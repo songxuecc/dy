@@ -1,0 +1,64 @@
+@import "base";
+
+.navbar {
+  height: 60px;
+  line-height: 60px;
+  background-color: @navbar-background-color;
+
+  .navbar-content {
+    padding: 0 20px;
+    color: @color-white;
+
+    .nav-title {
+      float: left;
+      left: 20px;
+      font-size: @navbar-title-font-size;
+    }
+
+    .nav-right {
+      float: right;
+      display:flex;
+      align-items: flex-start;
+      .el-button {
+        vertical-align: middle;
+        width: 100px;
+      }
+    }
+
+    /deep/ .el-menu {
+      .el-menu-item {
+        background-color: @navbar-background-color;
+        color: white;
+        &:hover {
+          background-color: @color-light-purple;
+        }
+      }
+      .el-submenu__title {
+        background-color: @navbar-background-color;
+        color: white;
+        &:hover {
+          background-color: @color-light-purple;
+        }
+        .el-submenu__icon-arrow {
+          color: white;
+
+        }
+      }
+    }
+  }
+}
+
+.nav-menu-popup {
+  color: blue !important;
+  min-width: 130px;
+
+  /deep/ .el-menu .el-menu--popup {
+    color: blue !important;
+    min-width: 130px;
+  }
+}
+
+/deep/ .el-menu--popup {
+  color: blue !important;
+  min-width: 130px !important;
+}
