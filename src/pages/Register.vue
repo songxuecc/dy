@@ -30,6 +30,19 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data () {
+    let checkPhone = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('手机号码不能为空'))
+      }
+      setTimeout(() => {
+        let phoneReg = /^1[3|4|5|6|7|8|9][0-9]{9}$/
+        if (!phoneReg.test(value)) {
+          callback(new Error('请输入手机号码'))
+        } else {
+          callback()
+        }
+      }, 1000)
+    }
     return {
       tabPosition: 'login',
       btnTitle: '登录',
@@ -39,7 +52,7 @@ export default {
       },
       rules: {
         phone: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
+          { required: true, validator: checkPhone, trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' }
@@ -124,6 +137,7 @@ export default {
     position: fixed;
     width: 100%;
     height: 100%;
+    z-index: 9999;
     background-color: #324057;
   }
   .manage_tip{

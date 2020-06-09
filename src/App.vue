@@ -30,9 +30,6 @@
         </div>
         <div class="float-view">
             <div class="float-button">
-                <el-button type="warning" icon="el-icon-message" circle @click="openNotificationBox"></el-button>
-            </div>
-            <div class="float-button">
                 <el-button type="primary" icon="el-icon-top" circle @click="backToTop"></el-button>
             </div>
         </div>
