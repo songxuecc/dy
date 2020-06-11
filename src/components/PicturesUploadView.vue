@@ -74,8 +74,9 @@ export default {
       return list
     },
     uploadIconVisible () {
-      return (this.featureType & common.PictureViewFeature['add']) &&
-        this.curPictureUrlList.length < this.containLimit
+      return false
+      // return (this.featureType & common.PictureViewFeature['add']) &&
+      //   this.curPictureUrlList.length < this.containLimit
     }
   },
   watch: {

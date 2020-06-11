@@ -177,8 +177,7 @@
                 </el-tooltip>
                 </span>
                 <div style="height: 400px; overflow: auto;">
-                    <div style="padding: 0 70px 5px; color: gray"> * 打勾的为白底图 </div>
-                    <pictures-upload-view ref="bannerPicListView" :belongType="0" :containLimit="10" :pictureUrlList="bannerPicUrlList">
+                    <pictures-upload-view ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList">
                     </pictures-upload-view>
                 </div>
                 <div class="common-bottom">
@@ -198,7 +197,7 @@
                     <el-badge :value="product.model.check_error_msg_static['3'].num" ></el-badge>
                 </el-tooltip>
                 </span>
-                <pictures-upload-view style="height: 400px" ref="descPicListView" :belongType="1" :containLimit="20" :pictureUrlList="descPicUrlList">
+                <pictures-upload-view style="height: 400px" ref="descPicListView" :belongType="1" :containLimit="-1" :pictureUrlList="descPicUrlList">
                 </pictures-upload-view>
                 <div class="common-bottom">
                     <el-checkbox v-if="isShowShelvesCheck" v-model="checkedShelves" style="margin-left:-127px">
