@@ -13,7 +13,7 @@
                 <el-form class="setting-content" ref="form" :model="product.model" label-width="90px" style="height: 400px">
                     <el-form-item label="商品分类:">
                         <span>{{ product.model.category_show }}</span>
-                        <el-button size="mini" @click="showSelectCateView">修改分类</el-button>
+                        <el-button size="mini" @click="showSelectCateView" :type="categoryBtnType">修改分类</el-button>
                     </el-form-item>
                     <el-form-item label="商品标题:">
                         <el-input v-model="product.model.title" size="mini"  style="width:70%"
@@ -451,6 +451,12 @@ export default {
       //   }
       // }
       return false
+    },
+    categoryBtnType () {
+      if (this.product.model.check_error_msg_static && '0' in this.product.model.check_error_msg_static && '1012' in this.product.model.check_error_msg_static['0']['code']) {
+        return 'danger'
+      }
+      return ''
     }
   },
   mounted () {
