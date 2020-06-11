@@ -76,6 +76,24 @@ const actions = {
     })
     return promise
   },
+  requestSendCaptcha ({commit, state}, params) {
+    let promise = new Promise(function (resolve, reject) {
+      Api.hhgjAPIs.getSendCaptcha(params).then(data => {
+        if (data !== null) {
+          resolve(data)
+        } else {
+          reject(new Error('接口数据出错'))
+        }
+      }, err => {
+        console.error(err)
+        reject(err)
+      }).catch(err => {
+        console.error(err)
+        reject(err)
+      })
+    })
+    return promise
+  },
   requestLogin ({commit, state}, params) {
     let promise = new Promise(function (resolve, reject) {
       Api.hhgjAPIs.getLogin(params).then(data => {
@@ -178,6 +196,9 @@ const actions = {
     let promise = new Promise(function (resolve, reject) {
       Api.hhgjAPIs.getBindApp(params).then(data => {
         if (data) {
+          data.isBind = true
+          commit(types.SET_USER, data)
+          resolve(data)
           resolve(data)
         }
       }, err => {
@@ -265,8 +286,10 @@ const mutations = {
     if (data.app_key) {
       localStorage.setItem('app_key', data.app_key)
       state.app_key = data.app_key
-      data.isBind = true
-      localStorage.setItem('isBind', true)
+      if (data.app_key !== 0) {
+        data.isBind = true
+        localStorage.setItem('is_bind', true)
+      }
     }
     if (data.owner_name) {
       localStorage.setItem('owner_name', data.owner_name)
@@ -285,7 +308,6 @@ const mutations = {
       state.mallName = data.mall_name
     }
     if (data.login_num) {
-      console.log(data.login_num)
       localStorage.setItem('login_num', data.login_num)
       state.loginNum = data.login_num
     }
@@ -297,7 +319,7 @@ const mutations = {
       state.isAuth = data.isAuth
     }
     if (data.isBind) {
-      localStorage.setItem('is_auth', data.isBind)
+      localStorage.setItem('is_bind', data.isBind)
       state.isBind = data.isBind
     }
     if (data.fake_token) {
@@ -314,6 +336,7 @@ const mutations = {
     localStorage.removeItem('login_num')
     localStorage.removeItem('expire_time')
     localStorage.removeItem('is_auth')
+    localStorage.removeItem('is_bind')
     localStorage.removeItem('fake_token')
     state.name = ''
     state.phone = ''

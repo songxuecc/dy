@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import '@/assets/css/base.less'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar.vue'
 import { mapGetters, mapActions } from 'vuex'

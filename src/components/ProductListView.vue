@@ -48,9 +48,10 @@
             </el-table-column>
             <el-table-column label="类目" width="120">
                 <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">
-                        <span> {{ getLastCategory(scope.row.category_show) }} </span>
-                    </el-tooltip>
+<!--                    <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">-->
+<!--                        <span> {{ getLastCategory(scope.row.category_show) }} </span>-->
+<!--                    </el-tooltip>-->
+                  <el-button size="mini" round @click="productCategoryEdit(scope.row, true)">编辑</el-button>
                 </template>
             </el-table-column>
             <el-table-column v-if="isSyncSource" label="最近同步" width="100">
@@ -127,18 +128,25 @@
               <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
             </span>
           </el-dialog>
+          <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" append-to-body center>
+          <category-select-view ref="categorySelectView" @changeCate="onChangeCate">
+          </category-select-view>
+        </el-dialog>
     </div>
 </template>
 <script>
 import productEditView from '@/components/ProductEditView.vue'
+import categorySelectView from '@/components/CategorySelectView'
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
+import FormModel from '@/common/formModel'
 export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditView
+    productEditView,
+    categorySelectView
   },
   props: {
     tpProductList: Array,
@@ -149,7 +157,11 @@ export default {
   },
   data () {
     return {
+      dialogVisible: false,
       deleteProductId: -1,
+      product: new FormModel([
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs'
+      ]),
       deleteProductVisible: false,
       dialogEditVisible: false,
       curTPProduct: {},
@@ -192,6 +204,19 @@ export default {
           }
         }
       })
+    },
+    product: {
+      handler (val, oldVal) {
+        if (oldVal.model.tp_product_id !== val.model.tp_product_id) {
+          return
+        }
+        if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id]) {
+          this.productDic[val.model.tp_product_id].isEdit = true
+        } else {
+          this.productDic[val.model.tp_product_id].isEdit = false
+        }
+      },
+      deep: true
     }
   },
   methods: {
@@ -297,6 +322,10 @@ export default {
         this.curTPProduct = product
         this.dialogEditVisible = true
       }
+    },
+    productCategoryEdit (product, isStatus = false) {
+      console.log(product)
+      this.dialogVisible = true
     },
     isSelectionEnable (row) {
       if (this.isSyncSource) {
@@ -479,10 +508,34 @@ export default {
     },
     handleMouseOut (row, column, cell, event) {
       // this.mouseOverIndex = -1
+    },
+    updateProperty (catId = -1) {
+      let params = { tp_product_id: this.product.model.tp_product_id, cat_id: catId }
+      this.request('getTPProductProperty', params, data => {
+        this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
+        this.haveAttr = this.$refs.attributeView.initAttribute(data.attribute_json)
+
+        if (catId === -1) { // 首次初始化
+          this.bannerPicUrlList = data.banner_json
+          this.descPicUrlList = data.desc_json
+          this.product.assign({description: data.desc_text})
+          this.initSku(data.sku_json, data.tp_id)
+          this.updateIsSingleSku()
+
+          this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
+          this.product.assign({bannerPicUrlList: this.bannerPicUrlList.map(val => val['url'])})
+          this.product.assign({descPicUrlList: this.descPicUrlList.map(val => val['url'])})
+          this.product.assign({attrs: JSON.parse(JSON.stringify(this.$refs.attributeView.getAttrUploadList()))})
+        }
+      })
+    },
+    onChangeCate (data) {
+      this.dialogVisible = false
+      this.product.model.cat_id = data.id
+      this.product.model.category_show = data.name
+      this.product.model.tp_product_id = data.id
+      this.updateProperty(this.product.model.tp_product_id, this.product.model.cat_id)
     }
   }
 }
 </script>
-<style lang="less" scoped>
-    @import '~@/assets/css/base.less';
-</style>

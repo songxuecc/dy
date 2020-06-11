@@ -4,6 +4,9 @@ const hhgjAPIs = {
   getRegister: (params) => {
     return api.actionCreatorPost('/api/account/register', params)
   },
+  getSendCaptcha: (params) => {
+    return api.actionCreatorPost('/api/account/sendCaptcha', params)
+  },
   getLogin: (params) => {
     return api.actionCreatorPost('/api/account/login', params)
   },
@@ -13,6 +16,15 @@ const hhgjAPIs = {
   getBindApp: (params) => {
     return api.actionCreatorPost('/api/account/bindApp', params)
   },
+  getCategoryList: (params) => {
+    return api.actionCreatorPost('/api/category/list', params)
+  },
+  getCategoryDetail: (params) => {
+    return api.actionCreatorPost('/api/category/detail', params)
+  },
+  searchCategory: (params) => {
+    return api.actionCreatorPost('/api/category/search', params)
+  },
   getAccessToken: (params) => {
     return api.actionCreatorPost('/api/getAccessToken', params)
   },
@@ -21,15 +33,6 @@ const hhgjAPIs = {
   },
   fakeUser: (params) => {
     return api.actionCreatorPost('/api/fakeUser', params)
-  },
-  getCategoryList: (params) => {
-    return api.actionCreatorPost('/api/getCategoryList', params)
-  },
-  searchCategory: (params) => {
-    return api.actionCreatorPost('/api/searchCategory', params)
-  },
-  getCategoryDetail: (params) => {
-    return api.actionCreatorPost('/api/getCategoryDetail', params)
   },
   getTemplate: (params) => {
     return api.actionCreatorPost('/api/getTemplate', params)

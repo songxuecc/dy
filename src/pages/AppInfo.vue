@@ -3,10 +3,8 @@
         <el-tabs type="border-card" v-model="activeName">
             <el-tab-pane label="基本介绍" name="basic">
               <div class="pay" v-if="true">
-                  <br/>
                   <div>
                       <div v-if="false">
-                        <br/>
                         <span style="width: 100px; display: block; float: left">价格：</span>
                         <span style="color: #ff7300;">{{subscRealPrice}}元</span>
                         <del style="color: #777777; font-size: 12px;">{{subscPrice}}元</del>
@@ -30,26 +28,11 @@
                             </div>
                         </el-radio-group>
                       </template>
-                      <el-button v-if="!isAuth" class="paybtn" size="medium" type="primary" style="width: 100px; " @click="onLogin">登录</el-button>
-                      <br/><br/>
-<!--                      <el-button class="paybtn" @click="createOrder" size="medium"  type="primary" style="margin-left: 0px;">立即订购</el-button>-->
                   </div>
                   <br/>
                   <div v-if="false">
                       <el-table border style="width: 100%" highlight-current-row :data="subscItem">
                           <el-table-column label="具体功能" prop="feature"></el-table-column>
-<!--                          <el-table-column label="基础版" width="150" prop="free">-->
-<!--                              <template slot-scope="scope">-->
-<!--                                <div v-if="scope.row.type === 'bool'">-->
-<!--                                  <i v-if="scope.row.free" class="el-icon-check"></i>-->
-<!--                                  <i v-if="!scope.row.free" class="el-icon-close"></i>-->
-<!--                                </div>-->
-<!--                                <div v-else-if="scope.row.type === 'int'">-->
-<!--                                  <span v-if="scope.row.free === -1">无限</span>-->
-<!--                                  <span v-else>{{scope.row.free}}</span>-->
-<!--                                </div>-->
-<!--                              </template>-->
-<!--                          </el-table-column>-->
                           <el-table-column label="高级版" width="150" prop="basic">
                               <template slot-scope="scope">
                                 <div v-if="scope.row.type === 'bool'">
@@ -78,7 +61,7 @@
                       <br>
                   </div>
               </div>
-              <br v-if="!isAuth"><br v-if="!isAuth">
+              <br v-if="!isAuth">
                 <div>
                   <div class="first-title">工具优势</div>
                   <div class="second-contain">
@@ -306,7 +289,6 @@ export default {
       return -1
     },
     subscPrice () {
-      console.log(this.priceMap)
       if (this.priceMap[this.selectLevelName + '-' + this.selectCycleName]) {
         return utils.fenToYuan(this.priceMap[this.selectLevelName + '-' + this.selectCycleName].subsc_price)
       }

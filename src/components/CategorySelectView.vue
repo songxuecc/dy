@@ -51,7 +51,7 @@ export default {
   data () {
     return {
       categoryId: 0,
-      maxLevel: 4,
+      maxLevel: 3,
       cateSearchStr: '',
       cateMultiList: [],
       cateFamilyList: [],

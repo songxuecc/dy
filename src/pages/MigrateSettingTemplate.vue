@@ -9,10 +9,6 @@
         </div><br>
         <el-card class="setting-content-with-tip" body-style="display:flex;">
             <el-form ref="template1" :model="template.model" :rules="rules" label-width="100px" style="width: 50%">
-                <el-form-item label="团购人数:" prop="customer_num">
-                    <el-input v-model.number="template.model.customer_num" size="medium" class="input-num" @input="check"></el-input>
-                </el-form-item>
-
                 <el-form-item label="单次限量:" prop="order_limit">
                     <el-input v-model.number="template.model.order_limit" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
@@ -21,7 +17,7 @@
                     <el-input v-model.number="template.model.buy_limit" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
 
-                <el-form-item label="运费模板:" prop="cost_template_id">
+                <el-form-item label="运费模板:" prop="cost_template_id" v-if="false">
                     <el-select v-model="template.model.cost_template_id" placeholder="请选择" size="medium"
                                class="input-text-left input-normal-width" @change="check"
                     >
@@ -38,11 +34,16 @@
                     >新建运费模板</el-link>
                 </el-form-item>
 
-                <el-form-item label="搬迁方式:" required>
-                    <el-radio-group v-model="migrate_type">
-                        <el-radio :label="0">草稿箱</el-radio>
-                        <el-radio :label="1">直接上线</el-radio>
+                <el-form-item label="付款方式:" required>
+                    <el-radio-group v-model="pay_type">
+                        <el-radio :label="0">货到付款</el-radio>
+                        <el-radio :label="1">在线支付</el-radio>
+                        <el-radio :label="2">两者都支持</el-radio>
                     </el-radio-group>
+                </el-form-item>
+
+                <el-form-item label="客服号码:" prop="mobile">
+                    <el-input v-model.number="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
             </el-form>
             <el-form ref="template2" :model="template.model" :rules="rules" label-width="100px" style="width: 50%">
@@ -122,7 +123,7 @@ export default {
       }
     }
     return {
-      migrate_type: 1,
+      pay_type: 1,
       preSaleDate: null,
       msgError: '',
       typeRadios: [
@@ -131,9 +132,9 @@ export default {
       ],
       pickerOptions: this.disabledDate(),
       rules: {
-        customer_num: [
-          { required: true, message: '请输入团购人数', trigger: 'change' },
-          { type: 'number', message: '团购人数必须为数字' }
+        mobile: [
+          { required: true, message: '请输入客服号码', trigger: 'change' },
+          { type: 'number', message: '客服号码必须为数字' }
         ],
         order_limit: [
           { required: true, message: '请输入单次限量', trigger: 'change' },
@@ -221,7 +222,7 @@ export default {
       if (this.msgError !== '') {
         return
       }
-      let keyList = ['customer_num', 'order_limit', 'buy_limit', 'cost_template_id',
+      let keyList = ['mobile', 'order_limit', 'buy_limit', 'cost_template_id',
         'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
         'price_rate', 'price_diff']
@@ -254,7 +255,7 @@ export default {
         unit_diff: utils.yuanToFen(this.template.model.single_price_diff),
         price_mult: this.template.model.price_rate * 100,
         price_diff: utils.yuanToFen(this.template.model.price_diff),
-        migration_type: this.migrate_type,
+        pay_type: this.pay_type,
         pre_sale_date: date,
         tp_product_ids: this.getSelectTPProductIdList,
         custom_prices: JSON.stringify(this.dicCustomPrices)
