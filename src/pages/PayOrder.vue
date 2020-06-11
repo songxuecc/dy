@@ -108,7 +108,6 @@ export default {
         this.orderList.push(data['order'])
         this.realFee = data['order']['real_fee']
         this.upgradeOrderList = data['upgrade_order_list']
-        console.log(this.orderList.length)
       })
     },
     payOrder (payChannel) {

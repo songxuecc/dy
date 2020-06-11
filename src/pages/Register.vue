@@ -9,12 +9,18 @@
           <el-radio-button label="login">登录</el-radio-button>
           <el-radio-button label="register">注册</el-radio-button>
         </el-radio-group>
-        <el-form :model="loginForm" :rules="rules" ref="loginForm">
+        <el-form :size="formSize" :model="loginForm" :rules="rules" ref="loginForm">
           <el-form-item label="手机号：" prop="phone">
             <el-input v-model="loginForm.phone" placeholder="手机号"><span>dsfsf</span></el-input>
           </el-form-item>
           <el-form-item label="密码：" prop="password">
             <el-input type="password" placeholder="密码" v-model="loginForm.password"></el-input>
+          </el-form-item>
+          <span v-if="errorTips !== ''" class="error-tip">{{errorTips}}</span>
+          <el-form-item class="phone-check" label="验证码：" prop="captcha" v-if="!isLogin">
+            <el-input v-model="loginForm.captcha" placeholder="手机验证码"><span>dsfsf</span></el-input>
+            <el-button v-show="sendAuthCode" type="success" @click="getAuthCode" size="small">获取验证码</el-button>
+            <span v-show="!sendAuthCode" class="auth_text"> <span class="auth_text_blue">{{auth_time}} </span> 秒之后重新发送验证码</span>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('loginForm')" class="submit_btn">{{btnTitle}}</el-button>
@@ -45,10 +51,17 @@ export default {
     }
     return {
       tabPosition: 'login',
+      isLogin: true,
+      sendAuthCode: true,
+      auth_time: 30,
+      formSize: '',
+      verification: '',
+      captchaTime: null,
       btnTitle: '登录',
       loginForm: {
         phone: '',
-        password: ''
+        password: '',
+        captcha: ''
       },
       rules: {
         phone: [
@@ -56,9 +69,13 @@ export default {
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        captcha: [
+          { required: true, message: '请输入验证码', trigger: 'blur' }
         ]
       },
-      showLogin: false
+      showLogin: false,
+      errorTips: ''
     }
   },
   computed: {
@@ -73,7 +90,8 @@ export default {
     ...mapActions([
       'requestToken',
       'requestLogin',
-      'requestRegister'
+      'requestRegister',
+      'requestSendCaptcha'
     ]),
     submitForm (formName) {
       this.$refs[formName].validate(async (valid) => {
@@ -83,29 +101,23 @@ export default {
             password: this.loginForm.password
           }
           if (this.tabPosition === 'login') {
+            delete params.captcha
             this.requestLogin(params).then(data => {
-              this.message = '授权成功'
               this.$router.push({
-                path: '/migrate'
+                path: '/info'
               })
-            }, e => {
-              this.message = '授权失败，请重新尝试'
-              this.$message.error(e.message)
             }).catch(err => {
-              this.message = '授权失败，请重新尝试'
+              this.errorTips = err.message
               this.$message.error(err.message)
             })
           } else {
+            params.captcha = this.loginForm.captcha
             this.requestRegister(params).then(data => {
-              this.message = '授权成功'
               this.$router.push({
-                path: '/migrate'
+                path: '/info'
               })
-            }, e => {
-              this.message = '授权失败，请重新尝试'
-              this.$message.error(e.message)
             }).catch(err => {
-              this.message = '授权失败，请重新尝试'
+              this.errorTips = err.message
               this.$message.error(err.message)
             })
           }
@@ -120,18 +132,44 @@ export default {
       })
     },
     changeTab () {
+      if (this.tabPosition === 'login') {
+        this.isLogin = true
+        this.formSize = ''
+      } else {
+        this.isLogin = false
+        this.formSize = 'small'
+      }
       this.btnTitle = this.tabPosition === 'login'
         ? '登录'
         : '注册'
     },
     goToRegister () {
       this.tabPosition = 'register'
+      this.changeTab()
+    },
+    getAuthCode () {
+      let params = {
+        phone: this.loginForm.phone
+      }
+      this.requestSendCaptcha(params).then(data => {
+        this.sendAuthCode = false
+        this.auth_time = 30
+        this.captchaTime = setInterval(() => {
+          this.auth_time--
+          if (this.auth_time <= 0) {
+            this.sendAuthCode = true
+            clearInterval(this.captchaTime)
+          }
+        }, 1000)
+      }).catch(err => {
+        this.errorTips = err.message
+        this.$message.error(err.message)
+      }) // 发送验证码
     }
   }
 }
 </script>
 <style lang="less" scoped>
-  @import '~@/assets/css/base.less';
   @import '~@/assets/css/mixin.less';
   .login_page{
     position: fixed;
@@ -143,7 +181,7 @@ export default {
   .manage_tip{
     position: absolute;
     width: 100%;
-    top: -100px;
+    top: -76px;
     left: 0;
     p{
       font-size: 34px;
@@ -151,8 +189,8 @@ export default {
     }
   }
   .form_contianer{
-    .wh(320px, 330px);
-    .ctp(320px, 330px);
+    .wh(320px, 340px);
+    .ctp(320px, 340px);
     padding: 25px;
     border-radius: 5px;
     text-align: center;
@@ -177,5 +215,23 @@ export default {
   .form-fade-enter, .form-fade-leave-active {
     transform: translate3d(0, -50px, 0);
     opacity: 0;
+  }
+  .error-tip {
+    color: #F56C6C;
+    position: relative;
+    top: -10px;
+  }
+  .phone-check {
+    text-align: left;
+    /deep/ .el-input--small {
+      width: 100px;
+      input {
+        width: 100px;
+      }
+    }
+  }
+  .auth_text {
+    color: #999999;
+    font-size: 12px;
   }
 </style>
