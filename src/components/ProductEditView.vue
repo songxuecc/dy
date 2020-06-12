@@ -7,7 +7,7 @@
                     <div slot="content">
                          <ul style="padding: 0; margin: 0;" v-for="(v,i) in product.model.check_error_msg_static['0']['info']" :key="i">{{v}}</ul>
                     </div>
-                    <el-badge :value="product.model.check_error_msg_static['0'].num" ></el-badge>
+                    <el-badge v-if="false" :value="product.model.check_error_msg_static['0'].num" ></el-badge>
                 </el-tooltip>
                 </span>
                 <el-form class="setting-content" ref="form" :model="product.model" label-width="90px" style="height: 400px">
@@ -51,7 +51,7 @@
                             <el-button type="primary" @click="onSaveProduct" disabled> {{ saveBtnText }} </el-button>
                         </span>
                     </el-tooltip>
-                    <el-button v-else type="primary" @click="onSaveProduct"> {{ saveBtnText }} </el-button>
+                    <el-button v-else type="primary" @click="onSaveProduct"> {{ saveBtnText }} 111</el-button>
                 </div>
             </el-tab-pane>
 
@@ -561,7 +561,7 @@ export default {
       this.dialogVisible = true
     },
     onOpenedCate () {
-      this.$refs.categorySelectView.initCate(this.product.model.cat_id, this.product.model.category_show)
+      // this.$refs.categorySelectView.initCate(this.product.model.cat_id, this.product.model.category_show)
     },
     onChangeCate (data) {
       this.dialogVisible = false

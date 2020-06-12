@@ -51,7 +51,8 @@
 <!--                    <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">-->
 <!--                        <span> {{ getLastCategory(scope.row.category_show) }} </span>-->
 <!--                    </el-tooltip>-->
-                  <el-button size="mini" round @click="productCategoryEdit(scope.row, true)">编辑</el-button>
+                  <el-button  v-if="scope.row.category_id === 0" size="mini" round @click="productCategoryEdit(scope.row, true)">编辑</el-button>
+                  <span v-else @click="productCategoryEdit(scope.row, true)">{{scope.row.category_show}}</span>
                 </template>
             </el-table-column>
             <el-table-column v-if="isSyncSource" label="最近同步" width="100">
@@ -128,7 +129,7 @@
               <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
             </span>
           </el-dialog>
-          <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" append-to-body center>
+          <el-dialog class="dialog-tight" title="修改分类123" width="800px" :visible.sync="dialogVisible" append-to-body center>
           <category-select-view ref="categorySelectView" @changeCate="onChangeCate">
           </category-select-view>
         </el-dialog>
@@ -160,7 +161,7 @@ export default {
       dialogVisible: false,
       deleteProductId: -1,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'hasCategory'
       ]),
       deleteProductVisible: false,
       dialogEditVisible: false,
@@ -324,7 +325,7 @@ export default {
       }
     },
     productCategoryEdit (product, isStatus = false) {
-      console.log(product)
+      this.product.model.tp_product_id = product.tp_product_id
       this.dialogVisible = true
     },
     isSelectionEnable (row) {
@@ -478,6 +479,18 @@ export default {
           this.curTPProduct[ dicKeys[key] ] = data[key]
         }
       }
+      if (this.tpProductList.length > 0) {
+        this.tpProductList.forEach((item) => {
+          if (item.tp_product_id === this.product.model.tp_product_id) {
+            for (let key in this.curTPProduct) {
+              if (!item.hasOwnProperty(key)) continue
+              if (key in item) {
+                item[key] = this.curTPProduct[key]
+              }
+            }
+          }
+        })
+      }
     },
     btnSyncClick (item) {
       this.$emit('btnSyncClick', item)
@@ -513,7 +526,7 @@ export default {
       let params = { tp_product_id: this.product.model.tp_product_id, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
-        this.haveAttr = this.$refs.attributeView.initAttribute(data.attribute_json)
+        // this.haveAttr = this.$refs.attributeView.initAttribute(data.attribute_json)
 
         if (catId === -1) { // 首次初始化
           this.bannerPicUrlList = data.banner_json
@@ -533,8 +546,25 @@ export default {
       this.dialogVisible = false
       this.product.model.cat_id = data.id
       this.product.model.category_show = data.name
-      this.product.model.tp_product_id = data.id
-      this.updateProperty(this.product.model.tp_product_id, this.product.model.cat_id)
+      this.updateProperty(this.product.model.cat_id)
+      // 保存save
+      let productParams = {
+        tp_product_id: this.product.model.tp_product_id,
+        category_id: this.product.model.cat_id
+      }
+      this.request('updateTPProduct', productParams, data => {
+        this.onChangeProduct({
+          status: data.status,
+          category_id: this.product.model.cat_id,
+          category_show: this.product.model.category_show
+        })
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        })
+        // this.reload()
+        this.$emit('closeDialog')
+      })
     }
   }
 }

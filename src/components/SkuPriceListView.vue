@@ -26,9 +26,9 @@
                     {{ scope.row.property_list[index].name }}
                 </template>
             </el-table-column>
-            <el-table-column key="3" width="200" align="center">
+            <el-table-column key="3" width="200" align="center" v-if="false">
                 <template slot="header" slot-scope="scope">
-                    <span>团购价</span>
+                    <span>团购价333</span>
                     <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
                 </template>
                 <template slot-scope="scope">
