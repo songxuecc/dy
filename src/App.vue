@@ -143,7 +143,3 @@ export default {
     min-width: 420px !important;
 }
 </style>
-
-<style lang="less" scoped>
-    @import '~@/assets/css/base.less';
-</style>

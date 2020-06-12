@@ -666,6 +666,3 @@ export default {
 }
 // 注意修改该控件的继承 PddProductEditView.vue
 </script>
-<style lang="less" scoped>
-    @import '~@/assets/css/base.less';
-</style>
