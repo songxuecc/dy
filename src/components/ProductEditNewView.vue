@@ -622,9 +622,6 @@ export default {
     onSaveProduct () {
       this.productEditSavingPercent = 0
       this.isProductEditSaving = true
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
-      }
       let tpProductList = []
       let tpProductIdList = []
       for (let i in this.productList) {
