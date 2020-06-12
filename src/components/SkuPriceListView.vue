@@ -26,15 +26,15 @@
                     {{ scope.row.property_list[index].name }}
                 </template>
             </el-table-column>
-            <el-table-column key="3" width="200" align="center" v-if="false">
+            <el-table-column key="3" width="200" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>团购价</span>
+                    <span>售卖价</span>
                     <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
                         <div style="width: 182px; padding-left: 18px;">
-                            <el-input v-model="scope.row.promo_price" size="mini" @input="inputChange(scope.row)"
+                            <el-input v-model="scope.row.promo_price" size="mini" @input="inputChange(scope.row,'promo_price')"
                                       :class="['input-medium', promoPriceClass(scope.row,scope.$index)]"
                             >
                                 <i class="el-icon-error el-input__icon"
@@ -56,13 +56,13 @@
             </el-table-column>
             <el-table-column key="4" width="200" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>单买价</span>
+                    <span>市场售价</span>
                     <el-button type="text" class="table-header-btn" @click="dialogPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
                         <div style="width: 182px; padding-left: 18px;">
-                            <el-input v-model="scope.row.price" size="mini" @input="inputChange(scope.row)"
+                            <el-input v-model="scope.row.price" size="mini" @input="inputChange(scope.row,'price')"
                                       :class="['input-medium', priceClass(scope.row, scope.$index)]"
                             >
                                 <i class="el-icon-error el-input__icon"
@@ -89,7 +89,7 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog title="批量修改团购价" width="400px" :visible.sync="dialogPromoPriceVisible" append-to-body center>
+        <el-dialog title="批量修改售卖价" width="400px" :visible.sync="dialogPromoPriceVisible" append-to-body center>
             <div>
                 <el-radio v-model="promoPriceHandler.radio" label="1">
                     <span style="display:inline-block; width:100px">统一价格为</span>
@@ -135,7 +135,7 @@
             </div>
         </el-dialog>
 
-        <el-dialog title="批量修改单买价" width="400px" :visible.sync="dialogPriceVisible" append-to-body center>
+        <el-dialog title="批量修改市场售价" width="400px" :visible.sync="dialogPriceVisible" append-to-body center>
             <div>
                 <el-radio v-model="priceHandler.radio" label="1">
                     <span style="display:inline-block; width:100px">统一价格为</span>
@@ -260,32 +260,33 @@ export default {
         ))
         skuShow.promo_price_obj = new FormModel()
         skuShow.promo_price_obj.assign({ price: skuShow.promo_price })
+        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['promo_price']) {
+          skuShow.promo_price_obj.model.price = skuShow.promo_price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['promo_price'])
+        }
 
         skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
-          utils.yuanToFen(promoPrice),
+          utils.yuanToFen(skuShow.promo_price),
           this.template.model.single_price_rate,
           this.template.model.single_price_diff * 100
         ))
         skuShow.price_obj = new FormModel()
         skuShow.price_obj.assign({ price: skuShow.price })
+
+        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['price']) {
+          skuShow.price_obj.model.price = skuShow.price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['price'])
+        }
+
         skuShow.msgSingleError = ''
         skuShow.msgGroupError = ''
-
-        if (this.dicCustomPrices[skuShow.property_key]) {
-          if (this.dicCustomPrices[skuShow.property_key]['promo_price']) {
-            skuShow.promo_price_obj.model.price =
-              skuShow.promo_price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['promo_price'])
-          }
-          if (this.dicCustomPrices[skuShow.property_key]['price']) {
-            skuShow.price_obj.model.price =
-              skuShow.price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['price'])
-          }
-        }
       }
       this.checkSkuPrice()
     },
     handleBatchPromoPrice () {
       this.batchEditPromoPrice()
+      for (let i in this.skuShowList) {
+        let skuShow = this.skuShowList[i]
+        this.updateSkuPriceByGroupPrice(skuShow)
+      }
       this.dialogPromoPriceVisible = false
       this.checkSkuPrice()
     },
@@ -296,34 +297,55 @@ export default {
     },
     checkSkuPrice () {
       let msg = ''
-      for (let i in this.skuShowList) {
-        let skuShow = this.skuShowList[i]
-        let maxAllowPrice = 1.08 * (skuShow.original_promo_price + this.tpProduct.postage / 100)
-        skuShow.msgGroupError = ''
-        skuShow.msgSingleError = ''
-        if (!utils.isNumber(skuShow.promo_price)) {
-          skuShow.msgGroupError = '请输入合法的数字'
-          msg = skuShow.msgGroupError
-        } else if (skuShow.promo_price > maxAllowPrice) {
-          skuShow.msgGroupError = '团购价涨幅不能超过抓取价格+邮费的8%(' + maxAllowPrice.toFixed(2) + '元)，请重新设置'
-          msg = skuShow.msgGroupError
-        } else if (!utils.isNumber(skuShow.price)) {
-          skuShow.msgSingleError = '请输入合法的数字'
-          msg = skuShow.msgSingleError
-        } else if (skuShow.promo_price > skuShow.price - 1) {
-          skuShow.msgSingleError = 'sku的单买价必须至少比团购价高一元'
-          msg = skuShow.msgSingleError
-        }
-      }
+      // for (let i in this.skuShowList) {
+      //   let skuShow = this.skuShowList[i]
+      //   let maxAllowPrice = skuShow.original_promo_price * 1.08 + this.tpProduct.postage / 100
+      //   skuShow.msgGroupError = ''
+      //   skuShow.msgSingleError = ''
+      //   if (!utils.isNumber(skuShow.promo_price)) {
+      //     skuShow.msgGroupError = '请输入合法的数字'
+      //     msg = skuShow.msgGroupError
+      //   } else if (skuShow.promo_price.toString() === '0') {
+      //     skuShow.msgGroupError = '团购价要大于0'
+      //     msg = skuShow.msgGroupError
+      //   } else if (skuShow.promo_price > maxAllowPrice) {
+      //     skuShow.msgGroupError = '团购价涨幅不能超过复制价格的8%+邮费(' + maxAllowPrice.toFixed(2) + '元)，请重新设置'
+      //     msg = skuShow.msgGroupError
+      //   } else if (!utils.isNumber(skuShow.price)) {
+      //     skuShow.msgSingleError = '请输入合法的数字'
+      //     msg = skuShow.msgSingleError
+      //   } else if (skuShow.promo_price > skuShow.price - 1) {
+      //     skuShow.msgSingleError = 'sku的单买价必须至少比团购价高一元'
+      //     msg = skuShow.msgSingleError
+      //   }
+      // }
       this.warnMsg = msg
     },
-    inputChange (sku) {
+    updateSkuPriceByGroupPrice (skuShow) {
+      if (!this.dicCustomPrices[skuShow.property_key] || !this.dicCustomPrices[skuShow.property_key]['price']) {
+        skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
+          utils.yuanToFen(skuShow.promo_price),
+          this.template.model.single_price_rate,
+          this.template.model.single_price_diff * 100
+        ))
+        skuShow.price_obj = new FormModel()
+        skuShow.price_obj.assign({ price: skuShow.price })
+      }
+    },
+    inputChange (skuShow, field) {
+      // 更新 单卖家
+      if (field === 'promo_price') {
+        this.updateSkuPriceByGroupPrice(skuShow)
+      }
       this.checkSkuPrice()
     },
     handleCancelEdit (sku, field) {
       sku[field + '_obj'].rollback()
       sku[field] = sku[field + '_obj'].model.price
       this.deleteCustomPrices(sku.property_key, field)
+      if (field === 'promo_price') {
+        this.updateSkuPriceByGroupPrice(sku)
+      }
       this.checkSkuPrice()
     },
     onSave () {

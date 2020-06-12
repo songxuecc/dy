@@ -11,7 +11,7 @@
             <el-form size="small" ref="template1" :model="template.model" :rules="rules" label-width="100px" style="width: 46%">
 
                 <el-form-item label="付款方式:" required>
-                    <el-radio-group v-model="pay_type">
+                    <el-radio-group v-model="template.model.pay_type">
                         <el-radio :label="0">货到付款</el-radio>
                         <el-radio :label="1">在线支付</el-radio>
                         <el-radio :label="2">两者都支持</el-radio>
@@ -25,10 +25,10 @@
                   <el-input v-model.number="template.model.cos_ratio" size="medium" class="input-num" @input="check"></el-input><span>&nbsp;&nbsp;%</span>
                 </el-form-item>
             </el-form>
-            <el-form size="small" ref="template2" :model="template.model" :rules="rules" label-width="120px" style="width: 55%">
+            <el-form size="small" ref="template2" :model="template.model" :rules="rules" label-width="150px" style="width: 55%">
 
-                 <el-form-item label="承诺发货时间:" prop="shipment_limit_day">
-                    <el-select v-model="template.model.shipment_limit_day" placeholder="请选择" size="small" @change="check">
+                 <el-form-item label="承诺发货时间:" prop="delivery_delay_day">
+                    <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" @change="check">
                         <el-option label="2天" :value="2"></el-option>
                         <el-option label="3天" :value="3"></el-option>
                         <el-option label="5天" :value="5"></el-option>
@@ -43,17 +43,18 @@
                         <el-option label="是" :value="1"></el-option>
                         <el-option label="否" :value="0"></el-option>
                     </el-select>
-                    <span v-if="template.model.is_pre_sale">&nbsp;&nbsp;预售时间：</span>
-                    <el-date-picker v-if="template.model.is_pre_sale" v-model="preSaleDate"
-                                    type="datetime"
-                                    placeholder="选择日期" size="small" class="input-date-left"
-                                    style="width: 150px; margin-left: 10px;"
-                                    :picker-options="pickerOptions"
-                                    @change="check"
-                    > </el-date-picker>
-                  <br>
-                  <span v-if="template.model.is_pre_sale" style="padding-top: 20px">预售结束后几天发货：</span>
-                  <el-select style="padding-top: 20px" v-if="template.model.is_pre_sale" v-model="deliverDateDayLater" placeholder="请选择" size="small" @change="check">
+                </el-form-item>
+                <el-form-item v-if="template.model.is_pre_sale" label="预售时间:" prop="pre_sale_date">
+                  <el-date-picker v-if="template.model.is_pre_sale" v-model="template.model.pre_sale_date"
+                                  type="datetime"
+                                  placeholder="选择日期" size="small" class="input-date-left"
+                                  style="width: 150px; margin-left: 10px;"
+                                  :picker-options="pickerOptions"
+                                  @change="check"
+                  > </el-date-picker>
+                </el-form-item>
+                <el-form-item v-if="template.model.is_pre_sale" label="预售结束后几天发货:" prop="presell_delay">
+                  <el-select style="padding-top: 20px" v-model="template.model.presell_delay" placeholder="请选择" size="small" @change="check">
                     <el-option v-for="item in dateRange" :key="item" :label="item" :value="item"></el-option>
                   </el-select>
                 </el-form-item>
@@ -83,7 +84,7 @@ export default {
   },
   data () {
     let validatePreSale = (rule, value, callback) => {
-      if (value && !this.preSaleDate && !this.deliverDateDayLater) {
+      if (value && !this.preSaleDate && !this.template.model.presell_delay) {
         callback(new Error('请选择预售时间及发货时间'))
       } else {
         callback()
@@ -92,7 +93,6 @@ export default {
     return {
       pay_type: 1,
       preSaleDate: null,
-      deliverDateDayLater: null,
       msgError: '',
       typeRadios: [
         { value: 0, label: '草稿箱' },
@@ -112,7 +112,7 @@ export default {
           { required: true, message: '请选择是否是否预售', trigger: 'change' },
           { validator: validatePreSale, trigger: 'change' }
         ],
-        shipment_limit_day: [
+        delivery_delay_day: [
           { required: true, message: '请选择发货承诺', trigger: 'change' }
         ]
       },
@@ -134,10 +134,21 @@ export default {
     window.removeEventListener('beforeunload', this.beforeunloadFn)
   },
   mounted () {
+    if (Object.entries(this.template.model).length === 0) {
+      this.loadingCnt++
+      this.requestTemplate().then(data => {
+        this.loadingCnt--
+        this.loadTempTemplate()
+        this.check()
+      })
+    }
   },
   methods: {
     ...mapActions([
-      'setSelectTPProductIdList'
+      'setSelectTPProductIdList',
+      'requestTemplate',
+      'loadTempTemplate',
+      'removeTempTemplate'
     ]),
     disabledDate (time) {
       let self = this
@@ -146,7 +157,7 @@ export default {
           let curTime = time.getTime()
           // “预售时间不能小于当前时间+承诺发货时间+1天之和”
           // “预售时间不可超过30天”（今天为1天，最后1天也为1天，29天）
-          return curTime < moment().startOf('day').add(1, 'days').valueOf() + self.template.model.shipment_limit_day * 1000 || curTime > moment().startOf('day').add(28, 'days').valueOf()
+          return curTime < moment().startOf('day').add(1, 'days').valueOf() + self.template.model.delivery_delay_day * 1000 || curTime > moment().startOf('day').add(28, 'days').valueOf()
         }
       }
     },
@@ -173,18 +184,27 @@ export default {
       this.$refs['template1'].validate(validateFun)
       this.$refs['template2'].validate(validateFun)
     },
-    startMigrate () {
-      if (this.msgError !== '') {
-        return
-      }
-      let keyList = ['mobile', 'is_pre_sale', 'shipment_limit_day',
+    getTemplateParams () {
+      let keyList = ['pay_type', 'mobile', 'cos_ratio', 'delivery_delay_day', 'presell_delay', 'cost_template_id',
+        'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
-        'price_rate', 'price_diff']
+        'price_rate', 'pre_sale_date', 'price_diff']
       let params = {}
       for (let key in this.template.model) {
         if (keyList.includes(key)) {
           params[key] = this.template.model[key]
         }
+      }
+      return params
+    },
+    startMigrate () {
+      if (this.msgError !== '') {
+        return
+      }
+      this.removeTempTemplate()
+      let params = this.getTemplateParams()
+      if (this.template.model.migrate_shop_template && this.template.model.migrate_shop_template.length > 0) {
+        params['cost_template_id'] = this.template.model.migrate_shop_template[0].cost_template_id
       }
       if (this.template.isDiff()) {
         this.request('updateTemplate', params, data => {
@@ -195,47 +215,77 @@ export default {
       }
     },
     migrage () {
+      this.isStartMigrate = true
       if (this.getSelectTPProductIdList.length === 0) {
         this.$message.error('没有选择搬家商品')
       }
       let date = ''
-      if (this.template.model.is_pre_sale && this.preSaleDate && this.deliverDateDayLater) {
+      if (this.template.model.is_pre_sale && this.preSaleDate) {
         date = moment(this.preSaleDate).format('L')
       }
+      let migrateShop = []
+      if (this.template.model.migrate_shop_template) {
+        for (let i = 0; i < this.template.model.migrate_shop_template.length; i++) {
+          let item = this.template.model.migrate_shop_template[i]
+          if (item.is_migrate === true && item.cost_template_id !== '') {
+            migrateShop.push({
+              'user_id': item['user_id'],
+              'template': {
+                'cost_template_id': item.cost_template_id
+              }
+            })
+          }
+        }
+      }
+      let templateParams = this.getTemplateParams()
+      templateParams.group_price_rate = Math.round(templateParams.group_price_rate * 100)
+      templateParams.group_price_diff = utils.yuanToFen(templateParams.group_price_diff)
+      templateParams.single_price_rate = Math.round(templateParams.single_price_rate * 100)
+      templateParams.single_price_diff = utils.yuanToFen(templateParams.single_price_diff)
+      templateParams.price_rate = Math.round(templateParams.price_rate * 100)
+      templateParams.price_diff = utils.yuanToFen(templateParams.price_diff)
       let params = {
-        group_mult: this.template.model.group_price_rate * 100,
-        group_diff: utils.yuanToFen(this.template.model.group_price_diff),
-        unit_mult: this.template.model.single_price_rate * 100,
-        unit_diff: utils.yuanToFen(this.template.model.single_price_diff),
-        price_mult: this.template.model.price_rate * 100,
-        price_diff: utils.yuanToFen(this.template.model.price_diff),
-        pay_type: this.pay_type,
+        template: JSON.stringify(templateParams),
+        migration_type: this.migrate_type,
         pre_sale_date: date,
-        deliver_date_day_later: this.deliverDateDayLater,
+        mobile: this.template.model.mobile,
+        pay_type: this.template.model.pay_type,
+        cos_ratio: this.template.model.cos_ratio,
+        presell_delay: this.template.model.presell_delay,
         tp_product_ids: this.getSelectTPProductIdList,
-        custom_prices: JSON.stringify(this.dicCustomPrices)
+        custom_prices: JSON.stringify(this.dicCustomPrices),
+        migrate_shop: JSON.stringify(migrateShop)
       }
       this.request('migrate', params, data => {
         if (this.loadingCnt === 0) {
-          this.$message('搬家任务已生效')
+          this.isStartMigrate = false
           this.setSelectTPProductIdList([])
           this.dicCustomPrices = {}
-          this.$router.push({
-            name: 'ProductList',
-            params: {
-              isMigrateComplete: false,
-              keepStatus: true,
-              needRefresh: true
+          this.$alert('搬家任务已在后台生成, 虎虎正在努力为你搬家，您可以继续其它操作', '提示', {
+            confirmButtonText: '确定',
+            callback: action => {
+              this.$router.push({
+                name: 'ProductList',
+                params: {
+                  isMigrateComplete: false,
+                  keepStatus: true,
+                  needRefresh: true
+                }
+              })
             }
           })
         }
-      })
+      }, data => { this.isStartMigrate = false })
     },
     goback () {
       this.$router.go(-1)
     },
-    reloadLogisticsTemplate () {
-      this.request('getPddLogisticsTemplate', {}, data => {
+    reloadLogisticsTemplate (userId = undefined) {
+      let params = {}
+      if (userId !== undefined) {
+        params['user_id'] = userId
+      }
+      this.request('getPddLogisticsTemplate', params, data => {
         if (data.length > 0) {
           this.template.model.template_list = data
           this.check()
