@@ -51,7 +51,7 @@
                             <el-button type="primary" @click="onSaveProduct" disabled> {{ saveBtnText }} </el-button>
                         </span>
                     </el-tooltip>
-                    <el-button v-else type="primary" @click="onSaveProduct"> {{ saveBtnText }} 111</el-button>
+                    <el-button v-else type="primary" @click="onSaveProduct"> {{ saveBtnText }}</el-button>
                 </div>
             </el-tab-pane>
 
