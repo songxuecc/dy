@@ -85,7 +85,7 @@
             </el-tooltip>
         </el-alert>
         <product-list-view ref="productListView" :tpProductList="tpProductList">
-            <template slot="upperRight">
+            <template slot="upperRight" v-if="false">
                 <router-link to="/productsSync">
                     <el-button size="small" @click="toProductsSync" style="right: 0px;">商品源同步</el-button>
                 </router-link>

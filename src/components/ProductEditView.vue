@@ -19,7 +19,8 @@
                         <el-input v-model="product.model.title" size="mini"  style="width:70%"
                                   :class="['input-text-left', {'warn': (isTitleWarn || isTitleInfoWarn())}]"
                         >
-                            <span slot="append" class="hint">{{ getStrRealLength(product.model.title) }} / 60</span>
+<!--                            <span slot="append" class="hint">{{ getStrRealLength(product.model.title) }} / 60</span>-->
+                            <span slot="append" class="hint">{{ getStrRealLength(product.model.title) }}</span>
                         </el-input>
                         <span style="font-size: 10px;">（已自动删除平台违禁词）</span>
 
@@ -440,9 +441,9 @@ export default {
   },
   computed: {
     isTitleWarn () {
-      if (utils.getStrRealLength(this.product.model.title) > 60) {
-        return true
-      }
+      // if (utils.getStrRealLength(this.product.model.title) > 60) {
+      //   return true
+      // }
       // if(this.product.model.check_error_msg_static){
       //   if('0' in this.product.model.check_error_msg_static){
       //     if('1005' in this.product.model.check_error_msg_static['0']['code']){
