@@ -8,31 +8,7 @@
             </el-steps>
         </div><br>
         <el-card class="setting-content-with-tip" body-style="display:flex;">
-            <el-form ref="template1" :model="template.model" :rules="rules" label-width="100px" style="width: 50%">
-                <el-form-item label="单次限量:" prop="order_limit">
-                    <el-input v-model.number="template.model.order_limit" size="medium" class="input-num" @input="check"></el-input>
-                </el-form-item>
-
-                <el-form-item label="限购次数:" prop="buy_limit">
-                    <el-input v-model.number="template.model.buy_limit" size="medium" class="input-num" @input="check"></el-input>
-                </el-form-item>
-
-                <el-form-item label="运费模板:" prop="cost_template_id" v-if="false">
-                    <el-select v-model="template.model.cost_template_id" placeholder="请选择" size="medium"
-                               class="input-text-left input-normal-width" @change="check"
-                    >
-                        <el-option v-for="item in template.model.template_list" :label="item.cost_template_name"
-                                   :key="item.cost_template_id" :value="item.cost_template_id"
-                        >
-                        </el-option>
-                    </el-select>
-                    <el-button type="text" @click="reloadLogisticsTemplate">
-                        <i class="el-icon-refresh"></i>
-                    </el-button>
-                    <el-link type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
-                             href="https://mms.pinduoduo.com/orders/order/carriage/add"
-                    >新建运费模板</el-link>
-                </el-form-item>
+            <el-form size="small" ref="template1" :model="template.model" :rules="rules" label-width="100px" style="width: 46%">
 
                 <el-form-item label="付款方式:" required>
                     <el-radio-group v-model="pay_type">
@@ -45,27 +21,20 @@
                 <el-form-item label="客服号码:" prop="mobile">
                     <el-input v-model.number="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
+                <el-form-item label="佣金比例:" prop="cos_ratio">
+                  <el-input v-model.number="template.model.cos_ratio" size="medium" class="input-num" @input="check"></el-input><span>&nbsp;&nbsp;%</span>
+                </el-form-item>
             </el-form>
-            <el-form ref="template2" :model="template.model" :rules="rules" label-width="100px" style="width: 50%">
-                <el-form-item label="7天退换:" prop="is_refundable">
-                    <el-select v-model="template.model.is_refundable" placeholder="请选择" size="small" @change="check">
-                        <el-option label="是" :value="1"></el-option>
-                        <el-option label="否" :value="0"></el-option>
-                    </el-select>
-                </el-form-item>
+            <el-form size="small" ref="template2" :model="template.model" :rules="rules" label-width="120px" style="width: 55%">
 
-                <el-form-item label="假一赔十:" prop="is_folt">
-                    <el-select v-model="template.model.is_folt" placeholder="请选择" size="small" @change="check">
-                        <el-option label="是" :value="1"></el-option>
-                        <el-option label="否" :value="0"></el-option>
-                    </el-select>
-                </el-form-item>
-
-                 <el-form-item label="发货承诺:" prop="shipment_limit_second">
-                    <el-select v-model="template.model.shipment_limit_second" placeholder="请选择" size="small" @change="check">
-                        <el-option label="24小时" :value="86400"></el-option>
-                        <el-option label="48小时" :value="172800"></el-option>
-                        <el-option label="5天" :value="432000"></el-option>
+                 <el-form-item label="承诺发货时间:" prop="shipment_limit_day">
+                    <el-select v-model="template.model.shipment_limit_day" placeholder="请选择" size="small" @change="check">
+                        <el-option label="2天" :value="2"></el-option>
+                        <el-option label="3天" :value="3"></el-option>
+                        <el-option label="5天" :value="5"></el-option>
+                        <el-option label="7天" :value="7"></el-option>
+                        <el-option label="10天" :value="10"></el-option>
+                        <el-option label="15天" :value="15"></el-option>
                     </el-select>
                 </el-form-item>
 
@@ -74,12 +43,19 @@
                         <el-option label="是" :value="1"></el-option>
                         <el-option label="否" :value="0"></el-option>
                     </el-select>
+                    <span v-if="template.model.is_pre_sale">&nbsp;&nbsp;预售时间：</span>
                     <el-date-picker v-if="template.model.is_pre_sale" v-model="preSaleDate"
+                                    type="datetime"
                                     placeholder="选择日期" size="small" class="input-date-left"
                                     style="width: 150px; margin-left: 10px;"
                                     :picker-options="pickerOptions"
                                     @change="check"
                     > </el-date-picker>
+                  <br>
+                  <span v-if="template.model.is_pre_sale" style="padding-top: 20px">预售结束后几天发货：</span>
+                  <el-select style="padding-top: 20px" v-if="template.model.is_pre_sale" v-model="deliverDateDayLater" placeholder="请选择" size="small" @change="check">
+                    <el-option v-for="item in dateRange" :key="item" :label="item" :value="item"></el-option>
+                  </el-select>
                 </el-form-item>
 
             </el-form>
@@ -106,18 +82,9 @@ export default {
   components: {
   },
   data () {
-    let validateCostTemplate = (rule, value, callback) => {
-      if (this.template.model.template_list.length === 0) {
-        callback(new Error('运费模板为空，请先新建运费模板'))
-      } else if (value === '' || value.toString() === '0') {
-        callback(new Error('请选择运费模板'))
-      } else {
-        callback()
-      }
-    }
     let validatePreSale = (rule, value, callback) => {
-      if (value && !this.preSaleDate) {
-        callback(new Error('请选择预售时间'))
+      if (value && !this.preSaleDate && !this.deliverDateDayLater) {
+        callback(new Error('请选择预售时间及发货时间'))
       } else {
         callback()
       }
@@ -125,6 +92,7 @@ export default {
     return {
       pay_type: 1,
       preSaleDate: null,
+      deliverDateDayLater: null,
       msgError: '',
       typeRadios: [
         { value: 0, label: '草稿箱' },
@@ -136,32 +104,19 @@ export default {
           { required: true, message: '请输入客服号码', trigger: 'change' },
           { type: 'number', message: '客服号码必须为数字' }
         ],
-        order_limit: [
-          { required: true, message: '请输入单次限量', trigger: 'change' },
-          { type: 'number', message: '单次限量必须为数字' }
-        ],
-        buy_limit: [
-          { required: true, message: '请输入限购次数', trigger: 'change' },
-          { type: 'number', message: '限购次数必须为数字' }
-        ],
-        cost_template_id: [
-          { required: true, message: '请选择运费模板', trigger: 'change' },
-          { validator: validateCostTemplate, trigger: 'change' }
-        ],
-        is_refundable: [
-          { required: true, message: '请选择是否7天退换', trigger: 'change' }
-        ],
-        is_folt: [
-          { required: true, message: '请选择是否假一赔十', trigger: 'change' }
+        cos_ratio: [
+          { required: true, message: '请输入佣金比例', trigger: 'change' },
+          { type: 'number', message: '佣金比例数字' }
         ],
         is_pre_sale: [
           { required: true, message: '请选择是否是否预售', trigger: 'change' },
           { validator: validatePreSale, trigger: 'change' }
         ],
-        shipment_limit_second: [
+        shipment_limit_day: [
           { required: true, message: '请选择发货承诺', trigger: 'change' }
         ]
-      }
+      },
+      dateRange: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
     }
   },
   computed: {
@@ -191,7 +146,7 @@ export default {
           let curTime = time.getTime()
           // “预售时间不能小于当前时间+承诺发货时间+1天之和”
           // “预售时间不可超过30天”（今天为1天，最后1天也为1天，29天）
-          return curTime < moment().startOf('day').add(1, 'days').valueOf() + self.template.model.shipment_limit_second * 1000 || curTime > moment().startOf('day').add(28, 'days').valueOf()
+          return curTime < moment().startOf('day').add(1, 'days').valueOf() + self.template.model.shipment_limit_day * 1000 || curTime > moment().startOf('day').add(28, 'days').valueOf()
         }
       }
     },
@@ -222,8 +177,7 @@ export default {
       if (this.msgError !== '') {
         return
       }
-      let keyList = ['mobile', 'order_limit', 'buy_limit', 'cost_template_id',
-        'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
+      let keyList = ['mobile', 'is_pre_sale', 'shipment_limit_day',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
         'price_rate', 'price_diff']
       let params = {}
@@ -245,7 +199,7 @@ export default {
         this.$message.error('没有选择搬家商品')
       }
       let date = ''
-      if (this.template.model.is_pre_sale && this.preSaleDate) {
+      if (this.template.model.is_pre_sale && this.preSaleDate && this.deliverDateDayLater) {
         date = moment(this.preSaleDate).format('L')
       }
       let params = {
@@ -257,6 +211,7 @@ export default {
         price_diff: utils.yuanToFen(this.template.model.price_diff),
         pay_type: this.pay_type,
         pre_sale_date: date,
+        deliver_date_day_later: this.deliverDateDayLater,
         tp_product_ids: this.getSelectTPProductIdList,
         custom_prices: JSON.stringify(this.dicCustomPrices)
       }
