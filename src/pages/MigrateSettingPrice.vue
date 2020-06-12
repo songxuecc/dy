@@ -450,7 +450,7 @@ export default {
       }
       for (let i in this.tpProductList) {
         let tpProduct = this.tpProductList[i]
-        let marketPriceFen = parseInt(tpProduct.market_price_obj.model.price * 100)
+        // let marketPriceFen = parseInt(tpProduct.market_price_obj.model.price * 100)
         tpProduct.singlePriceError = ''
         tpProduct.groupPriceError = ''
         if (tpProduct.sku_json && tpProduct.sku_json.sku_map) {
@@ -502,13 +502,13 @@ export default {
             //     this.msgError = strError
             //   }
             // } else
-            if (singlePriceFen < groupPriceFen + 100) {
-              let strError = 'sku的单买价必须比售卖价高一元，请重新设置'
-              tpProduct.singlePriceError = strError
-              if (this.msgError === '') {
-                this.msgError = strError
-              }
-            }
+            // if (singlePriceFen < groupPriceFen + 100) {
+            //   let strError = 'sku的单买价必须比售卖价高一元，请重新设置'
+            //   tpProduct.singlePriceError = strError
+            //   if (this.msgError === '') {
+            //     this.msgError = strError
+            //   }
+            // }
             // else if (marketPriceFen <= singlePriceFen) {
             //   let strError = '商品市场价必须大于sku单买价，请重新设置'
             //   tpProduct.marketPriceError = strError
@@ -517,15 +517,15 @@ export default {
             //   }
             // }
           }
-          if (maxSinglePriceFen) {
-            if (maxSinglePriceFen * 5 < marketPriceFen) {
-              let strError = '市场价不得高于最高sku单买价的5倍(' + (maxSinglePriceFen * 5 / 100) + ')，请重新设置'
-              tpProduct.marketPriceError = strError
-              if (this.msgError === '') {
-                this.msgError = strError
-              }
-            }
-          }
+          // if (maxSinglePriceFen) {
+          //   if (maxSinglePriceFen * 5 < marketPriceFen) {
+          //     let strError = '市场价不得高于最高sku单买价的5倍(' + (maxSinglePriceFen * 5 / 100) + ')，请重新设置'
+          //     tpProduct.marketPriceError = strError
+          //     if (this.msgError === '') {
+          //       this.msgError = strError
+          //     }
+          //   }
+          // }
         }
       }
     },

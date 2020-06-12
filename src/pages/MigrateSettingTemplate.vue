@@ -19,13 +19,13 @@
                 </el-form-item>
 
                 <el-form-item label="客服号码:" prop="mobile">
-                    <el-input v-model.number="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
+                    <el-input v-model="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
                 <el-form-item label="佣金比例:" prop="cos_ratio">
                   <el-input v-model.number="template.model.cos_ratio" size="medium" class="input-num" @input="check"></el-input><span>&nbsp;&nbsp;%</span>
                 </el-form-item>
             </el-form>
-            <el-form size="small" ref="template2" :model="template.model" :rules="rules" label-width="150px" style="width: 55%">
+            <el-form size="small" ref="template2" :model="template.model" :rules="rules" label-width="180px" style="width: 55%">
 
                  <el-form-item label="承诺发货时间:" prop="delivery_delay_day">
                     <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" @change="check">
@@ -48,13 +48,13 @@
                   <el-date-picker v-if="template.model.is_pre_sale" v-model="template.model.pre_sale_date"
                                   type="datetime"
                                   placeholder="选择日期" size="small" class="input-date-left"
-                                  style="width: 150px; margin-left: 10px;"
+                                  style="width: 190px;"
                                   :picker-options="pickerOptions"
                                   @change="check"
                   > </el-date-picker>
                 </el-form-item>
                 <el-form-item v-if="template.model.is_pre_sale" label="预售结束后几天发货:" prop="presell_delay">
-                  <el-select style="padding-top: 20px" v-model="template.model.presell_delay" placeholder="请选择" size="small" @change="check">
+                  <el-select v-model="template.model.presell_delay" placeholder="请选择" size="small" @change="check">
                     <el-option v-for="item in dateRange" :key="item" :label="item" :value="item"></el-option>
                   </el-select>
                 </el-form-item>
@@ -101,8 +101,7 @@ export default {
       pickerOptions: this.disabledDate(),
       rules: {
         mobile: [
-          { required: true, message: '请输入客服号码', trigger: 'change' },
-          { type: 'number', message: '客服号码必须为数字' }
+          { required: true, message: '请输入客服号码', trigger: 'change' }
         ],
         cos_ratio: [
           { required: true, message: '请输入佣金比例', trigger: 'change' },
@@ -195,6 +194,9 @@ export default {
           params[key] = this.template.model[key]
         }
       }
+      if (params.is_pre_sale && params.pre_sale_date) {
+        params.pre_sale_date = moment(params.pre_sale_date).format('YYYY-MM-DD HH-MM-SS')
+      }
       return params
     },
     startMigrate () {
@@ -219,10 +221,10 @@ export default {
       if (this.getSelectTPProductIdList.length === 0) {
         this.$message.error('没有选择搬家商品')
       }
-      let date = ''
-      if (this.template.model.is_pre_sale && this.preSaleDate) {
-        date = moment(this.preSaleDate).format('L')
-      }
+      // let date = ''
+      // if (this.template.model.is_pre_sale) {
+      //   date = moment(this.template.model.pre_sale_date).format('YYYY-MM-DD HH-MM-SS')
+      // }
       let migrateShop = []
       if (this.template.model.migrate_shop_template) {
         for (let i = 0; i < this.template.model.migrate_shop_template.length; i++) {
@@ -247,11 +249,11 @@ export default {
       let params = {
         template: JSON.stringify(templateParams),
         migration_type: this.migrate_type,
-        pre_sale_date: date,
-        mobile: this.template.model.mobile,
-        pay_type: this.template.model.pay_type,
-        cos_ratio: this.template.model.cos_ratio,
-        presell_delay: this.template.model.presell_delay,
+        // pre_sale_date: date,
+        // mobile: this.template.model.mobile,
+        // pay_type: this.template.model.pay_type,
+        // cos_ratio: this.template.model.cos_ratio,
+        // presell_delay: this.template.model.presell_delay,
         tp_product_ids: this.getSelectTPProductIdList,
         custom_prices: JSON.stringify(this.dicCustomPrices),
         migrate_shop: JSON.stringify(migrateShop)
