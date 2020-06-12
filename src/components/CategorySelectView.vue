@@ -27,7 +27,7 @@
                     <li v-for="(item, index) in searchRetList" :key="item.id" @click="selectSearchRet(index)"
                         class="select-list-item" :class="{'current-item': selectIndex == index }"
                     >
-                        {{ item.name }}
+                        {{ item.categoryName }}
                     </li>
                 </ul>
             </div>
@@ -37,7 +37,7 @@
             </div>
             <br>
             <div  class="common-bottom">
-                <el-button :disabled="selectCate.leaf !== 1" type="primary" @click="confirm">确定</el-button>
+                <el-button :disabled="selectCate.leaf !== 1" type="primary" @click="confirm">保存</el-button>
             </div>
         </el-row>
     </div>
@@ -124,6 +124,23 @@ export default {
 
       this.request('searchCategory', { keyword: this.cateSearchStr }, data => {
         this.$refs.selectList.scrollTop = 0
+        if (data.length > 0) {
+          data.forEach((item) => {
+            for (let key in item) {
+              if (key === 'levels' && (item[key].length > 0)) {
+                item[key].forEach((em, index) => {
+                  if (index !== (item[key].length - 1) && item.categoryName) {
+                    item.categoryName += em.name + ' > '
+                  } else if (index !== (item[key].length - 1) && !item.categoryName) {
+                    item.categoryName = em.name + ' > '
+                  } else {
+                    item.categoryName += em.name
+                  }
+                })
+              }
+            }
+          })
+        }
         this.searchRetList = data
       })
     },
@@ -137,13 +154,19 @@ export default {
         id: item.id,
         leaf: 1,
         level: item.level,
-        name: item.name,
+        levels: item.levels,
+        name: '',
         family_list: []
       }
       for (let i = 0; i < item.level; ++i) {
+        if (i !== (item.level - 1)) {
+          cate['name'] += item.levels[i].name + ' > '
+        } else {
+          cate['name'] += item.levels[i].name
+        }
         cate['family_list'][i] = {
-          id: item.desc['cat' + i + '_id'],
-          name: item.desc['cat' + i + '_name']
+          id: item.levels[i].id,
+          name: item.levels[i].name
         }
       }
       this.selectCate = cate

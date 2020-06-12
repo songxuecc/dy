@@ -14,32 +14,12 @@
                       <div slot="content">天猫</div>
                       <img class="icon" src="@/assets/images/u74.png">
                     </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">1688</div>
-                      <img class="icon" src="@/assets/images/1688.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">京东</div>
-                      <img class="icon" src="@/assets/images/jd.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">苏宁</div>
-                      <img class="icon" src="@/assets/images/sn.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">唯品会</div>
-                      <img class="icon" src="@/assets/images/vip.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">网易考拉</div>
-                      <img class="icon" src="@/assets/images/kaola.png">
-                    </el-tooltip>
                 </div>
                 <div  class="common-bottom">
                     <el-button type="primary" @click="onCapture(0)">开始抓取</el-button>
                 </div>
             </el-tab-pane>
-            <el-tab-pane v-loading="loadingCnt" label="整店抓取" :disabled="subsc().item_level<subscItemLevelMap['advanced']">
+            <el-tab-pane v-loading="loadingCnt" label="整店抓取" :disabled="subsc().item_level<subscItemLevelMap['advanced']" v-if="false">
                 <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls">
                 </el-input>
                 <div class="support">
@@ -51,26 +31,6 @@
                     <el-tooltip placement="bottom">
                       <div slot="content">天猫</div>
                       <img class="icon" src="@/assets/images/u74.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">1688</div>
-                      <img class="icon" src="@/assets/images/1688.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">京东</div>
-                      <img class="icon" src="@/assets/images/jd.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">苏宁</div>
-                      <img class="icon" src="@/assets/images/sn.png">
-                    </el-tooltip>
-<!--                    <el-tooltip placement="bottom">-->
-<!--                      <div slot="content">唯品会</div>-->
-<!--                      <img class="icon" src="@/assets/images/vip.png">-->
-<!--                    </el-tooltip>-->
-                    <el-tooltip placement="bottom">
-                      <div slot="content">网易考拉</div>
-                      <img class="icon" src="@/assets/images/kaola.png">
                     </el-tooltip>
                 </div>
                 <div  class="common-bottom">

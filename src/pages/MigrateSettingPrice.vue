@@ -26,7 +26,7 @@
                     <label style="font-size:12px" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
                 </template>
             </el-table-column>
-            <el-table-column label="sku团购价" width="220" align="center">
+            <el-table-column label="sku团购价" width="220" align="center" v-if="false">
                 <template slot="header" slot-scope="scope">
                     <el-tooltip placement="top" effect="light" :enterable="false"
                                 :content="'其他平台sku价格 x ' + template.model.group_price_rate
@@ -441,7 +441,7 @@ export default {
     check () {
       this.msgError = ''
       if (!this.template.checkNumber('price_rate') || !this.template.checkNumber('price_diff') ||
-        !this.template.checkNumber('group_price_rate') || !this.template.checkNumber('group_price_diff') ||
+        // !this.template.checkNumber('group_price_rate') || !this.template.checkNumber('group_price_diff') ||
         !this.template.checkNumber('single_price_rate') || !this.template.checkNumber('single_price_diff')
       ) {
         this.msgError = '请输入合法的数字'
@@ -490,21 +490,7 @@ export default {
             if (maxSinglePriceFen === undefined || singlePriceFen > maxSinglePriceFen) {
               maxSinglePriceFen = singlePriceFen
             }
-            // 检查顺序： sku团购价-单卖家-市场价
-            let maxAllowPrice = 1.08 * (item.promo_price + tpProduct.postage)
-            if (groupPriceFen > maxAllowPrice) {
-              let strError = '团购价涨幅不能超过抓取价格+邮费的8%(' + (maxAllowPrice / 100).toFixed(2) + ')，请重新设置'
-              tpProduct.groupPriceError = strError
-              if (this.msgError === '') {
-                this.msgError = strError
-              }
-            } else if (singlePriceFen < groupPriceFen + 100) {
-              let strError = 'sku的单买价必须比团购价高一元，请重新设置'
-              tpProduct.singlePriceError = strError
-              if (this.msgError === '') {
-                this.msgError = strError
-              }
-            } else if (marketPriceFen <= singlePriceFen) {
+            if (marketPriceFen <= singlePriceFen) {
               let strError = '商品市场价必须大于sku单买价，请重新设置'
               tpProduct.marketPriceError = strError
               if (this.msgError === '') {

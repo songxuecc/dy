@@ -53,7 +53,7 @@ export default {
       tabPosition: 'login',
       isLogin: true,
       sendAuthCode: true,
-      auth_time: 30,
+      auth_time: 60,
       formSize: '',
       verification: '',
       captchaTime: null,
@@ -80,19 +80,45 @@ export default {
   },
   computed: {
     ...mapGetters({
-      token: 'getToken'
+      isAuth: 'getIsAuth'
     })
   },
   mounted () {
-    this.showLogin = true
+    if (this.isAuth) {
+      this.getUserInfo()
+    } else {
+      this.showLogin = true
+    }
+  },
+  watch: {
+    isAuth (val) {
+      if (val) {
+        this.getUserInfo()
+      } else {
+        this.showLogin = true
+      }
+    }
   },
   methods: {
     ...mapActions([
-      'requestToken',
+      'requestUserInfo',
       'requestLogin',
       'requestRegister',
       'requestSendCaptcha'
     ]),
+    getUserInfo () {
+      this.requestUserInfo({}).then(data => {
+        if (data.phone && data.phone !== '') {
+          this.$router.push({
+            path: '/info'
+          })
+        }
+      }).catch(err => {
+        this.showLogin = true
+        this.message = '请重新登录'
+        this.$message.error(err.message)
+      })
+    },
     submitForm (formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
@@ -153,7 +179,7 @@ export default {
       }
       this.requestSendCaptcha(params).then(data => {
         this.sendAuthCode = false
-        this.auth_time = 30
+        this.auth_time = 60
         this.captchaTime = setInterval(() => {
           this.auth_time--
           if (this.auth_time <= 0) {
