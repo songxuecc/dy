@@ -62,7 +62,7 @@
                         scope.row.sync_source_status.status == taskResultStatus['ready']"
                        class="el-icon-loading"
                     ></i>
-                    <el-tooltip manua="true" v-show="scope.row.sync_source_status.status == taskResultStatus['fail']"
+                    <el-tooltip manua="true" v-if="scope.row.sync_source_status.status == taskResultStatus['fail']"
                                 class="item" effect="dark" placement="top" :content="scope.row.sync_source_status.msg"
                     >
                         <i class="el-icon-question"></i>
@@ -71,16 +71,17 @@
             </el-table-column>
             <el-table-column v-if="!isSyncSource" label="状态" width="120">
                 <template slot-scope="scope">
-                    <el-button :type="getStatusType(scope.row.status)" size="mini" round v-if="scope.row.status!==2" @click="productEdit(scope.row, true)">
-                    {{ productStatusMap[scope.row.status] }}
-                    <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
-                      <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-show="scope.row.status === 5 || scope.row.status === 6 || scope.row.status === 8" :disabled="scope.row.status !== 5 && scope.row.status !== 6 && scope.row.status !== 8" class="item" effect="dark" placement="top">
+                    <el-button type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-button>
+                    <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)">
+                      {{ productStatusMap[scope.row.status] }}
+                      <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
+                      <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="scope.row.status === 5 || scope.row.status === 6 || scope.row.status === 8" :disabled="scope.row.status !== 5 && scope.row.status !== 6 && scope.row.status !== 8" class="item" effect="dark" placement="top">
                           <div slot="content" style="max-width: 180px;" >
-                                  <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
                           </div>
                           <i class="el-icon-question"></i>
                       </el-tooltip>
-                      <el-tooltip style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-show="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
+                      <el-tooltip style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content" style="max-width: 180px;">
                             <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
                             <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: white;">联系客服</a>。</ul>
@@ -96,13 +97,8 @@
             </el-table-column>
             <el-table-column prop="" label="操作" :width="isSyncSource ? 140 : 120" align="center">
                 <template slot-scope="scope">
-                    <el-dropdown split-button type="primary" trigger="click" v-show="isModifyEnable(scope.row)" size="small" @click="productEdit(scope.row)" @command="handleCommand">
-                      {{getButtonName(scope.row)}}
-                      <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item :command="beforeHandleCommand('deleteProduct', scope.row)" size="small">删除</el-dropdown-item>
-                      </el-dropdown-menu>
-                    </el-dropdown>
-                    <div v-show="isSyncSource">
+                    <div v-if="[0,1].includes(scope.row.capture_status)"></div>
+                    <div v-else-if="isSyncSource">
                         <el-dropdown split-button type="primary" trigger="click" v-if="scope.row.sync_setting" size="small" @click="btnSyncClick(scope.row)" @command="handleCommand">
                           立即同步
                           <el-dropdown-menu slot="dropdown">
@@ -110,6 +106,15 @@
                           </el-dropdown-menu>
                         </el-dropdown>
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
+                    </div>
+                    <div v-else>
+                      <el-button type="primary" size="small" v-if="isModifyEnable(scope.row) && [3, 4].includes(scope.row.status)" @click="productEdit(scope.row)">{{getButtonName(scope.row)}}</el-button>
+                      <el-dropdown split-button type="primary" trigger="click" v-if="isModifyEnable(scope.row) && ![3, 4].includes(scope.row.status)" size="small" @click="productEdit(scope.row)" @command="handleCommand">
+                        {{getButtonName(scope.row)}}
+                        <el-dropdown-menu slot="dropdown" v-if="![3, 4].includes(scope.row.status)">
+                          <el-dropdown-item :command="beforeHandleCommand('deleteProduct', scope.row)" size="small">删除</el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
                     </div>
                 </template>
             </el-table-column>
@@ -252,7 +257,12 @@ export default {
     confirmDeleteProduct () {
       if (this.deleteProductId !== -1) {
         this.request('deleteTPProduct', { tp_product_ids: [this.deleteProductId] }, data => {
-          this.reload()
+          // this.reload()
+          // 删除操作不刷新页面
+          let idx = this.tpProductList.findIndex(item => item.tp_product_id === this.deleteProductId)
+          if (idx !== -1) {
+            this.tpProductList.splice(idx, 1)
+          }
         })
       }
       this.deleteProductVisible = false
@@ -284,6 +294,8 @@ export default {
         return '重试'
       } else if (product.status === 0 || product.status === 10) {
         return '编辑'
+      } else if (product.status === 3 || product.status === 4) {
+        return '删除'
       } else {
         return '修改'
       }
@@ -301,24 +313,31 @@ export default {
       return ''
     },
     productEdit (product, isStatus = false) {
-      if ([3, 4, 7, 10].includes(product.status) && isStatus) {
+      if ([7, 10].includes(product.status) && isStatus) {
         return true
-      } else if (product.status === 8 || product.status === 9) {
+      } else if ([8, 9].includes(product.status)) {
         if (product.migration_msg.length > 0) {
           window.open(product.migration_msg[0])
         }
       } else if (product.status === 7) {
         let self = this
-        this.request('capture', { urls: [product.title], capture_type: 0 }, data => {
-          let captureId = data.capture_id
+        this.request('capture', { urls: [product.url], capture_type: 0, tp_product_id: product.tp_product_id }, data => {
+          let params = {}
+          if (data.parent_id !== 0 && data.page_id !== 0) {
+            params['captureId'] = data.parent_id
+            params['pageId'] = data.page_id
+          } else {
+            params['captureId'] = data.capture_id
+          }
           self.$router.push({
             path: '/productList',
-            query: {
-              captureId: captureId
-            }
+            query: params
           })
           self.reload()
         })
+      } else if ([3, 4].includes(product.status)) {
+        this.deleteProductVisible = true
+        this.deleteProductId = product.tp_product_id
       } else {
         this.curTPProduct = product
         this.dialogEditVisible = true
@@ -345,7 +364,7 @@ export default {
       if (row.status === 8 && !row.migration_msg.length > 0) {
         return false
       }
-      if ([1, 2, 3, 4].includes(parseInt(row.status))) {
+      if ([1, 2].includes(parseInt(row.status))) {
         return false
       }
       return true
@@ -501,11 +520,14 @@ export default {
     cellStyle ({row, column, rowIndex, columnIndex}) {
       if (columnIndex === 0) {
         var status = this.tpProductList[rowIndex].status
-        if (status === 5 || status === 7 || status === 8) {
+        var captureStatus = this.tpProductList[rowIndex].capture_status
+        if ([0, 1].includes(captureStatus)) {
+          return 'background-color:#909399; padding:0;'
+        } else if ([5, 7, 8].includes(status)) {
           return 'background-color:#F56C6C; padding:0;'
         } else if (status === 6) {
           return 'background-color:#E6A23C; padding:0;'
-        } else if (status === 3 || status === 4) {
+        } else if ([3, 4].includes(status)) {
           return 'background-color:#67C23A; padding:0;'
         } else if (status === 10) {
           return 'background-color:#909399; padding:0;'
