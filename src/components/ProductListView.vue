@@ -134,7 +134,7 @@
               <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
             </span>
           </el-dialog>
-          <el-dialog class="dialog-tight" title="修改分类123" width="800px" :visible.sync="dialogVisible" append-to-body center>
+          <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" append-to-body center>
           <category-select-view ref="categorySelectView" @changeCate="onChangeCate">
           </category-select-view>
         </el-dialog>
