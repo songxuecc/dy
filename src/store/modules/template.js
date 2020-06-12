@@ -27,6 +27,26 @@ const actions = {
       })
     })
     return promise
+  },
+  saveTempTemplate ({commit, state}) {
+    let model = JSON.parse(JSON.stringify(state.template.model)) // deep copy
+    delete model['template_list']
+    localStorage.setItem('temp_template', JSON.stringify(model))
+    localStorage.setItem('custom_prices', JSON.stringify(state.dicCustomPrices))
+  },
+  loadTempTemplate ({commit, state}) {
+    let strTemplate = localStorage.getItem('temp_template') || ''
+    let strCustomPrices = localStorage.getItem('custom_prices') || ''
+    if (strTemplate !== '') {
+      Object.assign(state.template.model, JSON.parse(strTemplate))
+    }
+    if (strCustomPrices !== '') {
+      state.dicCustomPrices = JSON.parse(strCustomPrices)
+    }
+  },
+  removeTempTemplate ({commit, state}) {
+    localStorage.removeItem('temp_template')
+    localStorage.removeItem('custom_prices')
   }
 }
 
