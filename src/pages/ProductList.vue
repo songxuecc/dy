@@ -661,7 +661,7 @@ export default {
               } else {
                 item.isMigrating = false
               }
-              product.goods_commit_id = item['goods_commit_id']
+              product.dy_product_id = item['dy_product_id']
               product.status = item['status']
               product.isMigrating = item.isMigrating
               product.index = index
