@@ -48,7 +48,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
     /deep/ .el-menu--horizontal>.el-submenu .el-submenu__title{
       height: 30px;
       line-height: 30px;
