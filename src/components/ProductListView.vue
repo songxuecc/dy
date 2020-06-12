@@ -304,9 +304,7 @@ export default {
       if ([3, 4, 7, 10].includes(product.status) && isStatus) {
         return true
       } else if (product.status === 8 || product.status === 9) {
-        if (product.goods_commit_id) {
-          window.open(common.pddGoodsReturnDetailUrl + product.goods_commit_id)
-        }
+        window.open(common.dyGoodsCreateUrl + product.dy_product_id)
       } else if (product.status === 7) {
         let self = this
         this.request('capture', { urls: [product.title], capture_type: 0 }, data => {
@@ -342,7 +340,7 @@ export default {
     },
     isModifyEnable (row) {
       // 兼容之前数据
-      if (row.status === 8 && !row.goods_commit_id) {
+      if (row.status === 8 && !row.dy_product_id) {
         return false
       }
       if ([1, 2, 3, 4].includes(parseInt(row.status))) {

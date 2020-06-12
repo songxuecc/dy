@@ -62,7 +62,7 @@ module.exports = {
     'text': 0,
     'number': 1
   },
-  pddGoodsReturnDetailUrl: 'https://mms.pinduoduo.com/goods/goods_return_detail?id=',
+  dyGoodsCreateUrl: 'https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=',
   CAPTURE_SHOP: 1002,
   PRODUCT_TITLE_LIMIT: 60,
   PRODUCT_DESC_LIMIT: 500,
