@@ -1,237 +1,220 @@
 <template lang="html">
-    <div v-loading="loadingCnt">
-        <div style="text-align: left; margin-bottom: 10px">
-            <el-steps :active="1" finish-status="success">
-                <el-step title="选择商品"></el-step>
-                <el-step title="编辑价格"></el-step>
-                <el-step title="修改模板"></el-step>
-            </el-steps>
-        </div>
-        <el-table ref="productListTable" :data="tpProductList" border style="width: 100%"
-                  :row-style="{height:'68px'}"
-                  :cell-style="{padding:0}"
-                  :header-cell-class-name="headCellClassName"
-                  :cell-class-name="cellClassName"
-        >
-            <el-table-column label="图片" width="100" align="center">
-                <template slot-scope="scope">
-                    <img style="height:60px" :src="scope.row.thumbnail">
-                </template>
-            </el-table-column>
-            <el-table-column label="标题" align="center">
-                <template slot-scope="scope">
-                    <el-link :href="scope.row.url" target="_blank"  type="primary" :underline="false">
-                        {{ scope.row.title }}
-                    </el-link><br>
-                    <label style="font-size:12px" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
-                </template>
-            </el-table-column>
-            <el-table-column label="sku团购价" width="220" align="center" v-if="false">
-                <template slot="header" slot-scope="scope">
-                    <el-tooltip placement="top" effect="light" :enterable="false"
-                                :content="'其他平台sku价格 x ' + template.model.group_price_rate
-                                    + '%' + (template.model.group_price_diff < 0 ? ' + ' : ' - ')
-                                    + Math.abs(template.model.group_price_diff)"
-                    >
-                        <div class="setting-content" style="line-height: 60px;">
-                            <div class="th-title-with-icon">
-                                <div class="th-title"> sku团购价设置: </div>
-                                <div class="th-icon">
-                                    <el-tooltip v-if="(!template.checkNumber('group_price_rate') || !template.checkNumber('group_price_diff')) && isInitTemplate"
-                                                placement="top" content="请输入合法的数字"
-                                    >
-                                        <span> <i class="el-icon-warning warn" style=""></i> </span>
-                                    </el-tooltip>
-                                </div>
-                            </div>
-                            <div style="line-height: 40px; padding: 0;"> x </div>
-                            <el-tooltip content="根据抖音政策，团购价涨幅不能超过抓取价格的8%" :enterable="false">
-                                <el-input v-model="template.model.group_price_rate" size="medium"
-                                          :class="['input-m', !template.checkNumber('group_price_rate') && isInitTemplate ? 'warn' : '']"
-                                          @input="handleInputTemplateSkuPrice('promo_price')"
-                                ></el-input>
-                            </el-tooltip>
-                            <div style="line-height: 40px; padding: 0;"> % - </div>
-                            <el-tooltip content="差额可以为负数" :enterable="false">
-                                <el-input v-model="template.model.group_price_diff" size="medium" style="width:80px;"
-                                          :class="['input-m', !template.checkNumber('group_price_diff') && isInitTemplate ? 'warn' : '']"
-                                          @input="handleInputTemplateSkuPrice('promo_price')"
-                                ></el-input>
-                            </el-tooltip>
-                        </div>
-                    </el-tooltip>
-                </template>
-                <template slot-scope="scope">
-                    <el-tooltip placement="top" effect="light" :content="scope.row.group_tip" :enterable="false">
+  <div v-loading="loadingCnt">
+    <div style="text-align: left; margin-bottom: 10px">
+      <el-steps :active="1" finish-status="success">
+        <el-step title="选择商品"></el-step>
+        <el-step title="编辑价格"></el-step>
+        <el-step title="修改模板"></el-step>
+      </el-steps>
+    </div>
+    <el-table ref="productListTable" :data="tpProductList" border style="width: 100%"
+              :row-style="{height:'68px'}"
+              :cell-style="{padding:0}"
+              :header-cell-class-name="headCellClassName"
+              :cell-class-name="cellClassName"
+    >
+      <el-table-column label="图片" width="100" align="center">
+        <template slot-scope="scope">
+          <img style="height:60px" :src="scope.row.thumbnail">
+        </template>
+      </el-table-column>
+      <el-table-column label="标题" align="center">
+        <template slot-scope="scope">
+          <el-link :href="scope.row.url" target="_blank"  type="primary" :underline="false">
+            {{ scope.row.title }}
+          </el-link><br>
+          <label style="font-size:12px" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
+        </template>
+      </el-table-column>
+      <el-table-column label="售卖价" width="220" align="center">
+        <template slot="header" slot-scope="scope">
+          <div class="setting-content">
+            <div class="th-title-with-icon">
+              <div class="th-title"> 售卖价 = </div>
+              <div class="th-icon">
+                <el-tooltip v-if="(!template.checkNumber('group_price_rate') || !template.checkNumber('group_price_diff')) && isInitTemplate"
+                            placement="top" content="请输入合法的数字"
+                >
+                  <span> <i class="el-icon-warning warn" style=""></i> </span>
+                </el-tooltip>
+              </div>
+            </div>
+            <div class="th-title-text"> 原价 x </div>
+            <el-tooltip content="" :enterable="false">
+              <el-input v-model="template.model.group_price_rate" size="medium"
+                        :class="['input-m', !template.checkNumber('group_price_rate') && isInitTemplate ? 'warn' : '']"
+                        @input="handleInputTemplateSkuPrice('promo_price')"
+              ></el-input>
+            </el-tooltip>
+            <div class="th-title-text"> % - </div>
+            <el-tooltip content="差额可以为负数" :enterable="false">
+              <el-input v-model="template.model.group_price_diff" size="medium" style="width:60px;"
+                        :class="['input-m', !template.checkNumber('group_price_diff') && isInitTemplate ? 'warn' : '']"
+                        @input="handleInputTemplateSkuPrice('promo_price')"
+              ></el-input>
+            </el-tooltip>
+          </div>
+        </template>
+        <template slot-scope="scope">
+          <el-tooltip placement="top" effect="light" :content="scope.row.group_tip" :enterable="false">
                         <span :class="['great', scope.row.groupPriceError !== '' ? 'warn' : '']">
                             {{ scope.row.group_price_range }}
                         </span>
-                    </el-tooltip>
-                    <el-tooltip placement="top" content="sku价格设置" :enterable="false">
-                        <el-button type="text" class="table-header-btn" @click="showSkuPrice(scope.row)">
-                            <i class="el-icon-edit"></i>
-                        </el-button>
-                    </el-tooltip>
-                    <el-tooltip v-if="scope.row.groupPriceError !== ''" placement="top"
-                                :content="scope.row.groupPriceError"
-                    >
+          </el-tooltip>
+          <el-tooltip placement="top" content="价格设置" :enterable="false">
+            <el-button type="text" class="table-header-btn" @click="showSkuPrice(scope.row)">
+              <i class="el-icon-edit"></i>
+            </el-button>
+          </el-tooltip>
+          <el-tooltip v-if="scope.row.groupPriceError !== ''" placement="top"
+                      :content="scope.row.groupPriceError"
+          >
                         <span style="display:inline-block; height:18px; line-height:18px; font-size: 18px;">
                             <i class="el-icon-warning warn" style=""></i>
                         </span>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-            <el-table-column label="sku单买价" width="220" align="center">
-                <template slot="header" slot-scope="scope">
-                    <el-tooltip placement="top" effect="light" :enterable="false"
-                                :content="'其他平台sku价格 x ' + template.model.single_price_rate
-                                    + '%' + (template.model.single_price_diff < 0 ? ' + ' : ' - ')
-                                    + Math.abs(template.model.single_price_diff)"
-                    >
-                        <div class="setting-content">
-                            <div class="th-title-with-icon">
-                                <div class="th-title"> sku单买价设置: </div>
-                                <div class="th-icon">
-                                    <el-tooltip v-if="(!template.checkNumber('single_price_rate') || !template.checkNumber('single_price_diff')) && isInitTemplate"
-                                                placement="top" content="请输入合法的数字"
-                                    >
-                                        <span> <i class="el-icon-warning warn" style=""></i> </span>
-                                    </el-tooltip>
-                                </div>
-                            </div>
-                            <div style="line-height: 40px; padding: 0;"> x </div>
-                            <el-input v-model="template.model.single_price_rate" size="medium"
-                                      :class="['input-m', !template.checkNumber('single_price_rate') && isInitTemplate ? 'warn' : '']"
-                                      @input="handleInputTemplateSkuPrice('price')"
-                            ></el-input>
-                            <div style="line-height: 40px; padding: 0;"> % - </div>
-                            <el-tooltip content="差额可以为负数" :enterable="false">
-                                <el-input v-model="template.model.single_price_diff" size="medium" style="width:80px;"
-                                          :class="['input-m', !template.checkNumber('single_price_diff') && isInitTemplate ? 'warn' : '']"
-                                          @input="handleInputTemplateSkuPrice('price')"
-                                ></el-input>
-                            </el-tooltip>
-                        </div>
-                    </el-tooltip>
-                </template>
-                <template slot-scope="scope">
-                    <el-tooltip placement="top" effect="light" :content="scope.row.single_tip" :enterable="false">
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column label="市场售价" width="232" align="center">
+        <template slot="header" slot-scope="scope">
+          <div class="setting-content">
+            <div class="th-title-with-icon">
+              <div class="th-title"> 市场售价 = </div>
+              <div class="th-icon">
+                <el-tooltip v-if="(!template.checkNumber('single_price_rate') || !template.checkNumber('single_price_diff')) && isInitTemplate"
+                            placement="top" content="请输入合法的数字"
+                >
+                  <span> <i class="el-icon-warning warn" style=""></i> </span>
+                </el-tooltip>
+              </div>
+            </div>
+            <div class="th-title-text"> 售卖价 x </div>
+            <el-input v-model="template.model.single_price_rate" size="medium"
+                      :class="['input-m', !template.checkNumber('single_price_rate') && isInitTemplate ? 'warn' : '']"
+                      @input="handleInputTemplateSkuPrice('price')"
+            ></el-input>
+            <div class="th-title-text"> % - </div>
+            <el-tooltip content="差额可以为负数" :enterable="false">
+              <el-input v-model="template.model.single_price_diff" size="medium" style="width:60px;"
+                        :class="['input-m', !template.checkNumber('single_price_diff') && isInitTemplate ? 'warn' : '']"
+                        @input="handleInputTemplateSkuPrice('price')"
+              ></el-input>
+            </el-tooltip>
+          </div>
+        </template>
+        <template slot-scope="scope">
+          <el-tooltip placement="top" effect="light" :content="scope.row.single_tip" :enterable="false">
                         <span class="great">
                             {{ scope.row.single_price_range }}
                         </span>
-                    </el-tooltip>
-                    <el-tooltip placement="top" content="sku价格设置" :enterable="false">
-                        <el-button type="text" class="table-header-btn" @click="showSkuPrice(scope.row)">
-                            <i class="el-icon-edit"></i>
-                        </el-button>
-                    </el-tooltip>
-                    <el-tooltip v-if="scope.row.singlePriceError !== ''" placement="top"
-                                :content="scope.row.singlePriceError"
-                    >
+          </el-tooltip>
+          <el-tooltip placement="top" content="sku价格设置" :enterable="false">
+            <el-button type="text" class="table-header-btn" @click="showSkuPrice(scope.row)">
+              <i class="el-icon-edit"></i>
+            </el-button>
+          </el-tooltip>
+          <el-tooltip v-if="scope.row.singlePriceError !== ''" placement="top"
+                      :content="scope.row.singlePriceError"
+          >
                         <span style="display:inline-block; height:18px; line-height:18px; font-size: 18px;">
                             <i class="el-icon-warning warn" style=""></i>
                         </span>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-            <el-table-column label="市场价" width="220" align="center">
-                <template slot="header" slot-scope="scope">
-                    <el-tooltip placement="top" effect="light" :enterable="false"
-                                :content="'其他平台市场价格 x ' + template.model.price_rate + '%'
-                                    + (template.model.price_diff < 0 ? ' + ' : ' - ')
-                                    + Math.abs(template.model.price_diff)"
-                    >
-                        <div class="setting-content">
-                            <div class="th-title-with-icon">
-                                <div class="th-title"> 市场价设置: </div>
-                                <div class="th-icon">
-                                    <el-tooltip v-if="(!template.checkNumber('price_rate') || !template.checkNumber('price_diff')) && isInitTemplate"
-                                                placement="top" content="请输入合法的数字"
-                                    >
-                                        <span> <i class="el-icon-warning warn" style=""></i> </span>
-                                    </el-tooltip>
-                                </div>
-                            </div>
-                            <div style="line-height: 40px; padding: 0;"> x </div>
-                            <el-input v-model="template.model.price_rate" size="medium"
-                                      :class="['input-m', !template.checkNumber('price_rate') && isInitTemplate ? 'warn' : '']"
-                                      @input="handleInputTemplate"
-                            ></el-input>
-                            <div style="line-height: 40px; padding: 0;"> % - </div>
-                            <el-tooltip content="差额可以为负数" :enterable="false">
-                                <el-input v-model="template.model.price_diff" size="medium" style="width:80px;"
-                                          :class="['input-m', !template.checkNumber('price_diff') && isInitTemplate ? 'warn' : '']"
-                                          @input="handleInputTemplate"
-                                ></el-input>
-                            </el-tooltip>
-                        </div>
-                    </el-tooltip>
-                </template>
-                <template slot-scope="scope">
-                    <el-tooltip :disabled="scope.row.market_price_obj.isDiff()" placement="top" effect="light" :enterable="false"
-                                :content="scope.row.max_price / 100 + ' x ' + template.model.price_rate + '%'
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column label="市场价" width="240" align="center">
+        <template slot="header" slot-scope="scope">
+
+          <div class="setting-content">
+            <div class="th-title-with-icon">
+              <div class="th-title"> 市场价 = </div>
+              <div class="th-icon">
+                <el-tooltip v-if="(!template.checkNumber('price_rate') || !template.checkNumber('price_diff')) && isInitTemplate"
+                            placement="top" content="请输入合法的数字"
+                >
+                  <span> <i class="el-icon-warning warn" style=""></i> </span>
+                </el-tooltip>
+              </div>
+            </div>
+            <div class="th-title-text"> 最高价 x </div>
+            <el-input v-model="template.model.price_rate" size="medium"
+                      :class="['input-m', !template.checkNumber('price_rate') && isInitTemplate ? 'warn' : '']"
+                      @input="handleInputTemplate"
+            ></el-input>
+            <div class="th-title-text"> % - </div>
+            <el-tooltip content="差额可以为负数" :enterable="false">
+              <el-input v-model="template.model.price_diff" size="medium" style="width:60px;"
+                        :class="['input-m', !template.checkNumber('price_diff') && isInitTemplate ? 'warn' : '']"
+                        @input="handleInputTemplate"
+              ></el-input>
+            </el-tooltip>
+          </div>
+        </template>
+        <template slot-scope="scope">
+          <el-tooltip :disabled="scope.row.market_price_obj.isDiff()" placement="top" effect="light" :enterable="false"
+                      :content="scope.row.max_price / 100 + ' x ' + template.model.price_rate + '%'
                                            + (template.model.price_diff < 0 ? ' + ' : ' - ')
                                            + Math.abs(template.model.price_diff)"
-                    >
-                        <el-tooltip content="调整后的价格不再使用公式" :value="scope.row.focus && scope.row.mouseInside" :manual="true">
-                            <div style="display: flex">
-                                <div style="width: 182px; padding-left: 18px;">
-                                    <el-input v-model="scope.row.market_price_obj.model.price" size="medium"
-                                              :class="['input-great', marketPriceClass(scope.row)]"
-                                              @input="handleInputProduct(scope.row)"
-                                              @focus="scope.row.focus=true"
-                                              @blur="scope.row.focus=false"
-                                              @mouseenter.native="scope.row.mouseInside=true"
-                                              @mouseleave.native="scope.row.mouseInside=false"
-                                    >
-                                        <i class="el-icon-error el-input__icon"
-                                           v-if="scope.row.market_price_obj.isDiff()"
-                                           slot="suffix"
-                                           @click="handleCancelEdit(scope.row)">
-                                        </i>
-                                    </el-input>
-                                </div>
-                                <div style="width: 18px; display:flex; align-items:center;">
-                                     <el-tooltip v-if="scope.row.marketPriceError !== ''" placement="top"
-                                        :content="scope.row.marketPriceError"
-                                    >
+          >
+            <el-tooltip content="调整后的价格不再使用公式" :value="scope.row.focus && scope.row.mouseInside" :manual="true">
+              <div style="display: flex">
+                <div style="width: 182px; padding-left: 18px;">
+                  <el-input v-model="scope.row.market_price_obj.model.price" size="medium"
+                            :class="['input-great', marketPriceClass(scope.row)]"
+                            @input="handleInputProduct(scope.row)"
+                            @focus="scope.row.focus=true"
+                            @blur="scope.row.focus=false"
+                            @mouseenter.native="scope.row.mouseInside=true"
+                            @mouseleave.native="scope.row.mouseInside=false"
+                  >
+                    <i class="el-icon-error el-input__icon"
+                       v-if="scope.row.market_price_obj.isDiff()"
+                       slot="suffix"
+                       @click="handleCancelEdit(scope.row)">
+                    </i>
+                  </el-input>
+                </div>
+                <div style="width: 18px; display:flex; align-items:center;">
+                  <el-tooltip v-if="scope.row.marketPriceError !== ''" placement="top"
+                              :content="scope.row.marketPriceError"
+                  >
                                       <span style="display:inline-block; height:18px; line-height:18px; font-size: 18px;">
                                           <i class="el-icon-warning warn" style=""></i>
                                       </span>
-                                    </el-tooltip>
-                                </div>
-                            </div>
-                        </el-tooltip>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-        </el-table>
-        <br>
-        <!-- <el-pagination
-                v-show="loadingCnt == 0"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="pagination.index"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="pagination.size"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="pagination.total">
-        </el-pagination> -->
-        <div class="common-bottom">
-            <el-button style="margin-right: 15px" @click="goback">返回</el-button>
-            <el-tooltip placement="top" :disabled="msgError === ''" :content="msgError">
+                  </el-tooltip>
+                </div>
+              </div>
+            </el-tooltip>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+    </el-table>
+    <br>
+    <!-- <el-pagination
+            v-show="loadingCnt == 0"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pagination.index"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pagination.size"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pagination.total">
+    </el-pagination> -->
+    <div class="common-bottom">
+      <el-button style="margin-right: 15px" @click="goback">返回</el-button>
+      <el-tooltip placement="top" :disabled="msgError === ''" :content="msgError">
                 <span>
                     <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
                 </span>
-            </el-tooltip>
-        </div>
-        <el-dialog title="sku价格设置" :visible.sync="dialogSkuPriceVisible" width="900px" append-to-body center
-                   @opened="dialogSkuPriceOpened"  @close="dialogSkuPriceClose"
-        >
-            <sku-price-list-view ref="skuPriceListView" :template="template" :tpProduct="selectTpProduct">
-            </sku-price-list-view>
-        </el-dialog>
+      </el-tooltip>
     </div>
+    <el-dialog title="sku价格设置" :visible.sync="dialogSkuPriceVisible" width="900px" append-to-body center
+               @opened="dialogSkuPriceOpened"  @close="dialogSkuPriceClose"
+    >
+      <sku-price-list-view ref="skuPriceListView" :template="template" :tpProduct="selectTpProduct">
+      </sku-price-list-view>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import request from '@/mixins/request.js'
@@ -280,7 +263,9 @@ export default {
   methods: {
     ...mapActions([
       'setSelectTPProductIdList',
-      'requestTemplate'
+      'requestTemplate',
+      'loadTempTemplate',
+      'saveTempTemplate'
     ]),
     init () {
       this.getTPProductList()
@@ -309,6 +294,7 @@ export default {
       this.isInitTemplate = false
       this.requestTemplate().then(data => {
         this.isInitTemplate = true
+        this.loadTempTemplate()
         if (this.tpProductList.length > 0) {
           this.updateMarketPrices()
           this.updateRelatePrices('promo_price')
@@ -377,15 +363,20 @@ export default {
               originVal = priceFen / 100
               isCustom = true
             } else if (item.promo_price) {
+              let basePrice = item.promo_price
+              if (field === 'price') {
+                basePrice = item.group_price
+              }
               priceFen = utils.adjustPriceFen(
-                item.promo_price,
+                basePrice,
                 this.template.model[prefix + 'price_rate'],
                 this.template.model[prefix + 'price_diff'] * 100
               )
-              originVal = item.promo_price / 100
+              originVal = basePrice / 100
               isCustom = false
             }
             if (typeof priceFen !== 'undefined') {
+              item[prefix + 'price'] = priceFen
               if (minPriceFen > priceFen) {
                 minPriceFen = priceFen
                 minOriginVal = originVal
@@ -441,7 +432,7 @@ export default {
     check () {
       this.msgError = ''
       if (!this.template.checkNumber('price_rate') || !this.template.checkNumber('price_diff') ||
-        // !this.template.checkNumber('group_price_rate') || !this.template.checkNumber('group_price_diff') ||
+        !this.template.checkNumber('group_price_rate') || !this.template.checkNumber('group_price_diff') ||
         !this.template.checkNumber('single_price_rate') || !this.template.checkNumber('single_price_diff')
       ) {
         this.msgError = '请输入合法的数字'
@@ -466,17 +457,7 @@ export default {
           let maxSinglePriceFen
           for (let key in tpProduct.sku_json.sku_map) {
             let item = tpProduct.sku_json.sku_map[key]
-            let singlePriceFen = utils.getObjectValue(this.dicCustomPrices, [tpProduct.tp_product_id, 'sku', key, 'price'])
-            if (typeof singlePriceFen !== 'undefined') {
-              singlePriceFen = parseInt(singlePriceFen)
-            } else if (item.promo_price) {
-              singlePriceFen = utils.adjustPriceFen(
-                item.promo_price,
-                this.template.model['single_price_rate'],
-                this.template.model['single_price_diff'] * 100
-              )
-            }
-
+            // 团购价 = 原价 * group_price_rate - group_price_diff
             let groupPriceFen = utils.getObjectValue(this.dicCustomPrices, [tpProduct.tp_product_id, 'sku', key, 'promo_price'])
             if (typeof groupPriceFen !== 'undefined') {
               groupPriceFen = parseInt(groupPriceFen)
@@ -486,17 +467,55 @@ export default {
                 this.template.model['group_price_rate'],
                 this.template.model['group_price_diff'] * 100
               )
+            } else {
+              groupPriceFen = 1
+            }
+
+            // 单卖价 = 团购价 * group_price_rate - group_price_diff
+            let singlePriceFen = utils.getObjectValue(this.dicCustomPrices, [tpProduct.tp_product_id, 'sku', key, 'price'])
+            if (typeof singlePriceFen !== 'undefined') {
+              singlePriceFen = parseInt(singlePriceFen)
+            } else {
+              singlePriceFen = utils.adjustPriceFen(
+                // item.promo_price,
+                groupPriceFen,
+                this.template.model['single_price_rate'],
+                this.template.model['single_price_diff'] * 100
+              )
             }
             if (maxSinglePriceFen === undefined || singlePriceFen > maxSinglePriceFen) {
               maxSinglePriceFen = singlePriceFen
             }
-            if (marketPriceFen <= singlePriceFen) {
-              let strError = '商品市场价必须大于sku单买价，请重新设置'
-              tpProduct.marketPriceError = strError
+            // 检查顺序： sku团购价-单卖家-市场价
+            if (groupPriceFen === 0) {
+              let strError = '团购价要大于0'
+              tpProduct.groupPriceError = strError
               if (this.msgError === '') {
                 this.msgError = strError
               }
             }
+            // let maxAllowPrice = 1.08 * item.promo_price + tpProduct.postage
+            // if (groupPriceFen > maxAllowPrice) {
+            //   let strError = '团购价不能超过原价108%+邮费(' + (maxAllowPrice / 100).toFixed(2) + ')，请重新设置'
+            //   tpProduct.groupPriceError = strError
+            //   if (this.msgError === '') {
+            //     this.msgError = strError
+            //   }
+            // } else
+            if (singlePriceFen < groupPriceFen + 100) {
+              let strError = 'sku的单买价必须比售卖价高一元，请重新设置'
+              tpProduct.singlePriceError = strError
+              if (this.msgError === '') {
+                this.msgError = strError
+              }
+            }
+            // else if (marketPriceFen <= singlePriceFen) {
+            //   let strError = '商品市场价必须大于sku单买价，请重新设置'
+            //   tpProduct.marketPriceError = strError
+            //   if (this.msgError === '') {
+            //     this.msgError = strError
+            //   }
+            // }
           }
           if (maxSinglePriceFen) {
             if (maxSinglePriceFen * 5 < marketPriceFen) {
@@ -528,6 +547,9 @@ export default {
     },
     handleInputTemplateSkuPrice (field) {
       this.updateRelatePrices(field)
+      if (field === 'promo_price') { // 团购价改了，单卖价也跟着改
+        this.updateRelatePrices('price')
+      }
       this.check()
     },
     handleInputTemplate () {
@@ -586,6 +608,7 @@ export default {
       if (this.msgError !== '') {
         return
       }
+      this.saveTempTemplate()
       this.$router.push({
         path: '/migrateSettingTemplate'
       })
@@ -616,6 +639,5 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
-    @import '~@/assets/css/migratesetting.less';
+  @import '~@/assets/css/migratesetting.less';
 </style>
