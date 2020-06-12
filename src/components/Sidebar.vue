@@ -3,8 +3,8 @@
         <div class="sideBar">
             <el-menu :default-active='$route.path' router @select="handleSelect">
                 <el-menu-item index="/info">
-                    <i class="el-icon-guide"></i>
-                    <span slot="title">软件介绍</span>
+                    <i class="el-icon-user-solid"></i>
+                    <span slot="title">关于我们</span>
                 </el-menu-item>
                 <el-menu-item index="/migrate" :disabled="!isBind()">
                     <i class="el-icon-document-copy"></i>

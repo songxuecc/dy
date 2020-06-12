@@ -19,7 +19,7 @@
                 </el-form-item>
 
                 <el-form-item label="客服号码:" prop="mobile">
-                    <el-input v-model.number="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
+                    <el-input v-model="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
                 <el-form-item label="佣金比例:" prop="cos_ratio">
                   <el-input v-model.number="template.model.cos_ratio" size="medium" class="input-num" @input="check"></el-input><span>&nbsp;&nbsp;%</span>
@@ -101,8 +101,7 @@ export default {
       pickerOptions: this.disabledDate(),
       rules: {
         mobile: [
-          { required: true, message: '请输入客服号码', trigger: 'change' },
-          { type: 'number', message: '客服号码必须为数字' }
+          { required: true, message: '请输入客服号码', trigger: 'change' }
         ],
         cos_ratio: [
           { required: true, message: '请输入佣金比例', trigger: 'change' },
