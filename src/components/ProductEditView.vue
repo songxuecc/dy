@@ -85,7 +85,7 @@
                                               <span v-if="isPddProduct || skuPropertyList.length === 1">{{ele.value}}</span>
                                               <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
                                                         :class="['input-text-left', {'warn': isSkuNameWarn(ele.value, item.id) }]">
-                                                <span slot="append" class="hint">{{ ele.value.length }} / 18</span>
+                                                <span slot="append" class="hint">{{ ele.value.length }}</span>
                                               </el-input>
                                             </el-checkbox>
                                             <el-button v-if="Object.keys(skuPropertyValueMap[item.id]).length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
@@ -647,7 +647,7 @@ export default {
       if (cnt > 1) {
         return true
       }
-      return skuName.length > 18
+      return (false && (skuName.length > 18))
     },
     cellStyle ({row, column, rowIndex, columnIndex}) {
       return 'line-height: 26px;'
