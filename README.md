@@ -1,6 +1,6 @@
 # dy_banjia-fe
 
-> 抖音小店前端
+> 抖音搬家助手前端
 
 ## Build Setup
 

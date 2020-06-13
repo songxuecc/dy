@@ -3,7 +3,7 @@
     <transition name="form-fade" mode="in-out">
       <section class="form_contianer" v-show="showLogin">
         <div class="manage_tip">
-          <p>抖音小店</p>
+          <p>抖音搬家助手</p>
         </div>
         <el-radio-group v-model="tabPosition" @change="changeTab">
           <el-radio-button label="login">登录</el-radio-button>
