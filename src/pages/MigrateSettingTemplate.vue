@@ -44,8 +44,8 @@
                         <el-option label="否" :value="0"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item v-if="template.model.is_pre_sale" label="预售时间:" prop="pre_sale_date">
-                  <el-date-picker v-if="template.model.is_pre_sale" v-model="template.model.pre_sale_date"
+                <el-form-item v-if="template.model.is_pre_sale" label="预售结束时间:" prop="preSaleDate">
+                  <el-date-picker v-model="preSaleDate"
                                   type="datetime"
                                   placeholder="选择日期" size="small" class="input-date-left"
                                   style="width: 190px;"
@@ -115,6 +115,7 @@ export default {
           { required: true, message: '请选择发货承诺', trigger: 'change' }
         ]
       },
+      isStartMigrate: false,
       dateRange: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
     }
   },
@@ -187,15 +188,12 @@ export default {
       let keyList = ['pay_type', 'mobile', 'cos_ratio', 'delivery_delay_day', 'presell_delay', 'cost_template_id',
         'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
-        'price_rate', 'pre_sale_date', 'price_diff']
+        'price_rate', 'price_diff']
       let params = {}
       for (let key in this.template.model) {
         if (keyList.includes(key)) {
           params[key] = this.template.model[key]
         }
-      }
-      if (params.is_pre_sale && params.pre_sale_date) {
-        params.pre_sale_date = moment(params.pre_sale_date).format('YYYY-MM-DD HH-MM-SS')
       }
       return params
     },
@@ -221,10 +219,10 @@ export default {
       if (this.getSelectTPProductIdList.length === 0) {
         this.$message.error('没有选择搬家商品')
       }
-      // let date = ''
-      // if (this.template.model.is_pre_sale) {
-      //   date = moment(this.template.model.pre_sale_date).format('YYYY-MM-DD HH-MM-SS')
-      // }
+      let date = ''
+      if (this.preSaleDate) {
+        date = moment(this.preSaleDate).format('YYYY-MM-DD HH:mm:ss')
+      }
       let migrateShop = []
       if (this.template.model.migrate_shop_template) {
         for (let i = 0; i < this.template.model.migrate_shop_template.length; i++) {
@@ -249,7 +247,7 @@ export default {
       let params = {
         template: JSON.stringify(templateParams),
         migration_type: this.migrate_type,
-        // pre_sale_date: date,
+        pre_sale_date: date,
         // mobile: this.template.model.mobile,
         // pay_type: this.template.model.pay_type,
         // cos_ratio: this.template.model.cos_ratio,
