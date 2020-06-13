@@ -30,7 +30,7 @@
         <template slot="header" slot-scope="scope">
           <div class="setting-content">
             <div class="th-title-with-icon">
-              <div class="th-title"> 售卖价 = </div>
+              <div class="th-title"> SKU 售卖价 = </div>
               <div class="th-icon">
                 <el-tooltip v-if="(!template.checkNumber('group_price_rate') || !template.checkNumber('group_price_diff')) && isInitTemplate"
                             placement="top" content="请输入合法的数字"
@@ -40,12 +40,10 @@
               </div>
             </div>
             <div class="th-title-text"> 原价 x </div>
-            <el-tooltip content="" :enterable="false">
-              <el-input v-model="template.model.group_price_rate" size="medium"
-                        :class="['input-m', !template.checkNumber('group_price_rate') && isInitTemplate ? 'warn' : '']"
-                        @input="handleInputTemplateSkuPrice('promo_price')"
-              ></el-input>
-            </el-tooltip>
+            <el-input v-model="template.model.group_price_rate" size="medium"
+                      :class="['input-m', !template.checkNumber('group_price_rate') && isInitTemplate ? 'warn' : '']"
+                      @input="handleInputTemplateSkuPrice('promo_price')"
+            ></el-input>
             <div class="th-title-text"> % - </div>
             <el-tooltip content="差额可以为负数" :enterable="false">
               <el-input v-model="template.model.group_price_diff" size="medium" style="width:60px;"
@@ -79,7 +77,7 @@
         <template slot="header" slot-scope="scope">
           <div class="setting-content">
             <div class="th-title-with-icon">
-              <div class="th-title"> 市场售价 = </div>
+              <div class="th-title"> SKU 划线价 = </div>
               <div class="th-icon">
                 <el-tooltip v-if="(!template.checkNumber('single_price_rate') || !template.checkNumber('single_price_diff')) && isInitTemplate"
                             placement="top" content="请输入合法的数字"
@@ -127,7 +125,7 @@
 
           <div class="setting-content">
             <div class="th-title-with-icon">
-              <div class="th-title"> 市场价 = </div>
+              <div class="th-title"> 商品售价 = </div>
               <div class="th-icon">
                 <el-tooltip v-if="(!template.checkNumber('price_rate') || !template.checkNumber('price_diff')) && isInitTemplate"
                             placement="top" content="请输入合法的数字"
