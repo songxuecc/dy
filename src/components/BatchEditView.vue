@@ -203,7 +203,11 @@ export default {
       this.dialogVisible = true
     },
     onOpenedCate () {
-      this.$refs.categorySelectView.initCate(this.cat_id, this.category_show)
+      if (this.product.model.cat_id !== 0) {
+        this.$refs.categorySelectView.initCate(this.cat_id, this.category_show)
+      } else {
+        this.$refs.categorySelectView.initCate()
+      }
     },
     onChangeCate (data) {
       this.dialogVisible = false
