@@ -344,7 +344,13 @@ export default {
       }
     },
     productCategoryEdit (product, isStatus = false) {
-      this.product.model.tp_product_id = product.tp_product_id
+      if (this.tpProductList.length > 0) {
+        this.tpProductList.forEach((item) => {
+          if (item.tp_product_id === product.tp_product_id) {
+            this.curTPProduct = item
+          }
+        })
+      }
       this.dialogVisible = true
     },
     isSelectionEnable (row) {
@@ -498,18 +504,6 @@ export default {
           this.curTPProduct[ dicKeys[key] ] = data[key]
         }
       }
-      if (this.tpProductList.length > 0) {
-        this.tpProductList.forEach((item) => {
-          if (item.tp_product_id === this.product.model.tp_product_id) {
-            for (let key in this.curTPProduct) {
-              if (!item.hasOwnProperty(key)) continue
-              if (key in item) {
-                item[key] = this.curTPProduct[key]
-              }
-            }
-          }
-        })
-      }
     },
     btnSyncClick (item) {
       this.$emit('btnSyncClick', item)
@@ -544,41 +538,18 @@ export default {
     handleMouseOut (row, column, cell, event) {
       // this.mouseOverIndex = -1
     },
-    updateProperty (catId = -1) {
-      let params = { tp_product_id: this.product.model.tp_product_id, cat_id: catId }
-      this.request('getTPProductProperty', params, data => {
-        this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
-        // this.haveAttr = this.$refs.attributeView.initAttribute(data.attribute_json)
-
-        if (catId === -1) { // 首次初始化
-          this.bannerPicUrlList = data.banner_json
-          this.descPicUrlList = data.desc_json
-          this.product.assign({description: data.desc_text})
-          this.initSku(data.sku_json, data.tp_id)
-          this.updateIsSingleSku()
-
-          this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
-          this.product.assign({bannerPicUrlList: this.bannerPicUrlList.map(val => val['url'])})
-          this.product.assign({descPicUrlList: this.descPicUrlList.map(val => val['url'])})
-          this.product.assign({attrs: JSON.parse(JSON.stringify(this.$refs.attributeView.getAttrUploadList()))})
-        }
-      })
-    },
-    onChangeCate (data) {
+    onChangeCate (category) {
       this.dialogVisible = false
-      this.product.model.cat_id = data.id
-      this.product.model.category_show = data.name
-      this.updateProperty(this.product.model.cat_id)
-      // 保存save
       let productParams = {
-        tp_product_id: this.product.model.tp_product_id,
-        category_id: this.product.model.cat_id
+        tp_product_id: this.curTPProduct.tp_product_id,
+        category_id: category.id
       }
+
       this.request('updateTPProduct', productParams, data => {
         this.onChangeProduct({
           status: data.status,
-          category_id: this.product.model.cat_id,
-          category_show: this.product.model.category_show
+          category_id: category.id,
+          category_show: category.name
         })
         this.$message({
           message: '保存成功',
