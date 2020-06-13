@@ -28,7 +28,7 @@
             </el-table-column>
             <el-table-column key="3" width="200" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>售卖价</span>
+                    <span>SKU 售卖价</span>
                     <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
                 </template>
                 <template slot-scope="scope">
@@ -56,7 +56,7 @@
             </el-table-column>
             <el-table-column key="4" width="200" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>市场售价</span>
+                    <span>SKU 划线价</span>
                     <el-button type="text" class="table-header-btn" @click="dialogPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
                 </template>
                 <template slot-scope="scope">
