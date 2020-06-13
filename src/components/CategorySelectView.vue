@@ -44,6 +44,7 @@
 </template>
 <script>
 import request from '@/mixins/request.js'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   mixins: [request],
   components: {
@@ -62,13 +63,27 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      recentCatId: 'getRecentCatId',
+      recentCatName: 'getRecentCatName'
+    })
   },
   mounted () {
     this.resetCateFrom(1)
     this.getCategoryList(1, 0)
   },
   methods: {
-    initCate (cateId, cateName) {
+    ...mapActions([
+      'setRecentCat'
+    ]),
+    initCate (cateId = 0, cateName = '') {
+      if (cateId === 0) {
+        cateId = parseInt(this.recentCatId)
+        cateName = this.recentCatName
+      }
+      if (cateId === 0) {
+        return
+      }
       this.categoryId = cateId
       this.request('getCategoryDetail', { category_id: cateId }, data => {
         data.id = cateId
@@ -213,6 +228,7 @@ export default {
     confirm () {
       this.searchTableVisible = false
       this.cateSearchStr = ''
+      this.setRecentCat(this.selectCate)
       this.$emit('changeCate', this.selectCate)
     }
   }

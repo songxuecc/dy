@@ -123,18 +123,18 @@
         <el-dialog title="商品编辑" class="product-dialog" :visible.sync="dialogEditVisible" @opened="dialogOpened" @close="dialogClose" :before-close="dialogBeforeClose">
             <product-edit-view ref="productEditView" @changeProduct="onChangeProduct" @closeDialog="closeDialog"></product-edit-view>
         </el-dialog>
-          <el-dialog
-            title="删除抓取记录"
-            :show-close="false"
-            :visible.sync="deleteProductVisible"
-            width="30%">
-            <p>只删除软件的记录，对抖音商品没影响，您确定要操作吗？</p>
-            <span slot="footer" class="dialog-footer">
-              <el-button type="plain" @click="deleteProductVisible=false">取消</el-button>
-              <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
-            </span>
-          </el-dialog>
-          <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" append-to-body center>
+        <el-dialog
+          title="删除抓取记录"
+          :show-close="false"
+          :visible.sync="deleteProductVisible"
+          width="30%">
+          <p>只删除软件的记录，对抖音商品没影响，您确定要操作吗？</p>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="plain" @click="deleteProductVisible=false">取消</el-button>
+            <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" @opened="onOpenedCate" append-to-body center>
           <category-select-view ref="categorySelectView" @changeCate="onChangeCate">
           </category-select-view>
         </el-dialog>
@@ -488,6 +488,9 @@ export default {
       } else {
         done()
       }
+    },
+    onOpenedCate () {
+      this.$refs.categorySelectView.initCate()
     },
     onChangeProduct (data) {
       let dicKeys = {
