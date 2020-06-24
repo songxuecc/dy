@@ -37,9 +37,7 @@ export default {
       this.requestToken(params).then(data => {
         this.message = '授权成功'
         this.$router.push({
-          path: '/pddPoductList'
-        })
-        this.requestNotification().then(data => {
+          path: '/migrate'
         })
       }, e => {
         this.message = '授权失败，请重新尝试'
@@ -54,8 +52,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'requestToken',
-      'requestNotification'
+      'requestToken'
     ])
   }
 }

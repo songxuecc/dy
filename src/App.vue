@@ -1,17 +1,11 @@
 <template>
     <div id="app">
-        <div v-if="$route.meta.isFullShow">
-          <router-view></router-view>
-        </div>
-        <el-container class="main-wrapper" v-else-if="!$route.meta.specialShow">
-            <el-header :style="{height:(curNavNotification ? '98px' : '60px')}">
+        <el-container class="main-wrapper" v-if="!$route.meta.specialShow">
+            <el-header>
                 <nav-bar></nav-bar>
-                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
-                          :closable="notificationClosable" close-text="不再显示" title="-"
-                ></el-alert>
             </el-header>
             <el-container>
-                <el-aside class="aside" width="200px">
+                <el-aside class="aside" width="160px">
                     <side-bar></side-bar>
                 </el-aside>
                 <el-main>

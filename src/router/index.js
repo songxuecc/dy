@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import AppInfo from '@/pages/AppInfo'
-import Register from '@/pages/Register'
 import Migrate from '@/pages/Migrate'
 import MigrateList from '@/pages/MigrateList'
 import CaptureList from '@/pages/CaptureList'
@@ -21,18 +20,9 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      component: Register,
+      component: AppInfo,
       meta: {
-        keepAlive: true,
-        isFullShow: true
-      }
-    },
-    {
-      path: '/register',
-      component: Register,
-      meta: {
-        keepAlive: true,
-        isFullShow: true
+        keepAlive: true
       }
     },
     {

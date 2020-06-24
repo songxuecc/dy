@@ -1,20 +1,11 @@
 import api from './index'
 
 const hhgjAPIs = {
-  getRegister: (params) => {
-    return api.actionCreatorPost('/api/account/register', params)
-  },
-  getSendCaptcha: (params) => {
-    return api.actionCreatorPost('/api/account/sendCaptcha', params)
-  },
-  getLogin: (params) => {
-    return api.actionCreatorPost('/api/account/login', params)
+  getAccessToken: (params) => {
+    return api.actionCreatorPost('/api/account/authorize', params)
   },
   getUserInfo: (params) => {
     return api.actionCreatorPost('/api/account/getUserInfo', params)
-  },
-  getBindApp: (params) => {
-    return api.actionCreatorPost('/api/account/bindApp', params)
   },
   getCategoryList: (params) => {
     return api.actionCreatorPost('/api/category/list', params)
@@ -24,9 +15,6 @@ const hhgjAPIs = {
   },
   searchCategory: (params) => {
     return api.actionCreatorPost('/api/category/search', params)
-  },
-  getAccessToken: (params) => {
-    return api.actionCreatorPost('/api/getAccessToken', params)
   },
   getNotification: (params) => {
     return api.actionCreatorPost('/api/getNotification', params)
