@@ -18,6 +18,9 @@ export default {
       token: 'getToken'
     })
   },
+  created () {
+    localStorage.setItem('is_auth', false)
+  },
   mounted () {
     if (this.$route.query.code) {
       let params = {
@@ -40,9 +43,11 @@ export default {
           path: '/migrate'
         })
       }, e => {
+        localStorage.setItem('is_auth', false)
         this.message = '授权失败，请重新尝试'
         this.$message.error(e.message)
       }).catch(err => {
+        localStorage.setItem('is_auth', false)
         this.message = '授权失败，请重新尝试'
         this.$message.error(err.message)
       })

@@ -56,10 +56,12 @@ export default {
       'requestUserInfo'
     ]),
     getUserInfo () {
-      this.requestUserInfo({}).then(data => {
-      }).catch(err => {
-        this.message = '用户信息抓取失败'
-        this.$message.error(err.message)
+      setTimeout(() => {
+        this.requestUserInfo({}).then(data => {
+        }).catch(err => {
+          this.message = '用户信息抓取失败'
+          this.$message.error(err.message)
+        })
       })
     },
     onLogin () {
