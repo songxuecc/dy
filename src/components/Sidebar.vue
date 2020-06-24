@@ -6,11 +6,11 @@
                     <i class="el-icon-user-solid"></i>
                     <span slot="title">关于我们</span>
                 </el-menu-item>
-                <el-menu-item index="/migrate" :disabled="!isBind()">
+                <el-menu-item index="/migrate" :disabled="!isAuth()">
                     <i class="el-icon-document-copy"></i>
                     <span slot="title">开始抓取</span>
                 </el-menu-item>
-                <el-menu-item index="/productList" :disabled="!isBind()">
+                <el-menu-item index="/productList" :disabled="!isAuth()">
                     <i class="el-icon-receiving"></i>
                     <span slot="title">抓取商品</span>
                 </el-menu-item>
@@ -20,16 +20,13 @@
                 </el-menu-item>
             </el-menu>
         </div>
-      <bind-box :isShowBind="isShowBind"></bind-box>
     </el-row>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import common from '@/common/common.js'
-import BindBox from './BindBox'
 
 export default {
-  components: {BindBox},
   data () {
     return {
       isShowBind: false
@@ -38,15 +35,10 @@ export default {
   inject: ['reload'],
   methods: {
     ...mapGetters({
-      isBind: 'getIsBind'
+      isAuth: 'getIsAuth',
+      subsc: 'getCurrentSubsc'
     }),
     handleSelect (key, keyPath) {
-      let isBind = localStorage.getItem('is_bind')
-      if (!isBind) {
-        this.isShowBind = true
-      } else {
-        this.isShowBind = false
-      }
       if (key === '/productList') {
         this.reload()
       }

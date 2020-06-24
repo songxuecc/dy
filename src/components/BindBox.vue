@@ -33,15 +33,13 @@ export default {
   inject: ['reload'],
   computed: {
     ...mapGetters({
-      isBind: 'getIsBind',
       subsc: 'getCurrentSubsc'
     })
   },
   methods: {
     ...mapActions([
       'logout',
-      'requestUserInfo',
-      'requestBindApp'
+      'requestUserInfo'
     ]),
     subBindApp () {
       let params = {

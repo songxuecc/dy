@@ -3,27 +3,25 @@
         <div class="navbar-content">
             <div class="nav-title">抖音搬家助手</div>
             <div class="nav-right">
-              <div v-if="!phone">
+              <div v-if="!shopName">
+<!--                <el-button size="small" @click="goToServiceMarket">购买</el-button>-->
                 <el-button size="small" @click="onLogin">登录</el-button>
               </div>
-              <el-menu v-if="phone" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+              <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
                     <el-menu-item index="1">添加到收藏</el-menu-item>
                     <el-submenu index="2" popper-class="nav-menu-popup">
-                        <template slot="title">{{ phone }}</template>
+                        <template slot="title">{{ shopName }}</template>
                         <el-menu-item index="2-1">退出</el-menu-item>
                     </el-submenu>
                 </el-menu>
             </div>
         </div>
-      <bind-box :isShowBind="isShowBind"></bind-box>
     </div>
 </template>
 <script>
-import BindBox from './BindBox'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  components: {BindBox},
   data () {
     return {
       isShowBind: false,
@@ -40,9 +38,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      phone: 'getPhone',
       name: 'getName',
-      mallName: 'getMallName',
+      shopName: 'getShopName',
       isAuth: 'getIsAuth',
       subsc: 'getCurrentSubsc'
     })
@@ -57,8 +54,7 @@ export default {
   methods: {
     ...mapActions([
       'logout',
-      'requestUserInfo',
-      'requestBindApp'
+      'requestUserInfo'
     ]),
     getUserInfo () {
       this.requestUserInfo({}).then(data => {
@@ -71,9 +67,12 @@ export default {
       })
     },
     onLogin () {
-      this.$router.push({
-        path: '/'
-      })
+      window.location.href = 'https://fxg.jinritemai.com/index.html#/ffa/open/serviceAuthorizeManage?page=1&size=10&tab='
+      // this.$router.push({
+      //   path: '/'
+      // })
+      // let shareId = this.$route.query.share_id
+      // commonUtils.login(shareId)
     },
     onLogout () {
       this.logout()
@@ -113,6 +112,9 @@ export default {
         alert('您的浏览器不支持,请按 ' + strShortcut + ' 手动收藏!')
       }
     }
+    // goToServiceMarket () {
+    //   window.location.href = 'https://mms.pinduoduo.com/service-market/service-detail?detailId=236'
+    // }
   }
 }
 </script>

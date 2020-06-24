@@ -5,14 +5,12 @@ import moment from 'moment'
 
 const state = {
   name: localStorage.getItem('owner_name') || '',
-  phone: localStorage.getItem('owner_phone') || '',
   ownerId: localStorage.getItem('owner_id') || '',
-  mallName: localStorage.getItem('mall_name') || '',
+  shopName: localStorage.getItem('shop_name') || '',
   loginNum: localStorage.getItem('login_num') || 0,
   token: localStorage.getItem('token') || '',
   fakeToken: localStorage.getItem('fake_token') || false,
   isAuth: JSON.parse(localStorage.getItem('is_auth')) || false,
-  isBind: JSON.parse(localStorage.getItem('is_bind')) || false,
   exportFields: localStorage.getItem('export_fields'),
   syncStatus: {
     status: '',
@@ -32,9 +30,8 @@ const state = {
 
 const getters = {
   getName: state => state.name,
-  getPhone: state => state.phone,
   getOwnerId: state => state.ownerId,
-  getMallName: state => state.mallName,
+  getShopName: state => state.shopName,
   getLoginNum: state => state.loginNum,
   getToken: state => state.token,
   getTokenHeaders: state => {
@@ -47,7 +44,6 @@ const getters = {
     return {}
   },
   getIsAuth: state => state.isAuth,
-  getIsBind: state => state.isBind,
   getFakeToken: state => state.fakeToken,
   getSyncStatus: state => state.syncStatus,
   getSyncOrderStatus: state => state.syncOrderStatus,
@@ -56,64 +52,6 @@ const getters = {
 }
 
 const actions = {
-  requestRegister ({commit, state}, params) {
-    let promise = new Promise(function (resolve, reject) {
-      Api.hhgjAPIs.getRegister(params).then(data => {
-        if (data !== null) {
-          data.isAuth = true
-          commit(types.SET_USER, data)
-          resolve(data)
-        } else {
-          reject(new Error('接口数据出错'))
-        }
-      }, err => {
-        console.error(err)
-        reject(err)
-      }).catch(err => {
-        console.error(err)
-        reject(err)
-      })
-    })
-    return promise
-  },
-  requestSendCaptcha ({commit, state}, params) {
-    let promise = new Promise(function (resolve, reject) {
-      Api.hhgjAPIs.getSendCaptcha(params).then(data => {
-        if (data !== null) {
-          resolve(data)
-        } else {
-          reject(new Error('接口数据出错'))
-        }
-      }, err => {
-        console.error(err)
-        reject(err)
-      }).catch(err => {
-        console.error(err)
-        reject(err)
-      })
-    })
-    return promise
-  },
-  requestLogin ({commit, state}, params) {
-    let promise = new Promise(function (resolve, reject) {
-      Api.hhgjAPIs.getLogin(params).then(data => {
-        if (data !== null) {
-          data.isAuth = true
-          commit(types.SET_USER, data)
-          resolve(data)
-        } else {
-          reject(new Error('接口数据出错'))
-        }
-      }, err => {
-        console.error(err)
-        reject(err)
-      }).catch(err => {
-        console.error(err)
-        reject(err)
-      })
-    })
-    return promise
-  },
   requestToken ({commit, state}, params) {
     let promise = new Promise(function (resolve, reject) {
       Api.hhgjAPIs.getAccessToken(params).then(data => {
@@ -181,25 +119,6 @@ const actions = {
             state.haveSyncedOrder = true
             dispatch('requestSyncOrders', {})
           }
-        }
-      }, err => {
-        console.error(err)
-        reject(err)
-      }).catch(err => {
-        console.error(err)
-        reject(err)
-      })
-    })
-    return promise
-  },
-  requestBindApp ({commit, state, dispatch}, params) {
-    let promise = new Promise(function (resolve, reject) {
-      Api.hhgjAPIs.getBindApp(params).then(data => {
-        if (data) {
-          data.isBind = true
-          commit(types.SET_USER, data)
-          resolve(data)
-          resolve(data)
         }
       }, err => {
         console.error(err)
@@ -286,26 +205,18 @@ const mutations = {
     if (data.app_key) {
       localStorage.setItem('app_key', data.app_key)
       state.app_key = data.app_key
-      if (data.app_key !== 0) {
-        data.isBind = true
-        localStorage.setItem('is_bind', true)
-      }
     }
     if (data.owner_name) {
       localStorage.setItem('owner_name', data.owner_name)
       state.name = data.owner_name
     }
-    if (data.phone) {
-      localStorage.setItem('owner_phone', data.phone)
-      state.phone = data.phone
-    }
     if (data.owner_id) {
       localStorage.setItem('owner_id', data.owner_id)
       state.ownerId = data.owner_id
     }
-    if (data.mall_name) {
-      localStorage.setItem('mall_name', data.mall_name)
-      state.mallName = data.mall_name
+    if (data.shop_name) {
+      localStorage.setItem('shop_name', data.shop_name)
+      state.shopName = data.shop_name
     }
     if (data.login_num) {
       localStorage.setItem('login_num', data.login_num)
@@ -318,10 +229,6 @@ const mutations = {
       localStorage.setItem('is_auth', data.isAuth)
       state.isAuth = data.isAuth
     }
-    if (data.isBind) {
-      localStorage.setItem('is_bind', data.isBind)
-      state.isBind = data.isBind
-    }
     if (data.fake_token) {
       localStorage.setItem('fake_token', data.fake_token)
       state.fakeToken = data.fake_token
@@ -330,22 +237,19 @@ const mutations = {
   [ types.LOGOUT ] (state) {
     localStorage.removeItem('token')
     localStorage.removeItem('owner_name')
-    localStorage.removeItem('owner_phone')
     localStorage.removeItem('owner_id')
-    localStorage.removeItem('mall_name')
+    localStorage.removeItem('shop_name')
     localStorage.removeItem('login_num')
     localStorage.removeItem('expire_time')
     localStorage.removeItem('is_auth')
     localStorage.removeItem('is_bind')
     localStorage.removeItem('fake_token')
     state.name = ''
-    state.phone = ''
     state.ownerId = ''
-    state.mallName = ''
+    state.shopName = ''
     state.loginNum = 0
     state.token = ''
     state.isAuth = false
-    state.isBind = false
     state.fake_token = ''
   },
   [ types.SET_CURRENT_SUBSC ] (state, data) {
