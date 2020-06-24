@@ -29,7 +29,6 @@ import common from '@/common/common.js'
 export default {
   data () {
     return {
-      isShowBind: false
     }
   },
   inject: ['reload'],

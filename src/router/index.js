@@ -39,8 +39,7 @@ const router = new Router({
       component: Migrate,
       meta: {
         keepAlive: true,
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     },
     {
@@ -48,8 +47,7 @@ const router = new Router({
       name: 'MigrateList',
       component: MigrateList,
       meta: {
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     },
     {
@@ -58,8 +56,7 @@ const router = new Router({
       component: CaptureList,
       meta: {
         keepAlive: true,
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     },
     {
@@ -68,8 +65,7 @@ const router = new Router({
       component: ProductList,
       meta: {
         keepAlive: true,
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     },
     {
@@ -78,8 +74,7 @@ const router = new Router({
       component: MigrateSettingPrice,
       meta: {
         keepAlive: true,
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     },
     {
@@ -88,8 +83,7 @@ const router = new Router({
       component: MigrateSettingTemplate,
       meta: {
         keepAlive: true,
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     },
     {
@@ -110,8 +104,7 @@ const router = new Router({
       name: 'Fake',
       component: Fake,
       meta: {
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     },
     {
@@ -120,8 +113,7 @@ const router = new Router({
       component: SubscribeList,
       meta: {
         keepAlive: true,
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     },
     {
@@ -130,8 +122,7 @@ const router = new Router({
       component: PayOrder,
       meta: {
         keepAlive: true,
-        requiresAuth: true,
-        requiresBind: true
+        requiresAuth: true
       }
     }
   ]

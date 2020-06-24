@@ -30,9 +30,7 @@ const state = {
 
 const getters = {
   getName: state => state.name,
-  getOwnerId: state => state.ownerId,
   getShopName: state => state.shopName,
-  getLoginNum: state => state.loginNum,
   getToken: state => state.token,
   getTokenHeaders: state => {
     if (state.fakeToken) {
@@ -242,7 +240,6 @@ const mutations = {
     localStorage.removeItem('login_num')
     localStorage.removeItem('expire_time')
     localStorage.removeItem('is_auth')
-    localStorage.removeItem('is_bind')
     localStorage.removeItem('fake_token')
     state.name = ''
     state.ownerId = ''

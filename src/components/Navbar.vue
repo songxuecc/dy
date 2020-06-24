@@ -24,16 +24,10 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      isShowBind: false,
       form: {
         app_key: '',
         app_secret: ''
       }
-    }
-  },
-  mounted () {
-    if (this.isAuth) {
-      this.getUserInfo()
     }
   },
   computed: {
@@ -43,6 +37,11 @@ export default {
       isAuth: 'getIsAuth',
       subsc: 'getCurrentSubsc'
     })
+  },
+  mounted () {
+    if (this.isAuth) {
+      this.getUserInfo()
+    }
   },
   watch: {
     isAuth (val) {
@@ -58,9 +57,6 @@ export default {
     ]),
     getUserInfo () {
       this.requestUserInfo({}).then(data => {
-        if (data.app_key === 0) {
-          this.isShowBind = true
-        }
       }).catch(err => {
         this.message = '用户信息抓取失败'
         this.$message.error(err.message)
