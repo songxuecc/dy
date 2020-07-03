@@ -40,7 +40,7 @@ export default {
     })
   },
   mounted () {
-    if (this.isAuth) {
+    if (this.isAuth && window.location.pathname != "authorize") {
       this.getUserInfo()
     }
   },
