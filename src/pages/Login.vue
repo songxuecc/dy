@@ -22,9 +22,13 @@ export default {
     localStorage.setItem('is_auth', false)
   },
   mounted () {
-    if (this.$route.query.code) {
+    if (this.$route.query.code || this.$route.query.authCode) {
+      let code = this.$route.query.code
+      if (!code) {
+        code = this.$route.query.authCode
+      }
       let params = {
-        code: this.$route.query.code
+        code: code
       }
       let state = this.$route.query.state
       if (state) {
