@@ -2,7 +2,7 @@
     <div>
         <el-tabs type="border-card" v-model="activeName">
           <el-tab-pane label="关于我们" class="my-info" name="company">
-            虎虎抖音搬家助手属于上海虎正奔信息科技有限公司旗下品牌。
+            虎虎搬家助手属于上海虎正奔信息科技有限公司旗下品牌。
             <br/>
             上海虎正奔信息科技有限公司是一家为电商企业提供创新型店铺经营管理工具的互联网公司。致力于帮助企业降低运营成本、提升运营效率、促进交易转化。
             <br/>
