@@ -1,9 +1,5 @@
 import Api from '@/api/apis'
 import { Message } from 'element-ui'
-const pddHarf = process.env.BUILD_TYPE === 'yhds'
-  ? '&response_type=code&client_id=eb864d87975a4716878287d2855c8d55&redirect_uri=https://optimize.huhuguanjia.com/authorize'
-  : '&response_type=code&client_id=50a2a5a298fb42a8863ba1c5267159b9&redirect_uri=https://pdd.huhuguanjia.com/authorize'
-
 export default {
   request (method, params, cbsuccess, cbfail, isSilent = false) {
     if (!isSilent) {
@@ -57,6 +53,8 @@ export default {
     if (shareId) {
       state['share_id'] = shareId
     }
-    window.location.href = 'https://mms.pinduoduo.com/open.html?state=' + JSON.stringify(state) + pddHarf
+    let url = 'https://fxg.jinritemai.com/index.html#/ffa/open/applicationAuthorize?response_type=code&app_id=6839207088506422798&redirect_uri=https://dy.huhuguanjia.com/authorize&state=' + JSON.stringify(state)
+
+    window.location.href = url
   }
 }

@@ -20,6 +20,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import commonUtils from '@/common/commonUtils'
 
 export default {
   data () {
@@ -65,12 +66,12 @@ export default {
       })
     },
     onLogin () {
-      window.location.href = 'https://fxg.jinritemai.com/index.html#/ffa/open/serviceAuthorizeManage?page=1&size=10&tab='
+      // window.location.href = 'https://fxg.jinritemai.com/index.html#/ffa/open/serviceAuthorizeManage?page=1&size=10&tab='
       // this.$router.push({
       //   path: '/'
       // })
       // let shareId = this.$route.query.share_id
-      // commonUtils.login(shareId)
+      commonUtils.login(null)
     },
     onLogout () {
       this.logout()
