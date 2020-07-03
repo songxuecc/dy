@@ -1,7 +1,7 @@
 <template lang="html">
     <div class="navbar" id="navBar">
         <div class="navbar-content">
-            <div class="nav-title">抖音搬家助手</div>
+            <div class="nav-title">虎虎搬家助手</div>
             <div class="nav-right">
               <div v-if="!shopName">
 <!--                <el-button size="small" @click="goToServiceMarket">购买</el-button>-->
@@ -88,7 +88,7 @@ export default {
     },
     addToFavorite () {
       let url = 'https://optimize.huhuguanjia.com/'
-      let title = '虎虎抖音搬家助手'
+      let title = '虎虎搬家助手'
       let strShortcut = navigator.userAgent.toLowerCase().indexOf('mac') !== -1 ? 'Command+D' : 'Ctrl+D'
       let ua = navigator.userAgent.toLowerCase()
       if (ua.indexOf('360se') > -1) {
