@@ -70,6 +70,9 @@ const hhgjAPIs = {
   updateTPProduct: (params) => {
     return api.actionCreatorPost('/api/updateTPProduct', params)
   },
+  getShopBrandList: (params) => {
+    return api.actionCreatorPost('/api/getShopBrandList', params)
+  },
   migrate: (params) => {
     return api.actionCreatorPost('/api/migrate', params)
   },
