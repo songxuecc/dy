@@ -33,6 +33,17 @@
                                   :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
                         </el-input>
                     </el-form-item>
+                    <el-form-item label="品牌:">
+                      <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
+                        <el-option v-for="item in shopBrandList" :key="item.id" :label="item.brand_chinese_name" :value="item.id"></el-option>
+                      </el-select>
+                      <el-button type="text" @click="reloadBrandList">
+                          <i class="el-icon-refresh"></i>
+                      </el-button>
+                      <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
+                               :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
+                      >添加品牌</el-link>
+                    </el-form-item>
                     <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
                         <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
                     </el-form-item>
@@ -420,11 +431,12 @@ export default {
       dialogPromoPriceVisible: false,
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
       descPicUrlList: [],
+      shopBrandList: [],
       origionAttr: {},
       isPddProduct: false,
       isShowTemplateTab: false,
@@ -524,6 +536,7 @@ export default {
         if (catId === -1) { // 首次初始化
           this.bannerPicUrlList = data.banner_json
           this.descPicUrlList = data.desc_json
+          this.shopBrandList = data.shop_brand_list
           this.product.assign({description: data.desc_text})
           this.initSku(data.sku_json, data.tp_id)
           this.updateIsSingleSku()
@@ -532,7 +545,15 @@ export default {
           this.product.assign({bannerPicUrlList: this.bannerPicUrlList.map(val => val['url'])})
           this.product.assign({descPicUrlList: this.descPicUrlList.map(val => val['url'])})
           this.product.assign({attrs: JSON.parse(JSON.stringify(this.$refs.attributeView.getAttrUploadList()))})
+          if (data.brand_id) {
+            this.product.assign({brand_id: data.brand_id})
+          }
         }
+      })
+    },
+    reloadBrandList () {
+      this.request('getShopBrandList', {}, data => {
+        this.shopBrandList = data
       })
     },
     onDeleteSku (pId, pVid) {
@@ -580,7 +601,8 @@ export default {
         tp_property_json: JSON.stringify({
           attribute_json: this.$refs.attributeView.getAttrUploadList(),
           desc_text: this.product.model.description,
-          sku_json: this.getSkuUploadObj()
+          sku_json: this.getSkuUploadObj(),
+          brand_id: this.product.model.brand_id || 0
         }),
         banner_pic_list: this.$refs['bannerPicListView'].curPictureUrlList,
         desc_pic_list: this.$refs['descPicListView'].curPictureUrlList
