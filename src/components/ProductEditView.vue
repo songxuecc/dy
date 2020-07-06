@@ -35,7 +35,9 @@
                     </el-form-item>
                     <el-form-item label="品牌:">
                       <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
-                        <el-option v-for="item in shopBrandList" :key="item.id" :label="item.brand_chinese_name" :value="item.id"></el-option>
+                        <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
+                                   :label="item.brand_chinese_name || item.brand_english_name"
+                        ></el-option>
                       </el-select>
                       <el-button type="text" @click="reloadBrandList">
                           <i class="el-icon-refresh"></i>
