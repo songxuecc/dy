@@ -32,7 +32,12 @@ export default {
       }
       let state = this.$route.query.state
       if (state) {
-        let data = JSON.parse(state)
+        let data = {}
+        try {
+          data = JSON.parse(state)
+        } catch (error) {
+          console.error(error)
+        }
         if (data['host']) {
           let url = decodeURI(data['host']) + '/authorize?code=' + this.$route.query.code + '&state=' + JSON.stringify({'share_id': data['share_id']})
           window.location.href = url
