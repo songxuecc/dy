@@ -30,7 +30,7 @@ export default {
       let params = {
         code: code
       }
-      let state = this.$route.query.state
+      let state = decodeURI(this.$route.query.state)
       if (state) {
         let data = {}
         try {
