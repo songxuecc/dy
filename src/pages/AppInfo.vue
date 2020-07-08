@@ -16,7 +16,7 @@
             <br>
             <br>
             <div style="max-width: 70%; float:left; font-size: 14px;">
-              如有问题，可以联系微信客服：<img src="@/assets/images/qrcode.png" style="max-height: 100px;">
+              如有问题，可以联系客服：<img src="@/assets/images/wxpic.jpg" style="max-height: 100px;">
             </div>
           </el-tab-pane>
         </el-tabs>
