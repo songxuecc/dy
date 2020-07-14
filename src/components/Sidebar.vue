@@ -8,15 +8,19 @@
                 </el-menu-item>
                 <el-menu-item index="/migrate" :disabled="!isAuth()">
                     <i class="el-icon-document-copy"></i>
-                    <span slot="title">开始抓取</span>
+                    <span slot="title">开始复制</span>
                 </el-menu-item>
                 <el-menu-item index="/productList" :disabled="!isAuth()">
                     <i class="el-icon-receiving"></i>
-                    <span slot="title">抓取商品</span>
+                    <span slot="title">复制商品</span>
                 </el-menu-item>
                 <el-menu-item index="/service">
                     <i class="el-icon-chat-dot-round"></i>
                     <span slot="title">客服微信</span>
+                </el-menu-item>
+                <el-menu-item @click="openHelp">
+                    <i class="el-icon-question"></i>
+                    <span slot="title">搬家教程</span>
                 </el-menu-item>
             </el-menu>
         </div>
@@ -41,6 +45,9 @@ export default {
       if (key === '/productList') {
         this.reload()
       }
+    },
+    openHelp () {
+      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')
     }
   },
   computed: {
