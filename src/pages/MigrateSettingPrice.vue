@@ -624,9 +624,9 @@ export default {
       if (columnIndex === 2) {
         return row.groupPriceError !== '' ? 'warn-view' : ''
       } else if (columnIndex === 3) {
-        return row.marketPriceError !== '' ? 'warn-view' : ''
-      } else if (columnIndex === 4) {
         return row.discountPriceError !== '' ? 'warn-view' : ''
+      } else if (columnIndex === 4) {
+        return row.marketPriceError !== '' ? 'warn-view' : ''
       }
       return ''
     },
