@@ -76,67 +76,72 @@
       <el-table-column label="售卖价" width="240" align="center">
         <template slot="header" slot-scope="scope">
 
-          <div class="setting-content">
-            <div class="th-title-with-icon">
-              <div class="th-title"> 售卖价 = </div>
-              <div class="th-icon">
-                <el-tooltip v-if="(!template.checkNumber('single_price_rate') || !template.checkNumber('single_price_diff')) && isInitTemplate"
-                            placement="top" content="请输入合法的数字"
-                >
-                  <span> <i class="el-icon-warning warn" style=""></i> </span>
+          <div class="setting-content" style="height: 100%;">
+            <div class="th-title-with-icon" style="height: 100%;">
+              <div class="th-title" style="line-height: 64px;"> 售卖价
+                <el-tooltip manua="true" class="item" effect="dark" placement="top" >
+                    <div slot="content">
+                      <ul style="padding: 0; margin: 0;">基于抖音的规定，若有多个SKU价格，则售卖价在商品页面展示的是SKU价格范围。</ul>
+                    </div>
+                    <i class="el-icon-question"></i>
                 </el-tooltip>
               </div>
+<!--              <div class="th-icon">-->
+<!--                <el-tooltip v-if="(!template.checkNumber('single_price_rate') || !template.checkNumber('single_price_diff')) && isInitTemplate"-->
+<!--                            placement="top" content="请输入合法的数字"-->
+<!--                >-->
+<!--                  <span> <i class="el-icon-warning warn" style=""></i> </span>-->
+<!--                </el-tooltip>-->
+<!--              </div>-->
             </div>
-            <div class="th-title-text"> 最高价 x </div>
-            <el-input v-model="template.model.single_price_rate" size="medium"
-                      :class="['input-m', !template.checkNumber('single_price_rate') && isInitTemplate ? 'warn' : '']"
-                      @input="handleInputDiscountTemplate"
-            ></el-input>
-            <div class="th-title-text"> % - </div>
-            <el-tooltip content="差额可以为负数" :enterable="false">
-              <el-input v-model="template.model.single_price_diff" size="medium" style="width:60px;"
-                        :class="['input-m', !template.checkNumber('single_price_diff') && isInitTemplate ? 'warn' : '']"
-                        @input="handleInputDiscountTemplate"
-              ></el-input>
-            </el-tooltip>
+<!--            <div class="th-title-text"> 最高价 x </div>-->
+<!--            <el-input v-model="template.model.single_price_rate" size="medium"-->
+<!--                      :class="['input-m', !template.checkNumber('single_price_rate') && isInitTemplate ? 'warn' : '']"-->
+<!--                      @input="handleInputDiscountTemplate"-->
+<!--            ></el-input>-->
+<!--            <div class="th-title-text"> % - </div>-->
+<!--            <el-tooltip content="差额可以为负数" :enterable="false">-->
+<!--              <el-input v-model="template.model.single_price_diff" size="medium" style="width:60px;"-->
+<!--                        :class="['input-m', !template.checkNumber('single_price_diff') && isInitTemplate ? 'warn' : '']"-->
+<!--                        @input="handleInputDiscountTemplate"-->
+<!--              ></el-input>-->
+<!--            </el-tooltip>-->
           </div>
         </template>
         <template slot-scope="scope">
-          <el-tooltip :disabled="scope.row.discount_price_obj.isDiff()" placement="top" effect="light" :enterable="false"
-                      :content="scope.row.max_price / 100 + ' x ' + template.model.single_price_rate + '%'
-                                           + (template.model.single_price_diff < 0 ? ' + ' : ' - ')
-                                           + Math.abs(template.model.single_price_diff)"
-          >
-            <el-tooltip content="调整后的价格不再使用公式" :value="scope.row.focus2 && scope.row.mouseInside2" :manual="true">
-              <div style="display: flex">
-                <div style="width: 182px; padding-left: 18px;">
-                  <el-input v-model="scope.row.discount_price_obj.model.price" size="medium"
-                            :class="['input-great', discountPriceClass(scope.row)]"
-                            @input="handleInputDiscountProduct(scope.row)"
-                            @focus="scope.row.focus2=true"
-                            @blur="scope.row.focus2=false"
-                            @mouseenter.native="scope.row.mouseInside2=true"
-                            @mouseleave.native="scope.row.mouseInside2=false"
-                  >
-                    <i class="el-icon-error el-input__icon"
-                       v-if="scope.row.discount_price_obj.isDiff()"
-                       slot="suffix"
-                       @click="handleCancelDiscountEdit(scope.row)">
-                    </i>
-                  </el-input>
-                </div>
-                <div style="width: 18px; display:flex; align-items:center;">
-                  <el-tooltip v-if="scope.row.discountPriceError !== ''" placement="top"
-                              :content="scope.row.discountPriceError"
-                  >
-                                      <span style="display:inline-block; height:18px; line-height:18px; font-size: 18px;">
-                                          <i class="el-icon-warning warn" style=""></i>
-                                      </span>
-                  </el-tooltip>
-                </div>
+<!--          <el-tooltip :disabled="scope.row.discount_price_obj.isDiff()" placement="top" effect="light" :enterable="false"-->
+<!--                      :content="scope.row.max_price / 100 + ' x ' + template.model.single_price_rate + '%'-->
+<!--                                           + (template.model.single_price_diff < 0 ? ' + ' : ' - ')-->
+<!--                                           + Math.abs(template.model.single_price_diff)"-->
+<!--          >-->
+            <div style="display: flex">
+              <div style="width: 182px; padding-left: 18px;">
+                <el-input v-model="scope.row.discount_price_obj.model.price" size="medium"
+                          :class="['input-great', discountPriceClass(scope.row)]"
+                          @input="handleInputDiscountProduct(scope.row)"
+                          @focus="scope.row.focus2=true"
+                          @blur="scope.row.focus2=false"
+                          @mouseenter.native="scope.row.mouseInside2=true"
+                          @mouseleave.native="scope.row.mouseInside2=false"
+                >
+                  <i class="el-icon-error el-input__icon"
+                     v-if="scope.row.discount_price_obj.isDiff()"
+                     slot="suffix"
+                     @click="handleCancelDiscountEdit(scope.row)">
+                  </i>
+                </el-input>
               </div>
-            </el-tooltip>
-          </el-tooltip>
+              <div style="width: 18px; display:flex; align-items:center;">
+                <el-tooltip v-if="scope.row.discountPriceError !== ''" placement="top"
+                            :content="scope.row.discountPriceError"
+                >
+                                    <span style="display:inline-block; height:18px; line-height:18px; font-size: 18px;">
+                                        <i class="el-icon-warning warn" style=""></i>
+                                    </span>
+                </el-tooltip>
+              </div>
+            </div>
+<!--          </el-tooltip>-->
         </template>
       </el-table-column>
       <el-table-column label="划线价" width="240" align="center">
@@ -338,7 +343,7 @@ export default {
         if (this.tpProductList.length > 0) {
           this.updateMarketPrices()
           this.updateRelatePrices('promo_price')
-          this.updateRelatePrices('price')
+          // this.updateRelatePrices('price')
           this.check()
         }
       })
@@ -379,7 +384,7 @@ export default {
 
           tpProduct.discount_price_obj.assign({
             price: utils.fenToYuan(utils.adjustPriceFen(
-              tpProduct.max_price, this.template.model.single_price_rate, this.template.model.single_price_diff * 100
+              tpProduct.max_price, 100, 0
             ))
           })
           if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price']) {
@@ -390,7 +395,7 @@ export default {
         if (Object.entries(this.template.model).length > 0) {
           this.updateMarketPrices()
           this.updateRelatePrices('promo_price')
-          this.updateRelatePrices('price')
+          // this.updateRelatePrices('price')
           this.check()
         }
       })
@@ -442,6 +447,12 @@ export default {
               }
             }
           }
+          if (!this.dicCustomPrices[tpProduct.tp_product_id] || !this.dicCustomPrices[tpProduct.tp_product_id]['discount_price']) {
+            tpProduct.discount_price_obj.assign({
+              price: utils.fenToYuan(maxPriceFen)
+            })
+          }
+          this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', parseInt(tpProduct.discount_price_obj.model.price * 100))
           if (minPriceFen < 1e9) {
             let strFun = ' x ' + this.template.model[prefix + 'price_rate'] + '%' +
               (this.template.model[prefix + 'price_diff'] < 0 ? ' + ' : ' - ') +
@@ -532,7 +543,8 @@ export default {
         tpProduct.singlePriceError = ''
         tpProduct.groupPriceError = ''
         if (tpProduct.sku_json && tpProduct.sku_json.sku_map) {
-          let maxSinglePriceFen
+          let maxGroupPriceFen = 0
+          let minGroupPriceFen = 999999
           for (let key in tpProduct.sku_json.sku_map) {
             let item = tpProduct.sku_json.sku_map[key]
             // 团购价 = 原价 * group_price_rate - group_price_diff
@@ -549,29 +561,37 @@ export default {
               groupPriceFen = 1
             }
 
-            // 单卖价 = 团购价 * group_price_rate - group_price_diff
-            let singlePriceFen = utils.getObjectValue(this.dicCustomPrices, [tpProduct.tp_product_id, 'sku', key, 'price'])
-            if (typeof singlePriceFen !== 'undefined') {
-              singlePriceFen = parseInt(singlePriceFen)
-            } else {
-              singlePriceFen = utils.adjustPriceFen(
-                // item.promo_price,
-                groupPriceFen,
-                this.template.model['single_price_rate'],
-                this.template.model['single_price_diff'] * 100
-              )
+            if (groupPriceFen > maxGroupPriceFen) {
+              maxGroupPriceFen = groupPriceFen
             }
-            if (maxSinglePriceFen === undefined || singlePriceFen > maxSinglePriceFen) {
-              maxSinglePriceFen = singlePriceFen
+
+            if (groupPriceFen < minGroupPriceFen) {
+              minGroupPriceFen = groupPriceFen
             }
-            // 检查顺序： sku团购价-单卖家-市场价
-            if (groupPriceFen === 0) {
-              let strError = '团购价要大于0'
-              tpProduct.groupPriceError = strError
-              if (this.msgError === '') {
-                this.msgError = strError
-              }
-            }
+
+            // // 单卖价 = 团购价 * group_price_rate - group_price_diff
+            // let singlePriceFen = utils.getObjectValue(this.dicCustomPrices, [tpProduct.tp_product_id, 'sku', key, 'price'])
+            // if (typeof singlePriceFen !== 'undefined') {
+            //   singlePriceFen = parseInt(singlePriceFen)
+            // } else {
+            //   singlePriceFen = utils.adjustPriceFen(
+            //     // item.promo_price,
+            //     groupPriceFen,
+            //     this.template.model['single_price_rate'],
+            //     this.template.model['single_price_diff'] * 100
+            //   )
+            // }
+            // if (maxSinglePriceFen === undefined || singlePriceFen > maxSinglePriceFen) {
+            //   maxSinglePriceFen = singlePriceFen
+            // }
+            // // 检查顺序： sku团购价-单卖家-市场价
+            // if (groupPriceFen === 0) {
+            //   let strError = '团购价要大于0'
+            //   tpProduct.groupPriceError = strError
+            //   if (this.msgError === '') {
+            //     this.msgError = strError
+            //   }
+            // }
             // let maxAllowPrice = 1.08 * item.promo_price + tpProduct.postage
             // if (groupPriceFen > maxAllowPrice) {
             //   let strError = '团购价不能超过原价108%+邮费(' + (maxAllowPrice / 100).toFixed(2) + ')，请重新设置'
@@ -602,6 +622,15 @@ export default {
               this.msgError = strError
             }
           }
+
+          if (discountPriceFen > maxGroupPriceFen || discountPriceFen < minGroupPriceFen) {
+            let strError = '售卖价必须在sku价格范围内'
+            tpProduct.discountPriceError = strError
+            if (this.msgError === '') {
+              this.msgError = strError
+            }
+          }
+
           // if (maxSinglePriceFen) {
           //   if (maxSinglePriceFen * 5 < marketPriceFen) {
           //     let strError = '市场价不得高于最高sku单买价的5倍(' + (maxSinglePriceFen * 5 / 100) + ')，请重新设置'
@@ -632,9 +661,9 @@ export default {
     },
     handleInputTemplateSkuPrice (field) {
       this.updateRelatePrices(field)
-      if (field === 'promo_price') { // 团购价改了，单卖价也跟着改
-        this.updateRelatePrices('price')
-      }
+      // if (field === 'promo_price') { // 团购价改了，单卖价也跟着改
+      //   this.updateRelatePrices('price')
+      // }
       this.check()
     },
     handleInputTemplate () {
@@ -703,7 +732,7 @@ export default {
         this.addCustomPrices(tpProductId, 'sku', skuCustomPrices)
       }
       this.updateRelatePrices('promo_price')
-      this.updateRelatePrices('price')
+      // this.updateRelatePrices('price')
       this.check()
     },
     toSetTemplate () {
