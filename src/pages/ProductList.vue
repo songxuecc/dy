@@ -87,8 +87,11 @@
         <product-list-view ref="productListView" :tpProductList="tpProductList">
             <template slot="upperRight" v-if="false">
                 <router-link to="/productsSync">
-                    <el-button size="small" @click="toProductsSync" style="right: 0px;">商品源同步</el-button>
+                    <el-button size="small" @click="toProductsSync" style="right: 0px; margin-right: 10px;">商品源同步</el-button>
                 </router-link>
+            </template>
+            <template slot="upperRight">
+                <el-button size="small" @click="showBatchDeleteCapture" style="right: 0px;">批量删除</el-button>
             </template>
         </product-list-view>
         <br>
@@ -144,6 +147,40 @@
               <el-button type="primary" @click="finishSlide">已完成验证，继续操作</el-button>
             </span>
           </el-dialog>
+          <el-dialog
+            title="删除选中的商品"
+            :visible.sync="batchDeleteCaptureVisible"
+            @opened="captureSelectAll()"
+            width="40%">
+            <p style="text-align: left;">*只删除软件的记录，对抖音商品没影响。</p>
+            <el-table ref="selectCaptureTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
+                  :row-style="{height:'68px'}" max-height="420"
+                  @selection-change="handleCaptureSelectionChange"
+            >
+              <el-table-column type="selection">
+              </el-table-column>
+              <el-table-column label="图片" width="100" align="center">
+                  <template slot-scope="scope">
+                      <img style="height:60px" :src="scope.row.thumbnail">
+                  </template>
+              </el-table-column>
+              <el-table-column label="标题">
+                  <template slot-scope="scope">
+                      <el-link type="primary" :href="scope.row.url" target="_blank" :underline="false">
+                          {{ scope.row.title }}
+                      </el-link><br>
+                      <img style="width: 15px; height: 15px; margin-right: 2px;" class="icon" :src="getIcon(scope.row)">
+                      <label style="font-size:12px; margin-right: 5px;">{{scope.row.source}}</label>
+                      <label style="font-size:12px; margin-right: 5px;" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
+                      <label style="font-size:12px">创建时间: {{scope.row.create_time}}</label>
+                  </template>
+              </el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="batchDeleteCapture">确定</el-button>
+              <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
+            </span>
+          </el-dialog>
         </div>
     </div>
 </template>
@@ -193,7 +230,9 @@ export default {
       loginDialogVisible: false,
       slideDialogVisible: false,
       loginUrl: '',
-      slideUrl: ''
+      slideUrl: '',
+      batchDeleteCaptureVisible: false,
+      captureSelection: []
     }
   },
   computed: {
@@ -752,6 +791,47 @@ export default {
     finishSlide () {
       this.slideDialogVisible = false
       this.reload()
+    },
+    batchDeleteCapture () {
+      if (this.captureSelection.length === 0) {
+        return
+      }
+      this.request('deleteTPProduct', { tp_product_ids: this.captureSelection.map(arr => arr.tp_product_id) }, data => {
+        this.batchDeleteCaptureVisible = false
+        this.reload()
+      })
+    },
+    showBatchDeleteCapture () {
+      this.batchDeleteCaptureVisible = true
+    },
+    getIcon (product) {
+      if (product.source === '淘宝') {
+        return require('@/assets/images/u72.png')
+      } else if (product.source === '天猫') {
+        return require('@/assets/images/u74.png')
+      } else if (product.source === '1688') {
+        return require('@/assets/images/1688.png')
+      } else if (product.source === '京东') {
+        return require('@/assets/images/jd.png')
+      } else if (product.source === '苏宁') {
+        return require('@/assets/images/sn.png')
+      } else if (product.source === '网易考拉') {
+        return require('@/assets/images/kaola.png')
+      } else if (product.source === '唯品会') {
+        return require('@/assets/images/vip.png')
+      }
+      return ''
+    },
+    handleCaptureSelectionChange (val) {
+      this.captureSelection = val
+    },
+    captureSelectAll () {
+      if (this.captureSelection.length !== 0) {
+        return
+      }
+      this.tpProductList.forEach(row => {
+        this.$refs.selectCaptureTable.toggleRowSelection(row)
+      })
     }
   }
 }
