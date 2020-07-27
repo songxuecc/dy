@@ -91,7 +91,7 @@
                       <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
                           <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
                       </el-form-item>
-                      <el-form-item v-show="haveAttr" label="拼多多属性:">
+                      <el-form-item v-show="haveAttr" label="抖音属性:">
                           <attribute-view ref="attributeView" @selectFilter="selectFilter" @onAttrChanged="onAttrChanged" @updateAttrApplyCat="updateAttrApplyCat"
                           ></attribute-view>
                       </el-form-item>
@@ -598,6 +598,7 @@ export default {
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
         this.$refs.attributeView.setAttrApplyCatMap({})
+        data.attribute_json = {}
         this.haveAttr = this.$refs.attributeView.initAttribute(data.attribute_json, this.product.model.cat_id)
 
         this.bannerPicUrlList = data.banner_json
