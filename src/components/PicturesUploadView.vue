@@ -46,8 +46,8 @@
 <!--                </el-upload>-->
             </draggable>
         </ul>
-        <div v-if="containLimit!=-1">
-            <span>图片最多 {{containLimit}} 张</span>
+        <div>
+            <span v-if="containLimit!=-1">图片最多 {{containLimit}} 张，</span><span>sku图片+轮播图+详情图 不能超过 50 张</span>
         </div>
     </div>
 </template>

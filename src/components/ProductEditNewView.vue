@@ -221,7 +221,7 @@
                   </span>
                   <div style="overflow: auto;">
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
-                      <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="10" :pictureUrlList="bannerPicUrlList">
+                      <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList">
                       </pictures-upload-view>
                   </div>
                   <div class="common-bottom">
@@ -239,7 +239,7 @@
                   </span>
                   <div style="overflow: auto;">
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
-                      <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="20" :pictureUrlList="descPicUrlList">
+                      <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="-1" :pictureUrlList="descPicUrlList">
                       </pictures-upload-view>
                   </div>
                   <div class="common-bottom">
