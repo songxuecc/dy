@@ -1,7 +1,7 @@
 <template lang="html">
     <div v-loading="loadingCnt">
         <div class="text-left">
-            抓取列表
+            复制列表
         </div>
         <product-list-view ref="productListView" :tpProductList="captureTPProductList"
                            @onSelectChange="selectIdList = $event"
@@ -22,7 +22,7 @@
                 <span>返回上一步</span>
             </el-button>
             <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate" style="padding: 9px 15px">
-                <span style="line-height:21px">上传抖音</span>
+                <span style="line-height:21px">上传拼多多</span>
                 <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
             </el-button>
         </div>
@@ -97,3 +97,6 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+    @import '~@/assets/css/base.less';
+</style>

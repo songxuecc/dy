@@ -48,11 +48,9 @@
             </el-table-column>
             <el-table-column label="类目" width="120">
                 <template slot-scope="scope">
-<!--                    <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">-->
-<!--                        <span> {{ getLastCategory(scope.row.category_show) }} </span>-->
-<!--                    </el-tooltip>-->
-                  <el-button  v-if="scope.row.category_id === 0" size="mini" round @click="productCategoryEdit(scope.row, true)">编辑</el-button>
-                  <span v-else @click="productCategoryEdit(scope.row, true)">{{scope.row.category_show}}</span>
+                    <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">
+                        <span> {{ getLastCategory(scope.row.category_show) }} </span>
+                    </el-tooltip>
                 </template>
             </el-table-column>
             <el-table-column v-if="isSyncSource" label="最近同步" width="100">
@@ -72,7 +70,7 @@
             <el-table-column v-if="!isSyncSource" label="状态" width="120">
                 <template slot-scope="scope">
                     <el-button type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-button>
-                    <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
+                    <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)">
                       {{ productStatusMap[scope.row.status] }}
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
                       <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="scope.row.status === 5 || scope.row.status === 6 || scope.row.status === 8" :disabled="scope.row.status !== 5 && scope.row.status !== 6 && scope.row.status !== 8" class="item" effect="dark" placement="top">
@@ -120,39 +118,43 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog title="商品编辑" class="product-dialog" :visible.sync="dialogEditVisible" @opened="dialogOpened" @close="dialogClose" :before-close="dialogBeforeClose">
-            <product-edit-view ref="productEditView" @changeProduct="onChangeProduct" @closeDialog="closeDialog"></product-edit-view>
-        </el-dialog>
+<!--        <el-dialog title="商品编辑" class="product-dialog" :visible.sync="dialogEditVisible" @opened="dialogOpened" @close="dialogClose" :before-close="dialogBeforeClose">-->
+<!--            <product-edit-view ref="productEditView" @changeProduct="onChangeProduct" @closeDialog="closeDialog"></product-edit-view>-->
+<!--        </el-dialog>-->
+        <el-drawer
+          title="商品编辑"
+          :visible.sync="dialogEditVisible"
+          :with-header="false"
+          size="80%"
+          @opened="dialogOpened"
+          @close="dialogClose"
+          :before-close="dialogBeforeClose"
+        >
+          <product-edit-new-view ref="productEditNewView" @changeProducts="onChangeProducts" @triggerDialogClose="triggerDialogClose"></product-edit-new-view>
+        </el-drawer>
         <el-dialog
-          title="删除抓取记录"
+          title="删除复制记录"
           :show-close="false"
           :visible.sync="deleteProductVisible"
           width="30%">
-          <p>只删除软件的记录，对抖音商品没影响，您确定要操作吗？</p>
+          <p>只删除软件的记录，对拼多多商品没影响，您确定要操作吗？</p>
           <span slot="footer" class="dialog-footer">
             <el-button type="plain" @click="deleteProductVisible=false">取消</el-button>
             <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
           </span>
         </el-dialog>
-        <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" @opened="onOpenedCate" append-to-body center>
-          <category-select-view ref="categorySelectView" @changeCate="onChangeCate">
-          </category-select-view>
-        </el-dialog>
     </div>
 </template>
 <script>
-import productEditView from '@/components/ProductEditView.vue'
-import categorySelectView from '@/components/CategorySelectView'
+import productEditNewView from '@/components/ProductEditNewView.vue'
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
-import FormModel from '@/common/formModel'
 export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditView,
-    categorySelectView
+    productEditNewView
   },
   props: {
     tpProductList: Array,
@@ -163,11 +165,7 @@ export default {
   },
   data () {
     return {
-      dialogVisible: false,
       deleteProductId: -1,
-      product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'hasCategory'
-      ]),
       deleteProductVisible: false,
       dialogEditVisible: false,
       curTPProduct: {},
@@ -210,19 +208,6 @@ export default {
           }
         }
       })
-    },
-    product: {
-      handler (val, oldVal) {
-        if (oldVal.model.tp_product_id !== val.model.tp_product_id) {
-          return
-        }
-        if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id]) {
-          this.productDic[val.model.tp_product_id].isEdit = true
-        } else {
-          this.productDic[val.model.tp_product_id].isEdit = false
-        }
-      },
-      deep: true
     }
   },
   methods: {
@@ -282,6 +267,8 @@ export default {
         return require('@/assets/images/kaola.png')
       } else if (product.source === '唯品会') {
         return require('@/assets/images/vip.png')
+      } else if (product.source === '一起做网店17zwd') {
+        return require('@/assets/images/17.jpg')
       }
       return ''
     },
@@ -316,12 +303,16 @@ export default {
       if ([7, 10].includes(product.status) && isStatus) {
         return true
       } else if ([8, 9].includes(product.status)) {
-        if (product.migration_msg.length > 0 && product.migration_msg[0] !== '') {
-          window.open(product.migration_msg[0])
-        } else {
-          this.$message('平台审核中~ 请耐心等待！')
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '复制商品', '点击', '前往拼多多后台查看提交的商品'])
+        }
+        if (product.goods_commit_id) {
+          window.open(common.pddGoodsReturnDetailUrl + product.goods_commit_id)
         }
       } else if (product.status === 7) {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '复制商品', '点击', '重新复制新商品'])
+        }
         let self = this
         this.request('capture', { urls: [product.url], capture_type: 0, tp_product_id: product.tp_product_id }, data => {
           let params = {}
@@ -338,22 +329,18 @@ export default {
           self.reload()
         })
       } else if ([3, 4].includes(product.status)) {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '复制商品', '点击', '删除复制商品'])
+        }
         this.deleteProductVisible = true
         this.deleteProductId = product.tp_product_id
       } else {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '复制商品', '点击', '编辑复制商品'])
+        }
         this.curTPProduct = product
         this.dialogEditVisible = true
       }
-    },
-    productCategoryEdit (product, isStatus = false) {
-      if (this.tpProductList.length > 0) {
-        this.tpProductList.forEach((item) => {
-          if (item.tp_product_id === product.tp_product_id) {
-            this.curTPProduct = item
-          }
-        })
-      }
-      this.dialogVisible = true
     },
     isSelectionEnable (row) {
       if (this.isSyncSource) {
@@ -369,7 +356,7 @@ export default {
     },
     isModifyEnable (row) {
       // 兼容之前数据
-      if (row.status === 8 && !row.migration_msg.length > 0) {
+      if (row.status === 8 && !row.goods_commit_id) {
         return false
       }
       if ([1, 2].includes(parseInt(row.status))) {
@@ -467,32 +454,31 @@ export default {
     },
     dialogOpened () {
       if (this.curTPProduct.tp_product_id) {
-        this.$refs.productEditView.setProduct(this.curTPProduct)
+        this.$refs.productEditNewView.initList(this.curTPProduct, this.tpProductList.filter(product => [0, 5, 6, 8, 10].includes(product.status)))
       }
     },
     dialogClose () {
-      this.$refs.productEditView.onClose()
+      this.$refs.productEditNewView.onClose()
     },
-    closeDialog () {
+    triggerDialogClose () {
       this.dialogEditVisible = false
+      this.$refs.productEditNewView.onClose()
     },
     dialogBeforeClose (done) {
       let self = this
-      if (this.$refs.productEditView.isProductChange()) {
+      if (this.$refs.productEditNewView.isProductChange()) {
         this.$confirm('有未保存的修改，是否保存?', '提示', {
           confirmButtonText: '保存',
           cancelButtonText: '不保存'
         }).then(_ => {
-          self.$refs.productEditView.onSaveProduct()
-          done()
-        })
-          .catch(_ => { done() })
+          self.$refs.productEditNewView.closeAfterSave = true
+          self.$refs.productEditNewView.onSaveProduct()
+          // 保存完成后再触发关闭
+          // done()
+        }).catch(_ => { done() })
       } else {
         done()
       }
-    },
-    onOpenedCate () {
-      this.$refs.categorySelectView.initCate()
     },
     onChangeProduct (data) {
       let dicKeys = {
@@ -510,10 +496,40 @@ export default {
         }
       }
     },
+    onChangeProducts (data) {
+      let dicProduct = {}
+      for (let i in this.tpProductList) {
+        dicProduct[this.tpProductList[i].tp_product_id] = this.tpProductList[i]
+      }
+      let dicKeys = {
+        status: 'status',
+        migration_msg: 'migration_msg',
+        check_error_msg_static: 'check_error_msg_static',
+        price: 'max_price',
+        title: 'title',
+        category_id: 'category_id',
+        category_show: 'category_show'
+      }
+      for (let i in data) {
+        let dataItem = data[i]
+        for (let key in dataItem) {
+          if (!dataItem.hasOwnProperty(key)) continue
+          if (key in dicKeys && dataItem.tp_product_id in dicProduct) {
+            dicProduct[dataItem.tp_product_id][ dicKeys[key] ] = dataItem[key]
+          }
+        }
+      }
+    },
     btnSyncClick (item) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '商品源立即同步'])
+      }
       this.$emit('btnSyncClick', item)
     },
     btnSettingClick (item) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '设置商品源同步'])
+      }
       this.$emit('btnSettingClick', item)
     },
     cellStyle ({row, column, rowIndex, columnIndex}) {
@@ -542,28 +558,13 @@ export default {
     },
     handleMouseOut (row, column, cell, event) {
       // this.mouseOverIndex = -1
-    },
-    onChangeCate (category) {
-      this.dialogVisible = false
-      let productParams = {
-        tp_product_id: this.curTPProduct.tp_product_id,
-        category_id: category.id
-      }
-
-      this.request('updateTPProduct', productParams, data => {
-        this.onChangeProduct({
-          status: data.status,
-          category_id: category.id,
-          category_show: category.name
-        })
-        this.$message({
-          message: '保存成功',
-          type: 'success'
-        })
-        // this.reload()
-        this.$emit('closeDialog')
-      })
     }
   }
 }
 </script>
+<style lang="less" scoped>
+    @import '~@/assets/css/base.less';
+    /deep/ .el-drawer__body {
+      height: 100%;
+    }
+</style>

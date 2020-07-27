@@ -6,9 +6,14 @@ class FormModel {
     this.originModel = {}
     this.compareFields = compareFields
   }
+  deepClone (obj) {
+    let _obj = JSON.stringify(obj)
+    let objClone = JSON.parse(_obj)
+    return objClone
+  }
   assign (obj) {
     this.model = Object.assign({}, this.model, obj)
-    this.originModel = Object.assign({}, this.originModel, obj)
+    this.originModel = Object.assign({}, this.originModel, this.deepClone(obj))
   }
   getDiff () {
     let diff = {}
@@ -35,7 +40,7 @@ class FormModel {
         }
       } else {
         // Number, String, ... 等情况
-        if (this.model[key].toString() !== this.originModel[key].toString()) {
+        if (this.model[key] !== undefined && this.originModel[key] !== null && this.model[key].toString() !== this.originModel[key].toString()) {
           diff[key] = this.model[key]
         }
       }
@@ -53,11 +58,13 @@ class FormModel {
     return utils.isNumber(this.model[key])
   }
   rollback () {
-    let compareFields = Object.keys(this.model)
-    for (let i in compareFields) {
-      let key = compareFields[i]
-      this.model[key] = this.originModel[key]
-    }
+    this.model = this.deepClone(this.originModel)
+  }
+  rollbackPart (key) {
+    Object.assign(this.model, {[key]: this.deepClone(this.originModel[key])})
+  }
+  saveNow () {
+    this.originModel = this.deepClone(this.model)
   }
 }
 

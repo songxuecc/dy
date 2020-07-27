@@ -6,13 +6,13 @@
                     <el-input v-model="search.key" size="small" @keyup.enter.native="handleFilterChange" style="width: 200px"></el-input>
                 </el-form-item>
                 <el-form-item label="状态">
-                    <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleFilterChange"
+                    <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleStatusFilterChange"
                                popper-class="select-long" style="width: 100px"
                     >
                         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="抓取时间">
+                <el-form-item label="复制时间">
                     <el-select v-model="captureId" placeholder="请选择" size="small" @change="handleCaptureChange"
                                popper-class="select-long" style="width: 175px"
                     >
@@ -31,13 +31,13 @@
                 </el-form-item>
                 <br>
                 <div v-if="shopCaptureOptionList.length">
-                  <span style="font-size:14px;color: #606266;margin-right: 10px;">店铺抓取</span>
-                  <el-button type="text" @click="handleCaptureChange(item.value)" v-for="item in shopCaptureOptions.slice(1,3)" :key="item.value">
+                  <span style="font-size:14px;color: #606266;margin-right: 10px;">店铺复制</span>
+                  <el-button type="text" @click="handleShopCaptureChange(item.value)" v-for="item in shopCaptureOptions.slice(1,3)" :key="item.value">
                     <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;">{{item.label}}
                     </el-link>
                   </el-button>
                   <el-form-item>
-                      <el-select v-model="shopCaptureId" placeholder="请选择" size="small" @change="handleCaptureChange"
+                      <el-select v-model="shopCaptureId" placeholder="请选择" size="small" @change="handleShopCaptureChange"
                                 popper-class="select-long" style="width: 175px"
                       >
                           <el-option-group>
@@ -56,12 +56,9 @@
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
             <template slot='title'>
                 <div>
-                    <span v-if="isShopCapture">店铺<span v-if="this.capture.shop_name!=''">【{{capture.shop_name}}】</span>商品数量({{capture.total_num}}个) </span>
+                    <span v-if="isShopCapture">店铺<span v-if="capture.shop_name!=''">【{{capture.shop_name}}】</span> {{captureShopStatusMap[capture.status]}}, 商品数量({{capture.total_num}}个) </span>
                     <span v-if="isShopCapture">—— 第{{pagination.index}}页【</span>
-                    <span v-if="capture.status_statistics.length == 0 && capture.page_status !== 3">
-                        {{ captureStatusMap[capture.status] }}
-                    </span>
-                    <span v-if="capture.status_statistics.length == 0 && capture.page_status === 3">
+                    <span v-if="capture.status_statistics.length == 0">
                         {{ captureStatusMap[capture.page_status] }}
                     </span>
                     <span v-if="capture.status_statistics.length > 0"
@@ -85,17 +82,20 @@
             </el-tooltip>
         </el-alert>
         <product-list-view ref="productListView" :tpProductList="tpProductList">
-            <template slot="upperRight" v-if="false">
-                <router-link to="/productsSync">
-                    <el-button size="small" @click="toProductsSync" style="right: 0px; margin-right: 10px;">商品源同步</el-button>
-                </router-link>
+            <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
+                <el-button size="small" type="danger" @click="forceGetCapture" style="right: 0px; margin-right: 10px;">重新复制本页</el-button>
             </template>
+<!--            <template slot="upperRight">-->
+<!--                <router-link to="/productsSync">-->
+<!--                    <el-button size="small" @click="toProductsSync" style="right: 0px; margin-right: 10px;">商品源同步</el-button>-->
+<!--                </router-link>-->
+<!--            </template>-->
             <template slot="upperRight">
                 <el-button size="small" @click="showBatchDeleteCapture" style="right: 0px;">批量删除</el-button>
             </template>
         </product-list-view>
         <br>
-        <el-tooltip v-if="isShopCapture"  content="本页抓取完才能抓下一页" placement="top">
+        <el-tooltip v-if="isShopCapture"  content="本页复制完才能复制下一页" placement="top">
           <el-pagination :disabled="getCaptureStatus !== 'finish'"
                   v-show="loadingCnt == 0"
                   @current-change="handleCurrentChange"
@@ -148,34 +148,43 @@
             </span>
           </el-dialog>
           <el-dialog
-            title="删除选中的商品"
             :visible.sync="batchDeleteCaptureVisible"
-            @opened="captureSelectAll()"
-            width="40%">
-            <p style="text-align: left;">*只删除软件的记录，对抖音商品没影响。</p>
-            <el-table ref="selectCaptureTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
-                  :row-style="{height:'68px'}" max-height="420"
-                  @selection-change="handleCaptureSelectionChange"
-            >
-              <el-table-column type="selection">
-              </el-table-column>
-              <el-table-column label="图片" width="100" align="center">
-                  <template slot-scope="scope">
-                      <img style="height:60px" :src="scope.row.thumbnail">
-                  </template>
-              </el-table-column>
-              <el-table-column label="标题">
-                  <template slot-scope="scope">
-                      <el-link type="primary" :href="scope.row.url" target="_blank" :underline="false">
-                          {{ scope.row.title }}
-                      </el-link><br>
-                      <img style="width: 15px; height: 15px; margin-right: 2px;" class="icon" :src="getIcon(scope.row)">
-                      <label style="font-size:12px; margin-right: 5px;">{{scope.row.source}}</label>
-                      <label style="font-size:12px; margin-right: 5px;" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
-                      <label style="font-size:12px">创建时间: {{scope.row.create_time}}</label>
-                  </template>
-              </el-table-column>
-            </el-table>
+            @opened="captureSelectAll()">
+            <span slot="title">删除选中的商品</span>
+            <div style="margin-top: -30px;">
+              <p style="text-align: left;">*只删除软件的记录，对拼多多商品没影响。</p>
+              <el-table ref="selectCaptureTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
+                    :row-style="{height:'30px'}" max-height="320"
+                    @selection-change="handleCaptureSelectionChange"
+              >
+                <el-table-column type="selection">
+                </el-table-column>
+                <el-table-column label="图片" width="100" align="center">
+                    <template slot-scope="scope">
+                        <img style="height:30px" :src="scope.row.thumbnail">
+                    </template>
+                </el-table-column>
+                <el-table-column label="标题">
+                    <template slot-scope="scope">
+                        <el-link type="primary" :href="scope.row.url" target="_blank" :underline="false">
+                            {{ scope.row.title }}
+                        </el-link>
+                    </template>
+                </el-table-column>
+                <el-table-column label="状态" width="100">
+                    <template slot-scope="scope">
+                        <el-button type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-button>
+                        <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2">
+                          {{ productStatusMap[scope.row.status] }}
+                        </el-button>
+                        <div v-else>
+                          {{ productStatusMap[scope.row.status] }}
+                          <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
+                        </div>
+                    </template>
+                </el-table-column>
+              </el-table>
+            </div>
             <span slot="footer" class="dialog-footer">
               <el-button type="primary" @click="batchDeleteCapture">确定</el-button>
               <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
@@ -208,7 +217,8 @@ export default {
       search: {
         key: '',
         status: '-1',
-        captureId: '-1'
+        captureId: '-1',
+        child_shop_user_id: '0'
       },
       pagination: {
         index: 1,
@@ -218,12 +228,10 @@ export default {
       capture: {},
       pageData: {},
       triggerShopCaptureRunOnce: {},
-      migrate: {
-        'productStatusTimer': null,
-        'migrateProductList': [],
-        'statusStatistics': [],
-        'statusStatisticsTimer': null
-      },
+      statusStatistics: [],
+      statusStatisticsTimer: null,
+      migrateProductList: [],
+      productStatusSyncTimer: null,
       timer: null,
       isLoadProduct: false,
       migratingStatus: [1, 2, 9],
@@ -231,8 +239,10 @@ export default {
       slideDialogVisible: false,
       loginUrl: '',
       slideUrl: '',
+      isForceGetCapture: 0,
       batchDeleteCaptureVisible: false,
-      captureSelection: []
+      captureSelection: [],
+      isFinishLogin: false
     }
   },
   computed: {
@@ -241,6 +251,9 @@ export default {
     },
     captureStatusMap () {
       return common.captureStatusMap
+    },
+    captureShopStatusMap () {
+      return common.captureShopStatusMap
     },
     statusOptions () {
       let options = []
@@ -330,22 +343,22 @@ export default {
     getMigrateInfo () {
       let info = ''
       let running = 0
-      let check = 0
-      this.migrate.statusStatistics.forEach(function (item) {
+      // let check = 0
+      this.statusStatistics.forEach(function (item) {
         let status = parseInt(item['status'])
         if ([1, 2].includes(status)) {
           running += item['count']
         }
-        if (status === 9) {
-          check += item['count']
-        }
+        // if (status === 9) {
+        //   check += item['count']
+        // }
       })
       if (running) {
-        info += running + '个商品正在搬家 '
+        info += running + '个商品在搬家, 虎虎正在快马加鞭'
       }
-      if (check) {
-        info += check + '个商品在后台审核'
-      }
+      // if (check) {
+      //   info += check + '个商品在后台审核'
+      // }
       return info
     }
   },
@@ -364,12 +377,16 @@ export default {
       if (this.$route.params.needRefresh) {
         this.$refs.productListView.clearSelect()
         this.updateInfo()
+        this.getMigrateStatusStatistics()
       }
       return
     }
     this.resetInfo()
     if (this.$route.query.captureId) {
       this.search.captureId = this.$route.query.captureId.toString()
+      if (this.$route.query.hasOwnProperty('pageId') && this.$route.query.pageId !== 0) {
+        this.pagination.index = this.$route.query.pageId
+      }
     }
     this.$refs.productListView.clearSelect()
     this.getCaptureOptionList()
@@ -383,18 +400,19 @@ export default {
       clearTimeout(this.timer)
       this.timer = null
     }
-  },
-  beforeRouteLeave (to, from, next) {
-    clearTimeout(this.migrate.productStatusTimer)
-    this.migrate.productStatusTimer = null
-
-    clearTimeout(this.migrate.statusStatisticsTimer)
-    this.migrate.statusStatisticsTimer = null
-    next()
+    if (this.productStatusSyncTimer) {
+      clearTimeout(this.productStatusSyncTimer)
+      this.productStatusSyncTimer = null
+    }
+    if (this.statusStatisticsTimer) {
+      clearTimeout(this.statusStatisticsTimer)
+      this.statusStatisticsTimer = null
+    }
   },
   methods: {
     ...mapActions([
-      'setSelectTPProductIdList'
+      'setSelectTPProductIdList',
+      'removeTempTemplate'
     ]),
     calendarTime (strTime) {
       return moment(strTime).calendar()
@@ -415,18 +433,20 @@ export default {
       this.search.key = ''
       this.search.status = '-1'
       this.search.captureId = '-1'
+      this.search.child_shop_user_id = '0'
       this.capture = {}
       this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
+      clearTimeout(this.timer)
       this.timer = null
       this.pageData = {}
       this.triggerShopCaptureRunOnce = {}
       this.resetProductList()
       this.resetValidProductList()
-      this.migrate.migrateProductList = []
-      clearTimeout(this.migrate.productStatusTimer)
-      this.migrate.productStatusTimer = null
-      clearTimeout(this.migrate.statusStatisticsTimer)
-      this.migrate.statusStatisticsTimer = null
+      this.migrateProductList = []
+      clearTimeout(this.productStatusSyncTimer)
+      this.productStatusSyncTimer = null
+      clearTimeout(this.statusStatisticsTimer)
+      this.statusStatisticsTimer = null
     },
     resetProductList () {
       this.tpProductList = []
@@ -447,10 +467,9 @@ export default {
       if (captureId.toString() === '-1') {
         this.capture = {}
         this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
-        this.getProductList()
-        this.getCaptureValidTPProductIdList()
+        this.getProductList(false)
       } else {
-        this.getCapture()
+        this.getCapture(false)
       }
     },
     getProductList (isSilent = false) {
@@ -460,7 +479,8 @@ export default {
         page_size: this.pagination.size,
         keyword: this.search.key,
         status: this.search.status,
-        capture_id: this.search.captureId
+        capture_id: this.search.captureId,
+        child_shop_user_id: this.search.child_shop_user_id
       }
       if (params['page_size'] === 0) {
         return
@@ -471,20 +491,56 @@ export default {
         this.isLoadProduct = false
         let migrateProduct = []
         let self = this
+        let validTpProductIds = []
         this.tpProductList.forEach(function (product, index) {
           product.isMigrating = false
           product.index = index
           product.isMouseOver = false
+          self.$set(product, 'isEdit', false)
           if (self.migratingStatus.includes(parseInt(product.status))) {
             migrateProduct.push(product.tp_product_id)
             product.isMigrating = true
           }
+          if (parseInt(product.status) === 0) {
+            validTpProductIds.push(product.tp_product_id)
+          }
         })
-        this.migrate.migrateProductList = migrateProduct
+        this.$refs.productListView.validProductIdsList = validTpProductIds
+        this.$refs.productListView.selectAll()
+        this.migrateProductList = migrateProduct
         this.getTPProductByIds()
       }, undefined, isSilent)
     },
+    forceGetCapture () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '店铺重新复制本页'])
+      }
+      this.isForceGetCapture = 1
+      if (this.capture.status === 2 && this.capture.page_status === 3) {
+        let params = {}
+        params['captureId'] = this.capture.capture_id
+        params['pageId'] = this.pagination.index
+        this.$router.push({
+          path: '/productList',
+          query: params
+        })
+        this.reload()
+      } else if (this.capture.status === 3) {
+        let self = this
+        this.request('capture', { urls: [this.capture.url], capture_type: 1 }, data => {
+          let params = {}
+          params['captureId'] = data.capture_id
+          self.$router.push({
+            path: '/productList',
+            query: params
+          })
+          self.reload()
+        })
+      }
+    },
     getCapture (isSilent = false) {
+      clearTimeout(this.timer)
+      this.timer = null
       let captureId = this.search.captureId
       if (captureId.toString() === '-1') {
         this.capture = {}
@@ -496,9 +552,11 @@ export default {
         status: this.search.status,
         capture_id: this.search.captureId,
         page_index: this.pagination.index,
-        page_size: this.pagination.size
+        page_size: this.pagination.size,
+        force: this.isForceGetCapture
       }
       this.request('getCapture', params, data => {
+        this.isForceGetCapture = 0
         this.capture = data
         this.shopCaptureType = data.shop_capture_type
         if (this.isShopCapture) { // 店铺抓取，上面的筛选都针对本页抓取
@@ -513,6 +571,9 @@ export default {
               ).then(res => {
                 if (res.hasOwnProperty('rgv587_flag')) {
                   if (res.url.indexOf('login.taobao.com') !== -1) {
+                    if (this.isFinishLogin) {
+                      this.request('logCaptureShopFailure', params, data => {}, undefined, true)
+                    }
                     this.loginUrl = res.url
                     this.loginDialogVisible = true
                   } else {
@@ -522,43 +583,29 @@ export default {
                 } else {
                   this.pageData[data.page_id] = res
                 }
+                this.isFinishLogin = false
               })
             }
           }
         }
-        this.checkProgress()
-      }, undefined, isSilent)
-    },
-    getCaptureValidTPProductIdList (isSilent = false) {
-      let captureId = this.search.captureId
-      if (captureId.toString() === '-1') {
-        this.$refs.productListView.validProductIdsList = []
-        this.$refs.productListView.dicSelectId = {}
-        return
-      }
-      if (parseInt(this.search.status) !== 0 && parseInt(this.search.status) !== -1) {
-        this.$refs.productListView.validProductIdsList = []
-        this.$refs.productListView.dicSelectId = {}
-        return
-      }
-      let params = {
-        keyword: this.search.key,
-        capture_id: this.search.captureId,
-        page_index: this.pagination.index,
-        page_size: this.pagination.size
-      }
-      this.request('getCaptureValidTPProductIdList', params, data => {
-        this.$refs.productListView.validProductIdsList = data.valid_tp_product_ids
-        if (this.isLoadProduct) {
-          let unwatch = this.$watch('isLoadProduct', function (newVal, oldVal) {
-            if (newVal === false) {
-              this.$refs.productListView.selectAll()
-              unwatch()
-            }
-          })
-        } else {
-          this.$refs.productListView.selectAll()
+        if (this.loginDialogVisible || this.slideDialogVisible) {
+          return
         }
+        if (this.getCaptureStatus === 'finish') {
+          this.getProductList(isSilent)
+          return
+        }
+        // 定时任务的 isSilent = true
+        let self = this
+        this.timer = setTimeout(function () {
+          if (self.isShopCapture && self.getCaptureStatus === 'capture-item-waiting') {
+            self.triggerShopCapture(true)
+          }
+          if (self.getCaptureStatus === 'capture-item') {
+            self.getProductList(true)
+          }
+          self.getCapture(true)
+        }, 5000)
       }, undefined, isSilent)
     },
     triggerShopCapture (isSilent = false) {
@@ -585,39 +632,35 @@ export default {
       this.request('triggerShopCapture', params, data => {
       }, undefined, isSilent)
     },
-    handleFilterChange () {
+    handleStatusFilterChange () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '状态选择'])
+      }
       this.$refs.productListView.clearSelect()
       if (!this.isShopCapture) { // 店铺抓取，上面的筛选都针对本页抓取
         this.resetPaginationIndex()
       }
       this.updateInfo()
     },
-    checkProgress () {
-      if (this.timer) {
-        clearTimeout(this.timer)
-        this.timer = null
+    handleFilterChange () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '标题搜索'])
       }
-      if (this.loginDialogVisible || this.slideDialogVisible) {
-        return
+      this.$refs.productListView.clearSelect()
+      if (!this.isShopCapture) { // 店铺抓取，上面的筛选都针对本页抓取
+        this.resetPaginationIndex()
       }
-      if (this.getCaptureStatus === 'finish') {
-        this.getCaptureValidTPProductIdList(true)
-        this.getProductList(true)
-        return
-      }
-      let self = this
-      if (this.getCaptureStatus !== 'finish') {
-        this.timer = setTimeout(function () {
-          if (self.isShopCapture && self.getCaptureStatus === 'capture-item-waiting') {
-            self.triggerShopCapture()
-          }
-          if (self.getCaptureStatus === 'capture-item') {
-            self.getCaptureValidTPProductIdList(true)
-            self.getProductList(true)
-          }
-          self.getCapture(true)
-        }, 3000)
-      }
+      this.updateInfo()
+    },
+    handleFilterMigrateShop () {
+      this.$refs.productListView.clearSelect()
+      this.search.key = ''
+      this.search.status = '-1'
+      this.search.captureId = '-1'
+      this.shopCaptureId = '-1'
+      this.captureId = '-1'
+      this.resetPaginationIndex()
+      this.updateInfo()
     },
     handleSizeChange (val) {
       this.pagination.size = val
@@ -656,6 +699,20 @@ export default {
       this.search.captureId = captureId
     },
     handleCaptureChange (captureId) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '选择复制历史'])
+      }
+      // 如果进行抓取选择，将店铺选择改为本店铺
+      this.search.child_shop_user_id = '0'
+      this.handleCaptureOptionChange(captureId)
+      this.handleCommonCaptureChange()
+    },
+    handleShopCaptureChange (captureId) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '选择店铺复制历史'])
+      }
+      // 如果进行抓取选择，将店铺选择改为本店铺
+      this.search.child_shop_user_id = '0'
       this.handleCaptureOptionChange(captureId)
       this.handleCommonCaptureChange()
     },
@@ -670,23 +727,28 @@ export default {
       this.$router.replace({ query })
     },
     toMigrate () {
+      this.removeTempTemplate()
       this.setSelectTPProductIdList(this.selectIdList)
       this.$router.push({
         path: '/migrateSettingPrice'
       })
     },
-    getTPProductByIds (isSilent = false) {
-      clearTimeout(this.migrate.productStatusTimer)
-      this.migrate.productStatusTimer = null
+    getTPProductByIds () {
+      clearTimeout(this.productStatusSyncTimer)
+      this.productStatusSyncTimer = null
 
-      if (this.migrate.migrateProductList.length === 0) {
+      if (this.migrateProductList.length === 0) {
         return
       }
       let params = {
-        tp_product_ids: this.migrate.migrateProductList
+        tp_product_ids: this.migrateProductList,
+        child_shop_user_id: this.search.child_shop_user_id
       }
-
       this.request('getTPProductByIds', params, data => {
+         // 筛选子店铺，请求延后返回导致状态不对，因此将这种请求丢掉
+        if (params['child_shop_user_id'] !== this.search.child_shop_user_id) {
+          return
+        }
         let productList = data['items']
         let migrateProductList = []
         let self = this
@@ -700,12 +762,13 @@ export default {
               } else {
                 item.isMigrating = false
               }
-              product.dy_product_id = item['dy_product_id']
+              product.goods_commit_id = item['goods_commit_id']
               product.status = item['status']
               product.isMigrating = item.isMigrating
               product.index = index
               product.isMouseOver = false
               product.migration_msg = []
+              self.$set(product, 'isEdit', false)
               item.migration_msg.forEach(function (msg) {
                 product.migration_msg.push(msg)
               })
@@ -713,33 +776,33 @@ export default {
             }
           })
         })
-        this.migrate.migrateProductList = migrateProductList
-        if (this.migrate.productStatusTimer === null) {
-          this.migrate.productStatusTimer = setTimeout(function () {
+        this.migrateProductList = migrateProductList
+        if (this.productStatusSyncTimer === null) {
+          this.productStatusSyncTimer = setTimeout(function () {
             self.getTPProductByIds()
           }, 3000)
         }
-      }, undefined, isSilent)
+      }, undefined, true)
     },
-    getMigrateStatusStatistics (isSilent = false) {
-      clearTimeout(this.migrate.statusStatisticsTimer)
-      this.migrate.statusStatisticsTimer = null
-
+    getMigrateStatusStatistics () {
+      clearTimeout(this.statusStatisticsTimer)
+      this.statusStatisticsTimer = null
       this.request('getMigrateStatusStatistics', {}, data => {
-        this.migrate.statusStatistics = data['status_statistics']
-        let self = this
+        this.statusStatistics = data['status_statistics']
         let isFinish = true
-        this.migrate.statusStatistics.forEach(function (value) {
-          if (self.migratingStatus.includes(parseInt(value.status))) {
+        this.statusStatistics.forEach(function (value) {
+          if ([1, 2].includes(parseInt(value.status))) {
             isFinish = false
           }
         })
-        if (isFinish === false && this.migrate.statusStatisticsTimer === null) {
-          this.migrate.statusStatisticsTimer = setTimeout(function () {
-            self.getMigrateStatusStatistics()
-          }, 5000)
+        if (isFinish) {
+          return
         }
-      }, undefined, isSilent)
+        let self = this
+        this.statusStatisticsTimer = setTimeout(function () {
+          self.getMigrateStatusStatistics()
+        }, 5000)
+      }, undefined, true)
     },
     calcProgressText (capture) {
       let count = 0
@@ -765,6 +828,9 @@ export default {
       return Math.min(100, count / capture.capture_num * 100) + '%'
     },
     toProductsSync () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '商品源同步'])
+      }
 //      console.log('--- toProductsSync')
     },
     requestJsonp (url) {
@@ -782,6 +848,10 @@ export default {
       })
     },
     finishLogin () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '店铺复制完成登录'])
+      }
+      this.isFinishLogin = true
       this.loginDialogVisible = false
       this.reload()
     },
@@ -789,6 +859,9 @@ export default {
       window.open(this.loginUrl)
     },
     finishSlide () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '店铺复制完成滑动解锁'])
+      }
       this.slideDialogVisible = false
       this.reload()
     },
@@ -799,28 +872,27 @@ export default {
       this.request('deleteTPProduct', { tp_product_ids: this.captureSelection.map(arr => arr.tp_product_id) }, data => {
         this.batchDeleteCaptureVisible = false
         this.reload()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量删除'])
+        }
       })
     },
     showBatchDeleteCapture () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '批量删除'])
+      }
       this.batchDeleteCaptureVisible = true
     },
-    getIcon (product) {
-      if (product.source === '淘宝') {
-        return require('@/assets/images/u72.png')
-      } else if (product.source === '天猫') {
-        return require('@/assets/images/u74.png')
-      } else if (product.source === '1688') {
-        return require('@/assets/images/1688.png')
-      } else if (product.source === '京东') {
-        return require('@/assets/images/jd.png')
-      } else if (product.source === '苏宁') {
-        return require('@/assets/images/sn.png')
-      } else if (product.source === '网易考拉') {
-        return require('@/assets/images/kaola.png')
-      } else if (product.source === '唯品会') {
-        return require('@/assets/images/vip.png')
+    getStatusType (status) {
+      if (status === 5 || status === 7 || status === 8) {
+        return 'danger'
+      } else if (status === 6) {
+        return 'warning'
+      } else if (status === 3 || status === 4) {
+        return 'success'
+      } else if (status === 10) {
+        return 'info'
       }
-      return ''
     },
     handleCaptureSelectionChange (val) {
       this.captureSelection = val
@@ -837,6 +909,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+    @import '~@/assets/css/base.less';
     @import '~@/assets/css/progress.less';
 
     /deep/ .el-link.el-link--default.isSelect {

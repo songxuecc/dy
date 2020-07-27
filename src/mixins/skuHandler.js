@@ -109,6 +109,20 @@ export default {
       }
       return { sku_map: skuUploadObj }
     },
+    getSkuUploadObjByShowList (skuShowList) {
+      let skuUploadObj = {}
+      for (let i in skuShowList) {
+        let skuShow = skuShowList[i]
+        skuUploadObj[skuShow.property_key] = {
+          price: utils.yuanToFen(skuShow.price),
+          promo_price: utils.yuanToFen(skuShow.promo_price),
+          quantity: skuShow.quantity,
+          img: skuShow.img,
+          property_list: JSON.parse(JSON.stringify(skuShow.property_list))
+        }
+      }
+      return { sku_map: skuUploadObj }
+    },
     deleteSkus (pId, pVid) {
       let nSkuShowList = []
       let key = pId + ':' + pVid
@@ -125,7 +139,10 @@ export default {
           nSkuShowList.push(sku)
         }
       }
-      this.skuShowList = nSkuShowList
+      this.skuShowList.splice(0, this.skuShowList.length)
+      for (let i in nSkuShowList) {
+        this.skuShowList.push(nSkuShowList[i])
+      }
       this.updateSkuPropertyValueMap()
       this.updateIsSingleSku()
     },
@@ -161,7 +178,7 @@ export default {
           nSkuPropertyValueMap[propKVIds[0]][propKVIds[1]] = this.skuPropertyValueMap[propKVIds[0]][propKVIds[1]]
         }
       }
-      this.skuPropertyValueMap = nSkuPropertyValueMap
+      this.$set(this, 'skuPropertyValueMap', nSkuPropertyValueMap)
     },
     updateNameOfSkuPropertyValueMap (pid, vid, name) {
       for (let i in this.skuShowList) {
