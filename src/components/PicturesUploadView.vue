@@ -28,22 +28,22 @@
                            @change="handleSelect(picture, index, $event.target || $event.srcElement)"
                     >
                 </li>
-<!--                <el-upload-->
-<!--                    slot="footer"-->
-<!--                    class="el-upload el-upload&#45;&#45;picture-card"-->
-<!--                    :show-file-list="false"-->
-<!--                    :on-success="handleUploadSuccess"-->
-<!--                    :on-error="handleUploadError"-->
-<!--                    :before-upload="handleBeforeUpload"-->
-<!--                    action="/api/uploadProductImage"-->
-<!--                    :headers="getTokenHeaders"-->
-<!--                    :data="{'belong_type': belongType}"-->
-<!--                    multiple-->
-<!--                >-->
-<!--                    <i class="el-icon-plus upload-icon">-->
-<!--                        <br><span>({{ curPictureList.length }}/{{ containLimit }})</span>-->
-<!--                    </i>-->
-<!--                </el-upload>-->
+                <el-upload
+                    slot="footer"
+                    class="el-upload el-upload--picture-card"
+                    :show-file-list="false"
+                    :on-success="handleUploadSuccess"
+                    :on-error="handleUploadError"
+                    :before-upload="handleBeforeUpload"
+                    action="/api/uploadProductImage"
+                    :headers="getTokenHeaders"
+                    :data="{'belong_type': belongType}"
+                    multiple
+                >
+                    <i class="el-icon-plus upload-icon">
+                        <br><span>({{ curPictureList.length }}/{{ containLimit }})</span>
+                    </i>
+                </el-upload>
             </draggable>
         </ul>
         <div>
@@ -106,8 +106,9 @@ export default {
       return list
     },
     uploadIconVisible () {
-      return (this.featureType & common.PictureViewFeature['add']) &&
-        this.curPictureList.length < this.containLimit
+      return false
+      // return (this.featureType & common.PictureViewFeature['add']) &&
+      //   this.curPictureList.length < this.containLimit
     }
   },
   watch: {
