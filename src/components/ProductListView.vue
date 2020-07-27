@@ -70,7 +70,7 @@
             <el-table-column v-if="!isSyncSource" label="状态" width="120">
                 <template slot-scope="scope">
                     <el-button type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-button>
-                    <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)">
+                    <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
                       {{ productStatusMap[scope.row.status] }}
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
                       <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="scope.row.status === 5 || scope.row.status === 6 || scope.row.status === 8" :disabled="scope.row.status !== 5 && scope.row.status !== 6 && scope.row.status !== 8" class="item" effect="dark" placement="top">
@@ -307,7 +307,7 @@ export default {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '前往拼多多后台查看提交的商品'])
         }
         if (product.goods_commit_id) {
-          window.open(common.pddGoodsReturnDetailUrl + product.goods_commit_id)
+          window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + product.goods_commit_id)
         }
       } else if (product.status === 7) {
         if (window._hmt) {
