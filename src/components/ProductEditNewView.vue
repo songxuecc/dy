@@ -179,21 +179,21 @@
                       </el-table-column>
                       <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
-<!--                              <img style="height:40px" :src="scope.row.img">-->
-                            <el-upload
-                                slot="footer"
-                                class="el-upload el-upload--picture-card"
-                                :show-file-list="false"
-                                :on-success="(response, file, fileList) => handleUploadSuccess(response, file, fileList, scope.row)"
-                                :on-error="handleUploadError"
-                                :before-upload="handleBeforeUpload"
-                                action="/api/uploadProductImage"
-                                :headers="getTokenHeaders"
-                                :data="{'belong_type': belongType}"
-                                style="width:50px; height: 50px; line-height: 80px;"
-                            >
-                                <el-image :src="scope.row.img" style="width: 40px; height:40px; display: block;" fit="contain"></el-image>
-                            </el-upload>
+                              <img style="height:40px" :src="scope.row.img">
+<!--                            <el-upload-->
+<!--                                slot="footer"-->
+<!--                                class="el-upload el-upload&#45;&#45;picture-card"-->
+<!--                                :show-file-list="false"-->
+<!--                                :on-success="(response, file, fileList) => handleUploadSuccess(response, file, fileList, scope.row)"-->
+<!--                                :on-error="handleUploadError"-->
+<!--                                :before-upload="handleBeforeUpload"-->
+<!--                                action="/api/uploadProductImage"-->
+<!--                                :headers="getTokenHeaders"-->
+<!--                                :data="{'belong_type': belongType}"-->
+<!--                                style="width:50px; height: 50px; line-height: 80px;"-->
+<!--                            >-->
+<!--                                <el-image :src="scope.row.img" style="width: 40px; height:40px; display: block;" fit="contain"></el-image>-->
+<!--                            </el-upload>-->
                           </template>
                       </el-table-column>
                       <el-table-column key="6" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
