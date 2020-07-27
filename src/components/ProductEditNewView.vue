@@ -130,7 +130,7 @@
                                               <el-checkbox v-model="ele.checked" @change="onSkuFilter" style="margin-right: 0">
                                                 <span v-if="skuPropertyList.length === 1">{{ele.value}}</span>
                                                 <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
-                                                          :class="['input-text-left', {'warn': isSkuNameWarn(ele.value, item.id) }]">
+                                                          :class="['input-text-left']">
                                                   <span slot="append" class="hint">{{ ele.value.length }} / 18</span>
                                                 </el-input>
                                               </el-checkbox>
@@ -148,7 +148,7 @@
                           <template slot-scope="scope">
                             <span v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
                             <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
-                                      :class="['input-text-left', {'warn': isSkuNameWarn(scope.row.property_list[index].name, item.id) }]">
+                                      :class="['input-text-left']">
                               <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span>
                             </el-input>
                           </template>
