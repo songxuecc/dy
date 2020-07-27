@@ -32,6 +32,13 @@ module.exports = {
     3: '失败',
     4: '等待抓取'
   },
+  captureShopStatusMap: {
+    0: '开始复制',
+    1: '正在确认商品数量',
+    2: '确认完成',
+    3: '失败',
+    4: '等待复制'
+  },
   orderStatusMap: {
     0: '未完成',
     1: '已完成',
@@ -74,7 +81,8 @@ module.exports = {
     'delete': 1,
     'select': 1 << 1,
     'add': 1 << 2,
-    'handle_preview': 1 << 3
+    'handle': 1 << 3,
+    'sort': 1 << 4
   },
   NotificationType: {
     'show_in_white_list': 0,

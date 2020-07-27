@@ -1,6 +1,6 @@
 <template lang="html">
-    <div style="width: 400px">
-        <span>(带 <span style="color: red">*</span> 为必填属性)</span>
+    <div>
+      <span>(带 <span style="color: red">*</span> 为必填属性</span><span v-if="catId!==0">，勾选应用到本页相同分类商品，蓝色高亮</span><span>)</span>
         <br>
         <el-form class="setting-content" style="overflow: hidden;">
             <el-form-item v-for="(item, index) in attrShowList" :key="index" :label="item.name" :required="item.required"
@@ -16,7 +16,7 @@
                     </el-checkbox-group>
 
                 </div>
-                <div v-else-if="item.control_type == controlTypeMap['un_editable']">
+                <div v-else-if="item.control_type == controlTypeMap['un_editable']" style="display: inline">
                     {{attrShowList[index].value}}
                 </div>
                 <el-select v-else-if="item.control_type == controlTypeMap['select']" v-model="item.vid_matched" size="mini" placeholder="请选择"
@@ -34,7 +34,7 @@
                                 style="width: 180px" @change="onChangeDate($event, item)"
                 >
                 </el-date-picker>
-                <div v-else >
+                <div v-else style="display: inline">
                     <el-tooltip placement="right" effect="dark" class="item" :open-delay="500"
                                 :disabled="item.max_value === '' && item.min_value === '' && (item.value_precision !== 0 || item.value_type !== valueTypeMap['number'])"
                     >
@@ -56,7 +56,7 @@
                                 <el-input v-if="i===(attrShowList[index].group_input.length-1)"
                                           v-model="attrShowList[index].group_input[i]" size="mini"
                                           class="input-text-left" style="width: 120px;vertical-align:middle;"
-                                          @change="onChangeProductInput(index,item)">
+                                          @input="onChangeProductInput(index,item)">
                                     <template v-if="attrShowList[index].value_unit.length === 1" slot="append">
                                         {{ attrShowList[index].unit_matched }}
                                     </template>
@@ -71,13 +71,13 @@
                                 <el-input v-else
                                           v-model="attrShowList[index].group_input[i]" size="mini"
                                           class="input-text-left" style="width: 60px"
-                                          @change="onChangeProductInput(index,item)">
+                                          @input="onChangeProductInput(index,item)">
                                 </el-input>
                             </span>
                         </div>
                         <el-input v-else v-model="attrShowList[index].value" size="mini"
                                   class="input-text-left" style="width: 180px;vertical-align:middle;"
-                                  @change="onChangeInput(index, item)">
+                                  @input="onChangeInput(index, item)">
                             <template v-if="attrShowList[index].value_unit.length === 1" slot="append">
                                 {{ attrShowList[index].unit_matched }}
                             </template>
@@ -91,6 +91,11 @@
                         </el-input>
                     </el-tooltip>
                 </div>
+                <el-tooltip v-if="catId!==0" effect="dark" content="勾选应用到本页相同分类商品，蓝色高亮" placement="right">
+                  <el-checkbox size="mini" v-model="item.apply_cat" border @change="handleApplyCatChecked(item)">
+                    <span>应用</span>
+                  </el-checkbox>
+                </el-tooltip>
             </el-form-item>
         </el-form>
     </div>
@@ -106,7 +111,9 @@ export default {
     return {
       isRequiredComplete: false,
       attrRawDic: {},
-      attrShowList: []
+      attrShowList: [],
+      attrApplyCatMap: {},
+      catId: 0
     }
   },
   computed: {
@@ -123,8 +130,29 @@ export default {
     clear () {
       this.attrShowList = []
     },
+    setAttrRawDic (dic) {
+      if (dic) {
+        this.attrRawDic = {...dic}
+      }
+    },
+    setAttrShowList (list) {
+      if (list) {
+        this.attrShowList = [...list]
+      }
+    },
+    setAttrApplyCatMap (dic) {
+      if (dic) {
+        this.attrApplyCatMap = {...dic}
+      }
+    },
+    reloadAttrShowList () {
+      this.attrShowList = []
+      this.isRequiredComplete = true
+      this.dfsAttrRaw(0)
+      this.updateRequiredRule()
+    },
     // 每个 attribute 加上 child_ids 和 vid 字段，转换成字典
-    initAttribute (attributeJson) {
+    initAttribute (attributeJson, catId = 0) {
       this.attrRawDic = {
         0: { id: 0, child_ids: [], vid_matched: '' }
       }
@@ -145,6 +173,9 @@ export default {
             attrRaw.tp_value_list = ['', '', '']
           }
         }
+        attrRaw.apply_cat = false
+        attrRaw.cat_id = catId
+        this.catId = catId
         this.attrRawDic[attrRaw.id] = attrRaw
       }
       // 按照后端传到前端的顺序进行处理，因为属性默认有一定的重要性区别
@@ -161,6 +192,7 @@ export default {
       this.attrShowList = []
       this.isRequiredComplete = true
       this.dfsAttrRaw(0)
+      this.updateRequiredRule()
       this.$emit('onAttrChanged', this.isRequiredComplete)
 
       return this.attrShowList.length > 0
@@ -171,6 +203,7 @@ export default {
       this.attrShowList = []
       this.isRequiredComplete = true
       this.dfsAttrRaw(0)
+      this.updateRequiredRule()
       this.$emit('onAttrChanged', this.isRequiredComplete)
     },
     selectAttr (id, vid, value) {
@@ -182,6 +215,7 @@ export default {
       this.attrShowList = []
       this.isRequiredComplete = true
       this.dfsAttrRaw(0, id)
+      this.updateRequiredRule()
       this.$emit('onAttrChanged', this.isRequiredComplete)
     },
     multiSelectAttr (id, selectValueList) {
@@ -189,6 +223,7 @@ export default {
       this.attrShowList = []
       this.isRequiredComplete = true
       this.dfsAttrRaw(0, id)
+      this.updateRequiredRule()
       this.$emit('onAttrChanged', this.isRequiredComplete)
     },
     inputProductAtter (id, groupInputValueList) {
@@ -206,17 +241,58 @@ export default {
       this.attrShowList = []
       this.isRequiredComplete = true
       this.dfsAttrRaw(0, id)
+      this.updateRequiredRule()
       this.$emit('onAttrChanged', this.isRequiredComplete)
+    },
+    updateRequiredRule () {
+      let attrRefMap = {}
+      for (let i in this.attrShowList) {
+        attrRefMap[this.attrShowList[i].ref_pid] = this.attrShowList[i]
+      }
+      for (let idx in this.attrShowList) {
+        let attrShow = this.attrShowList[idx]
+        let isOrRequired = false
+        if (!attrShow.required_rule_type || attrShow.required_rule_type.toString() !== '1') {
+          continue
+        }
+        for (let i in attrShow.required_rule) {
+          let isAndRequired = true
+          for (let j in attrShow.required_rule[i]) {
+            let obj = attrShow.required_rule[i][j]
+            if (!(attrRefMap[obj['ref_pid']] && attrRefMap[obj['ref_pid']].vid_matched === obj.vid)) {
+              isAndRequired = false
+            }
+          }
+          if (isAndRequired) {
+            isOrRequired = true
+          }
+        }
+        if (isOrRequired) {
+          this.attrShowList[idx].required = true
+        } else {
+          this.attrShowList[idx].required = false
+        }
+      }
     },
     dfsAttrRaw (id, updateId = -1, isReset = false) {
       let curAttrRaw = this.attrRawDic[id]
       if (parseInt(id) !== 0) {
-        if (isReset) {
+        if (isReset && curAttrRaw.control_type !== common.CONTROL_INPUT) {
           this.attrRawDic[id].vid_matched = ''
           this.attrRawDic[id].tp_value = ''
           this.attrRawDic[id].vid_matched_list = []
         }
         let attrShow = this.genAttrShow(curAttrRaw)
+        if (
+          curAttrRaw.cat_id !== 0 &&
+          this.attrApplyCatMap[curAttrRaw.cat_id] &&
+          this.attrApplyCatMap[curAttrRaw.cat_id][curAttrRaw.id] &&
+          this.attrApplyCatMap[curAttrRaw.cat_id][curAttrRaw.id].apply_cat
+        ) {
+          attrShow = this.attrApplyCatMap[curAttrRaw.cat_id][curAttrRaw.id]
+        } else {
+          attrShow.apply_cat = false
+        }
         this.attrShowList.push(attrShow)
         if (attrShow.required && attrShow.show && attrShow.value === '') {
           this.isRequiredComplete = false
@@ -254,7 +330,17 @@ export default {
         value_precision: attrRaw.value_precision,
         loading: false,
         filter: false,
-        filterOptions: []
+        filterOptions: [],
+        cat_id: attrRaw.cat_id,
+        apply_cat: attrRaw.apply_cat
+      }
+      if (attrRaw.required_rule_type && attrRaw.required_rule) {
+        attrShow['required_rule_type'] = attrRaw.required_rule_type
+        attrShow['required_rule'] = attrRaw.required_rule
+      }
+      if (attrRaw.is_condition_show && attrRaw.show_vids) {
+        attrShow['is_condition_show'] = attrRaw.is_condition_show
+        attrShow['show_vids'] = attrRaw.show_vids
       }
       if ([common.CONTROL_ONE_DATE_YMD, common.CONTROL_ONE_DATE_YM].includes(parseInt(attrRaw.control_type))) {
         if (!utils.isDate(attrRaw.tp_value)) {
@@ -302,6 +388,9 @@ export default {
       ) {
         attrShow.show = false
       }
+      if (parseInt(attrRaw.parent_id) !== 0 && attrRaw.is_condition_show && !attrShow.show_vids.includes(parentVid)) {
+        attrShow.show = false
+      }
       if (attrShow.control_type === common.controlTypeMap['un_editable'] && attrShow.vid_matched === '') {
         attrShow.show = false
       }
@@ -336,6 +425,31 @@ export default {
       }
       return attrUploadList
     },
+    getAttrUploadListByShowList (attrShowList, needMatchedListDetail = false) {
+      let attrUploadList = []
+      for (let i in attrShowList) {
+        let attrShow = attrShowList[i]
+        let vidMatchedList = attrShow.group_select
+        if (needMatchedListDetail && vidMatchedList.length > 0) {
+          vidMatchedList = []
+          for (let j in attrShow.options) {
+            let option = attrShow.options[j]
+            if (attrShow.group_select.includes(option.value)) {
+              vidMatchedList.push(option)
+            }
+          }
+        }
+        attrUploadList.push({
+          id: attrShow.id,
+          ref_pid: attrShow.ref_pid,
+          tp_value: attrShow.value,
+          unit_matched: attrShow.unit_matched,
+          vid_matched: attrShow.vid_matched,
+          vid_matched_list: vidMatchedList
+        })
+      }
+      return attrUploadList
+    },
     getDatePickerType (controlType) {
       switch (parseInt(controlType)) {
         case common.CONTROL_ONE_DATE_YMD: return 'date'
@@ -344,13 +458,22 @@ export default {
       return 'date'
     },
     onChangeInput (index, item) {
+      if (item.apply_cat) {
+        this.clearApplyCat(item)
+      }
       this.inputAtter(item.id, item.value, item.unit_matched)
     },
     onChangeDate (val, item) {
+      if (item.apply_cat) {
+        this.clearApplyCat(item)
+      }
       let date = moment(val).format('L')
       this.inputAtter(item.id, date)
     },
     onChangeSelect (index, item) {
+      if (item.apply_cat) {
+        this.clearApplyCat(item)
+      }
       let options = (item.filter ? item.filterOptions : item.options)
       let value = ''
       for (let i in options) {
@@ -363,9 +486,15 @@ export default {
       item.filter = false
     },
     onChangeMultiSelect (index, item) {
+      if (item.apply_cat) {
+        this.clearApplyCat(item)
+      }
       this.multiSelectAttr(item.id, item.group_select)
     },
     onChangeProductInput (index, item) {
+      if (item.apply_cat) {
+        this.clearApplyCat(item)
+      }
       this.inputProductAtter(item.id, item.group_input)
     },
     selectRemoteFilter (query, item) {
@@ -385,7 +514,38 @@ export default {
           })
         }
       })
+    },
+    handleApplyCatChecked (item) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '批量应用商品属性'])
+      }
+      if (item.cat_id === 0) {
+        return
+      }
+      if (item.apply_cat === true) {
+        item.apply_cat = true
+        if (!this.attrApplyCatMap[item.cat_id]) {
+          this.attrApplyCatMap[item.cat_id] = {}
+        }
+        this.attrApplyCatMap[item.cat_id][item.id] = item
+      } else {
+        delete this.attrApplyCatMap[item.cat_id][item.id]
+        if (Object.keys(this.attrApplyCatMap[item.cat_id]).length === 0) {
+          delete this.attrApplyCatMap[item.cat_id]
+        }
+      }
+      this.$emit('updateAttrApplyCat', this.attrApplyCatMap)
+    },
+    clearApplyCat (item) {
+      delete this.attrApplyCatMap[item.cat_id][item.id]
+      if (this.attrApplyCatMap[item.cat_id].length === 0) {
+        delete this.attrApplyCatMap[item.cat_id]
+      }
+      this.$emit('updateAttrApplyCat', this.attrApplyCatMap)
     }
   }
 }
 </script>
+<style lang="less" scoped>
+    @import '~@/assets/css/base.less';
+</style>

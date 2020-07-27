@@ -3,107 +3,42 @@ import utils from '@/common/utils'
 
 class TextHandler {
   constructor () {
-    this._checked = false
-    this._checkedPrefix = false
-    this._checkedSuffix = false
-    this._checkedDelete = false
-    this._checkedReplace = false
+    this.reset()
+  }
+  reset () {
     this.textPrefix = ''
     this.textSuffix = ''
     this.textDelete = ''
     this.textReplace1 = ''
     this.textReplace2 = ''
   }
-  get checked () {
-    return this._checked
-  }
-  set checked (val) {
-    if (!val) {
-      this._checkedPrefix = false
-      this._checkedSuffix = false
-      this._checkedDelete = false
-      this._checkedReplace = false
+  handle (text, type = -1) {
+    if (this.textDelete !== '' && [-1, 2].includes(type)) {
+      text = text.replace(new RegExp(this.textDelete, 'g'), '')
     }
-    this._checked = val
-  }
-  get checkedPrefix () {
-    return this._checkedPrefix
-  }
-  set checkedPrefix (val) {
-    if (val) {
-      this.checked = true
+    if (this.textReplace1 !== '' && this.textReplace2 !== '' && [-1, 1].includes(type)) {
+      text = text.replace(new RegExp(this.textReplace1, 'g'), this.textReplace2)
     }
-    this._checkedPrefix = val
-    if (this.isAllFalse()) {
-      this.checked = false
+    if (this.textPrefix !== '' && [-1, 0].includes(type)) {
+      text = this.textPrefix + text
+    }
+    if (this.textSuffix !== '' && [-1, 0].includes(type)) {
+      text = text + this.textSuffix
+    }
+    return text
+  }
+  cutOffCnText (text, isUsePrefix, limit) {
+    if (isUsePrefix) {
+      return utils.getStrRealPrefix(text, limit)
+    } else {
+      return utils.getStrRealSuffix(text, limit)
     }
   }
-  get checkedSuffix () {
-    return this._checkedSuffix
-  }
-  set checkedSuffix (val) {
-    if (val) {
-      this.checked = true
-    }
-    this._checkedSuffix = val
-    if (this.isAllFalse()) {
-      this.checked = false
-    }
-  }
-  get checkedDelete () {
-    return this._checkedDelete
-  }
-  set checkedDelete (val) {
-    if (val) {
-      this.checked = true
-    }
-    this._checkedDelete = val
-    if (this.isAllFalse()) {
-      this.checked = false
-    }
-  }
-  get checkedReplace () {
-    return this._checkedReplace
-  }
-  set checkedReplace (val) {
-    if (val) {
-      this.checked = true
-    }
-    this._checkedReplace = val
-    if (this.isAllFalse()) {
-      this.checked = false
-    }
-  }
-  isAllFalse () {
-    return !this._checkedPrefix && !this._checkedSuffix && !this._checkedDelete && !this._checkedReplace
-  }
-  handle (productList, field) {
-    for (let i in productList) {
-      let product = productList[i]
-      if (this._checkedDelete) {
-        product[field] = product[field].replace(new RegExp(this.textDelete, 'g'), '')
-      }
-      if (this._checkedReplace) {
-        product[field] = product[field].replace(new RegExp(this.textReplace1, 'g'), this.textReplace2)
-      }
-      if (this._checkedPrefix) {
-        product[field] = this.textPrefix + product[field]
-      }
-      if (this._checkedSuffix) {
-        product[field] = product[field] + this.textSuffix
-      }
-    }
-  }
-  cutOffTitle (productList, field, limit) {
-    for (let i in productList) {
-      let product = productList[i]
-      product[field] = utils.getStrRealPrefix(product[field], limit)
-    }
-  }
-  cutOffText (productList, field, limit) {
-    for (let i in productList) {
-      let product = productList[i]
-      product[field] = product[field].substr(0, limit)
+  cutOffText (text, isUsePrefix, limit) {
+    if (isUsePrefix) {
+      return text.substr(0, limit)
+    } else {
+      return text.substr(-limit)
     }
   }
 }
@@ -127,15 +62,13 @@ class StockHandler {
     for (let i in productList) {
       let product = productList[i]
       for (let j in product.sku_list) {
+        let sku = product.sku_list[j]
         if (parseInt(this._radio) === 1 && utils.isNumber(this.textStock)) {
-          product.sku_list[j].quantity = this.textStock
-          product.sku_list[j].update_type = 1
+          sku.quantity = parseInt(this.textStock)
         } else if (parseInt(this._radio) === 2 && utils.isNumber(this.textStockAdd)) {
-          product.sku_list[j].quantity = this.textStockAdd
-          product.sku_list[j].update_type = 2
+          sku.quantity = parseInt(sku.quantity) + parseInt(this.textStockAdd)
         } else if (parseInt(this._radio) === 3 && utils.isNumber(this.textStockSub)) {
-          product.sku_list[j].quantity = Math.max(-this.textStockSub, -product.sku_list[j].quantity)
-          product.sku_list[j].update_type = 2
+          sku.quantity = Math.max(parseInt(sku.quantity) - parseInt(this.textStockSub), 0)
         }
       }
     }

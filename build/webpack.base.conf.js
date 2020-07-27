@@ -28,7 +28,8 @@ module.exports = {
     'vue-router': 'VueRouter',
     'element-ui': 'ELEMENT',
     'fabric':'fabric',
-    'moment': 'moment'
+    'moment': 'moment',
+    'vuedraggable': 'vuedraggable'
   },
   output: {
     path: config.build.assetsRoot,

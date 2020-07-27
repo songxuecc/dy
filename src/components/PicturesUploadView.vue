@@ -1,38 +1,70 @@
 <template lang="html">
     <div class="picture-wall">
-        <el-upload list-type="picture-card"
-                   :on-preview="handlePictureCardPreview"
-                   :on-remove="handleRemove"
-                   :on-success="handleUploadSuccess"
-                   :on-error="handleUploadError"
-                   :before-upload="handleBeforeUpload"
-                   :file-list="pictureList"
-                   action="/api/uploadProductImage"
-                   :headers="getTokenHeaders"
-                   :data="{'belong_type': belongType}"
-        >
-            <i class="el-icon-plus upload-icon">
-                <br><span>({{ curPictureUrlList.length }}/{{ containLimit }})</span>
-            </i>
-        </el-upload>
+        <div v-if="tip" style="padding: 0 70px 5px; color: gray">{{ tip }}</div>
+        <ul class="el-upload-list el-upload-list--picture-card">
+            <draggable v-model="curPictureList" group="people" :disabled="!canDraggable || isPauseDraggable"
+                       @start="isDraging=true" @end="isDraging=false"
+            >
+                <li v-for="(picture, index) in curPictureList" :key="picture.url + index"
+                    class="el-upload-list__item is-success" @click="onClickImage(picture, index)"
+                >
+                    <el-image :ref="'image'+index" :src="picture.url" :preview-src-list="curPictureUrlList"
+                    ></el-image>
+                    <label class="el-upload-list__item-status-label" :style="{visibility: picture.bg ? 'visible' : 'hidden'}">
+                        <i class="el-icon-upload-success el-icon-check"></i>
+                    </label>
+                    <span class="el-upload-list__item-actions" @click.self="onClick(picture, index)">
+                        <span class="el-upload-list__item-preview" style="margin-left: 0px;"
+                              @click="onShowPreview(picture, index)"
+                        > <i class="el-icon-zoom-in"></i> </span>
+                        <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete"
+                              style="visibility: visible;" @click="onHandle(picture, index)"
+                        > <i class="el-icon-edit-outline"></i> </span>
+                        <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete"
+                              style="visibility: visible;" @click="onRemove(picture, index)"
+                        > <i class="el-icon-delete"></i> </span>
+                    </span>
+                    <input type="checkbox" v-if="isAllowOperation('select')" :ref="'pictureCheck'+index" class="check-upload"
+                           @change="handleSelect(picture, index, $event.target || $event.srcElement)"
+                    >
+                </li>
+                <el-upload
+                    slot="footer"
+                    class="el-upload el-upload--picture-card"
+                    :show-file-list="false"
+                    :on-success="handleUploadSuccess"
+                    :on-error="handleUploadError"
+                    :before-upload="handleBeforeUpload"
+                    action="/api/uploadProductImage"
+                    :headers="getTokenHeaders"
+                    :data="{'belong_type': belongType}"
+                    multiple
+                >
+                    <i class="el-icon-plus upload-icon">
+                        <br><span>({{ curPictureList.length }}/{{ containLimit }})</span>
+                    </i>
+                </el-upload>
+            </draggable>
+        </ul>
         <div v-if="containLimit!=-1">
             <span>图片最多 {{containLimit}} 张</span>
         </div>
-        <el-dialog :visible.sync="dialogVisible" custom-class="dialog-upward" append-to-body>
-            <el-carousel ref="carousel" trigger="click" :autoplay="false" height="800px" :initial-index="initialIndex">
-                <el-carousel-item v-for="url in curPictureUrlList" :key="url" :name="url" style="overflow: auto">
-                    <img width="100%" :src="url" alt="">
-                </el-carousel-item>
-            </el-carousel>
-        </el-dialog>
     </div>
 </template>
 <script>
 import common from '@/common/common'
 import { mapGetters } from 'vuex'
+import draggable from 'vuedraggable'
 
 export default {
+  components: {
+    draggable
+  },
   props: {
+    tip: {
+      type: String,
+      default: ''
+    },
     belongType: {
       type: Number,
       default: 0
@@ -47,17 +79,16 @@ export default {
     },
     featureType: {
       type: Number,
-      default: common.PictureViewFeature['delete'] | common.PictureViewFeature['add']
+      default: common.PictureViewFeature['delete'] | common.PictureViewFeature['add'] | common.PictureViewFeature['sort']
     },
     pictureUrlList: Array
   },
   data () {
     return {
-      dialogVisible: false,
-      initialIndex: 0,
-      imageNum: 0,
-      curPictureUrlList: [],
-      appendPictureUrlList: [],
+      isDraging: false,
+      canDraggable: true,
+      isPauseDraggable: false,
+      curPictureList: [],
       selectedPictureDic: {},
       elemUploadDiv: null
     }
@@ -66,83 +97,24 @@ export default {
     ...mapGetters({
       getTokenHeaders: 'getTokenHeaders'
     }),
-    pictureList () {
+    curPictureUrlList () {
       let list = []
-      for (let i in this.pictureUrlList) {
-        list.push({ url: this.pictureUrlList[i].url })
+      for (let i in this.curPictureList) {
+        list.push(this.curPictureList[i].url)
       }
+      this.$emit('imageChanged', this.curPictureList)
       return list
     },
     uploadIconVisible () {
-      return false
-      // return (this.featureType & common.PictureViewFeature['add']) &&
-      //   this.curPictureUrlList.length < this.containLimit
+      return (this.featureType & common.PictureViewFeature['add']) &&
+        this.curPictureList.length < this.containLimit
     }
   },
   watch: {
     pictureUrlList (list) {
-      this.$nextTick(function () {
-        let dic = {}
-        for (let i in this.pictureUrlList) {
-          if (parseInt(this.pictureUrlList[i].bg) === 1) {
-            dic[this.pictureUrlList[i].url] = 1
-          }
-        }
-        let elemList = this.$el.querySelectorAll('li.el-upload-list__item')
-        for (let i = 0; i < elemList.length; ++i) {
-          let elem = elemList[i]
-          let img = elem.querySelector('img.el-upload-list__item-thumbnail')
-          if ('src' in img && img.src in dic) {
-            let label = elem.querySelector('label.el-upload-list__item-status-label')
-            label.style.visibility = 'visible'
-          }
-        }
-        if (this.featureType & common.PictureViewFeature['delete']) {
-          elemList = this.$el.querySelectorAll('span.el-upload-list__item-preview')
-          for (let i = 0; i < elemList.length; ++i) {
-            elemList[i].style.marginLeft = '0px'
-          }
-          elemList = this.$el.querySelectorAll('span.el-upload-list__item-delete')
-          for (let i = 0; i < elemList.length; ++i) {
-            elemList[i].style.visibility = 'visible'
-          }
-        }
-        if (this.featureType & common.PictureViewFeature['select']) {
-          elemList = this.$el.querySelectorAll('li.el-upload-list__item')
-          for (let i = 0; i < elemList.length; ++i) {
-            let input = document.createElement('input')
-            input.type = 'checkbox'
-            input.className = 'check-upload'
-            input.disabled = (this.selectLimit === 0)
-            input.style.position = 'absolute'
-            input.style.top = '2px'
-            input.style.right = '2px'
-            input.style.fontSize = '20px'
-            let self = this
-            input.onchange = function (event) {
-              if (input.checked) {
-                self.handleSelect(i)
-              } else {
-                self.handleUnselect(i)
-              }
-            }
-            elemList[i].appendChild(input)
-          }
-        }
-        if (this.featureType & common.PictureViewFeature['handle_preview']) {
-          elemList = this.$el.querySelectorAll('span.el-upload-list__item-preview')
-          for (let i = 0; i < elemList.length; ++i) {
-            elemList[i].firstElementChild.className = 'el-icon-edit-outline'
-          }
-        }
-      })
-
-      this.curPictureUrlList = []
+      this.curPictureList.splice(0, this.curPictureList.length)
       for (let i in list) {
-        this.curPictureUrlList.push(list[i].url)
-      }
-      for (let i in this.appendPictureUrlList) {
-        this.curPictureUrlList.push(this.appendPictureUrlList[i])
+        this.curPictureList.push(list[i])
       }
       this.selectedPictureDic = {}
 
@@ -152,65 +124,73 @@ export default {
     }
   },
   mounted () {
-    let elementList = document.querySelectorAll('div.dialog-upward')
-    for (let i = 0; i < elementList.length; ++i) {
-      elementList[i].style.marginTop = '5vh'
-    }
+    this.canDraggable = this.isAllowOperation('sort')
   },
   methods: {
     clear () {
-      this.appendPictureUrlList = []
     },
-    handleRemove (file, fileList) {
-      this.curPictureUrlList = []
-      for (let i in fileList) {
-        this.curPictureUrlList.push(fileList[i].url)
+    setCurPictureList (arr) {
+      if (arr) {
+        this.curPictureList = [...arr]
       }
-      delete this.selectedPictureDic[file.url]
+    },
+    isAllowOperation (operation) {
+      if (!['delete', 'select', 'add', 'handle', 'sort'].includes(operation)) {
+        return false
+      }
+      return (this.featureType & common.PictureViewFeature[operation]) !== 0
+    },
+    onClick (picture, index) {
+      if (this.isAllowOperation('select')) {
+        let checkElements = this.$refs['pictureCheck' + index]
+        if (checkElements.length > 0 && !checkElements[0].disabled) {
+          checkElements[0].checked = !checkElements[0].checked
+          this.handleSelect(picture, index, checkElements[0])
+        }
+      } else {
+        this.onShowPreview(picture, index)
+      }
+    },
+    onClickImage (picture, index) {
+      if (this.$refs['image' + index].length > 0 && !this.$refs['image' + index][0].showViewer) {
+        this.isPauseDraggable = false
+      }
+    },
+    onShowPreview (picture, index) {
+      this.isPauseDraggable = true
+      // clickHandler 文档中没有，在源码中找到的
+      // https://github.com/ElemeFE/element/blob/dev/packages/image/src/main.vue
+      this.$refs['image' + index][0].clickHandler()
+    },
+    onRemove (picture, index) {
+      this.curPictureList.splice(index, 1)
+      delete this.selectedPictureDic[picture.url]
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
       this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
     },
-    handlePictureCardPreview (file) {
-      if (this.featureType & common.PictureViewFeature['handle_preview']) {
-        this.$emit('handlePreview', file)
+    onHandle (picture, index) {
+      this.$emit('handleEdit', picture, index)
+    },
+    handleSelect (picture, index, target) {
+      let url = this.pictureUrlList[index].url
+      let cnt = Object.keys(this.selectedPictureDic).length
+      let isEditDisable = 0
+      if (target.checked) {
+        this.selectedPictureDic[url] = 1
+        cnt++
+        isEditDisable = (cnt === this.selectLimit ? 1 : 0)
       } else {
-        for (let i in this.curPictureUrlList) {
-          if (file.url === this.curPictureUrlList[i]) {
-            this.initialIndex = parseInt(i)
-            break
-          }
-        }
-        this.dialogVisible = true
-        let self = this
-        setTimeout(function () {
-          self.$refs['carousel'].setActiveItem(file.url)
-        }, 10)
+        delete this.selectedPictureDic[url]
+        cnt--
+        isEditDisable = (cnt === this.selectLimit - 1 ? -1 : 0)
       }
-    },
-    handleSelect (index) {
-      let url = this.pictureUrlList[index].url
-      this.selectedPictureDic[url] = 1
-      let cnt = Object.keys(this.selectedPictureDic).length
       this.$emit('onSelectChanged', cnt)
-      if (cnt >= this.selectLimit) {
-        let elemList = this.$el.querySelectorAll('input.check-upload')
-        for (let i = 0; i < elemList.length; ++i) {
-          if (!elemList[i].checked) {
-            elemList[i].disabled = true
-          }
-        }
-      }
-    },
-    handleUnselect (index) {
-      let url = this.pictureUrlList[index].url
-      delete this.selectedPictureDic[url]
-      let cnt = Object.keys(this.selectedPictureDic).length
-      this.$emit('onSelectChanged', cnt)
-      if (cnt < this.selectLimit) {
-        let elemList = this.$el.querySelectorAll('input.check-upload')
-        for (let i = 0; i < elemList.length; ++i) {
-          if (!elemList[i].checked) {
-            elemList[i].disabled = false
+      if (isEditDisable) {
+        let length = this.curPictureList.length
+        for (let i = 0; i < length; ++i) {
+          let checkElements = this.$refs['pictureCheck' + i]
+          if (checkElements.length > 0 && !checkElements[0].checked) {
+            checkElements[0].disabled = (isEditDisable > 0)
           }
         }
       }
@@ -232,12 +212,9 @@ export default {
         if (response.msg) {
           this.$message.error(response.msg)
         }
-        fileList.pop()
         return
       }
-      this.appendPictureUrlList.push(response.data.image_url)
-      this.curPictureUrlList.push(response.data.image_url)
-      file.url = response.data.image_url
+      this.curPictureList.push({ 'url': response.data.image_url, 'bg': 0 })
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
       this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
     },
