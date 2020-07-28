@@ -904,6 +904,9 @@ export default {
       this.tpProductList.forEach(row => {
         this.$refs.selectCaptureTable.toggleRowSelection(row)
       })
+    },
+    onOpenedCate () {
+      this.$refs.categorySelectView.initCate()
     }
   }
 }
