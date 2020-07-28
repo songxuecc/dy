@@ -77,7 +77,7 @@
                         <span>{{product.model.price}} 元
                           <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
                               <div slot="content">
-                                <ul style="padding: 0; margin: 0;">其他平台市场价，请在上传拼多多时设置市场价</ul>
+                                <ul style="padding: 0; margin: 0;">其他平台市场价，请在上传抖音时设置价格</ul>
                               </div>
                               <i class="el-icon-question"></i>
                           </el-tooltip>
@@ -181,7 +181,7 @@
                               <span>价格</span>
                               <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
                                   <div slot="content">
-                                    <ul style="padding: 0; margin: 0;">其他平台SKU价格，请在上传拼多多时设置单买价与团购价</ul>
+                                    <ul style="padding: 0; margin: 0;">其他平台SKU价格，请在上传抖音时设置价格</ul>
                                   </div>
                                   <i class="el-icon-question"></i>
                               </el-tooltip>
