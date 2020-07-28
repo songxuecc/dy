@@ -88,6 +88,23 @@
                                     :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
                           </el-input>
                       </el-form-item>
+                    <el-form-item label="品牌:">
+                      <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
+                        <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
+                                   :label="item.brand_chinese_name || item.brand_english_name"
+                        ></el-option>
+                      </el-select>
+                      <el-button type="text" @click="reloadBrandList">
+                          <i class="el-icon-refresh"></i>
+                      </el-button>
+                      <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
+                               :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
+                      >添加品牌</el-link>
+                      <el-button size="mini" type="primary" @click="applySelectBrandToSelection()">应用到选中的商品</el-button>
+                    </el-form-item>
+                    <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
+                        <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
+                    </el-form-item>
                       <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
                           <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
                       </el-form-item>
@@ -397,11 +414,12 @@ export default {
       dialogPromoPriceVisible: false,
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
       descPicUrlList: [],
+      shopBrandList: [],
       origionAttr: {},
       isShowTemplateTab: false,
       saveBtnText: '保存',
@@ -419,6 +437,7 @@ export default {
       productList: [],
       productTitleDic: {},
       productRemoveFirstBannerDic: {},
+      productBrandDic: {},
       productDic: {},
       attrApplyCatMap: {},
       saveAll: false,
@@ -427,6 +446,7 @@ export default {
       mouseOverIndex: -1,
       isLoading: false,
       applySelectCateToAllVisible: false,
+      applySelectBrandToAllVisible: false,
       hasSelection: false,
       selectedProductIds: [],
       batchEditTitleVisible: false,
@@ -534,7 +554,7 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList'
+          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -603,6 +623,7 @@ export default {
 
         this.bannerPicUrlList = data.banner_json
         this.descPicUrlList = data.desc_json
+        this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
         this.initSku(data.sku_json, data.tp_id)
         this.updateIsSingleSku()
@@ -617,6 +638,9 @@ export default {
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
+        if (data.brand_id) {
+          this.product.assign({brand_id: data.brand_id})
+        }
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
@@ -626,6 +650,10 @@ export default {
 
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
+
+        if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
+          this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
+        }
 
         this.isLoading = false
       }, data => {
@@ -652,7 +680,11 @@ export default {
       this.dialogVisible = true
     },
     onOpenedCate () {
-      this.$refs.categorySelectView.initCate(this.product.model.cat_id, this.product.model.category_show)
+      if (this.product.model.cat_id !== 0) {
+        this.$refs.categorySelectView.initCate(this.product.model.cat_id, this.product.model.category_show)
+      } else {
+        this.$refs.categorySelectView.initCate()
+      }
     },
     onChangeCate (data) {
       this.dialogVisible = false
@@ -703,6 +735,11 @@ export default {
         return true
       }
       return skuName.length > 18
+    },
+    reloadBrandList () {
+      this.request('getShopBrandList', {}, data => {
+        this.shopBrandList = data
+      })
     },
     onDeleteSku (pId, pVid) {
       this.deleteSkus(pId, pVid)
@@ -759,7 +796,8 @@ export default {
                 desc_text: product.model.description,
                 sku_json: this.getSkuUploadObjByShowList(product.model.skuShowList),
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
-                desc_json: product.model.descPicUrlList.map(val => val['url'])
+                desc_json: product.model.descPicUrlList.map(val => val['url']),
+                brand_id: product.model.brand_id || 0
               }
             }
             tpProductList.push(productParams)
@@ -780,6 +818,12 @@ export default {
           if (this.productRemoveFirstBannerDic[tpProductId] && !this.products[tpProductId]) {
             productParams['tp_property_json'] = {
               remove_first_banner: true
+            }
+            isChange = true
+          }
+          if (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId]) {
+            productParams['tp_property_json'] = {
+              brand_id: this.productBrandDic[tpProductId] || 0
             }
             isChange = true
           }
@@ -830,6 +874,7 @@ export default {
           // 批量保存完成
           self.productEditSavingPercent = 100
           self.products = {}
+          self.productBrandDic = {}
           self.updateAttrApplyCat({})
           for (let i in this.productList) {
             this.productTitleDic[this.productList[i].tp_product_id] = this.productList[i].title
@@ -955,6 +1000,7 @@ export default {
       this.skuShowList = []
       this.productTitleDic = {}
       this.productRemoveFirstBannerDic = {}
+      this.productBrandDic = {}
       this.updateAttrApplyCat({})
       this.$refs['bannerPicListView'].clear()
       this.$refs['descPicListView'].clear()
@@ -983,7 +1029,9 @@ export default {
           this.productDic[tpProductId].title !== this.productTitleDic[tpProductId] ||
           (this.products[tpProductId] && this.products[tpProductId].isDiff()) ||
           this.attrApplyCatMap[this.productList[i].category_id] ||
-          (this.productRemoveFirstBannerDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.bannerPicUrlList.length > 1)))) {
+          (this.productRemoveFirstBannerDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.bannerPicUrlList.length > 1))) ||
+          (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId])
+        ) {
           this.productDic[tpProductId].isEdit = true
           isChanged = true
         } else {
@@ -1007,6 +1055,22 @@ export default {
       }
       this.updateProductEditStatus()
       this.updateRemoveFirstBanner()
+    },
+    applySelectBrandToSelection () {
+      for (let i in this.selectedProductIds) {
+        let tpProductId = this.selectedProductIds[i]
+        this.productBrandDic[tpProductId] = this.product.model.brand_id
+      }
+      for (let i in this.productList) {
+        let tpProductId = this.productList[i].tp_product_id
+        if (tpProductId in this.products) {
+          let product = this.products[tpProductId]
+          if (this.productBrandDic.hasOwnProperty(tpProductId)) {
+            Object.assign(product.model, {brand_id: this.productBrandDic[tpProductId]})
+          }
+        }
+      }
+      this.updateProductEditStatus()
     },
     updateRemoveFirstBanner () {
       for (let i in this.productList) {
