@@ -61,7 +61,7 @@
                       <el-form-item label="商品分类:">
                           <span>{{ product.model.category_show }}</span>
                           <el-button size="mini" @click="showSelectCateView">修改分类</el-button>
-                          <el-button size="mini" type="primary" @click="onApplySelectCateToSelection()">应用到选中的商品</el-button>
+                          <el-button size="mini" type="primary" @click="onApplySelectCateToSelection()" :disabled="product.model.cat_id === 0">应用到选中的商品</el-button>
                       </el-form-item>
                       <el-form-item label="商品标题:" style="margin-right: 20px;">
                           <el-input v-model="product.model.title" size="mini"
@@ -105,13 +105,10 @@
                     <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
                         <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
                     </el-form-item>
-                      <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
-                          <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
-                      </el-form-item>
-                      <el-form-item v-show="haveAttr" label="抖音属性:">
-                          <attribute-view ref="attributeView" @selectFilter="selectFilter" @onAttrChanged="onAttrChanged" @updateAttrApplyCat="updateAttrApplyCat"
-                          ></attribute-view>
-                      </el-form-item>
+                    <el-form-item v-show="haveAttr" label="抖音属性:">
+                        <attribute-view ref="attributeView" @selectFilter="selectFilter" @onAttrChanged="onAttrChanged" @updateAttrApplyCat="updateAttrApplyCat"
+                        ></attribute-view>
+                    </el-form-item>
                   </el-form>
                   <div class="common-bottom">
                   </div>
@@ -977,6 +974,7 @@ export default {
         this.productTitleDic[this.productList[i].tp_product_id] = this.productList[i].title
         this.productRemoveFirstBannerDic[this.productList[i].tp_product_id] = false
       }
+      this.productBrandDic = {}
       this.updateAttrApplyCat({})
       this.$refs.attributeView.setAttrRawDic(this.product.model.attrDic)
       this.$refs.attributeView.setAttrShowList(this.product.model.attrList)
@@ -1071,6 +1069,10 @@ export default {
         }
       }
       this.updateProductEditStatus()
+      this.$message({
+        message: '应用成功',
+        type: 'success'
+      })
     },
     updateRemoveFirstBanner () {
       for (let i in this.productList) {
@@ -1116,6 +1118,10 @@ export default {
       this.updateTitleChange()
       this.textHandler.reset()
       this.batchEditTitleVisible = false
+      this.$message({
+        message: '应用成功',
+        type: 'success'
+      })
     },
     onProductTitleChange (val) {
       if (this.product) {
