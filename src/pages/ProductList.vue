@@ -152,7 +152,7 @@
             @opened="captureSelectAll()">
             <span slot="title">删除选中的商品</span>
             <div style="margin-top: -30px;">
-              <p style="text-align: left;">*只删除软件的记录，对拼多多商品没影响。</p>
+              <p style="text-align: left;">*只删除软件的记录，对抖音商品没影响。</p>
               <el-table ref="selectCaptureTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
                     :row-style="{height:'30px'}" max-height="320"
                     @selection-change="handleCaptureSelectionChange"

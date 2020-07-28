@@ -137,7 +137,7 @@
           :show-close="false"
           :visible.sync="deleteProductVisible"
           width="30%">
-          <p>只删除软件的记录，对拼多多商品没影响，您确定要操作吗？</p>
+          <p>只删除软件的记录，对抖音商品没影响，您确定要操作吗？</p>
           <span slot="footer" class="dialog-footer">
             <el-button type="plain" @click="deleteProductVisible=false">取消</el-button>
             <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
