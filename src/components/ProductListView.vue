@@ -359,6 +359,9 @@ export default {
       if (row.status === 8 && !row.goods_commit_id) {
         return false
       }
+      if (row.status === 9) {
+        return false
+      }
       if ([1, 2].includes(parseInt(row.status))) {
         return false
       }

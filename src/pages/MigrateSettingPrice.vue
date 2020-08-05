@@ -452,7 +452,7 @@ export default {
               price: utils.fenToYuan(maxPriceFen)
             })
           }
-          this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', parseInt(tpProduct.discount_price_obj.model.price * 100))
+          this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', Math.round(tpProduct.discount_price_obj.model.price * 100))
           if (minPriceFen < 1e9) {
             let strFun = ' x ' + this.template.model[prefix + 'price_rate'] + '%' +
               (this.template.model[prefix + 'price_diff'] < 0 ? ' + ' : ' - ') +
@@ -538,8 +538,8 @@ export default {
       }
       for (let i in this.tpProductList) {
         let tpProduct = this.tpProductList[i]
-        let discountPriceFen = parseInt(tpProduct.discount_price_obj.model.price * 100)
-        let marketPriceFen = parseInt(tpProduct.market_price_obj.model.price * 100)
+        let discountPriceFen = Math.round(tpProduct.discount_price_obj.model.price * 100)
+        let marketPriceFen = Math.round(tpProduct.market_price_obj.model.price * 100)
         tpProduct.singlePriceError = ''
         tpProduct.groupPriceError = ''
         if (tpProduct.sku_json && tpProduct.sku_json.sku_map) {

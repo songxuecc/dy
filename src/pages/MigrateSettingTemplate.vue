@@ -21,9 +21,9 @@
                 <el-form-item label="客服号码:" prop="mobile">
                     <el-input v-model="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
-                <el-form-item label="佣金比例:" prop="cos_ratio">
-                  <el-input v-model.number="template.model.cos_ratio" size="medium" class="input-num" @input="check"></el-input><span>&nbsp;&nbsp;%</span>
-                </el-form-item>
+<!--                <el-form-item label="佣金比例:" prop="cos_ratio">-->
+<!--                  <el-input v-model.number="template.model.cos_ratio" size="medium" class="input-num" @input="check"></el-input><span>&nbsp;&nbsp;%</span>-->
+<!--                </el-form-item>-->
             </el-form>
             <el-form size="small" ref="template2" :model="template.model" :rules="rules" label-width="180px" style="width: 55%">
 
@@ -103,10 +103,10 @@ export default {
         mobile: [
           { required: true, message: '请输入客服号码', trigger: 'change' }
         ],
-        cos_ratio: [
-          { required: true, message: '请输入佣金比例', trigger: 'change' },
-          { type: 'number', message: '佣金比例数字' }
-        ],
+        // cos_ratio: [
+        //   { required: true, message: '请输入佣金比例', trigger: 'change' },
+        //   { type: 'number', message: '佣金比例数字' }
+        // ],
         is_pre_sale: [
           { required: true, message: '请选择是否是否预售', trigger: 'change' },
           { validator: validatePreSale, trigger: 'change' }
