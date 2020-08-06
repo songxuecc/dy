@@ -7,7 +7,7 @@
                 <el-step title="修改模板"></el-step>
             </el-steps>
         </div><br>
-        <el-card class="setting-content-with-tip" body-style="display:flex;">
+        <el-card class="setting-content-with-tip" body-style="display:flex; position:relative;">
             <el-form size="small" ref="template1" :model="template.model" :rules="rules" label-width="100px" style="width: 46%">
 
                 <el-form-item label="付款方式:" required>
@@ -60,6 +60,9 @@
                 </el-form-item>
 
             </el-form>
+          <div class="help-tips" @click="goHelpLink">
+            <span><i class="el-icon-s-opportunity"></i>如何填写？</span>
+          </div>
         </el-card>
         <div  class="common-bottom">
             <el-button style="margin-right: 15px" @click="goback">返回</el-button>
@@ -75,6 +78,7 @@
 <script>
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
+import common from '@/common/common.js'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 
@@ -291,7 +295,27 @@ export default {
           this.check()
         }
       })
+    },
+    goHelpLink () {
+      window.open(common.HELP_TIPS_LINK['migrateSettingTemplate'])
     }
   }
 }
 </script>
+
+<style lang="less" scoped>
+.help-tips {
+  width: 100px;
+  right: 0px;
+  bottom: 15px;
+  position: absolute;
+  font-size: 12px;
+  color: #409EFF;
+  cursor: pointer;
+  i {
+    font-size: 13px;
+    color: #efb947;
+    padding-right: 2px;
+  }
+}
+</style>
