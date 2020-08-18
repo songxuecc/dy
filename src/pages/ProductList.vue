@@ -56,7 +56,7 @@
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
             <template slot='title'>
                 <div>
-                    <span v-if="isShopCapture">店铺<span v-if="capture.shop_name!=''">【{{capture.shop_name}}】</span> {{captureShopStatusMap[capture.status]}}, 商品数量({{capture.total_num}}个) </span>
+                    <span v-if="isShopCapture">店铺<span v-if="capture.shop_name!=''">【{{capture.shop_name}}】</span> {{captureShopStatusMap[capture.status]}}, 商品数量({{captureNum}}个) </span>
                     <span v-if="isShopCapture">—— 第{{pagination.index}}页【</span>
                     <span v-if="capture.status_statistics.length == 0">
                         {{ captureStatusMap[capture.page_status] }}
@@ -276,6 +276,12 @@ export default {
         })
       }
       return options
+    },
+    captureNum () {
+      if (this.capture.total_num === 999) {
+        return '个数未知，请逐页复制'
+      }
+      return this.capture.total_num
     },
     isShowCaptureExtendOpt () {
       if (this.search.captureId.toString() === '-1' || !this.capture.capture_id) {

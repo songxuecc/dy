@@ -269,6 +269,8 @@ export default {
         return require('@/assets/images/vip.png')
       } else if (product.source === '一起做网店17zwd') {
         return require('@/assets/images/17.jpg')
+      } else if (product.source === '抖音') {
+        return require('@/assets/images/douyin.jpg')
       }
       return ''
     },
