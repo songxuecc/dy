@@ -65,9 +65,9 @@
                       </el-form-item>
                       <el-form-item label="商品标题:" style="margin-right: 20px;">
                           <el-input v-model="product.model.title" size="mini"
-                                    :class="['input-text-left']" @input="onProductTitleChange"
+                                    :class="['input-text-left', {'warn': (isTitleWarn || isTitleInfoWarn())}]" @input="onProductTitleChange"
                           >
-                              <span slot="append" class="hint">{{ getStrRealLength(product.model.title) }} / 60</span>
+                              <span slot="append" class="hint">{{ parseInt((getStrRealLength(product.model.title)+1)/2) }} / 30</span>
                           </el-input>
                           <el-button size="mini" type="primary" @click="onApplyTitleEditToSelection()">批量编辑选中商品标题</el-button>
                           <!-- <span style="font-size: 10px;">（已自动删除平台违禁词）</span> -->
