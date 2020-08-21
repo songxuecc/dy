@@ -142,7 +142,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       server: {
         proxy: {
           "/api": {
-            target: "https://pdd.huhuguanjia.com",
+            target: "https://dy.huhuguanjia.com",
             secure: false,
             pathRewrite: {
               '^/api': '/api',
