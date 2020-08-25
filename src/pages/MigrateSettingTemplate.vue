@@ -297,7 +297,7 @@ export default {
       })
     },
     goHelpLink () {
-      window.open(common.HELP_TIPS_LINK['migrateSettingTemplate'])
+      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/zghdvq')
     }
   }
 }
