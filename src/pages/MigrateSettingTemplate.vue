@@ -78,7 +78,6 @@
 <script>
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
-import common from '@/common/common.js'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 
