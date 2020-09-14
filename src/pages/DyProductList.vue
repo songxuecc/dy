@@ -1,24 +1,29 @@
 <template lang="html">
     <div v-loading="loadingCnt">
-        <el-tabs type="card" v-model="activeTabName" @tab-click="handleTabClick">
-            <el-tab-pane label="全部商品" name="normal">
-                <el-row>
-                    <el-col :span="20">
-                        <pdd-search-filter-view ref="pddSearchFilterView" @filterChange="onSearchChange"></pdd-search-filter-view>
-                    </el-col>
-                    <el-col :span="4" style="height:40px; display:flex; align-items:center;">
-                        <el-button size="small" style="margin-left: auto;" @click="updateBatchProduct"
-                                   :disabled="isDisableBatch"
-                        >批量修改</el-button>
-                    </el-col>
-                </el-row>
-            </el-tab-pane>
-            <el-tab-pane label="在售滞销商品" name="unsalable">
-                <pdd-unsalable-filter-view ref="pddUnsalableFilterView" @filterChange="onUnsalableChange"></pdd-unsalable-filter-view>
-            </el-tab-pane>
-        </el-tabs>
+<!--        <el-tabs type="card" v-model="activeTabName" @tab-click="handleTabClick">-->
+<!--            <el-tab-pane label="全部商品" name="normal">-->
+<!--                <el-row>-->
+<!--                    <el-col :span="20">-->
+<!--                        <dy-search-filter-view ref="dySearchFilterView" @filterChange="onSearchChange"></dy-search-filter-view>-->
+<!--                    </el-col>-->
+<!--                    <el-col :span="4" style="height:40px; display:flex; align-items:center;">-->
+<!--                        <el-button size="small" style="margin-left: auto;" @click="updateBatchProduct"-->
+<!--                                   :disabled="isDisableBatch"-->
+<!--                        >批量修改</el-button>-->
+<!--                    </el-col>-->
+<!--                </el-row>-->
+<!--            </el-tab-pane>-->
+<!--            <el-tab-pane label="在售滞销商品" name="unsalable">-->
+<!--                <dy-unsalable-filter-view ref="dyUnsalableFilterView" @filterChange="onUnsalableChange"></dy-unsalable-filter-view>-->
+<!--            </el-tab-pane>-->
+<!--        </el-tabs>-->
+        <el-row>
+            <el-col :span="20">
+                <dy-search-filter-view ref="dySearchFilterView" @filterChange="onSearchChange"></dy-search-filter-view>
+            </el-col>
+        </el-row>
         <div v-if="activeTabName == 'normal'">
-            <pdd-product-list-view ref="pddProductListView" :pddProductList="pddProductList" @selectProductList="onSelectChange">
+            <dy-product-list-view ref="dyProductListView" :dyProductList="dyProductList" @selectProductList="onSelectChange">
                 <template slot="upperLeft">
                     <el-button size="small" type="primary" @click="onSyncProducts" :disabled="isSyncing">
                       {{ syncButtonText }}
@@ -26,9 +31,9 @@
                     <span v-if="isShowLastSyncTime" style="font-size: 13px;">最近同步时间 {{ syncStatus.last_sync_time }}</span>
                 </template>
                 <template slot="upperRight">
-                    <el-button size="small" @click="openDialogExport" class="nodim" style="right: 0px;">商品导出</el-button>
+<!--                    <el-button size="small" @click="openDialogExport" class="nodim" style="right: 0px;">商品导出</el-button>-->
                 </template>
-            </pdd-product-list-view>
+            </dy-product-list-view>
             <br>
             <el-pagination
                     v-show="loadingCnt == 0"
@@ -41,7 +46,7 @@
             </el-pagination>
         </div>
         <div v-else-if="activeTabName == 'unsalable'">
-            <pdd-product-list-view ref="pddUnsalableListView" :pddProductList="pddUnsalableList"></pdd-product-list-view>
+            <dy-product-list-view ref="dyUnsalableListView" :dyProductList="dyUnsalableList"></dy-product-list-view>
             <br>
             <el-pagination
                     v-show="loadingCnt == 0"
@@ -93,10 +98,10 @@
     </div>
 </template>
 <script>
-import pddProductListView from '@/components/PddProductListView.vue'
+import dyProductListView from '@/components/DyProductListView.vue'
 import batchEditView from '@/components/BatchEditView.vue'
-import pddSearchFilterView from '@/components/PddSearchFilterView.vue'
-import pddUnsalableFilterView from '@/components/PddUnsalableFilterView.vue'
+import dySearchFilterView from '@/components/DySearchFilterView.vue'
+import dyUnsalableFilterView from '@/components/DyUnsalableFilterView.vue'
 import request from '@/mixins/request.js'
 import { mapGetters, mapActions } from 'vuex'
 import common from '@/common/common.js'
@@ -105,10 +110,10 @@ import utils from '@/common/utils.js'
 export default {
   mixins: [request],
   components: {
-    pddProductListView,
+    dyProductListView,
     batchEditView,
-    pddSearchFilterView,
-    pddUnsalableFilterView
+    dySearchFilterView,
+    dyUnsalableFilterView
   },
   data () {
     return {
@@ -119,8 +124,8 @@ export default {
       activeTabName: 'normal',
       isDisableBatch: true,
       isUnsalableLoaded: false,
-      pddProductList: [],
-      pddUnsalableList: [],
+      dyProductList: [],
+      dyUnsalableList: [],
       pagination1: {
         index: 1,
         size: 10,
@@ -192,11 +197,11 @@ export default {
       clearTimeout(this.syncTimer)
       this.syncTimer = null
     }
-    if (this.$refs.pddProductListView) {
-      this.$refs.pddProductListView.dialogOptimizeVisible = false
+    if (this.$refs.dyProductListView) {
+      this.$refs.dyProductListView.dialogOptimizeVisible = false
     }
-    if (this.$refs.pddUnsalableListView) {
-      this.$refs.pddUnsalableListView.dialogOptimizeVisible = false
+    if (this.$refs.dyUnsalableListView) {
+      this.$refs.dyUnsalableListView.dialogOptimizeVisible = false
     }
   },
   methods: {
@@ -230,8 +235,8 @@ export default {
       })
     },
     getProductList (isResetIndex = true, isSilent = false) {
-      if (this.$refs.pddProductListView) {
-        this.$refs.pddProductListView.changeSelectAllData()
+      if (this.$refs.dyProductListView) {
+        this.$refs.dyProductListView.changeSelectAllData()
       }
 
       this.isLoadProduct = true
@@ -239,22 +244,22 @@ export default {
         this.pagination1.index = 1
       }
 
-      let params = this.$refs.pddSearchFilterView.getParams()
+      let params = this.$refs.dySearchFilterView.getParams()
       params['page_index'] = this.pagination1.index
       params['page_size'] = this.pagination1.size
 
       this.request('getProductList', params, data => {
-        this.pddProductList = data.items
+        this.dyProductList = data.items
         this.pagination1.total = data.total
 
-        if (this.$refs.pddProductListView) {
-          this.$refs.pddProductListView.setSelectRow()
+        if (this.$refs.dyProductListView) {
+          this.$refs.dyProductListView.setSelectRow()
         }
       }, undefined, isSilent)
     },
     getUnsalableProductList (isResetIndex = true, isSilent = false) {
-      if (this.$refs.pddUnsalableListView) {
-        this.$refs.pddUnsalableListView.changeSelectAllData()
+      if (this.$refs.dyUnsalableListView) {
+        this.$refs.dyUnsalableListView.changeSelectAllData()
       }
 
       this.isLoadProduct = true
@@ -262,16 +267,16 @@ export default {
         this.pagination2.index = 1
       }
 
-      let params = this.$refs.pddUnsalableFilterView.getParams()
+      let params = this.$refs.dyUnsalableFilterView.getParams()
       params['page_index'] = this.pagination2.index
       params['page_size'] = this.pagination2.size
 
       this.request('getUnsalableProductList', params, data => {
-        this.pddUnsalableList = data.items
+        this.dyUnsalableList = data.items
         this.pagination2.total = data.total
 
-        if (this.$refs.pddUnsalableListView) {
-          this.$refs.pddUnsalableListView.setSelectRow()
+        if (this.$refs.dyUnsalableListView) {
+          this.$refs.dyUnsalableListView.setSelectRow()
         }
       }, undefined, isSilent)
     },
@@ -304,7 +309,7 @@ export default {
       this.getUnsalableProductList(false)
     },
     dialogBatchOpened () {
-      this.$refs.batchEditView.setProductList(this.$refs.pddProductListView.selectProductList)
+      this.$refs.batchEditView.setProductList(this.$refs.dyProductListView.selectProductList)
     },
     dialogBatchClose () {
       this.$refs.batchEditView.onClose()
@@ -365,7 +370,7 @@ export default {
       })
     },
     onSelectChange () {
-      this.isDisableBatch = (this.$refs.pddProductListView.selectProductList.length === 0)
+      this.isDisableBatch = (this.$refs.dyProductListView.selectProductList.length === 0)
     },
     delayProductExcelInfo () {
       if (this.syncTimer) {

@@ -8,6 +8,7 @@ import tpProduct from './modules/tpProduct'
 import subscrible from './modules/subscribe'
 import notification from './modules/notification'
 import picture from './modules/picture'
+import controller from './modules/controller'
 
 Vue.use(Vuex)
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     tpProduct,
     subscrible,
     notification,
-    picture
+    picture,
+    controller
   }
 })

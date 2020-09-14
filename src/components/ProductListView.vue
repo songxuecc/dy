@@ -403,7 +403,6 @@ export default {
     },
     toggleSelectAll (isSelect) {
       this.isSelectAll = !this.isSelectAll
-//      console.log('--- toggleSelectAll', isSelect, this.isCheckboxSelect, this.isSelectAll, this.isSelectIndeterminate)
       if (this.isSelectIndeterminate) {
         this.isSelectAll = true
 //        this.isCheckboxSelect = true

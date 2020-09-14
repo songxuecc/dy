@@ -5,6 +5,8 @@ import Migrate from '@/pages/Migrate'
 import MigrateList from '@/pages/MigrateList'
 import CaptureList from '@/pages/CaptureList'
 import ProductList from '@/pages/ProductList'
+import DyProductList from '@/pages/DyProductList'
+import BatchEdit from '@/pages/BatchEdit'
 import MigrateSettingPrice from '@/pages/MigrateSettingPrice.vue'
 import MigrateSettingTemplate from '@/pages/MigrateSettingTemplate.vue'
 import Login from '@/pages/Login'
@@ -63,6 +65,24 @@ const router = new Router({
       path: '/productList',
       name: 'ProductList',
       component: ProductList,
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/dyProductList',
+      name: 'DyProductList',
+      component: DyProductList,
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/batchEdit/:tab',
+      name: 'BatchEdit',
+      component: BatchEdit,
       meta: {
         keepAlive: true,
         requiresAuth: true

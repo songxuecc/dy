@@ -15,12 +15,11 @@
                 </el-col>
             </el-row>
         </div>
-        <el-table ref="pddProductListTable" :data="pddProductList" row-key="goods_id" border style="width: 100%"
+        <el-table ref="dyProductListTable" :data="dyProductList" row-key="goods_id" border style="width: 100%"
                   :row-style="{height:'68px'}" :cell-style="{padding:0}"
-                  @selection-change="handleSelectionChange"
         >
-            <el-table-column type="selection" :reserve-selection="true" :selectable="this.$parent.isSelectionEnable ===undefined ? function(){return true}:this.$parent.isSelectionEnable">
-            </el-table-column>
+<!--            <el-table-column type="selection" :reserve-selection="true" :selectable="this.$parent.isSelectionEnable ===undefined ? function(){return true}:this.$parent.isSelectionEnable">-->
+<!--            </el-table-column>-->
             <el-table-column label="图片" width="100" align="center">
                 <template slot-scope="scope">
                     <img style="height:60px;max-width:79px;" :src="scope.row.image_url">
@@ -28,31 +27,34 @@
             </el-table-column>
             <el-table-column label="标题">
                 <template slot-scope="scope">
-                    <el-link type="primary" :underline="false" :href="'https://mobile.yangkeduo.com/goods.html?goods_id=' + scope.row.goods_id" target="_blank" >
+                    <el-link type="primary" :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
                         {{ scope.row.goods_name }}
                     </el-link><br>
                     <div>
-                        <label style="font-size:12px" v-if="scope.row.outer_goods_id">商家编码: {{scope.row.outer_goods_id}}</label>
-                        <el-tooltip class="item" effect="light" placement="right" v-if="isProductEnableEdit">
-                            <div slot="content">
-                                <div>
-                                    <span style="font-size: 14px">商品信息完整度</span>
-                                    <el-rate style="display: inline;" disabled v-model="scope.row.score" show-score score-template="{value}分"></el-rate>
-                                </div>
-                                <div v-for="(item, index) in scope.row.score_tips" :key="index" style="padding-top: 10px">
-                                    <span style="display:inline-block; width:100px">{{ item[0] }}</span>
-                                    <span>{{ item[1] }}</span>
-                                </div>
-                                <div style="text-align: center; padding-top: 10px;">
-                                    <el-button size="small" @click="optimizeProduct(scope.row)">去优化</el-button>
-                                </div>
-                                <!--<div style="padding-top: 10px; color: gray"> * 同步或更新后的商品分数将于1小时内更新 </div>-->
-                            </div>
-                            <div :class="['score', (scope.row.score >= 4 ? 'good-score' : 'bad-score')]">
-                                {{ scope.row.score > 0 ? scope.row.score + '分' : '尚未评分' }}
-                            </div>
-                        </el-tooltip>
+                      <label style="font-size:12px">{{ scope.row.goods_id }}</label>
                     </div>
+<!--                    <div>-->
+<!--                        <label style="font-size:12px" v-if="scope.row.outer_goods_id">商家编码: {{scope.row.outer_goods_id}}</label>-->
+<!--                        <el-tooltip class="item" effect="light" placement="right" v-if="isProductEnableEdit">-->
+<!--                            <div slot="content">-->
+<!--                                <div>-->
+<!--                                    <span style="font-size: 14px">商品信息完整度</span>-->
+<!--                                    <el-rate style="display: inline;" disabled v-model="scope.row.score" show-score score-template="{value}分"></el-rate>-->
+<!--                                </div>-->
+<!--                                <div v-for="(item, index) in scope.row.score_tips" :key="index" style="padding-top: 10px">-->
+<!--                                    <span style="display:inline-block; width:100px">{{ item[0] }}</span>-->
+<!--                                    <span>{{ item[1] }}</span>-->
+<!--                                </div>-->
+<!--                                <div style="text-align: center; padding-top: 10px;">-->
+<!--                                    <el-button size="small" @click="optimizeProduct(scope.row)">去优化</el-button>-->
+<!--                                </div>-->
+<!--                                &lt;!&ndash;<div style="padding-top: 10px; color: gray"> * 同步或更新后的商品分数将于1小时内更新 </div>&ndash;&gt;-->
+<!--                            </div>-->
+<!--                            <div :class="['score', (scope.row.score >= 4 ? 'good-score' : 'bad-score')]">-->
+<!--                                {{ scope.row.score > 0 ? scope.row.score + '分' : '尚未评分' }}-->
+<!--                            </div>-->
+<!--                        </el-tooltip>-->
+<!--                    </div>-->
                 </template>
             </el-table-column>
             <el-table-column label="类目" width="120">
@@ -62,51 +64,35 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column label="团购价" width="80">
+            <el-table-column label="折扣价" width="80">
                 <template slot-scope="scope">
-                    {{
-                        scope.row.min_multi_price === scope.row.max_multi_price ? scope.row.max_multi_price / 100
-                        : scope.row.min_multi_price / 100 + ' ~'
-                    }}
-                    <br/>
-                    {{
-                        scope.row.min_multi_price === scope.row.max_multi_price ? ''
-                        : scope.row.max_multi_price / 100
-                    }}
+                    {{ scope.row.discount_price / 100 }}
                 </template>
             </el-table-column>
-            <el-table-column label="单购价" width="80">
+            <el-table-column label="市场价" width="80">
                 <template slot-scope="scope">
-                    {{
-                    scope.row.min_price === scope.row.max_price ? scope.row.max_price / 100
-                    : scope.row.min_price / 100 + ' ~'
-                    }}
-                    <br/>
-                    {{
-                        scope.row.min_price === scope.row.max_price ? ''
-                        : scope.row.max_price / 100
-                    }}
+                    {{ scope.row.market_price / 100 }}
                 </template>
             </el-table-column>
             <el-table-column prop="goods_quantity" label="库存" width="80">
             </el-table-column>
             <el-table-column label="销售状态" width="80">
                 <template slot-scope="scope">
-                    {{ pddProductStatusMap[scope.row.status] }}
+                    {{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="操作" width="150" v-if="isProductEnableEdit">
+            <el-table-column prop="" label="操作" width="80" v-if="isProductEnableEdit">
                 <template slot-scope="scope">
-                    <el-button type="primary" size="small" @click="productEdit(scope.row)">修改</el-button>
-                    <el-button type="primary" size="small" @click="setSaleStatus(scope.row)">
-                        {{ getOptText(scope.row) }}
-                    </el-button>
+                    <el-button type="primary" size="small" @click="productEdit(scope.row)" :disabled="!checkProductEnableEdit(scope.row)">修改</el-button>
+<!--                    <el-button type="primary" size="small" @click="setSaleStatus(scope.row)">-->
+<!--                        {{ getOptText(scope.row) }}-->
+<!--                    </el-button>-->
                 </template>
             </el-table-column>
         </el-table>
 
         <el-dialog title="商品编辑" class="product-dialog" :visible.sync="dialogEditVisible" @opened="dialogEditOpened" @close="dialogEditClose"  :before-close="dialogBeforeClose">
-            <pdd-product-edit-view ref="productEditView" @changeProduct="onChangeProduct" @closeDialog="onCloseDialogEdit"></pdd-product-edit-view>
+            <dy-product-edit-view ref="productEditView" @changeProduct="onChangeProduct" @closeDialog="onCloseDialogEdit"></dy-product-edit-view>
         </el-dialog>
         <el-dialog title="商品优化" class="product-dialog" :visible.sync="dialogOptimizeVisible" @opened="dialogOptimizeOpened" @close="dialogOptimizeClose">
             <product-optimize-view ref="productOptimizeView" @changeProduct="onChangeProduct"></product-optimize-view>
@@ -123,7 +109,7 @@
             </el-table-column>
             <el-table-column label="标题">
                 <template slot-scope="scope">
-                    <a :href="'https://mobile.yangkeduo.com/goods.html?goods_id=' + scope.row.goods_id" target="_blank" >
+                    <a :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
                         {{ scope.row.goods_name }}
                     </a><br>
                     <div>
@@ -168,7 +154,7 @@
             </el-table-column>
             <el-table-column label="销售状态" width="80">
                 <template slot-scope="scope">
-                    {{ pddProductStatusMap[scope.row.status] }}
+                    {{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}
                 </template>
             </el-table-column>
             <el-table-column prop="" label="操作" width="90">
@@ -181,7 +167,7 @@
     </div>
 </template>
 <script>
-import pddProductEditView from '@/components/PddProductEditView.vue'
+import dyProductEditView from '@/components/DyProductEditView.vue'
 import productOptimizeView from '@/components/ProductOptimizeView.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
@@ -190,7 +176,7 @@ import utils from '@/common/utils.js'
 export default {
   mixins: [request],
   props: {
-    pddProductList: Array,
+    dyProductList: Array,
     isProductEnableEdit: {
       type: Boolean,
       default: true
@@ -207,12 +193,12 @@ export default {
     }
   },
   watch: {
-    pddProductList: function (newVal, oldVal) {
+    dyProductList: function (newVal, oldVal) {
       this.setSelectRow()
     }
   },
   components: {
-    pddProductEditView,
+    dyProductEditView,
     productOptimizeView
   },
   data () {
@@ -231,8 +217,8 @@ export default {
   mounted () {
   },
   computed: {
-    pddProductStatusMap () {
-      return common.pddProductStatusMap
+    dyProductStatusMap () {
+      return common.dyProductStatusMap
     },
     updateInfo () {
 //      return '正在修改商品'
@@ -240,6 +226,19 @@ export default {
     }
   },
   methods: {
+    checkProductEnableEdit (product) {
+      if (!this.isProductEnableEdit) {
+        return false
+      }
+      if (product) {
+        if ((product.status === 0 && product.check_status === 1) || // 草稿箱
+          (product.status === 1 && product.check_status === 5) // 封禁中
+        ) {
+          return false
+        }
+      }
+      return true
+    },
     getLastCategory (category) {
       return utils.getLastCategory(category)
     },
@@ -252,10 +251,10 @@ export default {
       this.selectAllProductList.forEach(row => {
         selectAllIds.push(row['goods_id'])
       })
-      this.$refs.pddProductListTable.clearSelection()
-      for (var i = 0; i < this.pddProductList.length; i++) {
-        if (selectAllIds.indexOf(this.pddProductList[i]['goods_id']) >= 0) {
-          this.$refs.pddProductListTable.toggleRowSelection(this.pddProductList[i], true)
+      this.$refs.dyProductListTable.clearSelection()
+      for (var i = 0; i < this.dyProductList.length; i++) {
+        if (selectAllIds.indexOf(this.dyProductList[i]['goods_id']) >= 0) {
+          this.$refs.dyProductListTable.toggleRowSelection(this.dyProductList[i], true)
         }
       }
     },
@@ -276,7 +275,7 @@ export default {
         }
       })
       let noSelectIds = []
-      this.pddProductList.forEach(row => {
+      this.dyProductList.forEach(row => {
         if (selectIds.indexOf(row['goods_id']) < 0) {
           noSelectIds.push(row['goods_id'])
         }
@@ -318,9 +317,9 @@ export default {
     },
     getOptText (product) {
       if (product.status === 1) {
-        return '下架'
-      } else {
         return '上架'
+      } else {
+        return '下架'
       }
     },
     setSaleStatus (product) {
@@ -417,8 +416,8 @@ export default {
             sku.quantity = dicSku[sku.sku_id].quantity
             sku.price = dicSku[sku.sku_id].price
             sku.multi_price = dicSku[sku.sku_id].multi_price
-            sku.is_onsale = dicSku[sku.sku_id].is_onsale
-            sku.limit_quantity = dicSku[sku.sku_id].limit_quantity
+            // sku.is_onsale = dicSku[sku.sku_id].is_onsale
+            // sku.limit_quantity = dicSku[sku.sku_id].limit_quantity
             quantity += parseInt(sku.quantity)
             minPrice = Math.min(minPrice, sku.price)
             maxPrice = Math.max(maxPrice, sku.price)

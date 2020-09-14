@@ -56,7 +56,7 @@ export default {
     return {
       search: {
         key: '',
-        status: '1',
+        status: '0-3',
         captureStatus: -1,
         minMultiPrice: '',
         maxMultiPrice: '',
@@ -74,11 +74,12 @@ export default {
   computed: {
     statusOptions () {
       let options = []
-      for (let key in common.pddProductStatusMap) {
-        let label = common.pddProductStatusMap[key] === '全部' ? '商品状态' : common.pddProductStatusMap[key]
+      for (let key in common.dyProductStatusMap) {
+        let label = common.dyProductStatusMap[key] === '全部' ? '商品状态' : common.dyProductStatusMap[key]
         options.push({ value: key, label: label })
       }
-      return options.sort((a, b) => a.value - b.value)
+      // return options.sort((a, b) => a.value - b.value)
+      return options
     }
   },
   mounted () {
@@ -88,9 +89,19 @@ export default {
       this.$emit('filterChange')
     },
     getParams () {
+      let arrStatus = this.search.status.split('-')
+      let status = -1
+      let checkStatus = -1
+      if (arrStatus.length > 1 && arrStatus[0]) {
+        status = parseInt(arrStatus[0])
+      }
+      if (arrStatus.length > 1 && arrStatus[1]) {
+        checkStatus = parseInt(arrStatus[1])
+      }
       let params = {
         keyword: this.search.key,
-        status: this.search.status,
+        status: status,
+        check_status: checkStatus,
         capture_status: this.search.captureStatus
         // ignore_has_watermark: this.search.ignoreHasWaterMark
       }

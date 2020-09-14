@@ -1,6 +1,7 @@
 <script>
 import productEditView from '@/components/ProductEditView.vue'
 import utils from '@/common/utils'
+import { mapActions } from 'vuex'
 
 export default {
   extends: productEditView,
@@ -13,11 +14,15 @@ export default {
   },
   computed: {},
   mounted () {
-    this.isPddProduct = true
-    this.isShowTemplateTab = true
+    this.isDyProduct = true
+    this.isShowTemplateTab = false
     this.saveBtnText = '保存'
   },
   methods: {
+    ...mapActions([
+      'addUpdateJobId',
+      'deleteUpdateJobId'
+    ]),
     setProduct (product) {
       this.product.assign({
         goods_id: product.goods_id,
@@ -32,11 +37,8 @@ export default {
       })
       this.isShowShelvesCheck = (parseInt(product.status) === 2)
       this.template.assign({
-        cost_template_id: product.cost_template_id,
-        is_pre_sale: product.is_pre_sale,
-        shipment_limit_second: product.shipment_limit_second,
-        is_refundable: product.is_refundable,
-        is_folt: product.is_folt
+        pay_type: product.pay_type,
+        mobile: product.mobile
       })
       this.checkedRefundable = (parseInt(product.is_refundable) === 1)
       this.checkedFolt = (parseInt(product.is_folt) === 1)
@@ -72,6 +74,9 @@ export default {
     },
     initSku (skuList) {
       if (!skuList || skuList.length === 0) {
+        this.skuPropertyList = []
+        this.skuShowList = []
+        this.product.assign({skuMap: this.getSkuList()})
         return
       }
       this.skuPropertyList = []
@@ -120,8 +125,8 @@ export default {
           promo_price: utils.fenToYuan(sku.multi_price),
           quantity: sku.quantity,
           img: sku.thumb_url,
-          is_onsale: sku.is_onsale,
-          limit_quantity: sku.limit_quantity,
+          // is_onsale: sku.is_onsale,
+          // limit_quantity: sku.limit_quantity,
           spec: sku.spec,
           hidden: false
         })
@@ -197,8 +202,8 @@ export default {
           quantity: skuShow.quantity,
           price: utils.yuanToFen(skuShow.price),
           multi_price: utils.yuanToFen(skuShow.promo_price),
-          is_onsale: skuShow.is_onsale,
-          limit_quantity: skuShow.limit_quantity,
+          // is_onsale: skuShow.is_onsale,
+          // limit_quantity: skuShow.limit_quantity,
           spec: skuShow.spec
         })
       }
@@ -228,15 +233,21 @@ export default {
         clearTimeout(this.syncTimer)
         this.syncTimer = null
       }
-      this.request('getUpdateProductRes', {job_id: jobId}, data => {
-        if (data.status !== 'complete') {
+      this.request('getUpdateProductRes', {job_ids: [jobId]}, data => {
+        if (!(jobId in data)) {
+          this.$message.error('更新失败，没有添加更新任务')
+          return
+        }
+        let jobItem = data[jobId]
+        if (jobItem.status !== 'complete') {
           let self = this
           this.syncTimer = setTimeout(function () {
             self.checkUpdateStatus(jobId, isUpdateProperty)
           }, 500)
         } else {
+          this.deleteUpdateJobId(jobId)
           this.loadingCnt--
-          if (data.goods_list.length > 0 && parseInt(data.goods_list[0].code) === 0) {
+          if (jobItem.goods_list.length > 0 && parseInt(jobItem.goods_list[0].code) === 0) {
             let goods = {
               cat_id: this.product.model.cat_id,
               category_show: this.product.model.category_show,
@@ -261,8 +272,8 @@ export default {
             })
             this.$emit('closeDialog')
           } else {
-            if (data.goods_list.length > 0) {
-              this.$message.error(data.goods_list[0].message)
+            if (jobItem.goods_list.length > 0) {
+              this.$message.error(jobItem.goods_list[0].message)
             }
           }
           if (isUpdateProperty) {

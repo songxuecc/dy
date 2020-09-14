@@ -837,7 +837,6 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '商品源同步'])
       }
-//      console.log('--- toProductsSync')
     },
     requestJsonp (url) {
       return new Promise((resolve, reject) => {
