@@ -67,7 +67,7 @@
                           <el-input v-model="product.model.title" size="mini"
                                     :class="['input-text-left', {'warn': (isTitleWarn || isTitleInfoWarn())}]" @input="onProductTitleChange"
                           >
-                              <span slot="append" class="hint">{{ parseInt((getStrRealLength(product.model.title)+1)/2) }} / 30</span>
+                              <span slot="append" class="hint">{{ getTitleLength(product.model.title) }} / 30</span>
                           </el-input>
                           <el-button size="mini" type="primary" @click="onApplyTitleEditToSelection()">批量编辑选中商品标题</el-button>
                           <!-- <span style="font-size: 10px;">（已自动删除平台违禁词）</span> -->
@@ -474,7 +474,7 @@ export default {
       getTokenHeaders: 'getTokenHeaders'
     }),
     isTitleWarn () {
-      if (utils.getStrRealLength(this.product.model.title) > 60) {
+      if (this.getTitleLength(this.product.model.title) > 30) {
         return true
       }
       return false
@@ -670,8 +670,11 @@ export default {
       }
       return false
     },
-    getStrRealLength (str) {
-      return utils.getStrRealLength(str)
+    getTitleLength (title) {
+      if (typeof title === 'undefined') {
+        return 0
+      }
+      return parseInt((utils.getStrRealLength(title) + 1) / 2)
     },
     showSelectCateView () {
       this.dialogVisible = true

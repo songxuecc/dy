@@ -25,7 +25,8 @@ const state = {
     'item_name': '',
     'item_level': 0,
     'deadline': ''
-  }
+  },
+  updateJobIdList: (localStorage.getItem('update_job_id_list') ? localStorage.getItem('update_job_id_list').split(',') : [])
 }
 
 const getters = {
@@ -46,7 +47,8 @@ const getters = {
   getSyncStatus: state => state.syncStatus,
   getSyncOrderStatus: state => state.syncOrderStatus,
   getCurrentSubsc: state => state.currentSubsc,
-  getExportFields: state => state.exportFields
+  getExportFields: state => state.exportFields,
+  getUpdateJobIdList: state => state.updateJobIdList
 }
 
 const actions = {
@@ -96,10 +98,6 @@ const actions = {
   requestUserInfo ({commit, state, dispatch}, params) {
     let promise = new Promise(function (resolve, reject) {
       Api.hhgjAPIs.getUserInfo(params).then(data => {
-        if (data) {
-          commit(types.SET_USER, data)
-          resolve(data)
-        }
         if (data.user) {
           commit(types.SET_USER, data.user)
         }
@@ -191,6 +189,23 @@ const actions = {
       })
     })
     return promise
+  },
+  addUpdateJobId ({commit, state}, jobId) {
+    state.updateJobIdList.push(jobId)
+    localStorage.setItem('update_job_id_list', state.updateJobIdList)
+  },
+  deleteUpdateJobId ({commit, state}, jobId) {
+    let index = -1
+    for (let i = 0; i < state.updateJobIdList.length; ++i) {
+      if (state.updateJobIdList[i] === jobId) {
+        index = i
+        break
+      }
+    }
+    if (index >= 0) {
+      state.updateJobIdList.splice(index, 1)
+    }
+    localStorage.setItem('update_job_id_list', state.updateJobIdList)
   }
 }
 

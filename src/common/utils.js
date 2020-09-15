@@ -224,11 +224,11 @@ export default {
       }
       var propA = a[propName]
       var propB = b[propName]
-      if ((typeof (propA) === 'object')) {
+      if (propA !== null && (typeof (propA) === 'object')) {
         if (!this.isObjectValueEqual(propA, propB)) {
           return false
         }
-      } else if (propA.toString() !== propB.toString()) {
+      } else if (propA !== null && propA.toString() !== propB.toString()) {
         return false
       }
     }

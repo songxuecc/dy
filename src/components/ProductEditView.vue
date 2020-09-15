@@ -19,8 +19,7 @@
                         <el-input v-model="product.model.title" size="mini"  style="width:70%"
                                   :class="['input-text-left', {'warn': (isTitleWarn || isTitleInfoWarn())}]"
                         >
-<!--                            <span slot="append" class="hint">{{ getStrRealLength(product.model.title) }} / 60</span>-->
-                            <span slot="append" class="hint">{{ getStrRealLength(product.model.title) }}</span>
+                            <span slot="append" class="hint">{{ getTitleLength(product.model.title)}} / 30</span>
                         </el-input>
                         <span style="font-size: 10px;">（已自动删除平台违禁词）</span>
 
@@ -28,23 +27,28 @@
                     <el-form-item label="市场价:">
                         <el-input v-model="product.model.price" size="mini" class="input-price"></el-input> 元
                     </el-form-item>
-                    <el-form-item label="商品描述:">
+                    <el-form-item v-if="!isDyProduct" label="商品描述:">
                         <el-input type="textarea" v-model="product.model.description" size="mini"
                                   :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
                         </el-input>
                     </el-form-item>
                     <el-form-item label="品牌:">
-                      <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
-                        <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
-                                   :label="item.brand_chinese_name || item.brand_english_name"
-                        ></el-option>
-                      </el-select>
-                      <el-button type="text" @click="reloadBrandList">
-                          <i class="el-icon-refresh"></i>
-                      </el-button>
-                      <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
-                               :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
-                      >添加品牌</el-link>
+                      <div v-if="isDyProduct">
+                        <span>{{ brandName }}</span>
+                      </div>
+                      <div v-else>
+                        <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
+                          <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
+                                     :label="item.brand_chinese_name || item.brand_english_name"
+                          ></el-option>
+                        </el-select>
+                        <el-button type="text" @click="reloadBrandList">
+                            <i class="el-icon-refresh"></i>
+                        </el-button>
+                        <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
+                                 :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
+                        >添加品牌</el-link>
+                      </div>
                     </el-form-item>
                     <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
                         <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
@@ -95,13 +99,13 @@
                                     <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
                                         <div style="display:flex">
                                             <el-checkbox v-model="ele.checked" @change="onSkuFilter" style="margin-right: 0">
-                                              <span v-if="isPddProduct || skuPropertyList.length === 1">{{ele.value}}</span>
+                                              <span v-if="isDyProduct || skuPropertyList.length === 1">{{ele.value}}</span>
                                               <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
                                                         :class="['input-text-left', {'warn': isSkuNameWarn(ele.value, item.id) }]">
                                                 <span slot="append" class="hint">{{ ele.value.length }}</span>
                                               </el-input>
                                             </el-checkbox>
-                                            <el-button v-if="Object.keys(skuPropertyValueMap[item.id]).length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
+                                            <el-button v-if="Object.keys(skuPropertyValueMap[item.id]).length > 1 && !isDyProduct" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
                                                        @click="onDeleteSku(item.id,vid)"
                                             > 删除 </el-button>
                                         </div>
@@ -113,7 +117,9 @@
                             </el-button>
                         </template>
                         <template slot-scope="scope">
-                          <span v-if="isPddProduct || (skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
+                          <span v-if="isDyProduct || (skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">
+                            {{scope.row.property_list[index].name}}
+                          </span>
                           <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
                                     :class="['input-text-left', {'warn': isSkuNameWarn(scope.row.property_list[index].name, item.id) }]">
                             <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span>
@@ -123,43 +129,42 @@
                     <el-table-column key="2" width="100">
                         <template slot="header" slot-scope="scope">
                             <span>库存</span>
-                            <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true"> <i class="el-icon-edit"></i> </el-button>
-                        </template>
-                        <template slot-scope="scope">
-                            <el-input v-model="scope.row.quantity" size="mini"></el-input>
-                        </template>
-                    </el-table-column>
-                    <el-table-column key="3" v-if="isPddProduct" width="100">
-                        <template slot="header" slot-scope="scope">
-                            <span>团购价</span>
-                            <el-tooltip effect="dark" placement="top" content="团购价设置调整后再上线">
-                                <i class="el-icon-question"></i>
-                            </el-tooltip>
-                            <!--<el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>-->
-                        </template>
-                        <template slot-scope="scope">
-                            <!--<el-input v-model="scope.row.promo_price" size="mini"></el-input>-->
-                            <span>{{ scope.row.promo_price }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column key="4" width="100">
-                        <template slot="header" slot-scope="scope">
-                            <span v-if="isPddProduct">单买价</span>
-                            <span v-else>价格</span>
-                            <el-tooltip v-if="!isPddProduct" manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
-                                <div slot="content">
-                                  <ul style="padding: 0; margin: 0;">其他平台SKU价格，请在上传抖音时设置单买价与团购价</ul>
-                                </div>
-                                <i class="el-icon-question"></i>
-                            </el-tooltip>
-                            <el-button v-if="isPddProduct" type="text" class="table-header-btn" @click="dialogPriceVisible=true">
+                            <el-button v-if="!isDyProduct" type="text" class="table-header-btn" @click="dialogQuantityVisible=true">
                               <i class="el-icon-edit"></i>
                             </el-button>
                         </template>
                         <template slot-scope="scope">
-                            <el-input v-if="isPddProduct" v-model="scope.row.price" size="mini"></el-input>
-                            <el-input v-else-if="scope.row.promo_price===0" v-model="scope.row.promo_price" size="mini"></el-input>
-                            <span v-else>{{scope.row.promo_price}}</span>
+                            <span v-if="isDyProduct">{{scope.row.quantity}}</span>
+                            <el-input v-else v-model="scope.row.quantity" size="mini"></el-input>
+                        </template>
+                    </el-table-column>
+<!--                    <el-table-column key="3" v-if="isDyProduct" width="100">-->
+<!--                        <template slot="header" slot-scope="scope">-->
+<!--                            <span>结算价</span>-->
+<!--                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>-->
+<!--                        </template>-->
+<!--                        <template slot-scope="scope">-->
+<!--                            <el-input v-model="scope.row.promo_price" size="mini"></el-input>-->
+<!--                        </template>-->
+<!--                    </el-table-column>-->
+                    <el-table-column key="4" width="100">
+                        <template slot="header" slot-scope="scope">
+                            <span>价格</span>
+                            <el-tooltip v-if="!isDyProduct" manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
+                                <div slot="content">
+                                  <ul style="padding: 0; margin: 0;">其他平台SKU价格，请在上传抖音时设置市场价与结算价</ul>
+                                </div>
+                                <i class="el-icon-question"></i>
+                            </el-tooltip>
+<!--                            <el-button v-if="isDyProduct" type="text" class="table-header-btn" @click="dialogPriceVisible=true">-->
+<!--                              <i class="el-icon-edit"></i>-->
+<!--                            </el-button>-->
+                        </template>
+                        <template slot-scope="scope">
+<!--                            <el-input v-if="isDyProduct" v-model="scope.row.price" size="mini"></el-input>-->
+<!--                            <el-input v-else-if="scope.row.promo_price===0" v-model="scope.row.promo_price" size="mini"></el-input>-->
+<!--                            <span v-else>{{scope.row.promo_price}}</span>-->
+                            <span>{{scope.row.promo_price}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
@@ -167,7 +172,7 @@
                             <img style="height:40px" :src="scope.row.img">
                         </template>
                     </el-table-column>
-                    <el-table-column key="6" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
+                    <el-table-column key="6" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1 && !isDyProduct" label="操作" width="80">
                       <template slot-scope="scope">
                           <el-button size="mini" @click="onDeleteSingleSku(scope.$index)" type="danger" plain>删除</el-button>
                       </template>
@@ -182,7 +187,7 @@
             </el-tab-pane>
 
             <el-tab-pane label="轮播页" name="carousel">
-               <span slot="label" v-if=" product.model.check_error_msg_static  && '2' in product.model.check_error_msg_static">轮播页
+                <span slot="label" v-if=" product.model.check_error_msg_static  && '2' in product.model.check_error_msg_static">轮播页
                    <el-tooltip effect="dark"  placement="top-start">
                     <div slot="content">
                          <ul style="padding: 0; margin: 0;" v-for="(v,i) in product.model.check_error_msg_static['2']['info']" :key="i">{{v}}</ul>
@@ -203,7 +208,7 @@
             </el-tab-pane>
 
             <el-tab-pane label="详情页" name="detail">
-              <span slot="label" v-if=" product.model.check_error_msg_static  && '3' in product.model.check_error_msg_static">详情页
+                <span slot="label" v-if=" product.model.check_error_msg_static  && '3' in product.model.check_error_msg_static">详情页
                    <el-tooltip effect="dark"  placement="top-start">
                     <div slot="content">
                          <ul style="padding: 0; margin: 0;" v-for="(v,i) in product.model.check_error_msg_static['3']['info']" :key="i">{{v}}</ul>
@@ -211,8 +216,10 @@
                     <el-badge :value="product.model.check_error_msg_static['3'].num" ></el-badge>
                 </el-tooltip>
                 </span>
-                <pictures-upload-view style="height: 400px" ref="descPicListView" :belongType="1" :containLimit="-1" :pictureUrlList="descPicUrlList">
-                </pictures-upload-view>
+                <div style="height: 400px; overflow: auto;">
+                  <pictures-upload-view style="height: 400px" ref="descPicListView" :belongType="1" :containLimit="-1" :pictureUrlList="descPicUrlList">
+                  </pictures-upload-view>
+                </div>
                 <div class="common-bottom">
                     <el-checkbox v-if="isShowShelvesCheck" v-model="checkedShelves" style="margin-left:-127px">
                         保存并上架
@@ -222,29 +229,46 @@
             </el-tab-pane>
 
             <el-tab-pane v-if="isShowTemplateTab" label="模板信息">
-                <el-form class="setting-content" ref="form" :model="template.model" label-width="90px" style="height: 400px">
-                    <el-form-item label="运费模板:">
-                        <el-select v-model="template.model.cost_template_id" placeholder="请选择" size="mini">
-                            <el-option v-for="item in template.model.template_list" :label="item.cost_template_name"
-                                       :key="item.cost_template_id" :value="item.cost_template_id"
-                            ></el-option>
+                <el-form class="setting-content" ref="form" :model="template.model" label-width="100px" style="height: 400px">
+                    <el-form-item label="付款方式:" required>
+                        <el-radio-group v-model="template.model.pay_type">
+                            <el-radio :label="0">货到付款</el-radio>
+                            <el-radio :label="1">在线支付</el-radio>
+                            <el-radio :label="2">两者都支持</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="客服号码:" prop="mobile">
+                        <el-input v-model="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
+                    </el-form-item>
+                    <el-form-item label="承诺发货时间:" prop="delivery_delay_day">
+                        <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" @change="check">
+                            <el-option label="2天" :value="2"></el-option>
+                            <el-option label="3天" :value="3"></el-option>
+                            <el-option label="5天" :value="5"></el-option>
+                            <el-option label="7天" :value="7"></el-option>
+                            <el-option label="10天" :value="10"></el-option>
+                            <el-option label="15天" :value="15"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="是否预售:">
-                        <el-radio v-model="template.model.is_pre_sale" :label="1">预售</el-radio>
-                        <el-radio v-model="template.model.is_pre_sale" :label="0">非预售</el-radio>
+                    <el-form-item label="是否预售:" prop="is_pre_sale">
+                        <el-select v-model="template.model.is_pre_sale" placeholder="请选择" size="small" @change="check">
+                            <el-option label="是" :value="1"></el-option>
+                            <el-option label="否" :value="0"></el-option>
+                        </el-select>
                     </el-form-item>
-                    <el-form-item label="发货时间:">
-                        <el-radio v-model="template.model.shipment_limit_second" :label="172800">48小时</el-radio>
-                        <el-radio v-model="template.model.shipment_limit_second" :label="86400">24小时</el-radio>
+                    <el-form-item v-if="template.model.is_pre_sale" label="预售结束时间:" prop="preSaleDate">
+                      <el-date-picker v-model="preSaleDate"
+                                      type="datetime"
+                                      placeholder="选择日期" size="small" class="input-date-left"
+                                      style="width: 190px;"
+                                      :picker-options="pickerOptions"
+                                      @change="check"
+                      > </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="承诺服务:">
-                        <el-checkbox v-model="checkedRefundable" @change="onChangeTemplateCheckbox($event, 'is_refundable')">
-                            7天无理由退货
-                        </el-checkbox>
-                        <el-checkbox v-model="checkedFolt" @change="onChangeTemplateCheckbox($event, 'is_folt')">
-                            假一赔十
-                        </el-checkbox>
+                    <el-form-item v-if="template.model.is_pre_sale" label="预售结束后几天发货:" prop="presell_delay">
+                      <el-select v-model="template.model.presell_delay" placeholder="请选择" size="small" @change="check">
+                        <el-option v-for="item in dateRange" :key="item" :label="item" :value="item"></el-option>
+                      </el-select>
                     </el-form-item>
                 </el-form>
                 <div class="common-bottom">
@@ -362,7 +386,7 @@
             </div>
         </el-dialog>
 
-        <el-dialog title="批量修改单买价" width="400px" :visible.sync="dialogPriceVisible" append-to-body center>
+        <el-dialog title="批量修改价格" width="400px" :visible.sync="dialogPriceVisible" append-to-body center>
             <div>
                 <el-radio v-model="priceHandler.radio" label="1">
                     <span style="display:inline-block; width:100px">统一价格为</span>
@@ -417,6 +441,7 @@ import request from '@/mixins/request.js'
 import skuHandler from '@/mixins/skuHandler.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
+import moment from 'moment'
 
 export default {
   inject: ['reload'],
@@ -440,8 +465,10 @@ export default {
       descPicUrlList: [],
       shopBrandList: [],
       origionAttr: {},
-      isPddProduct: false,
+      isDyProduct: false,
       isShowTemplateTab: false,
+      preSaleDate: null,
+      pickerOptions: this.disabledDate(),
       saveBtnText: '保存',
       checkedRefundable: false,
       checkedFolt: false,
@@ -454,17 +481,21 @@ export default {
   },
   computed: {
     isTitleWarn () {
-      // if (utils.getStrRealLength(this.product.model.title) > 60) {
-      //   return true
-      // }
-      // if(this.product.model.check_error_msg_static){
-      //   if('0' in this.product.model.check_error_msg_static){
-      //     if('1005' in this.product.model.check_error_msg_static['0']['code']){
-      //       return true
-      //     }
-      //   }
-      // }
+      if (this.getTitleLength(this.product.model.title) > 30) {
+        return true
+      }
       return false
+    },
+    brandName () {
+      let brandName = ''
+      for (let i in this.shopBrandList) {
+        let item = this.shopBrandList[i]
+        if (this.product.model.brand_id === item.id) {
+          brandName = item.brand_chinese_name || item.brand_english_name
+          break
+        }
+      }
+      return brandName
     }
   },
   mounted () {
@@ -626,8 +657,11 @@ export default {
         this.$emit('closeDialog')
       })
     },
-    getStrRealLength (str) {
-      return utils.getStrRealLength(str)
+    getTitleLength (title) {
+      if (typeof title === 'undefined') {
+        return 0
+      }
+      return parseInt((utils.getStrRealLength(title) + 1) / 2)
     },
     cutOrigionAttrStr (key, val) {
       let len = 50 - utils.getStrRealLength(key)
@@ -689,8 +723,20 @@ export default {
     isProductChange () {
       this.refreshProduct()
       return this.product.isDiff()
+    },
+    disabledDate (time) {
+      let self = this
+      return {
+        disabledDate (time) {
+          let curTime = time.getTime()
+          // “预售时间不能小于当前时间+承诺发货时间+1天之和”
+          // “预售时间不可超过30天”（今天为1天，最后1天也为1天，29天）
+          return curTime < moment().startOf('day').add(1, 'days').valueOf() + self.template.model.delivery_delay_day * 1000 ||
+            curTime > moment().startOf('day').add(28, 'days').valueOf()
+        }
+      }
     }
   }
 }
-// 注意修改该控件的继承 PddProductEditView.vue
+// 注意修改该控件的继承 DyProductEditView.vue
 </script>
