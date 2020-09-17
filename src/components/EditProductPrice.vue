@@ -22,12 +22,12 @@
               </div>
             </el-col>
             <el-col :span=6 v-if="product.model.sku_list.length>1" style="text-align: right">
-              <el-input v-model="batch_stock" size="mini"
+              <el-input v-model="batch_price" size="mini"
                   class="multiple-text" style="width:80px; display:inline-block"
                   placeholder="统一修改"
                 >
                 </el-input>
-                <el-button type="primary" size="mini" style="padding: 6px 4px" @click="batchUpdateStock()">确定</el-button>
+                <el-button type="primary" size="mini" style="padding: 6px 4px" @click="batchUpdatePrice()">确定</el-button>
             </el-col>
           </el-row>
           <el-divider style="margin:5px 0;" v-if="specList.length"></el-divider>
@@ -43,9 +43,9 @@
                 <div v-if="sku.spec.length === 0" style="display:inline-block;">默认规格</div>
               </el-col>
               <el-col :span="4">
-                <el-input-number v-model="sku.quantity" :controls="false"  :min="0" size="mini"
+                <el-input-number v-model="sku.price" :controls="false"  :min="0" size="mini"
                   class="multiple-text" style="width:80px;"
-                  :class="{'is-text-change':sku.quantity !== product.originModel.sku_list[sku_idx].quantity}"
+                  :class="{'is-text-change':sku.price !== product.originModel.sku_list[sku_idx].price}"
                 >
                 </el-input-number>
               </el-col>
@@ -70,7 +70,7 @@ export default {
     return {
       specList: [],
       specSelectId: [],
-      batch_stock: '',
+      batch_price: '',
       skuDict: {}
     }
   },
@@ -141,15 +141,15 @@ export default {
         }
       }
     },
-    batchUpdateStock () {
-      if (!utils.isNumber(this.batch_stock)) {
+    batchUpdatePrice () {
+      if (!utils.isNumber(this.batch_price)) {
         this.$alert('必须为数字')
         return
       }
       this.product.model.sku_list.forEach((sku) => {
         let skuId = sku.sku_id
         if (this.skuDict[skuId]['hidden'] === false) {
-          sku.quantity = this.batch_stock
+          sku.price = this.batch_price
         }
       })
     },

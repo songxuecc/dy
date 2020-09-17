@@ -129,13 +129,12 @@
                     <el-table-column key="2" width="100">
                         <template slot="header" slot-scope="scope">
                             <span>库存</span>
-                            <el-button v-if="!isDyProduct" type="text" class="table-header-btn" @click="dialogQuantityVisible=true">
+                            <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true">
                               <i class="el-icon-edit"></i>
                             </el-button>
                         </template>
                         <template slot-scope="scope">
-                            <span v-if="isDyProduct">{{scope.row.quantity}}</span>
-                            <el-input v-else v-model="scope.row.quantity" size="mini"></el-input>
+                            <el-input v-model="scope.row.quantity" size="mini"></el-input>
                         </template>
                     </el-table-column>
 <!--                    <el-table-column key="3" v-if="isDyProduct" width="100">-->
@@ -156,15 +155,14 @@
                                 </div>
                                 <i class="el-icon-question"></i>
                             </el-tooltip>
-<!--                            <el-button v-if="isDyProduct" type="text" class="table-header-btn" @click="dialogPriceVisible=true">-->
-<!--                              <i class="el-icon-edit"></i>-->
-<!--                            </el-button>-->
+                            <el-button v-if="isDyProduct" type="text" class="table-header-btn" @click="dialogPriceVisible=true">
+                              <i class="el-icon-edit"></i>
+                            </el-button>
                         </template>
                         <template slot-scope="scope">
-<!--                            <el-input v-if="isDyProduct" v-model="scope.row.price" size="mini"></el-input>-->
-<!--                            <el-input v-else-if="scope.row.promo_price===0" v-model="scope.row.promo_price" size="mini"></el-input>-->
-<!--                            <span v-else>{{scope.row.promo_price}}</span>-->
-                            <span>{{scope.row.promo_price}}</span>
+                            <el-input v-if="isDyProduct" v-model="scope.row.price" size="mini"></el-input>
+                            <el-input v-else-if="scope.row.promo_price===0" v-model="scope.row.promo_price" size="mini"></el-input>
+                            <span v-else>{{scope.row.promo_price}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
@@ -230,7 +228,7 @@
 
             <el-tab-pane v-if="isShowTemplateTab" label="模板信息">
                 <el-form class="setting-content" ref="form" :model="template.model" label-width="100px" style="height: 400px">
-                    <el-form-item label="付款方式:" required>
+                    <el-form-item label="付款方式:">
                         <el-radio-group v-model="template.model.pay_type">
                             <el-radio :label="0">货到付款</el-radio>
                             <el-radio :label="1">在线支付</el-radio>

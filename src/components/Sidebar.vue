@@ -18,10 +18,10 @@
                     <i class="el-icon-files"></i>
                     <span slot="title">商品管理</span>
                 </el-menu-item>
-<!--                <el-menu-item index="/batchEdit/saleStatus" :disabled="!isAuth()">-->
-<!--                    <i class="el-icon-box"></i>-->
-<!--                    <span slot="title">批量处理</span>-->
-<!--                </el-menu-item>-->
+                <el-menu-item index="/batchEdit/title" :disabled="!isAuth()">
+                    <i class="el-icon-box"></i>
+                    <span slot="title">批量处理</span>
+                </el-menu-item>
                 <el-menu-item index="/service">
                     <i class="el-icon-chat-dot-round"></i>
                     <span slot="title">客服微信</span>

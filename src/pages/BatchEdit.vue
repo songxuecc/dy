@@ -5,16 +5,17 @@
               :title="'有' + updateJobIdList.length + '组商品修改提交正在后台处理...'"
     ></el-alert>
     <el-row class="multi-fun-tab">
-      <help-tips :helpLink="activeTabName" positionT="10" positionR="400"></help-tips>
+<!--      <help-tips :helpLink="activeTabName" positionT="10" positionR="400"></help-tips>-->
       <el-col :span="14" style="text-align: left; padding-left: 10px;">
         <el-tabs v-model="activeTabName" @tab-click="handleTabClick" :before-leave="beforeLeaveTab">
-          <el-tab-pane label="上下架" name="saleStatus"></el-tab-pane>
+<!--          <el-tab-pane label="上下架" name="saleStatus"></el-tab-pane>-->
           <el-tab-pane label="改标题" name="title"></el-tab-pane>
-          <el-tab-pane label="改描述" name="description"></el-tab-pane>
+<!--          <el-tab-pane label="改描述" name="description"></el-tab-pane>-->
 <!--          <el-tab-pane label="改类目" name="category"></el-tab-pane>-->
          <el-tab-pane label="改库存" name="stock"></el-tab-pane>
-         <el-tab-pane label="轮播图" name="banner"></el-tab-pane>
-         <el-tab-pane label="改编码" name="outerSn"></el-tab-pane>
+         <el-tab-pane label="改价格" name="price"></el-tab-pane>
+<!--         <el-tab-pane label="轮播图" name="banner"></el-tab-pane>-->
+<!--         <el-tab-pane label="改编码" name="outerSn"></el-tab-pane>-->
 <!--          <el-tab-pane label="改模板" name="template"></el-tab-pane>-->
         </el-tabs>
       </el-col>
@@ -58,9 +59,9 @@
         ></edit-product-list-view>
       </div>
     </div>
-    <div v-if="isShowDrawer" style="height: 130px;"></div>
-    <el-drawer class="no-cover-bottom-drawer" :visible.sync="isShowDrawer" direction="btt"
-               :modal="false" :wrapperClosable="false" :withHeader="false" style="height: 130px;"
+    <div v-if="isShowDrawer" :style="{height: activeTabName==='price' ? '180px' : '130px'}"></div>
+    <el-drawer class="no-cover-bottom-drawer" :visible.sync="isShowDrawer" direction="btt" :modal="false"
+               :wrapperClosable="false" :withHeader="false" :style="{height: activeTabName==='price' ? '180px' : '130px'}"
     >
       <edit-text-drawer v-if="activeTabName==='title'" ref="editTitleDrawer" field="goods_name"
                          :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
@@ -81,8 +82,11 @@
       <edit-stock-drawer v-else-if="activeTabName==='stock'"  ref="editStockDrawer"
                                :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
                                @rollback="rollbackChange" @confirm="confirmChange"
-
       ></edit-stock-drawer>
+      <edit-price-drawer v-else-if="activeTabName==='price'"  ref="editPriceDrawer"
+                               :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
+                               @rollback="rollbackChange" @confirm="confirmChange"
+      ></edit-price-drawer>
       <edit-outer-sn-drawer v-else-if="activeTabName==='outerSn'"  ref="editOuterSnDrawer"
                                :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
                                @rollback="rollbackChange" @confirm="confirmChange"
@@ -137,6 +141,7 @@ import editTextDrawer from '@/components/EditTextDrawer.vue'
 import editSaleStatusDrawer from '@/components/EditSaleStatusDrawer.vue'
 import editBannerDrawer from '@/components/EditBannerDrawer.vue'
 import editStockDrawer from '@/components/EditStockDrawer.vue'
+import editPriceDrawer from '@/components/EditPriceDrawer.vue'
 import editOuterSnDrawer from '@/components/EditOuterSnDrawer.vue'
 import helpTips from '@/components/HelpTips.vue'
 import request from '@/mixins/request.js'
@@ -153,6 +158,7 @@ export default {
     editSaleStatusDrawer,
     editBannerDrawer,
     editStockDrawer,
+    editPriceDrawer,
     editOuterSnDrawer,
     helpTips
   },
@@ -240,7 +246,10 @@ export default {
           if (data.items[i].goods_id in this.selectProductDict) {
             product = this.selectProductDict[data.items[i].goods_id]
           } else {
-            data.items[i].is_onsale = (data.items[i].status === 2 ? 0 : 1)
+            // data.items[i].is_onsale = (data.items[i].status === 2 ? 0 : 1)
+            for (let j in data.items[i].sku_list) {
+              data.items[i].sku_list[j].price /= 100.0
+            }
             product.assign(data.items[i])
           }
           this.dyProductModelList.push(product)
@@ -369,6 +378,11 @@ export default {
         productNew['carousel_gallery_list'] = product.model.carousel_gallery_list
       } else if (this.activeTabName === 'stock') {
         productNew['sku_list'] = product.model.sku_list
+      } else if (this.activeTabName === 'price') {
+        productNew['sku_list'] = JSON.parse(JSON.stringify(product.model.sku_list)) //  深拷贝
+        productNew['sku_list'].forEach((sku) => {
+          sku['price'] *= 100
+        })
       } else if (this.activeTabName === 'outerSn') {
         productNew['outer_goods_id'] = product.model.outer_goods_id
         productNew['sku_list'] = product.model.sku_list
@@ -475,7 +489,9 @@ export default {
             productModel.originModel.goods_name = productModel.model.goods_name
             productModel.originModel.goods_desc = productModel.model.goods_desc
             productModel.originModel.is_onsale = productModel.model.is_onsale
-            productModel.originModel.carousel_gallery_list = Array.from(productModel.model.carousel_gallery_list)
+            if (productModel.model.carousel_gallery_list) {
+              productModel.originModel.carousel_gallery_list = Array.from(productModel.model.carousel_gallery_list)
+            }
             productModel.originModel.sku_list = JSON.parse(JSON.stringify(productModel.model.sku_list))
             productModel.originModel.outer_goods_id = productModel.model.outer_goods_id
           }
