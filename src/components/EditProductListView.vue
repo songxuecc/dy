@@ -28,7 +28,7 @@
               </div>
               <div @click.stop style="display: inline-block">
                 <el-link :underline="false" target="_blank" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.originModel.goods_id">
-                  <el-tag size="mini" effect="plain">{{ dyProductStatusMap[scope.row.originModel.status] }}</el-tag>
+                  <el-tag size="mini" effect="plain">{{ dyProductStatusMap[scope.row.originModel.status + '-' + scope.row.originModel.check_status] }}</el-tag>
                 </el-link>&nbsp;
                 <el-link v-if="scope.row.originModel.goods_commit_id" :underline="false" target="_blank">
                   <el-tag size="mini" effect="plain" type="info" >
@@ -36,8 +36,8 @@
                   </el-tag>
                 </el-link>
               </div>
-              <label class="text-small" v-if="scope.row.originModel.outer_goods_id">
-                商家编码: {{scope.row.originModel.outer_goods_id}}
+              <label class="text-small">
+                {{scope.row.originModel.goods_id}}
               </label>
             </div>
           </div>
@@ -46,7 +46,9 @@
       <el-table-column v-if="activeTabName == 'title'" label="标题" :key="Math.random()">
         <template slot-scope="scope">
           <div>
-            <div @click.stop><el-input v-model="scope.row.model.goods_name" @focus="editCell(scope.row)"></el-input></div>
+            <div @click.stop>
+              <el-input v-model="scope.row.model.goods_name" @focus="editCell(scope.row)" :disabled="!canOperate(scope.row)"></el-input>
+            </div>
             <div style="display: flex; flex-direction: row; justify-content: space-between;">
               <span class="text-small">{{ getStrRealLength(scope.row.model.goods_name) }}/60</span>
               <div>
@@ -103,9 +105,18 @@
           </div>
         </template>
       </el-table-column>
-       <el-table-column v-else-if="activeTabName == 'stock'" label="库存" :key="Math.random()" align="left">
+       <el-table-column v-else-if="activeTabName == 'stock'" label="库存" :key="Math.random()" align="left" width="700">
         <template slot-scope="scope">
          <edit-product-stock :product="scope.row"></edit-product-stock>
+          <div style="text-align: right">
+            <el-button @click.stop type="text" style="padding: 0; color: gray" @click="rollbackCell(scope.row)">重置</el-button>
+            <el-button @click.stop type="text" style="padding: 0" @click="saveCell(scope.row)" :disabled="isSaveDisabled(scope.row)">保存</el-button>
+          </div>
+        </template>
+      </el-table-column>
+       <el-table-column v-else-if="activeTabName == 'price'" label="价格" :key="Math.random()" align="left" width="700">
+        <template slot-scope="scope">
+         <edit-product-price :product="scope.row"></edit-product-price>
           <div style="text-align: right">
             <el-button @click.stop type="text" style="padding: 0; color: gray" @click="rollbackCell(scope.row)">重置</el-button>
             <el-button @click.stop type="text" style="padding: 0" @click="saveCell(scope.row)" :disabled="isSaveDisabled(scope.row)">保存</el-button>
@@ -130,12 +141,14 @@ import common from '@/common/common.js'
 import utils from '@/common/utils'
 import EditBannerList from '@/components/EditBannerList.vue'
 import EditProductStock from '@/components/EditProductStock.vue'
+import EditProductPrice from '@/components/EditProductPrice.vue'
 import EditProductOuterSn from '@/components/EditProductOuterSn.vue'
 
 export default {
   components: {
     EditBannerList,
     EditProductStock,
+    EditProductPrice,
     EditProductOuterSn
   },
   props: {
@@ -160,13 +173,24 @@ export default {
   },
   methods: {
     selectable (row, index) {
-      if (row.originModel.status === 4) {
+      if (!this.canOperate(row)) {
         return false
       }
       if (row.model.goods_id in this.selectProductDict) {
         return true
       }
       if (Object.keys(this.selectProductDict).length >= 100) {
+        return false
+      }
+      return true
+    },
+    canOperate (row) {
+      if (!row || !row.originModel) {
+        return false
+      }
+      if ((row.originModel.status === 0 && row.originModel.check_status === 1) || // 草稿箱
+        (row.originModel.status === 1 && row.originModel.check_status === 5) // 封禁中
+      ) {
         return false
       }
       return true
@@ -198,6 +222,9 @@ export default {
       row.rollback()
     },
     isSaveDisabled (row) {
+      if (!this.canOperate(row)) {
+        return true
+      }
       if (this.getStrRealLength(row.model.goods_name) > 60) {
         return true
       } else if (row.isDiff()) {
@@ -206,7 +233,7 @@ export default {
       return true
     },
     onCellClick (row, column, cell, event) {
-      if (this.canSelect) {
+      if (this.canSelect && this.canOperate(row)) {
         this.$refs.dyProductListTable.toggleRowSelection(row)
       }
     },

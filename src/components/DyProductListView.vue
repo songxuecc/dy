@@ -64,9 +64,12 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column label="折扣价" width="80">
+            <el-table-column label="售卖价" width="80">
                 <template slot-scope="scope">
-                    {{ scope.row.discount_price / 100 }}
+                    {{ scope.row.min_price / 100 }}
+                    {{ scope.row.min_price === scope.row.max_price ? '' : ' ~' }}
+                    <br/>
+                    {{ scope.row.min_price === scope.row.max_price ? '' : scope.row.max_price / 100 }}
                 </template>
             </el-table-column>
             <el-table-column label="市场价" width="80">

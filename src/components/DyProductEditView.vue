@@ -1,6 +1,8 @@
 <script>
 import productEditView from '@/components/ProductEditView.vue'
 import utils from '@/common/utils'
+import FormModel from '@/common/formModel'
+import moment from 'moment'
 import { mapActions } from 'vuex'
 
 export default {
@@ -9,13 +11,14 @@ export default {
   },
   data () {
     return {
-      syncTimer: null
+      syncTimer: null,
+      dateRange: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
     }
   },
   computed: {},
   mounted () {
     this.isDyProduct = true
-    this.isShowTemplateTab = false
+    this.isShowTemplateTab = true
     this.saveBtnText = '保存'
   },
   methods: {
@@ -36,6 +39,7 @@ export default {
         check_error_msg_static: product.check_error_msg_static
       })
       this.isShowShelvesCheck = (parseInt(product.status) === 2)
+      this.template = new FormModel()
       this.template.assign({
         pay_type: product.pay_type,
         mobile: product.mobile
@@ -47,7 +51,7 @@ export default {
       this.updateIsSingleSku()
 
       this.updateProperty()
-      this.getTemplate()
+      // this.getTemplate()
     },
     getTemplate () {
       this.request('getTemplate', {}, data => {
@@ -146,10 +150,20 @@ export default {
         goods_desc: this.product.model.description,
         goods_property_list: [],
         cost_template_id: this.template.model.cost_template_id,
-        is_pre_sale: this.template.model.is_pre_sale,
-        shipment_limit_second: this.template.model.shipment_limit_second,
-        is_refundable: this.template.model.is_refundable,
-        is_folt: this.template.model.is_folt
+        is_pre_sale: this.template.model.is_pre_sale
+      }
+      let templateDiff = this.template.getDiff()
+      for (let key in templateDiff) {
+        goods[key] = templateDiff[key]
+      }
+      if ('is_pre_sale' in templateDiff && templateDiff['is_pre_sale']) {
+        let date = ''
+        if (this.preSaleDate) {
+          date = moment(this.preSaleDate).format('YYYY-MM-DD HH:mm:ss')
+        }
+        if (date) {
+          goods['pre_sale_date'] = date
+        }
       }
       if (this.isShowShelvesCheck && this.checkedShelves) {
         goods['is_onsale'] = 1
