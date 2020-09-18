@@ -29,9 +29,9 @@ class TextHandler {
   }
   cutOffCnText (text, isUsePrefix, limit) {
     if (isUsePrefix) {
-      return utils.getStrRealPrefix(text, limit)
+      return utils.getDyStrRealPrefix(text, limit)
     } else {
-      return utils.getStrRealSuffix(text, limit)
+      return utils.getDyStrRealSuffix(text, limit)
     }
   }
   cutOffText (text, isUsePrefix, limit) {

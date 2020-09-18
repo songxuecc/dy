@@ -656,10 +656,7 @@ export default {
       })
     },
     getTitleLength (title) {
-      if (typeof title === 'undefined') {
-        return 0
-      }
-      return parseInt((utils.getStrRealLength(title) + 1) / 2)
+      return utils.getDyStrRealLength(title)
     },
     cutOrigionAttrStr (key, val) {
       let len = 50 - utils.getStrRealLength(key)

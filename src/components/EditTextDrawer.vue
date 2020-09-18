@@ -80,9 +80,9 @@ export default {
   methods: {
     handleBeyondTypeChange (value) {
       if (this.beyondWordsOptType === 1) {
-        this.cutOffCnText(false, 60)
+        this.cutOffCnText(false, 30)
       } else if (this.beyondWordsOptType === 2) {
-        this.cutOffCnText(true, 60)
+        this.cutOffCnText(true, 30)
       }
     },
     cutOffCnText (isUsePrefix, limit) {

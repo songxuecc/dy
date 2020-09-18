@@ -33,6 +33,50 @@ export default {
     }
     return str.substr(0, preLen)
   },
+  getStrRealSuffix (str, len) {
+    let strLen = str.length
+    let realLen = 0
+    let useLen = 0
+    for (let i = strLen - 1; i >= 0; i--) {
+      let charCode = str.charCodeAt(i)
+      if (charCode >= 0 && charCode <= 128) realLen += 1
+      else realLen += 2
+      if (realLen > len) break
+      useLen++
+    }
+    return str.substr(strLen - useLen)
+  },
+  getDyStrRealLength (str) {
+    return parseInt((this.getStrRealLength(str) + 1) / 2)
+  },
+  getDyStrRealPrefix (str, len) {
+    len *= 2 // 抖音计算方式
+    let strLen = str.length
+    let realLen = 0
+    let preLen = 0
+    for (let i = 0; i < strLen; i++) {
+      let charCode = str.charCodeAt(i)
+      if (charCode >= 0 && charCode <= 128) realLen += 1
+      else realLen += 2
+      if (realLen > len) break
+      preLen++
+    }
+    return str.substr(0, preLen)
+  },
+  getDyStrRealSuffix (str, len) {
+    len *= 2 // 抖音计算方式
+    let strLen = str.length
+    let realLen = 0
+    let useLen = 0
+    for (let i = strLen - 1; i >= 0; i--) {
+      let charCode = str.charCodeAt(i)
+      if (charCode >= 0 && charCode <= 128) realLen += 1
+      else realLen += 2
+      if (realLen > len) break
+      useLen++
+    }
+    return str.substr(strLen - useLen)
+  },
   isDate (date) {
     return (new Date(date) !== 'Invalid Date') && !isNaN(new Date(date))
   },

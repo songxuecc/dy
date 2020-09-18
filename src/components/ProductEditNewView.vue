@@ -671,10 +671,7 @@ export default {
       return false
     },
     getTitleLength (title) {
-      if (typeof title === 'undefined') {
-        return 0
-      }
-      return parseInt((utils.getStrRealLength(title) + 1) / 2)
+      return utils.getDyStrRealLength(title)
     },
     showSelectCateView () {
       this.dialogVisible = true

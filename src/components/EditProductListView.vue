@@ -50,7 +50,7 @@
               <el-input v-model="scope.row.model.goods_name" @focus="editCell(scope.row)" :disabled="!canOperate(scope.row)"></el-input>
             </div>
             <div style="display: flex; flex-direction: row; justify-content: space-between;">
-              <span class="text-small">{{ getStrRealLength(scope.row.model.goods_name) }}/60</span>
+              <span class="text-small">{{ getDyStrRealLength(scope.row.model.goods_name) }}/30</span>
               <div>
                 <el-button @click.stop type="text" style="padding: 0; color: gray" @click="rollbackCell(scope.row)"
                 >重置</el-button>
@@ -195,12 +195,12 @@ export default {
       }
       return true
     },
-    getStrRealLength (str) {
-      return utils.getStrRealLength(str)
+    getDyStrRealLength (str) {
+      return utils.getDyStrRealLength(str)
     },
     tableRowClassName ({row, rowIndex}) {
       let retClass = ''
-      if (this.getStrRealLength(row.model.goods_name) > 60) {
+      if (this.getDyStrRealLength(row.model.goods_name) > 30) {
         retClass += ' edited-warn'
       } else if (row.isDiff()) {
         retClass += ' edited-row'
@@ -225,7 +225,7 @@ export default {
       if (!this.canOperate(row)) {
         return true
       }
-      if (this.getStrRealLength(row.model.goods_name) > 60) {
+      if (this.getDyStrRealLength(row.model.goods_name) > 30) {
         return true
       } else if (row.isDiff()) {
         return false
