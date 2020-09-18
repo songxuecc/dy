@@ -89,7 +89,8 @@ module.exports = {
     'show_in_white_list': 0,
     'nav_cannot_close': 1,
     'nav_close_not_show_again': 2,
-    'msg_box': 3
+    'msg_box': 3,
+    'only_in_mail': 3
   },
   taskResultStatus: {
     'no_result': 0,

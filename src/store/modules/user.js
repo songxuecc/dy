@@ -116,6 +116,9 @@ const actions = {
             dispatch('requestSyncOrders', {})
           }
         }
+        if (data) {
+          resolve(data)
+        }
       }, err => {
         console.error(err)
         reject(err)
