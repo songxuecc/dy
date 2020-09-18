@@ -364,6 +364,13 @@ export default {
         'goods_id': product.model.goods_id,
         'is_onsale': 2
       }
+      let skuList = []
+      if (product.model.sku_list) {
+        skuList = JSON.parse(JSON.stringify(product.model.sku_list)) // deep copy
+        skuList.forEach((sku) => {
+          sku['price'] = Math.round(sku['price'] * 100)
+        })
+      }
       if (this.activeTabName === 'title') {
         if (utils.getDyStrRealLength(product.model.goods_name) > 30) {
           this.$alert('商品标题超过30个字，请重新设置', '提示')
@@ -377,15 +384,12 @@ export default {
       } else if (this.activeTabName === 'banner') {
         productNew['carousel_gallery_list'] = product.model.carousel_gallery_list
       } else if (this.activeTabName === 'stock') {
-        productNew['sku_list'] = product.model.sku_list
+        productNew['sku_list'] = skuList
       } else if (this.activeTabName === 'price') {
-        productNew['sku_list'] = JSON.parse(JSON.stringify(product.model.sku_list)) //  深拷贝
-        productNew['sku_list'].forEach((sku) => {
-          sku['price'] = Math.round(sku['price'] * 100)
-        })
+        productNew['sku_list'] = skuList
       } else if (this.activeTabName === 'outerSn') {
         productNew['outer_goods_id'] = product.model.outer_goods_id
-        productNew['sku_list'] = product.model.sku_list
+        productNew['sku_list'] = skuList
           // 跳过库存修改
         productNew['sku_list'].forEach((sku) => {
           sku['skip_update_stock'] = true
