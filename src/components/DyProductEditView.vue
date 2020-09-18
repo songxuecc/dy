@@ -18,7 +18,7 @@ export default {
   computed: {},
   mounted () {
     this.isDyProduct = true
-    this.isShowTemplateTab = true
+    this.isShowTemplateTab = false
     this.saveBtnText = '保存'
   },
   methods: {

@@ -365,8 +365,8 @@ export default {
         'is_onsale': 2
       }
       if (this.activeTabName === 'title') {
-        if (utils.getStrRealLength(product.model.goods_name) > 60) {
-          this.$alert('商品标题超过60个字，请重新设置', '提示')
+        if (utils.getDyStrRealLength(product.model.goods_name) > 30) {
+          this.$alert('商品标题超过30个字，请重新设置', '提示')
           return null
         }
         productNew['goods_name'] = product.model.goods_name
@@ -381,7 +381,7 @@ export default {
       } else if (this.activeTabName === 'price') {
         productNew['sku_list'] = JSON.parse(JSON.stringify(product.model.sku_list)) //  深拷贝
         productNew['sku_list'].forEach((sku) => {
-          sku['price'] *= 100
+          sku['price'] = Math.round(sku['price'] * 100)
         })
       } else if (this.activeTabName === 'outerSn') {
         productNew['outer_goods_id'] = product.model.outer_goods_id

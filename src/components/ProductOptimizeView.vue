@@ -7,7 +7,7 @@
                         <el-input v-model="product.model.title" size="mini" style="width: 600px;"
                                   :class="['input-text-left', {'warn': isTitleWarn}]"
                         >
-                            <span slot="append" class="hint">{{ getStrRealLength(product.model.title) }} / 60</span>
+                            <span slot="append" class="hint">{{ getDyStrRealLength(product.model.title) }} / 30</span>
                         </el-input>
                         <el-button size="mini" @click="checkTitle" style="margin-left: 10px; width: 80px">检测</el-button>
                         <a href="https://mms.pinduoduo.com/sycm/search_data/keyword" target="_blank" style="margin-left: 20px;">
@@ -106,7 +106,7 @@ export default {
   },
   computed: {
     isTitleWarn () {
-      return utils.getStrRealLength(this.product.model.title) > 60
+      return utils.getDyStrRealLength(this.product.model.title) > 30
     }
   },
   mounted () {
@@ -139,8 +139,8 @@ export default {
         this.syncTimer = null
       }
     },
-    getStrRealLength (str) {
-      return utils.getStrRealLength(str)
+    getDyStrRealLength (str) {
+      return utils.getDyStrRealLength(str)
     },
     checkTitle () {
       this.request('checkTitle', {title: this.product.model.title}, data => {
