@@ -1,8 +1,11 @@
 <template>
     <div id="app">
         <el-container class="main-wrapper" v-if="!$route.meta.specialShow">
-            <el-header>
+            <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
                 <nav-bar></nav-bar>
+                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
+                          :closable="notificationClosable" close-text="我知道啦 不再通知" title="-"
+                ></el-alert>
             </el-header>
             <el-container>
                 <el-aside class="aside" width="160px">
@@ -49,7 +52,9 @@ export default {
     return {
       isRouterAlive: true,
       haveSynced: false,
-      syncTimer: null
+      syncTimer: null,
+      notificationClosable: true,
+      curNavNotification: null
     }
   },
   components: {
@@ -58,7 +63,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      syncStatus: 'getSyncStatus'
+      syncStatus: 'getSyncStatus',
+      ignoreNotiList: 'getIgnoreNotiList',
+      notificationList: 'getNotificationList'
     })
   },
   watch: {
@@ -72,6 +79,28 @@ export default {
       } else if (oldVal.status !== 'error' && val.status === 'error') {
         this.$message.error('商品同步出错：' + val.message)
       }
+    },
+    notificationList (notiList) {
+      // 预渲染不处理notifincation
+      if (window.__PRERENDER_INJECTED && window.__PRERENDER_INJECTED.isReader) {
+        return
+      }
+      for (let i in notiList) {
+        if (this.ignoreNotiList.includes(notiList[i].id.toString()) ||
+          notiList[i].end_time < moment().format('YYYY-MM-DD HH:mm:ss')
+        ) {
+          continue
+        }
+        if (parseInt(notiList[i].type) === common.NotificationType['msg_box']) {
+          if (!this.curMsgNotification) {
+            this.setCurMsgNotification(notiList[i])
+          }
+        } else if (parseInt(notiList[i].type) !== common.NotificationType['only_in_mail']) {
+          if (!this.curNavNotification) {
+            this.setCurNavNotification(notiList[i])
+          }
+        }
+      }
     }
   },
   created () {
@@ -81,6 +110,7 @@ export default {
     ...mapActions([
       'requestSyncProducts',
       'updateSyncStatus',
+      'ignoreNotification',
       'requestOperate'
     ]),
     syncProducts () {
@@ -108,6 +138,41 @@ export default {
     },
     backToTop () {
       scrollTo(0, 0)
+    },
+    setCurMsgNotification (notification) { // 弹框通知先不展示
+      this.curMsgNotification = notification
+      return false
+      // this.$alert(notification.data, notification.title, {
+      //   dangerouslyUseHTMLString: true,
+      //   showCancelButton: true,
+      //   confirmButtonText: '不再显示',
+      //   cancelButtonText: '关闭',
+      //   customClass: 'notification-box'
+      // }).then(action => {
+      //   this.ignoreNotification(notification.id.toString())
+      // }).catch(() => {})
+    },
+    setCurNavNotification (notification) {
+      this.curNavNotification = notification
+      this.notificationClosable = (parseInt(notification.type) !== common.NotificationType['nav_cannot_close'])
+      this.$nextTick(function () {
+        let elem = this.$el.querySelector('span.el-alert__title')
+        if (notification) {
+          console.log(2222)
+          console.log(notification)
+          if (notification.title === '-') {
+            elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-09-18/7efc360f-1ba2-4f29-8c1a-14b6112cc9af.png" style="width: 20px; float: left">' + notification.data
+          } else {
+            elem.innerHTML = '<strong><span style="color:red"><img src="https://img.pddpic.com/mms-material-img/2020-09-18/7efc360f-1ba2-4f29-8c1a-14b6112cc9af.png" style="width: 20px; float: left;">' + notification.title + '</span></strong> : ' + '<div style="display: inline-block">' + notification.data + '</div>'
+          }
+        }
+      })
+    },
+    onCloseNotification () {
+      if (parseInt(this.curNavNotification.type) === common.NotificationType['nav_close_not_show_again']) {
+        this.ignoreNotification(this.curNavNotification.id.toString())
+        this.curNavNotification = null
+      }
     }
   }
 }

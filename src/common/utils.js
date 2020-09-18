@@ -233,5 +233,18 @@ export default {
       }
     }
     return true
+  },
+  isAppendNotice (list, times, leftDays) {
+    if ((parseInt(list.order_times) === 0) && (parseInt(list.order_time_less_five) === 0)) {
+      return true
+    } else if ((parseInt(list.order_times) === times) && (parseInt(list.order_time_less_five) === 0)) {
+      return true
+    } else if ((parseInt(list.order_times) === 0) && (parseInt(list.order_time_less_five) === leftDays)) {
+      return true
+    } else if ((parseInt(list.order_times) === times) && (parseInt(list.order_time_less_five) === leftDays)) {
+      return true
+    } else {
+      return false
+    }
   }
 }

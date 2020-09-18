@@ -41,29 +41,29 @@ export default {
   },
   mounted () {
     if (this.isAuth && window.location.pathname !== 'authorize') {
-      this.getUserInfo()
+      this.asyncUserAndNotice()
     }
   },
   watch: {
     isAuth (val) {
       if (val) {
-        this.getUserInfo()
+        this.asyncUserAndNotice()
       }
     }
   },
   methods: {
     ...mapActions([
       'logout',
-      'requestUserInfo'
+      'requestUserInfo',
+      'requestNotification'
     ]),
-    getUserInfo () {
-      setTimeout(() => {
-        this.requestUserInfo({}).then(data => {
-        }).catch(err => {
-          this.message = '用户信息抓取失败'
-          this.$message.error(err.message)
-        })
-      })
+    async asyncUserAndNotice () { // 同步获取userInfo及notification
+      try {
+        await this.requestUserInfo()
+        this.requestNotification()
+      } catch (error) {
+        console.error(error)
+      }
     },
     onLogin () {
       // window.location.href = 'https://fxg.jinritemai.com/index.html#/ffa/open/serviceAuthorizeManage?page=1&size=10&tab='
