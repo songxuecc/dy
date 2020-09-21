@@ -3,9 +3,9 @@
         <el-container class="main-wrapper" v-if="!$route.meta.specialShow">
             <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
                 <nav-bar></nav-bar>
-                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
-                          :closable="notificationClosable" close-text="我知道啦 不再通知" title="-"
-                ></el-alert>
+                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification" title=""
+                          :closable="notificationClosable" close-text="我知道啦 不再通知"
+                ><p style="font-size: 14px">&nbsp;在<span style='color:red'>拼多多</span>上也有开店？<a @click="goHhgjLink" href="https://fuwu.pinduoduo.com/service-market/auth?client_id=50a2a5a298fb42a8863ba1c5267159b9&redirect_uri=https://pdd.huhuguanjia.com/authorize&response_type=code&state=" target="_blank">点击此处</a>免费试用拼多多搬家工具！</p></el-alert>
             </el-header>
             <el-container>
                 <el-aside class="aside" width="160px">
@@ -155,23 +155,26 @@ export default {
     setCurNavNotification (notification) {
       this.curNavNotification = notification
       this.notificationClosable = (parseInt(notification.type) !== common.NotificationType['nav_cannot_close'])
-      this.$nextTick(function () {
-        let elem = this.$el.querySelector('span.el-alert__title')
-        if (notification) {
-          console.log(2222)
-          console.log(notification)
-          if (notification.title === '-') {
-            elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-09-18/7efc360f-1ba2-4f29-8c1a-14b6112cc9af.png" style="width: 20px; float: left">' + notification.data
-          } else {
-            elem.innerHTML = '<strong><span style="color:red"><img src="https://img.pddpic.com/mms-material-img/2020-09-18/7efc360f-1ba2-4f29-8c1a-14b6112cc9af.png" style="width: 20px; float: left;">' + notification.title + '</span></strong> : ' + '<div style="display: inline-block">' + notification.data + '</div>'
-          }
-        }
-      })
+      // this.$nextTick(function () {
+      //   let elem = this.$el.querySelector('span.el-alert__title')
+      //   if (notification) {
+      //     if (notification.title === '-') {
+      //       elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-09-18/7efc360f-1ba2-4f29-8c1a-14b6112cc9af.png" style="width: 20px; float: left">' + notification.data1 + `<a href="#" @click="${this.goHhgjLink}">点击此处</a>` + notification.data2
+      //     } else {
+      //       elem.innerHTML = '<strong><span style="color:red"><img src="https://img.pddpic.com/mms-material-img/2020-09-18/7efc360f-1ba2-4f29-8c1a-14b6112cc9af.png" style="width: 20px; float: left;">' + notification.title + '</span></strong> : ' + '<div style="display: inline-block">' + notification.data + '</div>'
+      //     }
+      //   }
+      // })
     },
     onCloseNotification () {
       if (parseInt(this.curNavNotification.type) === common.NotificationType['nav_close_not_show_again']) {
         this.ignoreNotification(this.curNavNotification.id.toString())
         this.curNavNotification = null
+      }
+    },
+    goHhgjLink () { // 虎虎管家引流打点
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '导航通知导流跳转', '点击', '跳转到虎虎管家'])
       }
     }
   }
