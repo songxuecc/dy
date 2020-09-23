@@ -5,7 +5,7 @@
                 <nav-bar></nav-bar>
                 <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification" title=""
                           :closable="notificationClosable" close-text="我知道啦 不再通知"
-                ><p style="font-size: 14px">&nbsp;在<span style='color:red'>拼多多</span>上也有开店？<a @click="goHhgjLink" href="https://fuwu.pinduoduo.com/service-market/auth?client_id=50a2a5a298fb42a8863ba1c5267159b9&redirect_uri=https://pdd.huhuguanjia.com/authorize&response_type=code&state=" target="_blank">点击此处</a>免费试用拼多多搬家工具！</p></el-alert>
+                ><p style="font-size: 14px">&nbsp;在<span style='color:red'>拼多多</span>上也有开店？<a @click="goHhgjLink" href="#" target="_blank">点击此处</a>免费试用拼多多搬家工具！</p></el-alert>
             </el-header>
             <el-container>
                 <el-aside class="aside" width="160px">
@@ -40,6 +40,7 @@ import sideBar from '@/components/Sidebar.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import common from '@/common/common.js'
+import utils from '@/common/utils'
 
 export default {
   name: 'App',
@@ -176,6 +177,8 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '导航通知导流跳转', '点击', '跳转到虎虎管家'])
       }
+      let url = utils.getHHlink('hhgj') + '?from=douyin'
+      window.open(url)
     }
   }
 }
