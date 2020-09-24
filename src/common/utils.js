@@ -296,13 +296,13 @@ export default {
     if (/(\.sit\.|\.test\.|localhost|0.0.0.0|10.15.*|192.*)/.test(url)) {
       return 'http://localhost:8080/'
     } else if (/nix\./.test(url)) {
-      if (name.toString === 'hhgj') {
+      if (name === 'hhgj') {
         return 'http://nix.huhuguanjia.com/'
       } else {
         return 'http://optimize.nix.huhuguanjia.com/'
       }
     } else {
-      if (name.toString === 'hhgj') {
+      if (name === 'hhgj') {
         return 'https://pdd.huhuguanjia.com/'
       } else {
         return 'https://optimize.huhuguanjia.com/'

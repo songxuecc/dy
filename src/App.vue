@@ -5,7 +5,7 @@
                 <nav-bar></nav-bar>
                 <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification" title=""
                           :closable="notificationClosable" close-text="我知道啦 不再通知"
-                ><p style="font-size: 14px">&nbsp;在<span style='color:red'>拼多多</span>上也有开店？<a @click="goHhgjLink" href="#" target="_blank">点击此处</a>免费试用拼多多搬家工具！</p></el-alert>
+                ><p style="font-size: 14px">&nbsp;在<span style='color:red'>拼多多</span>上也有开店？<a @click="goHhgjLink" href="javascript:;">点击此处</a>免费试用拼多多搬家工具！</p></el-alert>
             </el-header>
             <el-container>
                 <el-aside class="aside" width="160px">
