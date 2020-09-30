@@ -191,7 +191,15 @@
                               <span v-else>{{scope.row.promo_price}}</span>
                           </template>
                       </el-table-column>
-                      <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
+                      <el-table-column key="5" width="150">
+                          <template slot="header" slot-scope="scope">
+                              <span>商品编码</span>
+                          </template>
+                          <template slot-scope="scope">
+                              <el-input v-model="scope.row.code" size="mini" type="text" :class="['input-text-left']"></el-input>
+                          </template>
+                      </el-table-column>
+                      <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
                               <img style="height:40px" :src="scope.row.img">
 <!--                            <el-upload-->
@@ -210,7 +218,7 @@
 <!--                            </el-upload>-->
                           </template>
                       </el-table-column>
-                      <el-table-column key="6" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
+                      <el-table-column key="7" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
                         <template slot-scope="scope">
                             <el-button size="mini" @click="onDeleteSingleSku(scope.$index)" type="danger" plain>删除</el-button>
                         </template>
