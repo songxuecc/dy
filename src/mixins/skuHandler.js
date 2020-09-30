@@ -45,6 +45,7 @@ export default {
           promo_price: utils.fenToYuan(item.promo_price),
           quantity: item.quantity,
           img: item.img,
+          code: item.code,
           hidden: false
         })
       } else {
@@ -88,6 +89,7 @@ export default {
             promo_price: utils.fenToYuan(item.promo_price),
             quantity: item.quantity,
             img: item.img,
+            code: item.code,
             hidden: false
           })
         }
@@ -104,6 +106,7 @@ export default {
           promo_price: utils.yuanToFen(skuShow.promo_price),
           quantity: skuShow.quantity,
           img: skuShow.img,
+          code: skuShow.code,
           property_list: JSON.parse(JSON.stringify(skuShow.property_list))
         }
       }
@@ -118,6 +121,7 @@ export default {
           promo_price: utils.yuanToFen(skuShow.promo_price),
           quantity: skuShow.quantity,
           img: skuShow.img,
+          code: skuShow.code,
           property_list: JSON.parse(JSON.stringify(skuShow.property_list))
         }
       }
