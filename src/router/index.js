@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import AppInfo from '@/pages/AppInfo'
+import MeizheInfo from '@/pages/MeizheInfo'
+import WodaInfo from '@/pages/WodaInfo'
 import Migrate from '@/pages/Migrate'
 import MigrateList from '@/pages/MigrateList'
 import CaptureList from '@/pages/CaptureList'
@@ -23,6 +25,20 @@ const router = new Router({
     {
       path: '/',
       component: AppInfo,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/meizhe',
+      component: MeizheInfo,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/woda',
+      component: WodaInfo,
       meta: {
         keepAlive: true
       }
