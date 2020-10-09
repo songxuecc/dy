@@ -3,11 +3,17 @@
         <div class="navbar-content">
             <div class="nav-title">虎虎搬家助手</div>
             <div class="nav-right">
+              <el-menu v-if="!shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                    <el-menu-item index="3">短信水印</el-menu-item>
+                    <el-menu-item index="4">打单发货</el-menu-item>
+                </el-menu>
               <div v-if="!shopName">
 <!--                <el-button size="small" @click="goToServiceMarket">购买</el-button>-->
                 <el-button size="small" @click="onLogin">登录</el-button>
               </div>
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                    <el-menu-item index="3">短信水印</el-menu-item>
+                    <el-menu-item index="4">打单发货</el-menu-item>
                     <el-menu-item index="1">添加到收藏</el-menu-item>
                     <el-submenu index="2" popper-class="nav-menu-popup">
                         <template slot="title">{{ shopName }}</template>
@@ -84,6 +90,14 @@ export default {
         this.addToFavorite()
       } else if (key === '2-1') {
         this.onLogout()
+      } else if (key === '3') {
+        this.$router.push({
+          path: '/meizhe'
+        })
+      } else if (key === '4') {
+        this.$router.push({
+          path: '/woda'
+        })
       }
     },
     addToFavorite () {
