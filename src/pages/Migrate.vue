@@ -1,7 +1,8 @@
 <template lang="html">
-    <div>
-        <el-tabs type="border-card">
-            <el-tab-pane v-loading="loadingCnt" label="链接抓取">
+    <div style="position: relative;">
+        <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10"></help-tips>
+        <el-tabs type="border-card" v-model="activeName">
+            <el-tab-pane v-loading="loadingCnt" label="链接抓取" name="single">
                 <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过10个" v-model="textCaptureUrls">
                 </el-input>
                 <div class="support">
@@ -43,7 +44,7 @@
                     <el-button type="primary" @click="onCapture(0)">开始抓取</el-button>
                 </div>
             </el-tab-pane>
-            <el-tab-pane v-loading="loadingCnt" label="整店抓取">
+            <el-tab-pane v-loading="loadingCnt" label="整店抓取" name="shop">
                 <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls">
                 </el-input>
                 <div class="support">
@@ -92,14 +93,19 @@
 import request from '@/mixins/request.js'
 import { mapGetters, mapActions } from 'vuex'
 import common from '@/common/common.js'
+import helpTips from '@/components/HelpTips.vue'
 
 export default {
   mixins: [request],
   data () {
     return {
       textCaptureUrls: '',
-      textCaptureShopUrls: ''
+      textCaptureShopUrls: '',
+      activeName: 'single'
     }
+  },
+  components: {
+    helpTips
   },
   computed: {
     ...mapGetters([
