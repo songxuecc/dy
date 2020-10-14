@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="help-tips" @click="goHelpLink" :style="{top: positionT + 'px', right: positionR + 'px'}">
-    <span><i class="el-icon-s-opportunity"></i>不会用？点我查看教程</span>
+    <span><i class="el-icon-s-opportunity"></i>{{showWords}}</span>
   </div>
 </template>
 <script>
@@ -8,6 +8,7 @@ import common from '@/common/common.js'
 export default {
   props: {
     helpLink: String,
+    words: String,
     positionT: Number,
     positionR: Number
   },
@@ -16,6 +17,12 @@ export default {
     }
   },
   computed: {
+    showWords () {
+      if (this.words && this.words !== '') {
+        return this.words
+      }
+      return '不会用？点我查看教程'
+    }
   },
   methods: {
     goHelpLink () {

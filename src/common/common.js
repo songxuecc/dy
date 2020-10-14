@@ -117,5 +117,8 @@ module.exports = {
   SHOP_CAPTURE_TYPE: {
     'server': 0,
     'client': 1
+  },
+  HELP_TIPS_LINK: {
+    'captureShop': 'https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl'
   }
 }
