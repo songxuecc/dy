@@ -48,11 +48,11 @@ export default {
       goods_code_type_options: [
         {
           value: 0,
-          label: '使用来源sku编码，没有则留空'
+          label: '留空'
         },
         {
           value: 1,
-          label: '使用来源sku编码，没有则用{商品ID}'
+          label: '使用{商品ID}'
         }
       ]
     }
