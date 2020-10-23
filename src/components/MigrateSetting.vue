@@ -1,0 +1,190 @@
+<template lang="html">
+  <div style="text-align: left; font-size: 14px;">
+    <el-form ref="template" :rules="rules" style="width: 100%;">
+      <el-form-item size="small" label="sku编码:" required style="margin-bottom: 0px;">
+        <el-select v-model="goods_code_type" placeholder="请选择生成方式" style="width: 350px;">
+          <el-option
+            v-for="item in goods_code_type_options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <br/>
+    <el-button type="primary" @click="saveSetting()" size="small" style="margin-top: 20px;">保存设置</el-button>
+  </div>
+</template>
+<script>
+import request from '@/mixins/request.js'
+import apis from '@/api/apis.js'
+
+export default {
+  mixins: [request],
+  components: {
+
+  },
+  mounted () {
+  },
+  activated () {
+    this.getSetting()
+  },
+  data () {
+    return {
+      title_cut_off: true,
+      title_ban_words: true,
+      banner_completion: true,
+      detail_img_cut: true,
+      property_radio: '1',
+      goods_property_selected: '',
+      goods_code_type: 0,
+      goods_property_value: '',
+      goods_property_options: [],
+      goods_property_options_dic: {},
+      goods_property_list: [],
+      goods_code_prefix: '',
+      goods_code_suffix: '',
+      goods_code_type_options: [
+        {
+          value: 0,
+          label: '留空'
+        },
+        {
+          value: 1,
+          label: '使用{商品ID}'
+        }
+      ]
+    }
+  },
+  computed: {
+  },
+  methods: {
+    updateMigrateSettingData (data) {
+      let boolPropertys = [
+        'title_cut_off', 'title_ban_words',
+        'banner_completion', 'detail_img_cut'
+      ]
+      for (let key in boolPropertys) {
+        if (data.hasOwnProperty(boolPropertys[key])) {
+          this[boolPropertys[key]] = Boolean(data[boolPropertys[key]])
+        }
+      }
+      let strPropertys = [
+        'property_radio', 'goods_code_prefix', 'goods_code_suffix', 'goods_code_type'
+      ]
+      for (let key in strPropertys) {
+        if (data.hasOwnProperty(strPropertys[key])) {
+          this[strPropertys[key]] = data[strPropertys[key]]
+        }
+      }
+      if (data.hasOwnProperty('goods_property')) {
+        this.goods_property_options = []
+        this.goods_property_options_dic = {}
+        this.goods_property_list = []
+        for (let i in data['goods_property']) {
+          let item = {
+            'val': data['goods_property'][i]['val'],
+            'desc': data['goods_property'][i]['desc'],
+            'key': data['goods_property'][i]['key']
+          }
+          this.goods_property_options.push(item)
+          this.goods_property_options_dic[data['goods_property'][i]['key']] = item
+          if (data['goods_property'][i]['val'] !== '') {
+            this.goods_property_list.push({
+              'key': data['goods_property'][i]['key'],
+              'val': data['goods_property'][i]['val'],
+              'desc': data['goods_property'][i]['desc']
+            })
+          }
+        }
+      }
+    },
+    getSetting () {
+      apis.hhgjAPIs.getMigrateSetting({}).then(data => {
+        this.updateMigrateSettingData(data)
+      })
+      // this.request('getMigrateSetting', {}, data => {
+      //   this.updateMigrateSettingData(data)
+      // })
+    },
+    saveSetting () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
+      }
+      let productParams = {
+        json: JSON.stringify({
+          title_cut_off: Number(this.title_cut_off),
+          title_ban_words: Number(this.title_ban_words),
+          detail_img_cut: Number(this.detail_img_cut),
+          banner_completion: Number(this.banner_completion),
+          property_radio: this.property_radio,
+          goods_code_prefix: this.goods_code_prefix,
+          goods_code_suffix: this.goods_code_suffix,
+          goods_code_type: Number(this.goods_code_type),
+          goods_property: this.goods_property_options
+        })
+      }
+      this.request('updateMigrateSetting', productParams, data => {
+        this.$message({
+          message: '设置成功',
+          type: 'success'
+        })
+        this.updateMigrateSettingData(data)
+      })
+    },
+    onChangePropertySelect () {
+      if (this.goods_property_selected !== '') {
+        this.goods_property_value = this.goods_property_options_dic[this.goods_property_selected]['val']
+      }
+    },
+    onChangePropertyInput () {
+      for (let i in this.goods_property_options) {
+        if (this.goods_property_options[i]['key'] === this.goods_property_selected) {
+          this.goods_property_options[i]['val'] = this.goods_property_value
+        }
+      }
+    },
+    updateGoodsProperty () {
+      let idx = -1
+      let exist = false
+      for (let i in this.goods_property_list) {
+        if (this.goods_property_list[i]['key'] === this.goods_property_selected) {
+          exist = true
+          if (this.goods_property_value === '') {
+            idx = i
+          } else {
+            this.goods_property_list[i]['val'] = this.goods_property_value
+          }
+        }
+      }
+      if (idx !== -1) {
+        this.goods_property_list.splice(idx, 1)
+      }
+      if (exist === false) {
+        this.goods_property_list.push(this.goods_property_options_dic[this.goods_property_selected])
+      }
+    },
+    onCloseGoodsProperty (item, idx) {
+      for (let i in this.goods_property_options) {
+        if (this.goods_property_options[i]['key'] === item['key']) {
+          this.goods_property_options[i]['val'] = ''
+        }
+      }
+      this.goods_property_list.splice(idx, 1)
+    }
+  }
+}
+</script>
+<style lang="less" scoped>
+    @import '~@/assets/css/base.less';
+    .el-tag {
+      margin: 5px;
+    }
+    .info {
+      margin-top:10px;
+    }
+    .title {
+      font-size: 14px;
+    }
+</style>
