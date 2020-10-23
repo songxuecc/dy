@@ -5,7 +5,7 @@ import store from '@/store/store'
 import * as types from '@/store/types'
 
 const post = (relativePath, data, headers, resolve, reject) => {
-  Vue.axios.post(relativePath, data, { headers }).then(response => {
+  Vue.axios.post(relativePath, data, {headers}).then(response => {
     if (parseInt(response.status) === 200) {
       if (parseInt(response.data.code) === 0) {
         resolve(response.data.data)
@@ -27,6 +27,69 @@ const post = (relativePath, data, headers, resolve, reject) => {
   })
 }
 
+/**
+ * 发起get请求
+ */
+const get = (relativePath, headers, resolve, reject) => {
+  Vue.axios
+    .get(relativePath, {headers})
+    .then(response => {
+      if (parseInt(response.status) === 200) {
+        if (parseInt(response.data.code) === 0) {
+          resolve(response.data.data)
+        } else if ([200, 201, 202].includes(parseInt(response.data.code))) {
+          store.commit(types.LOGOUT)
+          router.push({
+            path: '/'
+          })
+          reject(new Error(response.data.msg))
+        } else {
+          reject(new Error(response.data.msg))
+        }
+      } else {
+        reject(new Error('服务接口出错'))
+      }
+    })
+    .catch(err => {
+      console.error(err)
+      reject(err)
+    })
+}
+
+/**
+ * 构造get请求对象
+ * @param relativePath
+ * @param params
+ * @returns {Promise<void>}
+ */
+const actionCreateGet = async (relativePath, params) => {
+  params = params || {}
+  // 遍历params构造请求路径
+  for (let key in params) {
+    relativePath += `${key}=${params[key]}&`
+  }
+
+  return new Promise(function (resolve, reject) {
+    let headers = {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    }
+    let token = localStorage.getItem('token')
+    let fakeToken = localStorage.getItem('fake_token')
+    if (token) {
+      headers['token'] = token
+    }
+    if (fakeToken && relativePath !== '/api/fakeUser') {
+      headers['fake-token'] = fakeToken
+    }
+    let changeShop = localStorage.getItem('change_shop')
+    if (changeShop) {
+      headers['change-shop'] = changeShop
+    }
+
+    get(relativePath, headers, resolve, reject)
+  })
+}
+
 const actionCreatorPost = async (relativePath, params) => {
   params = params || {}
   return new Promise(function (resolve, reject) {
@@ -41,7 +104,7 @@ const actionCreatorPost = async (relativePath, params) => {
     if (fakeToken && relativePath !== '/api/fakeUser') {
       headers['fake-token'] = fakeToken
     }
-    let data = qs.stringify(params, { arrayFormat: 'brackets' })
+    let data = qs.stringify(params, {arrayFormat: 'brackets'})
     post(relativePath, data, headers, resolve, reject)
   })
 }
@@ -78,7 +141,7 @@ const actionCreatorDownload = async (relativePath, params) => {
     if (fakeToken && relativePath !== '/api/fakeUser') {
       headers['fake-token'] = fakeToken
     }
-    Vue.axios.get(relativePath, { params, headers, responseType: 'blob' }).then(response => {
+    Vue.axios.get(relativePath, {params, headers, responseType: 'blob'}).then(response => {
       const blob = new Blob([response.data], {type: response.data.type})
       if (response.data.type === 'application/json') {
         let fr = new FileReader()
@@ -126,6 +189,7 @@ const actionCreatorDownload = async (relativePath, params) => {
 }
 
 export default {
+  actionCreateGet,
   actionCreatorPost,
   actionCreatorJsonPost,
   actionCreatorDownload

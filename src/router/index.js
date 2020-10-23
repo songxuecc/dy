@@ -16,6 +16,7 @@ import Fake from '@/pages/Fake'
 import SubscribeList from '@/pages/SubscribeList'
 import PayOrder from '@/pages/PayOrder'
 import CustomerService from '@/pages/CustomerService.vue'
+import MigrateSetting from '@/components/MigrateSetting.vue'
 
 Vue.use(Router)
 
@@ -99,6 +100,15 @@ const router = new Router({
       path: '/batchEdit/:tab',
       name: 'BatchEdit',
       component: BatchEdit,
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/migrateSetting',
+      name: 'MigrateSetting',
+      component: MigrateSetting,
       meta: {
         keepAlive: true,
         requiresAuth: true

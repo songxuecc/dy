@@ -252,6 +252,12 @@ const hhgjAPIs = {
   },
   operate: (params) => {
     return api.actionCreatorPost('/api/operate', params)
+  },
+  getMigrateSetting: (params) => {
+    return api.actionCreateGet('/api/getMigrateSetting', params)
+  },
+  updateMigrateSetting: (params) => {
+    return api.actionCreatorPost('/api/updateMigrateSetting', params)
   }
 }
 

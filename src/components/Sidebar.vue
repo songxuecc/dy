@@ -22,6 +22,10 @@
                     <i class="el-icon-box"></i>
                     <span slot="title">批量处理</span>
                 </el-menu-item>
+                <el-menu-item index="/migrateSetting" :disabled="!isAuth()">
+                    <i class="el-icon-setting"></i>
+                    <span slot="title">搬家设置</span>
+                </el-menu-item>
                 <el-menu-item index="/service">
                     <i class="el-icon-chat-dot-round"></i>
                     <span slot="title">客服微信</span>
