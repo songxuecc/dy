@@ -131,8 +131,6 @@ export default {
       let urls = this.textCaptureUrls.split('\n')
       urls = urls.map(s => s.trim()).filter(s => s !== '')
       this.captureUrlNums = urls.length
-      console.log(this.captureUrlNums)
-      console.log(urls)
     },
     onCapture (captureType) {
       let textUrls = ''
