@@ -3,7 +3,7 @@
         <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10"></help-tips>
         <el-tabs type="border-card" v-model="activeName">
             <el-tab-pane v-loading="loadingCnt" label="链接抓取" name="single">
-                <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过10个" v-model="textCaptureUrls">
+                <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个" @input="changeCaptureUrl" v-model="textCaptureUrls">
                 </el-input>
                 <div class="support">
                     <span>支持平台:</span>
@@ -41,7 +41,10 @@
                     </el-tooltip>
                 </div>
                 <div  class="common-bottom">
-                    <el-button type="primary" @click="onCapture(0)">开始抓取</el-button>
+                    <el-button type="primary" @click="onCapture(0)">
+                      <span style="line-height:21px">开始抓取</span>
+                      <el-badge :value="captureUrlNums"></el-badge>
+                    </el-button>
                 </div>
             </el-tab-pane>
             <el-tab-pane v-loading="loadingCnt" label="整店抓取" name="shop">
@@ -101,7 +104,8 @@ export default {
     return {
       textCaptureUrls: '',
       textCaptureShopUrls: '',
-      activeName: 'single'
+      activeName: 'single',
+      captureUrlNums: 0
     }
   },
   components: {
@@ -123,14 +127,20 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
-
+    changeCaptureUrl () {
+      let urls = this.textCaptureUrls.split('\n')
+      urls = urls.map(s => s.trim()).filter(s => s !== '')
+      this.captureUrlNums = urls.length
+      console.log(this.captureUrlNums)
+      console.log(urls)
+    },
     onCapture (captureType) {
       let textUrls = ''
       let limit = 1
       let message = ''
       if (captureType === 0) {
         textUrls = this.textCaptureUrls
-        limit = 10
+        limit = 50
         message = '链接抓取超过' + limit + '条限制'
       } else {
         textUrls = this.textCaptureShopUrls
