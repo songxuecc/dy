@@ -308,5 +308,19 @@ export default {
         return 'https://optimize.huhuguanjia.com/'
       }
     }
+  },
+  /**
+   * 将正则表达式中的特殊符号进行转义
+   * @param regStr
+   */
+  transferRegStr (reqStr) {
+    let reqCharList = ['$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|']
+
+    for (let reqChar of reqCharList) {
+      // eslint-disable-next-line no-eval
+      reqStr = eval('reqStr.replace(/\\' + reqChar + '/g, "\\\\' + reqChar + '")')
+    }
+
+    return reqStr
   }
 }

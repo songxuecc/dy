@@ -14,7 +14,9 @@ class TextHandler {
   }
   handle (text, type = -1) {
     if (this.textDelete !== '' && [-1, 2].includes(type)) {
-      text = text.replace(new RegExp(this.textDelete, 'g'), '')
+      // 正则特殊符号需要转义
+      let replaceStr = utils.transferRegStr(this.textDelete)
+      text = text.replace(new RegExp(replaceStr, 'g'), '')
     }
     if (this.textReplace1 !== '' && this.textReplace2 !== '' && [-1, 1].includes(type)) {
       text = text.replace(new RegExp(this.textReplace1, 'g'), this.textReplace2)
