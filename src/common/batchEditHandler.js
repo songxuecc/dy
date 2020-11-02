@@ -19,7 +19,8 @@ class TextHandler {
       text = text.replace(new RegExp(replaceStr, 'g'), '')
     }
     if (this.textReplace1 !== '' && this.textReplace2 !== '' && [-1, 1].includes(type)) {
-      text = text.replace(new RegExp(this.textReplace1, 'g'), this.textReplace2)
+      let replaceStr = utils.transferRegStr(this.textReplace1)
+      text = text.replace(new RegExp(replaceStr, 'g'), this.textReplace2)
     }
     if (this.textPrefix !== '' && [-1, 0].includes(type)) {
       text = this.textPrefix + text
