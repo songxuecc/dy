@@ -175,6 +175,9 @@ export default {
       }
     },
     goHhgjLink () { // 虎虎管家引流打点
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '导航通知导航收藏', '点击', '收藏首页链接'])
+      }
       commonUtils.addToFavorite()
       // if (window._hmt) {
       //   window._hmt.push(['_trackEvent', '导航通知导流跳转', '点击', '跳转到虎虎管家'])
