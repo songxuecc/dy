@@ -87,7 +87,7 @@ export default {
     },
     handleSelect (key, keyPath) {
       if (key === '1') {
-        this.addToFavorite()
+        commonUtils.addToFavorite()
       } else if (key === '2-1') {
         this.onLogout()
       } else if (key === '3') {
@@ -98,31 +98,6 @@ export default {
         this.$router.push({
           path: '/woda'
         })
-      }
-    },
-    addToFavorite () {
-      let url = 'https://optimize.huhuguanjia.com/'
-      let title = '虎虎搬家助手'
-      let strShortcut = navigator.userAgent.toLowerCase().indexOf('mac') !== -1 ? 'Command+D' : 'Ctrl+D'
-      let ua = navigator.userAgent.toLowerCase()
-      if (ua.indexOf('360se') > -1) {
-        alert('由于360浏览器功能限制，请按 ' + strShortcut + ' 手动收藏！')
-      } else if (ua.indexOf('msie 8') > -1) {
-        window.external.AddToFavoritesBar(url, title) // IE8
-      } else if (document.all) {
-        try {
-          window.external.addFavorite(url, title)
-        } catch (e) {
-          alert('您的浏览器不支持,请按 ' + strShortcut + ' 手动收藏!')
-        }
-      } else if (window.sidebar) {
-        try {
-          window.sidebar.addPanel(title, url, '')
-        } catch (e) {
-          alert('您的浏览器不支持,请按 ' + strShortcut + ' 手动收藏!')
-        }
-      } else {
-        alert('您的浏览器不支持,请按 ' + strShortcut + ' 手动收藏!')
       }
     }
     // goToServiceMarket () {

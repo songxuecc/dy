@@ -5,7 +5,7 @@
                 <nav-bar></nav-bar>
                 <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification" title=""
                           :closable="notificationClosable" close-text="我知道啦 不再通知"
-                ><p style="font-size: 14px">&nbsp;在<span style='color:red'>拼多多</span>上也有开店？<a @click="goHhgjLink" href="javascript:;">点击此处</a>免费试用拼多多搬家工具！</p></el-alert>
+                ><p style="font-size: 14px">&nbsp;<span style='color:red'>请务必将我们软件链接收藏</span>&nbsp;<a @click="goHhgjLink" href="javascript:;">https://dy.huhuguanjia.com/</a>下次使用时直接打开该链接即可用</p></el-alert>
             </el-header>
             <el-container>
                 <el-aside class="aside" width="160px">
@@ -40,7 +40,7 @@ import sideBar from '@/components/Sidebar.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import common from '@/common/common.js'
-import utils from '@/common/utils'
+import commonUtils from '@/common/commonUtils.js'
 
 export default {
   name: 'App',
@@ -55,7 +55,8 @@ export default {
       haveSynced: false,
       syncTimer: null,
       notificationClosable: true,
-      curNavNotification: null
+      // curNavNotification: null,
+      curNavNotification: true
     }
   },
   components: {
@@ -174,11 +175,12 @@ export default {
       }
     },
     goHhgjLink () { // 虎虎管家引流打点
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '导航通知导流跳转', '点击', '跳转到虎虎管家'])
-      }
-      let url = utils.getHHlink('hhgj') + '?from=douyin'
-      window.open(url)
+      commonUtils.addToFavorite()
+      // if (window._hmt) {
+      //   window._hmt.push(['_trackEvent', '导航通知导流跳转', '点击', '跳转到虎虎管家'])
+      // }
+      // let url = utils.getHHlink('hhgj') + '?from=douyin'
+      // window.open(url)
     }
   }
 }
