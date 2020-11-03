@@ -5,7 +5,7 @@
                 <nav-bar></nav-bar>
                 <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification" title=""
                           :closable="notificationClosable" close-text="我知道啦 不再通知"
-                ><p style="font-size: 14px">&nbsp;<span style='color:red'>请务必将我们软件链接收藏</span>&nbsp;<a @click="goHhgjLink" href="javascript:;">https://dy.huhuguanjia.com/</a>下次使用时直接打开该链接即可用</p></el-alert>
+                ><p style="font-size: 14px;color: #666666;">&nbsp;<span style="color: red">请务必将我们软件链接收藏</span>&nbsp;<a @click="goHhgjLink" href="javascript:;">https://dy.huhuguanjia.com/</a>&nbsp;下次使用时直接打开该链接即可用</p></el-alert>
             </el-header>
             <el-container>
                 <el-aside class="aside" width="160px">
