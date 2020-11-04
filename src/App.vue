@@ -1,21 +1,33 @@
 <template>
     <div id="app">
-        <el-container class="main-wrapper" v-if="!$route.meta.specialShow">
-            <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
-                <nav-bar></nav-bar>
+        <el-header :style="{height:(curNavNotification ? 'auto' : '96px')}">
+          <nav-bar></nav-bar>
+          <div class="full-screen">
+            <div class="header-notice">
+              <div class="main-inner clearfix">
                 <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification" title=""
                           :closable="notificationClosable" close-text="我知道啦 不再通知"
-                ><p style="font-size: 14px;color: #666666;">&nbsp;<span style="color: red">请务必将我们软件链接收藏</span>&nbsp;<a @click="goHhgjLink" href="javascript:;">https://dy.huhuguanjia.com/</a>&nbsp;下次使用时直接打开该链接即可用</p></el-alert>
-            </el-header>
+                ><p style="font-size: 12px;color: #666666;">&nbsp;<span style="color: red">请务必将我们软件链接收藏</span>&nbsp;<a @click="goHhgjLink" href="javascript:;">https://dy.huhuguanjia.com/</a>&nbsp;下次使用时直接打开该链接即可用</p></el-alert>
+              </div>
+            </div>
+          </div>
+        </el-header>
+        <el-container class="main-wrapper" v-if="!$route.meta.specialShow">
             <el-container>
-                <el-aside class="aside" width="160px">
-                    <side-bar></side-bar>
+                <el-aside class="aside" width="220px">
+                    <div class="aside-bar">
+                      <side-bar></side-bar>
+                    </div>
                 </el-aside>
                 <el-main>
-                    <keep-alive>
-                        <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
-                    </keep-alive>
-                    <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
+                  <div class="mainer">
+                    <div class="inner">
+                      <keep-alive>
+                          <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
+                      </keep-alive>
+                      <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
+                    </div>
+                  </div>
                 </el-main>
             </el-container>
         </el-container>
@@ -25,10 +37,13 @@
           </keep-alive>
           <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
         </div>
-        <div class="float-view">
-            <div class="float-button">
-                <el-button type="primary" icon="el-icon-top" circle @click="backToTop"></el-button>
-            </div>
+        <el-footer>
+          <div class="inner-foot full-screen">
+            <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
+          </div>
+        </el-footer>
+        <div v-if="isShowFloatView" class="float-view">
+          <flex-foot></flex-foot>
         </div>
     </div>
 </template>
@@ -37,6 +52,7 @@
 import '@/assets/css/base.less'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar.vue'
+import FlexFoot from '@/components/FlexFoot.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import common from '@/common/common.js'
@@ -61,13 +77,15 @@ export default {
   },
   components: {
     navBar,
-    sideBar
+    sideBar,
+    FlexFoot
   },
   computed: {
     ...mapGetters({
       syncStatus: 'getSyncStatus',
       ignoreNotiList: 'getIgnoreNotiList',
-      notificationList: 'getNotificationList'
+      notificationList: 'getNotificationList',
+      isShowFloatView: 'isShowFloatView'
     })
   },
   watch: {
@@ -138,9 +156,6 @@ export default {
         this.isRouterAlive = true
       })
     },
-    backToTop () {
-      scrollTo(0, 0)
-    },
     setCurMsgNotification (notification) { // 弹框通知先不展示
       this.curMsgNotification = notification
       return false
@@ -189,27 +204,48 @@ export default {
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  /*margin-top: 60px;*/
-}
+<style lang="less">
+  #app {
+    font-family: 14px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    min-height:100%;
+    height: auto !important;
+    height: 100%; /*IE6不识别min-height*/
+    position: relative;
+    /*margin-top: 60px;*/
+  }
 
-.main-wrapper {
-    width: 1280px;
+  .main-wrapper {
+    width: 1320px;
     margin: auto;
-}
+    /deep/ .el-container {
+      padding-bottom: 60px;
+    }
+  }
 
-.aside {
-    padding-left: 20px;
-}
+  .aside {
+    padding: 14px 0 14px 20px;
+    text-align: left;
+  }
 
-.notification-box {
+  .aside .aside-bar {
+    background: #ffffff;
+    height: 100%;
+  }
+
+  .mainer {
+    background: #ffffff;
+    height: 100%
+  }
+  .inner {
+    padding: 30px;
+  }
+
+  .notification-box {
     width: auto !important;
     min-width: 420px !important;
-}
+  }
 </style>

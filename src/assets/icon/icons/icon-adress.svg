@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>画板备份 9</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="14" height="14"></rect>
+    </defs>
+    <g id="ICON-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="10-9之前切图" transform="translate(-105.000000, -53.000000)">
+            <g id="公司地址" transform="translate(105.000000, 53.000000)">
+                <g id="编组-16">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="蒙版" fill="#D8D8D8" opacity="0" xlink:href="#path-1"></use>
+                    <g mask="url(#mask-2)">
+                        <g transform="translate(1.555556, 1.944444)">
+                            <g id="编组-15" stroke="none" stroke-width="1" fill-rule="evenodd" transform="translate(2.520000, 0.000000)">
+                                <path d="M3.75167091,7.54202805 C5.45055697,5.65717872 6.3,4.19316937 6.3,3.15 C6.3,1.41030304 4.88969696,0 3.15,0 C1.41030304,0 0,1.41030304 0,3.15 C0,4.19316377 0.849433913,5.65716301 2.54830174,7.54199771 L2.54826906,7.54202717 C2.84779217,7.87433763 3.35999449,7.90091703 3.69230496,7.60139392 C3.71310648,7.58264478 3.73292174,7.56282955 3.75167091,7.54202805 Z" id="椭圆形" stroke="#1D8FFF" stroke-width="0.8"></path>
+                                <circle id="椭圆形" stroke="#FA6400" stroke-width="0.8" cx="3.15" cy="3.15" r="1.49"></circle>
+                            </g>
+                            <path d="M9.13023193,5.67 L9.46901586,5.67 C9.83066495,5.67 10.1484976,5.90974162 10.2478503,6.25747589 L11.0449931,9.04747589 C11.1678898,9.47761425 10.9188212,9.92593772 10.4886828,10.0488344 C10.4163162,10.0695106 10.3414211,10.08 10.2661587,10.08 L1.07384129,10.08 C0.62649064,10.08 0.263841287,9.71735065 0.263841287,9.27 C0.263841287,9.19473761 0.274330722,9.11984247 0.29500689,9.04747589 L1.09214975,6.25747589 C1.19150239,5.90974162 1.50933505,5.67 1.87098414,5.67 L2.19346436,5.67 L2.19346436,5.67" id="路径" stroke="#1D8FFF" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </g>
+                    </g>
+                </g>
+                <rect id="矩形备份-6" fill="#D8D8D8" opacity="0" x="0" y="0" width="14" height="14"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

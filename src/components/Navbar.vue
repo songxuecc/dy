@@ -1,7 +1,9 @@
 <template lang="html">
     <div class="navbar" id="navBar">
+        <div class="navbar-top full-screen"></div>
         <div class="navbar-content">
-            <div class="nav-title">虎虎搬家助手</div>
+          <div class="main-inner clearfix">
+            <div class="nav-title" @click="goInfo"><img src="../assets/icon/logo.png" alt="虎虎搬家助手"></div>
             <div class="nav-right">
               <el-menu v-if="!shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
                     <el-menu-item index="3">短信水印</el-menu-item>
@@ -12,15 +14,16 @@
                 <el-button size="small" @click="onLogin">登录</el-button>
               </div>
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                    <el-menu-item index="3">短信水印</el-menu-item>
-                    <el-menu-item index="4">打单发货</el-menu-item>
-                    <el-menu-item index="1">添加到收藏</el-menu-item>
+<!--                    <el-menu-item index="3">短信水印</el-menu-item>-->
+<!--                    <el-menu-item index="4">打单发货</el-menu-item>-->
+<!--                    <el-menu-item index="1">添加到收藏</el-menu-item>-->
                     <el-submenu index="2" popper-class="nav-menu-popup">
                         <template slot="title">{{ shopName }}</template>
                         <el-menu-item index="2-1">退出</el-menu-item>
                     </el-submenu>
                 </el-menu>
             </div>
+          </div>
         </div>
     </div>
 </template>
@@ -99,6 +102,11 @@ export default {
           path: '/woda'
         })
       }
+    },
+    goInfo () {
+      this.$router.push({
+        path: '/info'
+      })
     }
     // goToServiceMarket () {
     //   window.location.href = 'https://mms.pinduoduo.com/service-market/service-detail?detailId=236'

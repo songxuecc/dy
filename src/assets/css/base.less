@@ -5,7 +5,15 @@ blockquote,body,dd,dl,dt,fieldset,form,h1,h2,h3,h4,h5,h6,hr,input,legend,ol,p,pr
   padding: 0;
 }
 body,p {
-  font: 14px/1.5 Avenir,Helvetica,Arial,sans-serif,'Hiragino Sans GB','\5b8b\4f53'
+  font: 14px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+}
+html,body {
+  margin: 0;
+  padding:0;
+  height: 100%;
+}
+body {
+  background-color: @body-bg;
 }
 img {
   border: 0;
@@ -376,35 +384,59 @@ div.block-content {
 }
 
 .notification-info {
-  background-color: #FFF8DC !important;
-  color: #708090 !important;
+  background-color: #FFF6ED !important;
+  color: #333333 !important;
   span {
     vertical-align: baseline;
   }
   /deep/ .el-alert__title {
-    font-size: 16px;
+    font-size: 12px;
   }
   /deep/ .el-alert__closebtn {
     color: #708090;
+    font-size: 12px;
   }
   /deep/ p {
     margin: 0;
-  }
-  /deep/ p.el-alert__description {
-    margin: 0;
+    font-size: 12px;
   }
 }
 
 .float-view {
   position: fixed;
-  right: calc(25% - @width-main * 0.25);
-  bottom: 10%;
-  z-index: 999;
+  //right: calc(25% - @width-main * 0.25);
+  left: 50%;
+  margin-left: 650px;
+  bottom: 20%;
+  z-index: 9999;
 
   .float-button {
-    padding: 8px;
+    padding: 4px;
+    position: relative;
+    .notice-icon {
+      position: absolute;
+      z-index: 1;
+      left: 20px;
+      top: 13px;
+      display: block;
+      width: 9px;
+      height: 9px;
+      border-radius: 10px;
+      background: red;
+      cursor: pointer;
+    }
     /deep/ .el-button.is-circle {
-      font-size: 18px;
+      font-size: 26px;
+    }
+  }
+  .wechat-button {
+    position: relative;
+    span.wechat-icon {
+      display: block;
+      width: 26px;
+      height: 26px;
+      background: url('../icon/service-white.png') no-repeat;
+      background-size: 100%;
     }
   }
 }
@@ -496,3 +528,396 @@ div .like-button-disabled {
   cursor: pointer;
 }
 
+/* 微信客服 begin */
+.service-area {
+  background: #ffffff;
+  text-align: left;
+  padding: 18px;
+}
+.service-pdd {
+  padding: 10px 0 10px 35px;
+  background: #f0f8ff;
+  border-radius: 4px;
+  border-radius: 0px;
+
+  .service-time {
+    font-size: 12px;
+    color: #666666;
+    padding: 4px 0 4px 24px;
+    p {
+      font-size: 12px;
+    }
+    span {
+      font-size: 12px;
+      color: #3D9FFF ;
+      background: #ffffff;
+      padding: 0 6px;
+      border-radius: 10px;
+    }
+  }
+}
+.service-title {
+  color: #333333;
+  font-size: 18px;
+  padding-bottom: 6px;
+  img {
+    width: 26px;
+    height: auto;
+    vertical-align: text-bottom;
+  }
+  span {
+    color: #0057FF;
+    padding-left: 2px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  em {
+    color: #999999;
+  }
+}
+.service-wechat {
+  padding: 18px 0 10px 35px;
+}
+.wechat-box {
+  display: flex;
+  padding-top: 20px;
+  .wechat-img {
+    padding-right: 30px;
+    img {
+      width: 200px;
+      height: auto;
+    }
+  }
+  .question-area {
+    color: #333333;
+    h4 {
+      margin-bottom: 30px;
+    }
+    p {
+      font-size: 12px;
+      padding-bottom: 8px;
+      a{
+        color: #666666;
+      }
+      a:hover{
+        color: #0057FF;
+      }
+    }
+    .see-more {
+      text-decoration: underline;
+      padding-top: 20px;
+      a {
+        color: #1D8FFF ;
+      }
+    }
+  }
+}
+
+.service-box {
+  box-shadow: 0 4px 14px 0 rgba(0,0,0,0.05);
+  position: absolute;
+  right: 70px;
+  top: -280px;
+  z-index: 99;
+  .service-area {
+    width: 270px;
+    .service-pdd {
+      padding: 10px;
+      background: #3FA0FF;
+      box-shadow: inset 0 1px 7px 0 #2890E1;
+      border-radius: 4px;
+      border-radius: 0px;
+      .service-title {
+        color: #ffffff;
+        font-size: 14px;
+        img {
+          width: 20px;
+        }
+        span {
+          color: #ffffff;
+        }
+      }
+      .service-time {
+        color: #ffffff;
+      }
+    }
+    .service-wechat {
+      padding: 20px 4px 0;
+      img {
+        width: 20px;
+      }
+      .service-title {
+        font-size: 14px;
+        color: #ffffff;;
+        line-height: 21px;
+        background: #3FA0FF;
+        padding: 10px;
+      }
+      .wechat-box {
+        display: block;
+        padding-top: 0;
+        .wechat-img {
+          padding: 0;
+          width: 200px;
+          margin: 0 auto;
+          img {
+            width: 100%;
+          }
+        }
+        .question-area {
+          padding-top: 24px;
+          h4 {
+            font-weight: normal;
+            margin-bottom: 10px;
+          }
+          p {
+            padding-bottom: 4px;
+            a {
+              color: #999999;
+            }
+          }
+          .see-more {
+            padding-top: 18px;
+          }
+        }
+      }
+    }
+  }
+  .close-btn {
+    text-align: right;
+    img {
+      cursor: pointer;
+      width: 24px;
+      height: auto;
+      padding: 0 0 8px;
+      position: relative;
+      right: -4px;
+    }
+  }
+}
+
+/* 微信客服 end */
+
+.content-relative {
+  position: relative;
+}
+
+.migrate-set {
+  padding-left: 10px;
+  font-size: 14px;
+  a {
+    i {
+      padding-right: 2px;
+    }
+    color: @color-blue;
+  }
+}
+
+.custom-message {
+  background-color: #f0f9eb;
+  border-color: #e1f3d8;
+}
+
+/* 右侧导航 */
+.float-nav {
+  width: 66px;
+  text-align: center;
+  background: #FFFFFF;
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.10);
+  border-radius: 4px;
+  .float-button {
+    cursor: pointer;
+    span.nav-icon {
+      padding: 10px 0 0 0;
+      width: 26px;
+      height: 26px;
+      display: block;
+      margin: 0 auto;
+      background-position: 0 10px;
+      background-repeat: no-repeat;
+    }
+    span.nav-help {
+      background-image: url("../images/help-nav.png");
+    }
+    span.nav-service {
+      background-image: url("../images/service-nav.png");
+    }
+    span.nav-notice {
+      background-image: url("../images/notice-nav.png");
+    }
+    span.nav-collect {
+      background-image: url("../images/collect-nav.png");
+    }
+    span.nav-gotop {
+      background-position: 0 0;
+      background-image: url("../images/gotop.png");
+    }
+    .column-name {
+      color: #666666;
+      padding: 6px 0 8px;
+    }
+  }
+  .float-button:hover {
+    background: #1D8FFF ;
+    span.nav-help {
+      background-image: url("../images/help-nav-hov.png");
+    }
+    span.nav-service {
+      background-image: url("../images/service-nav-hov.png");
+    }
+    span.nav-notice {
+      background-image: url("../images/notice-nav-hov.png");
+    }
+    span.nav-collect {
+      background-image: url("../images/collect-nav-hov.png");
+    }
+    span.nav-gotop {
+      background-image: url("../images/gotop.png");
+    }
+    .column-name {
+      color: #ffffff;
+    }
+  }
+  .nav-go-top {
+    height: 26px;
+    padding: 4px 0 6px;
+    border-top: 4px solid @body-bg;
+  }
+  .nav-go-top:hover {
+    background: #ffffff;
+  }
+  .collect-button:hover {
+    background: #ffffff;
+    .column-name {
+      color: #666666;
+    }
+  }
+}
+
+/* 内容间距设置 */
+.el-container {
+  /deep/ .el-main {
+    min-height: 500px;
+    padding: 14px 20px 14px 10px;
+  }
+}
+
+.el-button--primary.is-plain {
+  color: #1D8FFF;
+  border-color: #1D8FFF;
+  background: #FFFFFF;
+}
+
+.optimize-dialog {
+  /deep/ .el-dialog {
+    // min-width: 780px;
+    border-radius: 10px;
+    width: 780px;
+  }
+  /deep/ .el-dialog__header{
+    padding-top:32px;
+  }
+  .dialog-title{
+    height: 30px;
+    font-size: 22px;
+    font-weight: 500;
+    color: #4E4E4E;
+    line-height: 30px;
+  }
+  /deep/ .el-dialog__headerbtn .el-dialog__close {
+    color: #909399;
+    font-weight: 900;
+    color: #999;
+    opacity: 0.8;
+  }
+
+  /deep/ .el-dialog__headerbtn {
+    right: 30px;
+    top: 30px;
+    font-size: 22px;
+  }
+}
+
+/* 内容间距设置 */
+.el-container {
+  /deep/ .el-main {
+    min-height: 500px;
+    padding: 14px 20px 14px 10px;
+  }
+}
+
+.el-button--primary.is-plain {
+  color: #1D8FFF;
+  border-color: #1D8FFF;
+  background: #FFFFFF;
+}
+
+.optimize-dialog {
+  /deep/ .el-dialog {
+    // min-width: 780px;
+    border-radius: 10px;
+    width: 780px;
+  }
+  /deep/ .el-dialog__header{
+    padding-top:32px;
+  }
+  .dialog-title{
+    height: 30px;
+    font-size: 22px;
+    font-weight: 500;
+    color: #4E4E4E;
+    line-height: 30px;
+  }
+  /deep/ .el-dialog__headerbtn .el-dialog__close {
+    color: #909399;
+    font-weight: 900;
+    color: #999;
+    opacity: 0.8;
+  }
+
+  /deep/ .el-dialog__headerbtn {
+    right: 30px;
+    top: 30px;
+    font-size: 22px;
+  }
+}
+
+/* 头尾默认设置为全屏 */
+#app {
+  /deep/ .el-header {
+    padding: 0;
+  }
+  /deep/ .el-footer {
+    padding: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 81px;/*脚部的高度*/
+    clear:both;
+  }
+}
+.header-notice {
+  background: #FFF6ED;
+  /deep/ .el-alert.is-light .el-alert__closebtn{
+    padding-right: 6px;
+  }
+}
+.main-inner {
+  width: 1320px;
+  margin: 0 auto;
+}
+.inner-foot {
+  background: #ffffff;
+  padding: 30px 0;
+  /deep/ .el-link.el-link--default {
+    font-size: 12px;
+    color: #666666;
+  }
+  /deep/ a.el-link.el-link--default:hover{
+    color: #409EFF;
+    text-decoration: none;
+  }
+}
+.full-screen {
+  min-width: @full-screen-width;
+}
