@@ -75,10 +75,9 @@
       </el-table-column>
       <el-table-column label="售卖价" width="240" align="center">
         <template slot="header" slot-scope="scope">
-
           <div class="setting-content" style="height: 100%;">
-            <div class="th-title-with-icon" style="height: 100%;">
-              <div class="th-title" style="line-height: 64px;"> 售卖价
+            <div class="th-title-with-icon">
+              <div class="th-title"> 售卖价
                 <el-tooltip manua="true" class="item" effect="dark" placement="top" >
                     <div slot="content">
                       <ul style="padding: 0; margin: 0;">基于抖音的规定，若有多个SKU价格，则售卖价在商品页面展示的是SKU价格范围。</ul>
@@ -86,34 +85,12 @@
                     <i class="el-icon-question"></i>
                 </el-tooltip>
               </div>
-<!--              <div class="th-icon">-->
-<!--                <el-tooltip v-if="(!template.checkNumber('single_price_rate') || !template.checkNumber('single_price_diff')) && isInitTemplate"-->
-<!--                            placement="top" content="请输入合法的数字"-->
-<!--                >-->
-<!--                  <span> <i class="el-icon-warning warn" style=""></i> </span>-->
-<!--                </el-tooltip>-->
-<!--              </div>-->
             </div>
-<!--            <div class="th-title-text"> 最高价 x </div>-->
-<!--            <el-input v-model="template.model.single_price_rate" size="medium"-->
-<!--                      :class="['input-m', !template.checkNumber('single_price_rate') && isInitTemplate ? 'warn' : '']"-->
-<!--                      @input="handleInputDiscountTemplate"-->
-<!--            ></el-input>-->
-<!--            <div class="th-title-text"> % - </div>-->
-<!--            <el-tooltip content="差额可以为负数" :enterable="false">-->
-<!--              <el-input v-model="template.model.single_price_diff" size="medium" style="width:60px;"-->
-<!--                        :class="['input-m', !template.checkNumber('single_price_diff') && isInitTemplate ? 'warn' : '']"-->
-<!--                        @input="handleInputDiscountTemplate"-->
-<!--              ></el-input>-->
-<!--            </el-tooltip>-->
+            <div class="th-title-text" @click="getSalePrice(false)" style="cursor: pointer"><a>最低价</a></div>
+            <div class="th-title-text" @click="getSalePrice(true)" style="cursor: pointer"><a>最高价</a></div>
           </div>
         </template>
         <template slot-scope="scope">
-<!--          <el-tooltip :disabled="scope.row.discount_price_obj.isDiff()" placement="top" effect="light" :enterable="false"-->
-<!--                      :content="scope.row.max_price / 100 + ' x ' + template.model.single_price_rate + '%'-->
-<!--                                           + (template.model.single_price_diff < 0 ? ' + ' : ' - ')-->
-<!--                                           + Math.abs(template.model.single_price_diff)"-->
-<!--          >-->
             <div style="display: flex">
               <div style="width: 182px; padding-left: 18px;">
                 <el-input v-model="scope.row.discount_price_obj.model.price" size="medium"
@@ -141,7 +118,6 @@
                 </el-tooltip>
               </div>
             </div>
-<!--          </el-tooltip>-->
         </template>
       </el-table-column>
       <el-table-column label="划线价" width="240" align="center">
@@ -360,6 +336,9 @@ export default {
         let tpProductList = data.items
         for (let i in tpProductList) {
           let tpProduct = tpProductList[i]
+          tpProduct.showMax = true
+          tpProduct.currentMaxPrice = 0
+          tpProduct.currentMinPrice = Number.MAX_SAFE_INTEGER
           tpProduct.market_price_obj = new FormModel()
           tpProduct.discount_price_obj = new FormModel()
           tpProduct.group_price_range = '-'
@@ -378,6 +357,7 @@ export default {
               tpProduct.max_price, this.template.model.price_rate, this.template.model.price_diff * 100
             ))
           })
+          // 恢复历史价格
           if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['price']) {
             tpProduct.market_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['price'])
           }
@@ -387,8 +367,18 @@ export default {
               tpProduct.max_price, 100, 0
             ))
           })
+          // 恢复历史售卖价
           if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price']) {
             tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'])
+          }
+          // 恢复历史sku价格
+          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['sku']) {
+            let skuCustomPrices = this.dicCustomPrices[tpProduct.tp_product_id]['sku']
+            for (let key in skuCustomPrices) {
+              if (tpProduct.sku_json.sku_map[key]) {
+                tpProduct.sku_json.sku_map[key].promo_price = skuCustomPrices[key].promo_price
+              }
+            }
           }
         }
         this.tpProductList = tpProductList
@@ -765,6 +755,35 @@ export default {
           keepStatus: true
         }
       })
+    },
+    getSalePrice (isMax) {
+      for (let product of this.tpProductList) {
+        var minPrice = 0
+        var maxPrice = 0
+        for (let key in product.sku_json.sku_map) {
+          let promoPrice = product.sku_json.sku_map[key].promo_price
+
+          if (minPrice === 0) {
+            minPrice = promoPrice
+          }
+          if (minPrice > promoPrice) {
+            minPrice = promoPrice
+          }
+          if (maxPrice < promoPrice) {
+            maxPrice = promoPrice
+          }
+        }
+        product.currentMinPrice = minPrice
+        product.currentMaxPrice = maxPrice
+        if (isMax) {
+          product.showMax = true
+          product.discount_price_obj.model.price = utils.fenToYuan(maxPrice)
+        } else {
+          product.showMax = false
+          product.discount_price_obj.model.price = utils.fenToYuan(minPrice)
+        }
+        this.addCustomPrices(product.tp_product_id, 'discount_price', utils.yuanToFen(product.discount_price_obj.model.price))
+      }
     }
   }
 }
