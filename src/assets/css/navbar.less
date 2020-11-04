@@ -1,50 +1,145 @@
 @import "base";
 
 .navbar {
-  height: 60px;
-  line-height: 60px;
-  background-color: @navbar-background-color;
-
+  background: #ffffff;
+  .navbar-top {
+    height: 16px;
+    background-color: #409EFF;;
+  }
   .navbar-content {
     padding: 0 20px;
     color: @color-white;
-
+    height: 80px;
     .nav-title {
       float: left;
-      left: 20px;
-      font-size: @navbar-title-font-size;
+      padding: 20px 0 0 20px;
+      cursor: pointer;
+      img {
+        width: 153px;
+      }
     }
 
     .nav-right {
       float: right;
       display:flex;
       align-items: flex-start;
+      position: relative;
+      color: #333333;
       .el-button {
         vertical-align: middle;
         width: 100px;
+        padding: 10px;
+      }
+      .wx-box {
+        padding: 10px;
+        background: #50AEFF;
+        position: absolute;
+        left: 0;
+        top: 58px;
+        z-index: 9999;
+        .wx-title {
+          font-size: 12px;
+          font-weight: bold;
+          margin: 0 auto;
+          line-height: 34px;
+        }
+        .wx-info {
+          p {
+            padding-left: 10px;
+            font-size: 12px;
+            text-align: left;
+            margin: 0;
+            line-height: 20px;
+          }
+        }
+      }
+      .order-board-box {
+        position: absolute;
+        z-index: 999;
+        right: -21px;
+        top: 60px;
       }
     }
 
     /deep/ .el-menu {
       .el-menu-item {
-        background-color: @navbar-background-color;
-        color: white;
+        //background: #409EFF;
+        //color: white;
         &:hover {
-          background-color: @color-light-purple;
+          background-color: @color-light-blue;
         }
       }
       .el-submenu__title {
-        background-color: @navbar-background-color;
-        color: white;
+        color: #4e4e4e;
+        height: 80px;
+        line-height: 80px;
+        border-bottom: 2px solid #ffffff;
         &:hover {
-          background-color: @color-light-purple;
-        }
-        .el-submenu__icon-arrow {
-          color: white;
-
+          color: @color-light-blue;
+          //.color-light-blue;
+          i {
+            color: @color-light-blue;
+          }
         }
       }
     }
+  }
+  /deep/ .el-menu.el-menu--horizontal {
+    border-bottom: none;
+  }
+}
+
+.menu-content {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  line-height: 80px;
+  height: 80px;
+  overflow: hidden;
+  li {
+    border: 0;
+    padding: 0 20px;
+    display: block;
+    float: left;
+    cursor: pointer;
+  }
+  li:hover{
+    //.color-light-blue;
+    color: @color-light-blue;
+  }
+}
+
+.navbar .navbar-content .nav-right .dialog-footer .el-button {
+  vertical-align: middle;
+  width: auto;
+  padding: 10px;
+}
+.more-shop-order-dialog {
+  line-height: normal;
+}
+.more-shop-order {
+  text-indent: 26px;
+  p {
+    font-size: 16px;
+    line-height: 30px;
+    padding: 20px 0;
+  }
+  em {
+    color: red;
+    font-weight: bold;
+  }
+  span {
+    font-size: 12px;
+    line-height: 24px;
+    color: #666666;
+  }
+}
+
+/* 未登陆头部导航样式 */
+.nav-not-login {
+  padding: 20px 20px 20px 0;
+  /deep/ .el-button--primary {
+    font-size: 16px;
   }
 }
 

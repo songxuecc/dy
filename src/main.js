@@ -11,8 +11,11 @@ import VueAxios from 'vue-axios'
 import store from './store/store'
 import utils from '@/common/utils'
 
+import IconSvg from '@/components/icon-svg'
+
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
+Vue.component('icon-svg', IconSvg)
 
 // Vue.use(ELEMENT)
 
@@ -27,3 +30,7 @@ new Vue({
     utils.initMoment()
   }
 })
+
+const requireAll = requireContext => requireContext.keys().map(requireContext)
+const req = require.context('@/assets/icon/icons', true, /\.svg$/)
+requireAll(req)

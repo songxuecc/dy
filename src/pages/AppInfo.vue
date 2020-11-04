@@ -1,28 +1,23 @@
 <template lang="html">
-    <div>
+    <div class="info-page">
         <el-tabs type="border-card" v-model="activeName">
           <el-tab-pane label="关于我们" class="my-info" name="company">
-            虎虎搬家助手属于上海虎正奔信息科技有限公司旗下品牌。
-            <br/>
-            上海虎正奔信息科技有限公司是一家为电商企业提供创新型店铺经营管理工具的互联网公司。致力于帮助企业降低运营成本、提升运营效率、促进交易转化。
-            <br/>
-            <br/>
-            公司名称：上海虎正奔信息科技有限公司
-            <br/>
-            地址：上海浦东软件园22号楼310室
-            <br/>
-            联系方式：huhu_yunying@taofengcai.com
-            <br>
-            <br>
-            <br>
-            <div style="max-width: 70%; float:left; font-size: 14px;">
-              如有问题，可以联系客服：<img src="@/assets/images/wxpic.jpg" style="max-height: 100px;">
+            <div class="title">
+              虎虎搬家助手
+            </div>
+            <p class="info">
+              属于上海虎正奔信息科技有限公司旗下品牌。
+            </p>
+            <p class="info describe-text">
+              上海虎正奔信息科技有限公司是一家为电商企业提供新型店铺经营管理的互联网公司。致力于帮助<br>企业降低运营成本、提升运营效率、促进交易转化。
+            </p>
+            <div class="company-info">
+              <p><icon-svg iconClass="icon-company" style="width:18px; height:18px"></icon-svg><span>公司名称：</span>上海虎正奔信息科技有限公司</p>
+              <p><icon-svg iconClass="icon-adress" style="width:18px; height:18px"></icon-svg><span>地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</span>上海浦东软件园22号楼310室</p>
+              <p><icon-svg iconClass="icon-phone" style="width:18px; height:18px"></icon-svg><span>联系方式：</span><a href="mailto:huhu_yunying@taofengcai.com?"><em>huhu_yunying@taofengcai.com</em></a></p>
             </div>
           </el-tab-pane>
         </el-tabs>
-        <div style="padding-top: 20px">
-            <el-link href="http://www.beian.miit.gov.cn" target="_blank" >沪ICP备16034003号</el-link>
-        </div>
       <br>
       <br>
     </div>
@@ -37,9 +32,57 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    .my-info {
-      line-height: 30px;
-      text-align: left;
-      padding: 20px;
+  @import '~@/assets/css/appinfo.less';
+  .info {
+    margin: 0 auto;
+    .el-image {
+      padding: 0;
+      margin: 0;
+      border: 0;
+      display: block;
     }
+  }
+  .info-page {
+    .my-info {
+      text-align: center;
+      color: #333333;
+      padding-top: 30px;
+      p.info {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      p.describe-text {
+        text-align: left;
+        padding-left: 200px;
+      }
+      .title {
+        font-size: 24px;
+        letter-spacing: 0;
+        margin-bottom: 6px;
+      }
+      .company-info {
+        text-align: left;
+        padding-left: 360px;
+        padding-top: 18px;
+        p {
+          font-size: 14px;
+          letter-spacing: 0;
+          margin-bottom: 20px;
+          span {
+            padding-left: 3px;
+          }
+          svg {
+            padding-right: 4px;
+            position: relative;
+            top:1px;
+          }
+          em {
+            color: #1D8FFF;
+            cursor: pointer;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
 </style>

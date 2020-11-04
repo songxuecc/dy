@@ -120,5 +120,6 @@ module.exports = {
   },
   HELP_TIPS_LINK: {
     'captureShop': 'https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl'
-  }
+  },
+  HELP_LINK: 'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l'
 }

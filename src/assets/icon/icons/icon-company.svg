@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>画板备份 57</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="14" height="14"></rect>
+    </defs>
+    <g id="ICON-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="10-9之前切图" transform="translate(-89.000000, -52.000000)">
+            <g id="公司名称" transform="translate(89.000000, 53.000000)">
+                <g id="编组-14">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="蒙版" fill="#D8D8D8" opacity="0" xlink:href="#path-1"></use>
+                    <g mask="url(#mask-2)">
+                        <g transform="translate(1.555556, 2.333333)">
+                            <g id="编组-13" stroke-width="1" fill="none">
+                                <path d="M2.07,0 L7.38,0 C7.82735065,-4.79504172e-16 8.19,0.362649353 8.19,0.81 L8.19,8.82 L8.19,8.82 L1.26,8.82 L1.26,0.81 C1.26,0.362649353 1.62264935,5.26266191e-16 2.07,0 Z" id="矩形" stroke="#1D8FFF" stroke-width="0.8"></path>
+                                <path d="M8.19,2.52 L9.48290771,2.84322693 C10.2040783,3.02351956 10.71,3.6714922 10.71,4.41485778 L10.71,8.82 L10.71,8.82 L8.19,8.82 L8.19,2.52 Z" id="矩形" stroke="#1D8FFF" stroke-width="0.8"></path>
+                                <rect id="矩形" fill="#1D8FFF" x="0" y="8.51376709" width="11.34" height="1" rx="0.5"></rect>
+                            </g>
+                            <rect id="矩形" fill="#FA6400" x="3.15" y="3.15" width="3.15" height="1" rx="0.5"></rect>
+                            <rect id="矩形备份-2" fill="#FA6400" x="3.15" y="5.04" width="3.15" height="1" rx="0.5"></rect>
+                        </g>
+                    </g>
+                </g>
+                <rect id="矩形备份-5" fill="#D8D8D8" opacity="0" x="0" y="0" width="14" height="14"></rect>
+            </g>
+        </g>
+    </g>
+</svg>
