@@ -5,13 +5,13 @@
           <div class="main-inner clearfix">
             <div class="nav-title" @click="goInfo"><img src="../assets/icon/logo.png" alt="虎虎搬家助手"></div>
             <div class="nav-right">
-              <el-menu v-if="!shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+              <!--<el-menu v-if="!shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
                     <el-menu-item index="3">短信水印</el-menu-item>
                     <el-menu-item index="4">打单发货</el-menu-item>
-                </el-menu>
-              <div v-if="!shopName">
+              </el-menu>-->
+              <div class="nav-not-login" v-if="!shopName">
 <!--                <el-button size="small" @click="goToServiceMarket">购买</el-button>-->
-                <el-button size="small" @click="onLogin">登录</el-button>
+                <el-button type="primary" @click="onLogin">登录</el-button>
               </div>
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
 <!--                    <el-menu-item index="3">短信水印</el-menu-item>-->
