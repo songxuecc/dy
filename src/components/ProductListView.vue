@@ -74,10 +74,24 @@
                       {{ productStatusMap[scope.row.status] }}
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
                       <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="scope.row.status === 5 || scope.row.status === 6 || scope.row.status === 8" :disabled="scope.row.status !== 5 && scope.row.status !== 6 && scope.row.status !== 8" class="item" effect="dark" placement="top">
-                          <div slot="content" style="max-width: 180px;" >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
-                          </div>
-                          <i class="el-icon-question"></i>
+                        <div slot="content" style="max-width: 180px;" v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
+                        </div>
+                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              <p>根据官方规定，该类目需要填写品牌，请上传品牌</p>
+                              <p>查询哪些类目需填品牌：<a style="color: navajowhite;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">https://school.jinritemai.com/doudian/web/article/101810</a>（点击链接是可跳转的）</p>
+                            </ul>
+                        </div>
+                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败30-2,transImgToLocal failed') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              轮播图+详情图+sku图不能超过50张
+                            </ul>
+                        </div>
+                        <div slot="content" style="max-width: 180px;" v-else>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i" v-html="scope.row.migration_msg">{{v}}</ul>
+                        </div>
+                        <i class="el-icon-question"></i>
                       </el-tooltip>
                       <el-tooltip style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content" style="max-width: 180px;">
