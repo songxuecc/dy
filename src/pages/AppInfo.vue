@@ -9,7 +9,7 @@
               属于上海虎正奔信息科技有限公司旗下品牌。
             </p>
             <p class="info describe-text">
-              上海虎正奔信息科技有限公司是一家为电商企业提供新型店铺经营管理的互联网公司。致力于帮助<br>企业降低运营成本、提升运营效率、促进交易转化。
+              上海虎正奔信息科技有限公司是一家为电商企业提供新型店铺经营管理的互联网公司。致<br>力于帮助企业降低运营成本、提升运营效率、促进交易转化。
             </p>
             <div class="company-info">
               <p><icon-svg iconClass="icon-company" style="width:18px; height:18px"></icon-svg><span>公司名称：</span>上海虎正奔信息科技有限公司</p>
@@ -59,10 +59,11 @@ export default {
         font-size: 24px;
         letter-spacing: 0;
         margin-bottom: 6px;
+        font-weight: bold;
       }
       .company-info {
         text-align: left;
-        padding-left: 360px;
+        padding-left: 327px;
         padding-top: 18px;
         p {
           font-size: 14px;
