@@ -256,7 +256,8 @@ export default {
         skuShow.promo_price = utils.fenToYuan(utils.adjustPriceFen(
           utils.yuanToFen(promoPrice),
           this.template.model.group_price_rate,
-          this.template.model.group_price_diff * 100
+          this.template.model.group_price_diff * 100,
+          parseFloat(this.template.model.origin_price_diff) * 100
         ))
         skuShow.promo_price_obj = new FormModel()
         skuShow.promo_price_obj.assign({ price: skuShow.promo_price })
