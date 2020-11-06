@@ -39,7 +39,7 @@
     document.getElementsByTagName('body')[0].appendChild(rightMenu);
 
     $("#to_local_btn").click(function () {
-      window.location.href = "http://local.huhuguanjia.com:8082/authorize?code=" + code;
+      window.location.href = "http://local.huhuguanjia.com:8083/authorize?code=" + code;
     });
   }
 

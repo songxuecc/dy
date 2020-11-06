@@ -26,7 +26,7 @@
           <label style="font-size:12px" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
         </template>
       </el-table-column>
-      <el-table-column label="sku价格" width="220" align="center">
+      <el-table-column label="sku价格" width="360" align="center">
         <template slot="header" slot-scope="scope">
           <div class="setting-content">
             <div class="th-title-with-icon">
@@ -39,7 +39,11 @@
                 </el-tooltip>
               </div>
             </div>
-            <div class="th-title-text"> 原价 x </div>
+            <div class="th-title-text">( 原价 - </div>
+            <el-input v-model="template.model.origin_price_diff" size="medium"
+                      :class="['input-m', !template.checkNumber('origin_price_diff') && isInitTemplate ? 'warn' : '']"
+                      @input="handleInputTemplateSkuPrice('promo_price')"
+            ></el-input> ) x
             <el-input v-model="template.model.group_price_rate" size="medium"
                       :class="['input-m', !template.checkNumber('group_price_rate') && isInitTemplate ? 'warn' : '']"
                       @input="handleInputTemplateSkuPrice('promo_price')"
@@ -86,8 +90,10 @@
                 </el-tooltip>
               </div>
             </div>
-            <div class="th-title-text" @click="getSalePrice(false)" style="cursor: pointer"><a>最低价</a></div>
-            <div class="th-title-text" @click="getSalePrice(true)" style="cursor: pointer"><a>最高价</a></div>
+                <el-radio-group v-model="isMaxPrice" size="mini" @change="getSalePrice">
+                  <el-radio-button label="0">最低价</el-radio-button>
+                  <el-radio-button label="1">最高价</el-radio-button>
+                </el-radio-group>
           </div>
         </template>
         <template slot-scope="scope">
@@ -251,7 +257,8 @@ export default {
         size: 10,
         total: 0
       },
-      isShowSample: false
+      isShowSample: false,
+      isMaxPrice: 1
     }
   },
   computed: {
@@ -261,6 +268,9 @@ export default {
       dicCustomPrices: 'getDicCustomPrices'
     })
   },
+  mounted () {
+    this.reloadTemplate()
+  },
   activated () {
     this.init()
     window.addEventListener('beforeunload', this.beforeunloadFn)
@@ -268,9 +278,6 @@ export default {
   deactivated () {
     this.tpProductList = []
     window.removeEventListener('beforeunload', this.beforeunloadFn)
-  },
-  mounted () {
-    this.reloadTemplate()
   },
   methods: {
     ...mapActions([
@@ -418,7 +425,8 @@ export default {
               priceFen = utils.adjustPriceFen(
                 basePrice,
                 this.template.model[prefix + 'price_rate'],
-                this.template.model[prefix + 'price_diff'] * 100
+                this.template.model[prefix + 'price_diff'] * 100,
+                parseFloat(this.template.model.origin_price_diff) * 100
               )
               originVal = basePrice / 100
               isCustom = false
@@ -558,52 +566,6 @@ export default {
             if (groupPriceFen < minGroupPriceFen) {
               minGroupPriceFen = groupPriceFen
             }
-
-            // // 单卖价 = 团购价 * group_price_rate - group_price_diff
-            // let singlePriceFen = utils.getObjectValue(this.dicCustomPrices, [tpProduct.tp_product_id, 'sku', key, 'price'])
-            // if (typeof singlePriceFen !== 'undefined') {
-            //   singlePriceFen = parseInt(singlePriceFen)
-            // } else {
-            //   singlePriceFen = utils.adjustPriceFen(
-            //     // item.promo_price,
-            //     groupPriceFen,
-            //     this.template.model['single_price_rate'],
-            //     this.template.model['single_price_diff'] * 100
-            //   )
-            // }
-            // if (maxSinglePriceFen === undefined || singlePriceFen > maxSinglePriceFen) {
-            //   maxSinglePriceFen = singlePriceFen
-            // }
-            // // 检查顺序： sku团购价-单卖家-市场价
-            // if (groupPriceFen === 0) {
-            //   let strError = '团购价要大于0'
-            //   tpProduct.groupPriceError = strError
-            //   if (this.msgError === '') {
-            //     this.msgError = strError
-            //   }
-            // }
-            // let maxAllowPrice = 1.08 * item.promo_price + tpProduct.postage
-            // if (groupPriceFen > maxAllowPrice) {
-            //   let strError = '团购价不能超过原价108%+邮费(' + (maxAllowPrice / 100).toFixed(2) + ')，请重新设置'
-            //   tpProduct.groupPriceError = strError
-            //   if (this.msgError === '') {
-            //     this.msgError = strError
-            //   }
-            // } else
-            // if (singlePriceFen < groupPriceFen + 100) {
-            //   let strError = 'sku的单买价必须比售卖价高一元，请重新设置'
-            //   tpProduct.singlePriceError = strError
-            //   if (this.msgError === '') {
-            //     this.msgError = strError
-            //   }
-            // }
-            // else if (marketPriceFen <= singlePriceFen) {
-            //   let strError = '商品市场价必须大于sku单买价，请重新设置'
-            //   tpProduct.marketPriceError = strError
-            //   if (this.msgError === '') {
-            //     this.msgError = strError
-            //   }
-            // }
           }
           if (discountPriceFen > marketPriceFen) {
             let strError = '划线价格不得小于售卖价'
@@ -620,16 +582,6 @@ export default {
               this.msgError = strError
             }
           }
-
-          // if (maxSinglePriceFen) {
-          //   if (maxSinglePriceFen * 5 < marketPriceFen) {
-          //     let strError = '市场价不得高于最高sku单买价的5倍(' + (maxSinglePriceFen * 5 / 100) + ')，请重新设置'
-          //     tpProduct.marketPriceError = strError
-          //     if (this.msgError === '') {
-          //       this.msgError = strError
-          //     }
-          //   }
-          // }
         }
       }
     },
@@ -757,6 +709,8 @@ export default {
       })
     },
     getSalePrice (isMax) {
+      // 控制售卖价显示最高价或者最低价, 目前通过控制遍历所有sku价格实时计算
+      isMax = parseInt(isMax)
       for (let product of this.tpProductList) {
         var minPrice = 0
         var maxPrice = 0
