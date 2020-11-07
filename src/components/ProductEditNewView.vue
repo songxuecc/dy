@@ -534,13 +534,13 @@ export default {
   },
   methods: {
     ...mapActions([
-      // 'setIsShowFloatView'
+      'setIsShowFloatView'
     ]),
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
     initList (tpProduct, tpProductList = []) {
-      // this.setIsShowFloatView(false)
+      this.setIsShowFloatView(false)
       this.productList = tpProductList
       for (let i in this.productList) {
         this.productDic[this.productList[i].tp_product_id] = this.productList[i]
@@ -995,7 +995,7 @@ export default {
       this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
     },
     onClose () {
-      // this.setIsShowFloatView(true)
+      this.setIsShowFloatView(true)
       for (let i in this.productList) {
         this.productList[i].isEdit = false
       }
