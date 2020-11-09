@@ -394,13 +394,13 @@ export default {
         this.tpProductList = tpProductList
         if (Object.entries(this.template.model).length > 0) {
           this.updateMarketPrices()
-          this.updateRelatePrices('promo_price')
+          this.updateRelatePrices('promo_price', false)
           // this.updateRelatePrices('price')
           this.check()
         }
       })
     },
-    updateRelatePrices (field) {
+    updateRelatePrices (field, isFresh = true) {
       let prefix = (field === 'price' ? 'single_' : 'group_')
       for (let i in this.tpProductList) {
         let tpProduct = this.tpProductList[i]
@@ -476,18 +476,20 @@ export default {
                 tpProduct[prefix + 'tip'] = '(' + minOriginVal + ' ~ ' + maxOriginVal + ')' + strFun
               }
             }
-            if (parseInt(this.template.model.is_sale_price_show_max) === 0) {
-              tpProduct.discount_price_obj.assign({
-                price: minPriceFen / 100
-              })
-            } else {
-              tpProduct.discount_price_obj.assign({
-                price: maxPriceFen / 100
+            if (isFresh === true) {
+              if (parseInt(this.template.model.is_sale_price_show_max) === 0) {
+                tpProduct.discount_price_obj.assign({
+                  price: minPriceFen / 100
+                })
+              } else {
+                tpProduct.discount_price_obj.assign({
+                  price: maxPriceFen / 100
+                })
+              }
+              tpProduct.market_price_obj.assign({
+                price: utils.fenToYuan((maxPriceFen * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
               })
             }
-            tpProduct.market_price_obj.assign({
-              price: utils.fenToYuan((maxPriceFen * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
-            })
           }
           this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', Math.round(tpProduct.discount_price_obj.model.price * 100))
         }
