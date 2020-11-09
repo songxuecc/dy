@@ -191,7 +191,7 @@ export default {
       let keyList = ['pay_type', 'mobile', 'cos_ratio', 'delivery_delay_day', 'presell_delay', 'cost_template_id',
         'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
-        'price_rate', 'price_diff', 'origin_price_diff']
+        'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max']
       let params = {}
       for (let key in this.template.model) {
         if (keyList.includes(key)) {

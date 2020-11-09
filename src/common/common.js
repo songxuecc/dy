@@ -1,5 +1,19 @@
 
 module.exports = {
+  productStatus: {
+    'all': '-1',
+    'WAIT_ONLINE': 0,
+    'WAIT_MIGRATE': 1,
+    'MIGRATING': 2,
+    'SAVE_DRAFT': 3,
+    'ONLINE': 4,
+    'FAILED': 5,
+    'WAIT_MODIFY': 6,
+    'CAPTURE_FAILED': 7,
+    'REJECT': 8,
+    'DY_APPROVING': 9,
+    'DELETED': 10
+  },
   productStatusMap: {
     '-1': '全部',
     0: '待上线',
@@ -11,7 +25,7 @@ module.exports = {
     6: '待修改',
     7: '抓取失败',
     8: '驳回',
-    9: '审核中',
+    9: '抖音审核中',
     10: '已删除'
   },
   dyProductStatusMap: {

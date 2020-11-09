@@ -271,7 +271,8 @@ export default {
         skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
           utils.yuanToFen(skuShow.promo_price),
           this.template.model.single_price_rate,
-          this.template.model.single_price_diff * 100
+          this.template.model.single_price_diff * 100,
+          this.template.model.origin_price_diff * 100
         ))
         skuShow.price_obj = new FormModel()
         skuShow.price_obj.assign({ price: skuShow.price })
@@ -301,28 +302,14 @@ export default {
     },
     checkSkuPrice () {
       let msg = ''
-      // for (let i in this.skuShowList) {
-      //   let skuShow = this.skuShowList[i]
-      //   let maxAllowPrice = skuShow.original_promo_price * 1.08 + this.tpProduct.postage / 100
-      //   skuShow.msgGroupError = ''
-      //   skuShow.msgSingleError = ''
-      //   if (!utils.isNumber(skuShow.promo_price)) {
-      //     skuShow.msgGroupError = '请输入合法的数字'
-      //     msg = skuShow.msgGroupError
-      //   } else if (skuShow.promo_price.toString() === '0') {
-      //     skuShow.msgGroupError = '团购价要大于0'
-      //     msg = skuShow.msgGroupError
-      //   } else if (skuShow.promo_price > maxAllowPrice) {
-      //     skuShow.msgGroupError = '团购价涨幅不能超过复制价格的8%+邮费(' + maxAllowPrice.toFixed(2) + '元)，请重新设置'
-      //     msg = skuShow.msgGroupError
-      //   } else if (!utils.isNumber(skuShow.price)) {
-      //     skuShow.msgSingleError = '请输入合法的数字'
-      //     msg = skuShow.msgSingleError
-      //   } else if (skuShow.promo_price > skuShow.price - 1) {
-      //     skuShow.msgSingleError = 'sku的单买价必须至少比团购价高一元'
-      //     msg = skuShow.msgSingleError
-      //   }
-      // }
+      for (let i in this.skuShowList) {
+        let skuShow = this.skuShowList[i]
+        skuShow.msgGroupError = ''
+        if (!utils.isNumber(skuShow.promo_price) || parseInt(parseFloat(skuShow.promo_price)) < 0) {
+          skuShow.msgGroupError = '请输入合法的数字'
+          msg = skuShow.msgGroupError
+        }
+      }
       this.warnMsg = msg
     },
     updateSkuPriceByGroupPrice (skuShow) {
@@ -352,14 +339,14 @@ export default {
             minPrice = skuPrice
           }
         }
-        this.tpProduct.currentMinPrice = minPrice
-        this.tpProduct.currentMaxPrice = maxPrice
-        if (this.tpProduct.showMax) {
-          this.tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.tpProduct.currentMaxPrice)
+        if (parseInt(this.template.model.is_sale_price_show_max) === 1) {
+          this.tpProduct.discount_price_obj.model.price = utils.fenToYuan(maxPrice)
         } else {
-          this.tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.tpProduct.currentMinPrice)
+          this.tpProduct.discount_price_obj.model.price = utils.fenToYuan(minPrice)
         }
+        this.tpProduct.market_price_obj.model.price = utils.fenToYuan((maxPrice * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
         this.addCustomPrices(this.tpProduct.tp_product_id, 'discount_price', utils.yuanToFen(this.tpProduct.discount_price_obj.model.price))
+        this.addCustomPrices(this.tpProduct.tp_product_id, 'price', utils.yuanToFen(this.tpProduct.market_price_obj.model.price))
       }
     },
     inputChange (skuShow, field) {
