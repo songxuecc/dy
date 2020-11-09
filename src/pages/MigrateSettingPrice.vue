@@ -477,11 +477,17 @@ export default {
               }
             }
             if (parseInt(this.template.model.is_sale_price_show_max) === 0) {
-              tpProduct.discount_price_obj.model.price = minPriceFen / 100
+              tpProduct.discount_price_obj.assign({
+                price: minPriceFen / 100
+              })
             } else {
-              tpProduct.discount_price_obj.model.price = maxPriceFen / 100
+              tpProduct.discount_price_obj.assign({
+                price: maxPriceFen / 100
+              })
             }
-            tpProduct.market_price_obj.model.price = utils.fenToYuan((maxPriceFen * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
+            tpProduct.market_price_obj.assign({
+              price: utils.fenToYuan((maxPriceFen * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
+            })
           }
           this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', Math.round(tpProduct.discount_price_obj.model.price * 100))
         }
@@ -730,7 +736,7 @@ export default {
       // 控制售卖价显示最高价或者最低价, 目前通过控制遍历所有sku价格实时计算
       isMax = parseInt(isMax)
       for (let product of this.tpProductList) {
-        let priceRangeList = product.group_price_range.split('~')
+        let priceRangeList = product.group_price_range.toString().split('~')
         let minPrice = 0
         let maxPrice = 0
         if (priceRangeList.length === 2) {
@@ -741,9 +747,13 @@ export default {
           maxPrice = priceRangeList[0]
         }
         if (isMax) {
-          product.discount_price_obj.model.price = maxPrice
+          product.discount_price_obj.assign({
+            price: maxPrice
+          })
         } else {
-          product.discount_price_obj.model.price = minPrice
+          product.discount_price_obj.assign({
+            price: minPrice
+          })
         }
 
         this.addCustomPrices(product.tp_product_id, 'discount_price', utils.yuanToFen(product.discount_price_obj.model.price))
