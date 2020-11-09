@@ -361,26 +361,17 @@ export default {
           tpProduct.groupPriceError = ''
           tpProduct.marketPriceError = ''
           tpProduct.discountPriceError = ''
-
-          tpProduct.market_price_obj.assign({
-            price: utils.fenToYuan(utils.adjustPriceFen(
-              tpProduct.max_price, this.template.model.price_rate, this.template.model.price_diff * 100
-            ))
-          })
-          // 恢复历史价格
-          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['price']) {
-            tpProduct.market_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['price'])
-          }
-
-          tpProduct.discount_price_obj.assign({
-            price: utils.fenToYuan(utils.adjustPriceFen(
-              tpProduct.max_price, 100, 0
-            ))
-          })
-          // 恢复历史售卖价
-          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price']) {
-            tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'])
-          }
+        }
+        this.tpProductList = tpProductList
+        if (Object.entries(this.template.model).length > 0) {
+          // 如果存在模板数据，则刷新界面上的数据, sku价格范围, 售卖价, 划线价
+          // this.updateMarketPrices()
+          this.updateRelatePrices('promo_price', true)
+          // this.updateRelatePrices('price')
+          this.check()
+        }
+        // 恢复历史价格
+        for (let tpProduct of this.tpProductList) {
           // 恢复历史sku价格
           if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['sku']) {
             let skuCustomPrices = this.dicCustomPrices[tpProduct.tp_product_id]['sku']
@@ -390,17 +381,18 @@ export default {
               }
             }
           }
-        }
-        this.tpProductList = tpProductList
-        if (Object.entries(this.template.model).length > 0) {
-          this.updateMarketPrices()
-          this.updateRelatePrices('promo_price', false)
-          // this.updateRelatePrices('price')
-          this.check()
+          // 恢复历史售卖价
+          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price']) {
+            tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'])
+          }
+          // 恢复历史划线价
+          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['price']) {
+            tpProduct.market_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['price'])
+          }
         }
       })
     },
-    updateRelatePrices (field, isFresh = true) {
+    updateRelatePrices (field, isInit = false) {
       let prefix = (field === 'price' ? 'single_' : 'group_')
       for (let i in this.tpProductList) {
         let tpProduct = this.tpProductList[i]
@@ -448,47 +440,42 @@ export default {
               }
             }
           }
-          if (!this.dicCustomPrices[tpProduct.tp_product_id] || !this.dicCustomPrices[tpProduct.tp_product_id]['discount_price']) {
+          // 刷新售卖价, 依据最高价和最低价设置
+          if (parseInt(this.template.model.is_sale_price_show_max) === 0) {
             tpProduct.discount_price_obj.assign({
-              price: utils.fenToYuan(maxPriceFen)
+              price: minPriceFen / 100
+            })
+          } else {
+            tpProduct.discount_price_obj.assign({
+              price: maxPriceFen / 100
             })
           }
-          if (minPriceFen < 1e9) {
-            let strFun = ' x ' + this.template.model[prefix + 'price_rate'] + '%' +
-              (this.template.model[prefix + 'price_diff'] < 0 ? ' + ' : ' - ') +
-              Math.abs(this.template.model[prefix + 'price_diff'])
-            if (minPriceFen === maxPriceFen) {
-              tpProduct[prefix + 'price_range'] = (minPriceFen / 100)
-              if (minIsCustom || maxIsCustom) {
-                tpProduct[prefix + 'tip'] = minOriginVal
-              } else {
-                tpProduct[prefix + 'tip'] = minOriginVal + strFun
-              }
+          // 刷新划线价，依据划线价上浮率和差值
+          tpProduct.market_price_obj.assign({
+            price: utils.fenToYuan(utils.adjustPriceFen(maxPriceFen, this.template.model.price_rate, this.template.model.price_diff * 100
+            ))
+          })
+          // 刷新价格范围
+          let strFun = ' x ' + this.template.model[prefix + 'price_rate'] + '%' +
+            (this.template.model[prefix + 'price_diff'] < 0 ? ' + ' : ' - ') +
+            Math.abs(this.template.model[prefix + 'price_diff'])
+          if (minPriceFen === maxPriceFen) {
+            tpProduct[prefix + 'price_range'] = (minPriceFen / 100)
+            if (minIsCustom || maxIsCustom) {
+              tpProduct[prefix + 'tip'] = minOriginVal
             } else {
-              tpProduct[prefix + 'price_range'] = (minPriceFen / 100) + ' ~ ' + (maxPriceFen / 100)
-              if (minIsCustom && maxIsCustom) {
-                tpProduct[prefix + 'tip'] = minOriginVal + ' ~ ' + maxOriginVal
-              } else if (minIsCustom && !maxIsCustom) {
-                tpProduct[prefix + 'tip'] = minOriginVal + ' ~ (' + maxOriginVal + strFun + ')'
-              } else if (!minIsCustom && maxIsCustom) {
-                tpProduct[prefix + 'tip'] = '(' + minOriginVal + strFun + ') ~ ' + maxOriginVal
-              } else {
-                tpProduct[prefix + 'tip'] = '(' + minOriginVal + ' ~ ' + maxOriginVal + ')' + strFun
-              }
+              tpProduct[prefix + 'tip'] = minOriginVal + strFun
             }
-            if (isFresh === true) {
-              if (parseInt(this.template.model.is_sale_price_show_max) === 0) {
-                tpProduct.discount_price_obj.assign({
-                  price: minPriceFen / 100
-                })
-              } else {
-                tpProduct.discount_price_obj.assign({
-                  price: maxPriceFen / 100
-                })
-              }
-              tpProduct.market_price_obj.assign({
-                price: utils.fenToYuan((maxPriceFen * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
-              })
+          } else {
+            tpProduct[prefix + 'price_range'] = (minPriceFen / 100) + ' ~ ' + (maxPriceFen / 100)
+            if (minIsCustom && maxIsCustom) {
+              tpProduct[prefix + 'tip'] = minOriginVal + ' ~ ' + maxOriginVal
+            } else if (minIsCustom && !maxIsCustom) {
+              tpProduct[prefix + 'tip'] = minOriginVal + ' ~ (' + maxOriginVal + strFun + ')'
+            } else if (!minIsCustom && maxIsCustom) {
+              tpProduct[prefix + 'tip'] = '(' + minOriginVal + strFun + ') ~ ' + maxOriginVal
+            } else {
+              tpProduct[prefix + 'tip'] = '(' + minOriginVal + ' ~ ' + maxOriginVal + ')' + strFun
             }
           }
           this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', Math.round(tpProduct.discount_price_obj.model.price * 100))
@@ -498,13 +485,23 @@ export default {
     updateMarketPrices () {
       for (let i in this.tpProductList) {
         let tpProduct = this.tpProductList[i]
-        tpProduct.market_price_obj.assign({
-          price: utils.fenToYuan(utils.adjustPriceFen(
-            tpProduct.max_price, this.template.model.price_rate, this.template.model.price_diff * 100
-          ))
-        })
-        if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['price']) {
-          tpProduct.market_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['price'])
+        // tpProduct.market_price_obj.assign({
+        //   price: utils.fenToYuan(utils.adjustPriceFen(
+        //     tpProduct.max_price, this.template.model.price_rate, this.template.model.price_diff * 100
+        //   ))
+        // })
+        let priceRangeList = tpProduct.group_price_range.toString().split('~')
+        let maxPrice = 0
+        if (priceRangeList.length === 2) {
+          maxPrice = priceRangeList[1]
+        } else {
+          maxPrice = priceRangeList[0]
+        }
+        if (maxPrice !== '-') {
+          maxPrice = utils.yuanToFen(maxPrice)
+          tpProduct.market_price_obj.assign({
+            price: utils.fenToYuan(utils.adjustPriceFen(maxPrice, this.template.model.price_rate, this.template.model.price_diff * 100))
+          })
         }
       }
     },
