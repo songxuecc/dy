@@ -583,7 +583,7 @@ export default {
               this.msgError = strError
             }
           }
-          let priceRange = tpProduct.group_price_range.split(' ~ ')
+          let priceRange = tpProduct.group_price_range.toString().split(' ~ ')
           let maxPrice = 0
           let minPrice = 0
           if (priceRange.length === 2) {
