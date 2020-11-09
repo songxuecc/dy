@@ -230,14 +230,14 @@ export default {
   },
   adjustPriceFen (priceFen, rate, diffFen, originPriceDiff = 0) {
     // 调整公式 ((原价 - originPriceDiff) * rate - dfffFen * 10000) / 10000 = 最终展示价格
-    let minVal = 1
+    let minVal = 0
     priceFen = parseInt(priceFen)
     rate = parseInt(rate * 100) // 百分比的 10000 倍
     diffFen = parseInt(diffFen)
     originPriceDiff = parseInt(originPriceDiff)
     let ret = parseInt(((priceFen - originPriceDiff) * rate - diffFen * 10000) / 10000)
     if (ret < 0) {
-      ret = 1
+      ret = 0
     }
     return Math.max(ret, minVal)
   },

@@ -73,11 +73,11 @@
                     <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
                       {{ productStatusMap[scope.row.status] }}
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
-                      <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="scope.row.status === 5 || scope.row.status === 6 || scope.row.status === 8" :disabled="scope.row.status !== 5 && scope.row.status !== 6 && scope.row.status !== 8" class="item" effect="dark" placement="top">
+                      <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
                         <div slot="content" style="max-width: 180px;" v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
+                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <p>根据官方规定，该类目需要填写品牌，请上传品牌</p>
                               <p>查询哪些类目需填品牌：<a style="color: navajowhite;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">https://school.jinritemai.com/doudian/web/article/101810</a>（点击链接是可跳转的）</p>
@@ -89,7 +89,9 @@
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else>
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i" v-html="scope.row.migration_msg">{{v}}</ul>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
+                              <span v-html="v">{{v}}</span>
+                            </ul>
                         </div>
                         <i class="el-icon-question"></i>
                       </el-tooltip>
@@ -120,8 +122,8 @@
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
                     </div>
                     <div v-else>
-                      <el-button type="primary" size="small" v-if="isModifyEnable(scope.row) && [3, 4].includes(scope.row.status)" @click="productEdit(scope.row)">{{getButtonName(scope.row)}}</el-button>
-                      <el-dropdown split-button type="primary" trigger="click" v-if="isModifyEnable(scope.row) && ![3, 4].includes(scope.row.status)" size="small" @click="productEdit(scope.row)" @command="handleCommand">
+                      <el-button type="primary" size="small" v-if="isModifyEnable(scope.row) && [3, 4].includes(scope.row.status)" @click="productEdit(scope.row, false, false)">{{getButtonName(scope.row)}}</el-button>
+                      <el-dropdown split-button type="primary" trigger="click" v-if="isModifyEnable(scope.row) && ![3, 4].includes(scope.row.status)" size="small" @click="productEdit(scope.row, false, false)" @command="handleCommand">
                         {{getButtonName(scope.row)}}
                         <el-dropdown-menu slot="dropdown" v-if="![3, 4].includes(scope.row.status)">
                           <el-dropdown-item :command="beforeHandleCommand('deleteProduct', scope.row)" size="small">删除</el-dropdown-item>
@@ -191,6 +193,9 @@ export default {
     }
   },
   computed: {
+    productStatus () {
+      return common.productStatus
+    },
     productStatusMap () {
       return common.productStatusMap
     },
@@ -315,12 +320,12 @@ export default {
       }
       return ''
     },
-    productEdit (product, isStatus = false) {
+    productEdit (product, isStatus = false, needJump = true) {
       if ([7, 10].includes(product.status) && isStatus) {
         return true
       } else if ([8, 9].includes(product.status)) {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '复制商品', '点击', '前往拼多多后台查看提交的商品'])
+          window._hmt.push(['_trackEvent', '复制商品', '点击', '前往抖音后台查看提交的商品'])
         }
         if (product.goods_commit_id) {
           window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + product.goods_commit_id)
@@ -348,8 +353,12 @@ export default {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '删除复制商品'])
         }
-        this.deleteProductVisible = true
-        this.deleteProductId = product.tp_product_id
+        if (this.productStatus.ONLINE === product.status && needJump === true) {
+          window.open('https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + product.goods_commit_id)
+        } else if (this.productStatus.ONLINE === product.status) {
+          this.deleteProductVisible = true
+          this.deleteProductId = product.tp_product_id
+        }
       } else {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '编辑复制商品'])

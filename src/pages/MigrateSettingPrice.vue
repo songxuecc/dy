@@ -90,7 +90,7 @@
                 </el-tooltip>
               </div>
             </div>
-                <el-radio-group v-model="isMaxPrice" size="mini" @change="getSalePrice">
+                <el-radio-group v-model="template.model.is_sale_price_show_max" size="mini" @change="getSalePrice">
                   <el-radio-button label="0">最低价</el-radio-button>
                   <el-radio-button label="1">最高价</el-radio-button>
                 </el-radio-group>
@@ -258,7 +258,7 @@ export default {
         total: 0
       },
       isShowSample: false,
-      isMaxPrice: 1
+      isMounted: true
     }
   },
   computed: {
@@ -272,7 +272,11 @@ export default {
     this.reloadTemplate()
   },
   activated () {
-    this.init()
+    if (!this.isMounted) {
+      // 如果是mounted时触发，则不继续请求
+      this.init()
+    }
+    this.isMounted = false
     window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   deactivated () {
@@ -323,12 +327,14 @@ export default {
       this.requestTemplate().then(data => {
         this.isInitTemplate = true
         this.loadTempTemplate()
-        if (this.tpProductList.length > 0) {
-          this.updateMarketPrices()
-          this.updateRelatePrices('promo_price')
-          // this.updateRelatePrices('price')
-          this.check()
-        }
+        // 拿到模板数据后再请求商品数据
+        this.init()
+        // if (this.tpProductList.length > 0) {
+        //   this.updateMarketPrices()
+        //   this.updateRelatePrices('promo_price')
+        //   // this.updateRelatePrices('price')
+        //   this.check()
+        // }
       })
     },
     getTPProductList () {
@@ -343,9 +349,6 @@ export default {
         let tpProductList = data.items
         for (let i in tpProductList) {
           let tpProduct = tpProductList[i]
-          tpProduct.showMax = true
-          tpProduct.currentMaxPrice = 0
-          tpProduct.currentMinPrice = Number.MAX_SAFE_INTEGER
           tpProduct.market_price_obj = new FormModel()
           tpProduct.discount_price_obj = new FormModel()
           tpProduct.group_price_range = '-'
@@ -450,7 +453,6 @@ export default {
               price: utils.fenToYuan(maxPriceFen)
             })
           }
-          this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', Math.round(tpProduct.discount_price_obj.model.price * 100))
           if (minPriceFen < 1e9) {
             let strFun = ' x ' + this.template.model[prefix + 'price_rate'] + '%' +
               (this.template.model[prefix + 'price_diff'] < 0 ? ' + ' : ' - ') +
@@ -474,7 +476,14 @@ export default {
                 tpProduct[prefix + 'tip'] = '(' + minOriginVal + ' ~ ' + maxOriginVal + ')' + strFun
               }
             }
+            if (parseInt(this.template.model.is_sale_price_show_max) === 0) {
+              tpProduct.discount_price_obj.model.price = minPriceFen / 100
+            } else {
+              tpProduct.discount_price_obj.model.price = maxPriceFen / 100
+            }
+            tpProduct.market_price_obj.model.price = utils.fenToYuan((maxPriceFen * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
           }
+          this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', Math.round(tpProduct.discount_price_obj.model.price * 100))
         }
       }
     },
@@ -574,8 +583,17 @@ export default {
               this.msgError = strError
             }
           }
-
-          if (discountPriceFen > maxGroupPriceFen || discountPriceFen < minGroupPriceFen) {
+          let priceRange = tpProduct.group_price_range.split(' ~ ')
+          let maxPrice = 0
+          let minPrice = 0
+          if (priceRange.length === 2) {
+            minPrice = utils.yuanToFen(priceRange[0])
+            maxPrice = utils.yuanToFen(priceRange[1])
+          } else {
+            minPrice = utils.yuanToFen(priceRange[0])
+            maxPrice = utils.yuanToFen(priceRange[0])
+          }
+          if (discountPriceFen > maxPrice || discountPriceFen < minPrice) {
             let strError = '售卖价必须在sku价格范围内'
             tpProduct.discountPriceError = strError
             if (this.msgError === '') {
@@ -712,30 +730,22 @@ export default {
       // 控制售卖价显示最高价或者最低价, 目前通过控制遍历所有sku价格实时计算
       isMax = parseInt(isMax)
       for (let product of this.tpProductList) {
-        var minPrice = 0
-        var maxPrice = 0
-        for (let key in product.sku_json.sku_map) {
-          let promoPrice = product.sku_json.sku_map[key].promo_price
-
-          if (minPrice === 0) {
-            minPrice = promoPrice
-          }
-          if (minPrice > promoPrice) {
-            minPrice = promoPrice
-          }
-          if (maxPrice < promoPrice) {
-            maxPrice = promoPrice
-          }
-        }
-        product.currentMinPrice = minPrice
-        product.currentMaxPrice = maxPrice
-        if (isMax) {
-          product.showMax = true
-          product.discount_price_obj.model.price = utils.fenToYuan(maxPrice)
+        let priceRangeList = product.group_price_range.split('~')
+        let minPrice = 0
+        let maxPrice = 0
+        if (priceRangeList.length === 2) {
+          minPrice = priceRangeList[0]
+          maxPrice = priceRangeList[1]
         } else {
-          product.showMax = false
-          product.discount_price_obj.model.price = utils.fenToYuan(minPrice)
+          minPrice = priceRangeList[0]
+          maxPrice = priceRangeList[0]
         }
+        if (isMax) {
+          product.discount_price_obj.model.price = maxPrice
+        } else {
+          product.discount_price_obj.model.price = minPrice
+        }
+
         this.addCustomPrices(product.tp_product_id, 'discount_price', utils.yuanToFen(product.discount_price_obj.model.price))
       }
     }
