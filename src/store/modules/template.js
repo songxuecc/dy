@@ -34,6 +34,11 @@ const actions = {
     localStorage.setItem('temp_template', JSON.stringify(model))
     localStorage.setItem('custom_prices', JSON.stringify(state.dicCustomPrices))
   },
+  /**
+   * 载入模板，如果localStorage中有模板数据，则直接刷新
+   * @param commit
+   * @param state
+   */
   loadTempTemplate ({commit, state}) {
     let strTemplate = localStorage.getItem('temp_template') || ''
     let strCustomPrices = localStorage.getItem('custom_prices') || ''
@@ -47,6 +52,9 @@ const actions = {
   removeTempTemplate ({commit, state}) {
     localStorage.removeItem('temp_template')
     localStorage.removeItem('custom_prices')
+  },
+  removeDicCustomPrices ({commit, state}) {
+    state.dicCustomPrices = {}
   }
 }
 

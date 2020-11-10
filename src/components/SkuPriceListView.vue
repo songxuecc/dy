@@ -206,6 +206,10 @@ export default {
     isEdited (sku, field) {
       return sku[field + '_obj'].isDiff()
     },
+    /**
+     * sku价格列表弹窗入口
+     * @param skuCustomPrices
+     */
     init (skuCustomPrices) {
       this.dicCustomPrices = skuCustomPrices
       this.getTPProductProperty()
@@ -233,11 +237,8 @@ export default {
         ))
         skuShow.promo_price_obj = new FormModel()
         skuShow.promo_price_obj.assign({ price: skuShow.promo_price })
-        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['promo_price']) {
+        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['promo_price'] >= 0) {
           skuShow.promo_price_obj.model.price = skuShow.promo_price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['promo_price'])
-          // 将最新价格绑定到sku上
-          let promoPrice = utils.yuanToFen(skuShow.promo_price)
-          this.tpProduct.sku_json.sku_map[skuShow.property_key].promo_price = promoPrice
         }
 
         skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
@@ -249,7 +250,7 @@ export default {
         skuShow.price_obj = new FormModel()
         skuShow.price_obj.assign({ price: skuShow.price })
 
-        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['price']) {
+        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['price'] >= 0) {
           skuShow.price_obj.model.price = skuShow.price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['price'])
         }
 
@@ -285,7 +286,7 @@ export default {
       this.warnMsg = msg
     },
     updateSkuPriceByGroupPrice (skuShow) {
-      if (!this.dicCustomPrices[skuShow.property_key] || !this.dicCustomPrices[skuShow.property_key]['price']) {
+      if (!this.dicCustomPrices[skuShow.property_key] || !this.dicCustomPrices[skuShow.property_key]['price'] >= 0) {
         skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
           utils.yuanToFen(skuShow.promo_price),
           this.template.model.single_price_rate,
@@ -293,32 +294,6 @@ export default {
         ))
         skuShow.price_obj = new FormModel()
         skuShow.price_obj.assign({ price: skuShow.price })
-        // 实时检测sku价格和product最大价格,最小价格
-        let promoPrice = utils.yuanToFen(skuShow.promo_price)
-        this.tpProduct.sku_json.sku_map[skuShow.property_key].promo_price = promoPrice
-        // 遍历商品sku, 计算最大价格和最小价格
-        var maxPrice = 0
-        var minPrice = 0
-        for (let key in this.tpProduct.sku_json.sku_map) {
-          let skuPrice = this.tpProduct.sku_json.sku_map[key].promo_price
-          if (minPrice === 0) {
-            minPrice = skuPrice
-          }
-          if (maxPrice < skuPrice) {
-            maxPrice = skuPrice
-          }
-          if (minPrice > skuPrice) {
-            minPrice = skuPrice
-          }
-        }
-        if (parseInt(this.template.model.is_sale_price_show_max) === 1) {
-          this.tpProduct.discount_price_obj.model.price = utils.fenToYuan(maxPrice)
-        } else {
-          this.tpProduct.discount_price_obj.model.price = utils.fenToYuan(minPrice)
-        }
-        this.tpProduct.market_price_obj.model.price = utils.fenToYuan((maxPrice * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
-        this.addCustomPrices(this.tpProduct.tp_product_id, 'discount_price', utils.yuanToFen(this.tpProduct.discount_price_obj.model.price))
-        this.addCustomPrices(this.tpProduct.tp_product_id, 'price', utils.yuanToFen(this.tpProduct.market_price_obj.model.price))
       }
     },
     inputChange (skuShow, field) {
