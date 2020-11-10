@@ -151,7 +151,8 @@ export default {
       'setSelectTPProductIdList',
       'requestTemplate',
       'loadTempTemplate',
-      'removeTempTemplate'
+      'removeTempTemplate',
+      'removeDicCustomPrices'
     ]),
     disabledDate (time) {
       let self = this
@@ -265,6 +266,7 @@ export default {
           this.isStartMigrate = false
           this.setSelectTPProductIdList([])
           this.dicCustomPrices = {}
+          this.removeDicCustomPrices()
           this.$alert('搬家任务已在后台生成, 虎虎正在努力为你搬家，您可以继续其它操作', '提示', {
             confirmButtonText: '确定',
             callback: action => {

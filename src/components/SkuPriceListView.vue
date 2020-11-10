@@ -54,34 +54,6 @@
                     </div>
                 </template>
             </el-table-column>
-<!--            <el-table-column key="4" width="200" align="center">-->
-<!--                <template slot="header" slot-scope="scope">-->
-<!--                    <span>SKU 划线价</span>-->
-<!--                    <el-button type="text" class="table-header-btn" @click="dialogPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>-->
-<!--                </template>-->
-<!--                <template slot-scope="scope">-->
-<!--                    <div style="display: flex">-->
-<!--                        <div style="width: 182px; padding-left: 18px;">-->
-<!--                            <el-input v-model="scope.row.price" size="mini" @input="inputChange(scope.row,'price')"-->
-<!--                                      :class="['input-medium', priceClass(scope.row, scope.$index)]"-->
-<!--                            >-->
-<!--                                <i class="el-icon-error el-input__icon"-->
-<!--                                   v-if="isEdited(scope.row, 'price')"-->
-<!--                                   slot="suffix"-->
-<!--                                   @click="handleCancelEdit(scope.row, 'price')">-->
-<!--                                </i>-->
-<!--                            </el-input>-->
-<!--                        </div>-->
-<!--                        <div style="width: 18px; display:flex; align-items:center;">-->
-<!--                            <el-tooltip v-if="scope.row.msgSingleError !== ''" placement="top" :content="scope.row.msgSingleError">-->
-<!--                                <span style="display:inline-block; height:18px; line-height:18px; font-size: 18px;">-->
-<!--                                    <i class="el-icon-warning warn" style=""></i>-->
-<!--                                </span>-->
-<!--                            </el-tooltip>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </template>-->
-<!--            </el-table-column>-->
             <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
                 <template slot-scope="scope">
                     <img style="height:40px" :src="scope.row.img">
@@ -234,6 +206,10 @@ export default {
     isEdited (sku, field) {
       return sku[field + '_obj'].isDiff()
     },
+    /**
+     * sku价格列表弹窗入口
+     * @param skuCustomPrices
+     */
     init (skuCustomPrices) {
       this.dicCustomPrices = skuCustomPrices
       this.getTPProductProperty()
@@ -261,11 +237,8 @@ export default {
         ))
         skuShow.promo_price_obj = new FormModel()
         skuShow.promo_price_obj.assign({ price: skuShow.promo_price })
-        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['promo_price']) {
+        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['promo_price'] >= 0) {
           skuShow.promo_price_obj.model.price = skuShow.promo_price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['promo_price'])
-          // 将最新价格绑定到sku上
-          let promoPrice = utils.yuanToFen(skuShow.promo_price)
-          this.tpProduct.sku_json.sku_map[skuShow.property_key].promo_price = promoPrice
         }
 
         skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
@@ -277,7 +250,7 @@ export default {
         skuShow.price_obj = new FormModel()
         skuShow.price_obj.assign({ price: skuShow.price })
 
-        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['price']) {
+        if (this.dicCustomPrices[skuShow.property_key] && this.dicCustomPrices[skuShow.property_key]['price'] >= 0) {
           skuShow.price_obj.model.price = skuShow.price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['price'])
         }
 
@@ -313,7 +286,7 @@ export default {
       this.warnMsg = msg
     },
     updateSkuPriceByGroupPrice (skuShow) {
-      if (!this.dicCustomPrices[skuShow.property_key] || !this.dicCustomPrices[skuShow.property_key]['price']) {
+      if (!this.dicCustomPrices[skuShow.property_key] || !this.dicCustomPrices[skuShow.property_key]['price'] >= 0) {
         skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
           utils.yuanToFen(skuShow.promo_price),
           this.template.model.single_price_rate,
@@ -321,32 +294,6 @@ export default {
         ))
         skuShow.price_obj = new FormModel()
         skuShow.price_obj.assign({ price: skuShow.price })
-        // 实时检测sku价格和product最大价格,最小价格
-        let promoPrice = utils.yuanToFen(skuShow.promo_price)
-        this.tpProduct.sku_json.sku_map[skuShow.property_key].promo_price = promoPrice
-        // 遍历商品sku, 计算最大价格和最小价格
-        var maxPrice = 0
-        var minPrice = 0
-        for (let key in this.tpProduct.sku_json.sku_map) {
-          let skuPrice = this.tpProduct.sku_json.sku_map[key].promo_price
-          if (minPrice === 0) {
-            minPrice = skuPrice
-          }
-          if (maxPrice < skuPrice) {
-            maxPrice = skuPrice
-          }
-          if (minPrice > skuPrice) {
-            minPrice = skuPrice
-          }
-        }
-        if (parseInt(this.template.model.is_sale_price_show_max) === 1) {
-          this.tpProduct.discount_price_obj.model.price = utils.fenToYuan(maxPrice)
-        } else {
-          this.tpProduct.discount_price_obj.model.price = utils.fenToYuan(minPrice)
-        }
-        this.tpProduct.market_price_obj.model.price = utils.fenToYuan((maxPrice * parseFloat(this.template.model.price_rate)) / 100 - parseFloat(this.template.model.price_diff))
-        this.addCustomPrices(this.tpProduct.tp_product_id, 'discount_price', utils.yuanToFen(this.tpProduct.discount_price_obj.model.price))
-        this.addCustomPrices(this.tpProduct.tp_product_id, 'price', utils.yuanToFen(this.tpProduct.market_price_obj.model.price))
       }
     },
     inputChange (skuShow, field) {
