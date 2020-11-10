@@ -197,16 +197,6 @@
       </el-table-column>
     </el-table>
     <br>
-    <!-- <el-pagination
-            v-show="loadingCnt == 0"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="pagination.index"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="pagination.size"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="pagination.total">
-    </el-pagination> -->
     <div class="common-bottom">
       <el-button style="margin-right: 15px" @click="goback">返回</el-button>
       <el-tooltip placement="top" :disabled="msgError === ''" :content="msgError">
@@ -329,18 +319,10 @@ export default {
         this.loadTempTemplate()
         // 拿到模板数据后再请求商品数据
         this.init()
-        // if (this.tpProductList.length > 0) {
-        //   this.updateMarketPrices()
-        //   this.updateRelatePrices('promo_price')
-        //   // this.updateRelatePrices('price')
-        //   this.check()
-        // }
       })
     },
     getTPProductList () {
-      // this.pagination.total = this.tpProductIdList.length
-      // let start = (this.pagination.index - 1) * this.pagination.size
-      // let list = this.tpProductIdList.slice(start, start + this.pagination.size)
+      // 请求商品列表
       let params = {
         tp_product_ids: this.tpProductIdList,
         need_sku: true
@@ -365,22 +347,11 @@ export default {
         this.tpProductList = tpProductList
         if (Object.entries(this.template.model).length > 0) {
           // 如果存在模板数据，则刷新界面上的数据, sku价格范围, 售卖价, 划线价
-          // this.updateMarketPrices()
-          this.updateRelatePrices('promo_price', true)
-          // this.updateRelatePrices('price')
+          this.updateRelatePrices('promo_price')
           this.check()
         }
         // 恢复历史价格
         for (let tpProduct of this.tpProductList) {
-          // 恢复历史sku价格
-          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['sku']) {
-            let skuCustomPrices = this.dicCustomPrices[tpProduct.tp_product_id]['sku']
-            for (let key in skuCustomPrices) {
-              if (tpProduct.sku_json.sku_map[key]) {
-                tpProduct.sku_json.sku_map[key].promo_price = skuCustomPrices[key].promo_price
-              }
-            }
-          }
           // 恢复历史售卖价
           if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price']) {
             tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'])
@@ -392,7 +363,8 @@ export default {
         }
       })
     },
-    updateRelatePrices (field, isInit = false) {
+    updateRelatePrices (field) {
+      // 公式变量发生变化时做价格范围、售卖价和划线价的联动
       let prefix = (field === 'price' ? 'single_' : 'group_')
       for (let i in this.tpProductList) {
         let tpProduct = this.tpProductList[i]
@@ -405,7 +377,8 @@ export default {
         if (tpProduct.sku_json && tpProduct.sku_json.sku_map) {
           for (let key in tpProduct.sku_json.sku_map) {
             let item = tpProduct.sku_json.sku_map[key]
-            let priceFen = utils.getObjectValue(this.dicCustomPrices, [tpProduct.tp_product_id, 'sku', key, field])
+            // let priceFen = utils.getObjectValue(this.dicCustomPrices, [tpProduct.tp_product_id, 'sku', key, field])
+            let priceFen
             let originVal = 0
             let isCustom = false
             if (typeof priceFen !== 'undefined') { // 自定义价格的情况
@@ -452,8 +425,7 @@ export default {
           }
           // 刷新划线价，依据划线价上浮率和差值
           tpProduct.market_price_obj.assign({
-            price: utils.fenToYuan(utils.adjustPriceFen(maxPriceFen, this.template.model.price_rate, this.template.model.price_diff * 100
-            ))
+            price: utils.fenToYuan(utils.adjustPriceFen(maxPriceFen, this.template.model.price_rate, this.template.model.price_diff * 100))
           })
           // 刷新价格范围
           let strFun = ' x ' + this.template.model[prefix + 'price_rate'] + '%' +
@@ -485,11 +457,6 @@ export default {
     updateMarketPrices () {
       for (let i in this.tpProductList) {
         let tpProduct = this.tpProductList[i]
-        // tpProduct.market_price_obj.assign({
-        //   price: utils.fenToYuan(utils.adjustPriceFen(
-        //     tpProduct.max_price, this.template.model.price_rate, this.template.model.price_diff * 100
-        //   ))
-        // })
         let priceRangeList = tpProduct.group_price_range.toString().split('~')
         let maxPrice = 0
         if (priceRangeList.length === 2) {
@@ -626,9 +593,6 @@ export default {
     },
     handleInputTemplateSkuPrice (field) {
       this.updateRelatePrices(field)
-      // if (field === 'promo_price') { // 团购价改了，单卖价也跟着改
-      //   this.updateRelatePrices('price')
-      // }
       this.check()
     },
     handleInputTemplate () {
@@ -732,7 +696,7 @@ export default {
       })
     },
     getSalePrice (isMax) {
-      // 控制售卖价显示最高价或者最低价, 目前通过控制遍历所有sku价格实时计算
+      // group_price_range已经计算好了最高价和最低价，直接拿过来用即可
       isMax = parseInt(isMax)
       for (let product of this.tpProductList) {
         let priceRangeList = product.group_price_range.toString().split('~')
