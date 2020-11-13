@@ -769,8 +769,7 @@ export default {
             price: minPrice
           })
         }
-
-        this.addCustomPrices(product.tp_product_id, 'discount_price', utils.yuanToFen(product.discount_price_obj.model.price))
+        // this.addCustomPrices(product.tp_product_id, 'discount_price', utils.yuanToFen(product.discount_price_obj.model.price))
       }
     }
   }

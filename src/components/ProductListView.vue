@@ -290,6 +290,8 @@ export default {
         return require('@/assets/images/17.jpg')
       } else if (product.source === '抖音') {
         return require('@/assets/images/douyin.jpg')
+      } else if (product.source === '拼多多') {
+        return require('@/assets/images/yangkeduo.png')
       }
       return ''
     },
