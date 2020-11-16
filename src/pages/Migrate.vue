@@ -36,6 +36,10 @@
                       <img class="icon" src="@/assets/images/kaola.png">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
+                      <div slot="content">17网</div>
+                      <img class="icon" src="@/assets/images/17.jpg">
+                    </el-tooltip>
+                    <el-tooltip placement="bottom">
                       <div slot="content">抖音</div>
                       <img class="icon" src="@/assets/images/douyin.jpg">
                     </el-tooltip>
@@ -83,6 +87,10 @@
                     <el-tooltip placement="bottom">
                       <div slot="content">网易考拉</div>
                       <img class="icon" src="@/assets/images/kaola.png">
+                    </el-tooltip>
+                    <el-tooltip placement="bottom">
+                      <div slot="content">17网</div>
+                      <img class="icon" src="@/assets/images/17.jpg">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">抖音</div>
