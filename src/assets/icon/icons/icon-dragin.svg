@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>首页备份 2</title>
+    <defs>
+        <rect id="path-1" x="199" y="0" width="435" height="214" rx="10"></rect>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="435" height="214" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+    </defs>
+    <g id="虎虎商品管家网页" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="开始复制-导入复制" transform="translate(-669.000000, -314.000000)">
+            <rect id="矩形备份" fill="#F9F9F9" x="0" y="0" width="1280" height="768"></rect>
+            <polygon id="矩形" fill="#FFFFFF" points="249 156 1240 156 1240 708 249 708"></polygon>
+            <g id="编组-18" transform="translate(279.000000, 255.000000)">
+                <use id="矩形" stroke="#D4D4D4" mask="url(#mask-2)" stroke-width="3" fill="#FFFFFF" stroke-dasharray="6,6" xlink:href="#path-1"></use>
+                <g id="编组-17" transform="translate(291.000000, 61.000000)" fill="#1D8FFF">
+                    <g id="编组-16" transform="translate(100.000000, 0.000000)">
+                        <path d="M4.00234375,32.4457031 L5.91992187,41.7765625 L43.9550781,41.7765625 L45.9269531,32.4457031 L50.0382813,32.4457031 L50.0382813,47.2 L-7.10542736e-15,47.2 L-7.10542736e-15,32.4457031 L4.00234375,32.4457031 Z M32.2542969,9.60820313 L32.2542969,15.1429688 L44.3460938,15.1429688 L24.9375,36.6972656 L5.7734375,15.1429688 L18.1277344,15.1429688 L18.1277344,9.60820313 L32.2542969,9.60820313 Z M32.303125,4 L32.303125,7.2 L18.1375,7.2 L18.1375,4 L32.303125,4 Z M32.303125,0 L32.303125,1.6 L18.1375,1.6 L18.1375,0 L32.303125,0 Z" id="形状结合"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
