@@ -70,7 +70,7 @@ export default {
       isRouterAlive: true,
       haveSynced: false,
       syncTimer: null,
-      notificationClosable: true,
+      notificationClosable: false,
       // curNavNotification: null,
       curNavNotification: true
     }
