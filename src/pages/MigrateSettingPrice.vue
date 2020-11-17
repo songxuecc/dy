@@ -7,6 +7,7 @@
         <el-step title="修改模板"></el-step>
       </el-steps>
     </div>
+<!--    <dy-tips v-bind:words="tips"></dy-tips>-->
     <el-table ref="productListTable" :data="tpProductList" border style="width: 100%"
               :row-style="{height:'68px'}"
               :cell-style="{padding:0}"
@@ -225,6 +226,7 @@
 <script>
 import request from '@/mixins/request.js'
 import skuPriceListView from '@/components/SkuPriceListView.vue'
+import DyTips from '@/components/DyTips.vue'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
 import { mapGetters, mapActions } from 'vuex'
@@ -232,10 +234,12 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   mixins: [request],
   components: {
+    DyTips,
     skuPriceListView
   },
   data () {
     return {
+      tips: '注：抓取拼多多商品，售卖价可能无法获取到最新价格（技术瓶颈,难以解决）。请先确认源商品最新价后再设置售卖价，保证利润不受损',
       dialogSkuPriceVisible: false,
       tpProductList: [],
       selectTpProduct: null,
