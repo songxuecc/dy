@@ -7,7 +7,6 @@
         <el-step title="修改模板"></el-step>
       </el-steps>
     </div>
-<!--    <dy-tips v-bind:words="tips"></dy-tips>-->
     <el-table ref="productListTable" :data="tpProductList" border style="width: 100%"
               :row-style="{height:'68px'}"
               :cell-style="{padding:0}"
@@ -239,7 +238,6 @@ export default {
   },
   data () {
     return {
-      tips: '注：抓取拼多多商品，售卖价可能无法获取到最新价格（技术瓶颈,难以解决）。请先确认源商品最新价后再设置售卖价，保证利润不受损',
       dialogSkuPriceVisible: false,
       tpProductList: [],
       selectTpProduct: null,
