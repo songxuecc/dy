@@ -53,7 +53,8 @@ export default {
     if (shareId) {
       state['share_id'] = shareId
     }
-    let url = 'https://fxg.jinritemai.com/index.html#/ffa/open/applicationAuthorize?response_type=code&app_id=6839207088506422798&redirect_uri=https://dy.huhuguanjia.com/authorize&state=' + JSON.stringify(state)
+    // let url = 'https://fxg.jinritemai.com/index.html#/ffa/open/applicationAuthorize?response_type=code&app_id=6839207088506422798&redirect_uri=https://dy.huhuguanjia.com/authorize&state=' + JSON.stringify(state)
+    let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + JSON.stringify(state)
 
     window.location.href = url
   },
