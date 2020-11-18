@@ -35,7 +35,7 @@
                     :on-success="handleUploadSuccess"
                     :on-error="handleUploadError"
                     :before-upload="handleBeforeUpload"
-                    action="/api/uploadProductImage"
+                    action="/api/image/create"
                     :headers="getTokenHeaders"
                     :data="{'belong_type': belongType}"
                     multiple
@@ -47,7 +47,7 @@
             </draggable>
         </ul>
         <div>
-            <span v-if="containLimit!=-1">图片最多 {{containLimit}} 张，</span><span>sku图片+轮播图+详情图 不能超过 50 张</span>
+          <span v-if="containLimit!=-1">图片最多 {{containLimit}} 张，</span><span>sku图片+轮播图+详情图 不能超过 50 张</span>
         </div>
     </div>
 </template>
@@ -106,9 +106,9 @@ export default {
       return list
     },
     uploadIconVisible () {
-      return false
-      // return (this.featureType & common.PictureViewFeature['add']) &&
-      //   this.curPictureList.length < this.containLimit
+      // return false
+      return (this.featureType & common.PictureViewFeature['add']) &&
+        this.curPictureList.length < this.containLimit
     }
   },
   watch: {
@@ -215,7 +215,7 @@ export default {
         }
         return
       }
-      this.curPictureList.push({ 'url': response.data.image_url, 'bg': 0 })
+      this.curPictureList.push({ 'url': response.data.url, 'bg': 0 })
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
       this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
     },
