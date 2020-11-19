@@ -35,10 +35,11 @@
                     :on-success="handleUploadSuccess"
                     :on-error="handleUploadError"
                     :before-upload="handleBeforeUpload"
+                    :on-exceed="imageExceedHandler"
                     action="/api/image/create"
                     :headers="getTokenHeaders"
                     :data="{'belong_type': belongType}"
-                    multiple
+                    :multiple="false"
                 >
                     <i class="el-icon-plus upload-icon">
                         <br><span>({{ curPictureList.length }}/{{ containLimit }})</span>
@@ -90,7 +91,8 @@ export default {
       isPauseDraggable: false,
       curPictureList: [],
       selectedPictureDic: {},
-      elemUploadDiv: null
+      elemUploadDiv: null,
+      currentPicNums: 0
     }
   },
   computed: {
@@ -128,6 +130,9 @@ export default {
     this.canDraggable = this.isAllowOperation('sort')
   },
   methods: {
+    imageExceedHandler (files, fileList) {
+      this.$message.error('图片最多上传' + this.containLimit + '张')
+    },
     clear () {
     },
     setCurPictureList (arr) {
