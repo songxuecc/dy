@@ -376,6 +376,10 @@ export default {
     },
     openDialogExport () {
       this.dialogExportVisible = true
+      // 百度统计打点
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '全部商品', '点击', '商品导出'])
+      }
       // 查询导出状态
       // this.getProductExcelInfo()
     },
