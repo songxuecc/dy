@@ -331,11 +331,11 @@ export default {
         this.showDownloadFile = true
         this.recentProductExcelTime = data['last_update_time']
       })
-      const arrField = this.exportFields.split(',')
-      for (let i in this.exportFieldList) {
-        let item = this.exportFieldList[i]
-        item.value = arrField.includes(item.field)
-      }
+      // const arrField = this.exportFields.split(',')
+      // for (let i in this.exportFieldList) {
+      //   let item = this.exportFieldList[i]
+      //   item.value = arrField.includes(item.field)
+      // }
       this.checkAllFieldSelected()
       // 窗口打开，去查询当前导出任务的状态
       this.request('genProductExcel', {
