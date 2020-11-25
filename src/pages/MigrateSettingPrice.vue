@@ -225,6 +225,7 @@
 <script>
 import request from '@/mixins/request.js'
 import skuPriceListView from '@/components/SkuPriceListView.vue'
+import DyTips from '@/components/DyTips.vue'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
 import { mapGetters, mapActions } from 'vuex'
@@ -232,6 +233,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   mixins: [request],
   components: {
+    DyTips,
     skuPriceListView
   },
   data () {

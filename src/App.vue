@@ -7,7 +7,7 @@
               <div class="main-inner clearfix">
                 <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification" title=""
                           :closable="notificationClosable" close-text="我知道啦 不再通知"
-                ><p style="font-size: 12px;color: #666666;">&nbsp;<span style="color: red">请务必将我们软件链接收藏</span>&nbsp;<a @click="goHhgjLink" href="javascript:;">https://dy.huhuguanjia.com/</a>&nbsp;下次使用时直接打开该链接即可用</p></el-alert>
+                ><p style="font-size: 14px">&nbsp;在<span style='color:red'>拼多多</span>上也有开店？<a @click="goHhgjLink" href="javascript:;">点击此处</a>免费试用拼多多搬家工具！</p></el-alert>
               </div>
             </div>
           </div>
@@ -56,7 +56,7 @@ import FlexFoot from '@/components/FlexFoot.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import common from '@/common/common.js'
-import commonUtils from '@/common/commonUtils.js'
+import utils from '@/common/utils'
 
 export default {
   name: 'App',
@@ -70,7 +70,7 @@ export default {
       isRouterAlive: true,
       haveSynced: false,
       syncTimer: null,
-      notificationClosable: true,
+      notificationClosable: false,
       // curNavNotification: null,
       curNavNotification: true
     }
@@ -191,14 +191,13 @@ export default {
     },
     goHhgjLink () { // 虎虎管家引流打点
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '导航通知导航收藏', '点击', '收藏首页链接'])
+        window._hmt.push(['_trackEvent', '导航通知', '点击', '跳转虎虎管家链接'])
       }
-      commonUtils.addToFavorite()
-      // if (window._hmt) {
-      //   window._hmt.push(['_trackEvent', '导航通知导流跳转', '点击', '跳转到虎虎管家'])
-      // }
-      // let url = utils.getHHlink('hhgj') + '?from=douyin'
-      // window.open(url)
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '导航通知导流跳转', '点击', '跳转到虎虎管家'])
+      }
+      let url = utils.getHHlink('hhgj') + '?from=douyin'
+      window.open(url)
     }
   }
 }
