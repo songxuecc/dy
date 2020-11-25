@@ -129,7 +129,7 @@
                   <el-link type="primary" size="mini" @click="downloadCSV()" :underline="false" class="prompt-link">下载模板</el-link>
                 </div>
                 <span class="prompt-content">方式2（推荐）：安装网页插件选取商品，然后下载并上传导入文件
-                  <el-link type="primary" size="mini" @click="navToHelp()" :underline="false" class="prompt-link">安装及使用教程</el-link>
+                  <el-link type="primary" size="mini" @click="navToHelp" :underline="false" class="prompt-link">安装及使用教程</el-link>
                 </span>
                 <span class="prompt-content" style="margin-left: 40px;">插件下载（暂不支持 IE 浏览器）：360浏览器、搜狗浏览器安装包
                   <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false" @click="downloadCrx()" style="margin-right: 16px;">
@@ -151,6 +151,13 @@
               </div>
             </el-tab-pane>
         </el-tabs>
+        <el-dialog
+            title="安装及使用教程"
+            :show-close="true"
+            :visible.sync="importFilePromptVisibe"
+            width="60%">
+          <iframe v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'" width='100%' height='800px;' frameborder='0'></iframe>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -167,7 +174,8 @@ export default {
       textCaptureShopUrls: '',
       activeName: 'single',
       captureUrlNums: 0,
-      uploadAction: '/api/importCaptureFile'
+      uploadAction: '/api/importCaptureFile',
+      importFilePromptVisibe: false
     }
   },
   components: {
@@ -326,6 +334,9 @@ export default {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+    },
+    navToHelp () {
+      this.importFilePromptVisibe = true
     }
   }
 }
