@@ -804,7 +804,8 @@ export default {
             category_id: this.productList[i].category_id,
             title: this.productList[i].title,
             price: utils.yuanToFen(this.productList[i].price),
-            tp_outer_iid: this.productList[i].tp_outer_iid
+            tp_outer_iid: this.productList[i].tp_outer_iid,
+            tp_property_json: {}
           }
           let isChange = false
           if (this.productList[i].title !== this.productTitleDic[tpProductId]) {
@@ -812,15 +813,15 @@ export default {
             isChange = true
           }
           if (this.productRemoveFirstBannerDic[tpProductId] && !this.products[tpProductId]) {
-            productParams['tp_property_json'] = {
-              remove_first_banner: true
-            }
+            productParams['tp_property_json'].remove_first_banner = true
             isChange = true
           }
           if (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId]) {
-            productParams['tp_property_json'] = {
-              brand_id: this.productBrandDic[tpProductId] || 0
-            }
+            productParams['tp_property_json'].brand_id = this.productBrandDic[tpProductId] || 0
+            isChange = true
+          }
+          if (this.productRemoveLastDescDic[tpProductId] && !this.products[tpProductId]) {
+            productParams['tp_property_json'].remove_last_desc = true
             isChange = true
           }
           if (isChange) {
@@ -972,6 +973,7 @@ export default {
       for (let i in this.productList) {
         this.productTitleDic[this.productList[i].tp_product_id] = this.productList[i].title
         this.productRemoveFirstBannerDic[this.productList[i].tp_product_id] = false
+        this.productRemoveLastDescDic[this.productList[i].tp_product_id] = false
       }
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
@@ -1027,6 +1029,7 @@ export default {
           (this.products[tpProductId] && this.products[tpProductId].isDiff()) ||
           this.attrApplyCatMap[this.productList[i].category_id] ||
           (this.productRemoveFirstBannerDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.bannerPicUrlList.length > 1))) ||
+          (this.productRemoveLastDescDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.descPicUrlList.length > 1))) ||
           (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId])
         ) {
           this.productDic[tpProductId].isEdit = true
