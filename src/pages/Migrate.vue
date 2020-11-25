@@ -119,7 +119,7 @@
                   :disabled="!this.isAuth">
                   <icon-svg class="el-icon-upload" iconClass="icon-dragin" style="width:52px; height:52px; margin-top: 60px; margin-bottom: 18px;"></icon-svg>
                   <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
-                  <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span> 只能上传CSV文件，且不超过100KB，一次做多 200 条，一天最多支持 1200 条</div>
+                  <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span> 只能上传CSV文件，且不超过100KB，一次最多 200 条，一天最多支持 1200 条</div>
                   <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
                 </el-upload>
               </div>
