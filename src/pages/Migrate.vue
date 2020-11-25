@@ -268,6 +268,7 @@ export default {
       if (code !== 0) {
         this.uploading = false
         if (code === 205) { // 体验版功能受限
+          // eslint-disable-next-line no-undef
           this.requestFail(new MyError.FeatureLimitError(response.msg))
         } else {
           this.requestFail(new Error(response.msg))
