@@ -179,13 +179,16 @@ const hhgjAPIs = {
     return api.actionCreatorDownload('/api/exportProductExcel', params)
   },
   genProductExcel: (params) => {
-    return api.actionCreatorPost('/api/genProductExcel', params)
+    return api.actionCreatorPost('/api/product/excel/create', params)
   },
   getProductExcelProgress: (params) => {
     return api.actionCreatorPost('/api/getProductExcelProgress', params)
   },
   getExcelDownloadUrl: (params) => {
-    return api.actionCreatorPost('/api/getExcelDownloadUrl', params)
+    return api.actionCreateGet('/api/product/excel/url/query', params)
+  },
+  getExcelFile: (params) => {
+    return api.actionCreateGet('/api/product/excel/query', params)
   },
   downloadExcel: (params) => {
     return api.actionCreatorDownload('/api/downloadExcel', params)

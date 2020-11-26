@@ -202,20 +202,6 @@
                       <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
                               <img style="height:40px" :src="scope.row.img">
-<!--                            <el-upload-->
-<!--                                slot="footer"-->
-<!--                                class="el-upload el-upload&#45;&#45;picture-card"-->
-<!--                                :show-file-list="false"-->
-<!--                                :on-success="(response, file, fileList) => handleUploadSuccess(response, file, fileList, scope.row)"-->
-<!--                                :on-error="handleUploadError"-->
-<!--                                :before-upload="handleBeforeUpload"-->
-<!--                                action="/api/uploadProductImage"-->
-<!--                                :headers="getTokenHeaders"-->
-<!--                                :data="{'belong_type': belongType}"-->
-<!--                                style="width:50px; height: 50px; line-height: 80px;"-->
-<!--                            >-->
-<!--                                <el-image :src="scope.row.img" style="width: 40px; height:40px; display: block;" fit="contain"></el-image>-->
-<!--                            </el-upload>-->
                           </template>
                       </el-table-column>
                       <el-table-column key="7" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
@@ -251,6 +237,10 @@
               </el-tab-pane>
 
               <el-tab-pane label="详情页" name="detail">
+                <div style="width: 100%; text-align: left;">
+                  <el-button size="mini" sytle="" type="primary" @click="applyRemoveLastDescToSelection()">批量去除选中商品详情图尾图</el-button>
+                  <el-button v-if="product.originModel.descPicUrlList && product.originModel.descPicUrlList.length > 1 && productRemoveLastDescDic[product.model.tp_product_id]" size="mini" sytle="" type="error" @click="cancelRemoveLastDesc()">还原本商品详情图</el-button>
+                </div>
                 <span slot="label" v-if=" product.model.check_error_msg_static  && '3' in product.model.check_error_msg_static">详情页
                      <el-tooltip effect="dark"  placement="top-start">
                       <div slot="content">
@@ -442,6 +432,7 @@ export default {
       productList: [],
       productTitleDic: {},
       productRemoveFirstBannerDic: {},
+      productRemoveLastDescDic: {},
       productBrandDic: {},
       productDic: {},
       attrApplyCatMap: {},
@@ -813,7 +804,8 @@ export default {
             category_id: this.productList[i].category_id,
             title: this.productList[i].title,
             price: utils.yuanToFen(this.productList[i].price),
-            tp_outer_iid: this.productList[i].tp_outer_iid
+            tp_outer_iid: this.productList[i].tp_outer_iid,
+            tp_property_json: {}
           }
           let isChange = false
           if (this.productList[i].title !== this.productTitleDic[tpProductId]) {
@@ -821,15 +813,15 @@ export default {
             isChange = true
           }
           if (this.productRemoveFirstBannerDic[tpProductId] && !this.products[tpProductId]) {
-            productParams['tp_property_json'] = {
-              remove_first_banner: true
-            }
+            productParams['tp_property_json'].remove_first_banner = true
             isChange = true
           }
           if (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId]) {
-            productParams['tp_property_json'] = {
-              brand_id: this.productBrandDic[tpProductId] || 0
-            }
+            productParams['tp_property_json'].brand_id = this.productBrandDic[tpProductId] || 0
+            isChange = true
+          }
+          if (this.productRemoveLastDescDic[tpProductId] && !this.products[tpProductId]) {
+            productParams['tp_property_json'].remove_last_desc = true
             isChange = true
           }
           if (isChange) {
@@ -884,6 +876,7 @@ export default {
           for (let i in this.productList) {
             this.productTitleDic[this.productList[i].tp_product_id] = this.productList[i].title
             this.productRemoveFirstBannerDic[this.productList[i].tp_product_id] = false
+            this.productRemoveLastDescDic[this.productList[i].tp_product_id] = false
           }
           self.setProduct(self.productDic[self.product.model.tp_product_id])
           this.updateProductEditStatus()
@@ -981,6 +974,7 @@ export default {
       for (let i in this.productList) {
         this.productTitleDic[this.productList[i].tp_product_id] = this.productList[i].title
         this.productRemoveFirstBannerDic[this.productList[i].tp_product_id] = false
+        this.productRemoveLastDescDic[this.productList[i].tp_product_id] = false
       }
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
@@ -1036,6 +1030,7 @@ export default {
           (this.products[tpProductId] && this.products[tpProductId].isDiff()) ||
           this.attrApplyCatMap[this.productList[i].category_id] ||
           (this.productRemoveFirstBannerDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.bannerPicUrlList.length > 1))) ||
+          (this.productRemoveLastDescDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.descPicUrlList.length > 1))) ||
           (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId])
         ) {
           this.productDic[tpProductId].isEdit = true
@@ -1051,6 +1046,14 @@ export default {
       this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
       this.productRemoveFirstBannerDic[this.product.model.tp_product_id] = false
     },
+    /**
+     * 取消当前商品的详情图批量去尾图
+     */
+    cancelRemoveLastDesc () {
+      this.product.rollbackPart('descPicUrlList')
+      this.descPicUrlList = [...this.product.model.descPicUrlList]
+      this.productRemoveLastDescDic[this.product.model.tp_product_id] = false
+    },
     applyRemoveFirstBannerToSelection () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '点击批量去除轮播图首图'])
@@ -1061,6 +1064,46 @@ export default {
       }
       this.updateProductEditStatus()
       this.updateRemoveFirstBanner()
+    },
+    /**
+     * 批量去除详情图尾图
+     */
+    applyRemoveLastDescToSelection () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '点击批量去除详情图尾图'])
+      }
+      for (let i in this.selectedProductIds) {
+        let tpProductId = this.selectedProductIds[i]
+        this.productRemoveLastDescDic[tpProductId] = true
+      }
+      this.updateProductEditStatus()
+      this.updateRemoveLastDesc()
+    },
+    updateRemoveLastDesc () {
+      for (let i in this.productList) {
+        let tpProductId = this.productList[i].tp_product_id
+        if (tpProductId in this.products) {
+          let product = this.products[tpProductId]
+          let descLength = product.model.descPicUrlList.length
+          if (this.productRemoveLastDescDic[tpProductId] && descLength > 0) {
+            let lastImg = product.originModel.descPicUrlList[product.originModel.descPicUrlList.length - 1]
+            let delIdx = -1
+            while (descLength >= 0) {
+              if (product.model.descPicUrlList[descLength - 1].url === lastImg.url) {
+                delIdx = descLength - 1
+                break // 可能会有相同 URL 图片
+              }
+              descLength -= 1
+            }
+            if (delIdx !== -1 && product.model.descPicUrlList.length > 1) {
+              product.model.descPicUrlList.splice(delIdx, 1)
+              if (this.product.model.tp_product_id === tpProductId) {
+                this.descPicUrlList = [...product.model.descPicUrlList]
+              }
+            }
+          }
+        }
+      }
     },
     applySelectBrandToSelection () {
       for (let i in this.selectedProductIds) {
