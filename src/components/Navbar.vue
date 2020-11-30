@@ -10,9 +10,15 @@
                     <el-menu-item index="4">打单发货</el-menu-item>
               </el-menu>-->
               <div class="nav-not-login" v-if="!shopName">
-<!--                <el-button size="small" @click="goToServiceMarket">购买</el-button>-->
+                <el-button type="primary" @click="goToServiceMarket">购买</el-button>
                 <el-button type="primary" @click="onLogin">登录</el-button>
               </div>
+              <ul v-if="shopName" class="menu-content">
+                <li @click="goToOrder()">
+                  <span style="vertical-align: middle;">{{subscName}} 剩 {{leftDays}} 天</span>
+                  <img style="height: 28px; display: inline-block; position: relative; top: -1px; cursor: pointer" src="../assets/images/reorder.gif" />
+                </li>
+              </ul>
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
 <!--                    <el-menu-item index="3">短信水印</el-menu-item>-->
 <!--                    <el-menu-item index="4">打单发货</el-menu-item>-->
@@ -30,6 +36,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import commonUtils from '@/common/commonUtils'
+import utils from '@/common/utils'
 
 export default {
   data () {
@@ -46,7 +53,19 @@ export default {
       shopName: 'getShopName',
       isAuth: 'getIsAuth',
       subsc: 'getCurrentSubsc'
-    })
+    }),
+    leftDays () {
+      if (this.subsc.deadline === '') {
+        return '-'
+      }
+      return utils.diffDate(this.subsc.deadline) + 1
+    },
+    subscName () {
+      if (this.subsc.item_name === '') {
+        return '-'
+      }
+      return this.subsc.item_name.split(' ')[0]
+    }
   },
   mounted () {
     if (this.isAuth && window.location.pathname !== 'authorize') {
@@ -107,10 +126,16 @@ export default {
       this.$router.push({
         path: '/info'
       })
+    },
+    goToServiceMarket () {
+      window.location.href = 'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
+    },
+    goToOrder () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '导航栏', '点击', '续费点击'])
+      }
+      window.location.href = 'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
     }
-    // goToServiceMarket () {
-    //   window.location.href = 'https://mms.pinduoduo.com/service-market/service-detail?detailId=236'
-    // }
   }
 }
 </script>
