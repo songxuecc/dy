@@ -135,5 +135,6 @@ module.exports = {
   HELP_TIPS_LINK: {
     'captureShop': 'https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl'
   },
-  HELP_LINK: 'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l'
+  HELP_LINK: 'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l',
+  CHANNEL_WHITE_LIST: ['woda', 'douyin', 'pddwoda2', 'pddtgzj1', 'pddspgj2', 'pddddzs2', 'pddhhyh2', 'dywoda1', 'dymeizhe1']
 }

@@ -22,6 +22,8 @@ export default {
     localStorage.setItem('is_auth', false)
   },
   mounted () {
+    // 重新登录前先退出
+    this.logout()
     if (this.$route.query.code || this.$route.query.authCode) {
       let code = this.$route.query.code
       if (!code) {
@@ -31,6 +33,7 @@ export default {
         code: code
       }
       let state = decodeURI(this.$route.query.state)
+      let from = ''
       if (state) {
         let data = {}
         try {
@@ -39,18 +42,32 @@ export default {
           console.error(error)
         }
         if (data['host']) {
-          let url = decodeURI(data['host']) + '/authorize?code=' + this.$route.query.code + '&state=' + JSON.stringify({'share_id': data['share_id']})
+          let host = data['host']
+          delete data['host']
+          let url = decodeURI(host) + '/authorize?code=' + this.$route.query.code + '&state=' + JSON.stringify({'share_id': data['share_id']})
           window.location.href = url
         }
         if (data['share_id']) {
           params['share_id'] = data['share_id']
         }
+        if (data['from']) {
+          from = data['from']
+        }
+        if (data['channel_name']) {
+          params['channel_name'] = data['channel_name']
+        }
       }
       this.requestToken(params).then(data => {
         this.message = '授权成功'
-        this.$router.push({
-          path: '/migrate'
-        })
+        if (from === '') {
+          this.$router.push({
+            path: '/migrate'
+          })
+        } else {
+          this.$router.push({
+            name: from
+          })
+        }
       }, e => {
         localStorage.setItem('is_auth', false)
         this.message = '授权失败，请重新尝试'
@@ -66,7 +83,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'requestToken'
+      'requestToken',
+      'logout'
     ])
   }
 }

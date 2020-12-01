@@ -15,6 +15,9 @@ const hhgjAPIs = {
   getUserInfo: (params) => {
     return api.actionCreatorPost('/api/account/getUserInfo', params)
   },
+  saveChannelInfo: (params) => {
+    return api.actionCreatorPost('/api/saveChannelInfo', params)
+  },
   getCategoryList: (params) => {
     return api.actionCreatorPost('/api/category/list', params)
   },

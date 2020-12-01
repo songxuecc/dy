@@ -56,10 +56,13 @@ import FlexFoot from '@/components/FlexFoot.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import common from '@/common/common.js'
+import commonUtils from '@/common/commonUtils.js'
 import utils from '@/common/utils'
+import request from '@/mixins/request.js'
 
 export default {
   name: 'App',
+  mixins: [request],
   provide () {
     return {
       reload: this.reload
@@ -82,6 +85,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      isAuth: 'getIsAuth',
       syncStatus: 'getSyncStatus',
       ignoreNotiList: 'getIgnoreNotiList',
       notificationList: 'getNotificationList',
@@ -124,6 +128,7 @@ export default {
     }
   },
   created () {
+    this.getChannelInfo()
     window.onClickNotiLink = this.onClickNotiLink
   },
   methods: {
@@ -133,6 +138,39 @@ export default {
       'ignoreNotification',
       'requestOperate'
     ]),
+    getChannelInfo () {
+      let channel = commonUtils.getURLSearchParams('from')
+      if (common.CHANNEL_WHITE_LIST.indexOf(channel) !== -1) {
+        let channelName = utils.getCookie('channel_name')
+        let userMark = localStorage.getItem('user_mark')
+        if (!userMark) {
+          userMark = channel + new Date().getTime()
+          localStorage.setItem('user_mark', userMark)
+        }
+        let params = {
+          'channel_name': channel,
+          'user_mark': userMark
+        }
+        let time = null
+        if (!channelName) {
+          utils.setCookie('channel_name', channel)
+        }
+        if (!this.isAuth) {
+          this.request('saveChannelInfo', params, data => {
+            clearTimeout(time)
+            this.goToRegister(channel)
+          })
+          time = setTimeout(() => { // 接口未返回 默认1200毫秒后跳转
+            this.goToRegister(channel)
+          }, 1200)
+        } else {
+          clearTimeout(time)
+        }
+      }
+    },
+    goToRegister (channel) {
+      window.location.href = commonUtils.getChannelegisterUrl(channel)
+    },
     syncProducts () {
       let timeBefore12hour = moment().subtract(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
       if (!this.haveSynced && this.syncStatus.last_sync_time < timeBefore12hour) {
