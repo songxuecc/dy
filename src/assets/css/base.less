@@ -424,16 +424,21 @@ div.block-content {
     padding: 4px;
     position: relative;
     .notice-icon {
+      font-family: 'Avenir', Helvetica, Arial, sans-serif;
       position: absolute;
       z-index: 1;
-      left: 20px;
-      top: 13px;
-      display: block;
-      width: 9px;
-      height: 9px;
-      border-radius: 10px;
+      left: 16px;
+      top: 10px;
+      display: inline-block;
+      //min-width: 16px;
+      padding: 2px 4px;
+      font-size: 12px;
+      line-height: 1;
+      color: #ffffff;
+      border-radius: 8px;
       background: red;
       cursor: pointer;
+      transform: scale(0.8,0.8);
     }
     /deep/ .el-button.is-circle {
       font-size: 26px;
@@ -930,4 +935,32 @@ div .like-button-disabled {
 }
 .full-screen {
   min-width: @full-screen-width;
+}
+
+/* 新通知弹框样式 */
+.notice-main {
+  margin-top: -28px;
+  .notice-title {
+    font-size: 20px;
+    color: #333333;
+    line-height: 62px;
+    border-bottom: 1px solid #E5E5E5;
+
+  }
+  .notice-content {
+    padding: 22px 45px;
+    color: #4E4E4E;
+    font-size: 14px;
+    text-align: left;
+  }
+}
+.notice-foot {
+  margin-bottom: -6px;
+  /deep/ .el-button {
+    min-width: 126px;
+  }
+  /deep/ .el-button--default {
+    color: #1D8FFF;
+    border-color: #1D8FFF;
+  }
 }

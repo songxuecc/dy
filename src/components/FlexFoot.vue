@@ -11,8 +11,8 @@
       <span class="nav-icon nav-service" @click="handleClick"></span>
       <div class="column-name" @click="handleClick">客服</div>
     </div>
-    <div class="float-button" v-if="false">
-      <span class="notice-icon"></span>
+    <div class="float-button" @click="openNotificationBox">
+      <span v-if="unRead > 0" class="notice-icon" @click="openNotificationBox">{{unRead}}</span>
       <span class="nav-icon nav-notice"></span>
       <div class="column-name">通知</div>
     </div>
@@ -24,19 +24,36 @@
     <div class="float-button nav-go-top" @click="backToTop">
       <span class="nav-icon nav-gotop"></span>
     </div>
+    <hh-dialog width="600" :visible.sync="dialogNotificationVisible" :isClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog">
+      <template v-slot:content>
+        <div class="mail-notice-box">
+          <notification-list-view ref="notificationListView" @closeDialog="closeDialog"
+          ></notification-list-view>
+        </div>
+      </template>
+    </hh-dialog>
   </div>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 import ServiceBox from './ServiceBox.vue'
+import notificationListView from './NotificationListView.vue'
 import common from '@/common/common.js'
 export default {
   data () {
     return {
-      isServiceBoxShow: false
+      isServiceBoxShow: false,
+      dialogNotificationVisible: false
     }
   },
   components: {
-    ServiceBox
+    ServiceBox,
+    notificationListView
+  },
+  computed: {
+    ...mapGetters({
+      unRead: 'getUnRead'
+    })
   },
   methods: {
     handleClick (event) {
@@ -61,6 +78,15 @@ export default {
       if (this.$refs.ServiceBox && !this.$refs.ServiceBox.contains(e.target)) { // 点击除弹出层外的空白区域
         this.hide()
       }
+    },
+    openNotificationBox () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '通知列表', '点击', '打开通知列表'])
+      }
+      this.dialogNotificationVisible = true
+      this.$nextTick(function () {
+        this.$refs.notificationListView.init()
+      })
     },
     backToTop () {
       scrollTo(0, 0)
@@ -103,6 +129,12 @@ export default {
         this.$alert(`您的浏览器不支持,请按 ${strShortcut} 手动收藏!`, '温馨提示', {
           confirmButtonText: '确定'
         })
+      }
+    },
+    closeDialog () {
+      this.dialogNotificationVisible = false
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '通知列表', '点击', '关闭通知列表'])
       }
     }
   },

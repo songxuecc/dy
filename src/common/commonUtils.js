@@ -1,5 +1,7 @@
 import Api from '@/api/apis'
 import { Message } from 'element-ui'
+const dyHarf = '&response_type=code&redirect_uri=https://dy.huhuguanjia.com/authorize'
+
 export default {
   request (method, params, cbsuccess, cbfail, isSilent = false) {
     if (!isSilent) {
@@ -44,6 +46,42 @@ export default {
     console.log(err.message)
     Message.error(err.message)
   },
+  getLoginUrl (shareId = null, from = null) {
+    let host = encodeURI(window.location.protocol + '//' + window.location.host)
+    let state = {}
+    if (process.env.BUILD_ENV !== 'prod') {
+      state['host'] = host
+    }
+    if (shareId) {
+      state['share_id'] = shareId
+    }
+    // 登录后会跳转到from对应的routerName页面
+    if (from) {
+      state['from'] = from
+    }
+    let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + (Object.keys(state).length !== 0 ? encodeURI(JSON.stringify(state)) : '') + dyHarf
+    return url
+  },
+  getChannelegisterUrl (channel = null, shareId = null, from = null) {
+    let host = encodeURI(window.location.protocol + '//' + window.location.host)
+    let state = {}
+    if (process.env.BUILD_ENV !== 'prod') {
+      state['host'] = host
+    }
+    // 如果有渠道名称
+    if (channel) {
+      state['channel_name'] = channel
+    }
+    if (shareId) {
+      state['share_id'] = shareId
+    }
+    // 登录后会跳转到from对应的routerName页面
+    if (from) {
+      state['from'] = from
+    }
+    let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + encodeURI(JSON.stringify(state)) + dyHarf
+    return url
+  },
   login (shareId = null) {
     let host = encodeURI(window.location.protocol + '//' + window.location.host)
     let state = {}
@@ -53,8 +91,7 @@ export default {
     if (shareId) {
       state['share_id'] = shareId
     }
-    // let url = 'https://fxg.jinritemai.com/index.html#/ffa/open/applicationAuthorize?response_type=code&app_id=6839207088506422798&redirect_uri=https://dy.huhuguanjia.com/authorize&state=' + JSON.stringify(state)
-    let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + JSON.stringify(state)
+    let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + encodeURI(JSON.stringify(state)) + dyHarf
 
     window.location.href = url
   },
@@ -81,6 +118,15 @@ export default {
       }
     } else {
       alert('您的浏览器不支持,请按 ' + strShortcut + ' 手动收藏!')
+    }
+  },
+  getURLSearchParams (params) {
+    let reg = new RegExp('(^|&)' + params + '=([^&]*)(&|$)', 'i')
+    let r = window.location.search.substr(1).match(reg)
+    if (r != null) {
+      return unescape(r[2])
+    } else {
+      return null
     }
   }
 }

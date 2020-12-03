@@ -11,7 +11,8 @@ export default {
     return {
       loadingCnt: 0,
       notNeedAuthList: [
-        'getSubscItems'
+        'getSubscItems',
+        'saveChannelInfo'
       ]
     }
   },
