@@ -163,7 +163,7 @@
                             <span v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
                             <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
                                       :class="['input-text-left']">
-                              <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span>
+                              <!-- <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span> -->
                             </el-input>
                           </template>
                       </el-table-column>
