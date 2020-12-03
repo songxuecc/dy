@@ -104,7 +104,7 @@ module.exports = {
     'nav_cannot_close': 1,
     'nav_close_not_show_again': 2,
     'msg_box': 3,
-    'only_in_mail': 3
+    'only_in_mail': 4
   },
   taskResultStatus: {
     'no_result': 0,

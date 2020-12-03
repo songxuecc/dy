@@ -10,12 +10,33 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from './store/store'
 import utils from '@/common/utils'
-
-import IconSvg from '@/components/icon-svg'
+import upperFirst from 'lodash/upperFirst'
+import camelCase from 'lodash/camelCase'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
-Vue.component('icon-svg', IconSvg)
+
+// global components register
+const requireComponent = require.context(
+  './components/ui',
+  false,
+  /([\w\W]*)\.(vue|js)$/
+)
+requireComponent.keys().forEach(fileName => {
+  const componentConfig = requireComponent(fileName)
+  const componentName = upperFirst(
+    camelCase(
+      fileName
+        .split('/')
+        .pop()
+        .replace(/\.\w+$/, '')
+    )
+  )
+  Vue.component(
+    componentName,
+    componentConfig.default || componentConfig
+  )
+})
 
 // Vue.use(ELEMENT)
 

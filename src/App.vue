@@ -5,9 +5,9 @@
           <div class="full-screen">
             <div class="header-notice">
               <div class="main-inner clearfix">
-                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification" title=""
-                          :closable="notificationClosable" close-text="我知道啦 不再通知"
-                ><p style="font-size: 14px">&nbsp;在<span style='color:red'>拼多多</span>上也有开店？<a @click="goHhgjLink" href="javascript:;">点击此处</a>免费试用拼多多搬家工具！</p></el-alert>
+                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
+                          :closable="notificationClosable" close-text="不再显示" title="-"
+                ></el-alert>
               </div>
             </div>
           </div>
@@ -45,6 +45,24 @@
         <div v-if="isShowFloatView" class="float-view">
           <flex-foot></flex-foot>
         </div>
+        <hh-dialog width="500" :visible.sync="msgDialogShow" :isClose="false" :isBgClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog(curMsgNotification)">
+            <template v-slot:content>
+                <div class="notice-main">
+                    <div class="notice-title" v-if="curMsgNotification.title !== '-'">
+                        {{curMsgNotification.title}}
+                    </div>
+                    <div class="notice-content">
+                        <div v-html="curMsgNotification.data"></div>
+                    </div>
+                </div>
+            </template>
+            <template v-slot:foot>
+                <div class="notice-foot">
+                    <el-button @click="closeDialog(curMsgNotification)">我知道啦</el-button>
+                    <el-button v-if="curMsgNotification.is_btn === 1" type="primary" @click="goBtnLink(curMsgNotification)">{{curMsgNotification.btn_text}}</el-button>
+                </div>
+            </template>
+        </hh-dialog>
     </div>
 </template>
 
@@ -74,8 +92,14 @@ export default {
       haveSynced: false,
       syncTimer: null,
       notificationClosable: false,
-      // curNavNotification: null,
-      curNavNotification: true
+      curNavNotification: null,
+      curMsgNotification: null,
+      userOrderTimes: 0,
+      userLeftDays: null,
+      dialogTimer: null,
+      expireNotifyStyle: {},
+      msgNotificationData: {},
+      msgDialogShow: false
     }
   },
   components: {
@@ -86,11 +110,27 @@ export default {
   computed: {
     ...mapGetters({
       isAuth: 'getIsAuth',
+      orderTimes: 'getOrderTimes',
+      leftDays: 'getLeftDays',
       syncStatus: 'getSyncStatus',
       ignoreNotiList: 'getIgnoreNotiList',
       notificationList: 'getNotificationList',
       isShowFloatView: 'isShowFloatView'
-    })
+    }),
+    unreadNotiNum () {
+      let dicIgnore = {}
+      for (let i in this.ignoreNotiList) {
+        dicIgnore[this.ignoreNotiList[i]] = 1
+      }
+      let num = this.notificationList.length
+      for (let i in this.notificationList) {
+        let notification = this.notificationList[i]
+        if (notification.id in dicIgnore) {
+          num--
+        }
+      }
+      return num
+    }
   },
   watch: {
     syncStatus (val, oldVal) {
@@ -109,19 +149,25 @@ export default {
       if (window.__PRERENDER_INJECTED && window.__PRERENDER_INJECTED.isReader) {
         return
       }
+      this.getUserNoticeStatus()
       for (let i in notiList) {
         if (this.ignoreNotiList.includes(notiList[i].id.toString()) ||
           notiList[i].end_time < moment().format('YYYY-MM-DD HH:mm:ss')
         ) {
           continue
         }
-        if (parseInt(notiList[i].type) === common.NotificationType['msg_box']) {
-          if (!this.curMsgNotification) {
-            this.setCurMsgNotification(notiList[i])
+        if (parseInt(notiList[i].type) === common.NotificationType['msg_box']) { // 弹窗通知
+          if (!this.curMsgNotification && (this.leftDays !== '') && this.userOrderTimes && this.userLeftDays && (notiList[i].is_show === 0)) {
+            let result = utils.isAppendNotice(notiList[i], this.userOrderTimes, this.userLeftDays)
+            if (result) {
+              this.setCurMsgNotification(notiList[i])
+            }
           }
-        } else if (parseInt(notiList[i].type) !== common.NotificationType['only_in_mail']) {
+        } else if (parseInt(notiList[i].type) !== common.NotificationType['only_in_mail']) { // 头部导航通知
           if (!this.curNavNotification) {
-            this.setCurNavNotification(notiList[i])
+            if (utils.isAppendNotice(notiList[i], this.userOrderTimes, this.userLeftDays)) {
+              this.setCurNavNotification(notiList[i])
+            }
           }
         }
       }
@@ -171,6 +217,10 @@ export default {
     goToRegister (channel) {
       window.location.href = commonUtils.getChannelegisterUrl(channel)
     },
+    getUserNoticeStatus () {
+      this.userOrderTimes = this.orderTimes > 4 ? 5 : this.orderTimes
+      this.userLeftDays = this.leftDays > 5 ? -1 : 1
+    },
     syncProducts () {
       let timeBefore12hour = moment().subtract(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
       if (!this.haveSynced && this.syncStatus.last_sync_time < timeBefore12hour) {
@@ -194,48 +244,70 @@ export default {
         this.isRouterAlive = true
       })
     },
-    setCurMsgNotification (notification) { // 弹框通知先不展示
-      this.curMsgNotification = notification
-      return false
-      // this.$alert(notification.data, notification.title, {
-      //   dangerouslyUseHTMLString: true,
-      //   showCancelButton: true,
-      //   confirmButtonText: '不再显示',
-      //   cancelButtonText: '关闭',
-      //   customClass: 'notification-box'
-      // }).then(action => {
-      //   this.ignoreNotification(notification.id.toString())
-      // }).catch(() => {})
-    },
-    setCurNavNotification (notification) {
-      this.curNavNotification = notification
-      this.notificationClosable = (parseInt(notification.type) !== common.NotificationType['nav_cannot_close'])
-      // this.$nextTick(function () {
-      //   let elem = this.$el.querySelector('span.el-alert__title')
-      //   if (notification) {
-      //     if (notification.title === '-') {
-      //       elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-09-18/7efc360f-1ba2-4f29-8c1a-14b6112cc9af.png" style="width: 20px; float: left">' + notification.data1 + `<a href="#" @click="${this.goHhgjLink}">点击此处</a>` + notification.data2
-      //     } else {
-      //       elem.innerHTML = '<strong><span style="color:red"><img src="https://img.pddpic.com/mms-material-img/2020-09-18/7efc360f-1ba2-4f29-8c1a-14b6112cc9af.png" style="width: 20px; float: left;">' + notification.title + '</span></strong> : ' + '<div style="display: inline-block">' + notification.data + '</div>'
-      //     }
-      //   }
-      // })
-    },
     onCloseNotification () {
       if (parseInt(this.curNavNotification.type) === common.NotificationType['nav_close_not_show_again']) {
         this.ignoreNotification(this.curNavNotification.id.toString())
         this.curNavNotification = null
       }
     },
-    goHhgjLink () { // 虎虎管家引流打点
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '导航通知', '点击', '跳转虎虎管家链接'])
+    setCurMsgNotification (notification) {
+      this.curMsgNotification = notification
+      clearTimeout(this.dialogTimer)
+      this.dialogTimer = setTimeout(() => {
+        let result = utils.isAppendNotice(notification, this.userOrderTimes, this.userLeftDays)
+        if (result) {
+          this.msgDialogShow = true
+          if (window._hmt) {
+            window._hmt.push(['_trackEvent', '通知弹框', '展示', `${notification.title}显示`])
+          }
+        }
+      }, 400)
+    },
+    setCurNavNotification (notification) {
+      this.curNavNotification = notification
+      this.notificationClosable = (parseInt(notification.type) !== common.NotificationType['nav_cannot_close'])
+      this.$nextTick(function () {
+        let elem = this.$el.querySelector('span.el-alert__title')
+        if (notification.title === '-') {
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block">' + notification.data + '</div>'
+        } else {
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block">' + notification.data + '</div>'
+        }
+      })
+    },
+    onClickNotiLink (val) {
+      if (val.substr(0, 4) === 'http') {
+        window.open(val, '_blank')
       }
+    },
+    closeDialog (notification) {
+      this.msgDialogShow = false
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '导航通知导流跳转', '点击', '跳转到虎虎管家'])
+        window._hmt.push(['_trackEvent', '通知弹框--我知道按钮', '点击', `${notification.title}按钮点击`])
       }
-      let url = utils.getHHlink('hhgj') + '?from=douyin'
-      window.open(url)
+      let params = {
+        notification_id: notification.id,
+        is_show: 1
+      }
+      this.request('setNotificationStatus', params, data => {
+      })
+    },
+    goBtnLink (notification) {
+      this.msgDialogShow = false
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '通知弹框--主按钮点击', '点击', `${notification.title}主按钮点击`])
+      }
+      let params = {
+        notification_id: notification.id,
+        is_show: 1
+      }
+      this.request('setNotificationStatus', params, data => {
+        if (notification.is_new_window === 1) {
+          window.open(notification.btn_link)
+        } else {
+          window.location.href = notification.btn_link
+        }
+      })
     }
   }
 }
