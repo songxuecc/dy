@@ -18,7 +18,7 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="客服号码:" prop="mobile">
+                <el-form-item label="客服电话:" prop="mobile">
                     <el-input v-model="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
 <!--                <el-form-item label="佣金比例:" prop="cos_ratio">-->
@@ -104,7 +104,7 @@ export default {
       pickerOptions: this.disabledDate(),
       rules: {
         mobile: [
-          { required: true, message: '请输入客服号码', trigger: 'change' }
+          { required: true, message: '请输入客服电话', trigger: 'change' }
         ],
         // cos_ratio: [
         //   { required: true, message: '请输入佣金比例', trigger: 'change' },
