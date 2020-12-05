@@ -11,6 +11,9 @@
           </el-option>
         </el-select>
       </el-form-item>
+       <el-form-item label="商品总图片超过50张自动截断详情图" required style="margin-bottom: 0px;">
+        <el-checkbox v-model="detail_img_cut"></el-checkbox>
+      </el-form-item>
     </el-form>
     <br/>
     <el-button type="primary" @click="saveSetting()" size="small" style="margin-top: 20px;">保存设置</el-button>

@@ -145,7 +145,7 @@
                                                 <span v-if="skuPropertyList.length === 1">{{ele.value}}</span>
                                                 <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
                                                           :class="['input-text-left']">
-                                                  <span slot="append" class="hint">{{ ele.value.length }} / 18</span>
+                                                  <!-- <span slot="append" class="hint">{{ ele.value.length }} / 18</span> -->
                                                 </el-input>
                                               </el-checkbox>
                                               <el-button v-if="Object.keys(skuPropertyValueMap[item.id]).length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
@@ -163,7 +163,7 @@
                             <span v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
                             <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
                                       :class="['input-text-left']">
-                              <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span>
+                              <!-- <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span> -->
                             </el-input>
                           </template>
                       </el-table-column>
@@ -486,42 +486,42 @@ export default {
 
   },
   updated () {
-    if (this.activityTab === 'sku') {
-      let self = this
-      if (this.skuPropertyList.length === 1) {
-        return
-      }
-      this.skuPropertyList.forEach(item => {
-        if (self.skuPropertyValueMap[item.id]) {
-          for (let vid in self.skuPropertyValueMap[item.id]) {
-            let ele = self.skuPropertyValueMap[item.id][vid]
-            if (self.isSkuNameWarn(ele.value, item.id)) {
-              if (self.$refs['sku-property-' + item.id]) {
-                self.$refs['sku-property-' + item.id][0].show()
-              }
-            }
-          }
-        }
-      })
-      if ('1' in this.product.model.check_error_msg_static) {
-        if ('1017' in this.product.model.check_error_msg_static['1']['code']) {
-          let maxNum = 0
-          let maxNumProperty = 0
-          this.skuPropertyList.forEach(item => {
-            if (self.skuPropertyValueMap[item.id]) {
-              let len = Object.keys(self.skuPropertyValueMap[item.id]).length
-              if (len > maxNum) {
-                maxNumProperty = item.id
-                maxNum = len
-              }
-            }
-          })
-          if (this.$refs['sku-property-' + maxNumProperty]) {
-            this.$refs['sku-property-' + maxNumProperty][0].show()
-          }
-        }
-      }
-    }
+    // if (this.activityTab === 'sku') {
+    //   let self = this
+    //   if (this.skuPropertyList.length === 1) {
+
+    //   }
+      // this.skuPropertyList.forEach(item => {
+      //   if (self.skuPropertyValueMap[item.id]) {
+      //     for (let vid in self.skuPropertyValueMap[item.id]) {
+      //       let ele = self.skuPropertyValueMap[item.id][vid]
+      //       if (self.isSkuNameWarn(ele.value, item.id)) {
+      //         if (self.$refs['sku-property-' + item.id]) {
+      //           self.$refs['sku-property-' + item.id][0].show()
+      //         }
+      //       }
+      //     }
+      //   }
+      // })
+      // if ('1' in this.product.model.check_error_msg_static) {
+      //   if ('1017' in this.product.model.check_error_msg_static['1']['code']) {
+      //     let maxNum = 0
+      //     let maxNumProperty = 0
+      //     this.skuPropertyList.forEach(item => {
+      //       if (self.skuPropertyValueMap[item.id]) {
+      //         let len = Object.keys(self.skuPropertyValueMap[item.id]).length
+      //         if (len > maxNum) {
+      //           maxNumProperty = item.id
+      //           maxNum = len
+      //         }
+      //       }
+      //     })
+      //     if (this.$refs['sku-property-' + maxNumProperty]) {
+      //       this.$refs['sku-property-' + maxNumProperty][0].show()
+      //     }
+      //   }
+      // }
+    // }
   },
   methods: {
     ...mapActions([
@@ -720,18 +720,18 @@ export default {
     handlePropertyNameChange (pid, vid, ele) {
       this.updateNameOfSkuPropertyValueMap(pid, vid, ele['value'])
     },
-    isSkuNameWarn (skuName, idx) {
-      let cnt = 0
-      for (let key in this.skuPropertyValueMap[idx]) {
-        if (this.skuPropertyValueMap[idx][key]['value'].trim() === skuName.trim()) {
-          cnt += 1
-        }
-      }
-      if (cnt > 1) {
-        return true
-      }
-      return skuName.length > 18
-    },
+    // isSkuNameWarn (skuName, idx) {
+    //   let cnt = 0
+    //   for (let key in this.skuPropertyValueMap[idx]) {
+    //     if (this.skuPropertyValueMap[idx][key]['value'].trim() === skuName.trim()) {
+    //       cnt += 1
+    //     }
+    //   }
+    //   if (cnt > 1) {
+    //     return true
+    //   }
+    //   return skuName.length > 18
+    // },
     reloadBrandList () {
       this.request('getShopBrandList', {}, data => {
         this.shopBrandList = data

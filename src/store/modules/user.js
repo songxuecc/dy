@@ -2,6 +2,7 @@
 import Api from '@/api/apis'
 import * as types from '../types'
 import moment from 'moment'
+import utils from '@/common/utils'
 
 const state = {
   name: localStorage.getItem('owner_name') || '',
@@ -11,6 +12,8 @@ const state = {
   token: localStorage.getItem('token') || '',
   fakeToken: localStorage.getItem('fake_token') || false,
   isAuth: JSON.parse(localStorage.getItem('is_auth')) || false,
+  orderTimes: localStorage.getItem('order_times') || 0,
+  leftDays: localStorage.getItem('left_days') || '',
   exportFields: localStorage.getItem('export_fields'),
   syncStatus: {
     status: '',
@@ -44,6 +47,8 @@ const getters = {
     return {}
   },
   getIsAuth: state => state.isAuth,
+  getOrderTimes: state => state.orderTimes,
+  getLeftDays: state => state.leftDays,
   getFakeToken: state => state.fakeToken,
   getSyncStatus: state => state.syncStatus,
   getSyncOrderStatus: state => state.syncOrderStatus,
@@ -266,6 +271,8 @@ const mutations = {
     state.loginNum = 0
     state.token = ''
     state.isAuth = false
+    state.orderTimes = 0
+    state.leftDays = ''
     state.fake_token = ''
   },
   [ types.SET_CURRENT_SUBSC ] (state, data) {
@@ -277,6 +284,9 @@ const mutations = {
         'deadline': data.deadline,
         'goods_assess_notify': data.goods_assess_notify
       }
+      state.orderTimes = data.order_times
+      if (data.deadline) state.leftDays = utils.diffDate(data.deadline) + 1 // 剩余天数
+      localStorage.setItem('order_times', data.order_times)
     }
   },
   [ types.SET_SYNC_STATUS ] (state, data) {

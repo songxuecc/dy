@@ -3,11 +3,13 @@ import * as types from '../types'
 
 const state = {
   notificationList: [],
+  unRead: 0,
   ignoreNotiList: (localStorage.getItem('ignore_noti_list') ? localStorage.getItem('ignore_noti_list').split(',') : [])
 }
 
 const getters = {
   getNotificationList: state => state.notificationList,
+  getUnRead: state => state.unRead,
   getIgnoreNotiList: state => state.ignoreNotiList
 }
 
@@ -35,12 +37,22 @@ const actions = {
       state.ignoreNotiList = state.ignoreNotiList.slice(-100)
     }
     localStorage.setItem('ignore_noti_list', state.ignoreNotiList)
+  },
+  setUnReadNum ({commit, state}, num) {
+    commit(types.SET_UN_READ_NUM, num)
+  },
+  setLocalStorageNoticeFun ({commit, state}) {
+    localStorage.setItem('ago_notice_list', state.newNoticeStr)
   }
 }
 
 const mutations = {
   [ types.SET_NOTIFICATION_LIST ] (state, data) {
-    state.notificationList = data
+    state.notificationList = data.list
+    state.unRead = data.un_read
+  },
+  [ types.SET_UN_READ_NUM ] (state, num) {
+    state.unRead = num
   }
 }
 

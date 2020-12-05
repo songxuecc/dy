@@ -1,12 +1,12 @@
 import api from './index'
 
-const mock = (url) => { // 接口调用mock数据
-  console.log('mock: ' + url)
-  return new Promise(function (resolve, reject) {
-    let response = require(`../mock/${url}`)
-    resolve(response.data)
-  })
-}
+// const mock = (url) => { // 接口调用mock数据
+//   console.log('mock: ' + url)
+//   return new Promise(function (resolve, reject) {
+//     let response = require(`../mock/${url}`)
+//     resolve(response.data)
+//   })
+// }
 
 const hhgjAPIs = {
   getAccessToken: (params) => {
@@ -14,6 +14,9 @@ const hhgjAPIs = {
   },
   getUserInfo: (params) => {
     return api.actionCreatorPost('/api/account/getUserInfo', params)
+  },
+  saveChannelInfo: (params) => {
+    return api.actionCreatorPost('/api/saveChannelInfo', params)
   },
   getCategoryList: (params) => {
     return api.actionCreatorPost('/api/category/list', params)
@@ -25,8 +28,10 @@ const hhgjAPIs = {
     return api.actionCreatorPost('/api/category/search', params)
   },
   getNotification: (params) => {
-    return mock('noticelist.json')
-    // return api.actionCreatorPost('/api/getNotification', params)
+    return api.actionCreatorPost('/api/getNotification', params)
+  },
+  setNotificationStatus: (params) => {
+    return api.actionCreatorPost('/api/setNotificationStatus', params)
   },
   fakeUser: (params) => {
     return api.actionCreatorPost('/api/fakeUser', params)
