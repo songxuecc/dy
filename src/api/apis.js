@@ -261,6 +261,9 @@ const hhgjAPIs = {
   },
   updateMigrateSetting: (params) => {
     return api.actionCreatorPost('/api/updateMigrateSetting', params)
+  },
+  createStatisticsEvent: (params) => {
+    return api.actionCreatorPost('/api/statisticsEvent/create', params)
   }
 }
 
