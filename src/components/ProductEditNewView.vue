@@ -1013,7 +1013,7 @@ export default {
       this.mouseOverIndex = row.index
     },
     handleMouseOut (row, column, cell, event) {
-      // this.mouseOverIndex = -1
+      this.mouseOverIndex = -1
     },
     onApplySelectCateToSelection () {
       if (window._hmt) {
