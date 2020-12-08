@@ -75,7 +75,7 @@ export default {
   name: 'GoodAssessDialog',
   data () {
     return {
-      fiveStarAssessUrl: 'https://fuwu.jinritemai.com/orderList',
+      fiveStarAssessUrl: 'https://fuwu.jinritemai.com/evaluation/',
       isShowGoodAssessPopUp: false,
       isShowCustomerDialog: false,
       goods_assess_notify: {
@@ -125,7 +125,8 @@ export default {
      * 去吐槽
      */
     complaints () {
-      this.isShowCustomerDialog = true
+      // this.isShowCustomerDialog = true
+      window.open('https://www.wjx.cn/m/99756598.aspx')
       this.createStatisticsEvent('complaints')
     },
     /**
