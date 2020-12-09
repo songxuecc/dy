@@ -5,7 +5,10 @@
             <draggable v-model="curPictureList" group="people" :disabled="!canDraggable || isPauseDraggable"
                        @start="isDraging=true" @end="isDraging=false"
             >
-              <div v-for="(picture, index) in curPictureList" style="display: inline-block">
+              <div v-for="(picture, index) in curPictureList"
+                   style="display: inline-block"
+                   :key="index"
+              >
                 <li :key="picture.url + index"
                     class="el-upload-list__item is-success" @click="onClickImage(picture, index)"
                     style="margin-bottom: 0px"
