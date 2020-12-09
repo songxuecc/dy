@@ -79,7 +79,9 @@ export default {
     if (from) {
       state['from'] = from
     }
-    let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + encodeURI(JSON.stringify(state)) + dyHarf
+    // 目前抖音新用户或者部分支付用户授权登录不完善，先到订购页面
+    // let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + encodeURI(JSON.stringify(state)) + dyHarf
+    let url = 'https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42'
     return url
   },
   login (shareId = null) {
