@@ -13,7 +13,7 @@
                   style="width: 218px;" />
             </el-form-item>
             <el-form-item label="商品名称">
-                <el-input v-model="search.goods_name" size="small"   style="width: 218px"></el-input>
+                <el-input v-model="search.keyword" size="small"   style="width: 218px"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleFilterChange"
@@ -73,7 +73,7 @@ export default {
         maxMultiPrice: '',
         minScore: '',
         maxScore: '',
-        goods_name: '',
+        keyword: '',
         goods_ids: ''
         // ignoreHasWaterMark: false
       },
@@ -124,7 +124,7 @@ export default {
       }
       let params = {
         goods_ids: setGoodsIds.length ? setGoodsIds : '',
-        goods_name: this.search.goods_name,
+        keyword: this.search.keyword,
         status: status,
         check_status: checkStatus,
         capture_status: this.search.captureStatus
