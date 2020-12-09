@@ -60,7 +60,7 @@
 <script>
 import utils from '@/common/utils.js'
 import common from '@/common/common.js'
-import split from 'lodash/split'
+
 export default {
   components: {},
   data () {
@@ -116,9 +116,14 @@ export default {
       if (arrStatus.length > 1 && arrStatus[1]) {
         checkStatus = parseInt(arrStatus[1])
       }
-      const goodsIds = split(this.search.goods_ids, ' ').filter(item => item)
+      const goodsIds = this.search.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const setGoodsIds = [...new Set(goodsIds)]
+      const limit = 100
+      if (setGoodsIds.length > limit) {
+        this.$message.error(`搜索id不可以超过${limit}条！`)
+      }
       let params = {
-        goods_ids: goodsIds,
+        goods_ids: setGoodsIds.length ? setGoodsIds : '',
         goods_name: this.search.goods_name,
         status: status,
         check_status: checkStatus,
@@ -137,7 +142,6 @@ export default {
       if (this.search.maxScore && !isNaN(this.search.maxScore)) {
         params['max_score'] = this.search.maxScore
       }
-      console.log(params, 'params')
       return params
     }
   }

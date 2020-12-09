@@ -250,18 +250,17 @@ export default {
       }
 
       let params = this.$refs.dySearchFilterView.getParams()
-      console.log(params, 'params')
       params['page_index'] = this.pagination1.index
       params['page_size'] = this.pagination1.size
 
-      // this.request('getProductList', params, data => {
-      //   this.dyProductList = data.items
-      //   this.pagination1.total = data.total
+      this.request('getProductList', params, data => {
+        this.dyProductList = data.items
+        this.pagination1.total = data.total
 
-      //   if (this.$refs.dyProductListView) {
-      //     this.$refs.dyProductListView.setSelectRow()
-      //   }
-      // }, undefined, isSilent)
+        if (this.$refs.dyProductListView) {
+          this.$refs.dyProductListView.setSelectRow()
+        }
+      }, undefined, isSilent)
     },
     getUnsalableProductList (isResetIndex = true, isSilent = false) {
       if (this.$refs.dyUnsalableListView) {
