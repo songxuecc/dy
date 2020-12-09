@@ -43,10 +43,10 @@
                       <div slot="content">抖音</div>
                       <img class="icon" src="@/assets/images/douyin.jpg">
                     </el-tooltip>
-<!--                    <el-tooltip placement="bottom">-->
-<!--                      <div slot="content">拼多多</div>-->
-<!--                      <img class="icon" src="@/assets/images/yangkeduo.png">-->
-<!--                    </el-tooltip>-->
+                    <el-tooltip placement="bottom">
+                      <div slot="content">拼多多</div>
+                      <img class="icon" src="@/assets/images/yangkeduo.png">
+                    </el-tooltip>
                 </div>
                 <div  class="common-bottom">
                     <el-button type="primary" @click="onCapture(0)">
