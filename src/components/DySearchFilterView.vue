@@ -1,8 +1,19 @@
 <template lang="html">
-    <div>
+    <div class="DySearchFilterView">
         <el-form ref="form" :model="search" :inline="true" style="text-align: left">
-            <el-form-item>
-                <el-input v-model="search.key" size="small" placeholder="商品名称、ID" @keyup.enter.native="handleFilterChange" style="width: 160px"></el-input>
+            <el-form-item label="商品ID" class="form-textarea">
+                <el-input
+                  :value="search.goods_ids"
+                  @input="formatGoods_ids($event)"
+                  type="textarea"
+                  :autosize="{ minRows: 1, maxRows: 2 }"
+                  resize="none"
+                  size="small"
+                  placeholder="多个查询请换行或空格依次输入"
+                  style="width: 218px;" />
+            </el-form-item>
+            <el-form-item label="商品名称">
+                <el-input v-model="search.keyword" size="small"   style="width: 218px"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleFilterChange"
@@ -55,13 +66,15 @@ export default {
   data () {
     return {
       search: {
-        key: '',
+        // key: '',
         status: '0-3',
         captureStatus: -1,
         minMultiPrice: '',
         maxMultiPrice: '',
         minScore: '',
-        maxScore: ''
+        maxScore: '',
+        keyword: '',
+        goods_ids: ''
         // ignoreHasWaterMark: false
       },
       captureStatusOptions: [
@@ -88,6 +101,11 @@ export default {
     handleFilterChange () {
       this.$emit('filterChange')
     },
+    formatGoods_ids: function (target) {
+      const reg = /[a-zA-Z]/g
+      const value = target.replace(reg, '')
+      this.search.goods_ids = value
+    },
     getParams () {
       let arrStatus = this.search.status.split('-')
       let status = -1
@@ -98,8 +116,15 @@ export default {
       if (arrStatus.length > 1 && arrStatus[1]) {
         checkStatus = parseInt(arrStatus[1])
       }
+      const goodsIds = this.search.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const setGoodsIds = [...new Set(goodsIds)]
+      const limit = 100
+      if (setGoodsIds.length > limit) {
+        this.$message.error(`搜索id不可以超过${limit}条！`)
+      }
       let params = {
-        keyword: this.search.key,
+        goods_ids: setGoodsIds.length ? setGoodsIds : '',
+        keyword: this.search.keyword,
         status: status,
         check_status: checkStatus,
         capture_status: this.search.captureStatus
@@ -122,3 +147,15 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+  .DySearchFilterView{
+    /deep/ .form-textarea {
+      .el-form-item__content {
+        line-height: 37px;
+          .el-textarea__inner {
+            min-height: 32px  !important;
+          }
+      }
+    }
+  }
+</style>
