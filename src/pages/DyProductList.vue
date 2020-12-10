@@ -18,7 +18,7 @@
 <!--            </el-tab-pane>-->
 <!--        </el-tabs>-->
         <el-row>
-            <el-col :span="20">
+            <el-col >
                 <dy-search-filter-view ref="dySearchFilterView" @filterChange="onSearchChange"></dy-search-filter-view>
             </el-col>
         </el-row>
