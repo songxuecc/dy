@@ -27,7 +27,8 @@ const state = {
     'is_subsc': false,
     'item_name': '',
     'item_level': 0,
-    'deadline': ''
+    'deadline': '',
+    'goods_assess_notify': {}
   },
   updateJobIdList: (localStorage.getItem('update_job_id_list') ? localStorage.getItem('update_job_id_list').split(',') : [])
 }
@@ -280,7 +281,8 @@ const mutations = {
         'is_subsc': true,
         'item_name': data.item_name,
         'item_level': data.item_level,
-        'deadline': data.deadline
+        'deadline': data.deadline,
+        'goods_assess_notify': data.goods_assess_notify
       }
       state.orderTimes = data.order_times
       if (data.deadline) state.leftDays = utils.diffDate(data.deadline) + 1 // 剩余天数

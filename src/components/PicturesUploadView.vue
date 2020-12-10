@@ -5,8 +5,13 @@
             <draggable v-model="curPictureList" group="people" :disabled="!canDraggable || isPauseDraggable"
                        @start="isDraging=true" @end="isDraging=false"
             >
-                <li v-for="(picture, index) in curPictureList" :key="picture.url + index"
+              <div v-for="(picture, index) in curPictureList"
+                   style="display: inline-block"
+                   :key="index"
+              >
+                <li :key="picture.url + index"
                     class="el-upload-list__item is-success" @click="onClickImage(picture, index)"
+                    style="margin-bottom: 0px"
                 >
                     <el-image :ref="'image'+index" :src="picture.url" :preview-src-list="curPictureUrlList"
                     ></el-image>
@@ -28,6 +33,8 @@
                            @change="handleSelect(picture, index, $event.target || $event.srcElement)"
                     >
                 </li>
+                <div style="font-size: 12px">第{{index + 1}}张</div>
+              </div>
                 <el-upload
                     slot="footer"
                     class="el-upload el-upload--picture-card"
@@ -56,9 +63,11 @@
 import common from '@/common/common'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
+import IconSvg from './icon-svg'
 
 export default {
   components: {
+    IconSvg,
     draggable
   },
   props: {

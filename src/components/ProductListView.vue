@@ -323,16 +323,24 @@ export default {
       return ''
     },
     productEdit (product, isStatus = false, needJump = true) {
-      if ([7, 10].includes(product.status) && isStatus) {
+      if ([this.productStatus.CAPTURE_FAILED, this.productStatus.DELETED].includes(product.status) && isStatus) {
         return true
-      } else if ([8, 9].includes(product.status)) {
-        if (window._hmt) {
-          window._hmt.push(['_trackEvent', '复制商品', '点击', '前往抖音后台查看提交的商品'])
+      } else if ([this.productStatus.REJECT, this.productStatus.DY_APPROVING].includes(product.status)) {
+        if (product.status === this.productStatus.REJECT && !isStatus) {
+          this.curTPProduct = product
+          this.dialogEditVisible = true
+          if (window._hmt) {
+            window._hmt.push(['_trackEvent', '复制商品', '点击', '编辑复制商品'])
+          }
+        } else {
+          if (window._hmt) {
+            window._hmt.push(['_trackEvent', '复制商品', '点击', '前往抖音后台查看提交的商品'])
+          }
+          if (product.goods_commit_id) {
+            window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + product.goods_commit_id)
+          }
         }
-        if (product.goods_commit_id) {
-          window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + product.goods_commit_id)
-        }
-      } else if (product.status === 7) {
+      } else if (product.status === this.productStatus.CAPTURE_FAILED) {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '重新复制新商品'])
         }
@@ -383,9 +391,9 @@ export default {
     },
     isModifyEnable (row) {
       // 兼容之前数据
-      if (row.status === 8 && !row.goods_commit_id) {
-        return false
-      }
+      // if (row.status === 8 && !row.goods_commit_id) {
+      //   return false
+      // }
       if (row.status === 9) {
         return false
       }
@@ -586,7 +594,7 @@ export default {
       this.mouseOverIndex = row.index
     },
     handleMouseOut (row, column, cell, event) {
-      // this.mouseOverIndex = -1
+      this.mouseOverIndex = -1
     }
   }
 }
