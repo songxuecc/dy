@@ -102,7 +102,7 @@ export default {
       this.$emit('filterChange')
     },
     formatGoods_ids: function (target) {
-      const reg = /[a-zA-Z]/g
+      const reg = /[^\d ｜ \n | \s ]/g
       const value = target.replace(reg, '')
       this.search.goods_ids = value
     },
