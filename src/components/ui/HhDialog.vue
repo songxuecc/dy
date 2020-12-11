@@ -86,7 +86,7 @@ export default {
   border-radius: 4px;
   // z-index: 3001;
   background: #6FB8FF;
-  /*transform: translateY(-50%);*/
+  transform: translateY(-50%);
   -ms-transform: translateY(-50%);/* IE 9 */
   -moz-transform: translateY(-50%);/* Firefox */
   -webkit-transform: translateY(-50%);/* Safari 和 Chrome */
