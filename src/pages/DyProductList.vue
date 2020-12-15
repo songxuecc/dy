@@ -1,98 +1,114 @@
 <template lang="html">
-    <div v-loading="loadingCnt">
-<!--        <el-tabs type="card" v-model="activeTabName" @tab-click="handleTabClick">-->
-<!--            <el-tab-pane label="全部商品" name="normal">-->
-<!--                <el-row>-->
-<!--                    <el-col :span="20">-->
-<!--                        <dy-search-filter-view ref="dySearchFilterView" @filterChange="onSearchChange"></dy-search-filter-view>-->
-<!--                    </el-col>-->
-<!--                    <el-col :span="4" style="height:40px; display:flex; align-items:center;">-->
-<!--                        <el-button size="small" style="margin-left: auto;" @click="updateBatchProduct"-->
-<!--                                   :disabled="isDisableBatch"-->
-<!--                        >批量修改</el-button>-->
-<!--                    </el-col>-->
-<!--                </el-row>-->
-<!--            </el-tab-pane>-->
-<!--            <el-tab-pane label="在售滞销商品" name="unsalable">-->
-<!--                <dy-unsalable-filter-view ref="dyUnsalableFilterView" @filterChange="onUnsalableChange"></dy-unsalable-filter-view>-->
-<!--            </el-tab-pane>-->
-<!--        </el-tabs>-->
-        <el-row>
-            <el-col >
-                <dy-search-filter-view ref="dySearchFilterView" @filterChange="onSearchChange"></dy-search-filter-view>
-            </el-col>
-        </el-row>
-        <div v-if="activeTabName == 'normal'">
-            <dy-product-list-view ref="dyProductListView" :dyProductList="dyProductList" @selectProductList="onSelectChange">
-                <template slot="upperLeft">
-                    <el-button size="small" type="primary" @click="onSyncProducts" :disabled="isSyncing">
-                      {{ syncButtonText }}
-                    </el-button>&nbsp;&nbsp;
-                    <span v-if="isShowLastSyncTime" style="font-size: 13px;">最近同步时间 {{ syncStatus.last_sync_time }}</span>
-                </template>
-                <template slot="upperRight">
-                    <el-button size="small" @click="openDialogExport" class="nodim" style="right: 0px;">商品导出</el-button>
-                </template>
-            </dy-product-list-view>
-            <br>
-            <el-pagination
-                    v-show="loadingCnt == 0"
-                    @size-change="handleSizeChange1"
-                    @current-change="handleCurrentChange1"
-                    :current-page="pagination1.index"
-                    :page-size="pagination1.size"
-                    layout="total, prev, pager, next, jumper"
-                    :total="pagination1.total">
-            </el-pagination>
-        </div>
-        <div v-else-if="activeTabName == 'unsalable'">
-            <dy-product-list-view ref="dyUnsalableListView" :dyProductList="dyUnsalableList"></dy-product-list-view>
-            <br>
-            <el-pagination
-                    v-show="loadingCnt == 0"
-                    @size-change="handleSizeChange2"
-                    @current-change="handleCurrentChange2"
-                    :current-page="pagination2.index"
-                    :page-size="pagination2.size"
-                    layout="total, prev, pager, next, jumper"
-                    :total="pagination2.total">
-            </el-pagination>
-        </div>
-        <el-dialog title="批量修改属性" class="product-dialog" :visible.sync="dialogBatchEditVisible" @opened="dialogBatchOpened" @close="dialogBatchClose">
-            <batch-edit-view ref="batchEditView" @saved="onBatchEditSaved"></batch-edit-view>
-        </el-dialog>
-
-        <el-dialog title="选择需要导出的字段" :visible.sync="dialogExportVisible" @opened="dialogExportOpened">
-            <div v-loading="loadingCnt">
-                <div>
-                    <el-checkbox v-model="isAllFieldSelected" @change="changeAllFieldSelected">全选</el-checkbox>
-                    <el-button type="text" @click="switchFieldSelect">反选</el-button>
-                </div><br>
-                <div style="text-align: left">
-                    <el-checkbox v-for="item in exportFieldList" :key="item.field" v-model="item.value" @change="checkAllFieldSelected"
-                                 style="padding-bottom: 15px; margin: 0 15px;"
-                    >
-                        {{ item.label }}
-                    </el-checkbox>
-                </div>
-                <div v-if="showDownloadFile" class="download-file">
-                  <div> {{ "最近生成时间：" + recentProductExcelTime }} </div>
-                  <el-link :key="val" type="primary" @click="onDownloadExcel()">
-                    {{ '商品列表.xlsx' }}
-                  </el-link>
-                </div><br>
-                <div v-if="showProcess" style="text-align: center">
-                  <el-progress :text-inside="true" :stroke-width="14" :percentage="excelPercent"
-                               style="width: 300px; margin: auto;"
-                  ></el-progress>
-                </div>
-                <el-button v-else size="small" @click="onGenProductsExcel"
-                >
-                  生成Excel
-                </el-button>
-            </div>
-        </el-dialog>
+  <div v-loading="loadingCnt">
+    <el-row>
+      <el-col>
+        <dy-search-filter-view ref="dySearchFilterView" @filterChange="onSearchChange"></dy-search-filter-view>
+      </el-col>
+    </el-row>
+    <div v-if="activeTabName == 'normal'">
+      <dy-product-list-view ref="dyProductListView" :dyProductList="dyProductList" @selectProductList="onSelectChange">
+        <template slot="upperLeft">
+          <el-button size="small" type="primary" @click="onSyncProducts" :disabled="isSyncing">
+            {{ syncButtonText }}
+          </el-button>&nbsp;&nbsp;
+          <span v-if="isShowLastSyncTime" style="font-size: 13px;">最近同步时间 {{ syncStatus.last_sync_time }}</span>
+        </template>
+        <template slot="upperRight">
+          <el-button size="small" style="right: 0px;" @click="downloadExcel">sku模板下载</el-button>
+          <!-- 商品sku编码导入 upload组件 start -->
+          <el-upload
+            class="sku-excel-import-btn"
+            action="/api/product/sku/excel/create"
+            :multiple="false"
+            :show-file-list="false"
+            ref="upload"
+            :limit=1
+            :headers="getTokenHeaders"
+            :on-success="skuExcelImportSuccess"
+            :on-progress="skuExcelImporting"
+            :on-error="skuExcelImportError"
+          >
+            <el-tooltip class="item" effect="dark" content="每次最多修改100条，修改商品sku编码需要调用抖音接口，预计一个sku需要1秒，请耐心等待"
+                        placement="top">
+              <el-button size="small" class="nodim" style="right: 0px;" :diabled="isSkuImporting"
+                         @click="recordSkuExcelImportBtnClick">
+                <span>商品sku编码导入</span>
+                <i v-if="isSkuImporting" class="el-icon-loading"></i>
+              </el-button>
+            </el-tooltip>
+          </el-upload>
+          <!-- 商品sku编码导入 upload组件 end -->
+          <el-button size="small" @click="openDialogExport" class="nodim" style="right: 0px;">商品导出</el-button>
+        </template>
+      </dy-product-list-view>
+      <br>
+      <el-pagination
+        v-show="loadingCnt == 0"
+        @size-change="handleSizeChange1"
+        @current-change="handleCurrentChange1"
+        :current-page="pagination1.index"
+        :page-size="pagination1.size"
+        layout="total, prev, pager, next, jumper"
+        :total="pagination1.total">
+      </el-pagination>
     </div>
+    <div v-else-if="activeTabName == 'unsalable'">
+      <dy-product-list-view ref="dyUnsalableListView" :dyProductList="dyUnsalableList"></dy-product-list-view>
+      <br>
+      <el-pagination
+        v-show="loadingCnt == 0"
+        @size-change="handleSizeChange2"
+        @current-change="handleCurrentChange2"
+        :current-page="pagination2.index"
+        :page-size="pagination2.size"
+        layout="total, prev, pager, next, jumper"
+        :total="pagination2.total">
+      </el-pagination>
+    </div>
+    <el-dialog title="批量修改属性" class="product-dialog" :visible.sync="dialogBatchEditVisible" @opened="dialogBatchOpened"
+               @close="dialogBatchClose">
+      <batch-edit-view ref="batchEditView" @saved="onBatchEditSaved"></batch-edit-view>
+    </el-dialog>
+
+    <el-dialog title="选择需要导出的字段" :visible.sync="dialogExportVisible" @opened="dialogExportOpened">
+      <div v-loading="loadingCnt">
+        <div>
+          <el-checkbox v-model="isAllFieldSelected" @change="changeAllFieldSelected">全选</el-checkbox>
+          <el-button type="text" @click="switchFieldSelect">反选</el-button>
+        </div>
+        <br>
+        <div style="text-align: left">
+          <el-checkbox v-for="item in exportFieldList" :key="item.field" v-model="item.value"
+                       @change="checkAllFieldSelected"
+                       style="padding-bottom: 15px; margin: 0 15px;"
+          >
+            {{ item.label }}
+          </el-checkbox>
+        </div>
+        <div v-if="showDownloadFile" class="download-file">
+          <div> {{ '最近生成时间：' + recentProductExcelTime }}</div>
+          <el-link :key="val" type="primary" @click="onDownloadExcel()">
+            {{ '商品列表.xlsx' }}
+          </el-link>
+        </div>
+        <br>
+        <div v-if="showProcess" style="text-align: center">
+          <el-progress :text-inside="true" :stroke-width="14" :percentage="excelPercent"
+                       style="width: 300px; margin: auto;"
+          ></el-progress>
+        </div>
+        <el-button v-else size="small" @click="onGenProductsExcel"
+        >
+          生成Excel
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="sku编码更新结果" :visible.sync="skuExcelImportDialogVisible">
+      <div v-for="(error, index) in errorList" :key="index">
+        {{ error }}
+      </div>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import dyProductListView from '@/components/DyProductListView.vue'
@@ -100,7 +116,7 @@ import batchEditView from '@/components/BatchEditView.vue'
 import dySearchFilterView from '@/components/DySearchFilterView.vue'
 import dyUnsalableFilterView from '@/components/DyUnsalableFilterView.vue'
 import request from '@/mixins/request.js'
-import { mapGetters, mapActions } from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 
@@ -114,6 +130,9 @@ export default {
   },
   data () {
     return {
+      isSkuImporting: false,
+      errorList: [],
+      skuExcelImportDialogVisible: false,
       isNew: 0,
       showDownloadFile: false,
       showProcess: false,
@@ -138,21 +157,21 @@ export default {
       },
       isAllFieldSelected: false,
       exportFieldList: [
-        { value: false, field: 'goods_id', label: '商品id' },
-        { value: false, field: 'goods_name', label: '商品名' },
-        { value: false, field: 'goods_desc', label: '来源数据' },
-        { value: false, field: 'goods_quantity', label: '商品库存' },
-        { value: false, field: 'market_price', label: '划线价' },
-        { value: false, field: 'discount_price', label: '售卖价' },
-        { value: false, field: 'image_url', label: '主图' },
-        { value: false, field: 'category', label: '类目' },
-        { value: false, field: 'pay_type_str', label: '支付方式' },
-        { value: false, field: 'mobile', label: '客服手机' },
-        { value: false, field: 'status_str', label: '商品状态' },
-        { value: false, field: 'sku_id', label: 'skuid' },
-        { value: false, field: 'sku_price', label: 'sku价格' },
-        { value: false, field: 'spec_detail_names', label: 'sku规格' },
-        { value: false, field: 'sku_quantity', label: 'sku库存' }
+        {value: false, field: 'goods_id', label: '商品id'},
+        {value: false, field: 'goods_name', label: '商品名'},
+        {value: false, field: 'goods_desc', label: '来源数据'},
+        {value: false, field: 'goods_quantity', label: '商品库存'},
+        {value: false, field: 'market_price', label: '划线价'},
+        {value: false, field: 'discount_price', label: '售卖价'},
+        {value: false, field: 'image_url', label: '主图'},
+        {value: false, field: 'category', label: '类目'},
+        {value: false, field: 'pay_type_str', label: '支付方式'},
+        {value: false, field: 'mobile', label: '客服手机'},
+        {value: false, field: 'status_str', label: '商品状态'},
+        {value: false, field: 'sku_id', label: 'skuid'},
+        {value: false, field: 'sku_price', label: 'sku价格'},
+        {value: false, field: 'spec_detail_names', label: 'sku规格'},
+        {value: false, field: 'sku_quantity', label: 'sku库存'}
       ],
       excelStatus: '',
       excelPercent: -1,
@@ -167,7 +186,8 @@ export default {
   computed: {
     ...mapGetters({
       syncStatus: 'getSyncStatus',
-      exportFields: 'getExportFields'
+      exportFields: 'getExportFields',
+      getTokenHeaders: 'getTokenHeaders'
     }),
     isShowLastSyncTime () {
       if (!this.syncStatus.last_sync_time || this.syncStatus.last_sync_time < '2019-01-01') {
@@ -486,10 +506,59 @@ export default {
       this.request('getExcelDownloadUrl', {}, data => {
         utils.downloadURL(data.url, '')
       })
+    },
+    /**
+     * sku编码导入成功后的回调
+     * @param response
+     * @param file
+     * @param fileList
+     */
+    skuExcelImportSuccess (response, file, fileList) {
+      this.$refs.upload.clearFiles()
+      this.errorList = response.data['error_list']
+      this.skuExcelImportDialogVisible = true
+      this.isSkuImporting = false
+    },
+    /**
+     * sku编码导入中的回调
+     * @param event
+     * @param file
+     * @param fileList
+     */
+    skuExcelImporting (event, file, fileList) {
+      this.isSkuImporting = true
+    },
+    /**
+     * sku编码导入失败的回调
+     * @param xerr
+     * @param file
+     * @param fileList
+     */
+    skuExcelImportError (xerr, file, fileList) {
+      this.isSkuImporting = false
+      this.$message.error('sku编码导入失败')
+    },
+    /**
+     * 统计商品sku导入按钮的点击次数
+     */
+    recordSkuExcelImportBtnClick () {
+      // 百度统计打点
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '全部商品', '点击', '商品sku编码导入'])
+      }
+    },
+    /**
+     * 生成sku编码模板文件
+     */
+    downloadExcel () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '全部商品', '下载', '下载sku编码模板'])
+      }
+      window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code.xlsx'
     }
   }
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/productlist.less';
+@import '~@/assets/css/productlist.less';
 </style>
