@@ -147,7 +147,7 @@
                 </el-tooltip>
               </div>
             </div>
-            <div class="th-title-text"> sku最高原价 x </div>
+            <div class="th-title-text"> 原划线价 x </div>
             <el-input v-model="template.model.price_rate" size="medium"
                       :class="['input-m40', !template.checkNumber('price_rate') && isInitTemplate ? 'warn' : '']"
                       @input="handleInputTemplate"
@@ -234,6 +234,7 @@ import skuPriceListView from '@/components/SkuPriceListView.vue'
 import DyTips from '@/components/DyTips.vue'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
+import common from '@/common/common'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -436,6 +437,10 @@ export default {
             tpProduct.discount_price_obj.assign({
               price: maxPriceFen / 100
             })
+          }
+          // 如果是抖音商品，则取商品最小价格作为划线价
+          if (tpProduct['tp_id'] === common.TpType.dy) {
+            maxSkuOriginPriceFen = tpProduct['min_price']
           }
           // 刷新划线价，依据划线价上浮率和差值
           let marketPrice = utils.fenToYuan(utils.adjustPriceFen(maxSkuOriginPriceFen, this.template.model.price_rate, this.template.model.price_diff * 100))
