@@ -26,6 +26,7 @@
           <label style="font-size:12px" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
         </template>
       </el-table-column>
+      <!-- sku价格 start -->
       <el-table-column label="sku价格" width="240" align="center">
         <template slot="header" slot-scope="scope">
           <div class="setting-content">
@@ -39,7 +40,7 @@
                 </el-tooltip>
               </div>
             </div>
-            <div class="th-title-text">( 原价 - </div>
+            <div class="th-title-text">( 售价 - </div>
             <el-input v-model="template.model.origin_price_diff" size="medium"
                       :class="['input-m40', !template.checkNumber('origin_price_diff') && isInitTemplate ? 'warn' : '']"
                       @input="handleInputTemplateSkuPrice('promo_price')"
@@ -77,6 +78,8 @@
           </el-tooltip>
         </template>
       </el-table-column>
+      <!-- sku价格 end -->
+      <!-- 售卖价 start -->
       <el-table-column label="售卖价" width="240" align="center">
         <template slot="header" slot-scope="scope">
           <div class="setting-content" style="height: 100%;">
@@ -126,6 +129,8 @@
             </div>
         </template>
       </el-table-column>
+      <!-- 售卖价 end -->
+      <!-- 划线价 start -->
       <el-table-column label="划线价" width="240" align="center">
         <template slot="header" slot-scope="scope">
           <div class="setting-content">
@@ -142,15 +147,15 @@
                 </el-tooltip>
               </div>
             </div>
-            <div class="th-title-text"> 最高价 x </div>
+            <div class="th-title-text"> sku最高原价 x </div>
             <el-input v-model="template.model.price_rate" size="medium"
-                      :class="['input-m', !template.checkNumber('price_rate') && isInitTemplate ? 'warn' : '']"
+                      :class="['input-m40', !template.checkNumber('price_rate') && isInitTemplate ? 'warn' : '']"
                       @input="handleInputTemplate"
             ></el-input>
             <div class="th-title-text"> % - </div>
             <el-tooltip content="差额可以为负数" :enterable="false">
               <el-input v-model="template.model.price_diff" size="medium" style="width:60px;"
-                        :class="['input-m', !template.checkNumber('price_diff') && isInitTemplate ? 'warn' : '']"
+                        :class="['input-m40', !template.checkNumber('price_diff') && isInitTemplate ? 'warn' : '']"
                         @input="handleInputTemplate"
               ></el-input>
             </el-tooltip>
@@ -158,7 +163,7 @@
         </template>
         <template slot-scope="scope">
           <el-tooltip :disabled="scope.row.market_price_obj.isDiff()" placement="top" effect="light" :enterable="false"
-                      :content="scope.row.max_price / 100 + ' x ' + template.model.price_rate + '%'
+                      :content="scope.row.maxSkuOriginPriceFen / 100 + ' x ' + template.model.price_rate + '%'
                                            + (template.model.price_diff < 0 ? ' + ' : ' - ')
                                            + Math.abs(template.model.price_diff)"
           >
@@ -194,6 +199,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
+      <!-- 划线价 end -->
     </el-table>
     <br>
     <div class="common-bottom">
@@ -343,6 +349,7 @@ export default {
           tpProduct.groupPriceError = ''
           tpProduct.marketPriceError = ''
           tpProduct.discountPriceError = ''
+          tpProduct.maxSkuOriginPriceFen = 0
         }
         this.tpProductList = tpProductList
         if (Object.entries(this.template.model).length > 0) {
@@ -379,6 +386,8 @@ export default {
         let maxOriginVal = 0
         let minIsCustom = false
         let maxIsCustom = false
+        // sku最大原价
+        let maxSkuOriginPriceFen = 0
         if (tpProduct.sku_json && tpProduct.sku_json.sku_map) {
           for (let key in tpProduct.sku_json.sku_map) {
             let item = tpProduct.sku_json.sku_map[key]
@@ -414,6 +423,9 @@ export default {
                 maxIsCustom = isCustom
               }
             }
+            if (item.price > maxSkuOriginPriceFen) {
+              maxSkuOriginPriceFen = item.price
+            }
           }
           // 刷新售卖价, 依据最高价和最低价设置
           if (parseInt(this.template.model.is_sale_price_show_max) === 0) {
@@ -426,10 +438,11 @@ export default {
             })
           }
           // 刷新划线价，依据划线价上浮率和差值
-          let marketPrice = utils.fenToYuan(utils.adjustPriceFen(maxPriceFen, this.template.model.price_rate, this.template.model.price_diff * 100))
+          let marketPrice = utils.fenToYuan(utils.adjustPriceFen(maxSkuOriginPriceFen, this.template.model.price_rate, this.template.model.price_diff * 100))
           tpProduct.market_price_obj.assign({
             price: marketPrice
           })
+          tpProduct.maxSkuOriginPriceFen = maxSkuOriginPriceFen
           // 刷新划线价公式提示
           tpProduct.max_price = maxPriceFen
           // 恢复历史售卖价
@@ -482,22 +495,21 @@ export default {
         }
       }
     },
+    /**
+     * 更新划线价
+     */
     updateMarketPrices () {
       for (let i in this.tpProductList) {
         let tpProduct = this.tpProductList[i]
-        let priceRangeList = tpProduct.group_price_range.toString().split('~')
-        let maxPrice = 0
-        if (priceRangeList.length === 2) {
-          maxPrice = priceRangeList[1]
-        } else {
-          maxPrice = priceRangeList[0]
-        }
-        if (maxPrice !== '-') {
-          maxPrice = utils.yuanToFen(maxPrice)
-          tpProduct.market_price_obj.assign({
-            price: utils.fenToYuan(utils.adjustPriceFen(maxPrice, this.template.model.price_rate, this.template.model.price_diff * 100))
-          })
-        }
+        tpProduct.market_price_obj.assign({
+          price: utils.fenToYuan(
+            utils.adjustPriceFen(
+              tpProduct.maxSkuOriginPriceFen,
+              this.template.model.price_rate,
+              this.template.model.price_diff * 100
+            )
+          )
+        })
       }
     },
     updateDiscountPrices () {
@@ -634,6 +646,9 @@ export default {
       this.updateRelatePrices(field)
       this.check()
     },
+    /**
+     * 划线价变化
+     */
     handleInputTemplate () {
       this.updateMarketPrices()
       this.check()
