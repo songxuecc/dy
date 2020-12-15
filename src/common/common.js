@@ -99,6 +99,9 @@ module.exports = {
     'handle': 1 << 3,
     'sort': 1 << 4
   },
+  TpType: {
+    'dy': 2002
+  },
   NotificationType: {
     'show_in_white_list': 0,
     'nav_cannot_close': 1,
