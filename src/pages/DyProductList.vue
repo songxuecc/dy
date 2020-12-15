@@ -103,9 +103,12 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-dialog title="sku编码更新结果" :visible.sync="skuExcelImportDialogVisible">
-      <div v-for="(error, index) in errorList" :key="index">
-        {{ error }}
+    <el-dialog title="sku编码更新结果" :visible.sync="skuExcelImportDialogVisible" width="80%">
+      <div style="text-align: left">
+        <div style="text-align: center;font-size: 16px;">成功: <span style="color: #4ca916">{{skuExcelImportSuccessNums}}</span></div>
+        <div v-for="(error, index) in errorList" :key="index">
+          {{ error }}
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -133,6 +136,7 @@ export default {
       isSkuImporting: false,
       errorList: [],
       skuExcelImportDialogVisible: false,
+      skuExcelImportSuccessNums: 0,
       isNew: 0,
       showDownloadFile: false,
       showProcess: false,
@@ -515,9 +519,20 @@ export default {
      */
     skuExcelImportSuccess (response, file, fileList) {
       this.$refs.upload.clearFiles()
-      this.errorList = response.data['error_list']
-      this.skuExcelImportDialogVisible = true
       this.isSkuImporting = false
+      if (response.code !== 0) {
+        this.$message.error(response.msg)
+        return
+      }
+      this.errorList = response.data['error_list']
+      if (utils.isEmptyObj(this.errorList)) {
+        // 如果导入成功，则提示成功
+        this.$message.success('导入成功' + response.data['success_nums'] + '条')
+      } else {
+        // 如果有失败的，则返回具体失败的原因
+        this.skuExcelImportSuccessNums = response.data['success_nums']
+        this.skuExcelImportDialogVisible = true
+      }
     },
     /**
      * sku编码导入中的回调

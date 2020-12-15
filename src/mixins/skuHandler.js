@@ -42,6 +42,8 @@ export default {
           property_key: 'default',
           property_list: [{ id: 0, name: '默认规格' }],
           price: utils.fenToYuan(item.price),
+          // sku原价不随售价的变化而变化
+          originPrice: utils.fenToYuan(item.price),
           promo_price: utils.fenToYuan(item.promo_price),
           quantity: item.quantity,
           img: item.img,
@@ -86,6 +88,8 @@ export default {
             sort_key: sortKey,
             property_list: propertyList,
             price: utils.fenToYuan(item.price),
+            // sku原价不随售价的变化而变化
+            originPrice: utils.fenToYuan(item.price),
             promo_price: utils.fenToYuan(item.promo_price),
             quantity: item.quantity,
             img: item.img,

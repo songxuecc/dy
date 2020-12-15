@@ -26,6 +26,7 @@
                     {{ scope.row.property_list[index].name }}
                 </template>
             </el-table-column>
+            <!-- sku售价 start-->
             <el-table-column key="3" width="200" align="center">
                 <template slot="header" slot-scope="scope">
                     <span>售价</span>
@@ -54,6 +55,7 @@
                     </div>
                 </template>
             </el-table-column>
+            <!-- sku售价 end-->
             <!-- sku原价 start-->
             <el-table-column key="3" width="200" align="center">
                 <template slot="header" slot-scope="scope">
@@ -62,7 +64,7 @@
                 <template slot-scope="scope">
                     <div style="display: flex">
                         <div class="great" style="width: 182px; padding-left: 18px; font-size: 22px;">
-                          {{scope.row.price}}
+                          {{scope.row.originPrice}}
                         </div>
                     </div>
                 </template>
