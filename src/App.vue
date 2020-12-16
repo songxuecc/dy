@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <good-assess-dialog></good-assess-dialog>
-        <el-header :style="{height:(curNavNotification ? 'auto' : '96px')}">
+        <el-header :style="{height:(curNavNotification ? 'auto' : '80px')}">
           <nav-bar></nav-bar>
           <div class="full-screen">
             <div class="header-notice">

@@ -27,16 +27,19 @@
   width: 20px;
 }
 /deep/ .el-menu-item.is-active {
-  background: #DEEFFF;
-  border-left: 4px solid #1D8FFF;
+  background: @color-white;
+  border-left: 4px solid @color-white;
   color: @color-light-blue;
 }
 /deep/ .el-menu-item:hover {
   background: #ffffff;
-  color: @color-light-blue;
+  color: @text-gray-color;
+  font-weight: bold;
 }
 /deep/ .el-menu-item.is-active:hover {
-  background: #DEEFFF;
+  background: @color-white;
+  color: @color-light-blue;
+  font-weight: normal;
 }
 /deep/ .el-submenu__icon-arrow {
   margin-top: -7px;

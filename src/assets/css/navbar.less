@@ -1,7 +1,7 @@
 @import "base";
 
 .navbar {
-  background: #ffffff;
+  background: @navbar-bg;
   .navbar-top {
     height: 16px;
     background-color: #409EFF;;
@@ -25,7 +25,7 @@
       align-items: flex-start;
       position: relative;
       color: #333333;
-      background: @color-white;
+      background: @navbar-bg;
       .el-button {
         vertical-align: middle;
         width: 100px;
@@ -71,13 +71,16 @@
         }
       }
       .el-submenu__title {
-        color: #4e4e4e;
+        color: #ffffff;
         height: 80px;
         line-height: 80px;
         border-bottom: 2px solid #ffffff;
+        background: @navbar-bg;
+        i {
+          color: #ffffff;
+        }
         &:hover {
           color: @color-light-blue;
-          //.color-light-blue;
           i {
             color: @color-light-blue;
           }
@@ -103,7 +106,8 @@
     display: block;
     float: left;
     cursor: pointer;
-    background: @color-white;
+    color: #ffffff;
+    background: @navbar-bg;
   }
   li:hover{
     //.color-light-blue;
@@ -111,7 +115,7 @@
   }
 }
 .navbar .navbar-content .main-inner {
-  background: #ffffff;
+  background: @navbar-bg;
   height: 100%;
 }
 .navbar .navbar-content .nav-right .dialog-footer .el-button {
