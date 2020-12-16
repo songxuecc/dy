@@ -1,9 +1,8 @@
 <template lang="html">
     <div class="navbar" id="navBar">
-        <div class="navbar-top full-screen"></div>
         <div class="navbar-content">
           <div class="main-inner clearfix">
-            <div class="nav-title" @click="goInfo"><img src="../assets/icon/logo.png" alt="虎虎搬家助手"></div>
+            <div class="nav-title" @click="goInfo"><img src="../assets/icon/logo.png" alt="虎虎搬家助手"><icon-svg iconClass="icon-douyin-plat" style="width:50px; height:18px; position: relative; top: -7px;"></icon-svg></div>
             <div class="nav-right">
               <!--<el-menu v-if="!shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
                     <el-menu-item index="3">短信水印</el-menu-item>
