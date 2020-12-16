@@ -4,6 +4,10 @@
       <span class="nav-icon nav-help"></span>
       <div class="column-name">教程</div>
     </div>
+    <div class="float-button" @click="goToComments">
+      <hh-icon type="icon-yijianbaise1" class="comments-icon"></hh-icon>
+      <div class="column-name">反馈</div>
+    </div>
     <div class="float-button wechat-button">
       <div class="service-content" v-if="isServiceBoxShow" ref="ServiceBox">
         <service-box @serviceHandle="closeService"></service-box>
@@ -96,6 +100,9 @@ export default {
     },
     goToHelp () {
       window.open(common.HELP_LINK)
+    },
+    goToComments () {
+      window.open(common.COMMENTS_LINK)
     },
     addToFavorite () {
       if (window._hmt) {

@@ -26,9 +26,10 @@
                     {{ scope.row.property_list[index].name }}
                 </template>
             </el-table-column>
+            <!-- sku售价 start-->
             <el-table-column key="3" width="200" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>SKU 价格</span>
+                    <span>售价</span>
                     <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
                 </template>
                 <template slot-scope="scope">
@@ -54,6 +55,21 @@
                     </div>
                 </template>
             </el-table-column>
+            <!-- sku售价 end-->
+            <!-- sku原价 start-->
+            <el-table-column key="3" width="200" align="center">
+                <template slot="header" slot-scope="scope">
+                    <span>原价</span>
+                </template>
+                <template slot-scope="scope">
+                    <div style="display: flex">
+                        <div class="great" style="width: 182px; padding-left: 18px; font-size: 22px;">
+                          {{scope.row.originPrice}}
+                        </div>
+                    </div>
+                </template>
+            </el-table-column>
+            <!-- sku原价 end-->
             <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
                 <template slot-scope="scope">
                     <img style="height:40px" :src="scope.row.img">
@@ -241,12 +257,12 @@ export default {
           skuShow.promo_price_obj.model.price = skuShow.promo_price = utils.fenToYuan(this.dicCustomPrices[skuShow.property_key]['promo_price'])
         }
 
-        skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
-          utils.yuanToFen(skuShow.promo_price),
-          this.template.model.single_price_rate,
-          this.template.model.single_price_diff * 100,
-          this.template.model.origin_price_diff * 100
-        ))
+        // skuShow.price = utils.fenToYuan(utils.adjustPriceFen(
+        //   utils.yuanToFen(skuShow.promo_price),
+        //   this.template.model.single_price_rate,
+        //   this.template.model.single_price_diff * 100,
+        //   this.template.model.origin_price_diff * 100
+        // ))
         skuShow.price_obj = new FormModel()
         skuShow.price_obj.assign({ price: skuShow.price })
 

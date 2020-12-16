@@ -99,6 +99,9 @@ module.exports = {
     'handle': 1 << 3,
     'sort': 1 << 4
   },
+  TpType: {
+    'dy': 2002
+  },
   NotificationType: {
     'show_in_white_list': 0,
     'nav_cannot_close': 1,
@@ -136,5 +139,6 @@ module.exports = {
     'captureShop': 'https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl'
   },
   HELP_LINK: 'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l',
+  COMMENTS_LINK: 'https://www.wjx.cn/m/99756598.aspx',
   CHANNEL_WHITE_LIST: ['woda', 'douyin', 'pddwoda2', 'pddtgzj1', 'pddspgj2', 'pddddzs2', 'pddhhyh2', 'dywoda1', 'dymeizhe1']
 }

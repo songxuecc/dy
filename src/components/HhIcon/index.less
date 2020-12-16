@@ -1,0 +1,45 @@
+.hh-anticon {
+  display: inline-block;
+  color: inherit;
+  font-style: normal;
+  line-height: 0;
+  text-align: center;
+  text-transform: none;
+  vertical-align: -0.125em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.hh-anticon > * {
+  line-height: 1;
+}
+.hh-anticon svg {
+  display: inline-block;
+}
+.hh-anticon::before {
+  display: none;
+}
+.hh-anticon .anticon-icon {
+  display: block;
+}
+.hh-anticon[tabindex] {
+  cursor: pointer;
+}
+.hh-anticon-spin::before,
+.hh-anticon-spin {
+  display: inline-block;
+  -webkit-animation: loadingCircle 1s infinite linear;
+  animation: loadingCircle 1s infinite linear;
+}
+@-webkit-keyframes loadingCircle {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes loadingCircle {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
