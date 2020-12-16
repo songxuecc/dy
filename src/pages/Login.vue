@@ -46,6 +46,7 @@ export default {
           delete data['host']
           let url = decodeURI(host) + '/authorize?code=' + this.$route.query.code + '&state=' + JSON.stringify({'share_id': data['share_id']})
           window.location.href = url
+          return
         }
         if (data['share_id']) {
           params['share_id'] = data['share_id']
