@@ -1,4 +1,5 @@
 import moment from 'moment'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   fenToYuan (price) {
@@ -339,5 +340,8 @@ export default {
         return decodeURI(arr2[1])
       }
     }
+  },
+  isEmptyObj (obj) {
+    return isEmpty(obj)
   }
 }

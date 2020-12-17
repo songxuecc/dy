@@ -12,9 +12,11 @@ import store from './store/store'
 import utils from '@/common/utils'
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
+import HhIcon from '@/components/HhIcon'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
+Vue.component('hh-icon', HhIcon)
 
 // global components register
 const requireComponent = require.context(
