@@ -3,38 +3,38 @@
       <!-- 顶部价格修改输入框 -->
         <div class="priceChange">
           <div class="radios">
-            <el-radio v-model="promoPriceHandler.radio" label="1">
+            <el-radio v-model="promoPriceHandler.radio" label="6">
               <span>(原价-</span>
               <el-input
                 size="mini"
                 style="width:100px;"
-                v-model="promoPriceHandler.textPrice"
-                @focus="promoPriceHandler.radio='1'"/>
+                v-model="promoPriceHandler.arithmetic.subtraction1 "
+                @focus="promoPriceHandler.radio='6'"/>
               <span>) x</span>
               <el-input
                 size="mini"
                 style="width:100px;"
-                v-model="promoPriceHandler.textPrice"
-                @focus="promoPriceHandler.radio='1'"/>
+                v-model="promoPriceHandler.arithmetic.subtraction2"
+                @focus="promoPriceHandler.radio='6'"/>
               <span>% -</span>
               <el-input
                 size="mini"
                 style="width:100px;"
-                v-model="promoPriceHandler.textPrice"
-                @focus="promoPriceHandler.radio='1'"/>
+                v-model="promoPriceHandler.arithmetic.subtraction3"
+                @focus="promoPriceHandler.radio='6'"/>
             </el-radio>
-            <el-radio v-model="promoPriceHandler.radio" label="2">
+            <el-radio v-model="promoPriceHandler.radio" label="7">
               <span>统一价格为</span>
               <el-input
                 size="mini"
                 style="width:100px;"
                 v-model="promoPriceHandler.textPrice"
-                @focus="promoPriceHandler.radio='2'" />
+                @focus="promoPriceHandler.radio='7'" />
             </el-radio>
           </div>
           <div class="btns">
-            <el-button style="width: 120px">取消</el-button>
-            <el-button style="width: 120px" type="primary">确定</el-button>
+            <el-button style="width: 120px" @click="dialogPromoPriceVisible = false">取消</el-button>
+            <el-button style="width: 120px" type="primary" @click="handleBatchPromoPrice">确定</el-button>
           </div>
         </div>
         <!-- sku价格表 -->
@@ -221,6 +221,7 @@ import request from '@/mixins/request.js'
 import skuHandler from '@/mixins/skuHandler.js'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
+import { PriceHandler } from '@/common/batchEditHandler'
 
 export default {
   mixins: [request, skuHandler],
@@ -234,7 +235,8 @@ export default {
       dialogPromoPriceVisible: false,
       dialogPriceVisible: false,
       warnMsg: '',
-      dicCustomPrices: {}
+      dicCustomPrices: {},
+      promoPriceHandler: new PriceHandler('6')
     }
   },
   computed: {},

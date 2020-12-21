@@ -93,14 +93,19 @@ class StockHandler {
 }
 
 class PriceHandler {
-  constructor () {
+  constructor (defaultRadio) {
     this.checked = false
-    this._radio = '1'
+    this._radio = defaultRadio || '1'
     this.textPrice = ''
     this.textPriceAdd = ''
     this.textPriceSub = ''
     this.textPricePercentAdd = ''
     this.textPricePercentSub = ''
+    this.arithmetic = {
+      subtraction1: 0,
+      subtraction2: 100,
+      subtraction3: 0
+    }
   }
   get radio () {
     return this._radio
@@ -146,6 +151,8 @@ class PriceHandler {
           sku[field] = parseFloat(sku[field]) * (1 + parseFloat(this.textPricePercentAdd) / 100)
         } else if (parseInt(this._radio) === 5 && utils.isNumber(this.textPricePercentSub)) {
           sku[field] = parseFloat(sku[field]) * (1 - parseFloat(this.textPricePercentSub) / 100)
+        } else if (parseInt(this._radio) === 6 && utils.isNumber(this.arithmetic.subtraction1) && utils.isNumber(this.arithmetic.subtraction2) && utils.isNumber(this.arithmetic.subtraction3)) {
+          sku[field] = parseFloat((sku[field] - this.arithmetic.subtraction1) * (this.arithmetic.subtraction2 / 100) - this.arithmetic.subtraction3)
         }
         sku[field] = Math.max(sku[field], 0)
         sku[field] = Math.round(sku[field] * 100) / 100
