@@ -1,22 +1,23 @@
 <!-- PropertySet 商品属性设置 -->
 <template>
-    <el-form :model="model" :rules="rules" ref="propertySet" class="demo-ruleForm">
+    <el-form :model="model" :rules="rules" ref="propertySet" >
         <el-form-item
-            v-for="(item,index) in attribute_json || []"
-            :error="item.required && item.value === ''"
+            v-for="(item,index) in attribute_json"
             :key="index"
             :label="item.name"
             :prop="item.name"
-            :required="item.required"
+            :error="item.required && item.value === ''"
             :inline-message="true"
             label-width="84px"
             label-style="font-size:12px">
              <el-select
+                clearable
+                @clear="handleClear(item.name)"
                 size="small"
                 :style="{width: item.name !== '品牌' ? '220px' : '180px'}"
                 :placeholder="`请选择${item.name}`"
                 v-model="model[item.name]"
-                v-if="item.options.length && item.name !== '品牌'"
+                v-if="item.options.length || item.name === '品牌'"
                 :default-first-option="true">
                 <el-option
                     v-for="option in item.options"
@@ -27,6 +28,8 @@
             </el-select>
             <!-- 除去品牌 属性可选值列表，为空时需要手动填写 -->
             <el-input
+                clearable
+                @clear="handleClear(item.name)"
                 size="small"
                 style="width:220px"
                 :placeholder="`请输入${item.name}`"
@@ -51,11 +54,11 @@
           <span>)</span>
         </div>
     </el-form >
+
 </template>
 
 <script>
 import request from '@/mixins/request.js'
-
 export default {
   name: 'property-set',
   mixins: [request],
@@ -79,15 +82,17 @@ export default {
   computed: {
     rules () {
       return (this.attribute_json || []).reduce((target, item) => {
-        const current = {[item.name]: [{required: !!item.required, message: `请选择${item.name}`, trigger: 'change'}]}
+        const message = item.options.length || item.name === '品牌' ? `请选择${item.name}` : `请输入${item.name}`
+        const current = {[item.name]: [{required: !!item.required, message, trigger: 'change'}]}
         return {...target, ...current}
       }, {})
     }
   },
   watch: {
     attribute_json: {
-      handler (n, o) {
+      handler (n = [], o) {
         this.model = {}
+        // 移除表单项的校验结果
         const result = n.reduce((target, current) => {
           return {...target, [current.name]: current.tp_value}
         }, {})
@@ -109,6 +114,7 @@ export default {
     }
   },
   methods: {
+    // 重置 品牌列表
     reloadBrandList () {
       this.request('getShopBrandList', {}, data => {
         this.shopBrandList = data
@@ -116,22 +122,29 @@ export default {
     },
     // 验证
     validate () {
-      return new Promise((resolve) => {
-        this.$refs.propertySet.validate((valid) => {
+      return new Promise((resolve, reject) => {
+        this.$refs.propertySet.validate((valid, object) => {
+          console.log(valid, object)
           if (valid) {
             resolve(true)
           } else {
-            return false
+            this.$message.error(`${Object.keys(object).join('、')} 输入错误`)
+            reject(object)
           }
         })
       })
+    },
+    // 清除数据
+    clearData () {
+      this.data = {}
     },
     // 重置
     resetForm () {
       this.$refs.propertySet.resetFields()
     },
-    clear () {
-      this.data = {}
+    // 清空
+    handleClear (name) {
+      delete this.model[name]
     }
   }
 }
