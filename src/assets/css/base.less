@@ -1,15 +1,39 @@
 @import "var";
 
-blockquote,body,dd,dl,dt,fieldset,form,h1,h2,h3,h4,h5,h6,hr,input,legend,ol,p,pre,td,textarea,th {
+blockquote,
+body,
+dd,
+dl,
+dt,
+fieldset,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+input,
+legend,
+ol,
+p,
+pre,
+td,
+textarea,
+th {
   margin: 0;
   padding: 0;
 }
-body,p {
-  font: 14px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+body,
+p {
+  font: 14px/1.5 Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB,
+    "\5B8B\4F53", sans-serif;
 }
-html,body {
+html,
+body {
   margin: 0;
-  padding:0;
+  padding: 0;
   height: 100%;
 }
 body {
@@ -19,51 +43,64 @@ img {
   border: 0;
   vertical-align: middle;
 }
-h1,h2,h3,h4,h5,h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-size: 100%;
   line-height: normal;
 }
 
-address,cite,dfn,em,var {
-  font-style: normal
+address,
+cite,
+dfn,
+em,
+var {
+  font-style: normal;
 }
 
-code,kbd,pre,samp {
-  font-family: courier new,courier,monospace
+code,
+kbd,
+pre,
+samp {
+  font-family: courier new, courier, monospace;
 }
 
 small {
-  font-size: 12px
+  font-size: 12px;
 }
 
-ol,ul {
-  list-style: none
+ol,
+ul {
+  list-style: none;
 }
 
 a {
-  text-decoration: none
+  text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline
+  text-decoration: underline;
 }
 
 sup {
-  vertical-align: text-top
+  vertical-align: text-top;
 }
 
 sub {
-  vertical-align: text-bottom
+  vertical-align: text-bottom;
 }
 
 legend {
-  color: #000
+  color: #000;
 }
 
-fieldset,img {
-  border: 0
+fieldset,
+img {
+  border: 0;
 }
-
 
 .support {
   margin-top: 20px;
@@ -95,7 +132,6 @@ fieldset,img {
   }
 }
 
-
 /* 设置相关 */
 .setting-content {
   text-align: left;
@@ -115,7 +151,6 @@ fieldset,img {
       padding-top: 10px;
     }
   }
-
 }
 
 .setting-content-with-tip {
@@ -134,13 +169,12 @@ fieldset,img {
       padding-top: 0;
     }
   }
-
 }
 
 .setting-line {
   height: 36px;
-  display:flex;
-  align-items:center;
+  display: flex;
+  align-items: center;
 }
 
 .warn {
@@ -161,19 +195,19 @@ fieldset,img {
 
 .great {
   font-size: 24px;
-  color: orange;
-  font-weight:bold;
+  color: #1d8fff;
+  font-weight: bold;
   font-family: system-ui;
 }
 
 .input-great {
   padding: 5px;
   /deep/ .el-input__inner {
-    text-align:center;
+    text-align: center;
     padding: 5px;
     font-size: 24px;
-    color: orange;
-    font-weight:bold;
+    color: #1d8fff;
+    font-weight: bold;
     height: 46px;
   }
 }
@@ -181,12 +215,14 @@ fieldset,img {
 .input-medium {
   padding: 5px;
   /deep/ .el-input__inner {
-    text-align:center;
-    padding: 0 2px;
-    font-size: 22px;
-    color: orange;
-    font-weight:bold;
-    height: 38px;
+    text-align: left;
+    padding: 0 6px;
+    font-size: 16px;
+    color: #1d8fff;
+    font-weight: bold;
+    height: 28px;
+    background: rgba(29, 143, 255, 0.05);
+    border: 1px solid #1d8fff;
   }
 }
 
@@ -235,7 +271,7 @@ fieldset,img {
   font-size: 20px;
   /deep/ .el-input__inner {
     color: @color-blue;
-    font-weight:bold;
+    font-weight: bold;
   }
 }
 
@@ -245,7 +281,7 @@ fieldset,img {
   font-size: 20px;
   /deep/ .el-input__inner {
     color: @color-blue;
-    font-weight:bold;
+    font-weight: bold;
   }
 }
 
@@ -280,7 +316,7 @@ fieldset,img {
     padding: 8px 20px;
     height: 24px;
     cursor: pointer;
-    list-style-type:none;
+    list-style-type: none;
     color: @color-dark-gray;
     border-bottom: 1px solid @normal-border-color;
 
@@ -310,13 +346,15 @@ fieldset,img {
 }
 /deep/ .el-table .edited-row {
   //background-color: #e7ffeb !important;
-  /deep/ .el-input__inner, .el-textarea__inner {
+  /deep/ .el-input__inner,
+  .el-textarea__inner {
     border: 1px solid green;
     background-color: #e7ffeb;
   }
 }
 /deep/ .el-table .edited-warn {
-  /deep/ .el-input__inner, .el-textarea__inner {
+  /deep/ .el-input__inner,
+  .el-textarea__inner {
     border: 1px solid red;
     background-color: @color-light-red;
   }
@@ -328,10 +366,10 @@ fieldset,img {
   text-align: left;
   padding-left: 40px;
 }
-.el-radio{
+.el-radio {
   margin: 5px 30px 5px 0;
 }
-.paybtn{
+.paybtn {
   width: 150px;
   margin: 0px auto auto 10px;
 }
@@ -381,10 +419,10 @@ div.block-content {
   float: right;
 }
 .good-score {
-  color: #1C9BEB;
+  color: #1c9beb;
 }
 .bad-score {
-  color: #FE7A24;
+  color: #fe7a24;
 }
 
 .product-dialog {
@@ -394,7 +432,7 @@ div.block-content {
 }
 
 .notification-info {
-  background-color: #FFF6ED !important;
+  background-color: #fff6ed !important;
   color: #333333 !important;
   span {
     vertical-align: baseline;
@@ -425,7 +463,7 @@ div.block-content {
     padding: 4px;
     position: relative;
     .notice-icon {
-      font-family: 'Avenir', Helvetica, Arial, sans-serif;
+      font-family: "Avenir", Helvetica, Arial, sans-serif;
       position: absolute;
       z-index: 1;
       left: 16px;
@@ -439,7 +477,7 @@ div.block-content {
       border-radius: 8px;
       background: red;
       cursor: pointer;
-      transform: scale(0.8,0.8);
+      transform: scale(0.8, 0.8);
     }
     /deep/ .el-button.is-circle {
       font-size: 26px;
@@ -451,7 +489,7 @@ div.block-content {
       display: block;
       width: 26px;
       height: 26px;
-      background: url('../icon/service-white.png') no-repeat;
+      background: url("../icon/service-white.png") no-repeat;
       background-size: 100%;
     }
   }
@@ -468,12 +506,12 @@ div.block-content {
   top: auto;
 
   :focus {
-    outline:0;
+    outline: 0;
   }
 
   /deep/ .el-drawer {
     height: 90% !important;
-    box-shadow: 0 16px 20px 2px rgba(0,0,0,1);
+    box-shadow: 0 16px 20px 2px rgba(0, 0, 0, 1);
   }
 
   .drawer-container {
@@ -511,15 +549,15 @@ div.block-content {
 }
 
 div .like-button-disabled {
-  display:inline-block;
-  vertical-align:top;
+  display: inline-block;
+  vertical-align: top;
   background-color: #909399;
   color: white;
   height: 32px;
   border-radius: 3px;
   cursor: not-allowed;
   span {
-    display:inline-block;
+    display: inline-block;
     font-size: 12px;
     font-weight: 500;
     width: 100%;
@@ -539,7 +577,7 @@ div .like-button-disabled {
 }
 
 .span-link {
-  color: #409EFF;
+  color: #409eff;
   padding: 0 6px;
   cursor: pointer;
 }
@@ -565,7 +603,7 @@ div .like-button-disabled {
     }
     span {
       font-size: 12px;
-      color: #3D9FFF ;
+      color: #3d9fff;
       background: #ffffff;
       padding: 0 6px;
       border-radius: 10px;
@@ -582,7 +620,7 @@ div .like-button-disabled {
     vertical-align: text-bottom;
   }
   span {
-    color: #0057FF;
+    color: #0057ff;
     padding-left: 2px;
     text-decoration: underline;
     cursor: pointer;
@@ -612,25 +650,25 @@ div .like-button-disabled {
     p {
       font-size: 12px;
       padding-bottom: 8px;
-      a{
+      a {
         color: #666666;
       }
-      a:hover{
-        color: #0057FF;
+      a:hover {
+        color: #0057ff;
       }
     }
     .see-more {
       text-decoration: underline;
       padding-top: 20px;
       a {
-        color: #1D8FFF ;
+        color: #1d8fff;
       }
     }
   }
 }
 
 .service-box {
-  box-shadow: 0 4px 14px 0 rgba(0,0,0,0.05);
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.05);
   position: absolute;
   right: 70px;
   top: -280px;
@@ -639,8 +677,8 @@ div .like-button-disabled {
     width: 270px;
     .service-pdd {
       padding: 10px;
-      background: #3FA0FF;
-      box-shadow: inset 0 1px 7px 0 #2890E1;
+      background: #3fa0ff;
+      box-shadow: inset 0 1px 7px 0 #2890e1;
       border-radius: 4px;
       border-radius: 0px;
       .service-title {
@@ -664,9 +702,9 @@ div .like-button-disabled {
       }
       .service-title {
         font-size: 14px;
-        color: #ffffff;;
+        color: #ffffff;
         line-height: 21px;
-        background: #3FA0FF;
+        background: #3fa0ff;
         padding: 10px;
       }
       .wechat-box {
@@ -738,8 +776,8 @@ div .like-button-disabled {
 .float-nav {
   width: 66px;
   text-align: center;
-  background: #FFFFFF;
-  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.10);
+  background: #ffffff;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   .float-button {
     cursor: pointer;
@@ -774,11 +812,11 @@ div .like-button-disabled {
     }
     .comments-icon {
       font-size: 26px;
-      color: #409EFF;
+      color: #409eff;
     }
   }
   .float-button:hover {
-    background: #1D8FFF ;
+    background: #1d8fff;
     span.nav-help {
       background-image: url("../images/help-nav-hov.png");
     }
@@ -826,9 +864,9 @@ div .like-button-disabled {
 }
 
 .el-button--primary.is-plain {
-  color: #1D8FFF;
-  border-color: #1D8FFF;
-  background: #FFFFFF;
+  color: #1d8fff;
+  border-color: #1d8fff;
+  background: #ffffff;
 }
 
 .optimize-dialog {
@@ -837,14 +875,14 @@ div .like-button-disabled {
     border-radius: 10px;
     width: 780px;
   }
-  /deep/ .el-dialog__header{
-    padding-top:32px;
+  /deep/ .el-dialog__header {
+    padding-top: 32px;
   }
-  .dialog-title{
+  .dialog-title {
     height: 30px;
     font-size: 22px;
     font-weight: 500;
-    color: #4E4E4E;
+    color: #4e4e4e;
     line-height: 30px;
   }
   /deep/ .el-dialog__headerbtn .el-dialog__close {
@@ -870,9 +908,9 @@ div .like-button-disabled {
 }
 
 .el-button--primary.is-plain {
-  color: #1D8FFF;
-  border-color: #1D8FFF;
-  background: #FFFFFF;
+  color: #1d8fff;
+  border-color: #1d8fff;
+  background: #ffffff;
 }
 
 .optimize-dialog {
@@ -881,14 +919,14 @@ div .like-button-disabled {
     border-radius: 10px;
     width: 780px;
   }
-  /deep/ .el-dialog__header{
-    padding-top:32px;
+  /deep/ .el-dialog__header {
+    padding-top: 32px;
   }
-  .dialog-title{
+  .dialog-title {
     height: 30px;
     font-size: 22px;
     font-weight: 500;
-    color: #4E4E4E;
+    color: #4e4e4e;
     line-height: 30px;
   }
   /deep/ .el-dialog__headerbtn .el-dialog__close {
@@ -915,13 +953,13 @@ div .like-button-disabled {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 81px;/*脚部的高度*/
-    clear:both;
+    height: 81px; /*脚部的高度*/
+    clear: both;
   }
 }
 .header-notice {
-  background: #FFF6ED;
-  /deep/ .el-alert.is-light .el-alert__closebtn{
+  background: #fff6ed;
+  /deep/ .el-alert.is-light .el-alert__closebtn {
     padding-right: 6px;
   }
 }
@@ -936,8 +974,8 @@ div .like-button-disabled {
     font-size: 12px;
     color: #666666;
   }
-  /deep/ a.el-link.el-link--default:hover{
-    color: #409EFF;
+  /deep/ a.el-link.el-link--default:hover {
+    color: #409eff;
     text-decoration: none;
   }
 }
@@ -952,12 +990,11 @@ div .like-button-disabled {
     font-size: 20px;
     color: #333333;
     line-height: 62px;
-    border-bottom: 1px solid #E5E5E5;
-
+    border-bottom: 1px solid #e5e5e5;
   }
   .notice-content {
     padding: 22px 45px;
-    color: #4E4E4E;
+    color: #4e4e4e;
     font-size: 14px;
     text-align: left;
   }
@@ -969,7 +1006,7 @@ div .like-button-disabled {
     min-width: 126px;
   }
   /deep/ .el-button--default {
-    color: #1D8FFF;
-    border-color: #1D8FFF;
+    color: #1d8fff;
+    border-color: #1d8fff;
   }
 }

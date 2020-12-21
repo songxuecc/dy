@@ -1,8 +1,49 @@
 <template lang="html">
-    <div v-loading="loadingCnt">
-        <el-table ref="skuListTable" :data="skuRealShowList" row-key="tp_product_id" border style="width: 100%"
-                  :cell-class-name="cellClassName"
-        >
+    <div v-loading="loadingCnt" class="SkuPriceListView">
+      <!-- 顶部价格修改输入框 -->
+        <div class="priceChange">
+          <div class="radios">
+            <el-radio v-model="promoPriceHandler.radio" label="1">
+              <span>(原价-</span>
+              <el-input
+                size="mini"
+                style="width:100px;"
+                v-model="promoPriceHandler.textPrice"
+                @focus="promoPriceHandler.radio='1'"/>
+              <span>) x</span>
+              <el-input
+                size="mini"
+                style="width:100px;"
+                v-model="promoPriceHandler.textPrice"
+                @focus="promoPriceHandler.radio='1'"/>
+              <span>% -</span>
+              <el-input
+                size="mini"
+                style="width:100px;"
+                v-model="promoPriceHandler.textPrice"
+                @focus="promoPriceHandler.radio='1'"/>
+            </el-radio>
+            <el-radio v-model="promoPriceHandler.radio" label="2">
+              <span>统一价格为</span>
+              <el-input
+                size="mini"
+                style="width:100px;"
+                v-model="promoPriceHandler.textPrice"
+                @focus="promoPriceHandler.radio='2'" />
+            </el-radio>
+          </div>
+          <div class="btns">
+            <el-button style="width: 120px">取消</el-button>
+            <el-button style="width: 120px" type="primary">确定</el-button>
+          </div>
+        </div>
+        <!-- sku价格表 -->
+        <el-table
+          ref="skuListTable"
+          :data="skuRealShowList"
+          row-key="tp_product_id"
+          style="width: 100%"
+          :cell-class-name="cellClassName">
             <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id">
                 <template slot="header" slot-scope="scope">
                     <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.name }}</span>
@@ -27,16 +68,20 @@
                 </template>
             </el-table-column>
             <!-- sku售价 start-->
-            <el-table-column key="3" width="200" align="center">
+            <el-table-column key="3" width="150" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>售价</span>
+                    <span>sku价格</span>
                     <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
-                        <div style="width: 182px; padding-left: 18px;">
-                            <el-input v-model="scope.row.promo_price" size="mini" @input="inputChange(scope.row,'promo_price')"
-                                      :class="['input-medium', promoPriceClass(scope.row,scope.$index)]"
+                        <div >
+                            <el-input
+                              v-model="scope.row.promo_price"
+                              size="mini"
+                              @input="inputChange(scope.row,'promo_price')"
+                              :class="['input-medium', promoPriceClass(scope.row,scope.$index)]"
+                              style="width: 100%; "
                             >
                                 <i class="el-icon-error el-input__icon"
                                    v-if="isEdited(scope.row, 'promo_price')"
@@ -45,9 +90,9 @@
                                 </i>
                             </el-input>
                         </div>
-                        <div style="width: 18px; display:flex; align-items:center;">
+                        <div style="width: 16px; display:flex; align-items:center;">
                             <el-tooltip v-if="scope.row.msgGroupError !== ''" placement="top" :content="scope.row.msgGroupError">
-                                <span style="display:inline-block; height:18px; line-height:18px; font-size: 18px;">
+                                <span style="display:inline-block; height:16px; line-height:16px; font-size: 16px;">
                                     <i class="el-icon-warning warn" style=""></i>
                                 </span>
                             </el-tooltip>
@@ -57,13 +102,13 @@
             </el-table-column>
             <!-- sku售价 end-->
             <!-- sku原价 start-->
-            <el-table-column key="3" width="200" align="center">
+            <el-table-column key="3" width="150" align="center">
                 <template slot="header" slot-scope="scope">
                     <span>原价</span>
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
-                        <div class="great" style="width: 182px; padding-left: 18px; font-size: 22px;">
+                        <div class="great" style="width: 100%; padding-left: 18px; font-size: 16px;">
                           {{scope.row.originPrice}}
                         </div>
                     </div>
@@ -171,6 +216,7 @@
     </div>
 </template>
 <script>
+
 import request from '@/mixins/request.js'
 import skuHandler from '@/mixins/skuHandler.js'
 import FormModel from '@/common/formModel'
@@ -370,4 +416,34 @@ export default {
 </script>
 <style lang="less" scoped>
     @import '~@/assets/css/migratesetting.less';
+    .SkuPriceListView {
+      /deep/ .el-table td, .el-table th{
+        padding: 2px 0 !important;
+      }
+      .priceChange{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background: #F3F9FF;
+        border: 1px dashed #1D8FFF;
+        margin-bottom: 20px;
+        span {
+            font-size: 12px;
+            color: #4E4E4E;
+          }
+        /deep/ .el-input__inner{
+          font-size:18px;
+          color:#1D8FFF;
+        }
+
+        .radios{
+          margin-top: 20px;
+        }
+        .btns{
+          margin: 20px auto;
+        }
+      }
+
+    }
 </style>

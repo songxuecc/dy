@@ -210,11 +210,19 @@
                 </span>
       </el-tooltip>
     </div>
-    <el-dialog title="sku价格设置" :visible.sync="dialogSkuPriceVisible" width="900px" append-to-body center
-               @opened="dialogSkuPriceOpened"  @close="dialogSkuPriceClose"
+    <el-dialog
+      center
+      append-to-body
+      title="批量修改单商品sku价格"
+      :visible.sync="dialogSkuPriceVisible"
+      width="900px"
+      @opened="dialogSkuPriceOpened"
+      @close="dialogSkuPriceClose"
     >
-      <sku-price-list-view ref="skuPriceListView" :template="template" :tpProduct="selectTpProduct">
-      </sku-price-list-view>
+      <sku-price-list-view
+        ref="skuPriceListView"
+        :template="template"
+        :tpProduct="selectTpProduct" />
     </el-dialog>
     <el-dialog
       title="价格示例"
