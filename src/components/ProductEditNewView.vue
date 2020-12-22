@@ -1325,7 +1325,7 @@ export default {
         }
         return
       }
-      row.img = response.data.image_url
+      row.img = response.data.url
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
