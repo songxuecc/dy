@@ -199,11 +199,6 @@
                               <el-input v-model="scope.row.code" size="mini" type="text" :class="['input-text-left']"></el-input>
                           </template>
                       </el-table-column>
-                      <!-- <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
-                          <template slot-scope="scope">
-                              <img style="height:40px" :src="scope.row.img">
-                          </template>
-                      </el-table-column> -->
                       <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
                             <div class="preview">
@@ -560,12 +555,6 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
-    handlemouseover (item) {
-      this.$set(item, 'maskShow', true)
-    },
-    handlemouseleave (item) {
-      this.$set(item, 'maskShow', false)
-    },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
       this.productList = tpProductList
@@ -1329,7 +1318,13 @@ export default {
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
-    }
+    },
+    handlemouseover (item) {
+      this.$set(item, 'maskShow', true)
+    },
+    handlemouseleave (item) {
+      this.$set(item, 'maskShow', false)
+    },
   }
 }
 </script>
