@@ -28,7 +28,7 @@
             :on-progress="skuExcelImporting"
             :on-error="skuExcelImportError"
           >
-            <el-tooltip class="item" effect="dark" content="每次最多修改100条，修改商品sku编码需要调用抖音接口，预计一个sku需要1秒，请耐心等待"
+            <el-tooltip class="item" effect="dark" content="每次最多修改500条，预计一个sku需要1秒，请耐心等待"
                         placement="top">
               <el-button size="small" class="nodim" style="right: 0px;" :diabled="isSkuImporting"
                          @click="recordSkuExcelImportBtnClick">
