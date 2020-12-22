@@ -378,7 +378,6 @@ import FormModel from '@/common/formModel'
 import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
 import isEmpty from 'lodash/isEmpty'
-import debounce from 'lodash/debounce'
 
 export default {
   inject: ['reload'],
@@ -616,8 +615,7 @@ export default {
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
-        this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json.filter(item => item.tp_value) : []})
-
+        this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         if (data.brand_id) {
           this.product.assign({brand_id: data.brand_id})
         }
@@ -674,7 +672,7 @@ export default {
     },
     onDescImageChanged (descPicUrlList) {
       Object.assign(this.product.model, {descPicUrlList: [...descPicUrlList]})
-    }, 
+    },
     selectFilter (templatePid, key, callback) {
       let params = {
         cat_id: this.product.model.cat_id,
@@ -1282,9 +1280,9 @@ export default {
       this.$message.error(err.message)
     },
     // 属性设置 回调
-    handlePropertyset: debounce(function (value) {
+    handlePropertyset: function (value) {
       Object.assign(this.product.model, {attrList: value})
-    }, 300)
+    }
   }
 }
 </script>
