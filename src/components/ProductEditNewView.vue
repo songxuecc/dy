@@ -634,7 +634,8 @@ export default {
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }
-
+        // 获取最新model originmodel 和 model 保持一致
+        this.product.originModel = this.product.model
         this.isLoading = false
       }, data => {
         if (tpProductId in this.products) {
@@ -746,7 +747,6 @@ export default {
     },
     // 保存编辑
     async onSaveProduct () {
-      console.log('validate')
       const validation = await this.$refs.propertySet.validate()
       if (validation) {
         this.productEditSavingPercent = 0
@@ -827,6 +827,7 @@ export default {
       let tpProductIdListSlice = []
       let attrApplyCatMapTemp = {}
 
+      // TODO songxue 应用到全部商品属性时候 需要修改此处 tpProductIdListIdx attr_apply_map 字段
       if (tpProductListIdx < tpProductList.length) {
         tpProductListSlice = tpProductList.slice(tpProductListIdx, tpProductListIdx + 5)
       } else if (tpProductIdListIdx < tpProductIdList.length) {

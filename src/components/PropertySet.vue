@@ -124,7 +124,6 @@ export default {
     validate () {
       return new Promise((resolve, reject) => {
         this.$refs.propertySet.validate((valid, object) => {
-          console.log(valid, object)
           if (valid) {
             resolve(true)
           } else {
