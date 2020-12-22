@@ -1,5 +1,5 @@
 <template lang="html">
-  <div style="height: 100%">
+  <div style="height: 100%" >
     <el-row :gutter="20" style="height: 100%">
       <el-col :span="8" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
         <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
@@ -377,6 +377,8 @@ import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
 import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
+import isEmpty from 'lodash/isEmpty'
+import debounce from 'lodash/debounce'
 
 export default {
   inject: ['reload'],
@@ -600,22 +602,25 @@ export default {
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
-        this.attribute_json = data.attribute_json
-
+        this.attribute_json = isEmpty(data.attribute_json) ? [] : data.attribute_json
         this.bannerPicUrlList = data.banner_json
         this.descPicUrlList = data.desc_json
         this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
         this.initSku(data.sku_json, data.tp_id)
         this.updateIsSingleSku()
-
-        this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
-        this.product.assign({bannerPicUrlList: data.banner_json})
-        this.product.assign({descPicUrlList: data.desc_json})
-        this.product.assign({skuPropertyList: [...this.skuPropertyList]})
-        this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
-        this.product.assign({skuShowList: [...this.skuShowList]})
-        this.product.assign({originAttr: {...this.origionAttr}})
+        this.product.assign(
+          {
+            skuMap: this.getSkuUploadObj().sku_map,
+            bannerPicUrlList: data.banner_json,
+            descPicUrlList: data.desc_json,
+            skuPropertyList: [...this.skuPropertyList],
+            skuPropertyValueMap: {...this.skuPropertyValueMap},
+            skuShowList: [...this.skuShowList],
+            originAttr: {...this.origionAttr}
+          },
+          {attrList: !isEmpty(data.attribute_json) ? data.attribute_json.filter(item => item.tp_value) : []},
+          {})
         if (data.brand_id) {
           this.product.assign({brand_id: data.brand_id})
         }
@@ -673,11 +678,6 @@ export default {
     },
     onDescImageChanged (descPicUrlList) {
       Object.assign(this.product.model, {descPicUrlList: [...descPicUrlList]})
-    },
-    onAttrChanged (isRequiredComplete) {
-      Object.assign(this.product.model, {attrDic: {...this.$refs.attributeView.attrRawDic}})
-      Object.assign(this.product.model, {attrList: [...this.$refs.attributeView.attrShowList]})
-      this.isRequiredComplete = isRequiredComplete
     },
     selectFilter (templatePid, key, callback) {
       let params = {
@@ -746,7 +746,7 @@ export default {
     },
     // 保存编辑
     async onSaveProduct () {
-      // 验证属性设置
+      console.log('validate')
       const validation = await this.$refs.propertySet.validate()
       if (validation) {
         this.productEditSavingPercent = 0
@@ -954,6 +954,7 @@ export default {
     isProductChange () {
       return this.updateProductEditStatus()
     },
+    // 还原
     onRevertProduct () {
       for (let i in this.products) {
         this.products[i].rollback()
@@ -965,10 +966,7 @@ export default {
       }
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
-      this.$refs.attributeView.setAttrRawDic(this.product.model.attrDic)
-      this.$refs.attributeView.setAttrShowList(this.product.model.attrList)
-      this.$refs.attributeView.setAttrApplyCatMap(this.attrApplyCatMap)
-      this.$refs.attributeView.reloadAttrShowList()
+      this.$refs.propertySet.resetForm()
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.skuShowList = this.product.model.skuShowList
@@ -991,7 +989,7 @@ export default {
       this.updateAttrApplyCat({})
       this.$refs['bannerPicListView'].clear()
       this.$refs['descPicListView'].clear()
-      this.$refs['propertySet'].clear()
+      this.$refs['propertySet'].clearData()
     },
     handleMouseEnter (row, column, cell, event) {
       if (this.mouseOverIndex === row.index) {
@@ -1014,10 +1012,15 @@ export default {
         let tpProductId = this.productList[i].tp_product_id
         if (
           this.productDic[tpProductId].title !== this.productTitleDic[tpProductId] ||
+          // 单个商品修改
           (this.products[tpProductId] && this.products[tpProductId].isDiff()) ||
+          // 商品属性
           this.attrApplyCatMap[this.productList[i].category_id] ||
+          // banner修改
           (this.productRemoveFirstBannerDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.bannerPicUrlList.length > 1))) ||
+          // 详情图修改
           (this.productRemoveLastDescDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.descPicUrlList.length > 1))) ||
+          // 品牌详情修改
           (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId])
         ) {
           this.productDic[tpProductId].isEdit = true
@@ -1283,9 +1286,9 @@ export default {
       this.$message.error(err.message)
     },
     // 属性设置 回调
-    handlePropertyset (value) {
+    handlePropertyset: debounce(function (value) {
       this.product.model.attrList = value
-    }
+    }, 300)
   }
 }
 </script>
