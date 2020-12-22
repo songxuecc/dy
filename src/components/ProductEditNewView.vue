@@ -609,18 +609,18 @@ export default {
         this.product.assign({description: data.desc_text})
         this.initSku(data.sku_json, data.tp_id)
         this.updateIsSingleSku()
-        this.product.assign(
-          {
-            skuMap: this.getSkuUploadObj().sku_map,
-            bannerPicUrlList: data.banner_json,
-            descPicUrlList: data.desc_json,
-            skuPropertyList: [...this.skuPropertyList],
-            skuPropertyValueMap: {...this.skuPropertyValueMap},
-            skuShowList: [...this.skuShowList],
-            originAttr: {...this.origionAttr}
-          },
-          {attrList: !isEmpty(data.attribute_json) ? data.attribute_json.filter(item => item.tp_value) : []},
-          {})
+        
+        this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
+        this.product.assign({bannerPicUrlList: data.banner_json})
+        this.product.assign({descPicUrlList: data.desc_json})
+        this.product.assign({skuPropertyList: [...this.skuPropertyList]})
+        this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
+        this.product.assign({skuPropertySkuNameMap: {...this.skuPropertySkuNameMap}})
+        this.product.assign({selectedSkuName: {...this.selectedSkuName}})
+        this.product.assign({skuShowList: [...this.skuShowList]})
+        this.product.assign({originAttr: {...this.origionAttr}})
+        this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json.filter(item => item.tp_value) : []})
+
         if (data.brand_id) {
           this.product.assign({brand_id: data.brand_id})
         }
@@ -634,8 +634,6 @@ export default {
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }
-        // 获取最新model originmodel 和 model 保持一致
-        this.product.originModel = this.product.model
         this.isLoading = false
       }, data => {
         if (tpProductId in this.products) {
@@ -679,7 +677,7 @@ export default {
     },
     onDescImageChanged (descPicUrlList) {
       Object.assign(this.product.model, {descPicUrlList: [...descPicUrlList]})
-    },
+    }, 
     selectFilter (templatePid, key, callback) {
       let params = {
         cat_id: this.product.model.cat_id,
@@ -1288,7 +1286,7 @@ export default {
     },
     // 属性设置 回调
     handlePropertyset: debounce(function (value) {
-      this.product.model.attrList = value
+      Object.assign(this.product.model, {attrList: value})
     }, 300)
   }
 }
