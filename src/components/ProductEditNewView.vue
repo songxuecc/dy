@@ -219,9 +219,10 @@
                                     :on-success="(response, file, fileList) => handleUploadSuccess(response, file, fileList, scope.row)"
                                     :on-error="handleUploadError"
                                     :before-upload="handleBeforeUpload"
-                                    action="/api/uploadProductImage"
+                                    action="/api/image/create"
                                     :headers="getTokenHeaders"
                                     :data="{'belong_type': belongType}"
+                                    :multiple="false"
                                     style="width:50px; height: 50px; line-height: 80px;"
                                 >
                                     <img :src="scope.row.img" style="width: 40px; display: block;"/>
@@ -559,6 +560,12 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    handlemouseover (item) {
+      this.$set(item, 'maskShow', true)
+    },
+    handlemouseleave (item) {
+      this.$set(item, 'maskShow', false)
+    },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
       this.productList = tpProductList
