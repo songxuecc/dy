@@ -103,12 +103,11 @@ export default {
     model: {
       handler (newVal, o) {
         const newAttributeJson = (this.attribute_json || [])
-          .filter(item => newVal[item.name])
           .map(item => {
-            const tpValue = newVal[item.name]
+            const tpValue = newVal[item.name] || ''
             return {...item, tp_value: tpValue}
           })
-        if (Object.values(newAttributeJson).some(item => item)) this.$emit('change', newAttributeJson)
+        this.$emit('change', newAttributeJson)
       },
       deep: true
     }
@@ -124,7 +123,6 @@ export default {
     validate () {
       return new Promise((resolve, reject) => {
         this.$refs.propertySet.validate((valid, object) => {
-          console.log(valid, object)
           if (valid) {
             resolve(true)
           } else {

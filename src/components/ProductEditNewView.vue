@@ -378,7 +378,6 @@ import FormModel from '@/common/formModel'
 import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
 import isEmpty from 'lodash/isEmpty'
-import debounce from 'lodash/debounce'
 
 export default {
   inject: ['reload'],
@@ -609,18 +608,14 @@ export default {
         this.product.assign({description: data.desc_text})
         this.initSku(data.sku_json, data.tp_id)
         this.updateIsSingleSku()
-        this.product.assign(
-          {
-            skuMap: this.getSkuUploadObj().sku_map,
-            bannerPicUrlList: data.banner_json,
-            descPicUrlList: data.desc_json,
-            skuPropertyList: [...this.skuPropertyList],
-            skuPropertyValueMap: {...this.skuPropertyValueMap},
-            skuShowList: [...this.skuShowList],
-            originAttr: {...this.origionAttr}
-          },
-          {attrList: !isEmpty(data.attribute_json) ? data.attribute_json.filter(item => item.tp_value) : []},
-          {})
+        this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
+        this.product.assign({bannerPicUrlList: data.banner_json})
+        this.product.assign({descPicUrlList: data.desc_json})
+        this.product.assign({skuPropertyList: [...this.skuPropertyList]})
+        this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
+        this.product.assign({skuShowList: [...this.skuShowList]})
+        this.product.assign({originAttr: {...this.origionAttr}})
+        this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         if (data.brand_id) {
           this.product.assign({brand_id: data.brand_id})
         }
@@ -634,7 +629,6 @@ export default {
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }
-
         this.isLoading = false
       }, data => {
         if (tpProductId in this.products) {
@@ -746,7 +740,6 @@ export default {
     },
     // 保存编辑
     async onSaveProduct () {
-      console.log('validate')
       const validation = await this.$refs.propertySet.validate()
       if (validation) {
         this.productEditSavingPercent = 0
@@ -827,6 +820,7 @@ export default {
       let tpProductIdListSlice = []
       let attrApplyCatMapTemp = {}
 
+      // TODO songxue 应用到全部商品属性时候 需要修改此处 tpProductIdListIdx attr_apply_map 字段
       if (tpProductListIdx < tpProductList.length) {
         tpProductListSlice = tpProductList.slice(tpProductListIdx, tpProductListIdx + 5)
       } else if (tpProductIdListIdx < tpProductIdList.length) {
@@ -1286,9 +1280,9 @@ export default {
       this.$message.error(err.message)
     },
     // 属性设置 回调
-    handlePropertyset: debounce(function (value) {
-      this.product.model.attrList = value
-    }, 300)
+    handlePropertyset: function (value) {
+      Object.assign(this.product.model, {attrList: value})
+    }
   }
 }
 </script>

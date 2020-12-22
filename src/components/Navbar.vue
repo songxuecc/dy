@@ -15,7 +15,7 @@
               <ul v-if="shopName" class="menu-content">
                 <li @click="goToOrder()">
                   <span style="vertical-align: middle;">{{subscName}} 剩 {{leftDays}} 天</span>
-                  <img style="height: 28px; display: inline-block; position: relative; top: -1px; cursor: pointer" src="../assets/images/reorder.gif" />
+                  <img style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" />
                 </li>
               </ul>
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
