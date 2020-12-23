@@ -1,6 +1,7 @@
 <template>
     <div id="app">
         <good-assess-dialog></good-assess-dialog>
+        <expire-notify-dialog></expire-notify-dialog>
         <el-header :style="{height:(curNavNotification ? 'auto' : '80px')}">
           <nav-bar></nav-bar>
           <div class="full-screen">
@@ -70,6 +71,7 @@
 <script>
 import '@/assets/css/base.less'
 import GoodAssessDialog from '@/components/GoodAssessDialog'
+import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar.vue'
 import FlexFoot from '@/components/FlexFoot.vue'
@@ -108,7 +110,8 @@ export default {
     navBar,
     sideBar,
     FlexFoot,
-    GoodAssessDialog
+    GoodAssessDialog,
+    ExpireNotifyDialog
   },
   computed: {
     ...mapGetters({
