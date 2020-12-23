@@ -144,7 +144,7 @@ export default {
   font-weight: normal;
   color: #FFF6C6;
   line-height: 23px;
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 .countdown {
