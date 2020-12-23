@@ -50,7 +50,7 @@
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
                 <div >
                     <p style="color:red;font-size:12px">当前商品所选类目根据官方要求必须填写品牌。</p>
-                    <p style="color:red;font-size:12px">查询哪些类目需要填写品牌请点击 <a>https://school.jinritemai.com/doudian/web/article/101810</a></p>
+                    <p style="color:red;font-size:12px">查询哪些类目需要填写品牌 <a href="https://school.jinritemai.com/doudian/web/article/101810" style="color:red;font-size:12px;cursor: pointer">请点击我</a> </p>
                 </div>
             </slot>
         </el-form-item>
