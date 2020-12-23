@@ -1324,7 +1324,7 @@ export default {
     },
     handlemouseleave (item) {
       this.$set(item, 'maskShow', false)
-    },
+    }
   }
 }
 </script>

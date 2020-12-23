@@ -33,7 +33,7 @@
             </el-radio>
           </div>
           <div class="btns">
-            <el-button style="width: 120px" @click="dialogPromoPriceVisible = false">取消</el-button>
+            <el-button style="width: 120px" @click="handleCancelBatchEdit">取消</el-button>
             <el-button style="width: 120px" type="primary" @click="handleBatchPromoPrice">确定</el-button>
           </div>
         </div>
@@ -71,7 +71,7 @@
             <el-table-column key="3" width="150" align="center">
                 <template slot="header" slot-scope="scope">
                     <span>sku价格</span>
-                    <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
+                    <!-- <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button> -->
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
@@ -228,21 +228,33 @@ export default {
   components: {},
   props: {
     template: FormModel,
-    tpProduct: null
+    tpProduct: null,
+    defaultValue: Object
   },
   data () {
+    const arithmetic = this.defaultValue || {
+      subtraction1: this.template.model.origin_price_diff || 0,
+      subtraction2: this.template.model.group_price_rate || 100,
+      subtraction3: this.template.model.group_price_diff || 0
+    }
     return {
       dialogPromoPriceVisible: false,
       dialogPriceVisible: false,
       warnMsg: '',
       dicCustomPrices: {},
-      promoPriceHandler: new PriceHandler('6')
+      promoPriceHandler: new PriceHandler({
+        defaultRadio: '6',
+        arithmetic,
+        name: 'arithmetic'
+      }),
+      initialValue: {...arithmetic}
     }
   },
-  computed: {},
-  mounted () {
-  },
   methods: {
+    // 保持和原始价格一致
+    batchEditPromoPrice () {
+      this.promoPriceHandler.handleSkus(this.skuShowList, 'promo_price', 'original_promo_price')
+    },
     promoPriceClass (sku, index) {
       sku.promo_price_obj.model.price = sku.promo_price
       if (index !== undefined) {
@@ -367,6 +379,14 @@ export default {
       }
       this.checkSkuPrice()
     },
+    handleCancelBatchEdit () {
+      // 价格初始化
+      this.skuRealShowList.forEach(sku => {
+        this.handleCancelEdit(sku, 'promo_price')
+      })
+      // sku价格也初始化
+      this.promoPriceHandler.setState({arithmetic: this.initialValue})
+    },
     handleCancelEdit (sku, field) {
       sku[field + '_obj'].rollback()
       sku[field] = sku[field + '_obj'].model.price
@@ -397,6 +417,11 @@ export default {
         } else {
           this.deleteCustomPrices(skuShow.property_key, 'price')
         }
+      }
+      return {
+        subtraction1: this.promoPriceHandler.arithmetic.subtraction1,
+        subtraction2: this.promoPriceHandler.arithmetic.subtraction2,
+        subtraction3: this.promoPriceHandler.arithmetic.subtraction3
       }
     },
     addCustomPrices (key, field, value) {
