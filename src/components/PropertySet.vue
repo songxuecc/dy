@@ -7,6 +7,7 @@
             :label="item.name"
             :prop="item.name"
             :error="item.required && item.value === ''"
+            :show-message="item.name !== '品牌'"
             :inline-message="true"
             label-width="84px"
             label-style="font-size:12px">
@@ -46,6 +47,12 @@
                     添加品牌
                 </el-link>
             </span>
+            <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
+                <div >
+                    <p style="color:red;font-size:12px">当前商品所选类目根据官方要求必须填写品牌。</p>
+                    <p style="color:red;font-size:12px">查询哪些类目需要填写品牌请点击 <a>https://school.jinritemai.com/doudian/web/article/101810</a></p>
+                </div>
+            </slot>
         </el-form-item>
         <div class="tip">
           <span >(带 <span style="color: red">*</span> 为必填属性</span>
@@ -76,13 +83,15 @@ export default {
   },
   data () {
     return {
-      model: {}
+      model: {},
+      validation: {}
     }
   },
   computed: {
     rules () {
       return (this.attribute_json || []).reduce((target, item) => {
-        const message = item.options.length || item.name === '品牌' ? `请选择${item.name}` : `请输入${item.name}`
+        let message = item.options.length ? `请选择${item.name}` : `请输入${item.name}`
+        if (item.name === '品牌') message = ''
         const current = {[item.name]: [{required: !!item.required, message, trigger: 'change'}]}
         return {...target, ...current}
       }, {})
@@ -127,6 +136,7 @@ export default {
             resolve(true)
           } else {
             this.$message.error(`${Object.keys(object).join('、')} 输入错误`)
+            this.validation = object
             reject(object)
           }
         })
