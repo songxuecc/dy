@@ -49,7 +49,7 @@
 <!--                    </el-tooltip>-->
                 </div>
                 <div  class="common-bottom">
-                    <el-button type="primary" @click="onCapture(0)">
+                    <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
                       <span style="line-height:21px">开始抓取</span>
                       <el-badge :value="captureUrlNums"></el-badge>
                     </el-button>
@@ -98,7 +98,7 @@
                     </el-tooltip>
                 </div>
                 <div  class="common-bottom">
-                    <el-button type="primary" @click="onCapture(1)">开始抓取</el-button>
+                    <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture">开始抓取</el-button>
                 </div>
             </el-tab-pane>
           <el-tab-pane v-loading="loadingCnt" label="导入复制"  name="file">
@@ -175,7 +175,8 @@ export default {
       activeName: 'single',
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
-      importFilePromptVisibe: false
+      importFilePromptVisibe: false,
+      isStartCapture: false
     }
   },
   components: {
@@ -205,6 +206,9 @@ export default {
       this.captureUrlNums = urls.length
     },
     onCapture (captureType) {
+      if (this.isStartCapture) { // 当前有抓取请求
+        return
+      }
       let textUrls = ''
       let limit = 1
       let message = ''
@@ -219,19 +223,26 @@ export default {
       let urls = textUrls.split('\n')
       urls = urls.map(s => s.trim()).filter(s => s !== '')
       if (urls.length === 0) {
-        this.$message({
-          message: '抓取链接未填写',
-          type: 'warning'
+        this.$alert('复制链接未填写', '警告', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+          }
         })
         return
       } else if (urls.length > limit) {
-        this.$message({
-          message: message,
-          type: 'warning'
+        this.$alert(message, '警告', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+          }
         })
         return
       }
+      let self = this
+      this.isStartCapture = true
       this.request('capture', { urls, capture_type: captureType }, data => {
+        this.isStartCapture = false
         let captureId = data.capture_id
         this.$router.push({
           path: '/productList',
@@ -239,7 +250,16 @@ export default {
             captureId: captureId
           }
         })
-      })
+      }, err => {
+        this.$alert(err.message + "  <a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank'>查看帮助</a>", '警告', {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+            self.isStartCapture = false
+          }
+        })
+      }, true)
     },
     uploadBeforeUpload (file) {
       // let type = file.type
