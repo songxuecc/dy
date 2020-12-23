@@ -18,6 +18,26 @@
                   <img style="height: 28px; display: inline-block; position: relative; top: -1px; cursor: pointer" src="../assets/images/reorder.gif" />
                 </li>
               </ul>
+
+              <el-menu  class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                <el-submenu index="1" popper-class="nav-menu-popup">
+                  <template slot="title">多店铺管理</template>
+                  <el-submenu >
+                    <template slot="title">切换店铺</template>
+                    <el-menu-item index="1-0"><el-button type="text">返回主账号</el-button></el-menu-item>
+                    <el-menu-item v-for="(bindShop,index) in bindChildShopList" :key="bindShop.user_id" :index="`${bindShop.user_id}-${index}`">
+                      {{bindShop.mall_name}}
+                    </el-menu-item>
+                  </el-submenu>
+                  <el-menu-item index="1-2">绑定店铺</el-menu-item>
+                </el-submenu>
+                <!-- <el-submenu index="3" popper-class="nav-menu-popup">
+                  <template slot="title">{{ mallName ? mallName : name }}</template>
+                  <el-menu-item index="3-1">订购记录</el-menu-item>
+                  <el-menu-item index="3-2">退出</el-menu-item>
+                </el-submenu> -->
+              </el-menu>
+
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
 <!--                    <el-menu-item index="3">短信水印</el-menu-item>-->
 <!--                    <el-menu-item index="4">打单发货</el-menu-item>-->
@@ -43,7 +63,17 @@ export default {
       form: {
         app_key: '',
         app_secret: ''
-      }
+      },
+      bindChildShopList: [
+        {
+          mall_name: 'mall_name1',
+          user_id: 'user_id1'
+        },
+        {
+          mall_name: 'mall_name2',
+          user_id: 'user_id2'
+        }
+      ]
     }
   },
   computed: {
@@ -107,19 +137,49 @@ export default {
       })
     },
     handleSelect (key, keyPath) {
-      if (key === '1') {
-        commonUtils.addToFavorite()
-      } else if (key === '2-1') {
-        this.onLogout()
-      } else if (key === '3') {
-        this.$router.push({
-          path: '/meizhe'
-        })
-      } else if (key === '4') {
-        this.$router.push({
-          path: '/woda'
-        })
-      }
+      const bindShopList = (this.bindChildShopList || []).map((bindShop, index) => {
+        return [
+          `${bindShop.user_id}-${index}`, {
+            handle: () => {
+              if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '切换店铺'])
+              // this.onChangeShop(bindShop.user_id) 暂时还没onChangeShop
+            },
+            comment: '切换绑定店铺'
+          }
+        ]
+      })
+      const selectMap = new Map([
+        ['1', {
+          handle: () => commonUtils.addToFavorite(),
+          comment: '添加到收藏'
+        }],
+        ['2-1', {
+          handle: () => this.onLogout(),
+          comment: '退出'
+        }],
+        ['3', {
+          handle: () => this.$router.push({path: '/meizhe'}),
+          comment: '短信水印'
+        }],
+        ['4', {
+          handle: () => this.$router.push({path: '/woda'}),
+          comment: '打单发货'
+        }],
+        ['1-0', {
+          handle: () => this.$router.push({path: '/woda'}),
+          comment: '返回主账号'
+        }],
+        ['1-2', {
+          handle: () => {
+            if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
+            this.$router.push({ path: '/setting/shopbind' })
+          },
+          comment: '绑定店铺'
+        }],
+        ...bindShopList
+      ])
+      const value = selectMap.get(key)
+      if (value && value.handle) value.handle()
     },
     goInfo () {
       this.$router.push({
