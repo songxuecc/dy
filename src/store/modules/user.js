@@ -28,7 +28,8 @@ const state = {
     'item_name': '',
     'item_level': 0,
     'deadline': '',
-    'goods_assess_notify': {}
+    'goods_assess_notify': {},
+    'expire_notify': {}
   },
   updateJobIdList: (localStorage.getItem('update_job_id_list') ? localStorage.getItem('update_job_id_list').split(',') : [])
 }
@@ -282,7 +283,8 @@ const mutations = {
         'item_name': data.item_name,
         'item_level': data.item_level,
         'deadline': data.deadline,
-        'goods_assess_notify': data.goods_assess_notify
+        'goods_assess_notify': data.goods_assess_notify,
+        'expire_notify': data.expire_notify
       }
       state.orderTimes = data.order_times
       if (data.deadline) state.leftDays = utils.diffDate(data.deadline) + 1 // 剩余天数
