@@ -1,5 +1,5 @@
 <template lang="html">
-  <div style="height: 100%">
+  <div style="height: 100%" >
     <el-row :gutter="20" style="height: 100%">
       <el-col :span="8" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
         <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
@@ -88,26 +88,16 @@
                                     :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
                           </el-input>
                       </el-form-item>
-                    <el-form-item label="品牌:">
-                      <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
-                        <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
-                                   :label="item.brand_chinese_name || item.brand_english_name"
-                        ></el-option>
-                      </el-select>
-                      <el-button type="text" @click="reloadBrandList">
-                          <i class="el-icon-refresh"></i>
-                      </el-button>
-                      <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
-                               :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
-                      >添加品牌</el-link>
-                      <el-button size="mini" type="primary" @click="applySelectBrandToSelection()">应用到选中的商品</el-button>
-                    </el-form-item>
                     <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
                         <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
                     </el-form-item>
-                    <el-form-item v-show="haveAttr" label="抖音属性:">
-                        <attribute-view ref="attributeView" @selectFilter="selectFilter" @onAttrChanged="onAttrChanged" @updateAttrApplyCat="updateAttrApplyCat"
-                        ></attribute-view>
+                    <el-form-item  label="抖音属性:">
+                        <property-set
+                          @change="handlePropertyset"
+                          :attribute_json="attribute_json"
+                          :catId="product.model.cat_id"
+                          ref="propertySet"
+                          ></property-set>
                     </el-form-item>
                   </el-form>
                   <div class="common-bottom">
@@ -405,13 +395,14 @@
 <script>
 import picturesUploadView from '@/components/PicturesUploadView'
 import categorySelectView from '@/components/CategorySelectView'
-import attributeView from '@/components/AttributeView.vue'
+import PropertySet from '@/components/PropertySet.vue'
 import request from '@/mixins/request.js'
 import skuHandler from '@/mixins/skuHandler.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
 import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   inject: ['reload'],
@@ -419,7 +410,7 @@ export default {
   components: {
     picturesUploadView,
     categorySelectView,
-    attributeView
+    PropertySet
   },
   props: {
     belongType: {
@@ -591,10 +582,6 @@ export default {
         this.updateProperty(tpProduct.tp_product_id)
       } else {
         this.product = this.products[tpProduct.tp_product_id]
-        this.$refs.attributeView.setAttrRawDic(this.product.model.attrDic)
-        this.$refs.attributeView.setAttrShowList(this.product.model.attrList)
-        this.$refs.attributeView.setAttrApplyCatMap(this.attrApplyCatMap)
-        this.$refs.attributeView.reloadAttrShowList()
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
@@ -633,32 +620,27 @@ export default {
       }
       return 'info'
     },
-    updateProperty (tpProductId, catId = -1) {
+    updateProperty (tpProductId, catId) {
       this.isLoading = true
+      catId = this.product.model.cat_id || -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
-        this.$refs.attributeView.setAttrApplyCatMap({})
-        data.attribute_json = {}
-        this.haveAttr = this.$refs.attributeView.initAttribute(data.attribute_json, this.product.model.cat_id)
-
+        this.attribute_json = isEmpty(data.attribute_json) ? [] : data.attribute_json
         this.bannerPicUrlList = data.banner_json
         this.descPicUrlList = data.desc_json
         this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
         this.initSku(data.sku_json, data.tp_id)
         this.updateIsSingleSku()
-
         this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
         this.product.assign({bannerPicUrlList: data.banner_json})
         this.product.assign({descPicUrlList: data.desc_json})
-        this.product.assign({attrs: JSON.parse(JSON.stringify(this.$refs.attributeView.getAttrUploadList()))})
-        this.product.assign({attrDic: {...this.$refs.attributeView.attrRawDic}})
-        this.product.assign({attrList: [...this.$refs.attributeView.attrShowList]})
         this.product.assign({skuPropertyList: [...this.skuPropertyList]})
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
+        this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         if (data.brand_id) {
           this.product.assign({brand_id: data.brand_id})
         }
@@ -666,16 +648,12 @@ export default {
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
 
-        this.$refs.attributeView.setAttrApplyCatMap(this.attrApplyCatMap)
-        this.$refs.attributeView.reloadAttrShowList()
-
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
 
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }
-
         this.isLoading = false
       }, data => {
         if (tpProductId in this.products) {
@@ -707,6 +685,7 @@ export default {
         this.$refs.categorySelectView.initCate()
       }
     },
+    // 保存 修改的分类
     onChangeCate (data) {
       this.dialogVisible = false
       Object.assign(this.product.model, {cat_id: data.id})
@@ -718,11 +697,6 @@ export default {
     },
     onDescImageChanged (descPicUrlList) {
       Object.assign(this.product.model, {descPicUrlList: [...descPicUrlList]})
-    },
-    onAttrChanged (isRequiredComplete) {
-      Object.assign(this.product.model, {attrDic: {...this.$refs.attributeView.attrRawDic}})
-      Object.assign(this.product.model, {attrList: [...this.$refs.attributeView.attrShowList]})
-      this.isRequiredComplete = isRequiredComplete
     },
     selectFilter (templatePid, key, callback) {
       let params = {
@@ -789,15 +763,19 @@ export default {
         return 'background-color:rgb(179, 216, 255);'
       }
     },
-    onSaveProduct () {
-      this.productEditSavingPercent = 0
-      this.isProductEditSaving = true
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
+    // 保存编辑
+    async onSaveProduct () {
+      const validation = await this.$refs.propertySet.validate()
+      if (validation) {
+        this.productEditSavingPercent = 0
+        this.isProductEditSaving = true
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
+        }
+        this.saveProducts(this.product.model.cat_id)
       }
-      this.saveProducts()
     },
-    saveProducts (cid = -1, updateCategoryTPProductIds = []) {
+    saveProducts (catId = -1, updateCategoryTPProductIds = []) {
       let tpProductList = []
       let tpProductIdList = []
       for (let i in this.productList) {
@@ -813,7 +791,8 @@ export default {
               price: utils.yuanToFen(product.model.price),
               tp_outer_iid: product.model.outer_id,
               tp_property_json: {
-                attribute_json: this.$refs.attributeView.getAttrUploadListByShowList(product.model.attrList),
+                // 属性设置数据
+                attribute_json: this.product.model.attrList,
                 desc_text: product.model.description,
                 sku_json: this.getSkuUploadObjByShowList(product.model.skuShowList),
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
@@ -849,6 +828,7 @@ export default {
             productParams['tp_property_json'].remove_last_desc = true
             isChange = true
           }
+
           if (isChange) {
             tpProductList.push(productParams)
           }
@@ -858,13 +838,14 @@ export default {
           tpProductIdList.push(tpProductId)
         }
       }
-      this.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, this.attrApplyCatMap, 0, 0, cid, updateCategoryTPProductIds)
+      this.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, this.attrApplyCatMap, 0, 0, catId, updateCategoryTPProductIds)
     },
-    requestBatchUpdateTPProduct (tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx, tpProductIdListIdx, cid, updateCategoryTPProductIds) {
+    requestBatchUpdateTPProduct (tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx, tpProductIdListIdx, catId, updateCategoryTPProductIds) {
       let tpProductListSlice = []
       let tpProductIdListSlice = []
       let attrApplyCatMapTemp = {}
 
+      // TODO songxue 应用到全部商品属性时候 需要修改此处 tpProductIdListIdx attr_apply_map 字段
       if (tpProductListIdx < tpProductList.length) {
         tpProductListSlice = tpProductList.slice(tpProductListIdx, tpProductListIdx + 5)
       } else if (tpProductIdListIdx < tpProductIdList.length) {
@@ -889,7 +870,7 @@ export default {
         }
 
         if (tpProductListIdx >= tpProductList.length && tpProductIdListIdx >= tpProductIdList.length) {
-          if (cid !== -1) {
+          if (catId !== -1) {
             this.requestApplySelectCateToAll(this.product.model.cat_id, updateCategoryTPProductIds, 0, 50)
             return
           }
@@ -917,15 +898,15 @@ export default {
         } else {
           // 批量保存没完成继续处理
           let cnt = Math.min(tpProductListIdx + 5, tpProductList.length) + Math.min(tpProductIdListIdx + 5, tpProductIdList.length)
-          if (cid !== -1) {
+          if (catId !== -1) {
             self.productEditSavingPercent = parseInt(50 * cnt / (tpProductList.length + tpProductIdList.length))
           } else {
             self.productEditSavingPercent = parseInt(100 * cnt / (tpProductList.length + tpProductIdList.length))
           }
           if (tpProductListIdx < tpProductList.length) {
-            self.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx + 5, tpProductIdListIdx, cid, updateCategoryTPProductIds)
+            self.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx + 5, tpProductIdListIdx, catId, updateCategoryTPProductIds)
           } else {
-            self.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx, tpProductIdListIdx + 5, cid, updateCategoryTPProductIds)
+            self.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx, tpProductIdListIdx + 5, catId, updateCategoryTPProductIds)
           }
         }
       }, data => {
@@ -992,6 +973,7 @@ export default {
     isProductChange () {
       return this.updateProductEditStatus()
     },
+    // 还原
     onRevertProduct () {
       for (let i in this.products) {
         this.products[i].rollback()
@@ -1003,10 +985,7 @@ export default {
       }
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
-      this.$refs.attributeView.setAttrRawDic(this.product.model.attrDic)
-      this.$refs.attributeView.setAttrShowList(this.product.model.attrList)
-      this.$refs.attributeView.setAttrApplyCatMap(this.attrApplyCatMap)
-      this.$refs.attributeView.reloadAttrShowList()
+      this.$refs.propertySet.resetForm()
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.skuShowList = this.product.model.skuShowList
@@ -1029,7 +1008,7 @@ export default {
       this.updateAttrApplyCat({})
       this.$refs['bannerPicListView'].clear()
       this.$refs['descPicListView'].clear()
-      this.$refs['attributeView'].clear()
+      this.$refs['propertySet'].clearData()
     },
     handleMouseEnter (row, column, cell, event) {
       if (this.mouseOverIndex === row.index) {
@@ -1052,10 +1031,15 @@ export default {
         let tpProductId = this.productList[i].tp_product_id
         if (
           this.productDic[tpProductId].title !== this.productTitleDic[tpProductId] ||
+          // 单个商品修改
           (this.products[tpProductId] && this.products[tpProductId].isDiff()) ||
+          // 商品属性
           this.attrApplyCatMap[this.productList[i].category_id] ||
+          // banner修改
           (this.productRemoveFirstBannerDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.bannerPicUrlList.length > 1))) ||
+          // 详情图修改
           (this.productRemoveLastDescDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.descPicUrlList.length > 1))) ||
+          // 品牌详情修改
           (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId])
         ) {
           this.productDic[tpProductId].isEdit = true
@@ -1204,6 +1188,7 @@ export default {
         this.productTitleDic[this.product.model.tp_product_id] = val
       }
     },
+    // 批量修改分类
     applySelectCateToAll () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改类别'])
@@ -1324,6 +1309,10 @@ export default {
     },
     handlemouseleave (item) {
       this.$set(item, 'maskShow', false)
+    },
+    // 属性设置 回调
+    handlePropertyset: function (value) {
+      Object.assign(this.product.model, {attrList: value})
     }
   }
 }

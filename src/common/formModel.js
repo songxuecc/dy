@@ -15,7 +15,7 @@ class FormModel {
     this.model = Object.assign({}, this.model, obj)
     this.originModel = Object.assign({}, this.originModel, this.deepClone(obj))
   }
-  getDiff () {
+  getDiff (exclude = []) {
     let diff = {}
     let compareFields = this.compareFields
     if (compareFields.length === 0) { // this.compareFields 为空则比较所有 key
@@ -23,6 +23,9 @@ class FormModel {
     }
     for (let i in compareFields) {
       let key = compareFields[i]
+      if (exclude.includes(key)) {
+        continue
+      }
       let modelPrototype = Object.prototype.toString.call(this.model[key])
       let originModelPrototype = Object.prototype.toString.call(this.originModel[key])
       if (modelPrototype === '[object Undefined]') {
@@ -35,7 +38,7 @@ class FormModel {
         diff[key] = this.model[key]
       } else if (modelPrototype === '[object Object]' || modelPrototype === '[object Array]') {
         // Object, Array 的情况
-        if (!utils.isObjectValueEqual(this.model[key], this.originModel[key])) {
+        if (!utils.isObjectValueEqual(this.model[key], this.originModel[key], exclude)) {
           diff[key] = this.model[key]
         }
       } else {
@@ -47,8 +50,8 @@ class FormModel {
     }
     return diff
   }
-  isDiff () {
-    let diff = this.getDiff()
+  isDiff (exclude = []) {
+    let diff = this.getDiff(exclude)
     return Object.entries(diff).length > 0
   }
   checkNumber (key) {
