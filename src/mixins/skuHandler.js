@@ -233,6 +233,7 @@ export default {
       this.stockHandler.handleSkus(this.skuShowList)
     },
     batchEditPromoPrice () {
+      console.log(this.skuShowList)
       this.promoPriceHandler.handleSkus(this.skuShowList, 'promo_price')
     },
     batchEditPrice () {

@@ -1,8 +1,46 @@
 <template lang="html">
-    <div v-loading="loadingCnt">
-        <el-table ref="skuListTable" :data="skuRealShowList" row-key="tp_product_id" border style="width: 100%"
-                  :cell-class-name="cellClassName"
-        >
+    <div v-loading="loadingCnt" class="SkuPriceListView">
+      <!-- 顶部价格修改输入框 -->
+        <div class="priceChange">
+          <div class="radios">
+            <el-radio v-model="promoPriceHandler.radio" label="6">
+              <span>(原价-</span>
+              <el-input
+                size="mini"
+                style="width:100px;"
+                v-model="promoPriceHandler.arithmetic.subtraction1 "
+                @focus="promoPriceHandler.radio='6'"/>
+              <span>) x</span>
+              <el-input
+                size="mini"
+                style="width:100px;"
+                v-model="promoPriceHandler.arithmetic.subtraction2"
+                @focus="promoPriceHandler.radio='6'"/>
+              <span>% -</span>
+              <el-input
+                size="mini"
+                style="width:100px;"
+                v-model="promoPriceHandler.arithmetic.subtraction3"
+                @focus="promoPriceHandler.radio='6'"/>
+            </el-radio>
+            <el-radio v-model="promoPriceHandler.radio" label="7">
+              <span>统一价格为</span>
+              <el-input
+                size="mini"
+                style="width:100px;"
+                v-model="promoPriceHandler.textPrice"
+                @focus="promoPriceHandler.radio='7'" />
+            </el-radio>
+          </div>
+
+        </div>
+        <!-- sku价格表 -->
+        <el-table
+          ref="skuListTable"
+          :data="skuRealShowList"
+          row-key="tp_product_id"
+          style="width: 100%"
+          :cell-class-name="cellClassName">
             <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id">
                 <template slot="header" slot-scope="scope">
                     <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.name }}</span>
@@ -27,16 +65,20 @@
                 </template>
             </el-table-column>
             <!-- sku售价 start-->
-            <el-table-column key="3" width="200" align="center">
+            <el-table-column key="3" width="150" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>售价</span>
-                    <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>
+                    <span>sku价格</span>
+                    <!-- <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button> -->
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
-                        <div style="width: 182px; padding-left: 18px;">
-                            <el-input v-model="scope.row.promo_price" size="mini" @input="inputChange(scope.row,'promo_price')"
-                                      :class="['input-medium', promoPriceClass(scope.row,scope.$index)]"
+                        <div >
+                            <el-input
+                              v-model="scope.row.promo_price"
+                              size="mini"
+                              @input="inputChange(scope.row,'promo_price')"
+                              :class="['input-medium', promoPriceClass(scope.row,scope.$index)]"
+                              style="width: 100%; "
                             >
                                 <i class="el-icon-error el-input__icon"
                                    v-if="isEdited(scope.row, 'promo_price')"
@@ -45,9 +87,9 @@
                                 </i>
                             </el-input>
                         </div>
-                        <div style="width: 18px; display:flex; align-items:center;">
+                        <div style="width: 16px; display:flex; align-items:center;">
                             <el-tooltip v-if="scope.row.msgGroupError !== ''" placement="top" :content="scope.row.msgGroupError">
-                                <span style="display:inline-block; height:18px; line-height:18px; font-size: 18px;">
+                                <span style="display:inline-block; height:16px; line-height:16px; font-size: 16px;">
                                     <i class="el-icon-warning warn" style=""></i>
                                 </span>
                             </el-tooltip>
@@ -57,13 +99,13 @@
             </el-table-column>
             <!-- sku售价 end-->
             <!-- sku原价 start-->
-            <el-table-column key="3" width="200" align="center">
+            <el-table-column key="3" width="150" align="center">
                 <template slot="header" slot-scope="scope">
                     <span>原价</span>
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
-                        <div class="great" style="width: 182px; padding-left: 18px; font-size: 22px;">
+                        <div class="great" style="width: 100%; padding-left: 18px; font-size: 16px;">
                           {{scope.row.originPrice}}
                         </div>
                     </div>
@@ -76,7 +118,10 @@
                 </template>
             </el-table-column>
         </el-table>
-
+        <div class="btns">
+          <el-button style="width: 120px" @click="handleCancelBatchEdit">取消</el-button>
+          <el-button style="width: 120px" type="primary" @click="handleSureBatchEdut">确定</el-button>
+        </div>
         <el-dialog title="批量修改售卖价" width="400px" :visible.sync="dialogPromoPriceVisible" append-to-body center>
             <div>
                 <el-radio v-model="promoPriceHandler.radio" label="1">
@@ -167,32 +212,68 @@
                     <el-button @click="dialogPriceVisible = false">取消</el-button>
                 </div>
             </div>
+
         </el-dialog>
     </div>
 </template>
 <script>
+
 import request from '@/mixins/request.js'
 import skuHandler from '@/mixins/skuHandler.js'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
-
+import { PriceHandler } from '@/common/batchEditHandler'
+import cloneDeep from 'lodash/cloneDeep'
 export default {
   mixins: [request, skuHandler],
   components: {},
   props: {
     template: FormModel,
-    tpProduct: null
+    tpProduct: null,
+    defaultValue: Object
   },
   data () {
+    const model = Object.assign(this.template.model, {})
+    const arithmetic = cloneDeep(this.defaultValue || {
+      subtraction1: model.origin_price_diff || 0,
+      subtraction2: model.group_price_rate || 100,
+      subtraction3: model.group_price_diff || 0
+    })
     return {
       dialogPromoPriceVisible: false,
       dialogPriceVisible: false,
       warnMsg: '',
-      dicCustomPrices: {}
+      dicCustomPrices: {},
+      promoPriceHandler: new PriceHandler({
+        defaultRadio: '6',
+        arithmetic,
+        name: 'arithmetic'
+      })
     }
   },
-  computed: {},
-  mounted () {
+  watch: {
+    promoPriceHandler: {
+      handler: function (newVal) {
+        this.handleBatchPromoPrice()
+      },
+      deep: true
+    },
+    template: {
+      handler: function (newVal) {
+        const model = Object.assign(this.template.model, {})
+        const arithmetic = cloneDeep(this.defaultValue || {
+          subtraction1: model.origin_price_diff || 0,
+          subtraction2: model.group_price_rate || 100,
+          subtraction3: model.group_price_diff || 0
+        })
+        this.promoPriceHandler = new PriceHandler({
+          defaultRadio: '6',
+          arithmetic,
+          name: 'arithmetic'
+        })
+      },
+      deep: true
+    }
   },
   methods: {
     promoPriceClass (sku, index) {
@@ -275,6 +356,11 @@ export default {
       }
       this.checkSkuPrice()
     },
+    // 保持和原始价格一致
+    batchEditPromoPrice () {
+      this.promoPriceHandler.handleSkus(this.skuShowList, 'promo_price', 'original_promo_price')
+    },
+    // 批量修改价格
     handleBatchPromoPrice () {
       this.batchEditPromoPrice()
       for (let i in this.skuShowList) {
@@ -319,6 +405,28 @@ export default {
       }
       this.checkSkuPrice()
     },
+    // 批量取消
+    handleCancelBatchEdit () {
+      const arithmetic = this.defaultValue || {
+        subtraction1: this.template.model.origin_price_diff || 0,
+        subtraction2: this.template.model.group_price_rate || 100,
+        subtraction3: this.template.model.group_price_diff || 0
+      }
+      // 初始化设置
+      this.promoPriceHandler = new PriceHandler({
+        defaultRadio: '6',
+        arithmetic,
+        name: 'arithmetic'
+      })
+      // 价格初始化
+      this.skuRealShowList.forEach(sku => {
+        this.handleCancelEdit(sku, 'promo_price')
+      })
+      this.$emit('closeSkuPriceListView')
+    },
+    handleSureBatchEdut () {
+      this.$emit('closeSkuPriceListView')
+    },
     handleCancelEdit (sku, field) {
       sku[field + '_obj'].rollback()
       sku[field] = sku[field + '_obj'].model.price
@@ -350,6 +458,11 @@ export default {
           this.deleteCustomPrices(skuShow.property_key, 'price')
         }
       }
+      return {
+        subtraction1: this.promoPriceHandler.arithmetic.subtraction1,
+        subtraction2: this.promoPriceHandler.arithmetic.subtraction2,
+        subtraction3: this.promoPriceHandler.arithmetic.subtraction3
+      }
     },
     addCustomPrices (key, field, value) {
       if (!this.dicCustomPrices[key]) {
@@ -370,4 +483,36 @@ export default {
 </script>
 <style lang="less" scoped>
     @import '~@/assets/css/migratesetting.less';
+    .SkuPriceListView {
+      /deep/ .el-table td, .el-table th{
+        padding: 2px 0 !important;
+      }
+      .priceChange{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background: #F3F9FF;
+        border: 1px dashed #1D8FFF;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        span {
+            font-size: 12px;
+            color: #4E4E4E;
+          }
+        /deep/ .el-input__inner{
+          font-size:18px;
+          color:#1D8FFF;
+        }
+
+        .radios{
+          margin-top: 20px;
+        }
+      }
+      .btns{
+        margin-top: 20px ;
+        display: flex;
+        justify-content: center;
+      }
+    }
 </style>

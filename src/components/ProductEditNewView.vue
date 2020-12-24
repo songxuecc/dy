@@ -201,7 +201,32 @@
                       </el-table-column>
                       <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
-                              <img style="height:40px" :src="scope.row.img">
+                            <div class="preview">
+                              <el-popover
+                                placement="left"
+                                title=""
+                                :value="scope.row.maskShow">
+                                <img :src="scope.row.img" style="width: 250px;"/>
+                                <el-upload
+                                    slot="reference"
+                                    class="el-upload el-upload--picture-card"
+                                    :show-file-list="false"
+                                    :on-success="(response, file, fileList) => handleUploadSuccess(response, file, fileList, scope.row)"
+                                    :on-error="handleUploadError"
+                                    :before-upload="handleBeforeUpload"
+                                    action="/api/image/create"
+                                    :headers="getTokenHeaders"
+                                    :data="{'belong_type': belongType}"
+                                    :multiple="false"
+                                    style="width:50px; height: 50px; line-height: 80px;"
+                                >
+                                    <img :src="scope.row.img" style="width: 40px; display: block;"/>
+                                    <div :class="['mask' ,scope.row.maskShow ? 'show':'' ]" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
+                                      <icon-svg iconClass="tihuan" style="width:20px; height:20px"></icon-svg>
+                                    </div>
+                                </el-upload>
+                              </el-popover>
+                            </div>
                           </template>
                       </el-table-column>
                       <el-table-column key="7" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
@@ -1289,10 +1314,16 @@ export default {
         }
         return
       }
-      row.img = response.data.image_url
+      row.img = response.data.url
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
+    },
+    handlemouseover (item) {
+      this.$set(item, 'maskShow', true)
+    },
+    handlemouseleave (item) {
+      this.$set(item, 'maskShow', false)
     }
   }
 }
@@ -1308,5 +1339,34 @@ export default {
   }
   /deep/ .cell {
     overflow: unset;
+  }
+  .preview {
+    /deep/ .el-upload {
+      position: relative;
+    }
+    /deep/ .el-upload--picture-card i{
+      font-size: 20px;
+    }
+    /deep/ .el-upload--picture-card i {
+      color: #fff;
+    }
+    .mask {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      cursor: default;
+      text-align: center;
+      color: #fff;
+      opacity:0;
+      font-size: 20px;
+      background-color: rgba(0,0,0,.5);
+      transition: opacity .3s;
+      line-height: 40px;
+    }
+    .show {
+      opacity: 1;
+    }
   }
 </style>
