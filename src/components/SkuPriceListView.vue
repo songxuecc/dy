@@ -32,10 +32,7 @@
                 @focus="promoPriceHandler.radio='7'" />
             </el-radio>
           </div>
-          <div class="btns">
-            <el-button style="width: 120px" @click="handleCancelBatchEdit">取消</el-button>
-            <el-button style="width: 120px" type="primary" @click="handleBatchPromoPrice">确定</el-button>
-          </div>
+
         </div>
         <!-- sku价格表 -->
         <el-table
@@ -121,7 +118,10 @@
                 </template>
             </el-table-column>
         </el-table>
-
+        <div class="btns">
+          <el-button style="width: 120px" @click="handleCancelBatchEdit">取消</el-button>
+          <el-button style="width: 120px" type="primary" @click="handleSureBatchEdut">确定</el-button>
+        </div>
         <el-dialog title="批量修改售卖价" width="400px" :visible.sync="dialogPromoPriceVisible" append-to-body center>
             <div>
                 <el-radio v-model="promoPriceHandler.radio" label="1">
@@ -212,6 +212,7 @@
                     <el-button @click="dialogPriceVisible = false">取消</el-button>
                 </div>
             </div>
+
         </el-dialog>
     </div>
 </template>
@@ -222,7 +223,7 @@ import skuHandler from '@/mixins/skuHandler.js'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
 import { PriceHandler } from '@/common/batchEditHandler'
-
+import cloneDeep from 'lodash/cloneDeep'
 export default {
   mixins: [request, skuHandler],
   components: {},
@@ -232,11 +233,12 @@ export default {
     defaultValue: Object
   },
   data () {
-    const arithmetic = this.defaultValue || {
-      subtraction1: this.template.model.origin_price_diff || 0,
-      subtraction2: this.template.model.group_price_rate || 100,
-      subtraction3: this.template.model.group_price_diff || 0
-    }
+    const model = Object.assign(this.template.model, {})
+    const arithmetic = cloneDeep(this.defaultValue || {
+      subtraction1: model.origin_price_diff || 0,
+      subtraction2: model.group_price_rate || 100,
+      subtraction3: model.group_price_diff || 0
+    })
     return {
       dialogPromoPriceVisible: false,
       dialogPriceVisible: false,
@@ -246,15 +248,34 @@ export default {
         defaultRadio: '6',
         arithmetic,
         name: 'arithmetic'
-      }),
-      initialValue: {...arithmetic}
+      })
+    }
+  },
+  watch: {
+    promoPriceHandler: {
+      handler: function (newVal) {
+        this.handleBatchPromoPrice()
+      },
+      deep: true
+    },
+    template: {
+      handler: function (newVal) {
+        const model = Object.assign(this.template.model, {})
+        const arithmetic = cloneDeep(this.defaultValue || {
+          subtraction1: model.origin_price_diff || 0,
+          subtraction2: model.group_price_rate || 100,
+          subtraction3: model.group_price_diff || 0
+        })
+        this.promoPriceHandler = new PriceHandler({
+          defaultRadio: '6',
+          arithmetic,
+          name: 'arithmetic'
+        })
+      },
+      deep: true
     }
   },
   methods: {
-    // 保持和原始价格一致
-    batchEditPromoPrice () {
-      this.promoPriceHandler.handleSkus(this.skuShowList, 'promo_price', 'original_promo_price')
-    },
     promoPriceClass (sku, index) {
       sku.promo_price_obj.model.price = sku.promo_price
       if (index !== undefined) {
@@ -335,6 +356,11 @@ export default {
       }
       this.checkSkuPrice()
     },
+    // 保持和原始价格一致
+    batchEditPromoPrice () {
+      this.promoPriceHandler.handleSkus(this.skuShowList, 'promo_price', 'original_promo_price')
+    },
+    // 批量修改价格
     handleBatchPromoPrice () {
       this.batchEditPromoPrice()
       for (let i in this.skuShowList) {
@@ -379,13 +405,27 @@ export default {
       }
       this.checkSkuPrice()
     },
+    // 批量取消
     handleCancelBatchEdit () {
+      const arithmetic = this.defaultValue || {
+        subtraction1: this.template.model.origin_price_diff || 0,
+        subtraction2: this.template.model.group_price_rate || 100,
+        subtraction3: this.template.model.group_price_diff || 0
+      }
+      // 初始化设置
+      this.promoPriceHandler = new PriceHandler({
+        defaultRadio: '6',
+        arithmetic,
+        name: 'arithmetic'
+      })
       // 价格初始化
       this.skuRealShowList.forEach(sku => {
         this.handleCancelEdit(sku, 'promo_price')
       })
-      // sku价格也初始化
-      this.promoPriceHandler.setState({arithmetic: this.initialValue})
+      this.$emit('closeSkuPriceListView')
+    },
+    handleSureBatchEdut () {
+      this.$emit('closeSkuPriceListView')
     },
     handleCancelEdit (sku, field) {
       sku[field + '_obj'].rollback()
@@ -455,6 +495,7 @@ export default {
         background: #F3F9FF;
         border: 1px dashed #1D8FFF;
         margin-bottom: 20px;
+        padding-bottom: 20px;
         span {
             font-size: 12px;
             color: #4E4E4E;
@@ -467,10 +508,11 @@ export default {
         .radios{
           margin-top: 20px;
         }
-        .btns{
-          margin: 20px auto;
-        }
       }
-
+      .btns{
+        margin-top: 20px ;
+        display: flex;
+        justify-content: center;
+      }
     }
 </style>

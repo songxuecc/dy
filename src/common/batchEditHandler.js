@@ -114,11 +114,6 @@ class PriceHandler {
     this.checked = true
     this._radio = val
   }
-  setState = (value) => {
-    Object.keys(value).forEach(key => {
-      this[key] = value[key]
-    })
-  }
   handleProducts (productList, field = 'price') {
     for (let i in productList) {
       let product = productList[i]

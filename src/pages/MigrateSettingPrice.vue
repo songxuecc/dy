@@ -228,6 +228,7 @@
         ref="skuPriceListView"
         :defaultValue="skuPriceListViewMapActive"
         :template="template"
+        @closeSkuPriceListView="closeSkuPriceListView"
         :tpProduct="selectTpProduct" />
     </el-dialog>
     <el-dialog
@@ -743,11 +744,16 @@ export default {
       this.skuPriceListViewMapActive = this.skuPriceListViewMap.get(tpProductId)
       this.$refs.skuPriceListView.init(skuCustomPrices)
     },
+    closeSkuPriceListView () {
+      // this.dialogSkuPriceClose()
+      this.dialogSkuPriceVisible = false
+    },
     dialogSkuPriceClose () {
       const arithmetic = this.$refs.skuPriceListView.onSave()
       let tpProductId = this.selectTpProduct.tp_product_id
       if (arithmetic) {
         if (
+          // 当前总编辑价格 和 单个sku编辑价格 完全相同 则不展示当前价格算法
           arithmetic.subtraction1 === this.template.model.origin_price_diff ||
           arithmetic.subtraction2 === this.template.model.group_price_rate ||
           arithmetic.subtraction3 === this.template.model.group_price_diff
