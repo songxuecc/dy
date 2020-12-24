@@ -76,6 +76,11 @@
                             <i class="el-icon-warning warn" style=""></i>
                         </span>
           </el-tooltip>
+          <span v-if="skuPriceListViewMap.get(scope.row.tp_product_id)">
+            (售价-{{ skuPriceListViewMap.get(scope.row.tp_product_id).subtraction1}})
+            -{{ skuPriceListViewMap.get(scope.row.tp_product_id).subtraction2}}
+            %-{{ skuPriceListViewMap.get(scope.row.tp_product_id).subtraction3}}
+          </span>
         </template>
       </el-table-column>
       <!-- sku价格 end -->
@@ -210,11 +215,21 @@
                 </span>
       </el-tooltip>
     </div>
-    <el-dialog title="sku价格设置" :visible.sync="dialogSkuPriceVisible" width="900px" append-to-body center
-               @opened="dialogSkuPriceOpened"  @close="dialogSkuPriceClose"
+    <el-dialog
+      center
+      append-to-body
+      title="批量修改单商品sku价格"
+      :visible.sync="dialogSkuPriceVisible"
+      width="900px"
+      @opened="dialogSkuPriceOpened"
+      @close="dialogSkuPriceClose"
     >
-      <sku-price-list-view ref="skuPriceListView" :template="template" :tpProduct="selectTpProduct">
-      </sku-price-list-view>
+      <sku-price-list-view
+        ref="skuPriceListView"
+        :defaultValue="skuPriceListViewMapActive"
+        :template="template"
+        @closeSkuPriceListView="closeSkuPriceListView"
+        :tpProduct="selectTpProduct" />
     </el-dialog>
     <el-dialog
       title="价格示例"
@@ -256,7 +271,9 @@ export default {
         total: 0
       },
       isShowSample: false,
-      isMounted: true
+      isMounted: true,
+      skuPriceListViewMap: new Map(),
+      skuPriceListViewMapActive: undefined
     }
   },
   computed: {
@@ -499,6 +516,13 @@ export default {
           this.addCustomPrices(tpProduct.tp_product_id, 'last_discount_price', Math.round(tpProduct.discount_price_obj.model.price * 100))
         }
       }
+      // Object.keys(this.skuPriceListViewMap).forEach(key => {
+      //   this.skuPriceListViewMap.set(key, {
+      //     subtraction1: this.template.model.origin_price_diff,
+      //     subtraction2: this.template.model.group_price_rate,
+      //     subtraction3: this.template.model.group_price_diff
+      //   })
+      // })
     },
     /**
      * 更新划线价
@@ -717,11 +741,43 @@ export default {
       if (this.dicCustomPrices[tpProductId] && this.dicCustomPrices[tpProductId]['sku']) {
         skuCustomPrices = this.dicCustomPrices[tpProductId]['sku']
       }
+      this.skuPriceListViewMapActive = this.skuPriceListViewMap.get(tpProductId)
       this.$refs.skuPriceListView.init(skuCustomPrices)
     },
+    closeSkuPriceListView () {
+      // this.dialogSkuPriceClose()
+      this.dialogSkuPriceVisible = false
+    },
     dialogSkuPriceClose () {
-      this.$refs.skuPriceListView.onSave()
+      const arithmetic = this.$refs.skuPriceListView.onSave()
       let tpProductId = this.selectTpProduct.tp_product_id
+      if (arithmetic) {
+        if (
+          // 当前总编辑价格 和 单个sku编辑价格 完全相同 则不展示当前价格算法
+          arithmetic.subtraction1 === this.template.model.origin_price_diff ||
+          arithmetic.subtraction2 === this.template.model.group_price_rate ||
+          arithmetic.subtraction3 === this.template.model.group_price_diff
+        ) {
+          this.skuPriceListViewMap.set(tpProductId, undefined)
+        }
+        if (
+          // 当前总编辑价格和 单个sku编辑价格有不同
+          arithmetic.subtraction1 !== this.template.model.origin_price_diff ||
+          arithmetic.subtraction2 !== this.template.model.group_price_rate ||
+          arithmetic.subtraction3 !== this.template.model.group_price_diff
+        ) {
+          this.skuPriceListViewMap.set(tpProductId, arithmetic)
+        }
+        // 当前单个sku价格和 单个sku编辑价格有不同
+        // const oldArithmetic = this.skuPriceListViewMap.get(tpProductId)
+        // if (
+        //   arithmetic.subtraction1 !== oldArithmetic.subtraction1 ||
+        //   arithmetic.subtraction2 !== oldArithmetic.subtraction2 ||
+        //   arithmetic.subtraction3 !== oldArithmetic.subtraction3
+        // ) {
+        //   this.skuPriceListViewMap.set(tpProductId, arithmetic)
+        // }
+      }
       let skuCustomPrices = this.$refs.skuPriceListView.dicCustomPrices
 
       if (Object.entries(skuCustomPrices).length === 0) {

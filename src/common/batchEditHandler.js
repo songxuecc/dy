@@ -93,14 +93,19 @@ class StockHandler {
 }
 
 class PriceHandler {
-  constructor () {
+  constructor (options) {
     this.checked = false
-    this._radio = '1'
+    this._radio = (options && options.defaultRadio) || '1'
     this.textPrice = ''
     this.textPriceAdd = ''
     this.textPriceSub = ''
     this.textPricePercentAdd = ''
     this.textPricePercentSub = ''
+    this.arithmetic = (options && options.arithmetic) || {
+      subtraction1: 0,
+      subtraction2: 100,
+      subtraction3: 0
+    }
   }
   get radio () {
     return this._radio
@@ -132,7 +137,7 @@ class PriceHandler {
       }
     }
   }
-  handleSkus (skuShowList, field) {
+  handleSkus (skuShowList, field, originField) {
     for (let i in skuShowList) {
       let sku = skuShowList[i]
       if (!sku.hidden) {
@@ -146,6 +151,11 @@ class PriceHandler {
           sku[field] = parseFloat(sku[field]) * (1 + parseFloat(this.textPricePercentAdd) / 100)
         } else if (parseInt(this._radio) === 5 && utils.isNumber(this.textPricePercentSub)) {
           sku[field] = parseFloat(sku[field]) * (1 - parseFloat(this.textPricePercentSub) / 100)
+        } else if (parseInt(this._radio) === 6 && utils.isNumber(this.arithmetic.subtraction1) && utils.isNumber(this.arithmetic.subtraction2) && utils.isNumber(this.arithmetic.subtraction3)) {
+          // 保持和原始价格一致
+          sku[field] = parseFloat((sku[originField] - this.arithmetic.subtraction1) * (this.arithmetic.subtraction2 / 100) - this.arithmetic.subtraction3)
+        } else if (parseInt(this._radio) === 7 && utils.isNumber(this.textPrice)) {
+          sku[field] = parseFloat(this.textPrice)
         }
         sku[field] = Math.max(sku[field], 0)
         sku[field] = Math.round(sku[field] * 100) / 100
