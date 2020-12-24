@@ -37,7 +37,7 @@
                 v-model="model[item.name]"
                 v-else
               />
-            <span v-if="item.name === '品牌'">
+            <!-- <span v-if="item.name === '品牌'">
                 <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i></el-button>
                 <el-link
                     type="primary"
@@ -46,7 +46,7 @@
                     :href="`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`">
                     添加品牌
                 </el-link>
-            </span>
+            </span> -->
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
                 <div >
                     <p style="color:red;font-size:12px">当前商品所选类目根据官方要求必须填写品牌。</p>

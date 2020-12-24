@@ -88,6 +88,20 @@
                                     :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
                           </el-input>
                       </el-form-item>
+                      <el-form-item label="品牌:">
+                        <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
+                          <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
+                                    :label="item.brand_chinese_name || item.brand_english_name"
+                          ></el-option>
+                        </el-select>
+                        <el-button type="text" @click="reloadBrandList">
+                            <i class="el-icon-refresh"></i>
+                        </el-button>
+                        <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
+                                :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
+                        >添加品牌</el-link>
+                        <el-button size="mini" type="primary" @click="applySelectBrandToSelection()">应用到选中的商品</el-button>
+                      </el-form-item>
                     <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
                         <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
                     </el-form-item>
