@@ -10,6 +10,8 @@ import notification from './modules/notification'
 import picture from './modules/picture'
 import controller from './modules/controller'
 
+import moving from './modules/moving'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -22,6 +24,7 @@ export default new Vuex.Store({
     subscrible,
     notification,
     picture,
-    controller
+    controller,
+    ...moving
   }
 })
