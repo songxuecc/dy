@@ -3,6 +3,7 @@ import Api from '@/api/apis'
 // const api = hhgjAPIs.hhgjAPIs
 import FormModel from '@/common/formModel'
 
+// 店铺绑定
 export default {
   namespaced: 'migrateShopsBand',
   state: () => ({

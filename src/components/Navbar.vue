@@ -172,7 +172,7 @@ export default {
         ['1-2', {
           handle: () => {
             if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
-            this.$router.push({ path: '/setting/shopbind' })
+            this.$router.push({ path: '/setting/shopsBand' })
           },
           comment: '绑定店铺'
         }],

@@ -1,5 +1,5 @@
-import migrateShopsBand from './migrateShopsBand'
+import shopsBand from './shopsBand'
 
 export default {
-  migrateShopsBand
+  shopsBand
 }
