@@ -18,10 +18,11 @@ export default {
 <style lang="less" scoped>
 .EditHowToBindStore{
   width: 473px;
-  height: 333px;
+  height: 276px;
   background: #FFFFFF;
-  box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.04);
-  border-radius: 10px;
   border: 1px solid #F2F2F2;
+  box-shadow: 0 4px 14px 0 rgba(0,0,0,0.04);
+  border-radius: 10px;
+  border-radius: 10px;
 }
 </style>

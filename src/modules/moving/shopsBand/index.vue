@@ -1,10 +1,10 @@
 <!-- /setting/shopbind 绑定店铺-->
 <template>
   <div class='setting-shopbind'>
-    <el-row>
-        <el-col :span="12"><CardRealizableAfterBind /></el-col>
-        <el-col :span="12"><EditHowToBindStore /></el-col>
-    </el-row>
+    <div class="section">
+      <CardRealizableAfterBind class="CardRealizableAfterBind"/>
+      <EditHowToBindStore />
+    </div>
     <TableShopManagement />
   </div>
 </template>
@@ -44,7 +44,12 @@ export default {
 <style lang='less' scoped>
 
 .setting-shopbind {
-    // padding: 40px 0 30px 28px;
+    .section{
+      display: flex;
+      .CardRealizableAfterBind {
+        margin-right: 20px;
+      }
+    }
 }
 
 </style>

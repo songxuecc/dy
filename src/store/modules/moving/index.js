@@ -1,5 +1,11 @@
 import shopsBand from './shopsBand'
 
-export default {
-  shopsBand
+const modules = {
+  moving: {
+    namespaced: true,
+    modules: {
+      shopsBand
+    }
+  }
 }
+export default modules
