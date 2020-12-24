@@ -149,6 +149,7 @@ export default {
     // 重置
     resetForm () {
       this.$refs.propertySet.resetFields()
+      this.validation = {}
     },
     // 清空
     handleClear (name) {
