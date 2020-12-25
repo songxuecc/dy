@@ -1,6 +1,7 @@
 <!-- 店铺绑定列表 -->
 <template>
     <div>
+    <button @click="handleClick">testBtn</button>
     <el-table
       :data="tableData"
       style="width: 100%">
@@ -39,10 +40,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getTPProductByIds'])
+    ...mapActions(['getTPProductByIds']),
+    async handleClick  () {
+      const items = await this.getTPProductByIds({})
+      console.log('handleClick')
+      console.log(items)
+    }
   },
   computed: {
-    ...mapState(['tpProductList', 'captureIdList', 'tableData'])
+    ...mapState(['items', 'captureIdList', 'tableData'])
   }
 
 }
