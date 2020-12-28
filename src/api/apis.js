@@ -269,6 +269,9 @@ const hhgjAPIs = {
   },
   createStatisticsEvent: (params) => {
     return api.actionCreatorPost('/api/statisticsEvent/create', params)
+  },
+  postBindSuthCodeCreate: (params) => {
+    return api.actionCreatorPost('/api/user/bind/authCode/create', params)
   }
 }
 

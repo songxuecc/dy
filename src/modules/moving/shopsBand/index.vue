@@ -5,6 +5,7 @@
       <CardRealizableAfterBind class="CardRealizableAfterBind"/>
       <EditHowToBindStore />
     </div>
+
     <TableShopManagement />
   </div>
 </template>
@@ -44,11 +45,16 @@ export default {
 <style lang='less' scoped>
 
 .setting-shopbind {
+  text-align:left;
     .section{
       display: flex;
+      margin-bottom: 30px;
       .CardRealizableAfterBind {
         margin-right: 20px;
       }
+    }
+    .radio {
+      margin-bottom: 14px;
     }
 }
 

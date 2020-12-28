@@ -26,7 +26,6 @@ const modules = {
   ...moving
 }
 
-console.log(modules)
 export default new Vuex.Store({
   modules
 })

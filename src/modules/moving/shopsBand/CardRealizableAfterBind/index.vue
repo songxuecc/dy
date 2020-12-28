@@ -3,7 +3,7 @@
     <div class="CardRealizableAfterBind">
       <h1>绑定后可实现</h1>
       <div v-for="(item,index) in list" :key="index" :class="['item', index === list.length-1 ? 'no-margin-bottom' :'']">
-          <hh-icon :type="item.type" class="icon">888</hh-icon>
+          <img :src="item.type" alt="图片" class="icon">
             <div>
               <h3>{{item.h3}}<span v-if="item.extra" class="extra">666</span></h3>
               <span>{{item.span}}</span>
@@ -13,6 +13,9 @@
 </template>
 
 <script>
+import keyTab from './keyTab.png'
+import moving from './moving.png'
+import paintBoard from './paintBoard.png'
 export default {
   name: 'CardRealizableAfterBind',
   props: {
@@ -22,18 +25,18 @@ export default {
     return {
       list: [
         {
-          type: '',
+          type: moving,
           h3: '搬家上货至多个店铺',
           span: '绑定后，一次复制可以搬家至主店铺a和它所有子店铺bcd',
           extra: true
         },
         {
-          type: '',
+          type: paintBoard,
           h3: '各店铺间商品相互同步',
           span: '主店铺a和它所有子店铺bcd的商品可以相互同步'
         },
         {
-          type: '',
+          type: keyTab,
           h3: '店铺一键切换登录',
           span: '绑定后，主店铺a和它所有子店铺bcd间可以相互切换账号登录(顶部导航栏“多店铺管理”处切换）'
         }
@@ -88,6 +91,7 @@ export default {
     width: 44px;
     height: 44px;
     flex-shrink: 0;
+    margin-right: 10px;
   }
 
 }
