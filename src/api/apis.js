@@ -272,6 +272,12 @@ const hhgjAPIs = {
   },
   postBindSuthCodeCreate: (params) => {
     return api.actionCreatorPost('/api/user/bind/authCode/create', params)
+  },
+  postUserBindCreate: (params) => {
+    return api.actionCreatorPost('/api/user/bind/create', params)
+  },
+  deleteUserBind: (params) => {
+    return api.actionCreatorPost('/api/user/bind/delete', params)
   }
 }
 

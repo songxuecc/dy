@@ -12,31 +12,21 @@
                 <el-button type="primary" @click="goToServiceMarket">购买</el-button>
                 <el-button type="primary" @click="onLogin">登录</el-button>
               </div>
-              <ul v-if="shopName" class="menu-content">
-                <li @click="goToOrder()">
-                  <span style="vertical-align: middle;">{{subscName}} 剩 {{leftDays}} 天</span>
-                  <img style="height: 28px; display: inline-block; position: relative; top: -1px; cursor: pointer" src="../assets/images/reorder.gif" />
-                </li>
-              </ul>
+              <div class="manageShops" @click="manageShops"> 多店铺管理 </div>
+               <el-menu  class="el-menu-demo" mode="horizontal" @select="handleSelect">
 
-              <el-menu  class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                <el-submenu index="1" popper-class="nav-menu-popup">
-                  <template slot="title">多店铺管理</template>
-                  <el-submenu >
-                    <template slot="title">切换店铺</template>
-                    <el-menu-item index="1-0"><el-button type="text">返回主账号</el-button></el-menu-item>
-                    <el-menu-item v-for="(bindShop,index) in bindChildShopList" :key="bindShop.user_id" :index="`${bindShop.user_id}-${index}`">
-                      {{bindShop.mall_name}}
-                    </el-menu-item>
-                  </el-submenu>
-                  <el-menu-item index="1-2">绑定店铺</el-menu-item>
-                </el-submenu>
                 <!-- <el-submenu index="3" popper-class="nav-menu-popup">
                   <template slot="title">{{ mallName ? mallName : name }}</template>
                   <el-menu-item index="3-1">订购记录</el-menu-item>
                   <el-menu-item index="3-2">退出</el-menu-item>
                 </el-submenu> -->
               </el-menu>
+              <ul v-if="shopName" class="menu-content">
+                <li @click="goToOrder()">
+                  <span style="vertical-align: middle;">{{subscName}} 剩 {{leftDays}} 天</span>
+                  <img style="height: 28px; display: inline-block; position: relative; top: -1px; cursor: pointer" src="../assets/images/reorder.gif" />
+                </li>
+              </ul>
 
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
 <!--                    <el-menu-item index="3">短信水印</el-menu-item>-->
@@ -181,6 +171,10 @@ export default {
       const value = selectMap.get(key)
       if (value && value.handle) value.handle()
     },
+    manageShops () {
+      if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
+      this.$router.push({ path: '/setting/shopsBand' })
+    },
     goInfo () {
       this.$router.push({
         path: '/info'
@@ -198,6 +192,19 @@ export default {
   }
 }
 </script>
+<style >
+/* .el-menu--collapse .el-menu .el-submenu, .el-menu--popup {
+    min-width: 100px !important;
+  } */
+</style>
 <style lang="less" scoped>
     @import '~@/assets/css/navbar.less';
+    .manageShops {
+      line-height: 80px;
+      color: white;
+      margin-right:10px
+    }
+    .manageShops:hover {
+      color:#409EFF;
+    }
 </style>

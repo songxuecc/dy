@@ -5,21 +5,22 @@ const items = [
     is_main: true,
     is_self: true,
     auth_status: 'auth',
-    auth_deadline: '2020.10.28'
-  },
+    auth_deadline: '2020.10.28',
+    'user_id': 1111 },
   {
     shop_name: '小虎跑得快',
     is_main: false,
     is_self: false,
     auth_status: 'expire',
-    auth_deadline: '2020.10.28'
-  },
+    auth_deadline: '2020.10.28',
+    'user_id': 1111 },
   {
     shop_name: '小虎跑得快',
     is_main: false,
     is_self: false,
     auth_status: 'auth',
-    auth_deadline: '2020.10.28'
+    auth_deadline: '2020.10.28',
+    'user_id': 1111
   }
 ]
 const items2 = [{
@@ -27,21 +28,22 @@ const items2 = [{
   is_main: true,
   is_self: false,
   auth_status: 'auth',
-  auth_deadline: '2020.10.28'
-},
+  auth_deadline: '2020.10.28',
+  'user_id': 1111 },
 {
   shop_name: '2016-05-02',
   is_main: false,
   is_self: true,
   auth_status: 'auth',
-  auth_deadline: '2020.10.28'
-},
+  auth_deadline: '2020.10.28',
+  'user_id': 1111 },
 {
   shop_name: '2016-05-02',
   is_main: false,
   is_self: false,
   auth_status: 'auth',
-  auth_deadline: '2020.10.28'
+  auth_deadline: '2020.10.28',
+  'user_id': 1111
 }]
 let data = [
   {
@@ -89,7 +91,7 @@ export default {
     tableData: [],
     count: 0,
     active: 0,
-    postLoading: false,
+    postSubmitLoading: false,
     postCodeLoading: false
   }),
   mutations: {
@@ -99,91 +101,51 @@ export default {
     }
   },
   actions: {
-    changeShop () {
-      console.log('888')
-    },
     async getUserBindList ({commit, state}, payload) {
       // const {items} = await Api.hhgjAPIs.getProductList(payload)
       data = data.map((item, id) => ({...item, id}))
       commit('save', { data })
-    },
-    async postBindSuthCodeCreate ({commit, state}, payload) {
-      let postCodeLoading = true
-      commit('save', {
-        postCodeLoading
-      })
-      // const {auth_code} = await Api.hhgjAPIs.postBindSuthCodeCreate(payload)
-      setTimeout(() => {
-        postCodeLoading = false
-        commit('save', {
-          postCodeLoading
-        })
-      }, 1000)
-      return true
-    },
-    async postUserBindCreate ({commit, state}, payload) {
-      let postSubmitLoading = true
-      commit('save', {
-        postSubmitLoading
-      })
-      setTimeout(() => {
-        postSubmitLoading = false
-        commit('save', {
-          postSubmitLoading
-        })
-      }, 1000)
-      // const {items} = await Api.hhgjAPIs.getProductList(payload)
-    },
-    // 切换
-    change () {
-      console.log('999')
-    },
-    // 续费
-    renew () {
-      console.log('999')
-    },
-    // 踢出
-    kickOut () {
-      console.log('999')
-    },
-    // 退出
-    async exit ({commit, state}, {payload}) {
-      // const {items} = await Api.hhgjAPIs.getProductList(payload)
+      this.dispatch('moving/shopsBand/getTabData', data[state.active])
     },
     changeActive  ({commit, state}, payload) {
-      // const {items} = await Api.hhgjAPIs.getProductList(payload)
       commit('save', payload)
-    }
-  },
-  getters: {
-    isMainShops: state => state.data.filter(item => item.is_main) || [],
-    tableData: state => {
+      this.dispatch('moving/shopsBand/getTabData', state.data[payload.active])
+    },
+    getTabData ({commit, state}, payload) {
         // 当前店铺是主店铺 可以踢人
-      const items = data[state.active].user_list
+      const items = payload.user_list
       const canChangeShops = items.some(item => item.is_self && item.is_main)
       const tableData = items.map(item => {
         const editBtns = []
         if ((!item.is_main & !item.is_self & item.auth_status === 'auth') || (!item.is_self & !canChangeShops)) {
           editBtns.push({
             text: '切换成TA',
-            handle: () => this.dispatch({type: 'moving/shopsBand/change'})
-          })
-        } else if (!item.is_main & item.auth_status === 'expire') {
-          editBtns.push({
-            text: '授权过期,点击续费',
-            handle: this.changeShop
+            handle: () => this.dispatch('moving/shopsBand/changeShop', item)
           })
         }
+        // else if (!item.is_main & item.auth_status === 'expire') {
+        //   editBtns.push({
+        //     text: '授权过期,点击续费',
+        //     handle: () => this.dispatch('moving/shopsBand/renew', item)
+        //   })
+        // }
+        // 如果is_self为0，则为父店铺user_id, 如果is_self为1，则为子店铺user_id
         if (!item.is_self & canChangeShops) {
           editBtns.push({
             text: '踢出多店铺管理',
-            handle: this.changeShop
+            handle: () => this.dispatch('moving/shopsBand/kickOut', {
+              is_self: 1,
+              target_user_id: item.user_id
+            })
           })
         }
         if (item.is_self & !canChangeShops) {
           editBtns.push({
             text: '退出多店铺管理',
-            handle: this.changeShop
+            handle: () => this.dispatch('moving/shopsBand/kickOut', {
+              is_self: 0,
+              target_user_id: payload.user_id
+            })
           })
         }
         return {
@@ -191,7 +153,27 @@ export default {
           editBtns
         }
       })
-      return tableData
+      commit('save', { data, tableData })
+    },
+    // 切换
+    changeShop () {
+      window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
+    },
+    // 续费
+    renew () {
+      window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
+    },
+    // 踢出
+    async kickOut ({commit, state}, payload) {
+      console.log(payload)
+      await Api.hhgjAPIs.deleteUserBind(payload)
+      this._vm.$message({
+        message: '踢出成功',
+        type: 'success'
+      })
     }
+  },
+  getters: {
+    isMainShops: state => state.data.filter(item => item.is_main) || []
   }
 }

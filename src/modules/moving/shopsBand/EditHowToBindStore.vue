@@ -2,17 +2,24 @@
 <template>
     <div class="EditHowToBindStore">
       <h1>绑定后可实现<span class="tutorials">666</span></h1>
-      <h3><span>1、</span>当前店铺如果作为主店铺，授权码为xxxxx</h3>
-      <el-button
-        class="code"
+      <h3><span>1、</span>当前店铺如果作为主店铺，授权码为</h3>
+      <div class="code">
+        <el-link
+          type="primary"
+          :underline="false"
+          class="code-link"
+          v-if="auth_code"
+          >{{auth_code}}</el-link>
+        <el-button
         size="mini"
         type="primary"
         :loading="postCodeLoading"
         @click="copy">复制授权码</el-button>
+      </div>
       <p>复制授权码后<a>登陆其他店铺</a> 并粘贴该串授权码则完成绑定</p>
       <h1><span>2、</span>当前店铺如果作为子店铺，请在此输入主店铺的授权码</h1>
       <div class="input-code">
-        <el-input placeholder="请输入主店铺授权码" size="medium" class="input" style="width:230px" />
+        <el-input placeholder="请输入主店铺授权码" size="medium" class="input" style="width:230px" v-model="parent_auth_code"/>
         <el-button
           size="medium"
           type="primary"
@@ -25,9 +32,11 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
+import { VueClipboard } from 'vue-clipboard2'
+import Api from '@/api/apis'
 const {
-  mapActions,
-  mapState
+  mapState,
+  mapMutations
 } = createNamespacedHelpers('moving/shopsBand')
 
 export default {
@@ -35,26 +44,71 @@ export default {
   props: {
     msg: String
   },
+  components: {
+    VueClipboard
+  },
   data () {
     return {
+      parent_auth_code: '',
+      auth_code: ''
     }
+  },
+  async created () {
+    const data = await Api.hhgjAPIs.postBindSuthCodeCreate()
+    this.auth_code = data.auth_code
   },
   computed: {
     ...mapState(['postSubmitLoading', 'postCodeLoading'])
   },
   methods: {
-    ...mapActions(['postUserBindCreate', 'changeActive', 'postBindSuthCodeCreate']),
+    ...mapMutations(['save']),
     async copy () {
-      const result = await this.postBindSuthCodeCreate()
-      if (result) {
+      try {
+        this.save({postCodeLoading: true})
+        const data = await Api.hhgjAPIs.postBindSuthCodeCreate()
+        if (data) {
+          await this.$copyText(data.auth_code)
+          this.save({postCodeLoading: false})
+          this.$message({
+            message: '复制成功',
+            type: 'success'
+          })
+        }
+      } catch (err) {
+        this.save({postCodeLoading: false})
         this.$message({
-          message: '复制成功',
-          type: 'success'
+          message: err,
+          type: 'error'
         })
       }
     },
-    submit () {
-      this.postUserBindCreate()
+    async submit () {
+      if (!this.parent_auth_code) {
+        this.$message({
+          message: '请输入授权码',
+          type: 'error'
+        })
+        return false
+      }
+      this.save({postSubmitLoading: true})
+      try {
+        const code = await Api.hhgjAPIs.postUserBindCreate({
+          parent_auth_code: this.parent_auth_code
+        })
+        this.save({postSubmitLoading: false})
+        if (code) {
+          this.$message({
+            message: '绑定成功',
+            type: 'success'
+          })
+        }
+      } catch (err) {
+        this.save({postSubmitLoading: false})
+        this.$message({
+          message: err,
+          type: 'error'
+        })
+      }
     }
   }
 }
@@ -96,6 +150,11 @@ export default {
   .code {
     margin-left: 28px;
     margin-top: 7px;
+    .code-link {
+      margin-right: 5px;
+      font-size: 16px;
+      font-weight: 600;
+    }
   }
   p {
     font-family: PingFangSC-Light;

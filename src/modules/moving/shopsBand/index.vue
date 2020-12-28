@@ -5,7 +5,6 @@
       <CardRealizableAfterBind class="CardRealizableAfterBind"/>
       <EditHowToBindStore />
     </div>
-
     <TableShopManagement />
   </div>
 </template>

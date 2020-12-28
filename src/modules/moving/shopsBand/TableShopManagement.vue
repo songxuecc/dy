@@ -25,7 +25,16 @@
         prop="auth_status"
         label="授权状态"
         width="180">
-        <span slot-scope="scope" :class="scope.row.auth_status === 'expire' ? 'expire':'auth'">{{scope.row.auth_status === 'expire' ? '已过期' : '授权中' }}</span>
+        <span slot-scope="scope" :class="scope.row.auth_status === 'expire' ? 'expire':'auth'">
+          {{scope.row.auth_status === 'expire' ? '已过期' : '授权中' }}
+          <el-link
+            v-if="scope.row.auth_status === 'expire'"
+            type="primary"
+            style="display:inline;font-size:12px;margin-left:5px"
+            href="https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42"
+            :underline="false"
+          >去续订></el-link>
+        </span>
       </el-table-column>
       <el-table-column
         prop="auth_deadline"
@@ -79,11 +88,12 @@ export default {
     ...mapMutations(['save']),
     handleClick (active) {
       this.changeActive({active})
+      console.log(this)
     }
   },
   computed: {
-    ...mapState(['active']),
-    ...mapGetters(['isMainShops', 'tableData'])
+    ...mapState(['active', 'tableData']),
+    ...mapGetters(['isMainShops'])
   }
 
 }
