@@ -53,7 +53,3 @@ new Vue({
     utils.initMoment()
   }
 })
-
-const requireAll = requireContext => requireContext.keys().map(requireContext)
-const req = require.context('@/assets/icon/icons', true, /\.svg$/)
-requireAll(req)

@@ -5,7 +5,7 @@
         <el-menu :default-active='$route.path' router @select="handleSelect" :default-openeds="['1', '2', '3']" >
           <el-submenu index="1">
             <template slot="title">
-              <icon-svg iconClass="icon-copy" style="width:14px; height:14px; padding-left: 28px;"></icon-svg>
+              <hh-icon type="iconfuzhishangpin" style="font-size:14px; padding-left: 28px;margin-right:4px" />
               <span>搬家上货</span>
             </template>
             <el-menu-item index="/migrate" :disabled="!isAuth()">
@@ -20,7 +20,7 @@
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              <icon-svg iconClass="icon-manage" style="width:14px; height:14px; padding-left: 28px;"></icon-svg>
+              <hh-icon type="iconshangpinguanli" style="font-size:14px; padding-left: 28px;margin-right:4px" />
               <span>商品管理</span>
             </template>
             <el-menu-item index="/dyProductList" :disabled="!isAuth()">
@@ -32,7 +32,7 @@
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
-              <icon-svg iconClass="icon-more" style="width:14px; height:14px; padding-left: 28px;"></icon-svg>
+              <hh-icon type="icongengduogongneng" style="font-size:14px; padding-left: 28px;margin-right:4px" />
               <span>更多功能</span>
             </template>
             <el-menu-item index="/meizhe">

@@ -2,7 +2,10 @@
     <div class="navbar" id="navBar">
         <div class="navbar-content">
           <div class="main-inner clearfix">
-            <div class="nav-title" @click="goInfo"><img src="../assets/icon/logo.png" alt="虎虎搬家助手"><icon-svg iconClass="icon-douyin-plat" style="width:50px; height:18px; position: relative; top: -7px;"></icon-svg></div>
+            <div class="nav-title" @click="goInfo">
+              <img src="../assets/icon/logo.png" alt="虎虎搬家助手">
+              <hh-icon type="icondouyinban" style="font-size:42px;position:absolute;margin-left:4px;top:12px" />
+            </div>
             <div class="nav-right">
               <!-- 用户使用天数 -->
               <ul v-if="shopName" class="menu-content">
@@ -264,6 +267,7 @@ export default {
         .nav-title {
           float: left;
           padding: 20px 0 0 20px;
+          position:relative;
           cursor: pointer;
           img {
             width: 153px;

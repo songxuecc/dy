@@ -43,7 +43,7 @@
       <div class="complaints-btn is-btn" @click="complaints">不 我要吐槽</div>
       <div v-if="isShowGoodAssessPopUp" class="good-assess-popup"></div>
       <div class="big-cancel" @click="cancel">
-        <icon-svg iconClass="quxiao1" class="icon-big-cancel"></icon-svg>
+        <hh-icon type="iconquxiao1" style="font-size:50px; "/>
       </div>
     </el-dialog>
     <!-- 客服微信弹窗 -->
@@ -61,7 +61,7 @@
       <div class="customer-btn" @click="isShowCustomerDialog=false">已联系客服</div>
       <div class="customer-inside"></div>
       <div class="cancel-btn" @click="isShowCustomerDialog=false">
-        <icon-svg iconClass="quxiaoxiao"></icon-svg>
+        <hh-icon type="iconquxiaoxiao" style="font-size:20px; "/>
       </div>
     </el-dialog>
   </div>

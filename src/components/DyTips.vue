@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="tips-content">
-    <icon-svg iconClass="icon-tips" style=""></icon-svg>
+    <hh-icon type="icontishi" style="font-size: 6px;"/>
     <span class="tips">{{words}}</span>
   </div>
 </template>

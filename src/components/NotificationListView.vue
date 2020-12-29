@@ -1,6 +1,8 @@
 <template lang="html">
     <div class="mail-content">
-        <div class="close-icon" @click="closeDialog"><icon-svg iconClass="icon-close-other" style="width:34px; height:28px"></icon-svg></div>
+        <div class="close-icon" @click="closeDialog">
+          <hh-icon type="iconquxiao" style="font-size:28px;margin-top:-2px" />
+        </div>
         <el-table class="notification-box" v-if="mailNotificationList.length > 0" :data="mailNotificationList" :show-header="false" row-key="id"
                   style="max-height: 450px; overflow: auto; overflow-x: hidden;"  @cell-mouse-enter="showTipRead" @cell-mouse-leave="hideTipRead"
         >
@@ -24,12 +26,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <div class="empty-mail" v-else>
-          <div>
-            <icon-svg style="width:300px; height:250px" iconClass="icon-table-empty"></icon-svg>
-          </div>
-          <div class="empty-text">这里暂时什么都没有哦～~</div>
-        </div>
+        <el-table-empty v-else />
     </div>
 </template>
 <script>

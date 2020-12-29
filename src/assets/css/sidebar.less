@@ -22,7 +22,7 @@
     padding: 0 0 0 23px;
   }
 }
-/deep/ .el-submenu [class^=el-icon-] {
+/deep/ .el-submenu [class^="el-icon-"] {
   padding-left: 22px;
   width: 20px;
 }
@@ -53,11 +53,13 @@
   color: @text-title-color;
   height: 50px;
   line-height: 50px;
+  display: flex;
+  align-items: center;
 }
 /deep/ .el-submenu__title:hover {
   background: #ffffff;
 }
-/deep/ .el-submenu [class^=el-icon-]{
+/deep/ .el-submenu [class^="el-icon-"] {
   font-size: 14px;
   color: #666666;
   margin-right: 0;

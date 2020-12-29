@@ -63,7 +63,7 @@ module.exports = {
         loader: 'svg-sprite-loader',
         include:[resolve('src/assets/icon/icons')],
         options: {
-          symbolId: 'icon-[name]',
+          symbolId: '[name]',
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
         }
       },
