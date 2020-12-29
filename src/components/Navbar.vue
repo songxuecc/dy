@@ -15,7 +15,7 @@
                 </li>
               </ul>
               <!-- 同步商品 & 绑定店铺 -->
-              <el-tooltip class="syncProductToolTip" effect="dark" placement="bottom">
+              <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
                 <template slot="content">
                   <p style="font-size: 12px;margin-bottom:2px">将抖店后台的商品立马同步至本软件，每隔24小时自动同步一次</p>
                   <div> 最近同步时间 {{ syncStatus.last_sync_time }} </div>
@@ -24,20 +24,20 @@
                   <p style="display:flex;align-items:center"><hh-icon type="icontongbushangpin2" style="font-size:20px;"/>{{syncButtonText}}</p>
                 </div>
               </el-tooltip>
-              <div class="manageShops" @click="manageShops">
+              <div v-if="shopName" class="manageShops" @click="manageShops">
                 <p style="display:flex;align-items:center"><hh-icon type="iconduodianpuguanli2" style="font-size:20px;"/>绑定店铺管理</p>
               </div>
               <!-- 退出 & 登录-->
+              <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                  <el-submenu index="2" popper-class="nav-menu-popup">
+                      <template slot="title">{{ shopName }}</template>
+                      <el-menu-item index="2-1">退出</el-menu-item>
+                  </el-submenu>
+              </el-menu>
               <div class="nav-not-login" v-if="!shopName">
                 <el-button type="primary" @click="goToServiceMarket">购买</el-button>
                 <el-button type="primary" @click="onLogin">登录</el-button>
               </div>
-              <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                    <el-submenu index="2" popper-class="nav-menu-popup">
-                        <template slot="title">{{ shopName }}</template>
-                        <el-menu-item index="2-1">退出</el-menu-item>
-                    </el-submenu>
-                </el-menu>
             </div>
           </div>
         </div>
