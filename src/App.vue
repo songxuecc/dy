@@ -142,7 +142,10 @@ export default {
       } else if (oldVal.status === '') { // 初始化的时候
         this.syncProducts()
       } else if (oldVal.status !== 'complete' && val.status === 'complete') {
-        this.$message('商品同步完成')
+        this.$message({
+          message: '商品同步完成',
+          type: 'success'
+        })
       } else if (oldVal.status !== 'error' && val.status === 'error') {
         this.$message.error('商品同步出错：' + val.message)
       }

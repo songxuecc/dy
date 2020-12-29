@@ -7,12 +7,6 @@
     </el-row>
     <div v-if="activeTabName == 'normal'">
       <dy-product-list-view ref="dyProductListView" :dyProductList="dyProductList" @selectProductList="onSelectChange">
-        <template slot="upperLeft">
-          <el-button size="small" type="primary" @click="onSyncProducts" :disabled="isSyncing">
-            {{ syncButtonText }}
-          </el-button>&nbsp;&nbsp;
-          <span v-if="isShowLastSyncTime" style="font-size: 13px;">最近同步时间 {{ syncStatus.last_sync_time }}</span>
-        </template>
         <template slot="upperRight">
           <el-button size="small" style="right: 0px;" @click="downloadExcel">sku模板下载</el-button>
           <!-- 商品sku编码导入 upload组件 start -->
@@ -120,7 +114,6 @@ import dySearchFilterView from '@/components/DySearchFilterView.vue'
 import dyUnsalableFilterView from '@/components/DyUnsalableFilterView.vue'
 import request from '@/mixins/request.js'
 import {mapGetters, mapActions} from 'vuex'
-import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 
 export default {
@@ -142,8 +135,6 @@ export default {
       showProcess: false,
       dialogBatchEditVisible: false,
       dialogExportVisible: false,
-      isSyncing: false,
-      syncButtonText: '同步商品',
       activeTabName: 'normal',
       isDisableBatch: true,
       isUnsalableLoaded: false,
@@ -208,8 +199,6 @@ export default {
       if (['ready', 'running'].includes(oldVal.status) && val.status === 'complete') {
         this.getProductList(false)
       }
-      this.isSyncing = (val.status !== 'complete' && val.status !== 'error')
-      this.refreshSyncButtonText()
     }
   },
   mounted () {
@@ -239,30 +228,6 @@ export default {
       'updateSyncStatus',
       'setExportFields'
     ]),
-    refreshSyncButtonText () {
-      let val = this.syncStatus
-      if (val.status === 'ready') {
-        this.syncButtonText = '正在准备同步'
-      } else if (val.status === 'running') {
-        this.syncButtonText = '同步中...(' + val.cur + '/' + val.total + ')'
-      } else {
-        this.syncButtonText = '同步商品'
-      }
-    },
-    onSyncProducts () {
-      if (!this.isAuth) {
-        return
-      }
-      if (this.isSyncing) {
-        return
-      }
-      this.isSyncing = true
-      this.syncButtonText = '正在准备同步'
-      this.requestSyncProducts({
-        sync_type: common.SyncType['all'],
-        operation_type: 1
-      })
-    },
     getProductList (isResetIndex = true, isSilent = false) {
       if (this.$refs.dyProductListView) {
         this.$refs.dyProductListView.changeSelectAllData()
