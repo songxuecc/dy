@@ -20,9 +20,13 @@
                   <p style="font-size: 12px;margin-bottom:2px">将抖店后台的商品立马同步至本软件，每隔24小时自动同步一次</p>
                   <div> 最近同步时间 {{ syncStatus.last_sync_time }} </div>
                 </template>
-                <div class="syncProduct" @click="handleSyncProducts" :disabled="isSyncing"> {{syncButtonText}} </div>
+                <div class="syncProduct" @click="handleSyncProducts" :disabled="isSyncing">
+                  <p style="display:flex;align-items:center"><hh-icon type="icontongbushangpin2" style="font-size:20px;"/>{{syncButtonText}}</p>
+                </div>
               </el-tooltip>
-              <div class="manageShops" @click="manageShops"> 绑定店铺管理 </div>
+              <div class="manageShops" @click="manageShops">
+                <p style="display:flex;align-items:center"><hh-icon type="iconduodianpuguanli2" style="font-size:20px;"/>绑定店铺管理</p>
+              </div>
               <!-- 退出 & 登录-->
               <div class="nav-not-login" v-if="!shopName">
                 <el-button type="primary" @click="goToServiceMarket">购买</el-button>
@@ -234,7 +238,7 @@ export default {
           line-height: 80px;
           border-bottom: 2px solid #ffffff;
           background: @navbar-bg;
-          padding: 0 10px;
+          padding: 0 8px;
           i {
             color: #ffffff;
           }
@@ -338,7 +342,7 @@ export default {
       overflow: hidden;
       li {
         border: 0;
-        padding: 0 20px;
+        padding: 0 8px;
         display: block;
         float: left;
         cursor: pointer;
@@ -381,22 +385,32 @@ export default {
     }
 
     .manageShops {
-      line-height: 80px;
       color: white;
-      margin-right:10px;
       transition: all 0.3s;
-      padding: 0 10px;
+      padding: 0 8px;
+      height: 80px;
+      align-items: center;
+      display: flex;
+      span {
+        font-size:12px;
+        padding-top: 2px;
+      }
       &:hover {
         background: #409eff;
         color: #ffffff;
       }
     }
     .syncProduct {
-      line-height: 80px;
       color: white;
-      margin-right:10px;
       transition: all 0.3s;
-      padding: 0 10px;
+      padding: 0 8px;
+      height: 80px;
+      align-items: center;
+      display: flex;
+      span {
+        font-size:12px;
+        padding-top: 2px;
+      }
       &:hover {
         background: #409eff;
         color: #ffffff;
