@@ -13,7 +13,9 @@ import utils from '@/common/utils'
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
 import HhIcon from '@/components/HhIcon'
+import VueClipboard from 'vue-clipboard2'
 
+Vue.use(VueClipboard)
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.component('hh-icon', HhIcon)
