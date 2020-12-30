@@ -1,7 +1,7 @@
 <!-- 如何绑定店铺 -->
 <template>
     <div class="EditHowToBindStore">
-      <h1>绑定后可实现<span class="tutorials">666</span></h1>
+      <h1>绑定后可实现<span class="tutorials">操作教程 ></span></h1>
       <h3><span>1、</span>当前店铺如果作为主店铺，授权码为</h3>
       <div class="code">
         <el-link
@@ -10,6 +10,7 @@
           class="code-link"
           v-if="auth_code"
           >{{auth_code}}</el-link>
+        <a class="skeleton skeleton-item" v-else/>
         <el-button
         size="mini"
         type="primary"
@@ -32,20 +33,17 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
-import { VueClipboard } from 'vue-clipboard2'
 import Api from '@/api/apis'
 const {
   mapState,
-  mapMutations
+  mapMutations,
+  mapActions
 } = createNamespacedHelpers('moving/shopsBand')
 
 export default {
   name: 'EditHowToBindStore',
   props: {
     msg: String
-  },
-  components: {
-    VueClipboard
   },
   data () {
     return {
@@ -62,11 +60,12 @@ export default {
   },
   methods: {
     ...mapMutations(['save']),
-    async copy () {
+    ...mapActions(['getUserBindList']),
+    copy: async function () {
       try {
         this.save({postCodeLoading: true})
         const data = await Api.hhgjAPIs.postBindSuthCodeCreate()
-        if (data) {
+        if (data && this.$copyText) {
           await this.$copyText(data.auth_code)
           this.save({postCodeLoading: false})
           this.$message({
@@ -92,16 +91,15 @@ export default {
       }
       this.save({postSubmitLoading: true})
       try {
-        const code = await Api.hhgjAPIs.postUserBindCreate({
+        await Api.hhgjAPIs.postUserBindCreate({
           parent_auth_code: this.parent_auth_code
         })
         this.save({postSubmitLoading: false})
-        if (code) {
-          this.$message({
-            message: '绑定成功',
-            type: 'success'
-          })
-        }
+        this.$message({
+          message: '绑定成功',
+          type: 'success'
+        })
+        this.getUserBindList({ loading: true })
       } catch (err) {
         this.save({postSubmitLoading: false})
         this.$message({
@@ -135,11 +133,12 @@ export default {
       font-size: 10px;
       color: #FFFFFF;
       display: inline-block;
-      width: 50px;
       line-height: 18px;
       text-align: center;
       height: 18px;
-      margin-top: 2px;
+      padding: 0 4px;
+      margin-top: 3px;
+      margin-left: 3px;
     }
   }
   h3 {
@@ -150,6 +149,8 @@ export default {
   .code {
     margin-left: 28px;
     margin-top: 7px;
+    display: flex;
+    align-items: center;
     .code-link {
       margin-right: 5px;
       font-size: 16px;
@@ -171,6 +172,27 @@ export default {
     .input {
       margin-right: 10px;
     }
+  }
+}
+.skeleton-item {
+  height:24px;
+  width:290px;
+  display:inline-block;
+  margin-right: 5px;
+  border-radius: 2px;
+}
+.skeleton {
+  background: linear-gradient(90deg,#f2f2f2 25%,#e6e6e6 37%,#f2f2f2 63%);
+  background-size: 400% 100%;
+  -webkit-animation: hh-skeleton-loading 1.4s ease infinite;
+  animation: hh-skeleton-loading 1.4s ease infinite;
+}
+@keyframes hh-skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
   }
 }
 </style>

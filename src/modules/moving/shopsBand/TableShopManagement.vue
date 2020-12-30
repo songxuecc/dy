@@ -11,6 +11,7 @@
     <el-table
       :data="tableData"
       style="width: 100%">
+      <el-table-empty slot="empty"/>
       <el-table-column
         prop="shop_name"
         label="店铺名称"
@@ -62,7 +63,7 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
+import { createNamespacedHelpers, mapActions as vueMapActions } from 'vuex'
 const {
   mapState,
   mapActions,
@@ -80,11 +81,12 @@ export default {
       radio1: this.isMainShops
     }
   },
-  created () {
-    this.getUserBindList({})
+  mounted () {
+    this.getUserBindList()
   },
   methods: {
     ...mapActions(['getUserBindList', 'changeActive']),
+    ...vueMapActions(['triggerChangeShop']),
     ...mapMutations(['save']),
     handleClick (active) {
       this.changeActive({active})

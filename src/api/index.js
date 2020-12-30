@@ -100,6 +100,10 @@ const actionCreatorPost = async (relativePath, params) => {
     if (fakeToken && relativePath !== '/api/fakeUser') {
       headers['fake-token'] = fakeToken
     }
+    let changeShop = localStorage.getItem('change_shop')
+    if (changeShop) {
+      headers['change-shop'] = changeShop
+    }
     let data = qs.stringify(params, {arrayFormat: 'brackets'})
     post(relativePath, data, headers, resolve, reject)
   })
@@ -119,6 +123,10 @@ const actionCreatorJsonPost = async (relativePath, params) => {
     if (fakeToken && relativePath !== '/api/fakeUser') {
       headers['fake-token'] = fakeToken
     }
+    let changeShop = localStorage.getItem('change_shop')
+    if (changeShop) {
+      headers['change-shop'] = changeShop
+    }
     post(relativePath, params, headers, resolve, reject)
   })
 }
@@ -136,6 +144,10 @@ const actionCreatorDownload = async (relativePath, params) => {
     }
     if (fakeToken && relativePath !== '/api/fakeUser') {
       headers['fake-token'] = fakeToken
+    }
+    let changeShop = localStorage.getItem('change_shop')
+    if (changeShop) {
+      headers['change-shop'] = changeShop
     }
     return Vue.axios.get(relativePath, {params, headers, responseType: 'blob'}).then(response => {
       const blob = new Blob([response.data], {type: response.data.type})

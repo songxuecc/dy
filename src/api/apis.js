@@ -278,6 +278,15 @@ const hhgjAPIs = {
   },
   deleteUserBind: (params) => {
     return api.actionCreatorPost('/api/user/bind/delete', params)
+  },
+  getUserBindList: (params) => {
+    return api.actionCreateGet('/api/user/bind/list', params)
+  },
+  postUserBindChange: (params) => {
+    return api.actionCreatorPost('/api/user/bind/change', params)
+  },
+  getMigrateMultiShopProductList: (params) => {
+    return api.actionCreateGet('/api/migrate/multiShop/product/list', params)
   }
 }
 

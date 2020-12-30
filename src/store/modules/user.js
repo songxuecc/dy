@@ -30,6 +30,7 @@ const state = {
     'deadline': '',
     'goods_assess_notify': {}
   },
+  changeShop: localStorage.getItem('change_shop') || '',
   updateJobIdList: (localStorage.getItem('update_job_id_list') ? localStorage.getItem('update_job_id_list').split(',') : [])
 }
 
@@ -54,7 +55,8 @@ const getters = {
   getSyncOrderStatus: state => state.syncOrderStatus,
   getCurrentSubsc: state => state.currentSubsc,
   getExportFields: state => state.exportFields,
-  getUpdateJobIdList: state => state.updateJobIdList
+  getUpdateJobIdList: state => state.updateJobIdList,
+  getChangeShop: state => state.changeShop
 }
 
 const actions = {
@@ -100,6 +102,7 @@ const actions = {
   },
   logout ({commit, state}) {
     commit(types.LOGOUT)
+    commit(types.SET_CHANGE_SHOP, {'type': 'reset'})
   },
   requestUserInfo ({commit, state, dispatch}, params) {
     let promise = new Promise(function (resolve, reject) {
@@ -297,6 +300,15 @@ const mutations = {
   },
   [ types.SET_EXPORT_FIELDS ] (state, data) {
     state.exportFields = data
+  },
+  SET_CHANGE_SHOP (state, data) {
+    if (data['type'] === 'reset') {
+      state.change_shop = 0
+      localStorage.removeItem('change_shop')
+    } else {
+      localStorage.setItem('change_shop', data['change_shop_id'])
+      state.change_shop = data['change_shop_id']
+    }
   }
 }
 
