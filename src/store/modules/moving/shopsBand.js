@@ -1,5 +1,90 @@
 import Api from '@/api/apis'
 
+// const items = [
+//   {
+//     shop_name: '小虎跑得快',
+//     is_main: true,
+//     is_self: true,
+//     auth_status: 'auth',
+//     auth_deadline: '2020.10.28',
+//     'user_id': 1111 },
+//   {
+//     shop_name: '小虎跑得快',
+//     is_main: false,
+//     is_self: false,
+//     auth_status: 'expire',
+//     auth_deadline: '2020.10.28',
+//     'user_id': 1111 },
+//   {
+//     shop_name: '小虎跑得快',
+//     is_main: false,
+//     is_self: false,
+//     auth_status: 'auth',
+//     auth_deadline: '2020.10.28',
+//     'user_id': 1111
+//   }
+// ]
+// const items2 = [{
+//   shop_name: '2016-05-02',
+//   is_main: true,
+//   is_self: false,
+//   auth_status: 'expire',
+//   auth_deadline: '2020.10.28',
+//   'user_id': 1111 },
+// {
+//   shop_name: '2016-05-02',
+//   is_main: false,
+//   is_self: true,
+//   auth_status: 'auth',
+//   auth_deadline: '2020.10.28',
+//   'user_id': 1111 },
+// {
+//   shop_name: '2016-05-02',
+//   is_main: false,
+//   is_self: false,
+//   auth_status: 'auth',
+//   auth_deadline: '2020.10.28',
+//   'user_id': 1111
+// }]
+// let ddd = [
+//   {
+//     'user_id': 1111,
+//     'shop_name': '小虎跑得快a1',
+//     'auth_status': 'auth',
+//     'auth_deadline': '2021-01-01',
+//     'is_main': true,
+//     'is_self': false,
+//     'user_list': items
+//   },
+//   {
+//     'user_id': 1111,
+//     'shop_name': '小虎跑得快a2',
+//     'auth_status': 'auth',
+//     'auth_deadline': '2021-01-01',
+//     'is_main': true,
+//     'is_self': false,
+//     'user_list': items2
+//   },
+//   {
+//     'user_id': 1111,
+//     'shop_name': '小虎跑得快a1',
+//     'auth_status': 'auth',
+//     'auth_deadline': '2021-01-01',
+//     'is_main': true,
+//     'is_self': false,
+//     'user_list': items
+//   },
+//   {
+//     'user_id': 1111,
+//     'shop_name': '小虎跑得快a2',
+//     'auth_status': 'auth',
+//     'auth_deadline': '2021-01-01',
+//     'is_main': true,
+//     'is_self': false,
+//     'user_list': items
+//   }
+// ]
+
 // 店铺绑定
 export default {
   namespaced: true,
@@ -42,10 +127,17 @@ export default {
       const canChangeShops = items.some(item => item.is_self && item.is_main)
       const tableData = items.map(item => {
         const editBtns = []
-        if ((!item.is_main & !item.is_self & item.auth_status === 'auth') || (!item.is_self & !canChangeShops & item.auth_status === 'auth')) {
+        // if ((!item.is_main & !item.is_self & item.auth_status === 'auth') || (!item.is_self & !canChangeShops & item.auth_status === 'auth')) {
+        //   editBtns.push({
+        //     text: '切换成TA',
+        //     handle: () => this.dispatch('moving/shopsBand/changeShop', item)
+        //   })
+        // }
+        if (!item.is_self) {
           editBtns.push({
             text: '切换成TA',
-            handle: () => this.dispatch('moving/shopsBand/changeShop', item)
+            handle: item.auth_status !== 'auth' ? () => {} : () => this.dispatch('moving/shopsBand/changeShop', item),
+            diabled: item.auth_status !== 'auth'
           })
         }
         // 如果is_self为0，则为父店铺user_id, 如果is_self为1，则为子店铺user_id

@@ -49,7 +49,7 @@
               <span v-for="(btn,index) in scope.row.editBtns" :key="index" >
                 <el-link
                   @click="btn.handle"
-                  class="btn"
+                  :class="['btn',btn.diabled ? 'diabled' : '']"
                   type="primary"
                   :underline="false"
                 >{{btn.text}}</el-link>
@@ -90,7 +90,6 @@ export default {
     ...mapMutations(['save']),
     handleClick (active) {
       this.changeActive({active})
-      console.log(this)
     }
   },
   computed: {
@@ -144,6 +143,9 @@ export default {
     .expire {
       font-size: 12px;
       color: #E02020;
+    }
+    .diabled {
+      color: #cdcdcd;
     }
 
   }
