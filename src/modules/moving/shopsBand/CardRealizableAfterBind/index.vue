@@ -28,8 +28,8 @@ export default {
         {
           type: moving,
           h3: '搬家上货至多个店铺',
-          span: '绑定后，一次复制可以搬家至主店铺a和它所有子店铺bcd',
-          extra: true
+          span: '绑定后，一次复制可以搬家至主店铺a和它所有子店铺bcd'
+          // extra: true
         },
         {
           type: keyTab,
