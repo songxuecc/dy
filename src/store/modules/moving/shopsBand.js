@@ -169,7 +169,6 @@ export default {
     // 切换
     async changeShop ({commit, state}, payload) {
       if (parseInt(payload) === 0) return false
-      console.log(payload)
       await Api.hhgjAPIs.postUserBindChange({
         target_user_id: payload.user_id
       })
