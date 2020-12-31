@@ -269,6 +269,9 @@ const hhgjAPIs = {
   },
   createStatisticsEvent: (params) => {
     return api.actionCreatorPost('/api/statisticsEvent/create', params)
+  },
+  getMigrateMultiShopProductList: (params) => {
+    return api.actionCreateGet('/api/migrate/multiShop/product/list', params)
   }
 }
 

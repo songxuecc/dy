@@ -7,7 +7,7 @@
                 <el-step title="修改模板"></el-step>
             </el-steps>
         </div><br>
-        <el-card class="setting-content-with-tip" body-style="display:flex; position:relative;">
+       <div class="setting-content-with-tip" style="display:flex; position:relative;">
             <el-form size="small" ref="template1" :model="template.model" :rules="rules" label-width="100px" style="width: 46%">
 
                 <el-form-item label="付款方式:" required>
@@ -63,7 +63,59 @@
           <div class="help-tips" @click="goHelpLink">
             <span><i class="el-icon-s-opportunity"></i>如何填写？</span>
           </div>
-        </el-card>
+        </div>
+
+        <!-- 搬家店铺 start-->
+        <div class="setting-content-with-tip">
+          <el-form label-width="100px"  size="small">
+            <el-form-item label="搬家店铺:">
+              <el-checkbox
+                v-model="checkSelf"
+                class="current-shop">
+                本店铺</el-checkbox>
+              <div v-for="(parentShop,idx) in bindList" :key="idx" class="group">
+                <div v-if="parentShop.is_main" class="is-main">
+                  <el-checkbox
+                    @change="handleCheckAllChange($event,Number(parentShop.user_id))"
+                    :value="isIndeterminate  ? isIndeterminate[`isIndeterminate${parentShop.user_id}`] : false"
+                    style="margin-right:10px"
+                    >全选&nbsp;&nbsp;{{parentShop.shop_name}} 是主店铺</el-checkbox>
+                </div>
+                <el-checkbox-group
+                  v-model="checkedBindShopList"
+                  @change="handleCheckedBindListValueChange($event,Number(parentShop.user_id))">
+                  <el-checkbox
+                    :label="Number(parentShop.user_id)"
+                    :key="Number(parentShop.user_id)"
+                    :disabled="parentShop.auth_status === 'expire'"
+                    v-if="!parentShop.is_self"
+                    class="checkbox">
+                      <div>
+                        <span>{{parentShop.shop_name}}</span>
+                        <span>({{parentShop.auth_status === 'expire' ? '过期': parentShop.first_category_name_list.join('、') }})</span>
+                      </div>
+                    </el-checkbox>
+                    <span>预计有20个商品不可搬家</span>
+                  <el-checkbox
+                    v-for="childShop in parentShop.user_list"
+                    :label="Number(childShop.user_id)"
+                    :key="Number(childShop.user_id)"
+                    :disabled="parentShop.auth_status === 'expire'"
+                    v-if="!childShop.is_self"
+                    class="checkbox">
+                      <div class="label-name">
+                        <span>{{childShop.shop_name}}</span>
+                        <span>({{childShop.auth_status === 'expire' ? '过期': childShop.first_category_name_list.join('、') }})</span>
+                        <p class="label-tip">预计有20个商品不可搬家</p>
+                      </div>
+                    </el-checkbox>
+                </el-checkbox-group>
+              </div>
+              <p class="diffrent-category-tip"><span >*</span>仅允许搬家商品一级类目与店铺一级类目想通的商品</p>
+            </el-form-item>
+          </el-form>
+        </div>
+        <!-- 搬家店铺 end -->
         <div  class="common-bottom">
             <el-button style="margin-right: 15px" @click="goback">返回</el-button>
             <el-tooltip :disabled="msgError === ''" placement="top" :content="msgError">
@@ -78,9 +130,89 @@
 <script>
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 import moment from 'moment'
+import cloneDeep from 'lodash/cloneDeep'
+import Api from '@/api/apis'
 
+// const bindList = [
+//   {
+//     'user_id': 11111,
+//     'shop_name': '远远的快乐星球main',
+//     token: 'xcvxv',
+//     'auth_status': 'auth',
+//     'auth_deadline': '2021-01-01',
+//     'is_main': true,
+//     'is_self': false,
+//     // 一级类目 数组
+//     // 预计有多少商品不可搬家
+//     'first_category_name_list': ['数码'],
+//     'user_list': [
+//       {
+//         'user_id': 11112,
+//         'shop_name': '远远的快乐星球child1',
+//         'token': '2sflsf',
+//         'auth_status': 'auth',
+//         'auth_deadline': '2021-01-01',
+//         'first_category_name_list': ['数码', '服饰'],
+//         'is_main': false,
+//         'is_self': false
+//       }
+//     ]
+//   },
+//   {
+//     'user_id': 22221,
+//     'shop_name': '远远的快乐星球main',
+//     token: 'xcvxv',
+//     'auth_status': 'auth',
+//     'auth_deadline': '2021-01-01',
+//     'is_main': true,
+//     'first_category_name_list': ['服饰'],
+//     'is_self': false,
+//     'user_list': [
+//       {
+//         'user_id': 22222,
+//         'shop_name': '远远的快乐星球child1',
+//         'first_category_name_list': ['数码', '服饰'],
+//         'token': '2sflsf',
+//         'auth_status': 'auth',
+//         'auth_deadline': '2021-01-01',
+//         'is_main': false,
+//         'is_self': false
+//       },
+//       {
+//         'user_id': 22223,
+//         'shop_name': '远远的快乐星球child2',
+//         'first_category_name_list': ['数码', '服饰'],
+//         'token': '2sflsf',
+//         'auth_status': 'auth',
+//         'auth_deadline': '2021-01-01',
+//         'is_main': false,
+//         'is_self': false
+//       },
+//       {
+//         'user_id': 22224,
+//         'shop_name': '远远的快乐星球child3',
+//         'first_category_name_list': ['数码', '服饰'],
+//         'token': '2sflsf',
+//         'auth_status': 'auth',
+//         'auth_deadline': '2021-01-01',
+//         'is_main': false,
+//         'is_self': false
+//       },
+//       {
+//         'user_id': 22225,
+//         'shop_name': '远远的快乐星球child4',
+//         'first_category_name_list': ['数码', '服饰'],
+//         'token': '2sflsf',
+//         'auth_status': 'auth',
+//         'auth_deadline': '2021-01-01',
+//         'is_main': false,
+//         'is_self': true
+//       }
+//     ]
+//   }
+// ]
 export default {
   mixins: [request],
   components: {
@@ -119,7 +251,26 @@ export default {
         ]
       },
       isStartMigrate: false,
-      dateRange: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+      dateRange: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+
+      // 多选
+      checkSelf: true,
+      checkAll: false,
+      checkedBindShopList: [],
+      isIndeterminate: undefined,
+      bindList: [],
+      bindListValue: {}
+    }
+  },
+  async created () {
+    try {
+      // 记得合并修改的 fetch 不然await 无效
+      const bindList = await Api.hhgjAPIs.getMigrateMultiShopProductList({
+        tp_product_id_list: this.getSelectTPProductIdList
+      })
+      this.bindList = bindList
+    } catch (err) {
+      console.log(err)
     }
   },
   computed: {
@@ -127,7 +278,8 @@ export default {
       getSelectTPProductIdList: 'getSelectTPProductIdList',
       template: 'getTemplate',
       dicCustomPrices: 'getDicCustomPrices'
-    })
+    }),
+    ...mapState(['ownerId'])
   },
   activated () {
     window.addEventListener('beforeunload', this.beforeunloadFn)
@@ -154,6 +306,53 @@ export default {
       'removeTempTemplate',
       'removeDicCustomPrices'
     ]),
+    handleCheckedBindListValueChange (value, userId) {
+      //  全选
+      const currentGroup = this.bindList.find(item => Number(item.user_id) === Number(userId))
+      if (currentGroup) {
+        const childs = currentGroup.user_list || []
+        const isIndeterminate = []
+        childs.map(item => {
+          const childUserId = Number(item.user_id)
+          const childIndex = value.findIndex(v => childUserId === Number(v))
+          if (childIndex > -1) {
+            isIndeterminate.push(item.user_id)
+          }
+        })
+        const index = value.findIndex(v => Number(userId) === Number(v))
+        if (index > -1) {
+          isIndeterminate.push(Number(userId))
+        }
+        //  vue很傻逼 vue中数据更改了，但是视图没有更新 必须要重新复制一个新对象
+        if (isIndeterminate.length && isIndeterminate.length === (currentGroup.user_list.length + 1)) {
+          this.isIndeterminate = {...cloneDeep(this.isIndeterminate), [`isIndeterminate${userId}`]: true}
+        } else {
+          this.isIndeterminate = {...cloneDeep(this.isIndeterminate), [`isIndeterminate${userId}`]: false}
+        }
+      }
+    },
+    //  全选 反选
+    handleCheckAllChange (value, userId) {
+      const currentGroup = this.bindList.find(item => Number(item.user_id) === Number(userId))
+      const childs = (currentGroup.user_list || []).map(item => Number(item.user_id))
+      childs.push(Number(userId))
+      if (value) {
+        //  vue很傻逼 vue中数据更改了，但是视图没有更新 必须要重新复制一个新对象
+        this.isIndeterminate = cloneDeep(this.isIndeterminate || {})
+        this.isIndeterminate[`isIndeterminate${userId}`] = true
+        const unitcheckedBindShopList = this.checkedBindShopList.concat(childs).map(item => Number(item))
+        const nextcheckedBindShopList = [...new Set(unitcheckedBindShopList)]
+        this.checkedBindShopList = nextcheckedBindShopList
+      } else {
+        //  vue很傻逼 vue中数据更改了，但是视图没有更新 必须要重新复制一个新对象
+        this.isIndeterminate = cloneDeep(this.isIndeterminate || {})
+        this.isIndeterminate[`isIndeterminate${userId}`] = false
+        const childsSet = new Set(childs)
+        const checkedBindShopListSet = new Set(this.checkedBindShopList)
+        const nextcheckedBindShopList = [...checkedBindShopListSet].filter(item => !childsSet.has(Number(item)))
+        this.checkedBindShopList = [...nextcheckedBindShopList]
+      }
+    },
     disabledDate (time) {
       let self = this
       return {
@@ -210,6 +409,7 @@ export default {
       if (this.template.model.migrate_shop_template && this.template.model.migrate_shop_template.length > 0) {
         params['cost_template_id'] = this.template.model.migrate_shop_template[0].cost_template_id
       }
+
       if (this.template.isDiff()) {
         this.request('updateTemplate', params, data => {
           this.migrage()
@@ -223,24 +423,47 @@ export default {
       if (this.getSelectTPProductIdList.length === 0) {
         this.$message.error('没有选择搬家商品')
       }
+      // 检测必须要选择一个搬家店铺
+      let selfShopId = ''
+      this.bindList.map(item => {
+        if (item.is_self) {
+          selfShopId = item.user_id
+        } else {
+          item.user_list.forEach(child => {
+            if (child.is_self) {
+              selfShopId = child.user_id
+            }
+          })
+        }
+      })
+      let migrateShop = cloneDeep(this.checkedBindShopList)
+      if (this.checkSelf) {
+        migrateShop.push(selfShopId)
+      } else {
+        migrateShop = migrateShop.filter(i => Number(i) !== Number(this.selfShopId))
+      }
+      if (!migrateShop.length) {
+        this.$message.error('请选择搬家店铺')
+        return false
+      }
       let date = ''
       if (this.preSaleDate) {
         date = moment(this.preSaleDate).format('YYYY-MM-DD HH:mm:ss')
       }
-      let migrateShop = []
-      if (this.template.model.migrate_shop_template) {
-        for (let i = 0; i < this.template.model.migrate_shop_template.length; i++) {
-          let item = this.template.model.migrate_shop_template[i]
-          if (item.is_migrate === true && item.cost_template_id !== '') {
-            migrateShop.push({
-              'user_id': item['user_id'],
-              'template': {
-                'cost_template_id': item.cost_template_id
-              }
-            })
-          }
-        }
-      }
+      // let migrateShop = []
+      // if (this.template.model.migrate_shop_template) {
+      //   for (let i = 0; i < this.template.model.migrate_shop_template.length; i++) {
+      //     let item = this.template.model.migrate_shop_template[i]
+      //     if (item.is_migrate === true && item.cost_template_id !== '') {
+      //       migrateShop.push({
+      //         'user_id': item['user_id'],
+      //         'template': {
+      //           'cost_template_id': item.cost_template_id
+      //         }
+      //       })
+      //     }
+      //   }
+      // }
       let templateParams = this.getTemplateParams()
       templateParams.group_price_rate = Math.round(templateParams.group_price_rate * 100)
       templateParams.group_price_diff = utils.yuanToFen(templateParams.group_price_diff)
@@ -320,4 +543,53 @@ export default {
     padding-right: 2px;
   }
 }
+
+.setting-content-with-tip {
+  /deep/ .el-checkbox__label {
+    font-size: 12px;
+  }
+  /deep/ .el-checkbox__inner {
+    width: 12px;
+    height: 12px;
+  }
+  /deep/ .el-checkbox__inner::after {
+    left: 3px;
+    top: 0px;
+  }
+  .checkbox {
+    margin-bottom: 8px;
+  }
+  .current-shop {
+    margin-bottom: 10px;
+    line-height: 12px;
+  }
+  .group {
+    margin-bottom: 14px;
+  }
+  .is-main {
+    font-family: MicrosoftYaHei;
+    font-size: 12px;
+    color: #333333;
+  }
+  .label-name {
+    position:relative;
+  }
+  .label-category{
+  }
+  .label-tip {
+    position:absolute;
+    font-size: 12px;
+    color:#999999
+  }
+  .diffrent-category-tip {
+    margin-top: 14px;
+    color:#999999;
+    font-size: 12px;
+    span {
+      color: red;
+      margin-right: 4px;
+    }
+  }
+}
+
 </style>
