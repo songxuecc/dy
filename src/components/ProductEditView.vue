@@ -128,7 +128,7 @@
                     </el-table-column>
                     <el-table-column key="2" width="100">
                         <template slot="header" slot-scope="scope">
-                            <span>库存</span>
+                            <span>总库存</span>
                             <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true">
                               <i class="el-icon-edit"></i>
                             </el-button>
