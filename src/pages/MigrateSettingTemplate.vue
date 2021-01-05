@@ -78,7 +78,7 @@
                 <p class="info">最多支持设置距离当前30天</p>
             </el-form-item>
             <!-- 阶梯发货 -->
-            <el-form-item label="现货发货时间:"  v-if="presell.presell_type === 2" required>
+            <el-form-item label="现货发货时间:"  v-if="presell.presell_type === 2" >
                 <span>48小时</span>
                 <p class="info">现货发货模式下生成的订单平台统一规定发货时间为48小时，请严格按照承诺发货时间进行发货</p>
             </el-form-item>
@@ -114,10 +114,10 @@
             </el-form-item>
 
             <!-- 阶梯发货 -->
-            <el-form-item label="库存设置:"  v-if="presell.presell_type === 2" prop="stock_num">
+            <el-form-item label="库存设置:"  v-if="presell.presell_type === 2" prop="step_stock_num_diff">
                 <span>现货库存设置为</span>
                 <el-input-number
-                  v-model="presell.stock_num"
+                  v-model="presell.step_stock_num_diff"
                   controls-position="right"
                   @change="handleChange"
                   :min="0"
@@ -186,6 +186,7 @@ import moment from 'moment'
 import cloneDeep from 'lodash/cloneDeep'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
+import isEqual from 'lodash/isEqual'
 import Api from '@/api/apis'
 
 export default {
@@ -262,7 +263,7 @@ export default {
         presell_delay: [
           { required: true, message: '请输入发货时间', trigger: 'blur' }
         ],
-        stock_num: [
+        step_stock_num_diff: [
           { required: true, message: '请输入库存设置', trigger: 'blur' }
         ]
       }
@@ -289,38 +290,24 @@ export default {
     } catch (err) {
       console.log(err)
     }
-    // // if (Object.entries(this.template.model).length === 0) {
-    // this.loadingCnt++
-    // this.requestTemplate().then(data => {
-    //   this.loadingCnt--
-    //   const defaultPresell = {
-    //     presell_type: 1,
-    //     delivery_delay_day: 2,
-    //     presell_end_time: '',
-    //     presell_delay: 3,
-    //     stock_num: 0
-    //   }
-    //   const presell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_end_time', 'presell_delay', 'stock_num'])
-    //   this.presell = {...defaultPresell, ...presell}
-    //     // this.loadTempTemplate()
-    //     // this.check()
-    // })
-    // // }
   },
   mounted () {
+    console.log(this.template.model)
     if (Object.entries(this.template.model).length === 0) {
       this.loadingCnt++
       this.requestTemplate().then(data => {
         this.loadingCnt--
-        const defaultPresell = {
-          presell_type: 1,
+        const defaultValue = {
+          presell_type: 0,
           delivery_delay_day: 2,
           presell_end_time: '',
           presell_delay: 3,
           stock_num: 0
         }
-        const presell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_end_time', 'presell_delay', 'stock_num'])
-        this.presell = {...defaultPresell, ...presell}
+        const requestPresell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_delay', 'step_stock_num_diff'])
+        this.defaultPresell = {...defaultValue, ...requestPresell}
+        const presell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_end_time', 'presell_delay', 'step_stock_num_diff'])
+        this.presell = {...this.defaultPresell, ...presell}
         this.loadTempTemplate()
         this.check()
       })
@@ -440,7 +427,6 @@ export default {
         'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
         'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max'
-
       ]
       let params = {}
       for (let key in this.template.model) {
@@ -450,7 +436,7 @@ export default {
       }
       return params
     },
-    startMigrate () {
+    async startMigrate () {
       if (this.msgError !== '') {
         return
       }
@@ -460,13 +446,8 @@ export default {
         params['cost_template_id'] = this.template.model.migrate_shop_template[0].cost_template_id
       }
 
-      this.$refs.presellRef.validate((valid) => {
-        console.log(valid)
-        if (valid) {
-        } else {
-        }
-      })
-
+      const valid = await this.$refs.presellRef.validate()
+      if (!valid) return
       // 根据不同的发货模式 取字段
       let presell = {}
       if (this.presell.presell_type === 0) {
@@ -475,22 +456,19 @@ export default {
         presell = pick(this.presell, ['presell_type', 'presell_end_time', 'presell_delay'])
         presell.presell_end_time = moment(presell.presell_end_time).format('YYYY-MM-DD HH:mm:ss')
       } else {
-        presell = pick(this.presell, ['presell_type', 'delivery_delay_day', 'stock_num'])
+        presell = pick(this.presell, ['presell_type', 'delivery_delay_day', 'step_stock_num_diff'])
       }
-
-      const diffPresell = this.presell.diff()
-      // 预售结束时间 30天判断
-      // const diff = this.template.isDiff()
-      console.log(presell)
-      // this.migrage(presell)
+      const diffPresell = !isEqual(this.presell, this.defaultPresell)
+      const diffTemplate = this.template.isDiff()
+      console.log(diffPresell, diffTemplate)
       // todo 验证搬家 发货模式的数据
-      // if (this.template.isDiff()) {
-      //   this.request('updateTemplate', params, data => {
-      //     this.migrage()
-      //   })
-      // } else {
-      //   this.migrage()
-      // }
+      if (diffTemplate || diffPresell) {
+        this.request('updateTemplate', params, data => {
+          this.migrage()
+        })
+      } else {
+        this.migrage()
+      }
     },
     resetForm (formName) {
       this.$refs['presellRef'].resetFields()
@@ -523,10 +501,7 @@ export default {
         this.$message.error('请选择搬家店铺')
         return false
       }
-      let date = ''
-      if (this.preSaleDate) {
-        date = moment(this.preSaleDate).format('YYYY-MM-DD HH:mm:ss')
-      }
+
       let templateParams = this.getTemplateParams()
       templateParams.group_price_rate = Math.round(templateParams.group_price_rate * 100)
       templateParams.group_price_diff = utils.yuanToFen(templateParams.group_price_diff)
@@ -535,16 +510,17 @@ export default {
       templateParams.price_rate = Math.round(templateParams.price_rate * 100)
       templateParams.price_diff = utils.yuanToFen(templateParams.price_diff)
       templateParams.origin_price_diff = utils.yuanToFen(templateParams.origin_price_diff)
+      templateParams = {...templateParams, ...presell}
+
       let params = {
-        template: JSON.stringify(templateParams),
+        // template: JSON.stringify(templateParams),
+        template: templateParams,
         migration_type: this.migrate_type,
-        pre_sale_date: date,
+        // 预售结束时间
+        pre_sale_date: presell.presell_end_time,
         // mobile: this.template.model.mobile,
         // pay_type: this.template.model.pay_type,
         // cos_ratio: this.template.model.cos_ratio,
-        presell_delay: this.template.model.presell_delay,
-        // 搬家
-        presell,
         tp_product_ids: this.getSelectTPProductIdList,
         custom_prices: JSON.stringify(this.dicCustomPrices),
         migrate_shop: JSON.stringify(migrateShop.map(userId => ({user_id: userId})))
