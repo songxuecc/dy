@@ -384,6 +384,10 @@ export default {
       min-width: 130px;
     }
 
+    .syncProductToolTip {
+      cursor: pointer;
+    }
+
     .manageShops {
       color: white;
       transition: all 0.3s;
@@ -391,6 +395,7 @@ export default {
       height: 80px;
       align-items: center;
       display: flex;
+      cursor: pointer;
       span {
         font-size:12px;
         padding-top: 2px;
