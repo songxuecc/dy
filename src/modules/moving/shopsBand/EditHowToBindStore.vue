@@ -1,7 +1,7 @@
 <!-- 如何绑定店铺 -->
 <template>
     <div class="EditHowToBindStore">
-      <h1>绑定后可实现<span class="tutorials">操作教程 ></span></h1>
+      <h1>绑定后可实现<span class="tutorials" @click="caozuojiaocheng">操作教程 ></span></h1>
       <h3><span>1、</span>当前店铺如果作为主店铺，授权码为</h3>
       <div class="code">
         <el-link
@@ -17,7 +17,7 @@
         :loading="postCodeLoading"
         @click="copy">复制授权码</el-button>
       </div>
-      <p>复制授权码后<a>登陆其他店铺</a> 并粘贴该串授权码则完成绑定</p>
+      <p>复制授权码后<b>&nbsp;登陆其他店铺&nbsp;</b>并粘贴该串授权码则完成绑定</p>
       <h1><span>2、</span>当前店铺如果作为子店铺，请在此输入主店铺的授权码</h1>
       <div class="input-code">
         <el-input placeholder="请输入主店铺授权码" size="medium" class="input" style="width:230px" v-model="parent_auth_code"/>
@@ -61,6 +61,10 @@ export default {
   methods: {
     ...mapMutations(['save']),
     ...mapActions(['getUserBindList']),
+    caozuojiaocheng () {
+      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/knnu2m')
+      return false
+    },
     copy: async function () {
       try {
         this.save({postCodeLoading: true})
@@ -85,6 +89,13 @@ export default {
       if (!this.parent_auth_code) {
         this.$message({
           message: '请输入授权码',
+          type: 'error'
+        })
+        return false
+      }
+      if (this.parent_auth_code === this.auth_code) {
+        this.$message({
+          message: '授权失败，请切换其他店铺输入授权码',
           type: 'error'
         })
         return false
@@ -138,7 +149,12 @@ export default {
       height: 18px;
       padding: 0 4px;
       margin-top: 3px;
-      margin-left: 3px;
+      margin-left: 5px;
+      cursor: pointer;
+      &:hover {
+        transition: 0.3s;
+        transform: scale(1.05);
+      }
     }
   }
   h3 {

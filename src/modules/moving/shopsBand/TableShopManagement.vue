@@ -7,7 +7,7 @@
       @click="handleClick(index)"
       class="radio"
       :type="active===index ? 'primary':'default'"
-    >{{isMainShop.shop_name}}</el-button>
+    >{{isMainShop.shop_name}}是主店铺</el-button>
     <el-table
       :data="tableData"
       style="width: 100%">
@@ -32,7 +32,7 @@
             v-if="scope.row.auth_status === 'expire'"
             type="primary"
             style="display:inline;font-size:12px;margin-left:5px"
-            href="https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42"
+            @click="openDinggou"
             :underline="false"
           >去续订></el-link>
         </span>
@@ -90,6 +90,10 @@ export default {
     ...mapMutations(['save']),
     handleClick (active) {
       this.changeActive({active})
+    },
+    openDinggou () {
+      window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
+      return false
     }
   },
   computed: {

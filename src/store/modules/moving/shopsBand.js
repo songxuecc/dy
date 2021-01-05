@@ -187,7 +187,7 @@ export default {
           loading: true
         })
         this._vm.$message({
-          message: payload.is_self ? '踢出成功' : '退出成功',
+          message: !payload.is_self ? '踢出成功' : '退出成功',
           type: 'success'
         })
       } catch (err) {
