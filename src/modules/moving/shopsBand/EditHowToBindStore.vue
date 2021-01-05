@@ -68,15 +68,12 @@ export default {
     copy: async function () {
       try {
         this.save({postCodeLoading: true})
-        const data = await Api.hhgjAPIs.postBindSuthCodeCreate()
-        if (data && this.$copyText) {
-          await this.$copyText(data.auth_code)
-          this.save({postCodeLoading: false})
-          this.$message({
-            message: '复制成功',
-            type: 'success'
-          })
-        }
+        await this.$copyText(this.auth_code)
+        this.save({postCodeLoading: false})
+        this.$message({
+          message: '复制成功',
+          type: 'success'
+        })
       } catch (err) {
         this.save({postCodeLoading: false})
         this.$message({
