@@ -289,41 +289,41 @@ export default {
     } catch (err) {
       console.log(err)
     }
-    // if (Object.entries(this.template.model).length === 0) {
-    this.loadingCnt++
-    this.requestTemplate().then(data => {
-      this.loadingCnt--
-      const defaultPresell = {
-        presell_type: 1,
-        delivery_delay_day: 2,
-        presell_end_time: '',
-        presell_delay: 3,
-        stock_num: 0
-      }
-      const presell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_end_time', 'presell_delay', 'stock_num'])
-      this.presell = {...defaultPresell, ...presell}
-        // this.loadTempTemplate()
-        // this.check()
-    })
-    // }
+    // // if (Object.entries(this.template.model).length === 0) {
+    // this.loadingCnt++
+    // this.requestTemplate().then(data => {
+    //   this.loadingCnt--
+    //   const defaultPresell = {
+    //     presell_type: 1,
+    //     delivery_delay_day: 2,
+    //     presell_end_time: '',
+    //     presell_delay: 3,
+    //     stock_num: 0
+    //   }
+    //   const presell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_end_time', 'presell_delay', 'stock_num'])
+    //   this.presell = {...defaultPresell, ...presell}
+    //     // this.loadTempTemplate()
+    //     // this.check()
+    // })
+    // // }
   },
   mounted () {
     if (Object.entries(this.template.model).length === 0) {
-      // this.loadingCnt++
-      // this.requestTemplate().then(data => {
-      //   this.loadingCnt--
-      //   const defaultPresell = {
-      //     presell_type: 0,
-      //     delivery_delay_day: 2,
-      //     presell_end_time: '',
-      //     presell_delay: 3,
-      //     stock_num: 0
-      //   }
-      //   const presell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_end_time', 'presell_delay', 'stock_num'])
-      //   this.presell = {...defaultPresell, ...presell}
-      //   this.loadTempTemplate()
-      //   this.check()
-      // })
+      this.loadingCnt++
+      this.requestTemplate().then(data => {
+        this.loadingCnt--
+        const defaultPresell = {
+          presell_type: 1,
+          delivery_delay_day: 2,
+          presell_end_time: '',
+          presell_delay: 3,
+          stock_num: 0
+        }
+        const presell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_end_time', 'presell_delay', 'stock_num'])
+        this.presell = {...defaultPresell, ...presell}
+        this.loadTempTemplate()
+        this.check()
+      })
       this.loadTempTemplate()
       this.check()
     }
@@ -477,6 +477,8 @@ export default {
       } else {
         presell = pick(this.presell, ['presell_type', 'delivery_delay_day', 'stock_num'])
       }
+
+      const diffPresell = this.presell.diff()
       // 预售结束时间 30天判断
       // const diff = this.template.isDiff()
       console.log(presell)
