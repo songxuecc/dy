@@ -451,7 +451,7 @@ export default {
       if (this.template.model.migrate_shop_template && this.template.model.migrate_shop_template.length > 0) {
         params['cost_template_id'] = this.template.model.migrate_shop_template[0].cost_template_id
       }
-
+      // 检测发货模式
       const valid = await this.$refs.presellRef.validate()
       if (!valid) return
       // 根据不同的发货模式 取字段
@@ -486,27 +486,42 @@ export default {
         this.$message.error('没有选择搬家商品')
       }
       // 检测必须要选择一个搬家店铺
-      let selfShopId = ''
-      this.originBindList.map(item => {
-        if (item.is_self) {
-          selfShopId = item.user_id
-        } else {
-          item.user_list.forEach(child => {
-            if (child.is_self) {
-              selfShopId = child.user_id
-            }
-          })
+      // let selfShopId = ''
+      // this.originBindList.map(item => {
+      //   if (item.is_self) {
+      //     selfShopId = item.user_id
+      //   } else {
+      //     item.user_list.forEach(child => {
+      //       if (child.is_self) {
+      //         selfShopId = child.user_id
+      //       }
+      //     })
+      //   }
+      // })
+      // let migrateShop = cloneDeep(this.checkedBindShopList)
+      // if (this.checkSelf) {
+      //   migrateShop.push(selfShopId)
+      // } else {
+      //   migrateShop = migrateShop.filter(i => Number(i) !== Number(this.selfShopId))
+      // }
+      // if (!migrateShop.length) {
+      //   this.$message.error('请选择搬家店铺')
+      //   return false
+      // }
+      // 注释多店铺搬家
+      let migrateShop = []
+      if (this.template.model.migrate_shop_template) {
+        for (let i = 0; i < this.template.model.migrate_shop_template.length; i++) {
+          let item = this.template.model.migrate_shop_template[i]
+          if (item.is_migrate === true && item.cost_template_id !== '') {
+            migrateShop.push({
+              'user_id': item['user_id'],
+              'template': {
+                'cost_template_id': item.cost_template_id
+              }
+            })
+          }
         }
-      })
-      let migrateShop = cloneDeep(this.checkedBindShopList)
-      if (this.checkSelf) {
-        migrateShop.push(selfShopId)
-      } else {
-        migrateShop = migrateShop.filter(i => Number(i) !== Number(this.selfShopId))
-      }
-      if (!migrateShop.length) {
-        this.$message.error('请选择搬家店铺')
-        return false
       }
 
       let templateParams = this.getTemplateParams()
@@ -529,7 +544,9 @@ export default {
         // cos_ratio: this.template.model.cos_ratio,
         tp_product_ids: this.getSelectTPProductIdList,
         custom_prices: JSON.stringify(this.dicCustomPrices),
-        migrate_shop: JSON.stringify(migrateShop.map(userId => ({user_id: userId})))
+        // 注释多店铺搬家
+        // migrate_shop: JSON.stringify(migrateShop.map(userId => ({user_id: userId})))
+        migrate_shop: JSON.stringify(migrateShop)
       }
       this.request('migrate', params, data => {
         if (this.loadingCnt === 0) {
