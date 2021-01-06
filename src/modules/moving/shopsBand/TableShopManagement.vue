@@ -108,6 +108,9 @@ export default {
     /deep/ .el-button {
       border-radius: 0;
     }
+    .radio {
+      margin-bottom: 5px;
+    }
     .el-button+.el-button {
       border-left: 0;
       margin-left: 0;
