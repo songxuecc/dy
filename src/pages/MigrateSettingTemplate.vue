@@ -102,7 +102,7 @@
                 <template v-if="presell.presell_type === 2">
                 <span>订单生成后</span>
                 <el-input-number
-                  v-model="presell.delivery_delay_day"
+                  v-model="presell.presell_delay"
                   controls-position="right"
                   @change="handleChange"
                   :min="3"
@@ -203,9 +203,7 @@ export default {
     }
     const checkDeliveryDelayDay = (rule, value, callback) => {
       const startTime = new Date()
-      console.log(startTime)
       const days = moment(value).diff(moment(startTime), 'days')
-      console.log(days)
       if (days > 30) {
         callback(new Error('不可以超过30天'))
       } else {
@@ -254,7 +252,7 @@ export default {
           { required: true, message: '请选择发货模式', trigger: 'blur' }
         ],
         delivery_delay_day: [
-          { required: true, message: '请输入发货时间', trigger: 'blur' }
+          { required: true, message: '请输入发货时间', trigger: 'change' }
         ],
         presell_end_time: [
           { required: true, message: '请输入预售结束时间', trigger: 'blur' },
@@ -293,26 +291,33 @@ export default {
     }
   },
   mounted () {
+    const defaultValue = {
+      presell_type: 0,
+      delivery_delay_day: 2,
+      presell_end_time: '',
+      presell_delay: 3,
+      step_stock_num_diff: 0
+    }
+    // 初始化 曾经有 就取保存的 没有就新建
     if (Object.entries(this.template.model).length === 0) {
       this.loadingCnt++
       this.requestTemplate().then(data => {
         this.loadingCnt--
-        const defaultValue = {
-          presell_type: 0,
-          delivery_delay_day: 2,
-          presell_end_time: '',
-          presell_delay: 3,
-          stock_num: 0
-        }
         const requestPresell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_delay', 'step_stock_num_diff'])
+        // 验证 delivery_delay_day 只可以是 2, 3, 5, 7, 10, 15
+        if (![2, 3, 5, 7, 10, 15].includes(requestPresell.delivery_delay_day)) {
+          requestPresell.delivery_delay_day = 2
+        }
         this.defaultPresell = {...defaultValue, ...requestPresell}
-        const presell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_end_time', 'presell_delay', 'step_stock_num_diff'])
-        this.presell = {...this.defaultPresell, ...presell}
+        this.presell = {...this.defaultPresell}
         this.loadTempTemplate()
         this.check()
       })
       this.loadTempTemplate()
       this.check()
+    } else {
+      this.presell = defaultValue
+      this.defaultPresell = undefined
     }
   },
   computed: {
@@ -426,7 +431,8 @@ export default {
       let keyList = ['pay_type', 'mobile', 'cos_ratio', 'cost_template_id',
         'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
-        'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max'
+        'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max', 'step_stock_num_diff',
+        'presell_type', 'presell_delay', 'deliver_delay_day'
       ]
       let params = {}
       for (let key in this.template.model) {
@@ -456,24 +462,25 @@ export default {
         presell = pick(this.presell, ['presell_type', 'presell_end_time', 'presell_delay'])
         presell.presell_end_time = moment(presell.presell_end_time).format('YYYY-MM-DD HH:mm:ss')
       } else {
-        presell = pick(this.presell, ['presell_type', 'delivery_delay_day', 'step_stock_num_diff'])
+        presell = pick(this.presell, ['presell_type', 'presell_delay', 'step_stock_num_diff'])
+        // 抖音阶梯发货 现货都是48小时
+        presell.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+        this.presell.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
       }
-      const diffPresell = !isEqual(this.presell, this.defaultPresell)
+      const diffPresell = !isEqual(cloneDeep(this.presell), this.defaultPresell)
       const diffTemplate = this.template.isDiff()
-      // console.log(diffPresell, diffTemplate)
-      // todo 验证搬家 发货模式的数据
       if (diffTemplate || diffPresell) {
         this.request('updateTemplate', params, data => {
-          this.migrage()
+          this.migrage(presell)
         })
       } else {
-        this.migrage()
+        this.migrage(presell)
       }
     },
     resetForm (formName) {
       this.$refs['presellRef'].resetFields()
     },
-    migrage (presell) {
+    migrage (presell = {}) {
       this.isStartMigrate = true
       if (this.getSelectTPProductIdList.length === 0) {
         this.$message.error('没有选择搬家商品')
@@ -513,8 +520,7 @@ export default {
       templateParams = {...templateParams, ...presell}
 
       let params = {
-        // template: JSON.stringify(templateParams),
-        template: templateParams,
+        template: JSON.stringify(templateParams),
         migration_type: this.migrate_type,
         // 预售结束时间
         pre_sale_date: presell.presell_end_time,
@@ -525,27 +531,27 @@ export default {
         custom_prices: JSON.stringify(this.dicCustomPrices),
         migrate_shop: JSON.stringify(migrateShop.map(userId => ({user_id: userId})))
       }
-      // this.request('migrate', params, data => {
-      //   if (this.loadingCnt === 0) {
-      //     this.isStartMigrate = false
-      //     this.setSelectTPProductIdList([])
-      //     this.dicCustomPrices = {}
-      //     this.removeDicCustomPrices()
-      //     this.$alert('搬家任务已在后台生成, 虎虎正在努力为你搬家，您可以继续其它操作', '提示', {
-      //       confirmButtonText: '确定',
-      //       callback: action => {
-      //         this.$router.push({
-      //           name: 'ProductList',
-      //           params: {
-      //             isMigrateComplete: false,
-      //             keepStatus: true,
-      //             needRefresh: true
-      //           }
-      //         })
-      //       }
-      //     })
-      //   }
-      // }, data => { this.isStartMigrate = false })
+      this.request('migrate', params, data => {
+        if (this.loadingCnt === 0) {
+          this.isStartMigrate = false
+          this.setSelectTPProductIdList([])
+          this.dicCustomPrices = {}
+          this.removeDicCustomPrices()
+          this.$alert('搬家任务已在后台生成, 虎虎正在努力为你搬家，您可以继续其它操作', '提示', {
+            confirmButtonText: '确定',
+            callback: action => {
+              this.$router.push({
+                name: 'ProductList',
+                params: {
+                  isMigrateComplete: false,
+                  keepStatus: true,
+                  needRefresh: true
+                }
+              })
+            }
+          })
+        }
+      }, data => { this.isStartMigrate = false })
     },
     goback () {
       this.$router.go(-1)
