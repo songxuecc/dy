@@ -186,6 +186,7 @@ import moment from 'moment'
 import cloneDeep from 'lodash/cloneDeep'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
+import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import Api from '@/api/apis'
 
@@ -299,26 +300,30 @@ export default {
       step_stock_num_diff: 0
     }
     // 初始化 曾经有 就取保存的 没有就新建
-    if (Object.entries(this.template.model).length === 0) {
+    if (isEmpty(this.template.model)) {
       this.loadingCnt++
       this.requestTemplate().then(data => {
         this.loadingCnt--
         const requestPresell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_delay', 'step_stock_num_diff'])
-        // 验证 delivery_delay_day 只可以是 2, 3, 5, 7, 10, 15
-        if (![2, 3, 5, 7, 10, 15].includes(requestPresell.delivery_delay_day)) {
-          requestPresell.delivery_delay_day = 2
-        }
-        this.defaultPresell = {...defaultValue, ...requestPresell}
-        this.presell = {...this.defaultPresell}
-        this.loadTempTemplate()
-        this.check()
+        // 给requestPresell 中为undefined赋默认值
+        this.defaultPresell = Object.keys(requestPresell).reduce((target, key) => {
+          const valuePresell = requestPresell[key]
+          return {...target, [key]: valuePresell || defaultValue[key]}
+        }, {})
+        // defaultPresell 用作后期对比
+        this.presell = cloneDeep(this.defaultPresell)
       })
-      this.loadTempTemplate()
-      this.check()
     } else {
-      this.presell = defaultValue
       this.defaultPresell = undefined
+      this.presell = cloneDeep(defaultValue)
     }
+    // TODO 这里有一个大问题 保存模版上次使用
+    // 原来的逻辑是 在修改sku单价时 获取本地存储template 赋值给template 等到第三部的时候再取值 如果为空再请求template数据
+    // 这样做的目的是为了 保存用户上次使用模版本次回显
+    // 逻辑漏洞是 用户再第三页直接刷新 则template 的初始化永远为空
+    // 应该在第三页本页做此操作 后续改进
+    this.loadTempTemplate()
+    this.check()
   },
   computed: {
     ...mapGetters({
