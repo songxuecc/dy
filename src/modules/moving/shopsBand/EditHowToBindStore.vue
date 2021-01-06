@@ -108,6 +108,7 @@ export default {
           type: 'success'
         })
         this.getUserBindList({ loading: true })
+        this.parent_auth_code = ''
       } catch (err) {
         this.save({postSubmitLoading: false})
         this.$message({

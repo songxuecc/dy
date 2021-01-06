@@ -2,11 +2,11 @@
 <template>
     <div class="TableShopManagement">
     <el-button
-      v-for="(isMainShop,index) in isMainShops"
-      :key="index"
-      @click="handleClick(index)"
+      v-for="(isMainShop) in isMainShops"
+      :key="isMainShop.user_id"
+      @click="handleClick(isMainShop.user_id)"
       class="radio"
-      :type="active===index ? 'primary':'default'"
+      :type="active===isMainShop.user_id ? 'primary':'default'"
     >{{isMainShop.shop_name}}是主店铺</el-button>
     <el-table
       :data="tableData"

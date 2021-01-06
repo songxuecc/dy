@@ -1,90 +1,5 @@
 import Api from '@/api/apis'
 
-// const items = [
-//   {
-//     shop_name: '小虎跑得快',
-//     is_main: true,
-//     is_self: true,
-//     auth_status: 'auth',
-//     auth_deadline: '2020.10.28',
-//     'user_id': 1111 },
-//   {
-//     shop_name: '小虎跑得快',
-//     is_main: false,
-//     is_self: false,
-//     auth_status: 'expire',
-//     auth_deadline: '2020.10.28',
-//     'user_id': 1111 },
-//   {
-//     shop_name: '小虎跑得快',
-//     is_main: false,
-//     is_self: false,
-//     auth_status: 'auth',
-//     auth_deadline: '2020.10.28',
-//     'user_id': 1111
-//   }
-// ]
-// const items2 = [{
-//   shop_name: '2016-05-02',
-//   is_main: true,
-//   is_self: false,
-//   auth_status: 'expire',
-//   auth_deadline: '2020.10.28',
-//   'user_id': 1111 },
-// {
-//   shop_name: '2016-05-02',
-//   is_main: false,
-//   is_self: true,
-//   auth_status: 'auth',
-//   auth_deadline: '2020.10.28',
-//   'user_id': 1111 },
-// {
-//   shop_name: '2016-05-02',
-//   is_main: false,
-//   is_self: false,
-//   auth_status: 'auth',
-//   auth_deadline: '2020.10.28',
-//   'user_id': 1111
-// }]
-// let ddd = [
-//   {
-//     'user_id': 1111,
-//     'shop_name': '小虎跑得快a1',
-//     'auth_status': 'auth',
-//     'auth_deadline': '2021-01-01',
-//     'is_main': true,
-//     'is_self': false,
-//     'user_list': items
-//   },
-//   {
-//     'user_id': 1111,
-//     'shop_name': '小虎跑得快a2',
-//     'auth_status': 'auth',
-//     'auth_deadline': '2021-01-01',
-//     'is_main': true,
-//     'is_self': false,
-//     'user_list': items2
-//   },
-//   {
-//     'user_id': 1111,
-//     'shop_name': '小虎跑得快a1',
-//     'auth_status': 'auth',
-//     'auth_deadline': '2021-01-01',
-//     'is_main': true,
-//     'is_self': false,
-//     'user_list': items
-//   },
-//   {
-//     'user_id': 1111,
-//     'shop_name': '小虎跑得快a2',
-//     'auth_status': 'auth',
-//     'auth_deadline': '2021-01-01',
-//     'is_main': true,
-//     'is_self': false,
-//     'user_list': items
-//   }
-// ]
-
 // 店铺绑定
 export default {
   namespaced: true,
@@ -93,7 +8,7 @@ export default {
     tableData: [],
     count: 0,
     data: [],
-    active: 0,
+    active: undefined,
     postSubmitLoading: false,
     postCodeLoading: false
   }),
@@ -112,27 +27,38 @@ export default {
       }
       const result = await Api.hhgjAPIs.getUserBindList({})
       const data = (result || []).map((item, id) => ({...item, id}))
-      commit('save', { data })
-      this.dispatch('moving/shopsBand/getTabData', data[state.active])
+      const mapData = data.reduce((target, current) => {
+        return {...target, [current.user_id]: current}
+      }, {})
       loading && loading.close()
+      const active = state.active
+      // 如果切换的tab对应的user_id还存在 则切换当前tab
+      if (mapData[active]) {
+        this.dispatch('moving/shopsBand/getTabData', mapData[active])
+      } else if (!mapData[active] && data.length) {
+        // 如果切换的tab对应的user_id不存在 取默认第一个
+        this.dispatch('moving/shopsBand/getTabData', data[0])
+        commit('save', { active: data[0].user_id })
+      } else {
+        this.dispatch('moving/shopsBand/getTabData', undefined)
+        commit('save', { active: undefined })
+      }
+      commit('save', { data, mapData })
     },
     changeActive  ({commit, state}, payload) {
       commit('save', payload)
-      this.dispatch('moving/shopsBand/getTabData', state.data[payload.active])
+      this.dispatch('moving/shopsBand/getTabData', state.mapData[payload.active])
     },
     getTabData ({commit, state}, payload) {
         // 当前店铺是主店铺 可以踢人
-      if (!payload) return false
+      if (!payload) {
+        commit('save', { tableData: [] })
+        return false
+      }
       const items = payload.user_list
       const canChangeShops = items.some(item => item.is_self && item.is_main)
       const tableData = items.map(item => {
         const editBtns = []
-        // if ((!item.is_main & !item.is_self & item.auth_status === 'auth') || (!item.is_self & !canChangeShops & item.auth_status === 'auth')) {
-        //   editBtns.push({
-        //     text: '切换成TA',
-        //     handle: () => this.dispatch('moving/shopsBand/changeShop', item)
-        //   })
-        // }
         if (!item.is_self) {
           editBtns.push({
             text: '切换成TA',
