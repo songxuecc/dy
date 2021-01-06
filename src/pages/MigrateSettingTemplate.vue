@@ -129,7 +129,7 @@
         </div>
         <!-- 发货模式 end-->
         <!-- 搬家店铺 start-->
-        <div class="setting-content-with-tip">
+        <!-- <div class="setting-content-with-tip">
           <el-form label-width="120px"  size="small">
             <el-form-item label="搬家店铺:">
               <el-checkbox
@@ -165,7 +165,7 @@
               <p class="diffrent-category-tip"><span >*</span>仅允许搬家商品一级类目与店铺一级类目相同的商品</p>
             </el-form-item>
           </el-form>
-        </div>
+        </div> -->
         <!-- 搬家店铺 end -->
         <div  class="common-bottom">
             <el-button style="margin-right: 15px" @click="goback">返回</el-button>
@@ -268,27 +268,27 @@ export default {
     }
   },
   async created () {
-    try {
-      // 记得合并修改的 fetch 不然await 无效
-      const bindList = await Api.hhgjAPIs.getMigrateMultiShopProductList({
-        tp_product_id_list: JSON.stringify(this.getSelectTPProductIdList)
-      })
-      this.originBindList = cloneDeep(bindList)
-      this.bindList = bindList.map(parents => {
-        // 过滤所有非当前店铺的元素
-        if (parents.user_list && parents.user_list.length) {
-          const childs = parents.user_list.filter(child => !child.is_self)
-          if (!parents.is_self) {
-            const firstChilds = omit(parents, ['user_list'])
-            childs.unshift(firstChilds)
-          }
-          parents.user_list = childs
-        }
-        return parents
-      })
-    } catch (err) {
-      console.log(err)
-    }
+    // try {
+    //   // 记得合并修改的 fetch 不然await 无效
+    //   const bindList = await Api.hhgjAPIs.getMigrateMultiShopProductList({
+    //     tp_product_id_list: JSON.stringify(this.getSelectTPProductIdList)
+    //   })
+    //   this.originBindList = cloneDeep(bindList)
+    //   this.bindList = bindList.map(parents => {
+    //     // 过滤所有非当前店铺的元素
+    //     if (parents.user_list && parents.user_list.length) {
+    //       const childs = parents.user_list.filter(child => !child.is_self)
+    //       if (!parents.is_self) {
+    //         const firstChilds = omit(parents, ['user_list'])
+    //         childs.unshift(firstChilds)
+    //       }
+    //       parents.user_list = childs
+    //     }
+    //     return parents
+    //   })
+    // } catch (err) {
+    //   console.log(err)
+    // }
   },
   mounted () {
     const defaultValue = {
