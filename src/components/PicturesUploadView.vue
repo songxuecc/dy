@@ -63,11 +63,9 @@
 import common from '@/common/common'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
-import IconSvg from './icon-svg'
 
 export default {
   components: {
-    IconSvg,
     draggable
   },
   props: {

@@ -12,9 +12,9 @@
               上海虎正奔信息科技有限公司是一家为电商企业提供新型店铺经营管理的互联网公司。致<br>力于帮助企业降低运营成本、提升运营效率、促进交易转化。
             </p>
             <div class="company-info">
-              <p><icon-svg iconClass="icon-company" style="width:18px; height:18px"></icon-svg><span>公司名称：</span>上海虎正奔信息科技有限公司</p>
-              <p><icon-svg iconClass="icon-adress" style="width:18px; height:18px"></icon-svg><span>地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</span>上海浦东软件园22号楼310室</p>
-              <p><icon-svg iconClass="icon-phone" style="width:18px; height:18px"></icon-svg><span>联系方式：</span><a href="mailto:huhu_yunying@taofengcai.com?"><em>huhu_yunying@taofengcai.com</em></a></p>
+              <p><hh-icon type="icongongsimingcheng" style="font-size:18px" /><span>公司名称：</span>上海虎正奔信息科技有限公司</p>
+              <p><hh-icon type="icongongsidizhi" style="font-size:18px" /><span>地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</span>上海浦东软件园22号楼310室</p>
+              <p><hh-icon type="iconlianxifangshi" style="font-size:18px" /><span>联系方式：</span><a href="mailto:huhu_yunying@taofengcai.com?"><em>huhu_yunying@taofengcai.com</em></a></p>
             </div>
           </el-tab-pane>
         </el-tabs>
