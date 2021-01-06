@@ -10,18 +10,22 @@ import notification from './modules/notification'
 import picture from './modules/picture'
 import controller from './modules/controller'
 
+import moving from './modules/moving'
+
 Vue.use(Vuex)
+const modules = {
+  user,
+  category,
+  template,
+  capture,
+  tpProduct,
+  subscrible,
+  notification,
+  picture,
+  controller,
+  ...moving
+}
 
 export default new Vuex.Store({
-  modules: {
-    user,
-    category,
-    template,
-    capture,
-    tpProduct,
-    subscrible,
-    notification,
-    picture,
-    controller
-  }
+  modules
 })

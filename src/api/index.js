@@ -4,8 +4,33 @@ import router from '@/router'
 import store from '@/store/store'
 import * as types from '@/store/types'
 
-const post = (relativePath, data, headers, resolve, reject) => {
-  Vue.axios.post(relativePath, data, {headers}).then(response => {
+const post = (relativePath, data, headers, resolve, reject) => Vue.axios.post(relativePath, data, {headers}).then(response => {
+  if (parseInt(response.status) === 200) {
+    if (parseInt(response.data.code) === 0) {
+      resolve(response.data.data)
+    } else if ([200, 201, 202].includes(parseInt(response.data.code))) {
+      store.commit(types.LOGOUT)
+      router.push({
+        path: '/'
+      })
+      reject(new Error(response.data.msg))
+    } else {
+      reject(new Error(response.data.msg))
+    }
+  } else {
+    reject(new Error('服务接口出错'))
+  }
+}).catch(err => {
+  console.error(err)
+  reject(err)
+})
+
+/**
+ * 发起get请求
+ */
+const get = (relativePath, headers, resolve, reject) => Vue.axios
+  .get(relativePath, {headers})
+  .then(response => {
     if (parseInt(response.status) === 200) {
       if (parseInt(response.data.code) === 0) {
         resolve(response.data.data)
@@ -21,40 +46,11 @@ const post = (relativePath, data, headers, resolve, reject) => {
     } else {
       reject(new Error('服务接口出错'))
     }
-  }).catch(err => {
+  })
+  .catch(err => {
     console.error(err)
     reject(err)
   })
-}
-
-/**
- * 发起get请求
- */
-const get = (relativePath, headers, resolve, reject) => {
-  Vue.axios
-    .get(relativePath, {headers})
-    .then(response => {
-      if (parseInt(response.status) === 200) {
-        if (parseInt(response.data.code) === 0) {
-          resolve(response.data.data)
-        } else if ([200, 201, 202].includes(parseInt(response.data.code))) {
-          store.commit(types.LOGOUT)
-          router.push({
-            path: '/'
-          })
-          reject(new Error(response.data.msg))
-        } else {
-          reject(new Error(response.data.msg))
-        }
-      } else {
-        reject(new Error('服务接口出错'))
-      }
-    })
-    .catch(err => {
-      console.error(err)
-      reject(err)
-    })
-}
 
 /**
  * 构造get请求对象
@@ -104,6 +100,10 @@ const actionCreatorPost = async (relativePath, params) => {
     if (fakeToken && relativePath !== '/api/fakeUser') {
       headers['fake-token'] = fakeToken
     }
+    let changeShop = localStorage.getItem('change_shop')
+    if (changeShop) {
+      headers['change-shop'] = changeShop
+    }
     let data = qs.stringify(params, {arrayFormat: 'brackets'})
     post(relativePath, data, headers, resolve, reject)
   })
@@ -123,6 +123,10 @@ const actionCreatorJsonPost = async (relativePath, params) => {
     if (fakeToken && relativePath !== '/api/fakeUser') {
       headers['fake-token'] = fakeToken
     }
+    let changeShop = localStorage.getItem('change_shop')
+    if (changeShop) {
+      headers['change-shop'] = changeShop
+    }
     post(relativePath, params, headers, resolve, reject)
   })
 }
@@ -141,7 +145,11 @@ const actionCreatorDownload = async (relativePath, params) => {
     if (fakeToken && relativePath !== '/api/fakeUser') {
       headers['fake-token'] = fakeToken
     }
-    Vue.axios.get(relativePath, {params, headers, responseType: 'blob'}).then(response => {
+    let changeShop = localStorage.getItem('change_shop')
+    if (changeShop) {
+      headers['change-shop'] = changeShop
+    }
+    return Vue.axios.get(relativePath, {params, headers, responseType: 'blob'}).then(response => {
       const blob = new Blob([response.data], {type: response.data.type})
       if (response.data.type === 'application/json') {
         let fr = new FileReader()

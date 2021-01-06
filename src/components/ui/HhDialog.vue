@@ -7,7 +7,7 @@
         <div class="dialog-title">
           <div v-if='title' style="display:inline-block">{{title}}</div>
           <el-button v-if="isClose" class="dialog-close" @click="closeDialog" round>
-            <icon-svg iconClass="icon-close" style=" width: 24px;height: 24px;"></icon-svg>
+            <hh-icon type="iconquxiaoda2" style="font-size:24px; "/>
           </el-button>
         </div>
         <slot name="content"></slot>

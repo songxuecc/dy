@@ -4,8 +4,8 @@
       <span class="nav-icon nav-help"></span>
       <div class="column-name">教程</div>
     </div>
-    <div class="float-button" @click="goToComments">
-      <hh-icon type="icon-yijianbaise1" class="comments-icon"></hh-icon>
+    <div class="float-button icon" @click="goToComments">
+      <hh-icon type="iconyijianbaise1" style="font-size:28px;"></hh-icon>
       <div class="column-name">反馈</div>
     </div>
     <div class="float-button wechat-button">
@@ -150,3 +150,23 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+.icon {
+    background: #fff;
+    color: #409EFF;
+    height: 58px;
+    padding: 4px;
+    .column-name {
+      color: #666666;
+      height: 21px;
+      padding: 5px 0;
+    }
+    &:hover {
+      color: #fff;
+      background: #409EFF;
+      .column-name {
+        color: #fff;
+      }
+    }
+  }
+</style>

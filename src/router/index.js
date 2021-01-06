@@ -17,6 +17,7 @@ import SubscribeList from '@/pages/SubscribeList'
 import PayOrder from '@/pages/PayOrder'
 import CustomerService from '@/pages/CustomerService.vue'
 import MigrateSetting from '@/components/MigrateSetting.vue'
+import shopsBand from '@/modules/moving/shopsBand'
 
 Vue.use(Router)
 
@@ -48,6 +49,14 @@ const router = new Router({
       path: '/info',
       name: 'AppInfo',
       component: AppInfo,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/setting/shopsBand',
+      name: '绑定店铺',
+      component: shopsBand,
       meta: {
         keepAlive: true
       }

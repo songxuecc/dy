@@ -2,40 +2,56 @@
     <div class="navbar" id="navBar">
         <div class="navbar-content">
           <div class="main-inner clearfix">
-            <div class="nav-title" @click="goInfo"><img src="../assets/icon/logo.png" alt="虎虎搬家助手"><icon-svg iconClass="icon-douyin-plat" style="width:50px; height:18px; position: relative; top: -7px;"></icon-svg></div>
+            <div class="nav-title" @click="goInfo">
+              <img src="../assets/icon/logo.png" alt="虎虎搬家助手">
+              <hh-icon type="icondouyinban" style="font-size:42px;position:absolute;margin-left:4px;top:12px" />
+            </div>
             <div class="nav-right">
-              <!--<el-menu v-if="!shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                    <el-menu-item index="3">短信水印</el-menu-item>
-                    <el-menu-item index="4">打单发货</el-menu-item>
-              </el-menu>-->
-              <div class="nav-not-login" v-if="!shopName">
-                <el-button type="primary" @click="goToServiceMarket">购买</el-button>
-                <el-button type="primary" @click="onLogin">登录</el-button>
-              </div>
+              <!-- 用户使用天数 -->
               <ul v-if="shopName" class="menu-content">
                 <li @click="goToOrder()">
                   <span style="vertical-align: middle;">{{subscName}} 剩 {{leftDays}} 天</span>
                   <img style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" />
                 </li>
               </ul>
+              <!-- 同步商品 & 绑定店铺 -->
+              <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
+                <template slot="content">
+                  <p style="font-size: 12px;margin-bottom:2px">将抖店后台的商品立马同步至本软件，每隔24小时自动同步一次</p>
+                  <div> 最近同步时间 {{ syncStatus.last_sync_time }} </div>
+                </template>
+                <div class="syncProduct" @click="handleSyncProducts" :disabled="isSyncing">
+                  <p style="display:flex;align-items:center"><hh-icon type="icontongbushangpin2" style="font-size:20px;"/>{{syncButtonText}}</p>
+                </div>
+              </el-tooltip>
+              <div v-if="shopName" class="manageShops" @click="manageShops">
+                <p style="display:flex;align-items:center"><hh-icon type="iconduodianpuguanli2" style="font-size:20px;"/>绑定店铺管理</p>
+              </div>
+              <!-- 退出 & 登录-->
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-<!--                    <el-menu-item index="3">短信水印</el-menu-item>-->
-<!--                    <el-menu-item index="4">打单发货</el-menu-item>-->
-<!--                    <el-menu-item index="1">添加到收藏</el-menu-item>-->
-                    <el-submenu index="2" popper-class="nav-menu-popup">
-                        <template slot="title">{{ shopName }}</template>
-                        <el-menu-item index="2-1">退出</el-menu-item>
-                    </el-submenu>
-                </el-menu>
+                  <el-submenu index="2" popper-class="nav-menu-popup">
+                      <template slot="title">{{ shopName }}</template>
+                      <el-menu-item index="2-1">退出</el-menu-item>
+                  </el-submenu>
+              </el-menu>
+              <div class="nav-not-login" v-if="!shopName">
+                <el-button type="primary" @click="goToServiceMarket">购买</el-button>
+                <el-button type="primary" @click="onLogin">登录</el-button>
+              </div>
             </div>
           </div>
         </div>
     </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import commonUtils from '@/common/commonUtils'
 import utils from '@/common/utils'
+import common from '@/common/common.js'
+
+const {
+  mapActions: mapActionsNavbar
+} = createNamespacedHelpers('moving/shopsBand')
 
 export default {
   data () {
@@ -43,7 +59,19 @@ export default {
       form: {
         app_key: '',
         app_secret: ''
-      }
+      },
+      bindChildShopList: [
+        {
+          mall_name: 'mall_name1',
+          user_id: 'user_id1'
+        },
+        {
+          mall_name: 'mall_name2',
+          user_id: 'user_id2'
+        }
+      ],
+      isSyncing: false,
+      syncButtonText: '同步后台商品'
     }
   },
   computed: {
@@ -51,7 +79,8 @@ export default {
       name: 'getName',
       shopName: 'getShopName',
       isAuth: 'getIsAuth',
-      subsc: 'getCurrentSubsc'
+      subsc: 'getCurrentSubsc',
+      syncStatus: 'getSyncStatus'
     }),
     leftDays () {
       if (this.subsc.deadline === '') {
@@ -64,6 +93,12 @@ export default {
         return '-'
       }
       return this.subsc.item_name.split(' ')[0]
+    },
+    isShowLastSyncTime () {
+      if (!this.syncStatus.last_sync_time || this.syncStatus.last_sync_time < '2019-01-01') {
+        return false
+      }
+      return true
     }
   },
   mounted () {
@@ -76,13 +111,21 @@ export default {
       if (val) {
         this.asyncUserAndNotice()
       }
+    },
+    syncStatus (val, oldVal) {
+      this.isSyncing = (val.status !== 'complete' && val.status !== 'error')
+      this.refreshSyncButtonText()
     }
   },
   methods: {
     ...mapActions([
       'logout',
       'requestUserInfo',
-      'requestNotification'
+      'requestNotification',
+      'requestSyncProducts'
+    ]),
+    ...mapActionsNavbar([
+
     ]),
     async asyncUserAndNotice () { // 同步获取userInfo及notification
       try {
@@ -92,12 +135,27 @@ export default {
         console.error(error)
       }
     },
+    // 同步商品
+    handleSyncProducts () {
+      if (!this.isAuth || this.isSyncing) return false
+      this.isSyncing = true
+      this.syncButtonText = '正在准备同步...'
+      this.requestSyncProducts({
+        sync_type: common.SyncType['all'],
+        operation_type: 1
+      })
+    },
+    refreshSyncButtonText () {
+      let val = this.syncStatus
+      if (val.status === 'ready') {
+        this.syncButtonText = '正在准备同步...'
+      } else if (val.status === 'running') {
+        this.syncButtonText = '同步中...(' + val.cur + '/' + val.total + ')'
+      } else {
+        this.syncButtonText = '同步后台商品'
+      }
+    },
     onLogin () {
-      // window.location.href = 'https://fxg.jinritemai.com/index.html#/ffa/open/serviceAuthorizeManage?page=1&size=10&tab='
-      // this.$router.push({
-      //   path: '/'
-      // })
-      // let shareId = this.$route.query.share_id
       commonUtils.login(null)
     },
     onLogout () {
@@ -107,19 +165,41 @@ export default {
       })
     },
     handleSelect (key, keyPath) {
-      if (key === '1') {
-        commonUtils.addToFavorite()
-      } else if (key === '2-1') {
-        this.onLogout()
-      } else if (key === '3') {
-        this.$router.push({
-          path: '/meizhe'
-        })
-      } else if (key === '4') {
-        this.$router.push({
-          path: '/woda'
-        })
-      }
+      const selectMap = new Map([
+        ['1', {
+          handle: () => commonUtils.addToFavorite(),
+          comment: '添加到收藏'
+        }],
+        ['2-1', {
+          handle: () => this.onLogout(),
+          comment: '退出'
+        }],
+        ['3', {
+          handle: () => this.$router.push({path: '/meizhe'}),
+          comment: '短信水印'
+        }],
+        ['4', {
+          handle: () => this.$router.push({path: '/woda'}),
+          comment: '打单发货'
+        }],
+        ['1-0', {
+          handle: () => this.$router.push({path: '/woda'}),
+          comment: '返回主账号'
+        }],
+        ['1-2', {
+          handle: () => {
+            if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
+            this.$router.push({ path: '/setting/shopsBand' })
+          },
+          comment: '绑定店铺'
+        }]
+      ])
+      const value = selectMap.get(key)
+      if (value && value.handle) value.handle()
+    },
+    manageShops () {
+      if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
+      this.$router.push({ path: '/setting/shopsBand' })
     },
     goInfo () {
       this.$router.push({
@@ -139,5 +219,206 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/navbar.less';
+    @import '~@/assets/css/base.less';
+    .navbar {
+      background: @navbar-bg;
+      /deep/ .el-menu .el-menu--popup {
+        color: blue !important;
+        min-width: 130px;
+      }
+      /deep/ .el-menu {
+        .el-menu-item {
+          &:hover {
+            background-color: @color-light-blue;
+          }
+        }
+        .el-submenu__title {
+          color: #ffffff;
+          height: 80px;
+          line-height: 80px;
+          border-bottom: 2px solid #ffffff;
+          background: @navbar-bg;
+          padding: 0 8px;
+          i {
+            color: #ffffff;
+          }
+          &:hover {
+            background: #409eff;
+            color: #ffffff;
+            i {
+              color: @color-light-blue;
+            }
+          }
+        }
+        .el-icon-arrow-down:before {
+          color: #ffffff !important;
+        }
+      }
+      /deep/ .el-menu.el-menu--horizontal {
+        border-bottom: none;
+      }
+      /deep/ .el-button--primary {
+        font-size: 16px;
+      }
+      /deep/ .el-menu--popup {
+        color: blue !important;
+        min-width: 130px !important;
+      }
+      .navbar-content {
+        padding: 0 20px;
+        color: @color-white;
+        height: 80px;
+        .nav-title {
+          float: left;
+          padding: 20px 0 0 20px;
+          position:relative;
+          cursor: pointer;
+          img {
+            width: 153px;
+          }
+        }
+        .nav-right {
+          float: right;
+          display: flex;
+          align-items: flex-start;
+          position: relative;
+          color: #333333;
+          background: @navbar-bg;
+          .el-button {
+            vertical-align: middle;
+            width: 100px;
+            padding: 10px;
+          }
+          .wx-box {
+            padding: 10px;
+            background: #50aeff;
+            position: absolute;
+            left: 0;
+            top: 58px;
+            z-index: 9999;
+            .wx-title {
+              font-size: 12px;
+              font-weight: bold;
+              margin: 0 auto;
+              line-height: 34px;
+            }
+            .wx-info {
+              p {
+                padding-left: 10px;
+                font-size: 12px;
+                text-align: left;
+                margin: 0;
+                line-height: 20px;
+              }
+            }
+          }
+          .order-board-box {
+            position: absolute;
+            z-index: 999;
+            right: -21px;
+            top: 60px;
+          }
+        }
+
+        .main-inner {
+          background: @navbar-bg;
+          height: 100%;
+        }
+        .nav-right .dialog-footer .el-button {
+          vertical-align: middle;
+          width: auto;
+          padding: 10px;
+        }
+      }
+
+    }
+
+    .menu-content {
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+      line-height: 80px;
+      height: 80px;
+      overflow: hidden;
+      li {
+        border: 0;
+        padding: 0 8px;
+        display: block;
+        float: left;
+        cursor: pointer;
+        color: #ffffff;
+        background: @navbar-bg;
+      }
+      li:hover {
+        color: @color-light-blue;
+      }
+    }
+    .more-shop-order-dialog {
+      line-height: normal;
+    }
+    .more-shop-order {
+      text-indent: 26px;
+      p {
+        font-size: 16px;
+        line-height: 30px;
+        padding: 20px 0;
+      }
+      em {
+        color: red;
+        font-weight: bold;
+      }
+      span {
+        font-size: 12px;
+        line-height: 24px;
+        color: #666666;
+      }
+    }
+
+    /* 未登陆头部导航样式 */
+    .nav-not-login {
+      padding: 20px 20px 20px 0;
+    }
+
+    .nav-menu-popup {
+      color: blue !important;
+      min-width: 130px;
+    }
+
+    .syncProductToolTip {
+      cursor: pointer;
+    }
+
+    .manageShops {
+      color: white;
+      transition: all 0.3s;
+      padding: 0 8px;
+      height: 80px;
+      align-items: center;
+      display: flex;
+      cursor: pointer;
+      span {
+        font-size:12px;
+        padding-top: 2px;
+      }
+      &:hover {
+        background: #409eff;
+        color: #ffffff;
+      }
+    }
+    .syncProduct {
+      color: white;
+      transition: all 0.3s;
+      padding: 0 8px;
+      height: 80px;
+      align-items: center;
+      display: flex;
+      span {
+        font-size:12px;
+        padding-top: 2px;
+      }
+      &:hover {
+        background: #409eff;
+        color: #ffffff;
+      }
+    }
 </style>
