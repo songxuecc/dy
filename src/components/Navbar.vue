@@ -125,12 +125,13 @@ export default {
       'requestSyncProducts'
     ]),
     ...mapActionsNavbar([
-
+      'setShopFirstCategory'
     ]),
     async asyncUserAndNotice () { // 同步获取userInfo及notification
       try {
         await this.requestUserInfo()
         this.requestNotification()
+        this.setShopFirstCategory()
       } catch (error) {
         console.error(error)
       }

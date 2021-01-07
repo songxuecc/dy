@@ -287,6 +287,9 @@ const hhgjAPIs = {
   },
   getMigrateMultiShopProductList: (params) => {
     return api.actionCreateGet('/api/migrate/multiShop/product/list', params)
+  },
+  syncDyUserCategory: (params) => {
+    return api.actionCreatorPost('/api/category/sync/create', params)
   }
 }
 
