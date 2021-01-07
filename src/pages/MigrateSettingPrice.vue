@@ -223,6 +223,8 @@
       width="900px"
       @opened="dialogSkuPriceOpened"
       @close="dialogSkuPriceClose"
+      :close-on-click-modal="false"
+      :show-close="false"
     >
       <sku-price-list-view
         ref="skuPriceListView"

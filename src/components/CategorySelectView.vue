@@ -90,7 +90,7 @@ export default {
         data.name = cateName
         this.toSelectCate(data)
         this.updateBySelectCate()
-      })
+      }, function () {}, true)
     },
     resetCateFrom (level) {
       for (let i = level - 1; i < this.maxLevel; ++i) {

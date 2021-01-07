@@ -61,8 +61,9 @@ const get = (relativePath, headers, resolve, reject) => Vue.axios
 const actionCreateGet = async (relativePath, params) => {
   params = params || {}
   // 遍历params构造请求路径
-  for (let key in params) {
-    relativePath += `${key}=${params[key]}&`
+  let paramsStr = Object.entries(params).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&')
+  if (paramsStr) {
+    relativePath = relativePath + '?' + paramsStr
   }
 
   return new Promise(function (resolve, reject) {
