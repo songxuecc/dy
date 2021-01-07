@@ -1,4 +1,5 @@
 import Api from '@/api/apis'
+import * as types from '@/store/types'
 
 // 店铺绑定
 export default {
@@ -15,9 +16,21 @@ export default {
   mutations: {
     save (state, payload) {
       Object.assign(state, payload)
+    },
+    [ types.SET_SHOP_FIRST_CATEGORY ] (state, data) {
+      state.firstCategoryList = data
     }
   },
   actions: {
+    setShopFirstCategory ({commit, state}) {
+      Api.hhgjAPIs.getCategoryList(
+        {
+          parent_id: 0
+        }
+      ).then(data => {
+        commit(types.SET_SHOP_FIRST_CATEGORY, data)
+      })
+    },
     async getUserBindList ({commit, state}, payload) {
       let loading
       if (payload && payload.loading) {
@@ -125,6 +138,7 @@ export default {
     }
   },
   getters: {
-    isMainShops: state => state.data.filter(item => item.is_main) || []
+    isMainShops: state => state.data.filter(item => item.is_main) || [],
+    getFirstCategoryList: state => state.firstCategoryList
   }
 }
