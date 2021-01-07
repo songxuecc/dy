@@ -90,7 +90,6 @@ export default {
         data.id = cateId
         data.name = cateName
         this.toSelectCate(data)
-        this.updateBySelectCate()
         // 如果商品的三级类目不在店铺的一级类目中，则不继续刷新二、三、四级类目
         let firstCategoryIdList = []
         for (let category of this.firstCategoryList) {

@@ -124,14 +124,11 @@ export default {
       'requestNotification',
       'requestSyncProducts'
     ]),
-    ...mapActionsNavbar([
-      'setShopFirstCategory'
-    ]),
+    ...mapActionsNavbar([]),
     async asyncUserAndNotice () { // 同步获取userInfo及notification
       try {
         await this.requestUserInfo()
         this.requestNotification()
-        this.setShopFirstCategory()
       } catch (error) {
         console.error(error)
       }
