@@ -31,6 +31,7 @@ const state = {
     'goods_assess_notify': {},
     'expire_notify': {}
   },
+  getFirstCategoryList: [],
   changeShop: localStorage.getItem('change_shop') || '',
   updateJobIdList: (localStorage.getItem('update_job_id_list') ? localStorage.getItem('update_job_id_list').split(',') : [])
 }
@@ -57,7 +58,8 @@ const getters = {
   getCurrentSubsc: state => state.currentSubsc,
   getExportFields: state => state.exportFields,
   getUpdateJobIdList: state => state.updateJobIdList,
-  getChangeShop: state => state.changeShop
+  getChangeShop: state => state.changeShop,
+  getFirstCategoryList: state => state.getFirstCategoryList
 }
 
 const actions = {
@@ -125,6 +127,9 @@ const actions = {
             state.haveSyncedOrder = true
             dispatch('requestSyncOrders', {})
           }
+        }
+        if (data.firstCategoryList) {
+          commit(types.SET_SHOP_FIRST_CATEGORY, data.firstCategoryList)
         }
         if (data) {
           resolve(data)
@@ -311,6 +316,9 @@ const mutations = {
       localStorage.setItem('change_shop', data['change_shop_id'])
       state.change_shop = data['change_shop_id']
     }
+  },
+  [ types.SET_SHOP_FIRST_CATEGORY ] (state, data) {
+    state.getFirstCategoryList = data
   }
 }
 

@@ -52,7 +52,7 @@ export default {
   data () {
     return {
       categoryId: 0,
-      maxLevel: 3,
+      maxLevel: 4,
       cateSearchStr: '',
       cateMultiList: [],
       cateFamilyList: [],
@@ -65,7 +65,8 @@ export default {
   computed: {
     ...mapGetters({
       recentCatId: 'getRecentCatId',
-      recentCatName: 'getRecentCatName'
+      recentCatName: 'getRecentCatName',
+      firstCategoryList: 'getFirstCategoryList'
     })
   },
   mounted () {
@@ -89,7 +90,17 @@ export default {
         data.id = cateId
         data.name = cateName
         this.toSelectCate(data)
-        this.updateBySelectCate()
+        // 如果商品的三级类目不在店铺的一级类目中，则不继续刷新二、三、四级类目
+        let firstCategoryIdList = []
+        for (let category of this.firstCategoryList) {
+          firstCategoryIdList.push(category['id'])
+        }
+        for (let level of data.levels) {
+          if (level.level === 1 && firstCategoryIdList.includes(level.id)) {
+            this.updateBySelectCate()
+            break
+          }
+        }
       }, function () {}, true)
     },
     resetCateFrom (level) {

@@ -124,9 +124,7 @@ export default {
       'requestNotification',
       'requestSyncProducts'
     ]),
-    ...mapActionsNavbar([
-
-    ]),
+    ...mapActionsNavbar([]),
     async asyncUserAndNotice () { // 同步获取userInfo及notification
       try {
         await this.requestUserInfo()
