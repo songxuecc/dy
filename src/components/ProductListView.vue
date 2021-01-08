@@ -247,6 +247,11 @@ export default {
     }
   },
   methods: {
+    getSkuDuplicateFormatText (msg) {
+      msg = msg.replace('添加规格失败err=', '')
+      msg = msg.replace('对应的规格值不能重复，请核对', '')
+      return msg + '对应的sku名称重复，建议删除重复规格'
+    },
     getLastCategory (category) {
       return utils.getLastCategory(category)
     },
