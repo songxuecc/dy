@@ -90,6 +90,16 @@
                               <p>查询哪些类目需填品牌：<a style="color: navajowhite;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">https://school.jinritemai.com/doudian/web/article/101810</a>（点击链接是可跳转的）</p>
                             </ul>
                         </div>
+                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              商品详情图中有空白图，建议将空白图删除后再次搬家
+                            </ul>
+                        </div>
+                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              {{getSkuDuplicateFormatText(scope.row.migration_msg[0])}}
+                            </ul>
+                        </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败30-2,transImgToLocal failed') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               轮播图+详情图+sku图不能超过50张
@@ -237,6 +247,11 @@ export default {
     }
   },
   methods: {
+    getSkuDuplicateFormatText (msg) {
+      msg = msg.replace('添加规格失败err=', '')
+      msg = msg.replace('对应的规格值不能重复，请核对', '')
+      return msg + '对应的sku名称重复，建议删除重复规格'
+    },
     getLastCategory (category) {
       return utils.getLastCategory(category)
     },
