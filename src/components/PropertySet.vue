@@ -39,6 +39,18 @@
                 v-model="model[item.name]"
                 v-else
               />
+            <span v-if="item.name === '品牌'">
+                <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i></el-button>
+                <el-link
+                    type="primary"
+                    target="_blank"
+                    :underline="false"
+                    :href="`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`">
+                    添加品牌
+                </el-link>
+                <el-button size="mini" type="primary" @click="applySelectBrandToSelection" :disabled="!item.options.length">应用到选中的商品</el-button>
+            </span>
+
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
                 <div >
                     <p style="color:red;font-size:12px">当前商品所选类目根据官方要求必须填写品牌。</p>
@@ -105,9 +117,7 @@ export default {
   methods: {
     // 重置 品牌列表
     reloadBrandList () {
-      this.request('getShopBrandList', {}, data => {
-        this.shopBrandList = data
-      })
+      this.$emit('reloadBrandList')
     },
     // 验证
     validate () {
@@ -144,7 +154,10 @@ export default {
           const tpValue = newModal[item.name] || ''
           return {...item, tp_value: tpValue}
         })
-      this.$emit('change', newAttributeJson)
+      this.$emit('change', newAttributeJson, name, value)
+    },
+    applySelectBrandToSelection () {
+      this.$emit('applySelectBrandToSelection')
     }
   }
 }

@@ -83,13 +83,13 @@
                           </el-tooltip>
                         </span>
                       </el-form-item>
-                      <el-form-item label="商品描述:" style="margin-right: 20px;">
+                      <el-form-item label="商品描述:" style="margin-right: 20px;" >
                           <el-input type="textarea" v-model="product.model.description" size="mini"
                                     :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
                           </el-input>
                       </el-form-item>
-                      <el-form-item label="品牌:">
-                        <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
+                      <el-form-item label="品牌:" :required="product.model.brand_id_require" style="display:none">
+                        <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable :disabled="true">
                           <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
                                     :label="item.brand_chinese_name || item.brand_english_name"
                           ></el-option>
@@ -111,6 +111,8 @@
                           :catId="product.model.cat_id"
                           :productModel="product.model.attrList"
                           ref="propertySet"
+                          @applySelectBrandToSelection="applySelectBrandToSelection()"
+                          @reloadBrandList="reloadBrandList"
                           ></property-set>
                     </el-form-item>
                   </el-form>
@@ -655,6 +657,11 @@ export default {
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
+        const brand = data.attribute_json.find(item => item.name === '品牌')
+        // 设置品牌是否必填
+        if (brand && brand.required) {
+          this.product.assign({brand_id_require: brand.required})
+        }
         if (data.brand_id) {
           this.product.assign({brand_id: data.brand_id})
         }
@@ -756,6 +763,27 @@ export default {
     reloadBrandList () {
       this.request('getShopBrandList', {}, data => {
         this.shopBrandList = data
+        const catId = this.product.model.cat_id
+        for (let i in this.productList) {
+          let tpProductId = this.productList[i].tp_product_id
+          if (tpProductId in this.products) {
+            let product = this.products[tpProductId]
+            if (this.productBrandDic.hasOwnProperty(tpProductId) && product.model.cat_id === catId) {
+            // 品牌列表替换后 应用到所有商品 品牌option替换
+              const attrList = product.model.attrList.map(item => {
+                if (item.name === '品牌') {
+                  item.options = data
+                }
+                return item
+              })
+              Object.assign(product.model, {attrList})
+            }
+          }
+        }
+        this.$message({
+          message: '刷新成功',
+          type: 'success'
+        })
       })
     },
     onDeleteSku (pId, pVid) {
@@ -1133,6 +1161,7 @@ export default {
       }
     },
     applySelectBrandToSelection () {
+      const catId = this.product.model.cat_id
       for (let i in this.selectedProductIds) {
         let tpProductId = this.selectedProductIds[i]
         this.productBrandDic[tpProductId] = this.product.model.brand_id
@@ -1141,8 +1170,18 @@ export default {
         let tpProductId = this.productList[i].tp_product_id
         if (tpProductId in this.products) {
           let product = this.products[tpProductId]
-          if (this.productBrandDic.hasOwnProperty(tpProductId)) {
-            Object.assign(product.model, {brand_id: this.productBrandDic[tpProductId]})
+          //  只应用到同类目的品牌
+          if (this.productBrandDic.hasOwnProperty(tpProductId) && product.model.cat_id && product.model.cat_id === catId) {
+            this.productBrandDic[tpProductId] = this.product.model.brand_id
+            Object.assign(product.model, {brand_id: this.product.model.brand_id})
+            // 把品牌应用到所有
+            const attrList = product.model.attrList.map(item => {
+              if (item.name === '品牌') {
+                item.tp_value = this.product.model.brand_id
+              }
+              return item
+            })
+            Object.assign(product.model, {attrList: attrList})
           }
         }
       }
@@ -1329,8 +1368,11 @@ export default {
       this.$set(item, 'maskShow', false)
     },
     // 属性设置 回调
-    handlePropertyset: function (value) {
-      Object.assign(this.product.model, {attrList: value})
+    handlePropertyset: function (attrList, key, value) {
+      if (key === '品牌') {
+        Object.assign(this.product.model, {brand_id: value})
+      }
+      Object.assign(this.product.model, {attrList})
     }
   }
 }
