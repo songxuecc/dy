@@ -4,7 +4,7 @@
         <div class="priceChange">
           <div class="radios">
             <el-radio v-model="promoPriceHandler.radio" label="6">
-              <span>(原价-</span>
+              <span>(原sku价-</span>
               <el-input
                 size="mini"
                 style="width:100px;"
@@ -101,7 +101,7 @@
             <!-- sku原价 start-->
             <el-table-column key="3" width="150" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>原价</span>
+                    <span>原划线价</span>
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
