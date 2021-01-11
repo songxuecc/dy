@@ -40,7 +40,7 @@
                 </el-tooltip>
               </div>
             </div>
-            <div class="th-title-text">( 售价 - </div>
+            <div class="th-title-text">( 原价 - </div>
             <el-input v-model="template.model.origin_price_diff" size="medium"
                       :class="['input-m40', !template.checkNumber('origin_price_diff') && isInitTemplate ? 'warn' : '']"
                       @input="handleInputTemplateSkuPrice('promo_price')"

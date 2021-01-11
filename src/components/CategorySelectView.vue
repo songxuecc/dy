@@ -37,7 +37,11 @@
             </div>
             <br>
             <div  class="common-bottom">
-                <el-button :disabled="selectCate.leaf !== 1" type="primary" @click="confirm">保存</el-button>
+              <el-link type="primary" target="_blank" :underline="false" style="float: left" @click="realSyncCategory">
+                <i class="el-icon-refresh"></i>
+                获取新类目
+              </el-link>
+              <el-button :disabled="selectCate.leaf !== 1" type="primary" @click="confirm">保存</el-button>
             </div>
         </el-row>
     </div>
@@ -52,6 +56,7 @@ export default {
   data () {
     return {
       categoryId: 0,
+      categoryName: '',
       maxLevel: 4,
       cateSearchStr: '',
       cateMultiList: [],
@@ -77,6 +82,12 @@ export default {
     ...mapActions([
       'setRecentCat'
     ]),
+    realSyncCategory () {
+      let self = this
+      this.request('realSyncDyUserCategory', {}, data => {
+        self.initCate(this.categoryId, this.categoryName)
+      })
+    },
     initCate (cateId = 0, cateName = '') {
       if (cateId === 0) {
         cateId = parseInt(this.recentCatId)
@@ -85,6 +96,7 @@ export default {
       if (cateId === 0) {
         return
       }
+      this.categoryName = cateName
       this.categoryId = cateId
       this.request('getCategoryDetail', { category_id: cateId }, data => {
         data.id = cateId

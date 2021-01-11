@@ -290,6 +290,9 @@ const hhgjAPIs = {
   },
   syncDyUserCategory: (params) => {
     return api.actionCreatorPost('/api/category/sync/create', params)
+  },
+  realSyncDyUserCategory: (params) => {
+    return api.actionCreatorPost('/api/category/real_sync/create', params)
   }
 }
 
