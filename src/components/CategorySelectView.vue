@@ -56,6 +56,7 @@ export default {
   data () {
     return {
       categoryId: 0,
+      categoryName: '',
       maxLevel: 4,
       cateSearchStr: '',
       cateMultiList: [],
@@ -82,7 +83,10 @@ export default {
       'setRecentCat'
     ]),
     realSyncCategory () {
-      this.request('realSyncDyUserCategory', {}, data => {})
+      let self = this
+      this.request('realSyncDyUserCategory', {}, data => {
+        self.initCate(this.categoryId, this.categoryName)
+      })
     },
     initCate (cateId = 0, cateName = '') {
       if (cateId === 0) {
@@ -92,6 +96,7 @@ export default {
       if (cateId === 0) {
         return
       }
+      this.categoryName = cateName
       this.categoryId = cateId
       this.request('getCategoryDetail', { category_id: cateId }, data => {
         data.id = cateId
