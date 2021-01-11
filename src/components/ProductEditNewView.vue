@@ -108,8 +108,8 @@
                     <el-form-item  label="抖音属性:">
                         <property-set
                           @change="handlePropertyset"
-                          :attribute_json="attribute_json"
                           :catId="product.model.cat_id"
+                          :productModel="product.model.attrList"
                           ref="propertySet"
                           ></property-set>
                     </el-form-item>
@@ -787,15 +787,12 @@ export default {
     },
     // 保存编辑
     async onSaveProduct () {
-      const validation = await this.$refs.propertySet.validate()
-      if (validation) {
-        this.productEditSavingPercent = 0
-        this.isProductEditSaving = true
-        if (window._hmt) {
-          window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
-        }
-        this.saveProducts(this.product.model.cat_id)
+      this.productEditSavingPercent = 0
+      this.isProductEditSaving = true
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
+      this.saveProducts(this.product.model.cat_id)
     },
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
       let tpProductList = []
@@ -814,7 +811,7 @@ export default {
               tp_outer_iid: product.model.outer_id,
               tp_property_json: {
                 // 属性设置数据
-                attribute_json: this.product.model.attrList,
+                attribute_json: product.model.attrList,
                 desc_text: product.model.description,
                 sku_json: this.getSkuUploadObjByShowList(product.model.skuShowList),
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
@@ -1007,7 +1004,6 @@ export default {
       }
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
-      this.$refs.propertySet.resetForm()
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.skuShowList = this.product.model.skuShowList

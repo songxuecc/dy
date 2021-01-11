@@ -2,7 +2,7 @@
 <template>
     <el-form :model="model" :rules="rules" ref="propertySet" >
         <el-form-item
-            v-for="(item,index) in attribute_json"
+            v-for="(item,index) in productModel"
             :key="index"
             :label="item.name"
             :prop="item.name"
@@ -14,6 +14,7 @@
              <el-select
                 clearable
                 @clear="handleClear(item.name)"
+                @change="handleChange($event,item.name)"
                 size="small"
                 :style="{width: item.name !== '品牌' ? '220px' : '180px'}"
                 :placeholder="`请选择${item.name}`"
@@ -31,22 +32,13 @@
             <el-input
                 clearable
                 @clear="handleClear(item.name)"
+                @change="handleChange($event,item.name)"
                 size="small"
                 style="width:220px"
                 :placeholder="`请输入${item.name}`"
                 v-model="model[item.name]"
                 v-else
               />
-            <!-- <span v-if="item.name === '品牌'">
-                <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i></el-button>
-                <el-link
-                    type="primary"
-                    target="_blank"
-                    :underline="false"
-                    :href="`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`">
-                    添加品牌
-                </el-link>
-            </span> -->
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
                 <div >
                     <p style="color:red;font-size:12px">当前商品所选类目根据官方要求必须填写品牌。</p>
@@ -70,15 +62,15 @@ export default {
   name: 'property-set',
   mixins: [request],
   props: {
-    attribute_json: {
-      type: Array
-    },
     catId: {
       type: Number | String,
       default: -1
     },
     ref: {
       type: String
+    },
+    productModel: {
+      type: Object
     }
   },
   data () {
@@ -89,7 +81,7 @@ export default {
   },
   computed: {
     rules () {
-      return (this.attribute_json || []).reduce((target, item) => {
+      return (this.productModel || []).reduce((target, item) => {
         let message = item.options.length ? `请选择${item.name}` : `请输入${item.name}`
         if (item.name === '品牌') message = ''
         const current = {[item.name]: [{required: !!item.required, message, trigger: 'change'}]}
@@ -98,25 +90,14 @@ export default {
     }
   },
   watch: {
-    attribute_json: {
-      handler (n = [], o) {
-        this.model = {}
+    productModel: {
+      handler (newVal, o) {
+        this.resetForm()
         // 移除表单项的校验结果
-        const result = n.reduce((target, current) => {
+        const result = (newVal || []).reduce((target, current) => {
           return {...target, [current.name]: current.tp_value}
         }, {})
         this.model = result
-      },
-      deep: true
-    },
-    model: {
-      handler (newVal, o) {
-        const newAttributeJson = (this.attribute_json || [])
-          .map(item => {
-            const tpValue = newVal[item.name] || ''
-            return {...item, tp_value: tpValue}
-          })
-        this.$emit('change', newAttributeJson)
       },
       deep: true
     }
@@ -149,11 +130,21 @@ export default {
     // 重置
     resetForm () {
       this.$refs.propertySet.resetFields()
+      this.$refs.propertySet.clearValidate()
       this.validation = {}
     },
     // 清空
     handleClear (name) {
       delete this.model[name]
+    },
+    handleChange (value, name) {
+      const newModal = Object.assign(this.model, {[name]: value})
+      const newAttributeJson = (this.productModel || [])
+        .map(item => {
+          const tpValue = newModal[item.name] || ''
+          return {...item, tp_value: tpValue}
+        })
+      this.$emit('change', newAttributeJson)
     }
   }
 }
