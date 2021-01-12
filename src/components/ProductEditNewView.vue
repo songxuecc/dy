@@ -719,7 +719,7 @@ export default {
       this.product.model.category_show = data.name
       this.updateProperty(this.product.model.tp_product_id, this.product.model.cat_id)
       // 重置属性设置
-      this.$refs.propertySet.resetForm()
+      // this.$refs.propertySet.resetForm()
     },
     onBannerImageChanged (bannerPicUrlList) {
       Object.assign(this.product.model, {bannerPicUrlList: [...bannerPicUrlList]})

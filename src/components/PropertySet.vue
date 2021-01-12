@@ -104,7 +104,7 @@ export default {
   watch: {
     productModel: {
       handler (newVal, o) {
-        this.resetForm()
+        // this.resetForm()
         // 移除表单项的校验结果
         const result = (newVal || []).reduce((target, current) => {
           return {...target, [current.name]: current.tp_value}
