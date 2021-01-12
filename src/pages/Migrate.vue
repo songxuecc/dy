@@ -7,45 +7,45 @@
                 </el-input>
                 <div class="support">
                     <span>支持平台:</span>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">淘宝</div>
-                      <img class="icon" src="@/assets/images/u72.png">
+                    <el-tooltip placement="bottom" >
+                      <div slot="content" >淘宝</div>
+                      <img class="icon" src="@/assets/images/u72.png" @click="open('淘宝')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">天猫</div>
-                      <img class="icon" src="@/assets/images/u74.png">
+                      <img class="icon" src="@/assets/images/u74.png" @click="open('天猫')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">1688</div>
-                      <img class="icon" src="@/assets/images/1688.png">
+                      <img class="icon" src="@/assets/images/1688.png" @click="open('1688')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">京东</div>
-                      <img class="icon" src="@/assets/images/jd.png">
+                      <img class="icon" src="@/assets/images/jd.png" @click="open('京东')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">苏宁</div>
-                      <img class="icon" src="@/assets/images/sn.png">
+                      <img class="icon" src="@/assets/images/sn.png" @click="open('苏宁易购')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">唯品会</div>
-                      <img class="icon" src="@/assets/images/vip.png">
+                      <img class="icon" src="@/assets/images/vip.png" @click="open('唯品会')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">网易考拉</div>
-                      <img class="icon" src="@/assets/images/kaola.png">
+                      <img class="icon" src="@/assets/images/kaola.png" @click="open('网易考拉')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">17网</div>
-                      <img class="icon" src="@/assets/images/17.jpg">
+                      <img class="icon" src="@/assets/images/17.jpg" @click="open('17网')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">抖音</div>
-                      <img class="icon" src="@/assets/images/douyin.jpg">
+                      <img class="icon" src="@/assets/images/douyin.jpg" @click="open('抖音')">
                     </el-tooltip>
                     <el-tooltip placement="bottom">
                       <div slot="content">拼多多</div>
-                      <img class="icon" src="@/assets/images/yangkeduo.png">
+                      <img class="icon" src="@/assets/images/yangkeduo.png" @click="open('拼多多')">
                     </el-tooltip>
                 </div>
                 <div  class="common-bottom">
@@ -200,6 +200,24 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    open (name) {
+      const list = {
+        '淘宝': 'https://www.taobao.com/',
+        '天猫': 'https://www.tmall.com/',
+        '1688': 'https://www.1688.com/',
+        '京东': 'https://www.jd.com/',
+        '苏宁易购': 'https://www.suning.com/',
+        '唯品会': 'https://www.vip.com/',
+        '网易考拉': 'https://www.kaola.com/',
+        '17网': 'https://gz.17zwd.com/',
+        '抖音': 'https://www.yuque.com/huxiao-rkndm/ksui6u/muvtyt',
+        '拼多多': 'https://www.yuque.com/huxiao-rkndm/ksui6u/yd9cd1'
+      }
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '搬家上货', '开始复制', name])
+      }
+      window.open(list[name])
+    },
     changeCaptureUrl () {
       let urls = this.textCaptureUrls.split('\n')
       urls = urls.map(s => s.trim()).filter(s => s !== '')
