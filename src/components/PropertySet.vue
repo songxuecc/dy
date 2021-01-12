@@ -48,7 +48,7 @@
                     :href="`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`">
                     添加品牌
                 </el-link>
-                <el-button size="mini" type="primary" @click="applySelectBrandToSelection" :disabled="!item.options.length">应用到选中的商品</el-button>
+                <!-- <el-button size="mini" type="primary" @click="applySelectBrandToSelection" :disabled="!item.options.length">应用到选中的商品</el-button> -->
             </span>
 
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
