@@ -7,6 +7,7 @@
               <hh-icon type="icondouyinban" style="font-size:42px;position:absolute;margin-left:4px;top:12px" />
             </div>
             <div class="nav-right">
+              <img src="../assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable"/>
               <!-- 用户使用天数 -->
               <ul v-if="shopName" class="menu-content">
                 <li @click="goToOrder()">
@@ -212,6 +213,12 @@ export default {
         window._hmt.push(['_trackEvent', '导航栏', '点击', '续费点击'])
       }
       window.location.href = 'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
+    },
+    onEfficientAndStable () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '导航栏', '点击', '高效稳定banner'])
+      }
+      window.open('https://s.woda.com/9xS4C')
     }
   }
 }
@@ -280,8 +287,13 @@ export default {
           display: flex;
           align-items: flex-start;
           position: relative;
+          align-items: center;
           color: #333333;
           background: @navbar-bg;
+          .efficientAndStable {
+            cursor: pointer;
+            width: 100px;
+          }
           .el-button {
             vertical-align: middle;
             width: 100px;
