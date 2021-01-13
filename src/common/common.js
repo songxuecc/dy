@@ -86,7 +86,7 @@ module.exports = {
   },
   dyGoodsCreateUrl: 'https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=',
   CAPTURE_SHOP: 1002,
-  PRODUCT_TITLE_LIMIT: 60,
+  PRODUCT_TITLE_LIMIT: 30,
   PRODUCT_DESC_LIMIT: 500,
   pictureBelongTypeMap: {
     'banner': 0,
