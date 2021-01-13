@@ -1,6 +1,6 @@
 <!-- PropertySet 商品属性设置 -->
 <template>
-    <el-form :model="model" ref="propertySet" >
+    <el-form :model="model" ref="propertySet" v-if="productModel && productModel.length">
         <el-form-item
             v-for="(item,index) in productModel"
             :key="index"
@@ -68,7 +68,7 @@
             <!-- <span v-if="catId!==0">，勾选应用到本页相同分类商品，蓝色高亮</span> -->
         </div>
     </el-form >
-
+    <div v-else style="color:#e6a23c">请选择商品分类 填写抖音属性</div>
 </template>
 
 <script>
