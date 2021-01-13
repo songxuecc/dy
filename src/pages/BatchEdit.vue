@@ -12,8 +12,24 @@
           <el-tab-pane label="改标题" name="title"></el-tab-pane>
 <!--          <el-tab-pane label="改描述" name="description"></el-tab-pane>-->
 <!--          <el-tab-pane label="改类目" name="category"></el-tab-pane>-->
-         <el-tab-pane label="改库存" name="stock"></el-tab-pane>
-         <el-tab-pane label="改价格" name="price"></el-tab-pane>
+          <el-tab-pane name="stock">
+            <div slot="label">
+              <el-popover placement="bottom" width="200" :visible-arrow="false" trigger="hover" popper-class="noedge-popper">
+                <div>
+                  <ul class="el-scrollbar__view el-select-dropdown__list" style="text-align: center">
+                    <li class="el-select-dropdown__item" v-for="option in presellTypeOption"
+                        :key="option.value" @click="handleSelectStock(option.value)"
+                        :style="{color: tabPresellType === option.value ? 'black' : 'gray'}"
+                    >
+                      {{ option.label }}
+                    </li>
+                  </ul>
+                </div>
+                <div slot="reference">{{ '改库存(' + (tabPresellType === 2 ? '阶梯' : '现货') + ')'}}<i class="el-icon-arrow-down"></i> </div>
+              </el-popover>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="改价格" name="price"></el-tab-pane>
 <!--         <el-tab-pane label="轮播图" name="banner"></el-tab-pane>-->
 <!--         <el-tab-pane label="改编码" name="outerSn"></el-tab-pane>-->
 <!--          <el-tab-pane label="改模板" name="template"></el-tab-pane>-->
@@ -181,7 +197,15 @@ export default {
       updateStatusTimer: null,
       dialogEditVisible: false,
       auditingProductDict: {},
-      errorProductDict: {}
+      errorProductDict: {},
+      tabPresellType: 0,
+      presellTypeOption: [{
+        value: 0,
+        label: '现货发货&全款预售发货'
+      }, {
+        value: 2,
+        label: '阶梯发货模式'
+      }]
     }
   },
   computed: {
@@ -238,6 +262,9 @@ export default {
       let params = this.$refs.dySearchFilterView.getParams()
       params['page_index'] = this.pagination.index
       params['page_size'] = this.pagination.size
+      if (this.activeTabName === 'stock') {
+        params['is_step_stock'] = (this.tabPresellType === 2 ? 1 : 0)
+      }
 
       this.request('getProductList', params, data => {
         this.pagination.total = data.total
@@ -302,6 +329,7 @@ export default {
     handleTabClick (tab, event) {
       if (!this.haveEdit()) {
         this.$router.push({ path: tab.name })
+        this.getProductList()
       }
     },
     toggleShowProductList () {
@@ -317,6 +345,27 @@ export default {
         window._hmt.push(['_trackEvent', '批量修改', '点击', label])
       }
       this.isShowDrawer = !this.isShowDrawer
+    },
+    handleSelectStock (presellType) {
+      this.tabPresellType = presellType
+      if (!this.haveEdit()) {
+        this.activeTabName = 'stock'
+        this.$router.push({ path: 'stock' })
+        this.getProductList()
+      } else {
+        let self = this
+        return this.$confirm('已修改的商品不会保存，确定切换？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '暂不切换'
+        }).then(_ => {
+          self.rollbackChange()
+          self.activeTabName = 'stock'
+          self.$router.push({ path: 'stock' })
+          self.getProductList()
+        }).catch(_ => {
+          throw new Error('取消成功！')
+        })
+      }
     },
     handleSizeChange (val) {
       this.pagination.size = val
