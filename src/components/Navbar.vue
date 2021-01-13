@@ -7,7 +7,7 @@
               <hh-icon type="icondouyinban" style="font-size:42px;position:absolute;margin-left:4px;top:12px" />
             </div>
             <div class="nav-right">
-              <img src="../assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable"/>
+              <img v-if="shopName" src="../assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable" />
               <!-- 用户使用天数 -->
               <ul v-if="shopName" class="menu-content">
                 <li @click="goToOrder()">
@@ -293,6 +293,7 @@ export default {
           .efficientAndStable {
             cursor: pointer;
             width: 100px;
+            margin-right: 10px;
           }
           .el-button {
             vertical-align: middle;
