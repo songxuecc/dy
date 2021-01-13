@@ -61,6 +61,15 @@ class StockHandler {
   set radio (val) {
     this.checked = true
     this._radio = val
+    if (parseInt(this._radio) !== 1) {
+      this.textStock = ''
+    }
+    if (parseInt(this._radio) !== 2) {
+      this.textStockAdd = ''
+    }
+    if (parseInt(this._radio) !== 3) {
+      this.textStockSub = ''
+    }
   }
   handleProducts (productList) {
     for (let i in productList) {
@@ -114,6 +123,21 @@ class PriceHandler {
   set radio (val) {
     this.checked = true
     this._radio = val
+    if (parseInt(this._radio) !== 1) {
+      this.textPrice = ''
+    }
+    if (parseInt(this._radio) !== 2) {
+      this.textPriceAdd = ''
+    }
+    if (parseInt(this._radio) !== 3) {
+      this.textPriceSub = ''
+    }
+    if (parseInt(this._radio) !== 4) {
+      this.textPricePercentAdd = ''
+    }
+    if (parseInt(this._radio) !== 5) {
+      this.textPricePercentSub = ''
+    }
   }
   handleProducts (productList, field = 'price') {
     for (let i in productList) {
