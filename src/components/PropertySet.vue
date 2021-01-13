@@ -1,22 +1,22 @@
 <!-- PropertySet 商品属性设置 -->
 <template>
-    <el-form :model="model" :rules="rules" ref="propertySet" >
+    <el-form :model="model" ref="propertySet" >
         <el-form-item
             v-for="(item,index) in productModel"
             :key="index"
-            :label="item.name"
             :prop="item.name"
             :error="item.required && item.value === ''"
             :show-message="item.name !== '品牌'"
             :inline-message="true"
             label-width="84px"
             label-style="font-size:12px">
+             <span slot="label"><span v-if="item.required" style="color:red">*</span>{{item.name}}</span>
              <el-select
                 clearable
                 @clear="handleClear(item.name)"
                 @change="handleChange($event,item.name)"
                 size="small"
-                :style="{width: item.name !== '品牌' ? '220px' : '180px'}"
+                :style="{width: item.name !== '品牌' ? '300px' : '200px'}"
                 :placeholder="`请选择${item.name}`"
                 v-model="model[item.name]"
                 v-if="item.options.length || item.name === '品牌'"
@@ -34,7 +34,7 @@
                 @clear="handleClear(item.name)"
                 @change="handleChange($event,item.name)"
                 size="small"
-                style="width:220px"
+                style="width:300px;"
                 :placeholder="`请输入${item.name}`"
                 v-model="model[item.name]"
                 v-else
@@ -139,8 +139,10 @@ export default {
     },
     // 重置
     resetForm () {
-      this.$refs.propertySet.resetFields()
-      this.$refs.propertySet.clearValidate()
+      if (this.$refs && this.$refs.propertySet) {
+        this.$refs.propertySet.resetFields()
+        this.$refs.propertySet.clearValidate()
+      }
       this.validation = {}
     },
     // 清空
