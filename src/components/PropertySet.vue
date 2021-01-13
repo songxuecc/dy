@@ -51,9 +51,24 @@
                     :href="`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`">
                     添加品牌
                 </el-link>
-                <!-- <el-button size="mini" type="primary" @click="applySelectBrandToSelection" :disabled="!item.options.length">应用到选中的商品</el-button> -->
+                <el-checkbox
+                  border
+                  :value="selected && selected[item.name]? selected[item.name]: false"
+                  @change="applyPropertiesToSelection($event,item.name)"
+                  size="small"
+                  class="batch" >
+                  应用到选中的商品
+                </el-checkbox>
             </span>
-
+            <el-checkbox
+              v-if="item.name !== '品牌'"
+              border
+              @change="applyPropertiesToSelection($event,item.name)"
+              :value="selected && selected[item.name]? selected[item.name] : false"
+              size="small"
+              class="batch">
+              应用到选中的商品
+            </el-checkbox>
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
                 <div >
                     <p style="color:red;font-size:12px">当前商品所选类目根据官方要求必须填写品牌。</p>
@@ -86,6 +101,9 @@ export default {
     },
     productModel: {
       type: Object
+    },
+    propertyBatchMapSelect: {
+      type: Object
     }
   },
   data () {
@@ -102,17 +120,42 @@ export default {
         const current = {[item.name]: [{required: !!item.required, message, trigger: 'change'}]}
         return {...target, ...current}
       }, {})
+    },
+    listenChange () {
+      const {productModel, propertyBatchMapSelect, catId} = this
+      return {productModel, propertyBatchMapSelect, catId}
     }
   },
   watch: {
-    productModel: {
+    listenChange: {
       handler (newVal, o) {
-        // this.resetForm()
-        // 移除表单项的校验结果
-        const result = (newVal || []).reduce((target, current) => {
-          return {...target, [current.name]: current.tp_value}
+        const {productModel, propertyBatchMapSelect, catId} = newVal
+        const model = (productModel || []).reduce((target, current) => {
+          const key = current.name
+          let value = current.tp_value
+          // 如果有全选到应用
+          if (propertyBatchMapSelect && propertyBatchMapSelect[key] && propertyBatchMapSelect[key].checked) {
+            const checkCatId = propertyBatchMapSelect[key].catId
+            if (checkCatId === catId) {
+              value = propertyBatchMapSelect[key].propertyValue
+            }
+          }
+          return {...target, [key]: value}
         }, {})
-        this.model = result
+        this.model = model
+        if (propertyBatchMapSelect && Object.keys(propertyBatchMapSelect).length) {
+          const selected = Object.keys(propertyBatchMapSelect).reduce((target, key) => {
+            if (!propertyBatchMapSelect[key]) return target
+            const checked = propertyBatchMapSelect[key].checked
+            const checkCatId = propertyBatchMapSelect[key].catId
+            if (checkCatId === catId) {
+              return {...target, [key]: checked}
+            } else {
+              return target
+            }
+          }, {})
+          this.selected = {...selected}
+        }
       },
       deep: true
     }
@@ -160,9 +203,11 @@ export default {
           return {...item, tp_value: tpValue}
         })
       this.$emit('change', newAttributeJson, name, value)
+      this.$emit('applyPropertiesToSelection', false, name, '')
     },
-    applySelectBrandToSelection () {
-      this.$emit('applySelectBrandToSelection')
+    applyPropertiesToSelection (value, name) {
+      const propertyValue = this.model[name]
+      this.$emit('applyPropertiesToSelection', value, name, propertyValue)
     }
   }
 }
@@ -176,4 +221,12 @@ export default {
   text-align: left !important;
   padding-left: 10px !important;
 }
+/deep/ .el-form-item__content{
+  display:flex;
+  align-items:center;
+}
+.batch {
+  margin-left: 4px;
+}
+
 </style>

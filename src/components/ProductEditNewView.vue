@@ -111,7 +111,9 @@
                           :catId="product.model.cat_id"
                           :productModel="product.model.attrList"
                           ref="propertySet"
+                          :propertyBatchMapSelect="propertyBatchMap.get(product.model.tp_product_id)"
                           @applySelectBrandToSelection="applySelectBrandToSelection()"
+                          @applyPropertiesToSelection="applyPropertiesToSelection"
                           @reloadBrandList="reloadBrandList"
                           ></property-set>
                     </el-form-item>
@@ -419,6 +421,7 @@ import FormModel from '@/common/formModel'
 import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
 import isEmpty from 'lodash/isEmpty'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   inject: ['reload'],
@@ -479,7 +482,9 @@ export default {
       selectedProductIds: [],
       batchEditTitleVisible: false,
       textHandler: new TextHandler(),
-      closeAfterSave: false
+      closeAfterSave: false,
+      // 属性商品应用到所有 的数据记录
+      propertyBatchMap: new Map()
     }
   },
   watch: {
@@ -831,6 +836,12 @@ export default {
         if (this.products[tpProductId] && this.products[tpProductId].isDiff()) {
           if (tpProductId in this.products) {
             let product = this.products[tpProductId]
+            // 品牌和属性内的品牌是同一个值
+            let brandId = 0
+            const brand = (product.model.attrList || []).find(item => item.name === '品牌')
+            if (brand) {
+              brandId = brand.tp_value
+            }
             let productParams = {
               tp_product_id: product.model.tp_product_id,
               category_id: product.model.cat_id,
@@ -844,7 +855,7 @@ export default {
                 sku_json: this.getSkuUploadObjByShowList(product.model.skuShowList),
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
-                brand_id: product.model.brand_id || 0
+                brand_id: brandId
               }
             }
             tpProductList.push(productParams)
@@ -1071,6 +1082,19 @@ export default {
       }
       this.applySelectCateToAllVisible = true
     },
+    checkedPropertyBatchMapHasValue (tpProductId) {
+      const propertyBatch = this.propertyBatchMap.get(tpProductId)
+      if (!propertyBatch) return false
+      // 只要有一个属性选中全选应用 就相当于编辑过
+      const bool = Object.values(propertyBatch).some(item => {
+        const product = Object.values(this.productList).find(product => product.tp_product_id === tpProductId)
+        if (product && product.category_id === item.catId && item.checked) {
+          return true
+        }
+        return false
+      })
+      return bool
+    },
     updateProductEditStatus () {
       let isChanged = false
       for (let i in this.productList) {
@@ -1086,7 +1110,9 @@ export default {
           // 详情图修改
           (this.productRemoveLastDescDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.descPicUrlList.length > 1))) ||
           // 品牌详情修改
-          (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId])
+          (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId]) ||
+          // 批量修改属性商品
+          this.checkedPropertyBatchMapHasValue(tpProductId)
         ) {
           this.productDic[tpProductId].isEdit = true
           isChanged = true
@@ -1160,36 +1186,24 @@ export default {
         }
       }
     },
-    applySelectBrandToSelection () {
-      const catId = this.product.model.cat_id
+    // 批量应用属性
+    applyPropertiesToSelection (value, name, propertyValue) {
+      const propertyBatchMap = this.propertyBatchMap || new Map()
       for (let i in this.selectedProductIds) {
         let tpProductId = this.selectedProductIds[i]
-        this.productBrandDic[tpProductId] = this.product.model.brand_id
-      }
-      for (let i in this.productList) {
-        let tpProductId = this.productList[i].tp_product_id
-        if (tpProductId in this.products) {
-          let product = this.products[tpProductId]
-          //  只应用到同类目的品牌
-          if (this.productBrandDic.hasOwnProperty(tpProductId) && product.model.cat_id && product.model.cat_id === catId) {
-            this.productBrandDic[tpProductId] = this.product.model.brand_id
-            Object.assign(product.model, {brand_id: this.product.model.brand_id})
-            // 把品牌应用到所有
-            const attrList = product.model.attrList.map(item => {
-              if (item.name === '品牌') {
-                item.tp_value = this.product.model.brand_id
-              }
-              return item
-            })
-            Object.assign(product.model, {attrList: attrList})
+        const catId = this.product.model.cat_id
+        const propertyies = propertyBatchMap.get(tpProductId)
+        propertyBatchMap.set(tpProductId, {
+          ...propertyies,
+          [name]: {
+            checked: value,
+            propertyValue,
+            catId
           }
-        }
+        })
       }
+      this.propertyBatchMap = cloneDeep(propertyBatchMap)
       this.updateProductEditStatus()
-      this.$message({
-        message: '应用成功',
-        type: 'success'
-      })
     },
     updateRemoveFirstBanner () {
       for (let i in this.productList) {
