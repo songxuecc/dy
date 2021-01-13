@@ -17,44 +17,48 @@
       </el-col>
     </el-row>
     <div class="drawer-content">
-      <el-radio v-model="stockHandler.radio" label="1" style="margin-left:15px;">
-          <span style="display:inline-block; width:100px">统一现货库存为</span>
-          <el-input v-model="stockHandler.textStock" size="mini" style="width:80px"
-                    @focus="stockHandler.radio='1'"
-          ></el-input>
-      </el-radio>
-      <el-radio v-model="stockHandler.radio" label="2">
-          <span style="display:inline-block; width:120px">每个SKU现货库存加</span>
-          <el-input v-model="stockHandler.textStockAdd" size="mini" style="width:80px"
-                    @focus="stockHandler.radio='2'"
-          ></el-input>
-      </el-radio>
-      <el-radio v-model="stockHandler.radio" label="3">
-          <span style="display:inline-block; width:120px">每个SKU现货库存减</span>
-          <el-input v-model="stockHandler.textStockSub" size="mini" style="width:80px"
-                    @focus="stockHandler.radio='3'"
-          ></el-input>
-          <span class="explain">&nbsp; 小于 0 设为 0</span>
-      </el-radio><br>
-     <el-radio v-model="stepStockHandler.radio" label="1" style="margin-left:15px;">
-          <span style="display:inline-block; width:100px">统一阶梯库存为</span>
-          <el-input v-model="stepStockHandler.textStock" size="mini" style="width:80px"
-                    @focus="stepStockHandler.radio='1'"
-          ></el-input>
-      </el-radio>
-      <el-radio v-model="stepStockHandler.radio" label="2">
-          <span style="display:inline-block; width:120px">每个SKU阶梯库存加</span>
-          <el-input v-model="stepStockHandler.textStockAdd" size="mini" style="width:80px"
-                    @focus="stepStockHandler.radio='2'"
-          ></el-input>
-      </el-radio>
-      <el-radio v-model="stepStockHandler.radio" label="3">
-          <span style="display:inline-block; width:120px">每个SKU阶梯库存减</span>
-          <el-input v-model="stepStockHandler.textStockSub" size="mini" style="width:80px"
-                    @focus="stepStockHandler.radio='3'"
-          ></el-input>
-          <span class="explain">&nbsp; 小于 0 设为 0</span>
-      </el-radio>
+      <el-radio-group v-model="stockHandler.radio">
+        <el-radio label="1" style="margin-left:15px;">
+            <span style="display:inline-block; width:100px">统一现货库存为</span>
+            <el-input v-model="stockHandler.textStock" size="mini" style="width:80px"
+                      @focus="stockHandler.radio='1'"
+            ></el-input>
+        </el-radio>
+        <el-radio label="2">
+            <span style="display:inline-block; width:120px">每个SKU现货库存加</span>
+            <el-input v-model="stockHandler.textStockAdd" size="mini" style="width:80px"
+                      @focus="stockHandler.radio='2'"
+            ></el-input>
+        </el-radio>
+        <el-radio label="3">
+            <span style="display:inline-block; width:120px">每个SKU现货库存减</span>
+            <el-input v-model="stockHandler.textStockSub" size="mini" style="width:80px"
+                      @focus="stockHandler.radio='3'"
+            ></el-input>
+            <span class="explain">&nbsp; 小于 0 设为 0</span>
+        </el-radio>
+      </el-radio-group>
+      <el-radio-group v-if="useStepStock" v-model="stepStockHandler.radio">
+        <el-radio label="1" style="margin-left:15px;">
+            <span style="display:inline-block; width:100px">统一阶梯库存为</span>
+            <el-input v-model="stepStockHandler.textStock" size="mini" style="width:80px"
+                      @focus="stepStockHandler.radio='1'"
+            ></el-input>
+        </el-radio>
+        <el-radio label="2">
+            <span style="display:inline-block; width:120px">每个SKU阶梯库存加</span>
+            <el-input v-model="stepStockHandler.textStockAdd" size="mini" style="width:80px"
+                      @focus="stepStockHandler.radio='2'"
+            ></el-input>
+        </el-radio>
+        <el-radio label="3">
+            <span style="display:inline-block; width:120px">每个SKU阶梯库存减</span>
+            <el-input v-model="stepStockHandler.textStockSub" size="mini" style="width:80px"
+                      @focus="stepStockHandler.radio='3'"
+            ></el-input>
+            <span class="explain">&nbsp; 小于 0 设为 0</span>
+        </el-radio>
+      </el-radio-group>
       <el-button type="primary" size="mini" @click="batchEditStock">应用</el-button>
     </div>
   </div>
@@ -67,6 +71,7 @@ export default {
   components: {},
   props: {
     field: String,
+    useStepStock: Boolean,
     dyProductModelList: Array,
     selectProductDict: Object
   },
@@ -90,15 +95,19 @@ export default {
     },
     batchEditStock () {
       let products = []
-      let productsWithStep = []
       for (let key in this.selectProductDict) {
         products.push(this.selectProductDict[key].model)
-        if (this.selectProductDict[key].model.presell_type === 2) {
-          productsWithStep.push(this.selectProductDict[key].model)
-        }
       }
       this.stockHandler.handleProducts(products)
-      this.stepStockHandler.handleProducts(productsWithStep)
+      if (this.useStepStock) {
+        let productsWithStep = []
+        for (let key in this.selectProductDict) {
+          if (this.selectProductDict[key].model.presell_type === 2) {
+            productsWithStep.push(this.selectProductDict[key].model)
+          }
+        }
+        this.stepStockHandler.handleProducts(productsWithStep)
+      }
     },
     confirmChange () {
       this.$emit('confirm')

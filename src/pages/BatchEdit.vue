@@ -75,10 +75,9 @@
         ></edit-product-list-view>
       </div>
     </div>
-    <div v-if="isShowDrawer" :style="{height: activeTabName==='price' ? '180px' : '130px'}"></div>
+    <div v-if="isShowDrawer" :style="{height: drawerHeight}"></div>
     <el-drawer class="no-cover-bottom-drawer" :visible.sync="isShowDrawer" direction="btt" :modal="false"
-               :wrapperClosable="false" :withHeader="false"
-               :style="{height: ['stock', 'price'].includes(activeTabName) ? '180px' : '130px'}"
+               :wrapperClosable="false" :withHeader="false" :style="{height: drawerHeight}"
     >
       <edit-text-drawer v-if="activeTabName==='title'" ref="editTitleDrawer" field="goods_name"
                          :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
@@ -96,7 +95,7 @@
                                :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
                                @rollback="rollbackChange" @confirm="confirmChange">
       </edit-banner-drawer>
-      <edit-stock-drawer v-else-if="activeTabName==='stock'"  ref="editStockDrawer"
+      <edit-stock-drawer v-else-if="activeTabName==='stock'"  ref="editStockDrawer" :useStepStock="tabPresellType==2"
                                :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
                                @rollback="rollbackChange" @confirm="confirmChange"
       ></edit-stock-drawer>
@@ -211,7 +210,15 @@ export default {
   computed: {
     ...mapGetters({
       updateJobIdList: 'getUpdateJobIdList'
-    })
+    }),
+    drawerHeight () {
+      if (this.activeTabName === 'price') {
+        return '180px'
+      } else if (this.activeTabName === 'stock') {
+        return this.tabPresellType === 2 ? '180px' : '130px'
+      }
+      return '130px'
+    }
   },
   watch: {
     // isShowDrawer (val, oldVal) {
