@@ -47,12 +47,13 @@ class TextHandler {
 }
 
 class StockHandler {
-  constructor () {
+  constructor (field = 'quantity') {
     this.checked = false
     this._radio = '1'
     this.textStock = ''
     this.textStockAdd = ''
     this.textStockSub = ''
+    this.field = field
   }
   get radio () {
     return this._radio
@@ -67,11 +68,11 @@ class StockHandler {
       for (let j in product.sku_list) {
         let sku = product.sku_list[j]
         if (parseInt(this._radio) === 1 && utils.isNumber(this.textStock)) {
-          sku.quantity = parseInt(this.textStock)
+          sku[this.field] = parseInt(this.textStock)
         } else if (parseInt(this._radio) === 2 && utils.isNumber(this.textStockAdd)) {
-          sku.quantity = parseInt(sku.quantity) + parseInt(this.textStockAdd)
+          sku[this.field] = parseInt(sku[this.field]) + parseInt(this.textStockAdd)
         } else if (parseInt(this._radio) === 3 && utils.isNumber(this.textStockSub)) {
-          sku.quantity = Math.max(parseInt(sku.quantity) - parseInt(this.textStockSub), 0)
+          sku[this.field] = Math.max(parseInt(sku[this.field]) - parseInt(this.textStockSub), 0)
         }
       }
     }
@@ -81,11 +82,11 @@ class StockHandler {
       let sku = skuShowList[i]
       if (!sku.hidden) {
         if (parseInt(this._radio) === 1 && utils.isNumber(this.textStock)) {
-          sku.quantity = parseInt(this.textStock)
+          sku[this.field] = parseInt(this.textStock)
         } else if (parseInt(this._radio) === 2 && utils.isNumber(this.textStockAdd)) {
-          sku.quantity = parseInt(sku.quantity) + parseInt(this.textStockAdd)
+          sku[this.field] = parseInt(sku[this.field]) + parseInt(this.textStockAdd)
         } else if (parseInt(this._radio) === 3 && utils.isNumber(this.textStockSub)) {
-          sku.quantity = Math.max(parseInt(sku.quantity) - parseInt(this.textStockSub), 0)
+          sku[this.field] = Math.max(parseInt(sku[this.field]) - parseInt(this.textStockSub), 0)
         }
       }
     }
