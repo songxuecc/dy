@@ -8,9 +8,12 @@
             :error="item.required && item.value === ''"
             :show-message="item.name !== '品牌'"
             :inline-message="true"
-            label-width="84px"
             label-style="font-size:12px">
-             <span slot="label"><span v-if="item.required" style="color:red">*</span>{{item.name}}</span>
+             <span slot="label" style="width:120px;display:inline-block">
+               <i v-if="item.required && item.name === '品牌'" class="el-icon-warning-outline" style="color:#f56c6c"></i>
+               <i v-if="item.required && item.name !== '品牌'" class="el-icon-warning-outline" style="color:#e6a23c"></i>
+               {{item.name}}
+              </span>
              <el-select
                 clearable
                 @clear="handleClear(item.name)"
@@ -59,10 +62,10 @@
             </slot>
         </el-form-item>
         <div class="tip">
-          <span >(带 <span style="color: red">*</span> 为必填属性</span>
+          <p >1、带<span style="color:#f56c6c">红色感叹号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
+          <p >2、带<span style="color:#e6a23c">黄色感叹号</span> 为抖音官方后台必填属性，在本软件内<span style="color:#e6a23c">可不填写</span></p>
             <!-- 二期会实现本功能 -->
             <!-- <span v-if="catId!==0">，勾选应用到本页相同分类商品，蓝色高亮</span> -->
-          <span>)</span>
         </div>
     </el-form >
 
@@ -167,6 +170,7 @@ export default {
 <style lang="less" scoped>
 .tip{
   color: rgb(153, 153, 153);
+  margin-top: 10px;
 }
 /deep/ .el-input__inner{
   text-align: left !important;
