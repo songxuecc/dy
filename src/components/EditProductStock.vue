@@ -1,10 +1,10 @@
 <template>
     <div>
       <el-row v-if="specList.length" style="margin-top:10px">
-            <el-col :span=18>
+            <el-col :span="product.model.sku_list.length>1 && product.model.presell_type==2 ? 14 : 19">
               <div v-for="(spec,i) in specList" :key="spec.id" style="display:inline-block;">
                  <el-select v-model="specSelectId[i]" :placeholder="spec.name" size="mini"
-                            :style="{ display:'inline-block', width:getSpecWidth(i, product.model.sku_list, product.model.goods_id) }"
+                            :style="{ display:'inline-block', width:getSpecWidth(i, product.model.sku_list) }"
                   class="multiple-text"
                   @change="changeSpec"
                   :clearable="true"
@@ -16,36 +16,51 @@
                     :value="spec_value.id">
                   </el-option>
                 </el-select>
-                <div v-else :style="{ display:'inline-block', width:getSpecWidth(i, product.model.sku_list, product.model.goods_id) }"
+                <div v-else :style="{ display:'inline-block', width:getSpecWidth(i, product.model.sku_list) }"
                 >{{spec.name}}</div>
                 <el-divider direction="vertical" v-if="i+1<specList.length"></el-divider>
               </div>
             </el-col>
-            <el-col :span=6 v-if="product.model.sku_list.length>1" style="text-align: right">
-              <el-input v-model="batch_stock" size="mini"
-                  class="multiple-text" style="width:80px; display:inline-block"
-                  placeholder="统一修改"
+            <el-col :span=5 v-if="product.model.sku_list.length>1" style="text-align: right">
+              <el-input v-model="batchStock" size="mini"
+                        class="multiple-text input-center" style="width:80px; display:inline-block;"
+                        placeholder="现货库存"
                 >
                 </el-input>
                 <el-button type="primary" size="mini" style="padding: 6px 4px" @click="batchUpdateStock()">确定</el-button>
+            </el-col>
+            <el-col :span=5 v-if="product.model.sku_list.length>1 && product.model.presell_type==2" style="text-align: right">
+              <el-input v-model="batchStepStock" size="mini"
+                  class="multiple-text input-center" style="width:80px; display:inline-block;"
+                  placeholder="阶梯库存"
+                >
+                </el-input>
+                <el-button type="primary" size="mini" style="padding: 6px 4px" @click="batchUpdateStepStock()">确定</el-button>
             </el-col>
           </el-row>
           <el-divider style="margin:5px 0;" v-if="specList.length"></el-divider>
           <div v-for="(sku,sku_idx) in product.model.sku_list" :key="sku.sku_id">
             <div v-if="!skuDict[sku.sku_id].hidden">
               <el-row>
-              <el-col :span="20">
+              <el-col :span="product.model.presell_type==2 ? 14 : 19">
                 <div v-for="(spec,i) in sku.spec" :key="spec.spec_id" style="display:inline-block;">
-                  <div :style="{ display:'inline-block', 'text-align':center, width:getSpecWidth(i, product.model.sku_list, product.model.goods_id) }"
+                  <div :style="{ display:'inline-block', 'text-align':center, width:getSpecWidth(i, product.model.sku_list) }"
                   >{{spec.spec_name}}</div>
                   <el-divider direction="vertical" v-if="i+1<sku.spec.length"></el-divider>
                 </div>
                 <div v-if="sku.spec.length === 0" style="display:inline-block;">默认规格</div>
               </el-col>
-              <el-col :span="4">
+              <el-col :span="4" :offset="1">
                 <el-input-number v-model="sku.quantity" :controls="false"  :min="0" size="mini"
                   class="multiple-text" style="width:80px;"
                   :class="{'is-text-change':sku.quantity !== product.originModel.sku_list[sku_idx].quantity}"
+                >
+                </el-input-number>
+              </el-col>
+              <el-col :span="4" :offset="1" v-if="product.model.presell_type==2">
+                <el-input-number v-model="sku.step_quantity" :controls="false"  :min="0" size="mini"
+                  class="multiple-text" style="width:80px;"
+                  :class="{'is-text-change':sku.step_quantity !== product.originModel.sku_list[sku_idx].step_quantity}"
                 >
                 </el-input-number>
               </el-col>
@@ -70,7 +85,8 @@ export default {
     return {
       specList: [],
       specSelectId: [],
-      batch_stock: '',
+      batchStock: '',
+      batchStepStock: '',
       skuDict: {}
     }
   },
@@ -142,14 +158,26 @@ export default {
       }
     },
     batchUpdateStock () {
-      if (!utils.isNumber(this.batch_stock)) {
+      if (!utils.isNumber(this.batchStock)) {
         this.$alert('必须为数字')
         return
       }
       this.product.model.sku_list.forEach((sku) => {
         let skuId = sku.sku_id
         if (this.skuDict[skuId]['hidden'] === false) {
-          sku.quantity = this.batch_stock
+          sku.quantity = this.batchStock
+        }
+      })
+    },
+    batchUpdateStepStock () {
+      if (!utils.isNumber(this.batchStepStock)) {
+        this.$alert('必须为数字')
+        return
+      }
+      this.product.model.sku_list.forEach((sku) => {
+        let skuId = sku.sku_id
+        if (this.skuDict[skuId]['hidden'] === false) {
+          sku.step_quantity = this.batchStepStock
         }
       })
     },
@@ -159,11 +187,11 @@ export default {
         let sku = skuList[i]
         let specNameArr = sku['spec_detail_names'].split(',')
         for (let j in specNameArr) {
-          specLenArr[j] += specNameArr[j].length
+          specLenArr[j] = Math.max(specLenArr[j], specNameArr[j].length)
         }
       }
       let sumLen = Math.max(1, specLenArr[0] + specLenArr[1] + specLenArr[2])
-      let width = parseInt(480 * specLenArr[specIndex] / sumLen)
+      let width = parseInt(370 * specLenArr[specIndex] / sumLen)
       return width + 'px'
     }
   }

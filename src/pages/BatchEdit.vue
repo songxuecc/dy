@@ -61,7 +61,8 @@
     </div>
     <div v-if="isShowDrawer" :style="{height: activeTabName==='price' ? '180px' : '130px'}"></div>
     <el-drawer class="no-cover-bottom-drawer" :visible.sync="isShowDrawer" direction="btt" :modal="false"
-               :wrapperClosable="false" :withHeader="false" :style="{height: activeTabName==='price' ? '180px' : '130px'}"
+               :wrapperClosable="false" :withHeader="false"
+               :style="{height: ['stock', 'price'].includes(activeTabName) ? '180px' : '130px'}"
     >
       <edit-text-drawer v-if="activeTabName==='title'" ref="editTitleDrawer" field="goods_name"
                          :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
@@ -189,9 +190,9 @@ export default {
     })
   },
   watch: {
-    isShowDrawer (val, oldVal) {
-      this.setIsShowFloatView(!val)
-    }
+    // isShowDrawer (val, oldVal) {
+    //   this.setIsShowFloatView(!val)
+    // }
   },
   mounted () {
   },

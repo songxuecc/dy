@@ -2,7 +2,7 @@
   <div>
     <el-table ref="dyProductListTable" :data="dyProductModelList" row-key="originModel.goods_id" style="width: 100%"
               :row-style="{height:'68px'}" :cell-style="{padding:0}" :row-class-name="tableRowClassName"
-              :header-cell-style="{padding: '9px 0', 'line-height': '30px'}"
+              :header-cell-style="{padding: '9px 0', 'line-height': '30px'}" stripe
               @selection-change="handleSelectionChange" @cell-click="onCellClick"
     >
       <el-table-column v-if="canSelect" type="selection" :reserve-selection="true" :key="Math.random()" :selectable="selectable">
