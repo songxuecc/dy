@@ -61,7 +61,7 @@
                       <el-form-item label="商品分类:">
                           <span>{{ product.model.category_show }}</span>
                           <el-button size="mini" @click="showSelectCateView">修改分类</el-button>
-                          <el-button size="mini"  @click="onApplySelectCateToSelection()" :disabled="product.model.cat_id === 0">批量修改本页商品</el-button>
+                          <el-button size="mini"  @click="onApplySelectCateToSelection()" :disabled="product.model.cat_id === 0">批量修改选中商品</el-button>
                       </el-form-item>
                       <el-form-item label="商品标题:" style="margin-right: 20px;">
                           <div style="display:flex">
@@ -73,7 +73,7 @@
                               @input="onProductTitleChange">
                               <span slot="append" class="hint">{{ getTitleLength(product.model.title) }} / 30</span>
                           </el-input>
-                          <el-button size="mini"  @click="onApplyTitleEditToSelection()">批量修改本页商品</el-button>
+                          <el-button size="mini"  @click="onApplyTitleEditToSelection()">批量修改选中商品</el-button>
                           </div>
                           <!-- <span style="font-size: 10px;">（已自动删除平台违禁词）</span> -->
                       </el-form-item>
