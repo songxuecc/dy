@@ -820,8 +820,8 @@ export default {
     },
     // 保存编辑
     async onSaveProduct () {
-      this.productEditSavingPercent = 0
-      this.isProductEditSaving = true
+      // this.productEditSavingPercent = 0
+      // this.isProductEditSaving = true
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
@@ -830,6 +830,7 @@ export default {
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
       let tpProductList = []
       let tpProductIdList = []
+      const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
       for (let i in this.productList) {
         let tpProductId = this.productList[i].tp_product_id
         if (this.products[tpProductId] && this.products[tpProductId].isDiff()) {
@@ -890,19 +891,24 @@ export default {
             tpProductList.push(productParams)
           }
         }
+        const categoryId = this.productList[i].category_id
         // 处理批量修改属性的商品
-        if (this.attrApplyCatMap[this.productList[i].category_id]) {
+        if (propertyBatchCatIdMap.get(categoryId)) {
           tpProductIdList.push(tpProductId)
         }
       }
-      this.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, this.attrApplyCatMap, 0, 0, catId, updateCategoryTPProductIds)
+      let attrApplyCatMap = {}
+      const entries = [...propertyBatchCatIdMap.entries()]
+      entries.forEach(([key, value]) => {
+        attrApplyCatMap[key] = value
+      })
+      this.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, attrApplyCatMap, 0, 0, catId, updateCategoryTPProductIds)
     },
     requestBatchUpdateTPProduct (tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx, tpProductIdListIdx, catId, updateCategoryTPProductIds) {
       let tpProductListSlice = []
       let tpProductIdListSlice = []
       let attrApplyCatMapTemp = {}
-
-      // TODO songxue 应用到全部商品属性时候 需要修改此处 tpProductIdListIdx attr_apply_map 字段
+      // 应用到全部商品属性时候
       if (tpProductListIdx < tpProductList.length) {
         tpProductListSlice = tpProductList.slice(tpProductListIdx, tpProductListIdx + 5)
       } else if (tpProductIdListIdx < tpProductIdList.length) {
@@ -1186,7 +1192,7 @@ export default {
       }
     },
     // 批量应用属性
-    applyPropertiesToSelection (value, name, propertyValue) {
+    applyPropertiesToSelection (checked, name, propertyValue) {
       const propertyBatchMap = this.propertyBatchMap || new Map()
       const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
       const catId = this.product.model.cat_id
@@ -1198,7 +1204,7 @@ export default {
         propertyBatchMap.set(tpProductId, {
           ...propertyies,
           [name]: {
-            checked: value,
+            checked,
             propertyValue,
             catId,
             originAttr // 记录初始的 attr数据
@@ -1208,7 +1214,14 @@ export default {
       this.propertyBatchMap = cloneDeep(propertyBatchMap)
       // 批量应用到全部 的值
       const propertyBatchCatIdMapValue = propertyBatchCatIdMap.get(catId) || {}
-      propertyBatchCatIdMapValue[originAttr.id] = {...originAttr, tp_value: propertyValue}
+      if (checked) {
+        propertyBatchCatIdMapValue[originAttr.id] = {...originAttr, tp_value: propertyValue}
+      } else {
+        delete propertyBatchCatIdMapValue[originAttr.id]
+      }
+      propertyBatchCatIdMap.set(catId, propertyBatchCatIdMapValue)
+      this.propertyBatchCatIdMap = cloneDeep(propertyBatchCatIdMap)
+      console.log(JSON.stringify(propertyBatchCatIdMap))
       this.updateProductEditStatus()
     },
     updateRemoveFirstBanner () {
