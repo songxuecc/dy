@@ -40,6 +40,7 @@
               <el-link type="primary" target="_blank" :underline="false" style="float: left" @click="realSyncCategory">
                 <i class="el-icon-refresh"></i>
                 获取新类目
+                <span><el-progress v-if="isShowProgress" type="line" :percentage="percentage" :width="20"></el-progress></span>
               </el-link>
               <el-button :disabled="selectCate.leaf !== 1" type="primary" @click="confirm">保存</el-button>
             </div>
@@ -55,6 +56,8 @@ export default {
   },
   data () {
     return {
+      percentage: 0,
+      isShowProgress: false,
       categoryId: 0,
       categoryName: '',
       maxLevel: 4,
@@ -75,17 +78,36 @@ export default {
     })
   },
   mounted () {
-    this.resetCateFrom(1)
-    this.getCategoryList(1, 0)
+    this.init()
   },
   methods: {
     ...mapActions([
       'setRecentCat'
     ]),
+    init () {
+      this.resetCateFrom(1)
+      this.getCategoryList(1, 0)
+    },
     realSyncCategory () {
       let self = this
       this.request('realSyncDyUserCategory', {}, data => {
-        self.initCate(this.categoryId, this.categoryName)
+        // self.initCate(this.categoryId, this.categoryName)
+        self.isShowProgress = true
+        self.querySyncStatusSchedule()
+      })
+    },
+    querySyncStatusSchedule () {
+      let self = this
+      this.request('getSyncDyUserCategory', {}, data => {
+        self.percentage = data.percent
+        if (['complete', 'nothing'].includes(data.status)) {
+          self.init()
+          self.initCate(self.categoryId, self.categoryName)
+          self.isShowProgress = false
+          self.percentage = 0
+        } else {
+          setTimeout(self.querySyncStatusSchedule, 1000)
+        }
       })
     },
     initCate (cateId = 0, cateName = '') {
