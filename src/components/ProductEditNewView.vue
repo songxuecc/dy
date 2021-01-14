@@ -64,14 +64,18 @@
                           <el-button size="mini"  @click="onApplySelectCateToSelection()" :disabled="product.model.cat_id === 0">批量修改本页商品</el-button>
                       </el-form-item>
                       <el-form-item label="商品标题:" style="margin-right: 20px;">
-                          <el-input v-model="product.model.title" size="mini"
-                                    :class="['input-text-left', {'warn': (isTitleWarn || isTitleInfoWarn())}]" @input="onProductTitleChange"
-                          >
+                          <div style="display:flex">
+                            <el-input
+                              v-model="product.model.title"
+                              size="mini"
+                              style="margin-right:4px"
+                              :class="['input-text-left', {'warn': (isTitleWarn || isTitleInfoWarn())}]"
+                              @input="onProductTitleChange">
                               <span slot="append" class="hint">{{ getTitleLength(product.model.title) }} / 30</span>
                           </el-input>
                           <el-button size="mini"  @click="onApplyTitleEditToSelection()">批量修改本页商品</el-button>
+                          </div>
                           <!-- <span style="font-size: 10px;">（已自动删除平台违禁词）</span> -->
-
                       </el-form-item>
                       <el-form-item label="市场价:">
                         <span>{{product.model.price}} 元

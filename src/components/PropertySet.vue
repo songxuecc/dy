@@ -9,17 +9,18 @@
             :show-message="item.name !== '品牌'"
             :inline-message="true"
             label-style="font-size:12px">
-             <span slot="label" style="width:120px;display:inline-block">
+            <div style="diplay:flex">
+             <span slot="label" style="width:120px;display:inline-block;text-align:right;padding-right:4px">
+               {{item.name}}
                <i v-if="item.required && item.name === '品牌'" class="el-icon-warning-outline" style="color:#f56c6c"></i>
                <i v-if="item.required && item.name !== '品牌'" class="el-icon-warning-outline" style="color:#e6a23c"></i>
-               {{item.name}}
               </span>
              <el-select
                 clearable
                 @clear="handleClear(item.name)"
                 @change="handleChange($event,item.name)"
                 size="small"
-                :style="{width: item.name !== '品牌' ? '300px' : '200px'}"
+                :style="{width: item.name !== '品牌' ? '300px' : '190px'}"
                 :placeholder="`请选择${item.name}`"
                 v-model="model[item.name]"
                 v-if="item.options.length || item.name === '品牌'"
@@ -42,15 +43,9 @@
                 v-model="model[item.name]"
                 v-else
               />
-            <span v-if="item.name === '品牌'">
-                <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i></el-button>
-                <el-link
-                    type="primary"
-                    target="_blank"
-                    :underline="false"
-                    :href="`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`">
-                    添加品牌
-                </el-link>
+            <span v-if="item.name === '品牌'" style="">
+                <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i>刷新</el-button>
+                <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
                 <el-checkbox
                   border
                   :value="selected && selected[item.name]? selected[item.name]: false"
@@ -75,6 +70,8 @@
                     <p style="color:red;font-size:12px">查询哪些类目需要填写品牌 <a href="https://school.jinritemai.com/doudian/web/article/101810" style="color:red;font-size:12px;cursor: pointer">请点击我</a> </p>
                 </div>
             </slot>
+            </div>
+
         </el-form-item>
         <div class="tip">
           <p >1、带<span style="color:#f56c6c">红色感叹号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
@@ -210,6 +207,9 @@ export default {
     applyPropertiesToSelection (value, name) {
       const propertyValue = this.model[name]
       this.$emit('applyPropertiesToSelection', value, name, propertyValue)
+    },
+    open (catId) {
+      window.open(`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`)
     }
   }
 }
@@ -222,6 +222,9 @@ export default {
 /deep/ .el-input__inner{
   text-align: left !important;
   padding-left: 10px !important;
+}
+/deep/ .el-button+.el-button {
+  margin-left: 0px !important;
 }
 /deep/ .el-form-item__content{
   display:flex;
