@@ -155,6 +155,8 @@ export default {
             }
           }, {})
           this.selected = {...selected}
+        } else {
+          this.selected = {}
         }
       },
       deep: true
@@ -202,7 +204,7 @@ export default {
           const tpValue = newModal[item.name] || ''
           return {...item, tp_value: tpValue}
         })
-      this.$emit('change', newAttributeJson, name, value)
+      this.$emit('change', newAttributeJson)
       this.$emit('applyPropertiesToSelection', false, name, '')
     },
     applyPropertiesToSelection (value, name) {

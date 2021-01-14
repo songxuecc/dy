@@ -832,7 +832,6 @@ export default {
       let tpProductIdList = []
       for (let i in this.productList) {
         let tpProductId = this.productList[i].tp_product_id
-        // 处理单个修改的商品
         if (this.products[tpProductId] && this.products[tpProductId].isDiff()) {
           if (tpProductId in this.products) {
             let product = this.products[tpProductId]
@@ -918,7 +917,7 @@ export default {
       }, data => {
         // 更新商品列表信息
         self.changeProducts(data)
-
+        self.propertyBatchMap = new Map()
         // 更新已经保存的商品信息
         for (let i in tpProductListSlice) {
           let tpProductId = tpProductListSlice[i].tp_product_id
@@ -1189,20 +1188,27 @@ export default {
     // 批量应用属性
     applyPropertiesToSelection (value, name, propertyValue) {
       const propertyBatchMap = this.propertyBatchMap || new Map()
+      const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
+      const catId = this.product.model.cat_id
+      const originAttrList = this.product.model.attrList
+      const originAttr = originAttrList.find(attr => attr.name === name)
       for (let i in this.selectedProductIds) {
         let tpProductId = this.selectedProductIds[i]
-        const catId = this.product.model.cat_id
         const propertyies = propertyBatchMap.get(tpProductId)
         propertyBatchMap.set(tpProductId, {
           ...propertyies,
           [name]: {
             checked: value,
             propertyValue,
-            catId
+            catId,
+            originAttr // 记录初始的 attr数据
           }
         })
       }
       this.propertyBatchMap = cloneDeep(propertyBatchMap)
+      // 批量应用到全部 的值
+      const propertyBatchCatIdMapValue = propertyBatchCatIdMap.get(catId) || {}
+      propertyBatchCatIdMapValue[originAttr.id] = {...originAttr, tp_value: propertyValue}
       this.updateProductEditStatus()
     },
     updateRemoveFirstBanner () {
@@ -1382,10 +1388,12 @@ export default {
       this.$set(item, 'maskShow', false)
     },
     // 属性设置 回调
-    handlePropertyset: function (attrList, key, value) {
-      if (key === '品牌') {
-        Object.assign(this.product.model, {brand_id: value})
-      }
+    handlePropertyset: function (attrList) {
+      attrList.forEach(attr => {
+        if (attr.name === '品牌') {
+          Object.assign(this.product.model, {brand_id: attr.tp_value})
+        }
+      })
       Object.assign(this.product.model, {attrList})
     }
   }
