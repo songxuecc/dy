@@ -106,7 +106,7 @@ export default {
           self.isShowProgress = false
           self.percentage = 0
         } else {
-          setTimeout(this.querySyncStatusSchedule, 1000)
+          setTimeout(self.querySyncStatusSchedule, 1000)
         }
       })
     },
