@@ -1224,7 +1224,6 @@ export default {
       }
       propertyBatchCatIdMap.set(catId, propertyBatchCatIdMapValue)
       this.propertyBatchCatIdMap = cloneDeep(propertyBatchCatIdMap)
-      console.log(JSON.stringify(propertyBatchCatIdMap))
       this.updateProductEditStatus()
     },
     updateRemoveFirstBanner () {
