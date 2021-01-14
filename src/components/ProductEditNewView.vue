@@ -697,13 +697,7 @@ export default {
       return utils.getDyStrRealLength(title)
     },
     showSelectCateView () {
-      this.request(
-        'syncDyUserCategory',
-        {},
-        data => {
-          this.dialogVisible = true
-        }
-      )
+      this.dialogVisible = true
     },
     onOpenedCate () {
       if (this.product.model.cat_id !== 0) {
