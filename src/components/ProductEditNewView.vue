@@ -83,11 +83,11 @@
                           </el-tooltip>
                         </span>
                       </el-form-item>
-                      <el-form-item label="商品描述:" style="margin-right: 20px;" >
+                      <!-- <el-form-item label="商品描述:" style="margin-right: 20px;" >
                           <el-input type="textarea" v-model="product.model.description" size="mini"
                                     :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
                           </el-input>
-                      </el-form-item>
+                      </el-form-item> -->
                       <el-form-item label="品牌:" :required="product.model.brand_id_require" style="display:none">
                         <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable :disabled="true">
                           <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
@@ -820,8 +820,8 @@ export default {
     },
     // 保存编辑
     async onSaveProduct () {
-      // this.productEditSavingPercent = 0
-      // this.isProductEditSaving = true
+      this.productEditSavingPercent = 0
+      this.isProductEditSaving = true
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }

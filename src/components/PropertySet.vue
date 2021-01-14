@@ -57,7 +57,7 @@
                   @change="applyPropertiesToSelection($event,item.name)"
                   size="small"
                   class="batch" >
-                  应用到选中的商品
+                  批量修改同分类商品
                 </el-checkbox>
             </span>
             <el-checkbox
@@ -67,7 +67,7 @@
               :value="selected && selected[item.name]? selected[item.name] : false"
               size="small"
               class="batch">
-              应用到选中的商品
+              批量修改同分类商品
             </el-checkbox>
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
                 <div >
