@@ -924,6 +924,7 @@ export default {
         // 更新商品列表信息
         self.changeProducts(data)
         self.propertyBatchMap = new Map()
+        self.propertyBatchCatIdMap = new Map()
         // 更新已经保存的商品信息
         for (let i in tpProductListSlice) {
           let tpProductId = tpProductListSlice[i].tp_product_id
@@ -1048,6 +1049,8 @@ export default {
       }
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
+      this.propertyBatchMap = new Map()
+      this.propertyBatchCatIdMap = new Map()
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.skuShowList = this.product.model.skuShowList
