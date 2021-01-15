@@ -10,7 +10,6 @@ import ProductList from '@/pages/ProductList'
 import DyProductList from '@/pages/DyProductList'
 import BatchEdit from '@/pages/BatchEdit'
 import MigrateSettingPrice from '@/pages/MigrateSettingPrice.vue'
-import MigrateSettingTemplate from '@/pages/MigrateSettingTemplate.vue'
 import Login from '@/pages/Login'
 import Fake from '@/pages/Fake'
 import SubscribeList from '@/pages/SubscribeList'
@@ -18,6 +17,7 @@ import PayOrder from '@/pages/PayOrder'
 import CustomerService from '@/pages/CustomerService.vue'
 import MigrateSetting from '@/components/MigrateSetting.vue'
 import shopsBand from '@/modules/moving/shopsBand'
+import MigrateSettingTemplate from '@/modules/moving/migrateSettingTemplate'
 
 Vue.use(Router)
 

@@ -1,10 +1,12 @@
 import shopsBand from './shopsBand'
+import migrateSettingTemplate from './migrateSettingTemplate'
 
 const modules = {
   moving: {
     namespaced: true,
     modules: {
-      shopsBand
+      shopsBand,
+      migrateSettingTemplate
     }
   }
 }

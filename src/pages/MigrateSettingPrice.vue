@@ -252,7 +252,11 @@ import DyTips from '@/components/DyTips.vue'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
 import common from '@/common/common'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+const {
+  mapActions: mapActionsMoving,
+  mapGetters: mapGettersMoving
+} = createNamespacedHelpers('moving/migrateSettingTemplate')
 
 export default {
   mixins: [request],
@@ -280,7 +284,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      tpProductIdList: 'getSelectTPProductIdList',
+      tpProductIdList: 'getSelectTPProductIdList'
+    }),
+    ...mapGettersMoving({
       template: 'getTemplate',
       dicCustomPrices: 'getDicCustomPrices'
     })
@@ -303,9 +309,10 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setSelectTPProductIdList',
+      'setSelectTPProductIdList'
+    ]),
+    ...mapActionsMoving([
       'requestTemplate',
-      'loadTempTemplate',
       'saveTempTemplate'
     ]),
     beforeunloadFn (e) {
@@ -337,14 +344,12 @@ export default {
       }
       return ''
     },
-    reloadTemplate () {
+    async reloadTemplate () {
+      this.isInitTemplate = true
+      await this.requestTemplate()
       this.isInitTemplate = false
-      this.requestTemplate().then(data => {
-        this.isInitTemplate = true
-        this.loadTempTemplate()
-        // 拿到模板数据后再请求商品数据
-        this.getTPProductList()
-      })
+      // 拿到模板数据后再请求商品数据
+      this.getTPProductList()
     },
     /**
      * 请求搬家商品列表
