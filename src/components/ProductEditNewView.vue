@@ -61,17 +61,21 @@
                       <el-form-item label="商品分类:">
                           <span>{{ product.model.category_show }}</span>
                           <el-button size="mini" @click="showSelectCateView">修改分类</el-button>
-                          <el-button size="mini" type="primary" @click="onApplySelectCateToSelection()" :disabled="product.model.cat_id === 0">应用到选中的商品</el-button>
+                          <el-button size="mini"  @click="onApplySelectCateToSelection()" :disabled="product.model.cat_id === 0">批量修改选中商品</el-button>
                       </el-form-item>
                       <el-form-item label="商品标题:" style="margin-right: 20px;">
-                          <el-input v-model="product.model.title" size="mini"
-                                    :class="['input-text-left', {'warn': (isTitleWarn || isTitleInfoWarn())}]" @input="onProductTitleChange"
-                          >
+                          <div style="display:flex">
+                            <el-input
+                              v-model="product.model.title"
+                              size="mini"
+                              style="margin-right:4px"
+                              :class="['input-text-left', {'warn': (isTitleWarn || isTitleInfoWarn())}]"
+                              @input="onProductTitleChange">
                               <span slot="append" class="hint">{{ getTitleLength(product.model.title) }} / 30</span>
                           </el-input>
-                          <el-button size="mini" type="primary" @click="onApplyTitleEditToSelection()">批量编辑选中商品标题</el-button>
+                          <el-button size="mini"  @click="onApplyTitleEditToSelection()">批量修改选中商品</el-button>
+                          </div>
                           <!-- <span style="font-size: 10px;">（已自动删除平台违禁词）</span> -->
-
                       </el-form-item>
                       <el-form-item label="市场价:">
                         <span>{{product.model.price}} 元
@@ -83,11 +87,11 @@
                           </el-tooltip>
                         </span>
                       </el-form-item>
-                      <el-form-item label="商品描述:" style="margin-right: 20px;" >
+                      <!-- <el-form-item label="商品描述:" style="margin-right: 20px;" >
                           <el-input type="textarea" v-model="product.model.description" size="mini"
                                     :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
                           </el-input>
-                      </el-form-item>
+                      </el-form-item> -->
                       <el-form-item label="品牌:" :required="product.model.brand_id_require" style="display:none">
                         <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable :disabled="true">
                           <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
@@ -111,7 +115,9 @@
                           :catId="product.model.cat_id"
                           :productModel="product.model.attrList"
                           ref="propertySet"
+                          :propertyBatchMapSelect="propertyBatchMap.get(product.model.tp_product_id)"
                           @applySelectBrandToSelection="applySelectBrandToSelection()"
+                          @applyPropertiesToSelection="applyPropertiesToSelection"
                           @reloadBrandList="reloadBrandList"
                           ></property-set>
                     </el-form-item>
@@ -419,6 +425,7 @@ import FormModel from '@/common/formModel'
 import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
 import isEmpty from 'lodash/isEmpty'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   inject: ['reload'],
@@ -479,7 +486,9 @@ export default {
       selectedProductIds: [],
       batchEditTitleVisible: false,
       textHandler: new TextHandler(),
-      closeAfterSave: false
+      closeAfterSave: false,
+      // 属性商品应用到所有 的数据记录
+      propertyBatchMap: new Map()
     }
   },
   watch: {
@@ -819,12 +828,18 @@ export default {
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
       let tpProductList = []
       let tpProductIdList = []
+      const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
       for (let i in this.productList) {
         let tpProductId = this.productList[i].tp_product_id
-        // 处理单个修改的商品
         if (this.products[tpProductId] && this.products[tpProductId].isDiff()) {
           if (tpProductId in this.products) {
             let product = this.products[tpProductId]
+            // 品牌和属性内的品牌是同一个值
+            let brandId = 0
+            const brand = (product.model.attrList || []).find(item => item.name === '品牌')
+            if (brand) {
+              brandId = brand.tp_value
+            }
             let productParams = {
               tp_product_id: product.model.tp_product_id,
               category_id: product.model.cat_id,
@@ -838,7 +853,7 @@ export default {
                 sku_json: this.getSkuUploadObjByShowList(product.model.skuShowList),
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
-                brand_id: product.model.brand_id || 0
+                brand_id: brandId
               }
             }
             tpProductList.push(productParams)
@@ -874,19 +889,25 @@ export default {
             tpProductList.push(productParams)
           }
         }
+        const categoryId = this.productList[i].category_id
+        const selectedProductIds = this.selectedProductIds
         // 处理批量修改属性的商品
-        if (this.attrApplyCatMap[this.productList[i].category_id]) {
+        if (propertyBatchCatIdMap.get(categoryId) && selectedProductIds.includes(tpProductId)) {
           tpProductIdList.push(tpProductId)
         }
       }
-      this.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, this.attrApplyCatMap, 0, 0, catId, updateCategoryTPProductIds)
+      let attrApplyCatMap = {}
+      const entries = [...propertyBatchCatIdMap.entries()]
+      entries.forEach(([key, value]) => {
+        attrApplyCatMap[key] = value
+      })
+      this.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, attrApplyCatMap, 0, 0, catId, updateCategoryTPProductIds)
     },
     requestBatchUpdateTPProduct (tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx, tpProductIdListIdx, catId, updateCategoryTPProductIds) {
       let tpProductListSlice = []
       let tpProductIdListSlice = []
       let attrApplyCatMapTemp = {}
-
-      // TODO songxue 应用到全部商品属性时候 需要修改此处 tpProductIdListIdx attr_apply_map 字段
+      // 应用到全部商品属性时候
       if (tpProductListIdx < tpProductList.length) {
         tpProductListSlice = tpProductList.slice(tpProductListIdx, tpProductListIdx + 5)
       } else if (tpProductIdListIdx < tpProductIdList.length) {
@@ -901,7 +922,8 @@ export default {
       }, data => {
         // 更新商品列表信息
         self.changeProducts(data)
-
+        self.propertyBatchMap = new Map()
+        self.propertyBatchCatIdMap = new Map()
         // 更新已经保存的商品信息
         for (let i in tpProductListSlice) {
           let tpProductId = tpProductListSlice[i].tp_product_id
@@ -1026,6 +1048,8 @@ export default {
       }
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
+      this.propertyBatchMap = new Map()
+      this.propertyBatchCatIdMap = new Map()
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.skuShowList = this.product.model.skuShowList
@@ -1065,6 +1089,19 @@ export default {
       }
       this.applySelectCateToAllVisible = true
     },
+    checkedPropertyBatchMapHasValue (tpProductId) {
+      const propertyBatch = this.propertyBatchMap.get(tpProductId)
+      if (!propertyBatch) return false
+      // 只要有一个属性选中全选应用 就相当于编辑过
+      const bool = Object.values(propertyBatch).some(item => {
+        const product = Object.values(this.productList).find(product => product.tp_product_id === tpProductId)
+        if (product && product.category_id === item.catId && item.checked) {
+          return true
+        }
+        return false
+      })
+      return bool
+    },
     updateProductEditStatus () {
       let isChanged = false
       for (let i in this.productList) {
@@ -1080,7 +1117,9 @@ export default {
           // 详情图修改
           (this.productRemoveLastDescDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.descPicUrlList.length > 1))) ||
           // 品牌详情修改
-          (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId])
+          (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId]) ||
+          // 批量修改属性商品
+          this.checkedPropertyBatchMapHasValue(tpProductId)
         ) {
           this.productDic[tpProductId].isEdit = true
           isChanged = true
@@ -1154,36 +1193,37 @@ export default {
         }
       }
     },
-    applySelectBrandToSelection () {
+    // 批量应用属性
+    applyPropertiesToSelection (checked, name, propertyValue) {
+      const propertyBatchMap = this.propertyBatchMap || new Map()
+      const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
       const catId = this.product.model.cat_id
+      const originAttrList = this.product.model.attrList
+      const originAttr = originAttrList.find(attr => attr.name === name)
       for (let i in this.selectedProductIds) {
         let tpProductId = this.selectedProductIds[i]
-        this.productBrandDic[tpProductId] = this.product.model.brand_id
-      }
-      for (let i in this.productList) {
-        let tpProductId = this.productList[i].tp_product_id
-        if (tpProductId in this.products) {
-          let product = this.products[tpProductId]
-          //  只应用到同类目的品牌
-          if (this.productBrandDic.hasOwnProperty(tpProductId) && product.model.cat_id && product.model.cat_id === catId) {
-            this.productBrandDic[tpProductId] = this.product.model.brand_id
-            Object.assign(product.model, {brand_id: this.product.model.brand_id})
-            // 把品牌应用到所有
-            const attrList = product.model.attrList.map(item => {
-              if (item.name === '品牌') {
-                item.tp_value = this.product.model.brand_id
-              }
-              return item
-            })
-            Object.assign(product.model, {attrList: attrList})
+        const propertyies = propertyBatchMap.get(tpProductId)
+        propertyBatchMap.set(tpProductId, {
+          ...propertyies,
+          [name]: {
+            checked,
+            propertyValue,
+            catId,
+            originAttr // 记录初始的 attr数据
           }
-        }
+        })
       }
+      this.propertyBatchMap = cloneDeep(propertyBatchMap)
+      // 批量应用到全部 的值
+      const propertyBatchCatIdMapValue = propertyBatchCatIdMap.get(catId) || {}
+      if (checked) {
+        propertyBatchCatIdMapValue[originAttr.id] = {...originAttr, tp_value: propertyValue}
+      } else {
+        delete propertyBatchCatIdMapValue[originAttr.id]
+      }
+      propertyBatchCatIdMap.set(catId, propertyBatchCatIdMapValue)
+      this.propertyBatchCatIdMap = cloneDeep(propertyBatchCatIdMap)
       this.updateProductEditStatus()
-      this.$message({
-        message: '应用成功',
-        type: 'success'
-      })
     },
     updateRemoveFirstBanner () {
       for (let i in this.productList) {
@@ -1362,10 +1402,12 @@ export default {
       this.$set(item, 'maskShow', false)
     },
     // 属性设置 回调
-    handlePropertyset: function (attrList, key, value) {
-      if (key === '品牌') {
-        Object.assign(this.product.model, {brand_id: value})
-      }
+    handlePropertyset: function (attrList) {
+      attrList.forEach(attr => {
+        if (attr.name === '品牌') {
+          Object.assign(this.product.model, {brand_id: attr.tp_value})
+        }
+      })
       Object.assign(this.product.model, {attrList})
     }
   }

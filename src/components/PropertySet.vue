@@ -1,6 +1,6 @@
 <!-- PropertySet 商品属性设置 -->
 <template>
-    <el-form :model="model" ref="propertySet" >
+    <el-form :model="model" ref="propertySet" v-if="productModel && productModel.length">
         <el-form-item
             v-for="(item,index) in productModel"
             :key="index"
@@ -9,17 +9,18 @@
             :show-message="item.name !== '品牌'"
             :inline-message="true"
             label-style="font-size:12px">
-             <span slot="label" style="width:120px;display:inline-block">
+            <div style="diplay:flex">
+             <span slot="label" style="width:120px;display:inline-block;text-align:right;padding-right:4px">
+               {{item.name}}
                <i v-if="item.required && item.name === '品牌'" class="el-icon-warning-outline" style="color:#f56c6c"></i>
                <i v-if="item.required && item.name !== '品牌'" class="el-icon-warning-outline" style="color:#e6a23c"></i>
-               {{item.name}}
               </span>
              <el-select
                 clearable
                 @clear="handleClear(item.name)"
                 @change="handleChange($event,item.name)"
                 size="small"
-                :style="{width: item.name !== '品牌' ? '300px' : '200px'}"
+                :style="{width: item.name !== '品牌' ? '300px' : '190px'}"
                 :placeholder="`请选择${item.name}`"
                 v-model="model[item.name]"
                 v-if="item.options.length || item.name === '品牌'"
@@ -42,24 +43,35 @@
                 v-model="model[item.name]"
                 v-else
               />
-            <span v-if="item.name === '品牌'">
-                <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i></el-button>
-                <el-link
-                    type="primary"
-                    target="_blank"
-                    :underline="false"
-                    :href="`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`">
-                    添加品牌
-                </el-link>
-                <!-- <el-button size="mini" type="primary" @click="applySelectBrandToSelection" :disabled="!item.options.length">应用到选中的商品</el-button> -->
+            <span v-if="item.name === '品牌'" style="">
+                <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i>刷新</el-button>
+                <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
+                <el-checkbox
+                  border
+                  :value="selected && selected[item.name]? selected[item.name]: false"
+                  @change="applyPropertiesToSelection($event,item.name)"
+                  size="small"
+                  class="batch" >
+                  批量修改同分类商品
+                </el-checkbox>
             </span>
-
+            <el-checkbox
+              v-if="item.name !== '品牌'"
+              border
+              @change="applyPropertiesToSelection($event,item.name)"
+              :value="selected && selected[item.name]? selected[item.name] : false"
+              size="small"
+              class="batch">
+              批量修改同分类商品
+            </el-checkbox>
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
                 <div >
                     <p style="color:red;font-size:12px">当前商品所选类目根据官方要求必须填写品牌。</p>
                     <p style="color:red;font-size:12px">查询哪些类目需要填写品牌 <a href="https://school.jinritemai.com/doudian/web/article/101810" style="color:red;font-size:12px;cursor: pointer">请点击我</a> </p>
                 </div>
             </slot>
+            </div>
+
         </el-form-item>
         <div class="tip">
           <p >1、带<span style="color:#f56c6c">红色感叹号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
@@ -68,7 +80,7 @@
             <!-- <span v-if="catId!==0">，勾选应用到本页相同分类商品，蓝色高亮</span> -->
         </div>
     </el-form >
-
+    <div v-else style="color:#e6a23c">请选择商品分类 填写抖音属性</div>
 </template>
 
 <script>
@@ -86,6 +98,9 @@ export default {
     },
     productModel: {
       type: Object
+    },
+    propertyBatchMapSelect: {
+      type: Object
     }
   },
   data () {
@@ -102,17 +117,44 @@ export default {
         const current = {[item.name]: [{required: !!item.required, message, trigger: 'change'}]}
         return {...target, ...current}
       }, {})
+    },
+    listenChange () {
+      const {productModel, propertyBatchMapSelect, catId} = this
+      return {productModel, propertyBatchMapSelect, catId}
     }
   },
   watch: {
-    productModel: {
+    listenChange: {
       handler (newVal, o) {
-        // this.resetForm()
-        // 移除表单项的校验结果
-        const result = (newVal || []).reduce((target, current) => {
-          return {...target, [current.name]: current.tp_value}
+        const {productModel, propertyBatchMapSelect, catId} = newVal
+        const model = (productModel || []).reduce((target, current) => {
+          const key = current.name
+          let value = current.tp_value
+          // 如果有全选到应用
+          if (propertyBatchMapSelect && propertyBatchMapSelect[key] && propertyBatchMapSelect[key].checked) {
+            const checkCatId = propertyBatchMapSelect[key].catId
+            if (checkCatId === catId) {
+              value = propertyBatchMapSelect[key].propertyValue
+            }
+          }
+          return {...target, [key]: value}
         }, {})
-        this.model = result
+        this.model = model
+        if (propertyBatchMapSelect && Object.keys(propertyBatchMapSelect).length) {
+          const selected = Object.keys(propertyBatchMapSelect).reduce((target, key) => {
+            if (!propertyBatchMapSelect[key]) return target
+            const checked = propertyBatchMapSelect[key].checked
+            const checkCatId = propertyBatchMapSelect[key].catId
+            if (checkCatId === catId) {
+              return {...target, [key]: checked}
+            } else {
+              return target
+            }
+          }, {})
+          this.selected = {...selected}
+        } else {
+          this.selected = {}
+        }
       },
       deep: true
     }
@@ -159,10 +201,15 @@ export default {
           const tpValue = newModal[item.name] || ''
           return {...item, tp_value: tpValue}
         })
-      this.$emit('change', newAttributeJson, name, value)
+      this.$emit('change', newAttributeJson)
+      this.$emit('applyPropertiesToSelection', false, name, '')
     },
-    applySelectBrandToSelection () {
-      this.$emit('applySelectBrandToSelection')
+    applyPropertiesToSelection (value, name) {
+      const propertyValue = this.model[name]
+      this.$emit('applyPropertiesToSelection', value, name, propertyValue)
+    },
+    open (catId) {
+      window.open(`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`)
     }
   }
 }
@@ -176,4 +223,15 @@ export default {
   text-align: left !important;
   padding-left: 10px !important;
 }
+/deep/ .el-button+.el-button {
+  margin-left: 0px !important;
+}
+/deep/ .el-form-item__content{
+  display:flex;
+  align-items:center;
+}
+.batch {
+  margin-left: 4px;
+}
+
 </style>
