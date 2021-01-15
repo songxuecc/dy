@@ -81,7 +81,7 @@
             </el-table-column>
             <el-table-column label="销售状态" width="80">
                 <template slot-scope="scope">
-                    {{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}
+                    <el-link type="primary" :underline="false" :href="dyGoodsLink(scope.row.goods_id_str)" target="view_window">{{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}</el-link>
                 </template>
             </el-table-column>
             <el-table-column prop="" label="操作" width="80" v-if="isProductEnableEdit">
@@ -157,7 +157,7 @@
             </el-table-column>
             <el-table-column label="销售状态" width="80">
                 <template slot-scope="scope">
-                    {{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}
+                  <el-link type="primary" :underline="false" :href="dyGoodsLink(scope.row.goods_id_str)" target="view_window">{{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}</el-link>
                 </template>
             </el-table-column>
             <el-table-column prop="" label="操作" width="90">
@@ -229,6 +229,9 @@ export default {
     }
   },
   methods: {
+    dyGoodsLink (dyGoodsId) {
+      return 'https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + dyGoodsId
+    },
     checkProductEnableEdit (product) {
       if (!this.isProductEnableEdit) {
         return false
