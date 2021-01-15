@@ -197,9 +197,14 @@
 import productListView from '@/components/ProductListView.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
-import { mapActions } from 'vuex'
+import { createNamespacedHelpers, mapActions } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
+
+const {
+  mapActions: mapActionsMoving
+} = createNamespacedHelpers('moving/migrateSettingTemplate')
+
 export default {
   inject: ['reload'],
   mixins: [request],
@@ -417,7 +422,9 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setSelectTPProductIdList',
+      'setSelectTPProductIdList'
+    ]),
+    ...mapActionsMoving([
       'removeTempTemplate'
     ]),
     calendarTime (strTime) {

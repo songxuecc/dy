@@ -9,7 +9,6 @@
         </div><br>
        <div class="setting-content-with-tip" style="display:flex; position:relative;">
             <el-form size="small" ref="template1" :model="template.model" :rules="rules" label-width="120px" style="width: 46%">
-
                 <el-form-item label="付款方式:" required>
                     <el-radio-group v-model="template.model.pay_type">
                         <el-radio :label="0">货到付款</el-radio>
@@ -17,46 +16,76 @@
                         <el-radio :label="2">两者都支持</el-radio>
                     </el-radio-group>
                 </el-form-item>
-
                 <el-form-item label="客服电话:" prop="mobile">
                     <el-input v-model="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
                 </el-form-item>
-<!--                <el-form-item label="佣金比例:" prop="cos_ratio">-->
-<!--                  <el-input v-model.number="template.model.cos_ratio" size="medium" class="input-num" @input="check"></el-input><span>&nbsp;&nbsp;%</span>-->
-<!--                </el-form-item>-->
             </el-form>
           <div class="help-tips" @click="goHelpLink">
             <span><i class="el-icon-s-opportunity"></i>如何填写？</span>
           </div>
         </div>
-
+        <!-- 新版运费模版 start-->
+        <div class="step-delivery setting-content-with-tip" >
+          <el-form
+            label-width="120px"
+            size="small"
+            ref="stock"
+            :model="template.model"
+            :rules="stockRules">
+              <el-form-item label="运费模版:" prop="cost_template_id">
+                  <el-select v-model="template.model.cost_template_id" placeholder="请选择" size="small" @change="check">
+                    <el-option label="2天" :value="2"></el-option>
+                    <el-option label="3天" :value="3"></el-option>
+                    <el-option label="5天" :value="5"></el-option>
+                    <el-option label="7天" :value="7"></el-option>
+                    <el-option label="10天" :value="10"></el-option>
+                    <el-option label="15天" :value="15"></el-option>
+                </el-select>
+                <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i>刷新</el-button>
+                <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
+              </el-form-item>
+              <el-form-item label="搬迁方式:" prop="commit_type">
+                  <el-radio-group v-model="template.model.commit_type">
+                      <el-radio :label="0">直接上线</el-radio>
+                      <el-radio :label="1">草稿箱</el-radio>
+                  </el-radio-group>
+              </el-form-item>
+              <el-form-item label="订单库存计数:" prop="reduce_type">
+                  <el-radio-group v-model="template.model.reduce_type">
+                      <div><el-radio :label="0">下单减库存 <span class="info">买家提交订单，扣减库存，存在恶拍风险</span></el-radio></div>
+                      <div><el-radio :label="1">付款减库存 <span class="info">买家支付订单时，扣件库存，存在超卖风险</span></el-radio></div>
+                  </el-radio-group>
+              </el-form-item>
+          </el-form>
+        </div>
+         <!-- 新版运费模版 end-->
         <!-- 发货模式 start-->
-        <div class="step-delivery setting-content-with-tip" v-if="typeof presell.presell_type !== 'undefined'" >
+        <div class="step-delivery setting-content-with-tip" v-if="typeof template.model.presell_type !== 'undefined'" >
           <el-form
             label-width="120px"
             size="small"
             :rules="presellRules"
-            :model="presell"
+            :model="template.model"
             ref="presellRef">
             <el-form-item label="发货模式:" prop="presell_type" >
                 <!-- 预售类型，1-全款预售，0-非预售，2-阶梯库存，默认0 -->
-                <el-radio-group v-model="presell.presell_type" >
+                <el-radio-group v-model="template.model.presell_type" >
                   <el-radio :label="0" class="presell_type">现货发货模式</el-radio>
                   <el-radio :label="1" class="presell_type">全款预售发货模式
-                    <p>商品发布成功后，预售期间产生的订单需以预售发货时间进行发货，预售结束后，商品自动下架</p>
+                    <p  v-if="template.model.presell_type === 1">商品发布成功后，预售期间产生的订单需以预售发货时间进行发货，预售结束后，商品自动下架</p>
                   </el-radio>
                   <el-radio :label="2" class="presell_type">
                     阶梯发货模式
-                    <p>商品发布成功先现货售卖，现货订单需按照现货发货时间进行发货；</p>
-                    <p>现货库存售罄后生成的订单需以阶梯发货时间进行发货</p>
+                    <p  v-if="template.model.presell_type === 2">商品发布成功先现货售卖，现货订单需按照现货发货时间进行发货；</p>
+                    <p  v-if="template.model.presell_type === 2">现货库存售罄后生成的订单需以阶梯发货时间进行发货</p>
                   </el-radio>
                 </el-radio-group>
                 <div class="info">如果切换发货模式，原发货模式下的订单若被取消，系统不会自动回增库存</div>
             </el-form-item>
 
             <!-- 现货发货模式 -->
-            <el-form-item label="承诺发货时间:" prop="delivery_delay_day" v-if="presell.presell_type === 0">
-                <el-select v-model="presell.delivery_delay_day" placeholder="请选择" size="small" @change="check">
+            <el-form-item label="承诺发货时间:" prop="delivery_delay_day" v-if="template.model.presell_type === 0">
+                <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" @change="check">
                     <el-option label="2天" :value="2"></el-option>
                     <el-option label="3天" :value="3"></el-option>
                     <el-option label="5天" :value="5"></el-option>
@@ -67,10 +96,10 @@
             </el-form-item>
 
             <!-- 全款预售发货模式 -->
-            <el-form-item label="预售结束时间:"  v-if="presell.presell_type === 1" prop="presell_end_time">
+            <el-form-item label="预售结束时间:"  v-if="template.model.presell_type === 1" prop="presell_end_time">
                 <el-date-picker
                   class="margin-bottom-4"
-                  v-model="presell.presell_end_time"
+                  v-model="template.model.presell_end_time"
                   type="datetime"
                   placeholder="选择日期时间"
                   default-time="00:00:00">
@@ -78,31 +107,30 @@
                 <p class="info">最多支持设置距离当前30天</p>
             </el-form-item>
             <!-- 阶梯发货 -->
-            <el-form-item label="现货发货时间:"  v-if="presell.presell_type === 2" >
+            <el-form-item label="现货发货时间:"  v-if="template.model.presell_type === 2" >
                 <span>48小时</span>
                 <p class="info">现货发货模式下生成的订单平台统一规定发货时间为48小时，请严格按照承诺发货时间进行发货</p>
             </el-form-item>
-
             <el-form-item
-              :label="presell.presell_type === 1 ?'预售发货时间:':'阶梯发货时间:'"
-              v-if="presell.presell_type === 1 || presell.presell_type === 2"
+              :label="template.model.presell_type === 1 ?'预售发货时间:':'阶梯发货时间:'"
+              v-if="template.model.presell_type === 1 || template.model.presell_type === 2"
               prop="presell_delay">
-                <template v-if="presell.presell_type === 1">
+                <template v-if="template.model.presell_type === 1">
                 <span>预售结束后</span>
                 <el-input-number
-                  v-model="presell.presell_delay"
+                  v-model="template.model.presell_delay"
                   controls-position="right"
                   @change="handleChange"
                   :min="3"
                   :max="30"
                   class="input-number margin-bottom-4"></el-input-number>
                 <span>天发货</span>
-                <p class="info ">预售商品发货时间以此限制为主，仅可设置3-30天</p>
+                <p class="info">预售商品发货时间以此限制为主，仅可设置3-30天</p>
                 </template>
-                <template v-if="presell.presell_type === 2">
+                <template v-if="template.model.presell_type === 2">
                 <span>订单生成后</span>
                 <el-input-number
-                  v-model="presell.presell_delay"
+                  v-model="template.model.presell_delay"
                   controls-position="right"
                   @change="handleChange"
                   :min="3"
@@ -112,19 +140,17 @@
                 <p class="info">预售商品发货时间以此限制为主，仅可设置3-30天</p>
                 </template>
             </el-form-item>
-
             <!-- 阶梯发货 -->
-            <el-form-item label="库存设置:"  v-if="presell.presell_type === 2" prop="step_stock_num_diff">
+            <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2" prop="step_stock_num_diff">
                 <span>现货库存设置为</span>
                 <el-input-number
-                  v-model="presell.step_stock_num_diff"
+                  v-model="template.model.step_stock_num_diff"
                   controls-position="right"
                   @change="handleChange"
                   :min="0"
                   class="input-number"></el-input-number>
                 <span>,&nbsp;&nbsp;剩余为阶梯发货库存&nbsp;&nbsp;&nbsp;(原商品库存 = 现货库存 + 阶梯库存)</span>
             </el-form-item>
-
           </el-form>
         </div>
         <!-- 发货模式 end-->
@@ -181,27 +207,32 @@
 <script>
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
-import { mapGetters, mapActions, mapState } from 'vuex'
+import { createNamespacedHelpers, mapGetters, mapState, mapActions } from 'vuex'
 import moment from 'moment'
 import cloneDeep from 'lodash/cloneDeep'
 // import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import isEmpty from 'lodash/isEmpty'
-import isEqual from 'lodash/isEqual'
+// import isEqual from 'lodash/isEqual'
 // import Api from '@/api/apis'
+
+const {
+  mapActions: mapActionsMoving,
+  mapGetters: mapGettersMoving
+} = createNamespacedHelpers('moving/migrateSettingTemplate')
 
 export default {
   mixins: [request],
   components: {
   },
   data () {
-    let validatePreSale = (rule, value, callback) => {
-      if (value && !this.preSaleDate && !this.template.model.presell_delay) {
-        callback(new Error('请选择预售时间及发货时间'))
-      } else {
-        callback()
-      }
-    }
+    // let validatePreSale = (rule, value, callback) => {
+    //   if (value && !this.preSaleDate && !this.template.model.presell_delay) {
+    //     callback(new Error('请选择预售时间及发货时间'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     const checkDeliveryDelayDay = (rule, value, callback) => {
       const startTime = new Date()
       const days = moment(value).diff(moment(startTime), 'days')
@@ -224,17 +255,6 @@ export default {
       rules: {
         mobile: [
           { required: true, message: '请输入客服电话', trigger: 'change' }
-        ],
-        // cos_ratio: [
-        //   { required: true, message: '请输入佣金比例', trigger: 'change' },
-        //   { type: 'number', message: '佣金比例数字' }
-        // ],
-        is_pre_sale: [
-          { required: true, message: '请选择是否是否预售', trigger: 'change' },
-          { validator: validatePreSale, trigger: 'change' }
-        ],
-        delivery_delay_day: [
-          { required: true, message: '请选择发货承诺', trigger: 'change' }
         ]
       },
       isStartMigrate: false,
@@ -265,71 +285,39 @@ export default {
         step_stock_num_diff: [
           { required: true, message: '请输入库存设置', trigger: 'blur' }
         ]
+      },
+      stock: {},
+      stockRules: {
+        cost_template_id: [
+          { required: true, message: '请选择运费模版', trigger: 'blur' }
+        ],
+        commit_type: [
+          { required: true, message: '请选择搬迁方式', trigger: 'change' }
+        ],
+        reduce_type: [
+          { required: true, message: '请选择订单库存计数', trigger: 'blur' }
+        ]
       }
     }
   },
   async created () {
-    // try {
-    //   // 记得合并修改的 fetch 不然await 无效
-    //   const bindList = await Api.hhgjAPIs.getMigrateMultiShopProductList({
-    //     tp_product_id_list: JSON.stringify(this.getSelectTPProductIdList)
-    //   })
-    //   this.originBindList = cloneDeep(bindList)
-    //   this.bindList = bindList.map(parents => {
-    //     // 过滤所有非当前店铺的元素
-    //     if (parents.user_list && parents.user_list.length) {
-    //       const childs = parents.user_list.filter(child => !child.is_self)
-    //       if (!parents.is_self) {
-    //         const firstChilds = omit(parents, ['user_list'])
-    //         childs.unshift(firstChilds)
-    //       }
-    //       parents.user_list = childs
-    //     }
-    //     return parents
-    //   })
-    // } catch (err) {
-    //   console.log(err)
-    // }
-  },
-  mounted () {
-    const defaultValue = {
-      presell_type: 0,
-      delivery_delay_day: 2,
-      presell_end_time: '',
-      presell_delay: 3,
-      step_stock_num_diff: 0
-    }
     // 初始化 曾经有 就取保存的 没有就新建
     if (isEmpty(this.template.model)) {
       this.loadingCnt++
-      this.requestTemplate().then(data => {
-        this.loadingCnt--
-        const requestPresell = pick(data, ['presell_type', 'delivery_delay_day', 'presell_delay', 'step_stock_num_diff'])
-        // 给requestPresell 中为undefined赋默认值
-        this.defaultPresell = Object.keys(requestPresell).reduce((target, key) => {
-          const valuePresell = requestPresell[key]
-          return {...target, [key]: valuePresell || defaultValue[key]}
-        }, {})
-        // defaultPresell 用作后期对比
-        this.presell = cloneDeep(this.defaultPresell)
-      })
-    } else {
-      this.defaultPresell = undefined
-      this.presell = cloneDeep(defaultValue)
+      await this.requestTemplate()
+      this.loadingCnt--
     }
-    // TODO 这里有一个大问题 保存模版上次使用
-    // 原来的逻辑是 在修改sku单价时 获取本地存储template 赋值给template 等到第三部的时候再取值 如果为空再请求template数据
-    // 这样做的目的是为了 保存用户上次使用模版本次回显
-    // 逻辑漏洞是 用户再第三页直接刷新 则template 的初始化永远为空
-    // 应该在第三页本页做此操作 后续改进
-    this.loadTempTemplate()
-    this.check()
+  },
+  mounted () {
+
   },
   computed: {
-    ...mapGetters({
-      getSelectTPProductIdList: 'getSelectTPProductIdList',
+    ...mapGettersMoving({
       template: 'getTemplate',
       dicCustomPrices: 'getDicCustomPrices'
+    }),
+    ...mapGetters({
+      getSelectTPProductIdList: 'getSelectTPProductIdList'
     }),
     ...mapState(['ownerId'])
   },
@@ -341,12 +329,15 @@ export default {
     window.removeEventListener('beforeunload', this.beforeunloadFn)
   },
   methods: {
-    ...mapActions([
-      'setSelectTPProductIdList',
+    ...mapActionsMoving([
       'requestTemplate',
       'loadTempTemplate',
       'removeTempTemplate',
-      'removeDicCustomPrices'
+      'removeDicCustomPrices',
+      'saveTempTemplate'
+    ]),
+    ...mapActions([
+      'setSelectTPProductIdList'
     ]),
     getCannotMigrateShops (num) {
       if (!this.getSelectTPProductIdList) return ''
@@ -421,15 +412,15 @@ export default {
       return msg
     },
     check () {
-      this.msgError = ''
-      let validateFun = (valid) => {
-        if (valid) {
-        } else {
-          this.msgError = '模板存在错误'
-          return false
-        }
-      }
-      this.$refs['template1'].validate(validateFun)
+      // this.msgError = ''
+      // let validateFun = (valid) => {
+      //   if (valid) {
+      //   } else {
+      //     this.msgError = '模板存在错误'
+      //     return false
+      //   }
+      // }
+      // this.$refs['template1'].validate(validateFun)
       // this.$refs['template2'].validate(validateFun)
     },
     getTemplateParams () {
@@ -461,20 +452,20 @@ export default {
       if (!valid) return
       // 根据不同的发货模式 取字段
       let presell = {}
-      if (this.presell.presell_type === 0) {
-        presell = pick(this.presell, ['presell_type', 'delivery_delay_day'])
-      } else if (this.presell.presell_type === 1) {
-        presell = pick(this.presell, ['presell_type', 'presell_end_time', 'presell_delay'])
+      if (this.template.model.presell_type === 0) {
+        presell = pick(this.template.model.presell_type, ['presell_type', 'delivery_delay_day'])
+      } else if (this.template.model.presell_type === 1) {
+        presell = pick(this.template.model.presell_type, ['presell_type', 'presell_end_time', 'presell_delay'])
         presell.presell_end_time = moment(presell.presell_end_time).format('YYYY-MM-DD HH:mm:ss')
       } else {
-        presell = pick(this.presell, ['presell_type', 'presell_delay', 'step_stock_num_diff'])
+        presell = pick(this.template.model.presell_type, ['presell_type', 'presell_delay', 'step_stock_num_diff'])
         // 抖音阶梯发货 现货都是48小时
         presell.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
-        this.presell.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+        this.template.model.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
       }
-      const diffPresell = !isEqual(cloneDeep(this.presell), this.defaultPresell)
+      // const diffPresell = !isEqual(cloneDeep(this.template.model.presell), this.defaultPresell)
       const diffTemplate = this.template.isDiff()
-      if (diffTemplate || diffPresell) {
+      if (diffTemplate) {
         this.request('updateTemplate', params, data => {
           this.migrage(presell)
         })
@@ -537,7 +528,7 @@ export default {
       templateParams.price_rate = Math.round(templateParams.price_rate * 100)
       templateParams.price_diff = utils.yuanToFen(templateParams.price_diff)
       templateParams.origin_price_diff = utils.yuanToFen(templateParams.origin_price_diff)
-      templateParams = {...templateParams, ...presell}
+      templateParams = {...templateParams, ...presell, ...this.stock}
 
       let params = {
         template: JSON.stringify(templateParams),
@@ -577,6 +568,7 @@ export default {
     },
     goback () {
       this.$router.go(-1)
+      this.saveTempTemplate()
     },
     reloadLogisticsTemplate (userId = undefined) {
       let params = {}

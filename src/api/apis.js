@@ -293,6 +293,9 @@ const hhgjAPIs = {
   },
   realSyncDyUserCategory: (params) => {
     return api.actionCreatorPost('/api/category/real_sync/create', params)
+  },
+  getCostTemplateList: (params) => {
+    return api.actionCreateGet('/api/product/costTemplate/list', params)
   }
 }
 
