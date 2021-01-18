@@ -66,7 +66,8 @@ export default {
     ...mapState(['ownerId']),
     ...mapStateMoving(['template']),
     ...mapGetters({
-      getSelectTPProductIdList: 'getSelectTPProductIdList'
+      getSelectTPProductIdList: 'getSelectTPProductIdList',
+      dicCustomPrices: 'getDicCustomPrices'
     })
   },
   methods: {
@@ -223,6 +224,7 @@ export default {
       this.isStartMigrate = true
       try {
         const {formatParmas} = this.getTemplateParams()
+        console.log(this.this.dicCustomPrices)
       // const migrateShop = this.getMigrateShop()
         let params = {
           template: JSON.stringify(formatParmas),
