@@ -134,8 +134,7 @@ export default {
   },
   computed: {
     ...mapGettersMoving({
-      template: 'getTemplate',
-      dicCustomPrices: 'getDicCustomPrices'
+      template: 'getTemplate'
     })
   },
   methods: {

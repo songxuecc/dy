@@ -64,10 +64,9 @@ export default {
   watch: {},
   computed: {
     ...mapState(['ownerId']),
-    ...mapStateMoving(['template']),
+    ...mapStateMoving(['template', 'dicCustomPrices']),
     ...mapGetters({
-      getSelectTPProductIdList: 'getSelectTPProductIdList',
-      dicCustomPrices: 'getDicCustomPrices'
+      getSelectTPProductIdList: 'getSelectTPProductIdList'
     })
   },
   methods: {
@@ -224,7 +223,6 @@ export default {
       this.isStartMigrate = true
       try {
         const {formatParmas} = this.getTemplateParams()
-        console.log(this.this.dicCustomPrices)
       // const migrateShop = this.getMigrateShop()
         let params = {
           template: JSON.stringify(formatParmas),

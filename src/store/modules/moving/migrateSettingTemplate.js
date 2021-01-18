@@ -50,13 +50,13 @@ export default {
     loadTempTemplate ({commit, state}, payload) {
       let strTemplate = localStorage.getItem('temp_template') || ''
       let strCustomPrices = localStorage.getItem('custom_prices') || ''
-      if (strTemplate !== '') {
+      if (!strTemplate) {
         const template = cloneDeep(payload)
         template.assign(JSON.parse(strTemplate))
         commit('save', {template})
       }
-      if (strCustomPrices !== '') {
-        state.dicCustomPrices = JSON.parse(strCustomPrices)
+      if (!strCustomPrices) {
+        commit('save', {dicCustomPrices: JSON.parse(strCustomPrices)})
       }
       this.dispatch('moving/migrateSettingTemplate/saveTempTemplate')
     },
