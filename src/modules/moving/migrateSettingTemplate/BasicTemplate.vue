@@ -31,8 +31,8 @@
             </el-form-item>
             <el-form-item label="订单库存计数:" prop="reduce_type">
                 <el-radio-group v-model="template.model.reduce_type">
-                    <div><el-radio :label="0">下单减库存 <span class="info">买家提交订单，扣减库存，存在恶拍风险</span></el-radio></div>
-                    <div><el-radio :label="1">付款减库存 <span class="info">买家支付订单时，扣件库存，存在超卖风险</span></el-radio></div>
+                    <div><el-radio :label="1">下单减库存 <span class="info">买家提交订单，扣减库存，存在恶拍风险</span></el-radio></div>
+                    <div><el-radio :label="2">付款减库存 <span class="info">买家支付订单时，扣件库存，存在超卖风险</span></el-radio></div>
                 </el-radio-group>
             </el-form-item>
         </el-form>
