@@ -151,9 +151,8 @@ export default {
     resetForm () {
       this.$refs.form.resetFields()
     },
-    async validate () {
-      const validate = await this.$refs.form.validate()
-      return validate
+    validate (cb) {
+      return this.$refs.form.validate(cb)
     }
   }
 }
