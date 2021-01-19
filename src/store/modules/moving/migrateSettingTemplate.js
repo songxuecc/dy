@@ -27,7 +27,7 @@ export default {
         const template = cloneDeep(state.template)
         // 保存结束时间
         template.model.presell_end_time = localStorage.getItem('presell_end_time')
-        template.assign(data)
+        Object.assign(template.model, data)
         commit('save', {template})
         // 先获取数据 再保存localstorege 最后合并两个数据 是为了保证再用户刷新数据的时候 可以保证用户操作记录还在
         this.dispatch('moving/migrateSettingTemplate/loadTempTemplate', template)
@@ -50,12 +50,12 @@ export default {
     loadTempTemplate ({commit, state}, payload) {
       let strTemplate = localStorage.getItem('temp_template') || ''
       let strCustomPrices = localStorage.getItem('custom_prices') || ''
-      if (!strTemplate) {
+      if (strTemplate) {
         const template = cloneDeep(payload)
-        template.assign(JSON.parse(strTemplate))
+        Object.assign(template.model, JSON.parse(strTemplate))
         commit('save', {template})
       }
-      if (!strCustomPrices) {
+      if (strCustomPrices) {
         commit('save', {dicCustomPrices: JSON.parse(strCustomPrices)})
       }
       this.dispatch('moving/migrateSettingTemplate/saveTempTemplate')
