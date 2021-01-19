@@ -166,7 +166,8 @@ export default {
         {value: false, field: 'sku_id', label: 'skuid'},
         {value: false, field: 'sku_price', label: 'sku价格'},
         {value: false, field: 'spec_detail_names', label: 'sku规格'},
-        {value: false, field: 'sku_quantity', label: 'sku库存'}
+        {value: false, field: 'sku_quantity', label: 'sku库存'},
+        {value: false, field: 'sku_code', label: 'sku编码'}
       ],
       excelStatus: '',
       excelPercent: -1,
