@@ -37,6 +37,7 @@
                 <el-date-picker
                   class="margin-bottom-4"
                   v-model="template.model.presell_end_time"
+                   :picker-options="pickerOptions"
                   type="datetime"
                   placeholder="选择日期时间"
                   default-time="00:00:00">
@@ -71,6 +72,7 @@
                       v-model="template.model.presell_delay"
                       controls-position="right"
                       @change="handleChange"
+                      :picker-options="pickerOptions"
                       :min="3"
                       :max="30"
                       class="input-number margin-bottom-4"></el-input-number>
@@ -104,7 +106,7 @@ export default {
   data () {
     const checkDeliveryDelayDay = (rule, value, callback) => {
       const startTime = new Date()
-      const days = moment(value).diff(moment(startTime), 'days')
+      const days = moment(value).diff(moment(startTime), 'days', true)
       if (days > 30) {
         callback(new Error('不可以超过30天'))
       } else {
@@ -129,6 +131,14 @@ export default {
         step_stock_num_diff: [
           { required: true, message: '请输入库存设置', trigger: 'blur' }
         ]
+      },
+      pickerOptions: {
+        disabledDate: (time) => {
+          const value = moment(time)
+          const now = moment()
+          const diff = value.diff(now, 'days', true)
+          return diff > 30
+        }
       }
     }
   },
