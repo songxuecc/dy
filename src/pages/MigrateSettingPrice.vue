@@ -631,13 +631,13 @@ export default {
               minGroupPriceFen = groupPriceFen
             }
           }
-          if (discountPriceFen > marketPriceFen) {
-            let strError = '划线价格不得小于售卖价'
-            tpProduct.marketPriceError = strError
-            if (this.msgError === '') {
-              this.msgError = strError
-            }
-          }
+          // if (discountPriceFen > marketPriceFen) {
+          //   let strError = '划线价格不得小于售卖价'
+          //   tpProduct.marketPriceError = strError
+          //   if (this.msgError === '') {
+          //     this.msgError = strError
+          //   }
+          // }
           let priceRange = tpProduct.group_price_range.toString().split(' ~ ')
           let maxPrice = 0
           let minPrice = 0
@@ -651,6 +651,13 @@ export default {
           if (discountPriceFen > maxPrice || discountPriceFen < minPrice) {
             let strError = '售卖价必须在sku价格范围内'
             tpProduct.discountPriceError = strError
+            if (this.msgError === '') {
+              this.msgError = strError
+            }
+          }
+          if (marketPriceFen < maxPrice) {
+            let strError = '划线价需大于等于sku最高价'
+            tpProduct.marketPriceError = strError
             if (this.msgError === '') {
               this.msgError = strError
             }
