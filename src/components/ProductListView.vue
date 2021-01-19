@@ -385,9 +385,9 @@ export default {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '删除复制商品'])
         }
-        if (this.productStatus.ONLINE === product.status && needJump === true) {
+        if (needJump === true) {
           window.open('https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + product.goods_commit_id)
-        } else if (this.productStatus.ONLINE === product.status) {
+        } else if ([this.productStatus.ONLINE, this.productStatus.SAVE_DRAFT].includes(product.status)) {
           this.deleteProductVisible = true
           this.deleteProductId = product.tp_product_id
         }
