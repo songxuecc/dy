@@ -296,6 +296,9 @@ const hhgjAPIs = {
   },
   getSyncDyUserCategory: (params) => {
     return api.actionCreateGet('/api/product/newCategory/sync/query', params)
+  },
+  getCostTemplateList: (params) => {
+    return api.actionCreateGet('/api/product/costTemplate/list', params)
   }
 }
 
