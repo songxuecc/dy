@@ -6,9 +6,9 @@
             :rules="rules"
             :model="template.model"
             ref="form">
-            <el-form-item label="发货模式:" prop="presell_type" >
+            <el-form-item label="发货模式:" prop="presell_type">
                 <!-- 预售类型，1-全款预售，0-非预售，2-阶梯库存，默认0 -->
-                <el-radio-group v-model="template.model.presell_type" >
+                <el-radio-group v-model="template.model.presell_type"  @change="check">
                   <el-radio :label="0" class="presell_type">现货发货模式</el-radio>
                   <el-radio :label="1" class="presell_type">全款预售发货模式
                     <p  v-if="template.model.presell_type === 1">商品发布成功后，预售期间产生的订单需以预售发货时间进行发货，预售结束后，商品自动下架</p>
@@ -23,7 +23,7 @@
             </el-form-item>
             <!-- 现货发货模式 -->
             <el-form-item label="承诺发货时间:" prop="delivery_delay_day" v-if="template.model.presell_type === 0">
-                <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" @change="check">
+                <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" default-first-option>
                     <el-option label="2天" :value="2"></el-option>
                     <el-option label="3天" :value="3"></el-option>
                     <el-option label="5天" :value="5"></el-option>
@@ -116,20 +116,20 @@ export default {
     return {
       rules: {
         presell_type: [
-          { required: true, message: '请选择发货模式', trigger: 'blur' }
+          { required: true, message: '请选择发货模式', trigger: ['blur', 'change'] }
         ],
         delivery_delay_day: [
-          { required: true, message: '请输入发货时间', trigger: 'change' }
+          { required: true, message: '请输入发货时间', trigger: ['blur', 'change'] }
         ],
         presell_end_time: [
-          { required: true, message: '请输入预售结束时间', trigger: 'blur' },
-          { validator: checkDeliveryDelayDay, trigger: 'blur' }
+          { required: true, message: '请输入预售结束时间', trigger: ['blur', 'change'] },
+          { validator: checkDeliveryDelayDay, trigger: ['blur', 'change'] }
         ],
         presell_delay: [
-          { required: true, message: '请输入发货时间', trigger: 'blur' }
+          { required: true, message: '请输入发货时间', trigger: ['blur', 'change'] }
         ],
         step_stock_num_diff: [
-          { required: true, message: '请输入库存设置', trigger: 'blur' }
+          { required: true, message: '请输入库存设置', trigger: ['blur', 'change'] }
         ]
       },
       pickerOptions: {
@@ -147,12 +147,25 @@ export default {
       template: 'getTemplate'
     })
   },
+  watch: {
+
+  },
   methods: {
     resetForm () {
       this.$refs.form.resetFields()
     },
     validate (cb) {
       return this.$refs.form.validate(cb)
+    },
+    check (value) {
+      this.$refs.form.clearValidate()
+      if (value === 0) {
+        this.$refs.form.validateField(['delivery_delay_day'])
+      } else if (value === 1) {
+        this.$refs.form.validateField(['presell_end_time', 'presell_delay'])
+      } else if (value === 2) {
+        this.$refs.form.validateField(['presell_delay', 'step_stock_num_diff'])
+      }
     }
   }
 }

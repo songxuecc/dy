@@ -209,7 +209,7 @@ export default {
        */
       try {
         const validate = await this.validForms()
-        if (!validate) return
+        if (!validate) return this.$message.error('请按提示正确填写模版')
         this.removeTempTemplate()
         const {template} = this.getTemplateParams()
         const diffTemplate = this.template.isDiff()
