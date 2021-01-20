@@ -125,7 +125,7 @@ export default {
         'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
         'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max',
-        'presell_type', 'commit_type', 'reduce_type'
+        'presell_type', 'commit_type', 'reduce_type', 'product_type'
       ]
       const model = this.template.model
       const params = pick(model, keyList)
