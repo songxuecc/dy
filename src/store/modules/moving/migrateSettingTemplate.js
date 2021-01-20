@@ -26,7 +26,11 @@ export default {
         }
         const template = cloneDeep(state.template)
         // 保存结束时间
-        template.model.presell_end_time = localStorage.getItem('presell_end_time')
+        data.presell_end_time = localStorage.getItem('presell_end_time')
+        // 设置默认发货时间
+        if (!data.delivery_delay_day) {
+          data.delivery_delay_day = 2
+        }
         Object.assign(template.model, data)
         commit('save', {template})
         // 先获取数据 再保存localstorege 最后合并两个数据 是为了保证再用户刷新数据的时候 可以保证用户操作记录还在

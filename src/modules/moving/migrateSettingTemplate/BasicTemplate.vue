@@ -60,6 +60,9 @@ export default {
   data () {
     return {
       rules: {
+        pay_type: [
+          { required: true, message: '请选择付款方式', trigger: 'change' }
+        ],
         mobile: [
           { required: true, message: '请输入客服电话', trigger: 'change' }
         ],
@@ -91,9 +94,8 @@ export default {
     open () {
       window.open('https://fxg.jinritemai.com/index.html#/ffa/morder/logistics/freight-list')
     },
-    async validate () {
-      const validate = await this.$refs.form.validate()
-      return validate
+    validate (cb) {
+      return this.$refs.form.validate(cb)
     }
   }
 }
