@@ -1,6 +1,6 @@
 <template lang="html">
     <div>
-        <div class="text-left" style="padding: 10px 0">
+        <!-- <div class="text-left" style="padding: 10px 0">
             <el-row>
                 <el-col :span="16">
                     商品列表&nbsp;&nbsp;
@@ -15,7 +15,7 @@
                     <slot name="upperRight"></slot>
                 </el-col>
             </el-row>
-        </div>
+        </div> -->
         <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
                   :row-style="{height:'68px'}"
                   @select-all="handleSelectAll" @select="handleSelect"

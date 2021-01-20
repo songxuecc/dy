@@ -81,6 +81,10 @@
                 </div>
             </el-tooltip>
         </el-alert>
+        <BatchEdit
+          @onSizeChange="handleSizeChange"
+          :pageSize="pagination.size"
+        />
         <product-list-view ref="productListView" :tpProductList="tpProductList">
             <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
                 <el-button size="small" type="danger" @click="forceGetCapture" style="right: 0px; margin-right: 10px;">重新复制本页</el-button>
@@ -97,23 +101,23 @@
         <br>
         <el-tooltip v-if="isShopCapture"  content="本页复制完才能复制下一页" placement="top">
           <el-pagination :disabled="getCaptureStatus !== 'finish'"
-                  v-show="loadingCnt == 0"
-                  @current-change="handleCurrentChange"
-                  :current-page="pagination.index"
-                  :page-size="pagination.size"
-                  layout="total, prev, pager, next, jumper"
-                  :total="pagination.total">
+            v-show="loadingCnt == 0"
+            @current-change="handleCurrentChange"
+            :current-page="pagination.index"
+            :page-size="pagination.size"
+            layout="total, prev, pager, next, jumper"
+            :total="pagination.total">
           </el-pagination>
         </el-tooltip>
         <el-pagination v-else
-                v-show="loadingCnt == 0"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="pagination.index"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="pagination.size"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="pagination.total">
+          v-show="loadingCnt == 0"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagination.index"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="pagination.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pagination.total">
         </el-pagination>
         <div  class="common-bottom">
             <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
@@ -194,7 +198,8 @@
     </div>
 </template>
 <script>
-import productListView from '@/components/ProductListView.vue'
+import productListView from '@/components/ProductListView'
+import BatchEdit from './components/BatchEdit'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import { createNamespacedHelpers, mapActions } from 'vuex'
@@ -209,7 +214,8 @@ export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productListView
+    productListView,
+    BatchEdit
   },
   data () {
     return {

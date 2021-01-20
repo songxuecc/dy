@@ -6,7 +6,6 @@ import WodaInfo from '@/pages/WodaInfo'
 import Migrate from '@/pages/Migrate'
 import MigrateList from '@/pages/MigrateList'
 import CaptureList from '@/pages/CaptureList'
-import ProductList from '@/pages/ProductList'
 import DyProductList from '@/pages/DyProductList'
 import BatchEdit from '@/pages/BatchEdit'
 import MigrateSettingPrice from '@/pages/MigrateSettingPrice.vue'
@@ -18,6 +17,7 @@ import CustomerService from '@/pages/CustomerService.vue'
 import MigrateSetting from '@/components/MigrateSetting.vue'
 import shopsBand from '@/modules/moving/shopsBand'
 import MigrateSettingTemplate from '@/modules/moving/migrateSettingTemplate'
+import ProductList from '@/modules/moving/readyToMigrate'
 
 Vue.use(Router)
 
