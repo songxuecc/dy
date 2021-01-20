@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="step-delivery setting-content-with-tip">
-        <el-form size="small" ref="form" :model="template.model" :rules="rules" label-width="120px" style="width: 46%">
+        <el-form size="small" ref="form" :model="template.model" :rules="rules" label-width="120px">
             <el-form-item label="付款方式:">
                 <el-radio-group v-model="template.model.pay_type">
                     <el-radio :label="0">货到付款</el-radio>
@@ -28,6 +28,14 @@
                 </el-select>
                 <el-button type="text" @click="getCostTemplateList"><i class="el-icon-refresh"></i>刷新</el-button>
                 <el-button type="text" @click="open()">添加运费模版</el-button>
+            </el-form-item>
+            <el-form-item label="商品类型:" prop="product_type">
+                <el-radio-group v-model="template.model.product_type">
+                    <el-radio :label="0">普通商品</el-radio>
+                    <el-radio :label="3">虚拟商品</el-radio>
+                    <el-radio :label="6">玉石闪购</el-radio>
+                    <el-radio :label="7">云闪购</el-radio>
+                </el-radio-group>
             </el-form-item>
             <el-form-item label="订单库存计数:" prop="reduce_type">
                 <el-radio-group v-model="template.model.reduce_type">
@@ -60,6 +68,9 @@ export default {
         ],
         commit_type: [
           { required: true, message: '请选择搬迁方式', trigger: 'change' }
+        ],
+        product_type: [
+          { required: true, message: '请选择商品类型', trigger: 'change' }
         ],
         reduce_type: [
           { required: true, message: '请选择订单库存计数', trigger: 'blur' }
