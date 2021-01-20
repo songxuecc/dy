@@ -645,9 +645,28 @@ export default {
       }
       return 'info'
     },
-    updateProperty (tpProductId, catId) {
+    updateAttributeProperty (tpProductId) {
       this.isLoading = true
-      catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
+      const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
+      let params = { tp_product_id: tpProductId, cat_id: catId }
+      this.request('getTPProductProperty', params, data => {
+        this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
+        const brand = data.attribute_json.find(item => item.name === '品牌')
+        // 设置品牌是否必填
+        if (brand && brand.required) {
+          this.product.assign({brand_id_require: brand.required})
+        }
+        if (data.brand_id) {
+          this.product.assign({brand_id: data.brand_id})
+        }
+        this.isLoading = false
+      }, data => {
+        this.isLoading = false
+      })
+    },
+    updateProperty (tpProductId) {
+      this.isLoading = true
+      const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
@@ -720,7 +739,7 @@ export default {
       this.dialogVisible = false
       Object.assign(this.product.model, {cat_id: data.id})
       this.product.model.category_show = data.name
-      this.updateProperty(this.product.model.tp_product_id, this.product.model.cat_id)
+      this.updateAttributeProperty(this.product.model.tp_product_id)
       // 重置属性设置
       this.$refs.propertySet && this.$refs.propertySet.resetForm()
     },
@@ -823,7 +842,8 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
-      this.saveProducts(this.product.model.cat_id)
+      // 没有修改分类时不用传参数
+      this.saveProducts()
     },
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
       let tpProductList = []
@@ -931,7 +951,6 @@ export default {
             self.products[tpProductId].saveNow()
           }
         }
-
         if (tpProductListIdx >= tpProductList.length && tpProductIdListIdx >= tpProductIdList.length) {
           if (catId !== -1) {
             this.requestApplySelectCateToAll(this.product.model.cat_id, updateCategoryTPProductIds, 0, 50)
