@@ -1,7 +1,7 @@
 <template lang="html">
     <div class="step-delivery setting-content-with-tip">
         <el-form size="small" ref="form" :model="template.model" :rules="rules" label-width="120px" style="width: 46%">
-            <el-form-item label="付款方式:">
+            <el-form-item label="付款方式:" prop="pay_type">
                 <el-radio-group v-model="template.model.pay_type">
                     <el-radio :label="0">货到付款</el-radio>
                     <el-radio :label="1">在线支付</el-radio>
@@ -52,6 +52,9 @@ export default {
   data () {
     return {
       rules: {
+        pay_type: [
+          { required: true, message: '请选择付款方式', trigger: 'change' }
+        ],
         mobile: [
           { required: true, message: '请输入客服电话', trigger: 'change' }
         ],
@@ -80,9 +83,8 @@ export default {
     open () {
       window.open('https://fxg.jinritemai.com/index.html#/ffa/morder/logistics/freight-list')
     },
-    async validate () {
-      const validate = await this.$refs.form.validate()
-      return validate
+    validate (cb) {
+      return this.$refs.form.validate(cb)
     }
   }
 }

@@ -97,17 +97,27 @@ export default {
       this.$router.go(-1)
     },
     validForms () {
-      let validate = true
-      if (this.$refs.basicTemplate && this.$refs.basicTemplate.validate) {
-        validate = this.$refs.basicTemplate.validate()
-      }
-      if (this.$refs.stepDelivery && this.$refs.stepDelivery.validate) {
-        validate = this.$refs.stepDelivery.validate()
-      }
-      if (this.$refs.shopsMigrate && this.$refs.shopsMigrate.validate) {
-        validate = this.$refs.shopsMigrate.validate()
-      }
-      return validate
+      const v1 = new Promise((resolve, reject) => {
+        this.$refs.stepDelivery.validate((valid, object) => {
+          resolve(valid)
+          reject(object)
+        })
+      })
+      const v2 = new Promise((resolve, reject) => {
+        this.$refs.basicTemplate.validate((valid, object) => {
+          resolve(valid)
+          reject(object)
+        })
+      })
+      // todo 多店铺搬家
+
+      return new Promise((resolve, reject) => {
+        Promise.all([v1, v2]).then(data => {
+          resolve(data.every(b => b))
+        }).catch(err => {
+          reject(err)
+        })
+      })
     },
     // 获取模版params
     getTemplateParams () {
@@ -190,7 +200,7 @@ export default {
       //   }
       // }
     },
-    async startMigrate () {
+    async  startMigrate () {
       /**
        * 验证
        * 删除template localstorage
@@ -198,8 +208,8 @@ export default {
        * 设置搬家parmas 搬家
        */
       try {
-        const validate = this.validForms()
-        if (!validate) return
+        const validate = await this.validForms()
+        if (!validate) return this.$message.error('请按提示正确填写模版')
         this.removeTempTemplate()
         const {template} = this.getTemplateParams()
         const diffTemplate = this.template.isDiff()
@@ -211,7 +221,7 @@ export default {
           this.migrage()
         }
       } catch (err) {
-        this.$message.error('err | err.message')
+        this.$message.error(err | err.message)
       }
     },
     async migrage () {
