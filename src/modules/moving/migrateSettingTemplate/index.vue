@@ -110,7 +110,6 @@ export default {
         })
       })
       // todo 多店铺搬家
-
       return new Promise((resolve, reject) => {
         Promise.all([v1, v2]).then(data => {
           resolve(data.every(b => b))
@@ -221,7 +220,7 @@ export default {
           this.migrage()
         }
       } catch (err) {
-        this.$message.error(err | err.message)
+        this.$message.error(err || err.message)
       }
     },
     async migrage () {
@@ -265,7 +264,7 @@ export default {
         }
       } catch (err) {
         this.isStartMigrate = false
-        this.$message.error(err | err.message)
+        this.$message.error(err || err.message)
       }
     }
   }
