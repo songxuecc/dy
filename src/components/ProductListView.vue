@@ -67,13 +67,12 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column v-if="!isSyncSource" label="状态" width="120">
+             <el-table-column v-if="!isSyncSource" label="状态" width="120">
                 <template slot-scope="scope">
-                    <el-button type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-button>
-                    <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
-                      {{ productStatusMap[scope.row.status] }}
+                    <div v-if="[0,1].includes(scope.row.capture_status)">复制中</div>
+                    <el-link :underline="false" style="text-decoration:none" :type="getStatusType(scope.row.status)" v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
-                      <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
+                      <span manual :value="scope.row.index === mouseOverIndex"  v-else-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
                         <div slot="content" style="max-width: 180px;" v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
                         </div>
@@ -110,16 +109,15 @@
                               <span v-html="v">{{v}}</span>
                             </ul>
                         </div>
-                        <i class="el-icon-question"></i>
-                      </el-tooltip>
-                      <el-tooltip style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
+                      </span>
+                      <span style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-else-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content" style="max-width: 180px;">
                             <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
                             <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: white;">联系客服</a>。</ul>
                           </div>
-                          <i class="el-icon-question"></i>
-                      </el-tooltip>
-                    </el-button>
+                      </span>
+                      <span v-if="(scope.row.isMigrating && scope.row.status!==2) || (scope.row.status ===4)" >{{ productStatusMap[scope.row.status] }}</span>
+                    </el-link>
                     <div v-else>
                       {{ productStatusMap[scope.row.status] }}
                       <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
