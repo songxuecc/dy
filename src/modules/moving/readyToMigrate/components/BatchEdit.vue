@@ -27,7 +27,7 @@
     <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel" />
     <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage" />
     <!-- 修改分类 -->
-    <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center>
+    <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate">
       </categorySelectView>
     </el-dialog>
@@ -111,7 +111,7 @@ export default {
         }
       ],
       value: this.pageSize,
-      visibleEditTitle: true,
+      visibleEditTitle: false,
       visibleEditDelteRecord: false,
       visibleEditDelteDetailImage: false,
       visibleEditDeleteCarousel: false,
@@ -184,5 +184,8 @@ export default {
     .el-dialog__body {
       padding-top: 0;
     }
+  }
+  /deep/ .el-dialog {
+    border-radius: 10px;
   }
 </style>

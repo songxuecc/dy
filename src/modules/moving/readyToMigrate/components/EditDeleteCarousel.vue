@@ -2,7 +2,7 @@
 <template>
   <el-dialog title="批量删除轮播首图" :show-close="false" :visible.sync="visible" v-hh-modal width="30%" center>
     <p style="text-align:center">
-      只删除软件的记录，对拼多多商品没影响，您确定要操作吗？
+      所选商品的轮播首图都会被删除，确认操作吗
     </p>
     <span slot="footer">
       <el-button type="plain" style="width:120px;margin-right:10px" @click="batchDeleteCaptureVisible = false">取消
