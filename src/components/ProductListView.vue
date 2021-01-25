@@ -129,7 +129,7 @@
                             <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;font-size:12px">联系客服</a>。</ul>
                           </div>
                       </span>
-                      <span v-if="(scope.row.isMigrating && scope.row.status!==2) || (scope.row.status ===4)  || (scope.row.status ===3)" >无</span>
+                      <span v-if="(scope.row.isMigrating && scope.row.status!==2) || (scope.row.status ===4)  || (scope.row.status ===3)   || (scope.row.status === 0) || (scope.row.status === 2)" >无</span>
                     </div>
                 </template>
             </el-table-column>
