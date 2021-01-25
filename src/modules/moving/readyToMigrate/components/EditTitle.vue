@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <el-dialog :visible.sync="visible" width="700px" append-to-body v-hh-modal title="批量修改标题" center>
+  <el-dialog :visible.sync="visible" width="700px" append-to-body v-hh-modal title="批量修改标题" center @close="close">
     <div>
       <div style="display:flex;margin-bottom:20px">
         <p style="margin-right:10px">
@@ -48,11 +48,20 @@
 export default {
   name: 'EditTitle',
   props: {
-    visible: Boolean
+    visible: Boolean,
+    parentkey: String
   },
   data () {
-    return { 
-      radio:1
+    return {
+      radio: 1
+    }
+  },
+  methods: {
+    close () {
+      this.$emit('update:visible', false)
+    },
+    confirm () {
+      this.close()
     }
   }
 }

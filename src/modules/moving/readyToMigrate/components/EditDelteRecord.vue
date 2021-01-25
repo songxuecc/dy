@@ -5,9 +5,9 @@
       只删除软件的记录，对小店后台商品没影响，删除后已复制的商品可进行再次复制搬家，您确定要操作吗？
     </p>
     <span slot="footer">
-      <el-button type="plain" style="width:120px;margin-right:10px" @click="batchDeleteCaptureVisible = false">取消
+      <el-button type="plain" style="width:120px;margin-right:10px" @click="close">取消
       </el-button>
-      <el-button type="primary" style="width:120px" @click="batchDeleteCapture">确定</el-button>
+      <el-button type="primary" style="width:120px" @click="confirm">确定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -20,6 +20,14 @@ export default {
   },
   data () {
     return {}
+  },
+  methods: {
+    close () {
+      this.$emit('update:visible', false)
+    },
+    confirm () {
+      this.close()
+    }
   }
 }
 </script>

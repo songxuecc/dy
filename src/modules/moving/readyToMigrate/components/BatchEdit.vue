@@ -21,7 +21,7 @@
       </el-col>
     </el-row>
     <div class="info left">注：批量修改本页勾选产品</div>
-    <EditTitle :visible.sync="visibleEditTitle" />
+    <EditTitle :visible.sync="visibleEditTitle" @onClose="handleClose" parentkey="visibleEditTitle"/>
     <EditBrandId :visible.sync="visvileEditBrandId" />
     <EditDelteRecord :visible.sync="visibleEditDelteRecord" />
     <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel" />
@@ -127,7 +127,13 @@ export default {
       console.log(command)
       this.activeIndex = command
       const key = this.dropdownOptions[command || 0].key
+
       this[key] = !this[key]
+    },
+    handleClose (key) {
+      this[key] = false
+
+      console.log('handleClose', this)
     }
   }
 }
