@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <el-dialog title="批量删除详情尾图" :show-close="false" :visible.sync="visible" v-hh-modal width="30%" center>
+  <el-dialog title="批量删除详情尾图"    :visible.sync="visible" v-hh-modal width="30%" center @close="close">
     <p style="text-align:center">
       所选商品的详情尾图都会被删除，确认操作吗
     </p>

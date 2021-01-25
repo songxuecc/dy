@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-bottom: 10px">
+  <div style="margin: 10px 0">
     <el-row type="flex" justify="start" style="margin-bottom: 4px">
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
@@ -21,11 +21,11 @@
       </el-col>
     </el-row>
     <div class="info left">注：批量修改本页勾选产品</div>
-    <EditTitle :visible.sync="visibleEditTitle" @onClose="handleClose" parentkey="visibleEditTitle"/>
-    <EditBrandId :visible.sync="visvileEditBrandId" />
-    <EditDelteRecord :visible.sync="visibleEditDelteRecord" />
-    <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel" />
-    <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage" />
+    <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle"/>
+    <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @batchUpdateCategory="batchUpdateCategory"/>
+    <EditDelteRecord :visible.sync="visibleEditDelteRecord"  v-if="visibleEditDelteRecord"/>
+    <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel"  v-if="visibleEditDeleteCarousel"/>
+    <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage"  v-if="visibleEditDelteDetailImage"/>
     <!-- 修改分类 -->
     <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate">
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import Api from '@/api/apis'
 import categorySelectView from '@/components/CategorySelectView'
 import EditDelteRecord from './EditDelteRecord'
 import EditTitle from './EditTitle'
@@ -44,10 +45,13 @@ import EditDelteDetailImage from './EditDelteDetailImage'
 import skuHandler from '@/mixins/skuHandler.js'
 
 export default {
+  inject: ['reload'],
   name: 'BatchEdit',
   mixins: [skuHandler],
   props: {
-    pageSize: String
+    pageSize: String,
+    selections: Array,
+    onSizeChange: Object
   },
   components: {
     EditDelteRecord,
@@ -129,11 +133,28 @@ export default {
       const key = this.dropdownOptions[command || 0].key
 
       this[key] = !this[key]
+
+      console.log(this.selections)
     },
     handleClose (key) {
       this[key] = false
 
       console.log('handleClose', this)
+    },
+    // 批量修改分类
+    async onChangeCate (category) {
+      try {
+        this.visvileCategory = false
+        this.$emit('toggleLoadingCnt', 1)
+        await Api.hhgjAPIs.batchUpdateCategory({
+          tp_product_ids: this.selections,
+          cid: category.id
+        })
+        this.$emit('toggleLoadingCnt', 0)
+      } catch (err) {
+        this.$message.error(err || err.message)
+      }
+      this.reload()
     }
   }
 }

@@ -84,6 +84,8 @@
         <BatchEdit
           @onSizeChange="handleSizeChange"
           :pageSize="pagination.size"
+          :selections="selectIdList"
+          @toggleLoadingCnt="toggleLoadingCnt"
         />
         <product-list-view ref="productListView" :tpProductList="tpProductList">
             <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
@@ -925,6 +927,9 @@ export default {
     },
     onOpenedCate () {
       this.$refs.categorySelectView.initCate()
+    },
+    toggleLoadingCnt (value) {
+      this.loadingCnt = value
     }
   }
 }

@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <el-dialog title="删除复制记录" :visible="visible" v-hh-modal width="30%" center>
+  <el-dialog title="删除复制记录" :visible="visible" v-hh-modal width="30%" center @close="close">
     <p style="text-align:center">
       只删除软件的记录，对小店后台商品没影响，删除后已复制的商品可进行再次复制搬家，您确定要操作吗？
     </p>
