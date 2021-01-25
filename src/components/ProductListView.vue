@@ -25,31 +25,33 @@
             </el-table-column>
             <el-table-column type="selection" :selectable="isSelectionEnable">
             </el-table-column>
-            <el-table-column label="图片" width="100" align="center">
+            <el-table-column label="图片" width="80" align="center">
                 <template slot-scope="scope">
-                    <img style="height:60px" :src="scope.row.thumbnail">
+                    <img style="height:50px" :src="scope.row.thumbnail">
                 </template>
             </el-table-column>
-            <el-table-column label="标题">
+            <el-table-column label="标题"  width="300">
                 <template slot-scope="scope">
-                    <el-link type="primary" :href="scope.row.url" target="_blank" :underline="false">
+                    <el-link  :href="scope.row.url" target="_blank" :underline="false" style="font-size:12px">
                         {{ scope.row.title }}
                     </el-link><br>
-                    <img style="width: 15px; height: 15px; margin-right: 2px;" class="icon" :src="getIcon(scope.row)">
-                    <label style="font-size:12px; margin-right: 5px;">{{scope.row.source}}</label>
-                    <label style="font-size:12px; margin-right: 5px;" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
-                    <label style="font-size:12px">创建时间: {{scope.row.create_time}}</label>
+                    <div>
+                      <img style="width: 12px; height: 12px;margin-right: 5px;" class="icon" :src="getIcon(scope.row)">
+                      <label style="font-size:12px; margin-right: 5px;color:#999999">{{scope.row.source}}</label>
+                      <label style="font-size:12px; margin-right: 5px;color:#999999" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
+                      <label style="font-size:12px;color:#999999">创建时间: {{scope.row.create_time}}</label>
+                    </div>
                 </template>
             </el-table-column>
-            <el-table-column label="价格" width="70">
+            <el-table-column label="价格" width="80" >
                 <template slot-scope="scope">
-                    {{ scope.row.max_price / 100 }}
+                    <span style="font-size:12px;">{{ scope.row.max_price / 100 }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="类目" width="120">
+            <el-table-column label="类目" width="100">
                 <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">
-                        <span> {{ getLastCategory(scope.row.category_show) }} </span>
+                        <span style="font-size:12px;"> {{ getLastCategory(scope.row.category_show) }} </span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -67,12 +69,23 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="状态" width="120">
+             <el-table-column v-if="!isSyncSource" label="状态" width="110">
                 <template slot-scope="scope">
-                    <div v-if="[0,1].includes(scope.row.capture_status)">复制中</div>
-                    <el-link :underline="false" style="text-decoration:none" :type="getStatusType(scope.row.status)" v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
+                    <el-link :underline="false" style="text-decoration:none;font-size:12px" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
+                    <el-link :underline="false" style="text-decoration:none;font-size:12px"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
+                      {{ productStatusMap[scope.row.status] }}
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
-                      <span manual :value="scope.row.index === mouseOverIndex"  v-else-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
+                    </el-link>
+                    <el-link v-else :underline="false"  style="text-decoration:none;font-size:12px;display:block" type="warning">
+                      {{ productStatusMap[scope.row.status] }}
+                      <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
+                    </el-link>
+                </template>
+            </el-table-column>
+             <el-table-column v-if="!isSyncSource" label="理由">
+                <template slot-scope="scope">
+                    <div style="text-decoration:none;font-size:12px"  v-if="scope.row.status!==2" >
+                      <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
                         <div slot="content" style="max-width: 180px;" v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
                         </div>
@@ -116,11 +129,7 @@
                             <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: white;">联系客服</a>。</ul>
                           </div>
                       </span>
-                      <span v-if="(scope.row.isMigrating && scope.row.status!==2) || (scope.row.status ===4)" >{{ productStatusMap[scope.row.status] }}</span>
-                    </el-link>
-                    <div v-else>
-                      {{ productStatusMap[scope.row.status] }}
-                      <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
+                      <span v-if="(scope.row.isMigrating && scope.row.status!==2) || (scope.row.status ===4)" >无</span>
                     </div>
                 </template>
             </el-table-column>
@@ -137,13 +146,7 @@
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
                     </div>
                     <div v-else>
-                      <el-button type="primary" size="small" v-if="isModifyEnable(scope.row) && [3, 4].includes(scope.row.status)" @click="productEdit(scope.row, false, false)">{{getButtonName(scope.row)}}</el-button>
-                      <el-dropdown split-button type="primary" trigger="click" v-if="isModifyEnable(scope.row) && ![3, 4].includes(scope.row.status)" size="small" @click="productEdit(scope.row, false, false)" @command="handleCommand">
-                        {{getButtonName(scope.row)}}
-                        <el-dropdown-menu slot="dropdown" v-if="![3, 4].includes(scope.row.status)">
-                          <el-dropdown-item :command="beforeHandleCommand('deleteProduct', scope.row)" size="small">删除</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <el-link  v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:12px;margin-right:4px">{{item.text}}</el-link>
                     </div>
                 </template>
             </el-table-column>
@@ -278,6 +281,10 @@ export default {
         this.$emit('btnSettingClick', command.product)
       }
     },
+    productDelete (product) {
+      this.deleteProductVisible = true
+      this.deleteProductId = product.tp_product_id
+    },
     confirmDeleteProduct () {
       if (this.deleteProductId !== -1) {
         this.request('deleteTPProduct', { tp_product_ids: [this.deleteProductId] }, data => {
@@ -330,6 +337,42 @@ export default {
         return '修改'
       }
     },
+    //  待上线 0
+    //  等待搬迁
+    //  搬迁中
+
+    getButtonNames (product) {
+      const edit = {
+        handle: () => this.productEdit(product, false, false),
+        text: '修改'
+      }
+      const houtai = {
+        handle: () => this.productEdit(product, false, false),
+        text: '后台'
+      }
+      const tryAgian = {
+        handle: () => this.productEdit(product, false, false),
+        text: '重试'
+      }
+      const deleteItem = {
+        handle: () => this.productDelete(product),
+        text: '删除'
+      }
+      const productStatusMap = {
+        0: [edit, deleteItem],
+        1: [deleteItem],
+        2: [deleteItem],
+        3: [houtai, deleteItem],
+        4: [houtai, deleteItem],
+        5: [edit, deleteItem],
+        6: [edit, deleteItem],
+        7: [tryAgian, deleteItem],
+        8: [houtai, edit, deleteItem],
+        9: [deleteItem]
+      }
+      return productStatusMap[product.status]
+    },
+
     getSyncStatus (product) {
       if (parseInt(product.sync_source_status.status) === common.taskResultStatus['success']) {
         return product.sync_source_status.complete_time
