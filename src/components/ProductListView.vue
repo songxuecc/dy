@@ -87,38 +87,38 @@
                     <div style="text-decoration:none;font-size:12px" >
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
                         <div slot="content" style="max-width: 180px;" v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:12px" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <p>当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。规则查询：</p>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:12px" :key="0">
+                              <p>当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。</p>
                               <p><a style="color: #409EFF;font-size:12px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/105695">点击查询规则</a ></p>
                             </ul>
                         </div>
 
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:12px" :key="0">
                               <p>根据官方规定，该类目需要填写品牌，请上传品牌</p>
                               <p><a  style="color: #409EFF;font-size:12px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:12px" :key="0">
                               商品详情图中有空白图，建议将空白图删除后再次搬家
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:12px" :key="0">
                               {{getSkuDuplicateFormatText(scope.row.migration_msg[0])}}
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败30-2,transImgToLocal failed') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:12px" :key="0">
                               轮播图+详情图+sku图不能超过50张
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else>
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:12px" v-for="(v,i) in scope.row.migration_msg" :key="i">
                               <span v-html="v">{{v}}</span>
                             </ul>
                         </div>
