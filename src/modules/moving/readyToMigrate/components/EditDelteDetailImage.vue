@@ -5,8 +5,6 @@
       所选商品的详情尾图都会被删除，确认操作吗
     </p>
     <span slot="footer">
-      <el-button type="plain" style="width:120px;margin-right:10px" @click="close">取消
-      </el-button>
       <el-button type="primary" style="width:120px" @click="confirm">确定</el-button>
     </span>
   </el-dialog>

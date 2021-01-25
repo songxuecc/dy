@@ -15,11 +15,11 @@
       </div>
       <div style="display:flex;margin-bottom:20px">
         <p style="margin-right:10px">
-          <el-input v-model="textReplace1" style="width: 260px;margin-right:10px"></el-input>
+          <el-input v-model="textReplaceOrigin" style="width: 260px;margin-right:10px"></el-input>
           <span style="font-size:12px">替换为</span>
         </p>
         <p>
-          <el-input v-model="textReplace2" style="width: 260px;margin-right:13px"></el-input>
+          <el-input v-model="textReplaceNew" style="width: 260px;margin-right:13px"></el-input>
           <el-link type="primary" @click="applyTitleChangeToSelection(1)" style="font-size:12px" :underline="false">应用
           </el-link>
         </p>
@@ -33,7 +33,7 @@
         </p>
         <p style="width:300px;display:flex;flex:1">
           <span style="font-size: 12px;margin-right:4px">超过30个字:</span>
-          <el-radio-group v-model="radio" >
+          <el-radio-group v-model="radio">
             <el-radio :label="3">自动去开头</el-radio>
             <el-radio :label="6">自动去末尾</el-radio>
             <el-radio :label="9">手动处理</el-radio>
@@ -41,6 +41,9 @@
         </p>
       </div>
     </div>
+    <span slot="footer">
+      <el-button type="primary" style="width:120px" @click="confirm">确定</el-button>
+    </span>
   </el-dialog>
 </template>
 
@@ -53,7 +56,12 @@ export default {
   },
   data () {
     return {
-      radio: 1
+      radio: 1,
+      textPrefix: '',
+      textSuffix: '',
+      textReplaceOrigin: '',
+      textReplaceNew: '',
+      textDelete: ''
     }
   },
   methods: {

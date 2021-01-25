@@ -22,7 +22,7 @@
     </el-row>
     <div class="info left">注：批量修改本页勾选产品</div>
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle"/>
-    <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @batchUpdateCategory="batchUpdateCategory"/>
+    <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @batchUpdateBrandIds="batchUpdateBrandIds"/>
     <EditDelteRecord :visible.sync="visibleEditDelteRecord"  v-if="visibleEditDelteRecord"/>
     <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel"  v-if="visibleEditDeleteCarousel"/>
     <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage"  v-if="visibleEditDelteDetailImage"/>
@@ -133,8 +133,6 @@ export default {
       const key = this.dropdownOptions[command || 0].key
 
       this[key] = !this[key]
-
-      console.log(this.selections)
     },
     handleClose (key) {
       this[key] = false
@@ -156,6 +154,21 @@ export default {
       }
       this.reload()
     }
+  },
+  // 修改品牌
+  async batchUpdateBrandIds (brandId) {
+    try {
+      this.visvileEditBrandId = false
+      this.$emit('toggleLoadingCnt', 1)
+      // await Api.hhgjAPIs.batchUpdateCategory({
+      //   attr_apply_map: brandId,
+      //   tp_product_list: this.selections
+      // })
+      this.$emit('toggleLoadingCnt', 0)
+    } catch (err) {
+      this.$message.error(err || err.message)
+    }
+    this.reload()
   }
 }
 </script>
