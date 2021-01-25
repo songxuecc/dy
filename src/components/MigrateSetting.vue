@@ -17,7 +17,7 @@
       <el-form-item label="sku规格值超过20个自动截断" required style="margin-bottom: 0px;">
         <el-checkbox v-model="is_cut_sku_spec"></el-checkbox>
       </el-form-item>
-      <el-form-item label="自动截取前五张轮播图" required style="margin-bottom: 0px;">
+      <el-form-item label="仅保留前5张轮播图" required style="margin-bottom: 0px;">
         <el-checkbox v-model="is_banner_auto_5"></el-checkbox>
       </el-form-item>
     </el-form>
