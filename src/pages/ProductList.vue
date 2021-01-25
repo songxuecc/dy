@@ -7,7 +7,7 @@
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleStatusFilterChange"
-                               popper-class="select-long" style="width: 100px"
+                               popper-class="select-long" style="width: 120px"
                     >
                         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>

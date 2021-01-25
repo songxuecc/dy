@@ -25,31 +25,33 @@
             </el-table-column>
             <el-table-column type="selection" :selectable="isSelectionEnable">
             </el-table-column>
-            <el-table-column label="图片" width="100" align="center">
+            <el-table-column label="图片" width="80" align="center">
                 <template slot-scope="scope">
-                    <img style="height:60px" :src="scope.row.thumbnail">
+                    <img style="height:50px" :src="scope.row.thumbnail">
                 </template>
             </el-table-column>
-            <el-table-column label="标题">
+            <el-table-column label="标题"  width="300">
                 <template slot-scope="scope">
-                    <el-link type="primary" :href="scope.row.url" target="_blank" :underline="false">
+                    <el-link  :href="scope.row.url" target="_blank" :underline="false" style="font-size:13px">
                         {{ scope.row.title }}
                     </el-link><br>
-                    <img style="width: 15px; height: 15px; margin-right: 2px;" class="icon" :src="getIcon(scope.row)">
-                    <label style="font-size:12px; margin-right: 5px;">{{scope.row.source}}</label>
-                    <label style="font-size:12px; margin-right: 5px;" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
-                    <label style="font-size:12px">创建时间: {{scope.row.create_time}}</label>
+                    <div style="display: flex;align-items: center;flex-wrap: wrap;">
+                      <img style="width: 12px; height: 12px;margin-right: 5px;" class="icon" :src="getIcon(scope.row)">
+                      <label style="font-size:12px; margin-right: 5px;color:#999999">{{scope.row.source}}</label>
+                      <label style="font-size:12px; margin-right: 5px;color:#999999" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
+                      <label style="font-size:12px;color:#999999">创建时间: {{scope.row.create_time}}</label>
+                    </div>
                 </template>
             </el-table-column>
-            <el-table-column label="价格" width="70">
+            <el-table-column label="价格" width="80" >
                 <template slot-scope="scope">
-                    {{ scope.row.max_price / 100 }}
+                    <span style="font-size:13px;">{{ scope.row.max_price / 100 }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="类目" width="120">
+            <el-table-column label="类目" width="100">
                 <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">
-                        <span> {{ getLastCategory(scope.row.category_show) }} </span>
+                        <span style="font-size:13px;"> {{ getLastCategory(scope.row.category_show) }} </span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -67,62 +69,67 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column v-if="!isSyncSource" label="状态" width="120">
+             <el-table-column v-if="!isSyncSource" label="状态" width="110">
                 <template slot-scope="scope">
-                    <el-button type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-button>
-                    <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
+                    <el-link :underline="false" style="text-decoration:none;font-size:13px" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
+                    <el-link :underline="false" style="text-decoration:none;font-size:13px"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
                       {{ productStatusMap[scope.row.status] }}
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
-                      <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
+                    </el-link>
+                    <el-link v-else :underline="false"  style="text-decoration:none;font-size:13px;display:block" type="warning">
+                      {{ productStatusMap[scope.row.status] }}
+                      <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
+                    </el-link>
+                </template>
+            </el-table-column>
+             <el-table-column v-if="!isSyncSource" label="理由">
+                <template slot-scope="scope">
+                    <div style="text-decoration:none;font-size:13px" >
+                      <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
                         <div slot="content" style="max-width: 180px;" v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <p>当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。规则查询：</p>
-                              <p><a style="color: navajowhite;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/105695">https://school.jinritemai.com/doudian/web/article/105695</a>（点击链接是可跳转的）</p>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                              <p style="font-size:13px">当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。</p>
+                              <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/105695">点击查询规则</a ></p>
                             </ul>
                         </div>
 
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <p>根据官方规定，该类目需要填写品牌，请上传品牌</p>
-                              <p>查询哪些类目需填品牌：<a style="color: navajowhite;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">https://school.jinritemai.com/doudian/web/article/101810</a>（点击链接是可跳转的）</p>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                              <p style="font-size:13px">根据官方规定，该类目需要填写品牌，请上传品牌</p>
+                              <p><a  style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               商品详情图中有空白图，建议将空白图删除后再次搬家
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               {{getSkuDuplicateFormatText(scope.row.migration_msg[0])}}
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败30-2,transImgToLocal failed') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               轮播图+详情图+sku图不能超过50张
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else>
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" v-for="(v,i) in scope.row.migration_msg" :key="i">
                               <span v-html="v">{{v}}</span>
                             </ul>
                         </div>
-                        <i class="el-icon-question"></i>
-                      </el-tooltip>
-                      <el-tooltip style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
+                      </span>
+                      <span style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-else-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content" style="max-width: 180px;">
                             <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
-                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: white;">联系客服</a>。</ul>
+                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;font-size:13px">联系客服</a>。</ul>
                           </div>
-                          <i class="el-icon-question"></i>
-                      </el-tooltip>
-                    </el-button>
-                    <div v-else>
-                      {{ productStatusMap[scope.row.status] }}
-                      <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
+                      </span>
+                      <span v-if="[0,1,2,3,4,9].includes(Number(scope.row.status))">无</span>
                     </div>
                 </template>
             </el-table-column>
@@ -139,13 +146,7 @@
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
                     </div>
                     <div v-else>
-                      <el-button type="primary" size="small" v-if="isModifyEnable(scope.row) && [3, 4].includes(scope.row.status)" @click="productEdit(scope.row, false, false)">{{getButtonName(scope.row)}}</el-button>
-                      <el-dropdown split-button type="primary" trigger="click" v-if="isModifyEnable(scope.row) && ![3, 4].includes(scope.row.status)" size="small" @click="productEdit(scope.row, false, false)" @command="handleCommand">
-                        {{getButtonName(scope.row)}}
-                        <el-dropdown-menu slot="dropdown" v-if="![3, 4].includes(scope.row.status)">
-                          <el-dropdown-item :command="beforeHandleCommand('deleteProduct', scope.row)" size="small">删除</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <el-link  v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:13px;margin-right:4px">{{item.text}}</el-link>
                     </div>
                 </template>
             </el-table-column>
@@ -280,6 +281,10 @@ export default {
         this.$emit('btnSettingClick', command.product)
       }
     },
+    productDelete (product) {
+      this.deleteProductVisible = true
+      this.deleteProductId = product.tp_product_id
+    },
     confirmDeleteProduct () {
       if (this.deleteProductId !== -1) {
         this.request('deleteTPProduct', { tp_product_ids: [this.deleteProductId] }, data => {
@@ -332,6 +337,42 @@ export default {
         return '修改'
       }
     },
+    //  待上线 0
+    //  等待搬迁
+    //  搬迁中
+
+    getButtonNames (product) {
+      const edit = {
+        handle: () => this.productEditOpen(product),
+        text: '修改'
+      }
+      const houtai = {
+        handle: () => this.productHoutai(product),
+        text: '后台'
+      }
+      const tryAgian = {
+        handle: () => this.productEdit(product),
+        text: '重试'
+      }
+      const deleteItem = {
+        handle: () => this.productDelete(product),
+        text: '删除'
+      }
+      const productStatusMap = {
+        0: [edit, deleteItem],
+        1: [deleteItem],
+        2: [deleteItem],
+        3: [houtai, deleteItem],
+        4: [houtai, deleteItem],
+        5: [edit, deleteItem],
+        6: [edit, deleteItem],
+        7: [tryAgian, deleteItem],
+        8: [houtai, edit, deleteItem],
+        9: [deleteItem]
+      }
+      return productStatusMap[product.status]
+    },
+
     getSyncStatus (product) {
       if (parseInt(product.sync_source_status.status) === common.taskResultStatus['success']) {
         return product.sync_source_status.complete_time
@@ -381,7 +422,7 @@ export default {
           })
           self.reload()
         })
-      } else if ([3, 4].includes(product.status)) {
+      } else if ([3, 4, 8].includes(product.status)) {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '删除复制商品'])
         }
@@ -398,6 +439,42 @@ export default {
         this.curTPProduct = product
         this.dialogEditVisible = true
       }
+    },
+
+    productEditOpen (product) {
+      this.curTPProduct = product
+      this.dialogEditVisible = true
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '编辑复制商品'])
+      }
+    },
+    productHoutai (product) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '前往抖音后台查看提交的商品'])
+      }
+      if (product.goods_commit_id) {
+        window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + product.goods_commit_id)
+      }
+    },
+    productTryAgian (product) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '重新复制新商品'])
+      }
+      let self = this
+      this.request('capture', { urls: [product.url], capture_type: 0, tp_product_id: product.tp_product_id }, data => {
+        let params = {}
+        if (data.parent_id !== 0 && data.page_id !== 0) {
+          params['captureId'] = data.parent_id
+          params['pageId'] = data.page_id
+        } else {
+          params['captureId'] = data.capture_id
+        }
+        self.$router.push({
+          path: '/productList',
+          query: params
+        })
+        self.reload()
+      })
     },
     isSelectionEnable (row) {
       if (this.isSyncSource) {
