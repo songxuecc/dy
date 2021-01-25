@@ -35,7 +35,7 @@
                     <el-link  :href="scope.row.url" target="_blank" :underline="false" style="font-size:13px">
                         {{ scope.row.title }}
                     </el-link><br>
-                    <div>
+                    <div style="display: flex;align-items: center;flex-wrap: wrap;">
                       <img style="width: 12px; height: 12px;margin-right: 5px;" class="icon" :src="getIcon(scope.row)">
                       <label style="font-size:12px; margin-right: 5px;color:#999999">{{scope.row.source}}</label>
                       <label style="font-size:12px; margin-right: 5px;color:#999999" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
@@ -126,7 +126,7 @@
                       <span style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-else-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content" style="max-width: 180px;">
                             <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
-                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;font-size:12px">联系客服</a>。</ul>
+                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;font-size:13px">联系客服</a>。</ul>
                           </div>
                       </span>
                       <span v-if="[0,1,2,3,4,9].includes(Number(scope.row.status))">无</span>
@@ -146,7 +146,7 @@
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
                     </div>
                     <div v-else>
-                      <el-link  v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:12px;margin-right:4px">{{item.text}}</el-link>
+                      <el-link  v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:13px;margin-right:4px">{{item.text}}</el-link>
                     </div>
                 </template>
             </el-table-column>
