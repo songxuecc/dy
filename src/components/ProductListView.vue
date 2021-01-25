@@ -32,7 +32,7 @@
             </el-table-column>
             <el-table-column label="标题"  width="300">
                 <template slot-scope="scope">
-                    <el-link  :href="scope.row.url" target="_blank" :underline="false" style="font-size:12px">
+                    <el-link  :href="scope.row.url" target="_blank" :underline="false" style="font-size:13px">
                         {{ scope.row.title }}
                     </el-link><br>
                     <div>
@@ -72,7 +72,7 @@
              <el-table-column v-if="!isSyncSource" label="状态" width="110">
                 <template slot-scope="scope">
                     <el-link :underline="false" style="text-decoration:none;font-size:12px" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
-                    <el-link :underline="false" style="text-decoration:none;font-size:12px"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" @click="productEdit(scope.row, true)" :disabled="scope.row.status === 9">
+                    <el-link :underline="false" style="text-decoration:none;font-size:12px"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
                       {{ productStatusMap[scope.row.status] }}
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
                     </el-link>
@@ -129,7 +129,7 @@
                             <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;font-size:12px">联系客服</a>。</ul>
                           </div>
                       </span>
-                      <span v-if="(scope.row.isMigrating && scope.row.status!==2) || (scope.row.status ===4)" >无</span>
+                      <span v-if="(scope.row.isMigrating && scope.row.status!==2) || (scope.row.status ===4)  || (scope.row.status ===3)" >无</span>
                     </div>
                 </template>
             </el-table-column>
@@ -343,15 +343,15 @@ export default {
 
     getButtonNames (product) {
       const edit = {
-        handle: () => this.productEdit(product, false, false),
+        handle: () => this.productEditOpen(product),
         text: '修改'
       }
       const houtai = {
-        handle: () => this.productEdit(product, false, false),
+        handle: () => this.productHoutai(product),
         text: '后台'
       }
       const tryAgian = {
-        handle: () => this.productEdit(product, false, false),
+        handle: () => this.productEdit(product),
         text: '重试'
       }
       const deleteItem = {
@@ -422,7 +422,7 @@ export default {
           })
           self.reload()
         })
-      } else if ([3, 4].includes(product.status)) {
+      } else if ([3, 4, 8].includes(product.status)) {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '删除复制商品'])
         }
@@ -439,6 +439,42 @@ export default {
         this.curTPProduct = product
         this.dialogEditVisible = true
       }
+    },
+
+    productEditOpen (product) {
+      this.curTPProduct = product
+      this.dialogEditVisible = true
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '编辑复制商品'])
+      }
+    },
+    productHoutai (product) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '前往抖音后台查看提交的商品'])
+      }
+      if (product.goods_commit_id) {
+        window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + product.goods_commit_id)
+      }
+    },
+    productTryAgian (product) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '重新复制新商品'])
+      }
+      let self = this
+      this.request('capture', { urls: [product.url], capture_type: 0, tp_product_id: product.tp_product_id }, data => {
+        let params = {}
+        if (data.parent_id !== 0 && data.page_id !== 0) {
+          params['captureId'] = data.parent_id
+          params['pageId'] = data.page_id
+        } else {
+          params['captureId'] = data.capture_id
+        }
+        self.$router.push({
+          path: '/productList',
+          query: params
+        })
+        self.reload()
+      })
     },
     isSelectionEnable (row) {
       if (this.isSyncSource) {
