@@ -92,14 +92,14 @@
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <p>当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。规则查询：</p>
-                              <p><a style="color: navajowhite;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/105695">https://school.jinritemai.com/doudian/web/article/105695</a>（点击链接是可跳转的）</p>
+                              <p><a style="color: #409EFF;font-size:12px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/105695">点击查询规则</a ></p>
                             </ul>
                         </div>
 
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <p>根据官方规定，该类目需要填写品牌，请上传品牌</p>
-                              <p>查询哪些类目需填品牌：<a style="color: navajowhite;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">https://school.jinritemai.com/doudian/web/article/101810</a>（点击链接是可跳转的）</p>
+                              <p><a  style="color: #409EFF;font-size:12px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
@@ -126,7 +126,7 @@
                       <span style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-else-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content" style="max-width: 180px;">
                             <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
-                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: white;">联系客服</a>。</ul>
+                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;font-size:12px">联系客服</a>。</ul>
                           </div>
                       </span>
                       <span v-if="(scope.row.isMigrating && scope.row.status!==2) || (scope.row.status ===4)" >无</span>
