@@ -199,6 +199,17 @@ export default {
       //   }
       // }
     },
+    updateTemplate () {
+      try {
+        const {template} = this.getTemplateParams()
+        const diffTemplate = this.template.isDiff()
+        if (diffTemplate) {
+          Api.hhgjAPIs.updateTemplate(template)
+        }
+      } catch (err) {
+        this.$message.error(err || err.message)
+      }
+    },
     async  startMigrate () {
       /**
        * 验证
@@ -210,15 +221,10 @@ export default {
         const validate = await this.validForms()
         if (!validate) return this.$message.error('请按提示正确填写模版')
         this.removeTempTemplate()
+        this.updateTemplate()
         const {template} = this.getTemplateParams()
-        const diffTemplate = this.template.isDiff()
-        if (diffTemplate) {
-          await Api.hhgjAPIs.updateTemplate(template)
-          this.setPresellEndTime(template.presell_end_time)
-          this.migrage()
-        } else {
-          this.migrage()
-        }
+        this.setPresellEndTime(template.presell_end_time)
+        this.migrage()
       } catch (err) {
         this.$message.error(err || err.message)
       }

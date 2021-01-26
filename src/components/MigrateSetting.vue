@@ -17,6 +17,9 @@
       <el-form-item label="sku规格值超过20个自动截断" required style="margin-bottom: 0px;">
         <el-checkbox v-model="is_cut_sku_spec"></el-checkbox>
       </el-form-item>
+      <el-form-item label="仅保留前5张轮播图" required style="margin-bottom: 0px;">
+        <el-checkbox v-model="is_banner_auto_5"></el-checkbox>
+      </el-form-item>
     </el-form>
     <br/>
     <el-button type="primary" @click="saveSetting()" size="small" style="margin-top: 20px;">保存设置</el-button>
@@ -43,6 +46,7 @@ export default {
       banner_completion: true,
       detail_img_cut: true,
       is_cut_sku_spec: true,
+      is_banner_auto_5: true,
       property_radio: '1',
       goods_property_selected: '',
       goods_code_type: 0,
@@ -70,7 +74,7 @@ export default {
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'title_cut_off', 'title_ban_words',
-        'banner_completion', 'detail_img_cut', 'is_cut_sku_spec'
+        'banner_completion', 'detail_img_cut', 'is_cut_sku_spec', 'is_banner_auto_5'
       ]
       for (let key in boolPropertys) {
         if (data.hasOwnProperty(boolPropertys[key])) {
@@ -125,6 +129,7 @@ export default {
           title_ban_words: Number(this.title_ban_words),
           detail_img_cut: Number(this.detail_img_cut),
           is_cut_sku_spec: Number(this.is_cut_sku_spec),
+          is_banner_auto_5: Number(this.is_banner_auto_5),
           banner_completion: Number(this.banner_completion),
           property_radio: this.property_radio,
           goods_code_prefix: this.goods_code_prefix,

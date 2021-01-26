@@ -1,32 +1,32 @@
 <template lang="html">
   <div class="float-nav">
-    <div class="float-button" @click="goToHelp">
-      <span class="nav-icon nav-help"></span>
+    <div class="float-button" @click="goToHelp" @mouseover="changeFlexFootIndex(1)" @mouseout="changeFlexFootIndex(0)">
+      <hh-icon :type="flexFootIndex === 1 ? 'iconjiaochengbarhover' : 'iconjiaochengbar'" style="font-size:28px;" />
       <div class="column-name">教程</div>
     </div>
-    <div class="float-button icon" @click="goToComments">
-      <hh-icon type="iconyijianbaise1" style="font-size:28px;"></hh-icon>
-      <div class="column-name">反馈</div>
-    </div>
-    <div class="float-button wechat-button">
+    <div class="float-button wechat-button" @mouseover="changeFlexFootIndex(3)" @mouseout="changeFlexFootIndex(0)">
       <div class="service-content" v-if="isServiceBoxShow" ref="ServiceBox">
         <service-box @serviceHandle="closeService"></service-box>
       </div>
-      <span class="nav-icon nav-service" @click="handleClick"></span>
+      <hh-icon @click="handleClick" :type="flexFootIndex === 3 ? 'iconkefuweixinbarhover' : 'iconkefuweixinbar'" style="font-size:28px;" />
       <div class="column-name" @click="handleClick">客服</div>
     </div>
-    <div class="float-button" @click="openNotificationBox">
+    <div class="float-button" @click="goToComments" @mouseover="changeFlexFootIndex(2)" @mouseout="changeFlexFootIndex(0)">
+      <hh-icon :type="flexFootIndex === 2 ? 'iconyijianbarhover' : 'iconyijianbar'" style="font-size:28px;" />
+      <div class="column-name">意见</div>
+    </div>
+    <div class="float-button" @click="openNotificationBox" @mouseover="changeFlexFootIndex(4)" @mouseout="changeFlexFootIndex(0)">
       <span v-if="unRead > 0" class="notice-icon" @click="openNotificationBox">{{unRead}}</span>
-      <span class="nav-icon nav-notice"></span>
+      <hh-icon :type="flexFootIndex === 4 ? 'icontongzhibarhover' : 'icontongzhibar'" style="font-size:28px;" />
       <div class="column-name">通知</div>
     </div>
-    <div class="float-button collect-button" @click="addToFavorite">
-<!--      <el-button type="primary" icon="el-icon-top" circle ></el-button>-->
-      <span class="nav-icon nav-collect"></span>
+    <div class="float-button collect-button" @click="addToFavorite" @mouseover="changeFlexFootIndex(5)" @mouseout="changeFlexFootIndex(0)">
+      <hh-icon :type="flexFootIndex === 5 ? 'iconshoucangbarhover' : 'iconshoucangbar'" style="font-size:28px;" />
       <div class="column-name">收藏</div>
     </div>
     <div class="float-button nav-go-top" @click="backToTop">
-      <span class="nav-icon nav-gotop"></span>
+<!--      <span class="nav-icon nav-gotop"></span>-->
+      <hh-icon type="iconshanglajiantou" style="font-size:17px;" />
     </div>
     <hh-dialog width="600" :visible.sync="dialogNotificationVisible" :isClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog">
       <template v-slot:content>
@@ -47,7 +47,8 @@ export default {
   data () {
     return {
       isServiceBoxShow: false,
-      dialogNotificationVisible: false
+      dialogNotificationVisible: false,
+      flexFootIndex: 0
     }
   },
   components: {
@@ -143,6 +144,9 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '通知列表', '点击', '关闭通知列表'])
       }
+    },
+    changeFlexFootIndex (index) {
+      this.flexFootIndex = parseInt(index)
     }
   },
   beforeDestroy () {
