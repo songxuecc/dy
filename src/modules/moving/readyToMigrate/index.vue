@@ -86,6 +86,7 @@
           :pageSize="pagination.size"
           :selections="selectIdList"
           @toggleLoadingCnt="toggleLoadingCnt"
+          :tpProductList="tpProductList"
         />
         <product-list-view ref="productListView" :tpProductList="tpProductList">
             <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
@@ -126,7 +127,9 @@
                 <span style="line-height:21px">准备搬家</span>
                 <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
             </el-button>
+            <div class="info mt-10"><span class="fail">*</span>搬家仅针对<span class="fail">待上线、失败、驳回</span>状态商品进行搬家；其余状态商品会自动过滤</div>
         </div>
+
         <div>
           <el-dialog
             title="淘宝登录验证"

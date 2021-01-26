@@ -21,11 +21,15 @@
       </el-col>
     </el-row>
     <div class="info left">注：批量修改本页勾选产品</div>
-    <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle"/>
-    <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @batchUpdateBrandIds="batchUpdateBrandIds"/>
-    <EditDelteRecord :visible.sync="visibleEditDelteRecord"  v-if="visibleEditDelteRecord"/>
-    <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel"  v-if="visibleEditDeleteCarousel"/>
-    <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage"  v-if="visibleEditDelteDetailImage"/>
+    <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading" />
+    <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @updateBrands="updateBrands"
+      :loading="loading" />
+    <EditDelteRecord :visible.sync="visibleEditDelteRecord" v-if="visibleEditDelteRecord" @deleteRecord="deleteRecord"
+      :loading="loading" />
+    <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel" v-if="visibleEditDeleteCarousel"
+      @batchUpdate="batchUpdate" :loading="loading" />
+    <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage" v-if="visibleEditDelteDetailImage"
+      @batchUpdate="batchUpdate" :loading="loading"/>
     <!-- 修改分类 -->
     <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate">
@@ -51,7 +55,8 @@ export default {
   props: {
     pageSize: String,
     selections: Array,
-    onSizeChange: Object
+    onSizeChange: Object,
+    tpProductList: Array
   },
   components: {
     EditDelteRecord,
@@ -64,6 +69,7 @@ export default {
   data () {
     return {
       activeIndex: 0,
+      loading: false,
       options: [
         {
           value: 10,
@@ -128,19 +134,85 @@ export default {
       this.$emit('onSizeChange', value)
     },
     handleCommand (command) {
-      console.log(command)
       this.activeIndex = command
       const key = this.dropdownOptions[command || 0].key
-
       this[key] = !this[key]
     },
     handleClose (key) {
       this[key] = false
+    },
 
-      console.log('handleClose', this)
+    formatTitle (model, title) {
+      if (!model) return title
+      if (model.textPrefix) {
+        title = `${model.textPrefix}${title}`
+      }
+
+      if (model.textSuffix) {
+        title = `${title}${model.textSuffix}`
+      }
+
+      if (model.textReplaceOrigin && model.textReplaceNew) {
+        title = title.replace(model.textReplaceOrigin, model.textReplaceNew)
+      }
+
+      if (model.textDelete) {
+        title = title.split(model.textDelete).join('')
+      }
+
+      if (model.radio === 6) {
+        title = title.substring(0, 30)
+      }
+
+      if (model.radio === 3) {
+        title = title.split('').reverse().slice(0, 30).reverse()
+      }
+
+      return title.replace(/\s+/g, '')
+    },
+    async batchUpdate (options) {
+      const carousel = options.carousel || false
+      const detailImage = options.detailImage || false
+      const title = options.title
+      const list = this.tpProductList
+        .filter(item => [0, 3, 4, 5, 6, 8].includes(item.status))
+        .map(item => {
+          return ({
+            tp_product_id: item.tp_product_id,
+            category_id: item.category_id,
+            title: this.formatTitle(title, item.title),
+            tp_outer_iid: '',
+            price: null,
+            tp_property_json: {
+              'remove_first_banner': carousel,
+              'remove_last_desc': detailImage
+            }
+          })
+        })
+      if (!list.length) {
+        return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
+      }
+      try {
+        this.loading = true
+        await Api.hhgjAPIs.batchUpdateTPProduct({
+          tp_product_list: JSON.stringify(list)
+        })
+        this.$message.success('修改成功')
+      } catch (err) {
+        this.$message.error('修改失败，请稍后再试')
+      }
+      this.loading = false
+      this.visibleEditTitle = false
+      this.visibleEditDelteDetailImage = false
+      this.visibleEditDeleteCarousel = false
+      this.activeIndex = 0
+      this.reload()
     },
     // 批量修改分类
     async onChangeCate (category) {
+      if (!this.tpProductList.length) {
+        return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
+      }
       try {
         this.visvileCategory = false
         this.$emit('toggleLoadingCnt', 1)
@@ -152,23 +224,52 @@ export default {
       } catch (err) {
         this.$message.error(err || err.message)
       }
+      this.activeIndex = 0
+      this.reload()
+    },
+    async updateBrands (id) {
+      const list = this.tpProductList
+        .filter(item => [0, 3, 4, 5, 6, 8].includes(item.status))
+        .map(item => item.tp_product_id)
+      // if (!list.length) {
+      //   return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
+      // }
+      try {
+        this.loading = true
+        await Api.hhgjAPIs.updateTpproductBrand({
+          tp_product_id_list: JSON.stringify(list),
+          brand_id: id
+        })
+        this.$message.success('删除成功')
+      } catch (err) {
+        console.log(err)
+        this.$message.error('删除失败，请稍后再试')
+      }
+      this.loading = false
+      this.visvileEditBrandId = false
+      this.activeIndex = 0
+      this.reload()
+    },
+    async deleteRecord () {
+      if (!this.tpProductList.length) {
+        return this.$message.error('请选择要批量删除的商品')
+      }
+      try {
+        this.loading = true
+        await Api.hhgjAPIs.deleteTPProduct({
+          tp_product_ids: this.tpProductList
+            .map(item => item.tp_product_id)
+        })
+        this.$message.success('删除成功')
+      } catch (err) {
+        console.log(err)
+        this.$message.error('删除失败，请稍后再试')
+      }
+      this.loading = false
+      this.visibleEditDelteRecord = false
+      this.activeIndex = 0
       this.reload()
     }
-  },
-  // 修改品牌
-  async batchUpdateBrandIds (brandId) {
-    try {
-      this.visvileEditBrandId = false
-      this.$emit('toggleLoadingCnt', 1)
-      // await Api.hhgjAPIs.batchUpdateCategory({
-      //   attr_apply_map: brandId,
-      //   tp_product_list: this.selections
-      // })
-      this.$emit('toggleLoadingCnt', 0)
-    } catch (err) {
-      this.$message.error(err || err.message)
-    }
-    this.reload()
   }
 }
 </script>

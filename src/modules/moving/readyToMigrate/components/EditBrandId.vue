@@ -10,9 +10,9 @@
   <el-button type="text" @click="loadData"><i class="el-icon-refresh"></i>刷新</el-button>
   <el-button type="text" @click="open()"> 添加品牌 </el-button>
   </div>
-  <span class="info">&nbsp;&nbsp;&nbsp;仅针对授权了该品牌的类目生效</span>
+  <span class="info">&nbsp;&nbsp;<span class="fail">*&nbsp;</span>仅针对&nbsp;<b>已填写类目且该类目是在品牌授权范围内</b>&nbsp;的商品生效</span>
   <span slot="footer">
-    <el-button type="primary" style="width:120px" @click="confirm">确定</el-button>
+    <el-button type="primary" style="width:120px" @click="confirm" :loading="loading" :disabled="loading">{{loading?'处理中':'确定'}}</el-button>
   </span>
 </el-dialog>
 </template>
@@ -23,7 +23,8 @@ import Api from '@/api/apis'
 export default {
   name: 'EditBrandId',
   props: {
-    visible: Boolean
+    visible: Boolean,
+    loading: Boolean
   },
   data () {
     return {
@@ -41,13 +42,14 @@ export default {
     loadData () {
       Api.hhgjAPIs.getShopBrandList().then(data => {
         this.options = data
+        if (data.length) {
+          this.value = data[0].id
+        }
       })
     },
     confirm () {
       if (this.value) {
-        console.log(this.value)
-        // todo 修改标题
-        this.$emit('batchUpdateBrandIds', this.value)
+        this.$emit('updateBrands', this.value)
       } else {
         this.$message.error('请选择品牌')
       }

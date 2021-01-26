@@ -4,36 +4,30 @@
     <div>
       <div style="display:flex;margin-bottom:20px">
         <p style="margin-right:10px">
-          <el-input v-model="textPrefix" placeholder="前缀" style="width: 260px;margin-right:10px"></el-input>
+          <el-input v-model="model.textPrefix" placeholder="前缀" style="width: 290px;margin-right:10px"></el-input>
           <span style="font-size:12px">原标题</span>
         </p>
         <p>
-          <el-input v-model="textSuffix" placeholder="后缀" style="width: 260px;margin-right:13px"></el-input>
-          <el-link type="primary" @click="applyTitleChangeToSelection(0)" style="font-size:12px" :underline="false">应用
-          </el-link>
+          <el-input v-model="model.textSuffix" placeholder="后缀" style="width: 290px;"></el-input>
         </p>
       </div>
       <div style="display:flex;margin-bottom:20px">
         <p style="margin-right:10px">
-          <el-input v-model="textReplaceOrigin" style="width: 260px;margin-right:10px"></el-input>
+          <el-input v-model="model.textReplaceOrigin" style="width: 290px;margin-right:10px"></el-input>
           <span style="font-size:12px">替换为</span>
         </p>
         <p>
-          <el-input v-model="textReplaceNew" style="width: 260px;margin-right:13px"></el-input>
-          <el-link type="primary" @click="applyTitleChangeToSelection(1)" style="font-size:12px" :underline="false">应用
-          </el-link>
+          <el-input v-model="model.textReplaceNew" style="width: 290px;"></el-input>
         </p>
       </div>
       <div style="display:flex;align-items:center">
-        <p style="margin-right:20px">
-          <el-input v-model="textDelete" style="width: 260px;margin-right:13px" placeholder="输入删除关键字">
+        <p style="margin-right:42px">
+          <el-input v-model="model.textDelete" style="width: 290px;margin-right:13px" placeholder="输入删除关键字">
           </el-input>
-          <el-link type="primary" @click="applyTitleChangeToSelection(2)" style="font-size:12px" :underline="false">应用
-          </el-link>
         </p>
         <p style="width:300px;display:flex;flex:1">
           <span style="font-size: 12px;margin-right:4px">超过30个字:</span>
-          <el-radio-group v-model="radio">
+          <el-radio-group v-model="model.radio">
             <el-radio :label="3">自动去开头</el-radio>
             <el-radio :label="6">自动去末尾</el-radio>
             <el-radio :label="9">手动处理</el-radio>
@@ -42,7 +36,7 @@
       </div>
     </div>
     <span slot="footer">
-      <el-button type="primary" style="width:120px" @click="confirm">确定</el-button>
+      <el-button type="primary" style="width:120px" @click="confirm" :loading="loading" :disabled="loading">{{loading?'处理中':'确定'}}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -52,16 +46,18 @@ export default {
   name: 'EditTitle',
   props: {
     visible: Boolean,
-    parentkey: String
+    loading: Boolean
   },
   data () {
     return {
-      radio: 1,
-      textPrefix: '',
-      textSuffix: '',
-      textReplaceOrigin: '',
-      textReplaceNew: '',
-      textDelete: ''
+      model: {
+        textPrefix: '',
+        textSuffix: '',
+        textReplaceOrigin: '',
+        textReplaceNew: '',
+        textDelete: '',
+        radio: 9
+      }
     }
   },
   methods: {
@@ -69,7 +65,9 @@ export default {
       this.$emit('update:visible', false)
     },
     confirm () {
-      this.close()
+      if (this.model) {
+        this.$emit('batchUpdate', {title: this.model})
+      }
     }
   }
 }

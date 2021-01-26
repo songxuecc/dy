@@ -5,7 +5,7 @@
       所选商品的详情尾图都会被删除，确认操作吗
     </p>
     <span slot="footer">
-      <el-button type="primary" style="width:120px" @click="confirm">确定</el-button>
+      <el-button type="primary" style="width:120px" @click="confirm" :loading="loading" :disabled="loading">{{loading?'处理中':'确定'}}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -14,7 +14,8 @@
 export default {
   name: 'EditDelteDetailImage',
   props: {
-    visible: String
+    visible: String,
+    loading: Boolean
   },
   data () {
     return {}
@@ -24,7 +25,7 @@ export default {
       this.$emit('update:visible', false)
     },
     confirm () {
-      this.close()
+      this.$emit('batchUpdate', {detailImage: true})
     }
   }
 }
