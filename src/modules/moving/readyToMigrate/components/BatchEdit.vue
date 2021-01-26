@@ -227,20 +227,22 @@ export default {
       this.activeIndex = 0
       this.reload()
     },
+    // 修改品牌
     async updateBrands (id) {
       const list = this.tpProductList
         .filter(item => [0, 3, 4, 5, 6, 8].includes(item.status))
         .map(item => item.tp_product_id)
-      // if (!list.length) {
-      //   return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
-      // }
+      if (!list.length) {
+        return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
+      }
       try {
         this.loading = true
-        await Api.hhgjAPIs.updateTpproductBrand({
+        const data = await Api.hhgjAPIs.updateTpproductBrand({
           tp_product_id_list: JSON.stringify(list),
           brand_id: id
         })
-        this.$message.success('删除成功')
+        const successLists = data.filter(item => item.is_brand_update)
+        this.$message.success(`成功数${successLists.length},失败数${list.length - successLists.length},失败可能原因是商品未填写类目或该类目不在品牌授权范围内`)
       } catch (err) {
         console.log(err)
         this.$message.error('删除失败，请稍后再试')
