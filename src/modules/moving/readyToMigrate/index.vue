@@ -84,7 +84,7 @@
         <BatchEdit
           @onSizeChange="handleSizeChange"
           :pageSize="pagination.size"
-          :selections="selectIdList"
+          :selections="selectIdBatchEditList"
           @toggleLoadingCnt="toggleLoadingCnt"
           :tpProductList="tpProductList"
         />
@@ -210,7 +210,6 @@ import common from '@/common/common.js'
 import { createNamespacedHelpers, mapActions } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
-
 const {
   mapActions: mapActionsMoving
 } = createNamespacedHelpers('moving/migrateSettingTemplate')
@@ -323,6 +322,20 @@ export default {
       return options
     },
     selectIdList () {
+      if (!this.isMounted) {
+        return []
+      }
+      let retList = []
+      const tpProductList = this.tpProductList
+      for (let id in this.$refs.productListView.dicSelectId) {
+        const product = tpProductList.find(item => Number(item.tp_product_id) === Number(id))
+        if (this.$refs.productListView.dicSelectId[id] && [common.productStatus.WAIT_ONLINE, common.productStatus.FAILED, common.productStatus.REJECT].includes(product.status)) {
+          retList.push(id)
+        }
+      }
+      return retList
+    },
+    selectIdBatchEditList () {
       if (!this.isMounted) {
         return []
       }

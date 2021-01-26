@@ -47,6 +47,7 @@ import EditBrandId from './EditBrandId'
 import EditDeleteCarousel from './EditDeleteCarousel'
 import EditDelteDetailImage from './EditDelteDetailImage'
 import skuHandler from '@/mixins/skuHandler.js'
+import { productStatus } from '@/common/common'
 
 export default {
   inject: ['reload'],
@@ -126,7 +127,8 @@ export default {
       visibleEditDelteDetailImage: false,
       visibleEditDeleteCarousel: false,
       visvileEditBrandId: false,
-      visvileCategory: false
+      visvileCategory: false,
+      canEditStatus: [productStatus.WAIT_ONLINE, productStatus.SAVE_DRAFT, productStatus.ONLINE, productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT]
     }
   },
   methods: {
@@ -175,7 +177,7 @@ export default {
       const detailImage = options.detailImage || false
       const title = options.title
       const list = this.tpProductList
-        .filter(item => [0, 3, 4, 5, 6, 8].includes(item.status))
+        .filter(item => this.canEditStatus.includes(item.status))
         .map(item => {
           return ({
             tp_product_id: item.tp_product_id,
@@ -230,7 +232,7 @@ export default {
     // 修改品牌
     async updateBrands (id) {
       const list = this.tpProductList
-        .filter(item => [0, 3, 4, 5, 6, 8].includes(item.status))
+        .filter(item => this.canEditStatus.includes(item.status))
         .map(item => item.tp_product_id)
       if (!list.length) {
         return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')

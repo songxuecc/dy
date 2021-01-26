@@ -403,13 +403,13 @@ export default {
       if (this.isSyncSource) {
         return true
       }
-      if (parseInt(row.status) === 0) {
-        return true
-      }
-      if (parseInt(row.check) === 0 && (parseInt(row.status) === 5 || parseInt(row.status) === 10)) {
-        return true
-      }
-      return false
+      // if (parseInt(row.status) === 0) {
+      //   return true
+      // }
+      // if (parseInt(row.check) === 0 && (parseInt(row.status) === 5 || parseInt(row.status) === 10)) {
+      //   return true
+      // }
+      return true
     },
     isModifyEnable (row) {
       // 兼容之前数据
