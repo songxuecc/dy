@@ -476,8 +476,8 @@ div.block-content {
       font-family: "Avenir", Helvetica, Arial, sans-serif;
       position: absolute;
       z-index: 1;
-      left: 16px;
-      top: 10px;
+      left: 20px;
+      top: 0;
       display: inline-block;
       //min-width: 16px;
       padding: 2px 4px;
@@ -800,58 +800,21 @@ div .like-button-disabled {
       background-position: 0 10px;
       background-repeat: no-repeat;
     }
-    span.nav-help {
-      background-image: url("../images/help-nav.png");
-    }
-    span.nav-service {
-      background-image: url("../images/service-nav.png");
-    }
-    span.nav-notice {
-      background-image: url("../images/notice-nav.png");
-    }
-    span.nav-collect {
-      background-image: url("../images/collect-nav.png");
-    }
-    span.nav-gotop {
-      background-position: 0 0;
-      background-image: url("../images/gotop.png");
-    }
     .column-name {
       color: #666666;
-      padding: 6px 0 8px;
+      padding: 1px 0 8px;
     }
     .comments-icon {
       font-size: 26px;
       color: #409eff;
     }
   }
-  .float-button:hover {
-    background: #1d8fff;
-    span.nav-help {
-      background-image: url("../images/help-nav-hov.png");
-    }
-    span.nav-service {
-      background-image: url("../images/service-nav-hov.png");
-    }
-    span.nav-notice {
-      background-image: url("../images/notice-nav-hov.png");
-    }
-    span.nav-collect {
-      background-image: url("../images/collect-nav-hov.png");
-    }
-    span.nav-gotop {
-      background-image: url("../images/gotop.png");
-    }
-    .column-name {
-      color: #ffffff;
-    }
-    .comments-icon {
-      color: white;
-    }
+  .float-button:first-child {
+    padding-top: 12px;
   }
   .nav-go-top {
-    height: 26px;
-    padding: 4px 0 6px;
+    height: 20px;
+    padding: 7px 0 6px;
     border-top: 4px solid @body-bg;
   }
   .nav-go-top:hover {
