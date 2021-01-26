@@ -785,23 +785,13 @@ export default {
     reloadBrandList () {
       this.request('getShopBrandList', {}, data => {
         this.shopBrandList = data
-        const catId = this.product.model.cat_id
-        for (let i in this.productList) {
-          let tpProductId = this.productList[i].tp_product_id
-          if (tpProductId in this.products) {
-            let product = this.products[tpProductId]
-            if (this.productBrandDic.hasOwnProperty(tpProductId) && product.model.cat_id === catId) {
-            // 品牌列表替换后 应用到所有商品 品牌option替换
-              const attrList = product.model.attrList.map(item => {
-                if (item.name === '品牌') {
-                  item.options = data
-                }
-                return item
-              })
-              Object.assign(product.model, {attrList})
-            }
+        const attrList = this.product.model.attrList.map(item => {
+          if (item.name === '品牌') {
+            item.options = data
           }
-        }
+          return item
+        })
+        Object.assign(this.product.model, {attrList})
         this.$message({
           message: '刷新成功',
           type: 'success'
