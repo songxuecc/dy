@@ -787,7 +787,13 @@ export default {
         this.shopBrandList = data
         const attrList = this.product.model.attrList.map(item => {
           if (item.name === '品牌') {
-            item.options = data
+            item.options = data.map(item => ({
+              value: `${item.id}`,
+              name: `${item.brand_chinese_name}(${item.brand_english_name})`
+            }))
+            if (data.length) {
+              item.tp_value = `${data[0].id}`
+            }
           }
           return item
         })
