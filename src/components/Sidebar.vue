@@ -29,6 +29,9 @@
             <el-menu-item index="/batchEdit/title" :disabled="!isAuth()">
               <span slot="title">批量处理</span>
             </el-menu-item>
+            <el-menu-item index="/SkuImport" :disabled="!isAuth()">
+              <span slot="title">sku导入修改</span>
+            </el-menu-item>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">

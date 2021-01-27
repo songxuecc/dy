@@ -18,6 +18,7 @@ import CustomerService from '@/pages/CustomerService.vue'
 import MigrateSetting from '@/components/MigrateSetting.vue'
 import shopsBand from '@/modules/moving/shopsBand'
 import MigrateSettingTemplate from '@/modules/moving/migrateSettingTemplate'
+import SkuImport from '@/modules/moving/skuImport'
 
 Vue.use(Router)
 
@@ -136,6 +137,15 @@ const router = new Router({
       path: '/migrateSettingTemplate',
       name: 'MigrateSettingTemplate',
       component: MigrateSettingTemplate,
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/skuImport',
+      name: 'SkuImport',
+      component: SkuImport,
       meta: {
         keepAlive: true,
         requiresAuth: true
