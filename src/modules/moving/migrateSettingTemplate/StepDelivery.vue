@@ -174,7 +174,7 @@ export default {
       }
     },
     open () {
-      window.open('https://school.jinritemai.com/doudian/web/article/105695')
+      window.open('https://school.jinritemai.com/doudian/web/article/101706')
     }
   }
 }
