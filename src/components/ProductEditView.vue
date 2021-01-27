@@ -93,7 +93,7 @@
                                          trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                             >
                                 <span class="el-dropdown-link" style="color:#909399">
-                                  ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+                                  ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial;font-weight:bold">修改</span>
                                 </span>
                                 <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
                                     <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
@@ -130,7 +130,7 @@
                         <template slot="header" slot-scope="scope">
                             <span>总库存</span>
                             <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0">
-                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial;font-weight:bold">修改</span>
                             </el-button>
                         </template>
                         <template slot-scope="scope">
@@ -156,7 +156,7 @@
                                 <i class="el-icon-question"></i>
                             </el-tooltip>
                             <el-button v-if="isDyProduct" type="text" class="table-header-btn" @click="dialogPriceVisible=true"  style="padding:0">
-                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial;font-weight:bold">修改</span>
                             </el-button>
                         </template>
                         <template slot-scope="scope">
