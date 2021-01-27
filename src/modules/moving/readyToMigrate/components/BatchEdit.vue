@@ -4,7 +4,7 @@
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
           <el-button type="primary" size="mini">
-            更多操作 <span class="badge"> 10 </span><i class="el-icon-arrow-down el-icon--right"></i>
+            更多操作 <el-badge v-if="tpProductList.length" :value="tpProductList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px"
@@ -218,10 +218,11 @@ export default {
       try {
         this.visvileCategory = false
         this.$emit('toggleLoadingCnt', 1)
-        await Api.hhgjAPIs.batchUpdateCategory({
+        const message = await Api.hhgjAPIs.batchUpdateCategory({
           tp_product_ids: this.selections,
           cid: category.id
         })
+        console.log(message)
         this.$emit('toggleLoadingCnt', 0)
       } catch (err) {
         this.$message.error(err || err.message)
