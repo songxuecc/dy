@@ -21,9 +21,9 @@
         确定要删除当前记录吗？
       </p>
       <span slot="footer">
-        <el-button  style="width:120px" @click="close">
+        <el-button  style="width:120px" @click="closeDelete">
           点错了</el-button>
-        <el-button type="primary" style="width:120px" @click="confirm" :loading="loading" :disabled="loading">
+        <el-button type="primary" style="width:120px" @click="confirmDelete" :loading="loading" :disabled="loading">
           {{loading?'处理中':'确定'}}</el-button>
       </span>
     </el-dialog>
@@ -60,7 +60,7 @@ export default {
       this.visibleSkuEdit = false
     },
     confirmDelete () {
-      this.confirmDelete()
+      this.closeDelete()
     },
     closeDelete () {
       this.visibleDelete = false
