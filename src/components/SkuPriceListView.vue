@@ -68,7 +68,7 @@
             <el-table-column key="3" width="150" align="center">
                 <template slot="header" slot-scope="scope">
                     <span>sku价格</span>
-                    <!-- <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span> </el-button> -->
+                    <!-- <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <hh-icon type="iconbianji" style="font-size:14px" /> <b style="color:#999999;font-size:12px;font-family:Arial">修改</b> </el-button> -->
                 </template>
                 <template slot-scope="scope">
                     <div style="display: flex">
