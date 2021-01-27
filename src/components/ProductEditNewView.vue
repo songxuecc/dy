@@ -179,10 +179,10 @@
                             </el-input>
                           </template>
                       </el-table-column>
-                      <el-table-column key="2" width="100">
+                      <el-table-column key="2" width="130">
                           <template slot="header" slot-scope="scope">
-                              <span>总库存</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true"> <i class="el-icon-edit"></i> </el-button>
+                              <span>总库存 &nbsp;</span>
+                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model.number="scope.row.quantity" size="mini" type="number"></el-input>
@@ -789,7 +789,7 @@ export default {
           if (item.name === '品牌') {
             item.options = data.map(item => ({
               value: `${item.id}`,
-              name: `${item.brand_chinese_name}(${item.brand_english_name})`
+              name: item.brand_english_name ? `${item.brand_chinese_name}(${item.brand_english_name})` : `${item.brand_chinese_name}`
             }))
             if (data.length) {
               item.tp_value = `${data[0].id}`

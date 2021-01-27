@@ -126,11 +126,11 @@
                           </el-input>
                         </template>
                     </el-table-column>
-                    <el-table-column key="2" width="100">
+                    <el-table-column key="2" width="130">
                         <template slot="header" slot-scope="scope">
                             <span>总库存</span>
                             <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true">
-                              <i class="el-icon-edit"></i>
+                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span>
                             </el-button>
                         </template>
                         <template slot-scope="scope">
@@ -140,13 +140,13 @@
 <!--                    <el-table-column key="3" v-if="isDyProduct" width="100">-->
 <!--                        <template slot="header" slot-scope="scope">-->
 <!--                            <span>结算价</span>-->
-<!--                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <i class="el-icon-edit"></i> </el-button>-->
+<!--                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span> </el-button>-->
 <!--                        </template>-->
 <!--                        <template slot-scope="scope">-->
 <!--                            <el-input v-model="scope.row.promo_price" size="mini"></el-input>-->
 <!--                        </template>-->
 <!--                    </el-table-column>-->
-                    <el-table-column key="4" width="100">
+                    <el-table-column key="4" width="130">
                         <template slot="header" slot-scope="scope">
                             <span>价格</span>
                             <el-tooltip v-if="!isDyProduct" manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
@@ -156,7 +156,7 @@
                                 <i class="el-icon-question"></i>
                             </el-tooltip>
                             <el-button v-if="isDyProduct" type="text" class="table-header-btn" @click="dialogPriceVisible=true">
-                              <i class="el-icon-edit"></i>
+                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span>
                             </el-button>
                         </template>
                         <template slot-scope="scope">
