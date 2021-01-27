@@ -85,15 +85,15 @@
                 </span>
 
                 <el-table :data="skuRealShowList" height="400" border style="width: 100%" :header-cell-style="cellStyle">
-                    <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id">
+                    <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id" width="130">
                         <template slot="header" slot-scope="scope">
-                            <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.name }}</span>
+                            <span :style="{color: (item.filter ? '#409EFF' : '#909399')}" >{{ item.name }}</span>
                             <el-dropdown v-if="skuPropertyValueMap[item.id] && skuPropertyList.length > 1"
                                          style="line-height:0px; padding-left: 0px; cursor:pointer; vertical-align: middle;"
                                          trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                             >
                                 <span class="el-dropdown-link" style="color:#909399">
-                                  ({{Object.keys(skuPropertyValueMap[item.id]).length}})<i class="el-icon-edit" style="color: #409EFF"></i>
+                                  ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                                 </span>
                                 <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
                                     <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
@@ -129,8 +129,8 @@
                     <el-table-column key="2" width="130">
                         <template slot="header" slot-scope="scope">
                             <span>总库存</span>
-                            <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true">
-                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span>
+                            <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0">
+                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                             </el-button>
                         </template>
                         <template slot-scope="scope">
@@ -140,7 +140,7 @@
 <!--                    <el-table-column key="3" v-if="isDyProduct" width="100">-->
 <!--                        <template slot="header" slot-scope="scope">-->
 <!--                            <span>结算价</span>-->
-<!--                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span> </el-button>-->
+<!--                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true"> <hh-icon type="iconbianji" style="font-size:14px" /> <b style="color:#999999;font-size:12px;font-family:Arial">修改</b> </el-button>-->
 <!--                        </template>-->
 <!--                        <template slot-scope="scope">-->
 <!--                            <el-input v-model="scope.row.promo_price" size="mini"></el-input>-->
@@ -155,8 +155,8 @@
                                 </div>
                                 <i class="el-icon-question"></i>
                             </el-tooltip>
-                            <el-button v-if="isDyProduct" type="text" class="table-header-btn" @click="dialogPriceVisible=true">
-                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span>
+                            <el-button v-if="isDyProduct" type="text" class="table-header-btn" @click="dialogPriceVisible=true"  style="padding:0">
+                              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                             </el-button>
                         </template>
                         <template slot-scope="scope">

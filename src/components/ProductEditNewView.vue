@@ -148,7 +148,7 @@
                                            trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                               >
                                   <span class="el-dropdown-link" style="color:#909399">
-                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<i class="el-icon-edit" style="color: #409EFF"></i>
+                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                                   </span>
                                   <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
                                       <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
@@ -181,8 +181,8 @@
                       </el-table-column>
                       <el-table-column key="2" width="130">
                           <template slot="header" slot-scope="scope">
-                              <span>总库存 &nbsp;</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px">修改</span></el-button>
+                              <span>总库存</span>
+                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model.number="scope.row.quantity" size="mini" type="number"></el-input>
