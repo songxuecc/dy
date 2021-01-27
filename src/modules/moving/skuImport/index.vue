@@ -9,7 +9,7 @@
     @onDetail="onDetail"
     @onDelete="onDelete"/>
 
-    <el-dialog title="选中商品" :visible.sync="visibleSkuEdit" v-hh-modal width="900" center @close="toggleEdit" >
+    <el-dialog title="选中商品" :visible.sync="visibleSkuEdit" v-hh-modal width="780px" center @close="toggleEdit" >
       <DetailSkuEdit />
     </el-dialog>
 
@@ -34,10 +34,11 @@
 <script>
 import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
+import DetailSkuEdit from './DetailSkuEdit'
 export default {
   data () {
     return {
-      visibleSkuEdit: false,
+      visibleSkuEdit: true,
       visibleDelete: false,
       visibleShutDown: false,
       loading: false
@@ -45,7 +46,8 @@ export default {
   },
   components: {
     UploadFile,
-    TableUploadFileRecord
+    TableUploadFileRecord,
+    DetailSkuEdit
   },
   computed: {},
   watch: {},
