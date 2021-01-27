@@ -1,7 +1,7 @@
 <template lang="html">
     <div class="step-delivery setting-content-with-tip">
         <el-form size="small" ref="form" :model="template.model" :rules="rules" label-width="120px">
-            <el-form-item label="付款方式:">
+            <el-form-item label="付款方式:"  prop="pay_type">
                 <el-radio-group v-model="template.model.pay_type">
                     <el-radio :label="0">货到付款</el-radio>
                     <el-radio :label="1">在线支付</el-radio>

@@ -148,7 +148,7 @@
                                            trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                               >
                                   <span class="el-dropdown-link" style="color:#909399">
-                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<i class="el-icon-edit" style="color: #409EFF"></i>
+                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                                   </span>
                                   <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
                                       <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
@@ -179,10 +179,10 @@
                             </el-input>
                           </template>
                       </el-table-column>
-                      <el-table-column key="2" width="100">
+                      <el-table-column key="2" width="130">
                           <template slot="header" slot-scope="scope">
                               <span>总库存</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true"> <i class="el-icon-edit"></i> </el-button>
+                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model.number="scope.row.quantity" size="mini" type="number"></el-input>
@@ -789,7 +789,7 @@ export default {
           if (item.name === '品牌') {
             item.options = data.map(item => ({
               value: `${item.id}`,
-              name: item.brand_english_name ? `${item.brand_chinese_name}(${item.brand_english_name})` : item.brand_chinese_name
+              name: item.brand_english_name ? `${item.brand_chinese_name}(${item.brand_english_name})` : `${item.brand_chinese_name}`
             }))
             if (data.length) {
               item.tp_value = `${data[0].id}`

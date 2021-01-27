@@ -64,11 +64,9 @@
                             {{ scope.row.group_price_range }}
                         </span>
           </el-tooltip>
-          <el-tooltip placement="top" content="价格设置" :enterable="false">
             <el-button type="text" class="table-header-btn" @click="showSkuPrice(scope.row)">
-              <i class="el-icon-edit"></i>
+              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
             </el-button>
-          </el-tooltip>
           <el-tooltip v-if="scope.row.groupPriceError !== ''" placement="top"
                       :content="scope.row.groupPriceError"
           >
