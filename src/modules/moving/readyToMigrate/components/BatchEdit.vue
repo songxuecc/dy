@@ -29,11 +29,14 @@
     <EditDelteRecord :visible.sync="visibleEditDelteRecord" v-if="visibleEditDelteRecord" @deleteRecord="deleteRecord"
       :loading="loading" :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel" v-if="visibleEditDeleteCarousel"
-      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
+      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown"
+      :shutdown="shutdown" />
     <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage" v-if="visibleEditDelteDetailImage"
-      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
+      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown"
+      :shutdown="shutdown" />
     <!-- 修改分类 -->
-    <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
+    <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal
+      :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <categorySelectView ref="categorySelectView">
         <template slot="footer">
           <div class="mt-10 mb-20">
@@ -44,7 +47,7 @@
               <el-button style="width:120px" @click="closeVisvileCategory" v-if="!loading">取消</el-button>
               <el-button type="primary" style="width:120px" @click="onChangeCate" v-if="!loading">确定</el-button>
               <div v-if="loading" class="flex column justify-c align-c ">
-                <el-button @click="shutdownVisvileCategory"  :loading="shutdown">更新中，点击中止操作</el-button>
+                <el-button @click="shutdownVisvileCategory" :loading="shutdown">更新中，点击中止操作</el-button>
                 <div class="pl-10 info" style="margin-top:5px">已经更新的数据无法撤回</div>
               </div>
             </div>
