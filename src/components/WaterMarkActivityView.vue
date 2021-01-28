@@ -56,7 +56,7 @@
                     {{ scope.row.fail_reason }}
                 </template>
             </el-table-column>
-             <el-table-column label="操作" width="200" align="center">
+             <!-- <el-table-column label="操作" width="200" align="center">
                 <template slot-scope="scope">
                   <el-tooltip placement="top" style="margin-right:10px" v-if="parseInt(scope.row.wm_activity_product_status) ===2">
                     <div slot="content">
@@ -70,7 +70,7 @@
                     @click="stopProductWaterMarkActivity(scope.row)"
                   >中止商品水印</el-link>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
         </el-table>
         <br>
         <el-row>

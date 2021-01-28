@@ -39,7 +39,7 @@
                   @selection-change="handleSelectionChange"
         >
           <el-table-empty slot="empty"></el-table-empty>
-            <el-table-column width="40" type="selection" :reserve-selection="true"></el-table-column>
+            <el-table-column width="50" type="selection" :reserve-selection="true"></el-table-column>
             <el-table-column width="25" label="全选"  header-align="right" ></el-table-column>
             <el-table-column label="素材" width="100" align="center">
                 <template slot-scope="scope">
