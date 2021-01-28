@@ -153,6 +153,11 @@ export default {
       canEditStatus: [productStatus.WAIT_ONLINE, productStatus.SAVE_DRAFT, productStatus.ONLINE, productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT]
     }
   },
+  watch: {
+    pageSize: function (newVal) {
+      this.value = newVal
+    }
+  },
   methods: {
     onChange (value) {
       this.$emit('onSizeChange', value)

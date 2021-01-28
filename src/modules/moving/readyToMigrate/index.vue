@@ -326,10 +326,10 @@ export default {
         return []
       }
       let retList = []
-      const tpProductList = this.tpProductList
+      const tpProductList = this.tpProductList || []
       for (let id in this.$refs.productListView.dicSelectId) {
         const product = tpProductList.find(item => Number(item.tp_product_id) === Number(id))
-        if (this.$refs.productListView.dicSelectId[id] && [common.productStatus.WAIT_ONLINE, common.productStatus.FAILED, common.productStatus.REJECT].includes(product.status)) {
+        if (product && this.$refs.productListView.dicSelectId[id] && [common.productStatus.WAIT_ONLINE, common.productStatus.FAILED, common.productStatus.REJECT].includes(product.status)) {
           retList.push(id)
         }
       }
