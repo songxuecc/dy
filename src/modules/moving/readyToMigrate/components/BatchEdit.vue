@@ -4,7 +4,7 @@
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
           <el-button type="primary" size="mini">
-            更多操作 <el-badge v-if="tpProductList.length" :value="tpProductList.length"></el-badge><i
+            更多操作 <el-badge v-if="selectList" :value="selectList.length"></el-badge><i
               class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
@@ -75,7 +75,7 @@ export default {
   mixins: [skuHandler],
   props: {
     pageSize: String,
-    selections: Array,
+    selectIdBatchEditList: Array,
     onSizeChange: Object,
     tpProductList: Array
   },
@@ -156,6 +156,13 @@ export default {
   watch: {
     pageSize: function (newVal) {
       this.value = newVal
+    }
+  },
+  computed: {
+    selectList () {
+      return this.tpProductList.filter(item => {
+        return this.selectIdBatchEditList.includes(`${item.tp_product_id}`)
+      })
     }
   },
   methods: {
@@ -257,7 +264,7 @@ export default {
       const carousel = options.carousel || false
       const detailImage = options.detailImage || false
       const title = options.title
-      const list = this.tpProductList
+      const list = this.selectList
         .filter(item => this.canEditStatus.includes(item.status))
         .map(item => {
           return ({
@@ -299,7 +306,7 @@ export default {
     },
     // 修改品牌
     async updateBrands (id) {
-      const list = this.tpProductList
+      const list = this.selectList
         .filter(item => this.canEditStatus.includes(item.status))
         .map(item => item.tp_product_id)
       if (!list.length) {
@@ -331,10 +338,10 @@ export default {
     },
     // 批量删除
     async deleteRecord () {
-      if (!this.tpProductList.length) {
+      if (!this.selectList.length) {
         return this.$message.error('请选择要批量删除的商品')
       }
-      const list = this.tpProductList
+      const list = this.selectList
         .map(item => item.tp_product_id)
       const fn = async (list) => {
         const data = await Api.hhgjAPIs.deleteTPProduct({
@@ -366,10 +373,10 @@ export default {
     },
     // 批量修改分类
     async onChangeCate (category) {
-      if (!this.tpProductList.length) {
+      if (!this.selectList.length) {
         return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
       }
-      const list = this.tpProductList
+      const list = this.selectList
         .filter(item => this.canEditStatus.includes(item.status))
         .map(item => {
           return ({

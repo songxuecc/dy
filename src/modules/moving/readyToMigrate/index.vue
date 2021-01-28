@@ -84,7 +84,7 @@
         <BatchEdit
           @onSizeChange="handleSizeChange"
           :pageSize="pagination.size"
-          :selections="selectIdBatchEditList"
+          :selectIdBatchEditList="selectIdBatchEditList"
           @toggleLoadingCnt="toggleLoadingCnt"
           :tpProductList="tpProductList"
         />
