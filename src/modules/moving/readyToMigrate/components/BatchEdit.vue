@@ -34,7 +34,22 @@
       @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
     <!-- 修改分类 -->
     <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
-      <categorySelectView ref="categorySelectView" @changeCate="onChangeCate">
+      <categorySelectView ref="categorySelectView">
+        <template slot="footer">
+          <div class="mt-10 mb-20">
+            <div class="mb-10 flex justify-c">
+              <el-progress :percentage="percentage" :format="format"></el-progress>
+            </div>
+            <div class="flex justify-c">
+              <el-button style="width:120px" @click="closeVisvileCategory" v-if="!loading">取消</el-button>
+              <el-button type="primary" style="width:120px" @click="onChangeCate" v-if="!loading">确定</el-button>
+              <div v-if="loading" class="flex column justify-c align-c ">
+                <el-button @click="shutdownVisvileCategory">更新中，点击中止操作</el-button>
+                <div class="pl-10 info" style="margin-top:5px">已经更新的数据无法撤回</div>
+              </div>
+            </div>
+          </div>
+        </template>
       </categorySelectView>
     </el-dialog>
   </div>
@@ -335,38 +350,56 @@ export default {
         }
       )(list)
     },
+    closeVisvileCategory () {
+      this.visvileCategory = false
+    },
+    shutdownVisvileCategory () {
+      this.shutdown = true
+    },
     // 批量修改分类
     async onChangeCate (category) {
       if (!this.tpProductList.length) {
         return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
       }
-      try {
-        this.visvileCategory = false
-        const list = this.tpProductList
-          .filter(item => this.canEditStatus.includes(item.status))
-          .map(item => {
-            return ({
-              tp_product_id: item.tp_product_id,
-              category_id: item.category_id,
-              title: item.title,
-              tp_outer_iid: '',
-              price: null,
-              tp_property_json: {
-                'remove_first_banner': false,
-                'remove_last_desc': false
-              }
-            })
+      const list = this.tpProductList
+        .filter(item => this.canEditStatus.includes(item.status))
+        .map(item => {
+          return ({
+            tp_product_id: item.tp_product_id,
+            category_id: item.category_id,
+            title: item.title,
+            tp_outer_iid: '',
+            price: null,
+            tp_property_json: {
+              'remove_first_banner': false,
+              'remove_last_desc': false
+            }
           })
-        this.$emit('toggleLoadingCnt', 1)
-        await Api.hhgjAPIs.batchUpdateTPProduct({
+        })
+      const fn = async (list) => {
+        const data = await Api.hhgjAPIs.batchUpdateTPProduct({
           tp_product_list: JSON.stringify(list)
         })
-        this.$emit('toggleLoadingCnt', 0)
-      } catch (err) {
-        this.$message.error(err || err.message)
+        return data
       }
-      this.activeIndex = 0
-      this.reload()
+      this.loading = true
+      this.polling(
+        fn,
+        () => {
+          this.$message.success(!this.shutdown ? '更新成功' : '中止成功')
+          this.visibleEditTitle = false
+          this.visibleEditDelteDetailImage = false
+          this.visibleEditDeleteCarousel = false
+          this.loading = false
+          this.percentage = 0
+          this.shutdown = false
+          this.activeIndex = 0
+          this.reload()
+        }
+      )(list)
+    },
+    format (percentage) {
+      return `已完成${percentage}%`
     }
 
   }
