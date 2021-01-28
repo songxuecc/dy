@@ -1,6 +1,7 @@
-<!--  -->
+<!-- 更新标题 -->
 <template>
-  <el-dialog :visible.sync="visible" width="700px" append-to-body v-hh-modal title="批量修改标题" center @close="close">
+  <el-dialog :visible.sync="visible" width="700px" append-to-body v-hh-modal title="批量修改标题" center @close="close"
+  :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
     <div>
       <div style="display:flex;margin-bottom:20px">
         <p style="margin-right:10px">
@@ -35,18 +36,24 @@
         </p>
       </div>
     </div>
+    <div class="mt-10"><el-progress :percentage="percentage" :format="format" ></el-progress></div>
     <span slot="footer">
-      <el-button type="primary" style="width:120px" @click="confirm" :loading="loading" :disabled="loading">{{loading?'处理中':'确定'}}</el-button>
+      <el-button style="width:120px" @click="close" v-if="!loading">取消</el-button>
+      <el-button type="primary" style="width:120px" @click="confirm" v-if="!loading">确定</el-button>
+      <div v-if="loading" class="flex column justify-c align-c "><el-button @click="shutdown">更新中，点击中止操作</el-button><div class="pl-10 info" style="margin-top:5px">已经更新的数据无法撤回</div></div>
     </span>
   </el-dialog>
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
+
 export default {
   name: 'EditTitle',
   props: {
     visible: Boolean,
-    loading: Boolean
+    loading: Boolean,
+    percentage: Number
   },
   data () {
     return {
@@ -68,6 +75,14 @@ export default {
       if (this.model) {
         this.$emit('batchUpdate', {title: this.model})
       }
+    },
+    shutdown: debounce(function () {
+      if (this.model) {
+        this.$emit('shutdown', {title: this.model})
+      }
+    }, 300),
+    format (percentage) {
+      return `已完成${percentage}%`
     }
   }
 }

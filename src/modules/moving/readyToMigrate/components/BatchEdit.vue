@@ -4,7 +4,8 @@
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
           <el-button type="primary" size="mini">
-            更多操作 <el-badge v-if="tpProductList.length" :value="tpProductList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i>
+            更多操作 <el-badge v-if="tpProductList.length" :value="tpProductList.length"></el-badge><i
+              class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px"
@@ -21,15 +22,16 @@
       </el-col>
     </el-row>
     <div class="info left">注：批量修改本页勾选产品</div>
-    <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading" />
+    <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
+      :percentage="percentage" @shutdown="onShutdown" />
     <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @updateBrands="updateBrands"
-      :loading="loading" />
+      :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
     <EditDelteRecord :visible.sync="visibleEditDelteRecord" v-if="visibleEditDelteRecord" @deleteRecord="deleteRecord"
-      :loading="loading" />
+      :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
     <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel" v-if="visibleEditDeleteCarousel"
-      @batchUpdate="batchUpdate" :loading="loading" />
+      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
     <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage" v-if="visibleEditDelteDetailImage"
-      @batchUpdate="batchUpdate" :loading="loading"/>
+      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
     <!-- 修改分类 -->
     <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate">
@@ -121,6 +123,8 @@ export default {
           key: 'visibleEditDelteRecord'
         }
       ],
+      percentage: 0,
+      shutdown: false,
       value: this.pageSize,
       visibleEditTitle: false,
       visibleEditDelteRecord: false,
@@ -172,6 +176,60 @@ export default {
 
       return title.replace(/\s+/g, '')
     },
+    polling (fn, succeesCallback, step = 5) {
+      let previous = 0
+      let current = previous + step
+      let length = 0
+      const vm = this
+      let result = []
+      return function () {
+        var _this = this // 取debounce执行作用域的this
+        var list = [...arguments][0]
+        length = list.length
+
+        function promiseFn () {
+          return new Promise(async (resolve, reject) => {
+            try {
+              const sliceList = list.slice(previous, current)
+              const data = await fn.call(_this, sliceList)
+              previous = current
+              current = previous + step
+              resolve(data)
+            } catch (err) {
+              reject(err)
+            }
+          })
+        }
+
+        const resultFn = () => promiseFn().then(data => {
+          result = result.concat(data)
+          if (vm.shutdown) {
+            succeesCallback(result)
+            return false
+          }
+          if (current < length) {
+            resultFn()
+            const percentage = Math.floor(current / length * 100)
+            vm.percentage = percentage
+          } else if (current >= length) {
+            succeesCallback(result)
+          }
+        }).catch(error => {
+          if (error) {
+            console.log(error)
+          }
+          current = length
+          // vm.$message.error(`${error || error.message}`)
+          vm.$message.error(`更新失败，请稍后再试`)
+        })
+
+        resultFn()
+      }
+    },
+    onShutdown () {
+      this.shutdown = true
+    },
+    // 批量修改  移除轮播图首图 移除详情图尾图  标题
     async batchUpdate (options) {
       const carousel = options.carousel || false
       const detailImage = options.detailImage || false
@@ -194,41 +252,27 @@ export default {
       if (!list.length) {
         return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
       }
-      try {
-        this.loading = true
-        await Api.hhgjAPIs.batchUpdateTPProduct({
+      const fn = async (list) => {
+        const data = await Api.hhgjAPIs.batchUpdateTPProduct({
           tp_product_list: JSON.stringify(list)
         })
-        this.$message.success('修改成功')
-      } catch (err) {
-        this.$message.error('修改失败，请稍后再试')
+        return data
       }
-      this.loading = false
-      this.visibleEditTitle = false
-      this.visibleEditDelteDetailImage = false
-      this.visibleEditDeleteCarousel = false
-      this.activeIndex = 0
-      this.reload()
-    },
-    // 批量修改分类
-    async onChangeCate (category) {
-      if (!this.tpProductList.length) {
-        return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
-      }
-      try {
-        this.visvileCategory = false
-        this.$emit('toggleLoadingCnt', 1)
-        const message = await Api.hhgjAPIs.batchUpdateCategory({
-          tp_product_ids: this.selections,
-          cid: category.id
-        })
-        console.log(message)
-        this.$emit('toggleLoadingCnt', 0)
-      } catch (err) {
-        this.$message.error(err || err.message)
-      }
-      this.activeIndex = 0
-      this.reload()
+      this.loading = true
+      this.polling(
+        fn,
+        () => {
+          this.$message.success(!this.shutdown ? '更新成功' : '中止成功')
+          this.visibleEditTitle = false
+          this.visibleEditDelteDetailImage = false
+          this.visibleEditDeleteCarousel = false
+          this.loading = false
+          this.percentage = 0
+          this.shutdown = false
+          this.activeIndex = 0
+          this.reload()
+        }
+      )(list)
     },
     // 修改品牌
     async updateBrands (id) {
@@ -238,43 +282,93 @@ export default {
       if (!list.length) {
         return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
       }
-      try {
-        this.loading = true
+      const fn = async (list) => {
         const data = await Api.hhgjAPIs.updateTpproductBrand({
           tp_product_id_list: JSON.stringify(list),
           brand_id: id
         })
-        const successLists = data.filter(item => item.is_brand_update)
-        this.$message.success(`成功数${successLists.length},失败数${list.length - successLists.length},失败可能原因是商品未填写类目或该类目不在品牌授权范围内`)
-      } catch (err) {
-        console.log(err)
-        this.$message.error('删除失败，请稍后再试')
+        return data
       }
-      this.loading = false
-      this.visvileEditBrandId = false
-      this.activeIndex = 0
-      this.reload()
+      this.loading = true
+      this.polling(
+        fn,
+        (data) => {
+          const successLists = data.filter(item => item.is_brand_update)
+          this.$message.success(!this.shutdown
+            ? `成功数${successLists.length},失败数${list.length - successLists.length},失败可能原因是商品未填写类目或该类目不在品牌授权范围内`
+            : '中止成功')
+          this.visvileEditBrandId = false
+          this.loading = false
+          this.percentage = 0
+          this.shutdown = false
+          this.activeIndex = 0
+          this.reload()
+        }
+      )(list)
     },
+    // 批量删除
     async deleteRecord () {
       if (!this.tpProductList.length) {
         return this.$message.error('请选择要批量删除的商品')
       }
-      try {
-        this.loading = true
-        await Api.hhgjAPIs.deleteTPProduct({
-          tp_product_ids: this.tpProductList
-            .map(item => item.tp_product_id)
+      const list = this.tpProductList
+        .map(item => item.tp_product_id)
+      const fn = async (list) => {
+        const data = await Api.hhgjAPIs.deleteTPProduct({
+          tp_product_ids: list
         })
-        this.$message.success('删除成功')
-      } catch (err) {
-        console.log(err)
-        this.$message.error('删除失败，请稍后再试')
+        return data
       }
-      this.loading = false
-      this.visibleEditDelteRecord = false
+      this.loading = true
+      this.polling(
+        fn,
+        (data) => {
+          this.$message.success(!this.shutdown
+            ? `删除成功`
+            : '中止成功')
+          this.visibleEditDelteRecord = false
+          this.loading = false
+          this.percentage = 0
+          this.shutdown = false
+          this.activeIndex = 0
+          this.reload()
+        }
+      )(list)
+    },
+    // 批量修改分类
+    async onChangeCate (category) {
+      if (!this.tpProductList.length) {
+        return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
+      }
+      try {
+        this.visvileCategory = false
+        const list = this.tpProductList
+          .filter(item => this.canEditStatus.includes(item.status))
+          .map(item => {
+            return ({
+              tp_product_id: item.tp_product_id,
+              category_id: item.category_id,
+              title: item.title,
+              tp_outer_iid: '',
+              price: null,
+              tp_property_json: {
+                'remove_first_banner': false,
+                'remove_last_desc': false
+              }
+            })
+          })
+        this.$emit('toggleLoadingCnt', 1)
+        await Api.hhgjAPIs.batchUpdateTPProduct({
+          tp_product_list: JSON.stringify(list)
+        })
+        this.$emit('toggleLoadingCnt', 0)
+      } catch (err) {
+        this.$message.error(err || err.message)
+      }
       this.activeIndex = 0
       this.reload()
     }
+
   }
 }
 </script>
@@ -333,5 +427,24 @@ export default {
   }
   /deep/ .el-dialog {
     border-radius: 10px;
+  }
+  /deep/ .el-progress-bar {
+    // width: 80%;
+    margin-right: -80px;
+    padding-right: 80px;
+  }
+  /deep/ .el-progress__text{
+    color:#999999;
+    font-size:12px !important;
+    margin-left: 0;
+    padding-left:10px;
+    box-sizing:border-box
+  }
+  /deep/ .el-progress{
+    width:100%;
+    display: flex;
+    justify-content: center;
+    margin-top:20px;
+    align-items: center;
   }
 </style>
