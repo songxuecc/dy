@@ -23,28 +23,28 @@
     </el-row>
     <div class="info left">注：批量修改本页勾选产品</div>
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
-      :percentage="percentage" @shutdown="onShutdown" />
+      :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @updateBrands="updateBrands"
-      :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
+      :loading="loading" :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <EditDelteRecord :visible.sync="visibleEditDelteRecord" v-if="visibleEditDelteRecord" @deleteRecord="deleteRecord"
-      :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
+      :loading="loading" :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <EditDeleteCarousel :visible.sync="visibleEditDeleteCarousel" v-if="visibleEditDeleteCarousel"
-      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
+      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage" v-if="visibleEditDelteDetailImage"
-      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @shutdown="onShutdown" />
+      @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <!-- 修改分类 -->
     <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView">
         <template slot="footer">
           <div class="mt-10 mb-20">
-            <div class="mb-10 flex justify-c">
+            <div class="mb-10 flex justify-c" v-if="loading">
               <el-progress :percentage="percentage" :format="format"></el-progress>
             </div>
             <div class="flex justify-c">
               <el-button style="width:120px" @click="closeVisvileCategory" v-if="!loading">取消</el-button>
               <el-button type="primary" style="width:120px" @click="onChangeCate" v-if="!loading">确定</el-button>
               <div v-if="loading" class="flex column justify-c align-c ">
-                <el-button @click="shutdownVisvileCategory">更新中，点击中止操作</el-button>
+                <el-button @click="shutdownVisvileCategory"  :loading="shutdown">更新中，点击中止操作</el-button>
                 <div class="pl-10 info" style="margin-top:5px">已经更新的数据无法撤回</div>
               </div>
             </div>
@@ -387,9 +387,7 @@ export default {
         fn,
         () => {
           this.$message.success(!this.shutdown ? '更新成功' : '中止成功')
-          this.visibleEditTitle = false
-          this.visibleEditDelteDetailImage = false
-          this.visibleEditDeleteCarousel = false
+          this.visvileCategory = false
           this.loading = false
           this.percentage = 0
           this.shutdown = false
