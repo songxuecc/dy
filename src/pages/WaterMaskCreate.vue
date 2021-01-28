@@ -755,7 +755,7 @@ export default {
         window._hmt.push(['_trackEvent', '水印', '点击', '制作完水印去投放'])
       }
       this.$router.push({
-        name: 'WaterMarkActivityCreate',
+        name: 'PosterDgActivityCreate',
         params: {
           'waterMark': this.waterMark
         }
