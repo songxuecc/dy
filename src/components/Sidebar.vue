@@ -31,6 +31,8 @@
             </el-menu-item>
             <el-menu-item index="/SkuImport" :disabled="!isAuth()">
               <span slot="title">sku导入修改</span>
+            <el-menu-item index="/poster/dg/list" :disabled="!isAuth()">
+              <span slot="title">详情海报</span>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="3">

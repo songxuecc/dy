@@ -189,6 +189,101 @@ const router = new Router({
         keepAlive: true,
         requiresAuth: true
       }
+    },
+    // {
+    //   path: '/wm',
+    //   name: 'watermark',
+    //   component: resolve => require(['@/pages/WaterMark'], resolve),
+    //   meta: {
+    //     requiresAuth: true
+    //     // keepAlive: true,
+    //   },
+    //   children: [
+    //     {
+    //       path: 'activity',
+    //       name: 'WaterMarkActivityList',
+    //       component: resolve => require(['@/components/WaterMarkActivityListView.vue'], resolve),
+    //       meta: {
+    //         keepAlive: true
+    //       }
+    //     },
+    //     {
+    //       path: 'activity/detail/:id',
+    //       name: 'WaterMarkActivity',
+    //       component: resolve => require(['@/components/WaterMarkActivityView.vue'], resolve),
+    //       meta: {
+    //         keepAlive: true
+    //       }
+    //     },
+    //     {
+    //       path: 'activity/create',
+    //       name: 'WaterMarkActivityCreate',
+    //       component: resolve => require(['@/components/WaterMarkActivityCreateView.vue'], resolve),
+    //       meta: {
+    //         keepAlive: true
+    //       }
+    //     },
+    //     {
+    //       path: 'list',
+    //       name: 'WaterMarkList',
+    //       component: resolve => require(['@/components/WaterMarkListView.vue'], resolve),
+    //       meta: {
+    //         keepAlive: true
+    //       }
+    //     }
+    //   ]
+    // },
+    {
+      path: '/wm/create/:water_mark_type/:water_mark_id',
+      name: 'WaterMaskCreate',
+      component: resolve => require(['@/pages/WaterMaskCreate'], resolve),
+      meta: {
+        requiresAuth: true,
+        keepAlive: true,
+        specialShow: true
+      }
+    },
+    {
+      path: '/poster/dg',
+      name: 'PosterDg',
+      component: resolve => require(['@/pages/PosterDg.vue'], resolve),
+      meta: {
+        requiresAuth: true
+      },
+      children: [
+        {
+          path: 'list',
+          name: 'PosterDgList',
+          component: resolve => require(['@/components/WaterMarkListView.vue'], resolve),
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: 'activity/create',
+          name: 'PosterDgActivityCreate',
+          component: resolve => require(['@/components/WaterMarkActivityCreateView.vue'], resolve),
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: 'activity',
+          name: 'PosterDgActivityList',
+          component: resolve => require(['@/components/WaterMarkActivityListView.vue'], resolve),
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: 'activity/detail/:id',
+          name: 'PosterDgActivity',
+          component: resolve => require(['@/components/WaterMarkActivityView.vue'], resolve),
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
     }
   ]
 })

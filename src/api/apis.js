@@ -204,11 +204,20 @@ const hhgjAPIs = {
   getWaterMarkList: (params) => {
     return api.actionCreatorPost('/api/getWaterMarkList', params)
   },
+  getWaterMark: (params) => {
+    return api.actionCreatorPost('/api/getWaterMark', params)
+  },
   getWaterMarkActivityList: (params) => {
     return api.actionCreatorPost('/api/getWaterMarkActivityList', params)
   },
+  getWaterMarkActivity: (params) => {
+    return api.actionCreatorPost('/api/getWaterMarkActivity', params)
+  },
   getWMActivityProductList: (params) => {
     return api.actionCreatorPost('/api/getWMActivityProductList', params)
+  },
+  addWaterMarkActivity: (params) => {
+    return api.actionCreatorPost('/api/addWaterMarkActivity', params)
   },
   updateWaterMarkActivity: (params) => {
     return api.actionCreatorPost('/api/updateWaterMarkActivity', params)

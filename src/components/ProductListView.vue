@@ -92,7 +92,7 @@
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               <p style="font-size:13px">当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。</p>
-                              <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/105695">点击查询规则</a ></p>
+                              <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101706">点击查询规则</a ></p>
                             </ul>
                         </div>
 
