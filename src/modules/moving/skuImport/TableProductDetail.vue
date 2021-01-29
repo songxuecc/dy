@@ -1,9 +1,10 @@
 <!--  -->
 <template>
-    <div>
+  <div>
     <el-table :data="tableData" stripe style="width: 100%;" header-row-class-name="label">
-      <el-table-column prop="create_time" label="图片" width="180">
-          <template slot-scope="scope" >
+      <el-table-empty slot="empty"/>
+      <el-table-column prop="create_time" label="图片" width="80">
+        <template slot-scope="scope">
           <img src="" alt="图片" class="product-img">
         </template>
       </el-table-column>
@@ -13,14 +14,17 @@
       </el-table-column>
       <el-table-column prop="fail_nums" label="SKU编码" class-name="fail" label-class-name="label">
       </el-table-column>
-      <el-table-column prop="edit" label="操作" width="220">
-        <template slot-scope="scope" >
+      <el-table-column prop="fail_nums" label="理由">
+      </el-table-column>
+      <el-table-column prop="edit" label="操作" width="100">
+        <template slot-scope="scope">
           <a class="pramiry" @click="handleEdit('onDetail',scope.row.id)">查看</a>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" class=" pt-20 right mr-20"
-      :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4"
+      class=" pt-20 right mr-20" :page-sizes="[100, 200, 300, 400]" :page-size="100"
+      layout="total, sizes, prev, pager, next, jumper" :total="400">
     </el-pagination>
   </div>
 </template>
