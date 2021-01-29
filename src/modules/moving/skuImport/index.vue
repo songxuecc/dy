@@ -32,6 +32,7 @@
 </template>
 
 <script>
+
 import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'

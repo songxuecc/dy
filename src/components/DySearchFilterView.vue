@@ -52,7 +52,7 @@
               border size="small">忽略已有水印</el-checkbox>
             </el-form-item> -->
             <el-form-item>
-                <el-button type="primary" size="small" @click="handleFilterChange">搜索</el-button>
+                <el-button type="primary" size="medium" @click="handleFilterChange">搜索</el-button>
             </el-form-item>
         </el-form>
     </div>
