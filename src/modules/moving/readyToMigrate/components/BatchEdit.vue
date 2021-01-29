@@ -3,7 +3,7 @@
     <el-row type="flex" justify="start" style="margin-bottom: 4px">
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
-          <el-button type="primary" size="medium" style="padding:7px 20px;height:36px">
+          <el-button type="primary" size="small" style="padding:5px 20px;height:32px">
             批量操作
             <el-badge v-if="selectList && selectList.length" :value="selectList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
@@ -14,7 +14,7 @@
           </el-dropdown-menu>
         </el-dropdown>
         <span style="margin-left: 10px; font-size: 12px">每页商品数
-          <el-select v-model="value" placeholder="请选择" size="medium" style="width: 100px" @change="onChange">
+          <el-select v-model="value" placeholder="请选择" size="small" style="width: 100px" @change="onChange">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>

@@ -7,14 +7,14 @@
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleStatusFilterChange"
-                               popper-class="select-long" style="width: 120px"
+                               popper-class="select-long" style="width: 200px"
                     >
                         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="复制时间">
                     <el-select v-model="captureId" placeholder="请选择" size="small" @change="handleCaptureChange"
-                               popper-class="select-long" style="width: 175px"
+                               popper-class="select-long" style="width: 200px"
                     >
                         <el-option-group>
                             <el-option v-for="item in captureOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -29,22 +29,24 @@
                 <el-form-item>
                     <el-button type="primary" size="small" @click="handleFilterChange">搜索</el-button>
                 </el-form-item>
-                <br>
-                <div v-if="shopCaptureOptionList.length">
-                  <span style="font-size:14px;color: #606266;margin-right: 10px;">店铺复制</span>
+                <div class="flex">
+                  <div v-if="shopCaptureOptionList.length">
+                  <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span>
                   <el-button type="text" @click="handleShopCaptureChange(item.value)" v-for="item in shopCaptureOptions.slice(1,3)" :key="item.value">
-                    <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;">{{item.label}}
+                    <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;font-size:13px;">{{item.label}}
                     </el-link>
                   </el-button>
                   <el-form-item>
                       <el-select v-model="shopCaptureId" placeholder="请选择" size="small" @change="handleShopCaptureChange"
-                                popper-class="select-long" style="width: 175px"
+                                popper-class="select-long" style="width: 200px"
                       >
                           <el-option-group>
                               <el-option v-for="item in shopCaptureOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                           </el-option-group>
                       </el-select>
                   </el-form-item>
+                </div>
+
                 </div>
             </el-form>
         </div>
@@ -53,6 +55,7 @@
                       center>
             </el-alert>
         </div>
+
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
             <template slot='title'>
                 <div>
@@ -82,12 +85,12 @@
             </el-tooltip>
         </el-alert>
         <BatchEdit
-          @onSizeChange="handleSizeChange"
-          :pageSize="pagination.size"
-          :selectIdBatchEditList="selectIdBatchEditList"
-          @toggleLoadingCnt="toggleLoadingCnt"
-          :tpProductList="tpProductList"
-        />
+            @onSizeChange="handleSizeChange"
+            :pageSize="pagination.size"
+            :selectIdBatchEditList="selectIdBatchEditList"
+            @toggleLoadingCnt="toggleLoadingCnt"
+            :tpProductList="tpProductList"
+          />
         <product-list-view ref="productListView" :tpProductList="tpProductList">
             <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
                 <el-button size="small" type="danger" @click="forceGetCapture" style="right: 0px; margin-right: 10px;">重新复制本页</el-button>
@@ -957,5 +960,11 @@ export default {
     /deep/ .el-link.el-link--default.isSelect {
          color: #409EFF;
           border-bottom: 1px solid #409EFF;
+    }
+    /deep/ .el-form--inline .el-form-item {
+        display: inline-block;
+        margin-right: 10px;
+        vertical-align: top;
+        margin-bottom: 10px;
     }
 </style>
