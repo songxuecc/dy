@@ -3,9 +3,9 @@
     <el-row type="flex" justify="start" style="margin-bottom: 4px">
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
-          <el-button type="primary" size="mini">
-            更多操作 <el-badge v-if="selectList" :value="selectList.length"></el-badge><i
-              class="el-icon-arrow-down el-icon--right"></i>
+          <el-button type="primary" size="medium" style="padding:7px 20px;height:36px">
+            批量操作
+            <el-badge v-if="selectList && selectList.length" :value="selectList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px"
@@ -14,14 +14,14 @@
           </el-dropdown-menu>
         </el-dropdown>
         <span style="margin-left: 10px; font-size: 12px">每页商品数
-          <el-select v-model="value" placeholder="请选择" size="mini" style="width: 100px" @change="onChange">
+          <el-select v-model="value" placeholder="请选择" size="medium" style="width: 100px" @change="onChange">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </span>
       </el-col>
     </el-row>
-    <div class="info left">注：批量修改本页勾选产品</div>
+    <div class="info left">注：批量修改本页勾选产品。自动过滤抓取失败、搬迁中、等待搬迁、审核中，4种状态的商品。</div>
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
       :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @updateBrands="updateBrands"
@@ -37,15 +37,15 @@
     <!-- 修改分类 -->
     <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal
       :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
-      <categorySelectView ref="categorySelectView">
+      <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" >
         <template slot="footer">
           <div class="mt-10 mb-20">
             <div class="mb-10 flex justify-c" v-if="loading">
               <el-progress :percentage="percentage" :format="format"></el-progress>
             </div>
             <div class="flex justify-c">
-              <el-button style="width:120px" @click="closeVisvileCategory" v-if="!loading">取消</el-button>
-              <el-button type="primary" style="width:120px" @click="onChangeCate" v-if="!loading">确定</el-button>
+              <el-button style="width:120px" @click="closeVisvileCategory" v-if="!loading" class="mt-10">取消</el-button>
+              <el-button type="primary" style="width:120px" @click="confirmCategorySelectView " v-if="!loading" class="mt-10">确定</el-button>
               <div v-if="loading" class="flex column justify-c align-c ">
                 <el-button @click="shutdownVisvileCategory" :loading="shutdown">更新中，点击中止操作</el-button>
                 <div class="pl-10 info" style="margin-top:5px">已经更新的数据无法撤回</div>
@@ -68,6 +68,7 @@ import EditDeleteCarousel from './EditDeleteCarousel'
 import EditDelteDetailImage from './EditDelteDetailImage'
 import skuHandler from '@/mixins/skuHandler.js'
 import { productStatus } from '@/common/common'
+import utils from '@/common/utils'
 
 export default {
   inject: ['reload'],
@@ -150,7 +151,14 @@ export default {
       visibleEditDeleteCarousel: false,
       visvileEditBrandId: false,
       visvileCategory: false,
-      canEditStatus: [productStatus.WAIT_ONLINE, productStatus.SAVE_DRAFT, productStatus.ONLINE, productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT]
+      canEditStatus: [
+        productStatus.WAIT_ONLINE,
+        productStatus.REJECT,
+        productStatus.FAILED,
+        productStatus.WAIT_MODIFY,
+        productStatus.SAVE_DRAFT,
+        productStatus.ONLINE
+      ]
     }
   },
   watch: {
@@ -161,7 +169,7 @@ export default {
   computed: {
     selectList () {
       return this.tpProductList.filter(item => {
-        return this.selectIdBatchEditList.includes(`${item.tp_product_id}`)
+        return this.selectIdBatchEditList.includes(`${item.tp_product_id}`) && this.canEditStatus.includes(item.status)
       })
     }
   },
@@ -189,11 +197,13 @@ export default {
       }
 
       if (model.textReplaceOrigin && model.textReplaceNew) {
-        title = title.replace(model.textReplaceOrigin, model.textReplaceNew)
+        let replaceStr = utils.transferRegStr(model.textReplaceOrigin)
+        title = title.replace(new RegExp(replaceStr, 'g'), model.textReplaceNew)
       }
 
       if (model.textDelete) {
-        title = title.split(model.textDelete).join('')
+        let replaceStr = utils.transferRegStr(model.textDelete)
+        title = title.replace(new RegExp(replaceStr, 'g'), '')
       }
 
       if (model.radio === 6) {
@@ -201,14 +211,13 @@ export default {
       }
 
       if (model.radio === 3) {
-        title = title.split('').reverse().slice(0, 30).reverse()
+        title = title.split('').reverse().slice(0, 30).reverse().join('')
       }
 
       return title.replace(/\s+/g, '')
     },
-    polling (fn, succeesCallback, step = 5) {
+    polling (fn, succeesCallback, failCallback, step = 5) {
       let previous = 0
-      let current = previous + step
       let length = 0
       const vm = this
       let result = []
@@ -216,14 +225,16 @@ export default {
         var _this = this // 取debounce执行作用域的this
         var list = [...arguments][0]
         length = list.length
+        let current = Math.min(previous + step, length)
 
         function promiseFn () {
           return new Promise(async (resolve, reject) => {
             try {
               const sliceList = list.slice(previous, current)
+              console.log(sliceList)
               const data = await fn.call(_this, sliceList)
               previous = current
-              current = previous + step
+              current = Math.min(previous + step, length)
               resolve(data)
             } catch (err) {
               reject(err)
@@ -234,23 +245,23 @@ export default {
         const resultFn = () => promiseFn().then(data => {
           result = result.concat(data)
           if (vm.shutdown) {
-            succeesCallback(result)
+            succeesCallback && succeesCallback(result)
             return false
           }
-          if (current < length) {
+          if (previous < length) {
             resultFn()
-            const percentage = Math.floor(current / length * 100)
+            const percentage = Math.floor(previous / length * 100)
             vm.percentage = percentage
-          } else if (current >= length) {
-            succeesCallback(result)
+          } else {
+            succeesCallback && succeesCallback(result)
           }
         }).catch(error => {
           if (error) {
             console.log(error)
           }
           current = length
-          // vm.$message.error(`${error || error.message}`)
-          vm.$message.error(`更新失败，请稍后再试`)
+
+          failCallback && failCallback(error)
         })
 
         resultFn()
@@ -265,7 +276,6 @@ export default {
       const detailImage = options.detailImage || false
       const title = options.title
       const list = this.selectList
-        .filter(item => this.canEditStatus.includes(item.status))
         .map(item => {
           return ({
             tp_product_id: item.tp_product_id,
@@ -280,7 +290,11 @@ export default {
           })
         })
       if (!list.length) {
-        return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
+        return this.$message({
+          message: '只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改',
+          type: 'error',
+          duration: 5000
+        })
       }
       const fn = async (list) => {
         const data = await Api.hhgjAPIs.batchUpdateTPProduct({
@@ -301,16 +315,30 @@ export default {
           this.shutdown = false
           this.activeIndex = 0
           this.reload()
+        },
+        (error) => {
+          this.$message.error(`${error || error.message}`)
+          this.visibleEditTitle = false
+          this.visibleEditDelteDetailImage = false
+          this.visibleEditDeleteCarousel = false
+          this.loading = false
+          this.percentage = 0
+          this.shutdown = false
+          this.activeIndex = 0
+          this.reload()
         }
       )(list)
     },
     // 修改品牌
     async updateBrands (id) {
       const list = this.selectList
-        .filter(item => this.canEditStatus.includes(item.status))
         .map(item => item.tp_product_id)
       if (!list.length) {
-        return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
+        return this.$message({
+          message: '只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改',
+          type: 'error',
+          duration: 5000
+        })
       }
       const fn = async (list) => {
         const data = await Api.hhgjAPIs.updateTpproductBrand({
@@ -324,9 +352,22 @@ export default {
         fn,
         (data) => {
           const successLists = data.filter(item => item.is_brand_update)
-          this.$message.success(!this.shutdown
-            ? `成功数${successLists.length},失败数${list.length - successLists.length},失败可能原因是商品未填写类目或该类目不在品牌授权范围内`
-            : '中止成功')
+          this.$message({
+            message: !this.shutdown
+              ? `成功数${successLists.length},失败数${list.length - successLists.length},失败可能原因是商品未填写类目或该类目不在品牌授权范围内`
+              : '中止成功',
+            type: 'success',
+            duration: 5000
+          })
+          this.visvileEditBrandId = false
+          this.loading = false
+          this.percentage = 0
+          this.shutdown = false
+          this.activeIndex = 0
+          this.reload()
+        },
+        (error) => {
+          this.$message.error(`${error || error.message}`)
           this.visvileEditBrandId = false
           this.loading = false
           this.percentage = 0
@@ -362,6 +403,15 @@ export default {
           this.shutdown = false
           this.activeIndex = 0
           this.reload()
+        },
+        (error) => {
+          this.$message.error(`${error || error.message}`)
+          this.visibleEditDelteRecord = false
+          this.loading = false
+          this.percentage = 0
+          this.shutdown = false
+          this.activeIndex = 0
+          this.reload()
         }
       )(list)
     },
@@ -371,17 +421,26 @@ export default {
     shutdownVisvileCategory () {
       this.shutdown = true
     },
+    confirmCategorySelectView () {
+      this.$refs.categorySelectView.confirm()
+    },
     // 批量修改分类
     async onChangeCate (category) {
       if (!this.selectList.length) {
-        return this.$message.error('只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改')
+        return this.$message({
+          message: '只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改',
+          type: 'error',
+          duration: 5000
+        })
+      }
+      if (!category || (category && !category.id)) {
+        return this.$message.error('请选择分类')
       }
       const list = this.selectList
-        .filter(item => this.canEditStatus.includes(item.status))
         .map(item => {
           return ({
             tp_product_id: item.tp_product_id,
-            category_id: item.category_id,
+            category_id: category.id,
             title: item.title,
             tp_outer_iid: '',
             price: null,
@@ -408,6 +467,15 @@ export default {
           this.shutdown = false
           this.activeIndex = 0
           this.reload()
+        },
+        (error) => {
+          this.$message.error(`${error || error.message}`)
+          this.visvileCategory = false
+          this.loading = false
+          this.percentage = 0
+          this.shutdown = false
+          this.activeIndex = 0
+          // this.reload()
         }
       )(list)
     },

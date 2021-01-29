@@ -14,16 +14,16 @@
       </div>
       <div style="display:flex;margin-bottom:20px">
         <p style="margin-right:10px">
-          <el-input v-model="model.textReplaceOrigin" style="width: 290px;margin-right:10px"></el-input>
-          <span style="font-size:12px">替换为</span>
+          <el-input v-model="model.textReplaceOrigin" style="width: 278px;margin-right:10px"></el-input>
+          <span style="font-size:12px">全部替换为</span>
         </p>
         <p>
-          <el-input v-model="model.textReplaceNew" style="width: 290px;"></el-input>
+          <el-input v-model="model.textReplaceNew" style="width: 278px;"></el-input>
         </p>
       </div>
       <div style="display:flex;align-items:center">
         <p style="margin-right:42px">
-          <el-input v-model="model.textDelete" style="width: 290px;margin-right:13px" placeholder="输入删除关键字">
+          <el-input v-model="model.textDelete" style="width: 290px;margin-right:13px" placeholder="请输入需要全部删除的关键字">
           </el-input>
         </p>
         <p style="width:300px;display:flex;flex:1">
