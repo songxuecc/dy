@@ -1,27 +1,31 @@
 <!-- sku导入详情 -->
 <template>
-  <div>
-    <el-alert  type="warning" :closable ="false">
-      <div slot="title" class="font-14">
-        <span>·修改字段:导入修改sku编码</span>
-        <span>·修改时间:2020-12-24 18:28:21</span>
-        <span>·修改数量:共计1057条成功0条，失败0条</span>
-      </div>
-    </el-alert>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane :label="tab.label" :name="tab.name" :key="tab.id" v-for="tab in tabs">
-      <TableProductDetail />
+<div>
+  <el-alert type="warning" :closable="false">
+    <div slot="title" class="font-14 flex">
+      <span><b>·</b>修改字段:&nbsp;导入修改sku编码</span>
+      <span><b>·</b>修改时间:&nbsp;{{parentRowData.create_time}}</span>
+      <span><b>·</b>修改数量:&nbsp;共计{{parentRowData.total_nums}}条成功{{parentRowData.success_nums}}条，失败{{parentRowData.fail_nums}}条</span>
+    </div>
+  </el-alert>
+  <el-tabs v-model="activeName" >
+    <el-tab-pane :label="tab.label" :name="tab.name" :key="tab.name" v-for="tab in tabs">
+      <TableProductDetail :activeName="activeName" :currentName="tab.name" v-if="tab.name === activeName"/>
     </el-tab-pane>
-    </el-tabs>
-  </div>
+  </el-tabs>
+</div>
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+
 import TableProductDetail from './TableProductDetail'
+const {
+  mapState
+} = createNamespacedHelpers('moving/skuImport')
 export default {
   name: 'DetailSkuEdit',
   props: {
-    msg: String
   },
   components: {TableProductDetail},
   data () {
@@ -43,13 +47,16 @@ export default {
         label: '终止',
         name: 'stop'
       }],
-      activeName: 'complete'
+      activeName: 'fail'
     }
   },
-  methods: {
-    handleClick (tab, event) {
-      console.log(tab, event)
+  watch: {
+    activeName: function (params) {
+      console.log(params)
     }
+  },
+  computed: {
+    ...mapState(['tableDataProductDetail', 'paginationProductDetail', 'parentRowData'])
   }
 }
 </script>

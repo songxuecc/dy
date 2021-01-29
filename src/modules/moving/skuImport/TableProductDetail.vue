@@ -1,69 +1,101 @@
 <!--  -->
 <template>
-  <div>
-    <el-table :data="tableData" stripe style="width: 100%;" header-row-class-name="label">
+  <div class="TableProductDetail" >
+    <el-table :data="tableDataProductDetail" stripe style="width: 100%;"  row-key="dy_product_id">
       <el-table-empty slot="empty"/>
-      <el-table-column prop="create_time" label="图片" width="80">
+      <el-table-column prop="sku_img_url" label="图片" width="80">
         <template slot-scope="scope">
-          <img src="" alt="图片" class="product-img">
+          <img :src="scope.row.sku_img_url" alt="图片" class="product-img">
         </template>
       </el-table-column>
-      <el-table-column prop="total_nums" label="商品信息" width="200">
+      <el-table-column prop="goods_name" label="商品信息" width="200">
       </el-table-column>
-      <el-table-column prop="success_nums" label="SKU名称">
+      <el-table-column prop="sku_spec_names" label="SKU名称">
+
       </el-table-column>
-      <el-table-column prop="fail_nums" label="SKU编码" class-name="fail" label-class-name="label">
+      <el-table-column prop="sku_code" label="SKU编码" >
       </el-table-column>
-      <el-table-column prop="fail_nums" label="理由">
+      <el-table-column prop="fail_reason" label="理由">
       </el-table-column>
       <el-table-column prop="edit" label="操作" width="100">
         <template slot-scope="scope">
-          <a class="pramiry" @click="handleEdit('onDetail',scope.row.id)">查看</a>
+          <a class="pramiry" @click="open('onDetail',scope.row.id)">查看</a>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4"
-      class=" pt-20 right mr-20" :page-sizes="[100, 200, 300, 400]" :page-size="100"
-      layout="total, sizes, prev, pager, next, jumper" :total="400">
+     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="paginationProductDetail.page_index"
+      class=" pt-20 right mr-20" :page-sizes="paginationProductDetail.sizes" :page-size="paginationProductDetail.page_size"
+      layout="total, sizes, prev, pager, next, jumper" :total="paginationProductDetail.total">
     </el-pagination>
   </div>
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const {
+  mapState,
+  mapActions
+} = createNamespacedHelpers('moving/skuImport')
+
 export default {
   name: 'TableProductDetail',
   props: {
-    msg: String
+    activeName: String,
+    parentId: String,
+    currentName: String
   },
   data () {
     return {
-      tableData: [ {
-        'id': 1,
-        'is_delete': 0,
-        'success_nums': 0,
-        'status': 'running',
-        'total_nums': 0,
-        'fail_nums': 0,
-        'create_time': '2021-01-27 12:15:35'
-      },
-      {
-        'id': 2,
-        'is_delete': 0,
-        'success_nums': 0,
-        'status': 'stop',
-        'total_nums': 0,
-        'fail_nums': 0,
-        'create_time': '2021-01-27 12:15:35'
-      },
-      {
-        'id': 3,
-        'is_delete': 0,
-        'success_nums': 0,
-        'status': 'complete',
-        'total_nums': 0,
-        'fail_nums': 0,
-        'create_time': '2021-01-27 12:15:35'
-      }]
+    }
+  },
+  mounted () {
+    const data = {status: this.activeName, parent_id: this.parentId}
+    this.getProductSkuExcelDetailPage({
+      filtersProductDetail: data,
+      paginationProductDetail: this.paginationProductDetail
+    })
+  },
+  computed: {
+    ...mapState(['tableDataProductDetail', 'paginationProductDetail', 'parentRowData']),
+    filters: function () {
+      if (!this.active || !this.parentRowData) return false
+      const data = {status: this.active, parentRowData: this.parentRowData.id}
+      return data
+    }
+  },
+  watch: {
+    filters: function (newval) {
+      this.getProductSkuExcelDetailPage({
+        filtersProductDetail: newval,
+        paginationProductDetail: this.paginationProductDetail
+      })
+    }
+  },
+  methods: {
+    ...mapActions(['getProductSkuExcelDetailPage', 'deleteProductSkuExcelPage']),
+    handleSizeChange (pageSize) {
+      this.getProductSkuExcelDetailPage({
+        paginationProductDetail: {
+          ...this.paginationProductDetail,
+          page_size: pageSize
+        }
+      })
+    },
+    handleCurrentChange (pageIndex) {
+      this.getProductSkuExcelDetailPage({
+        paginationProductDetail: {
+          ...this.paginationProductDetail,
+          page_index: pageIndex
+        }
+      })
+    },
+    open (id) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', 'sku导入', '详情', '前往抖音后台查看提交的商品'])
+      }
+      if (id) {
+        window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + id)
+      }
     }
   }
 }

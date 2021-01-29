@@ -308,6 +308,18 @@ const hhgjAPIs = {
   },
   getCostTemplateList: (params) => {
     return api.actionCreateGet('/api/product/costTemplate/list', params)
+  },
+  getProductSkuExcelPage: (params) => {
+    return api.actionCreateGet('/api/product/sku/excel/page', params)
+  },
+  deleteProductSkuExcelPage: (params) => {
+    return api.actionCreatorPost('/api/product/sku/excel/delete', params)
+  },
+  getProductSkuExcelProgressQuery: (params) => {
+    return api.actionCreateGet('/api/product/sku/excel/progress/query', params)
+  },
+  getProductSkuExcelDetailPage: (params) => {
+    return api.actionCreateGet('/api/product/sku/excel/detail/page', params)
   }
 }
 
