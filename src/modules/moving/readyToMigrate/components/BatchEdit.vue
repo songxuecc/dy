@@ -250,7 +250,7 @@ export default {
           }
           if (previous < length) {
             resultFn()
-            const percentage = Math.floor(previous / length * 100)
+            const percentage = Math.floor(current / length * 100)
             vm.percentage = percentage
           } else {
             succeesCallback && succeesCallback(result)
