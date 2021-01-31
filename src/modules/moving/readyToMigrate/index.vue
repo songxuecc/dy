@@ -465,10 +465,11 @@ export default {
       }, undefined, true)
     },
     resetInfo () {
+      // 这里会引起其他问题 还是不要改了
       this.captureId = '-1'
       this.shopCaptureId = '-1'
       this.pagination.index = 1
-      // this.pagination.size = 50
+      this.pagination.size = 50
       this.pagination.total = 0
       this.search.key = ''
       this.search.status = '-1'
