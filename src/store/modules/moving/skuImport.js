@@ -69,17 +69,44 @@ export default {
         'total': 1,
         'item_list': mockData
       }
-      console.log(data)
       await sleep(500)
       paginationRecord.total = data.total
-      console.log(paginationRecord)
-      console.log(filtersRecord)
       commit('save', {
         paginationRecord,
         filtersRecord,
         tableDataRecord: data.item_list
       })
       loading && loading.close()
+      this.dispatch('moving/skuImport/getperprogress', data.item_list)
+    },
+    async getperprogress ({commit, state}, payload) {
+      const runingsIds = payload.filter(item => item.status === 'running').map(item => item.id)
+      if (!runingsIds.length) return false
+      console.log(runingsIds)
+      // const progressIds = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
+      //   id_list: runingsIds
+      // })
+      await sleep(500)
+      const progressData = [{
+        'id': 1,
+        'status': 'running',
+        'success_nums': 10,
+        'fail_nums': 5,
+        'percent': 36
+      }]
+      const tableDataRecord = state.tableDataRecord.map(originItem => {
+        const progressItem = progressData.find(progressItem => progressItem.id === originItem.id)
+        if (!progressItem) return originItem
+        return Object.assign(originItem, progressItem)
+      })
+      console.log(tableDataRecord)
+      commit('save', {
+        progressData,
+        tableDataRecord
+      })
+      // setTimeout(() => {
+      //   this.dispatch('moving/skuImport/getperprogress', progressData)
+      // }, 500)
     },
     async getProductSkuExcelDetailPage ({commit, state}, payload) {
       const {paginationProductDetail, filtersProductDetail} = payload

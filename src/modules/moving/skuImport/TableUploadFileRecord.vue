@@ -15,7 +15,7 @@
         <template slot-scope="scope">
           <div v-if="scope.row.status === 'running'" class="flex column warning ">
             导入中
-            <el-progress :percentage="50" :show-text="false" style="width:80px" :stroke-width="10"></el-progress>
+            <el-progress :percentage="scope.row.percent" :show-text="false" style="width:80px" :stroke-width="10"></el-progress>
           </div>
           <div v-else-if="scope.row.status === 'stop'">终止</div>
           <div v-else>修改完成</div>
@@ -80,7 +80,7 @@ export default {
     this.init()
   },
   computed: {
-    ...mapState(['tableDataRecord', 'paginationRecord', 'filtersRecord'])
+    ...mapState(['tableDataRecord', 'paginationRecord', 'filtersRecord', 'progressIds'])
   },
   methods: {
     ...mapActions(['getProductSkuExcelPage', 'deleteProductSkuExcelPage']),

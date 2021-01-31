@@ -1,18 +1,41 @@
 <!-- sku上传文件 -->
 <template>
-<div class="left uploadFile pb-10">
-  <p class="font-12 ">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a class="pramiry">同步商品</a> <span class="info">&nbsp;最近同步时间 2020-12-05</span></p>
-  <p class="font-12 ">2、每次支持3000个sku编码修改，文件格式支持.xlsx &nbsp;<a class="pramiry">示例文件</a> </p>
-  <p class="font-12 ">3、保证导入的商品标题、规格名与抖店后台一致 </p>
-  <el-upload class="upload-demo mt-10" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview"
-    :on-remove="handleRemove" :before-remove="beforeRemove" multiple :limit="3" :on-exceed="handleExceed" :show-file-list="false"
-    :file-list="fileList">
-    <el-button size="small" type="primary"><i class="el-icon-upload"></i>&nbsp;&nbsp;点击上传</el-button>
-  </el-upload>
-</div>
+  <div class="left uploadFile pb-10">
+    <p class="font-12 ">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a :class="[isSyncing?'info':'pramiry']"
+        @click="handleSyncProducts">{{syncButtonText}}</a> <span class="info">&nbsp;最近同步时间
+        {{ syncStatus.last_sync_time }} </span></p>
+    <p class="font-12 ">2、每次支持3000个sku编码修改，文件格式支持.xlsx &nbsp;<a class="pramiry" @click="downloadExcel">示例文件</a> </p>
+    <p class="font-12 ">3、保证导入的商品标题、规格名与抖店后台一致 </p>
+    <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
+      :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders" :on-success="skuExcelImportSuccess"
+      :before-upload="beforeUpload" :on-progress="skuExcelImporting" :on-error="skuExcelImportError">
+      <el-button size="small" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick">
+        <i class="el-icon-upload" v-if="!isSkuImporting"></i>
+        <i v-if="isSkuImporting" class="el-icon-loading"></i>
+        &nbsp;&nbsp;点击上传
+      </el-button>
+    </el-upload>
+    <el-dialog title="sku编码更新结果" :visible.sync="skuExcelImportDialogVisible" width="80%">
+      <div style="text-align: left">
+        <div style="text-align: center;font-size: 16px;">成功: <span style="color: #4ca916">{{skuExcelImportSuccessNums}}</span></div>
+        <div v-for="(error, index) in errorList" :key="index">
+          {{ error }}
+        </div>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
+import utils from '@/common/utils.js'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import common from '@/common/common.js'
+
+const {
+  mapState: mapStateSkuImport,
+  mapActions: mapActionsSkuImport
+} = createNamespacedHelpers('moving/skuImport')
+
 export default {
   name: 'UploadFile',
   props: {
@@ -20,21 +43,143 @@ export default {
   },
   data () {
     return {
-      fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
+      isSkuImporting: false,
+      errorList: [],
+      skuExcelImportDialogVisible: false,
+      skuExcelImportSuccessNums: 0,
+      isNew: 0,
+      showDownloadFile: false,
+      showProcess: false,
+      dialogBatchEditVisible: false,
+      dialogExportVisible: false,
+      fileList: [],
+      isSyncing: false,
+      syncButtonText: '同步后台商品'
+    }
+  },
+  computed: {
+    ...mapGetters({
+      exportFields: 'getExportFields',
+      getTokenHeaders: 'getTokenHeaders',
+      syncStatus: 'getSyncStatus'
+    }),
+    ...mapStateSkuImport(['tableDataRecord', 'paginationRecord', 'filtersRecord'])
+
+  },
+  watch: {
+    isAuth (val) {
+      if (val) {
+        this.asyncUserAndNotice()
+      }
+    },
+    syncStatus (val, oldVal) {
+      this.isSyncing = (val.status !== 'complete' && val.status !== 'error')
+      this.refreshSyncButtonText()
     }
   },
   methods: {
-    handleRemove (file, fileList) {
-      console.log(file, fileList)
+    ...mapActions([
+      'requestSyncProducts'
+    ]),
+    ...mapActionsSkuImport(['getProductSkuExcelPage', 'deleteProductSkuExcelPage']),
+    // 同步商品
+    handleSyncProducts () {
+      if (!this.isAuth || this.isSyncing) return false
+      this.isSyncing = true
+      this.syncButtonText = '正在准备同步...'
+      this.requestSyncProducts({
+        sync_type: common.SyncType['all'],
+        operation_type: 1
+      })
     },
-    handlePreview (file) {
-      console.log(file)
+    refreshSyncButtonText () {
+      let val = this.syncStatus
+      if (val.status === 'ready') {
+        this.syncButtonText = '正在准备同步...'
+      } else if (val.status === 'running') {
+        this.syncButtonText = '同步中...(' + val.cur + '/' + val.total + ')'
+      } else {
+        this.syncButtonText = '同步后台商品'
+      }
     },
-    handleExceed (files, fileList) {
-      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    beforeUpload (file) {
+      // let type = file.type
+      // let size = file.size / 1024 / 1024
+      // if (type !== 'xlsx') {
+      //   this.$message.error('只能上传xlsx文件')
+      //   return false
+      // }
+      // if (size > 3) {
+      //   this.$message.error('表格不超过3M')
+      //   return false
+      // }
     },
-    beforeRemove (file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`)
+    /**
+     * sku编码导入成功后的回调
+     * @param response
+     * @param file
+     * @param fileList
+     */
+    skuExcelImportSuccess (response, file, fileList) {
+      this.$refs.upload.clearFiles()
+      this.isSkuImporting = false
+      if (response.code !== 0) {
+        this.$message.error(response.msg)
+        return
+      }
+      this.errorList = response.data['error_list']
+      console.log(response.data['error_list'])
+      if (utils.isEmptyObj(this.errorList)) {
+        // 如果导入成功，则提示成功
+        this.$message.success('导入成功' + response.data['success_nums'] + '条')
+      } else {
+        // 如果有失败的，则返回具体失败的原因
+        this.skuExcelImportSuccessNums = response.data['success_nums']
+        this.skuExcelImportDialogVisible = true
+      }
+      //  刷新列表
+      this.getProductSkuExcelPage({
+        filtersRecord: this.filtersRecord,
+        paginationRecord: this.paginationRecord
+      })
+    },
+    /**
+     * sku编码导入中的回调
+     * @param event
+     * @param file
+     * @param fileList
+     */
+    skuExcelImporting (event, file, fileList) {
+      console.log(event, file, fileList)
+      this.isSkuImporting = true
+    },
+    /**
+     * sku编码导入失败的回调
+     * @param xerr
+     * @param file
+     * @param fileList
+     */
+    skuExcelImportError (xerr, file, fileList) {
+      this.isSkuImporting = false
+      this.$message.error('sku编码导入失败')
+    },
+    /**
+     * 统计商品sku导入按钮的点击次数
+     */
+    recordSkuExcelImportBtnClick () {
+      // 百度统计打点
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '全部商品', '点击', '商品sku编码导入'])
+      }
+    },
+    /**
+     * 生成sku编码模板文件
+     */
+    downloadExcel () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '全部商品', '下载', '下载sku编码模板'])
+      }
+      window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code.xlsx'
     }
   }
 }
