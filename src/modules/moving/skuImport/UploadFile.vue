@@ -81,7 +81,7 @@ export default {
     ...mapActions([
       'requestSyncProducts'
     ]),
-    ...mapActionsSkuImport(['getProductSkuExcelPage', 'deleteProductSkuExcelPage']),
+    ...mapActionsSkuImport(['getProductSkuExcelPage']),
     // 同步商品
     handleSyncProducts () {
       if (!this.isAuth || this.isSyncing) return false
@@ -131,7 +131,7 @@ export default {
       console.log(response.data['error_list'])
       if (utils.isEmptyObj(this.errorList)) {
         // 如果导入成功，则提示成功
-        this.$message.success('导入成功' + response.data['success_nums'] + '条')
+        this.$message.success('正在导入中...')
       } else {
         // 如果有失败的，则返回具体失败的原因
         this.skuExcelImportSuccessNums = response.data['success_nums']

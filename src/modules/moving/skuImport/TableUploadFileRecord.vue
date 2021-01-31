@@ -54,6 +54,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
+import Api from '@/api/apis'
 const {
   mapState,
   mapActions
@@ -125,7 +126,13 @@ export default {
       this.deleteId = id
     },
     async confirmDelete () {
-      // await this.deleteProductSkuExcelPage({id: this.deleteId})
+      try {
+        await Api.hhgjAPIs.deleteProductSkuExcelPage({id: this.deleteId})
+      } catch (err) {
+        console.log(err)
+        this.$message.error(`${err}`)
+      }
+      this.$message.success(`删除成功`)
       this.closeDelete()
       this.init()
     },

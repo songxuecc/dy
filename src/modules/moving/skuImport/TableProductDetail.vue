@@ -72,7 +72,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getProductSkuExcelDetailPage', 'deleteProductSkuExcelPage']),
+    ...mapActions(['getProductSkuExcelDetailPage']),
     handleSizeChange (pageSize) {
       this.getProductSkuExcelDetailPage({
         paginationProductDetail: {
