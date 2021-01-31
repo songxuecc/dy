@@ -166,6 +166,16 @@
                             <span v-else>{{scope.row.promo_price}}</span>
                         </template>
                     </el-table-column>
+                    <el-table-column key="6" width="130">
+                        <template slot="header" slot-scope="scope">
+                            <span>sku编码</span>
+                        </template>
+                        <template slot-scope="scope">
+                            <el-input v-if="isDyProduct" v-model="scope.row.sku_code" size="mini"></el-input>
+                            <el-input v-else-if="scope.row.sku_code===0" v-model="scope.row.sku_code" size="mini"></el-input>
+                            <span v-else>{{scope.row.sku_code}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
                         <template slot-scope="scope">
                             <img style="height:40px" :src="scope.row.img">

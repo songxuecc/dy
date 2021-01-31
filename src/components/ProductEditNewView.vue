@@ -8,7 +8,6 @@
                   style="height: 100%; overflow-y: scroll;"
                   @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" @selection-change="handleSelectionChange"
         >
-        <el-table-empty slot="empty"/>
             <el-table-column width="1">
               <template slot-scope="scope">
                 <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="scope.row.status === 5 || scope.row.status === 6 || scope.row.status === 8" :disabled="scope.row.status !== 5 && scope.row.status !== 6 && scope.row.status !== 8" class="item" effect="dark" placement="left">
@@ -107,9 +106,7 @@
                         >添加品牌</el-link>
                         <el-button size="mini" type="primary" @click="applySelectBrandToSelection()">应用到选中的商品</el-button>
                       </el-form-item>
-                    <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
-                        <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
-                    </el-form-item>
+
                     <el-form-item  label="抖音属性:">
                         <property-set
                           @change="handlePropertyset"
@@ -149,7 +146,7 @@
                                            trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                               >
                                   <span class="el-dropdown-link" style="color:#909399">
-                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial;font-weight:bold">修改</span>
+                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                                   </span>
                                   <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
                                       <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
@@ -183,7 +180,7 @@
                       <el-table-column key="2" width="130">
                           <template slot="header" slot-scope="scope">
                               <span>总库存</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial;font-weight:bold">修改</span></el-button>
+                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model.number="scope.row.quantity" size="mini" type="number"></el-input>
@@ -206,7 +203,13 @@
                       </el-table-column>
                       <el-table-column key="5" width="150">
                           <template slot="header" slot-scope="scope">
-                              <span>商品编码</span>
+                            <span @click="toggleVisibleSkuImport">商品编码</span>
+                            <el-tooltip manua="true" @click="toggleVisibleSkuImport" class="item" effect="dark" placement="top" style="vertical-align: middle">
+                                <div slot="content">
+                                  <ul style="padding: 0; margin: 0;" @click="toggleVisibleSkuImport">无法抓取,点击查看获取方法</ul>
+                                </div>
+                                <i class="el-icon-question"></i>
+                            </el-tooltip>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model="scope.row.code" size="mini" type="text" :class="['input-text-left']"></el-input>
@@ -413,6 +416,16 @@
         </div>
       </div>
     </el-dialog>
+
+    <el-dialog :visible.sync="visibleSkuImport" width="30%" title="提示"
+      :append-to-body="true" v-hh-modal>
+      <div style="text-align:center">
+        <p>因商品编码属于商家后台的字段，故无法获取。</p>
+        <p>您可在搬家上线成功后在【导入修改】中导入"规格名称-</p>
+        <p>sku编码"对应表格进行修改。</p>
+        <p src="">我是图片</p>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -489,7 +502,8 @@ export default {
       textHandler: new TextHandler(),
       closeAfterSave: false,
       // 属性商品应用到所有 的数据记录
-      propertyBatchMap: new Map()
+      propertyBatchMap: new Map(),
+      visibleSkuImport: false
     }
   },
   watch: {
@@ -1425,6 +1439,10 @@ export default {
         }
       })
       Object.assign(this.product.model, {attrList})
+    },
+    // sku抓取
+    toggleVisibleSkuImport: function () {
+      this.visibleSkuImport = !this.visibleSkuImport
     }
   }
 }
