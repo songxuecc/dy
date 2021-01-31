@@ -4,6 +4,7 @@
             <el-table :data="upgradeOrderList"  border show-summary sum-text="可抵扣金额" v-if="upgradeOrderList.length"
                       style="width: 100%" :row-style="{height:'68px'}" :cell-style="{padding:0}"
             >
+            <el-table-empty slot="empty"/>
                 <el-table-column label="未过期订购" align="center">
                 <el-table-column label="版本" prop='subsc_item' width="100">
                 </el-table-column>

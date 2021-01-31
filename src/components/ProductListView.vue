@@ -21,6 +21,7 @@
                   @select-all="handleSelectAll" @select="handleSelect"
                   @selection-change="handleSelectionChange" :cell-style="cellStyle" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut"
         >
+        <el-table-empty slot="empty"/>
             <el-table-column width="12">
             </el-table-column>
             <el-table-column type="selection" :selectable="isSelectionEnable">

@@ -85,6 +85,7 @@
                 </span>
 
                 <el-table :data="skuRealShowList" height="400" border style="width: 100%" :header-cell-style="cellStyle">
+                  <el-table-empty slot="empty"/>
                     <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id" width="130">
                         <template slot="header" slot-scope="scope">
                             <span :style="{color: (item.filter ? '#409EFF' : '#909399')}" >{{ item.name }}</span>

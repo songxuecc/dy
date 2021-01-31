@@ -157,6 +157,7 @@
                     :row-style="{height:'30px'}" max-height="320"
                     @selection-change="handleCaptureSelectionChange"
               >
+              <el-table-empty slot="empty"/>
                 <el-table-column type="selection">
                 </el-table-column>
                 <el-table-column label="图片" width="100" align="center">

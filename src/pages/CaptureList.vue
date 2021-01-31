@@ -4,6 +4,7 @@
             <el-table v-loading="loadingCnt" :data="captureList" border
                       style="width: 100%" :row-style="{height:'68px'}" :cell-style="{padding:0}"
             >
+            <el-table-empty slot="empty"/>
                 <el-table-column label="抓取类型" width="100">
                     <template slot-scope="scope">
                         {{ captureTypeMap[scope.row.capture_type_id] }}

@@ -8,6 +8,7 @@
                   style="height: 100%; overflow-y: scroll;"
                   @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" @selection-change="handleSelectionChange"
         >
+        <el-table-empty slot="empty"/>
             <el-table-column width="1">
               <template slot-scope="scope">
                 <el-tooltip manual :value="scope.row.index === mouseOverIndex"  v-if="scope.row.status === 5 || scope.row.status === 6 || scope.row.status === 8" :disabled="scope.row.status !== 5 && scope.row.status !== 6 && scope.row.status !== 8" class="item" effect="dark" placement="left">
