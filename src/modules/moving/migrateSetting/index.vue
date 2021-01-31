@@ -1,30 +1,44 @@
 <template lang="html">
-  <div style="text-align: left; font-size: 14px;">
-    <el-form ref="template" :rules="rules" style="width: 100%;">
-      <el-form-item size="small" label="sku编码:" required style="margin-bottom: 0px;">
-        <el-select v-model="goods_code_type" placeholder="请选择生成方式" style="width: 350px;">
-          <el-option
-            v-for="item in goods_code_type_options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-       <el-form-item label="商品总图片超过50张自动截断详情图" required style="margin-bottom: 0px;">
-        <el-checkbox v-model="detail_img_cut"></el-checkbox>
-      </el-form-item>
-      <el-form-item label="sku规格值超过20个自动截断" required style="margin-bottom: 0px;">
-        <el-checkbox v-model="is_cut_sku_spec"></el-checkbox>
-      </el-form-item>
-      <el-form-item label="仅保留前5张轮播图" required style="margin-bottom: 0px;">
-        <el-checkbox v-model="is_banner_auto_5"></el-checkbox>
-      </el-form-item>
-    </el-form>
-    <br/>
-    <el-button type="primary" @click="saveSetting()" size="small" style="margin-top: 20px;">保存设置</el-button>
-  </div>
+    <div style="text-align: left; font-size: 14px;">
+        <el-form ref="template" :rules="rules" style="width: 100%;">
+            <el-form-item size="small" label="sku编码:" required style="margin-bottom: 0px;">
+                <el-select v-model="goods_code_type" placeholder="请选择生成方式" style="width: 350px;">
+                    <el-option v-for="item in goods_code_type_options" :key="item.value" :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="商品总图片超过50张自动截断详情图" required style="margin-bottom: 0px;">
+                <el-checkbox v-model="detail_img_cut"></el-checkbox>
+            </el-form-item>
+            <el-form-item label="sku规格值超过20个自动截断" required style="margin-bottom: 0px;">
+                <el-checkbox v-model="is_cut_sku_spec"></el-checkbox>
+            </el-form-item>
+            <el-form-item label="仅保留前5张轮播图" required style="margin-bottom: 0px;">
+                <el-checkbox v-model="is_banner_auto_5"></el-checkbox>
+            </el-form-item>
+            <el-form-item label="商品标题、sku规格违规词自动删除" required style="margin-bottom: 0px;">
+                <el-checkbox v-model="is_cut_black_word"></el-checkbox>
+            </el-form-item>
+        </el-form>
+        <div style="display:flex" >
+            <p style="width: 35%;text-align:center;position:relative" >
+                <el-input :value="back_words" @input="formatBlackWords($event)" type="textarea"
+                :autosize="{ minRows: 3}"  size="small" placeholder="请输入自定义违规词，换行分隔多个违规词"
+                style="width: 100%;" />
+                <el-button size="small" style="margin-top:10px;position:absolute;right:20px;bottom:10px" type="primary" @click="createBlackWords">添加</el-button>
+            </p>
+            <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px">
+                <el-tag v-for="tag in blackWords" :key="tag" closable :type="tag">
+                    {{tag}}
+                </el-tag>
+            </div>
+        </div>
+        <br />
+        <el-button type="primary" @click="saveSetting()" style="margin-top: 20px;">保存设置</el-button>
+    </div>
 </template>
+
 <script>
 import request from '@/mixins/request.js'
 import apis from '@/api/apis.js'
@@ -46,6 +60,7 @@ export default {
       banner_completion: true,
       detail_img_cut: true,
       is_cut_sku_spec: true,
+      is_cut_black_word: true,
       is_banner_auto_5: true,
       property_radio: '1',
       goods_property_selected: '',
@@ -65,7 +80,10 @@ export default {
           value: 1,
           label: '使用{商品ID}'
         }
-      ]
+      ],
+      blackWords: [],
+      back_words: '',
+      auto_delete: ''
     }
   },
   computed: {
@@ -74,7 +92,7 @@ export default {
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'title_cut_off', 'title_ban_words',
-        'banner_completion', 'detail_img_cut', 'is_cut_sku_spec', 'is_banner_auto_5'
+        'banner_completion', 'detail_img_cut', 'is_cut_sku_spec', 'is_cut_black_word', 'is_banner_auto_5'
       ]
       for (let key in boolPropertys) {
         if (data.hasOwnProperty(boolPropertys[key])) {
@@ -115,6 +133,9 @@ export default {
       apis.hhgjAPIs.getMigrateSetting({}).then(data => {
         this.updateMigrateSettingData(data)
       })
+      apis.hhgjAPIs.getBlackWordList({}).then(data => {
+        this.blackWords = data
+      })
       // this.request('getMigrateSetting', {}, data => {
       //   this.updateMigrateSettingData(data)
       // })
@@ -129,6 +150,7 @@ export default {
           title_ban_words: Number(this.title_ban_words),
           detail_img_cut: Number(this.detail_img_cut),
           is_cut_sku_spec: Number(this.is_cut_sku_spec),
+          is_cut_black_word: Number(this.is_cut_black_word),
           is_banner_auto_5: Number(this.is_banner_auto_5),
           banner_completion: Number(this.banner_completion),
           property_radio: this.property_radio,
@@ -185,6 +207,23 @@ export default {
         }
       }
       this.goods_property_list.splice(idx, 1)
+    },
+    formatBlackWords: function (target) {
+    //   const reg = /^\n\s/g
+    //   const value = target.replace(reg, '')
+
+      let value = target.split('\n')
+      value = value.map(s => s.trim()).filter(s => s !== '')
+      console.log(value.length)
+      this.back_words = target
+    },
+    async createBlackWords () {
+      const params = {black_word_list: JSON.stringify(this.back_words)}
+      await apis.hhgjAPIs.createBlackWords(params)
+      this.$message('保存成功')
+      apis.hhgjAPIs.getBlackWordList({}).then(data => {
+        this.blackWords = data
+      })
     }
   }
 }

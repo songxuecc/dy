@@ -308,7 +308,14 @@ const hhgjAPIs = {
   },
   getCostTemplateList: (params) => {
     return api.actionCreateGet('/api/product/costTemplate/list', params)
+  },
+  getBlackWordList: (params) => {
+    return api.actionCreateGet('/api/black_word/list', params)
+  },
+  createBlackWords: (params) => {
+    return api.actionCreatorPost('/api/black_word/create', params)
   }
+
 }
 
 export default {
