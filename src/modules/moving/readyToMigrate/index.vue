@@ -90,6 +90,7 @@
             :selectIdBatchEditList="selectIdBatchEditList"
             @toggleLoadingCnt="toggleLoadingCnt"
             :tpProductList="tpProductList"
+            @reload="getProductList"
           />
         <product-list-view ref="productListView" :tpProductList="tpProductList">
             <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
@@ -465,7 +466,6 @@ export default {
       }, undefined, true)
     },
     resetInfo () {
-      // 这里会引起其他问题 还是不要改了
       this.captureId = '-1'
       this.shopCaptureId = '-1'
       this.pagination.index = 1

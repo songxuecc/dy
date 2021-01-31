@@ -71,14 +71,14 @@ import { productStatus } from '@/common/common'
 import utils from '@/common/utils'
 
 export default {
-  inject: ['reload'],
   name: 'BatchEdit',
   mixins: [skuHandler],
   props: {
     pageSize: String,
     selectIdBatchEditList: Array,
     onSizeChange: Object,
-    tpProductList: Array
+    tpProductList: Array,
+    reload: Object
   },
   components: {
     EditDelteRecord,
@@ -314,7 +314,7 @@ export default {
           this.percentage = 0
           this.shutdown = false
           this.activeIndex = 0
-          this.reload()
+          this.$emit('reload')
         },
         (error) => {
           this.$message.error(`${error || error.message}`)
@@ -325,7 +325,7 @@ export default {
           this.percentage = 0
           this.shutdown = false
           this.activeIndex = 0
-          this.reload()
+          this.$emit('reload')
         }
       )(list)
     },
@@ -364,7 +364,7 @@ export default {
           this.percentage = 0
           this.shutdown = false
           this.activeIndex = 0
-          this.reload()
+          this.$emit('reload')
         },
         (error) => {
           this.$message.error(`${error || error.message}`)
@@ -373,7 +373,7 @@ export default {
           this.percentage = 0
           this.shutdown = false
           this.activeIndex = 0
-          this.reload()
+          this.$emit('reload')
         }
       )(list)
     },
@@ -402,7 +402,7 @@ export default {
           this.percentage = 0
           this.shutdown = false
           this.activeIndex = 0
-          this.reload()
+          this.$emit('reload')
         },
         (error) => {
           this.$message.error(`${error || error.message}`)
@@ -411,7 +411,7 @@ export default {
           this.percentage = 0
           this.shutdown = false
           this.activeIndex = 0
-          this.reload()
+          this.$emit('reload')
         }
       )(list)
     },
@@ -466,7 +466,7 @@ export default {
           this.percentage = 0
           this.shutdown = false
           this.activeIndex = 0
-          this.reload()
+          this.$emit('reload')
         },
         (error) => {
           this.$message.error(`${error || error.message}`)
@@ -475,7 +475,7 @@ export default {
           this.percentage = 0
           this.shutdown = false
           this.activeIndex = 0
-          // this.reload()
+          this.$emit('reload')
         }
       )(list)
     },
