@@ -1,7 +1,7 @@
 <!-- sku导入详情 -->
 <template>
 <div>
-  <el-alert type="warning" :closable="false">
+  <el-alert type="warning" :closable="false" @tab-click="handleClick">
     <div slot="title" class="font-14 flex">
       <span><b>·</b>修改字段:&nbsp;导入修改sku编码</span>
       <span><b>·</b>修改时间:&nbsp;{{parentRowData.create_time}}</span>
@@ -9,8 +9,10 @@
     </div>
   </el-alert>
   <el-tabs v-model="activeName" >
-    <el-tab-pane :label="tab.label" :name="tab.name" :key="tab.name" v-for="tab in tabs">
-      <TableProductDetail :activeName="activeName" :currentName="tab.name" v-if="tab.name === activeName"/>
+    <el-tab-pane :label="tab.label" :name="tab.name" :key="tab.name" v-for="tab in tabs" >
+      <div style="position:relative">
+        <TableProductDetail :activeName="activeName" style="height:50vh;min-height:50vh;overflow:auto;" :currentName="tab.name" v-if="tab.name === activeName"/>
+      </div>
     </el-tab-pane>
   </el-tabs>
 </div>
@@ -54,13 +56,8 @@ export default {
       activeName: 'fail'
     }
   },
-  watch: {
-    activeName: function (params) {
-      console.log(params)
-    }
-  },
   computed: {
-    ...mapState(['tableDataProductDetail', 'paginationProductDetail', 'parentRowData'])
+    ...mapState(['parentRowData'])
   }
 }
 </script>

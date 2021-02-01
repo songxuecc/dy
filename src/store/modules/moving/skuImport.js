@@ -1,36 +1,4 @@
 import Api from '@/api/apis'
-
-// function sleep (time) {
-//   return new Promise((resolve) => setTimeout(resolve, time))
-// }
-// const mockData = [ {
-//   'id': 1,
-//   'is_delete': 0,
-//   'success_nums': 0,
-//   'status': 'running',
-//   'total_nums': 0,
-//   'fail_nums': 0,
-//   'create_time': '2021-01-27 12:15:35'
-// },
-// {
-//   'id': 2,
-//   'is_delete': 0,
-//   'success_nums': 0,
-//   'status': 'stop',
-//   'total_nums': 0,
-//   'fail_nums': 0,
-//   'create_time': '2021-01-27 12:15:35'
-// },
-// {
-//   'id': 3,
-//   'is_delete': 0,
-//   'success_nums': 0,
-//   'status': 'complete',
-//   'total_nums': 0,
-//   'fail_nums': 0,
-//   'create_time': '2021-01-27 12:15:35'
-// }]
-// 店铺绑定
 export default {
   namespaced: true,
   state: () => ({
@@ -114,7 +82,6 @@ export default {
     },
     async getProductSkuExcelDetailPage ({commit, state}, payload) {
       const {paginationProductDetail, filtersProductDetail} = payload
-      console.log(payload)
       let loading = this._vm.$loading({
         target: '.TableProductDetail'
       })

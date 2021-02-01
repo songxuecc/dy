@@ -9,7 +9,7 @@
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
       :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders" :on-success="skuExcelImportSuccess"
       :before-upload="beforeUpload" :on-progress="skuExcelImporting" :on-error="skuExcelImportError">
-      <el-button size="small" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick">
+      <el-button size="small" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick" style="height:26px">
         <i class="el-icon-upload" v-if="!isSkuImporting"></i>
         <i v-if="isSkuImporting" class="el-icon-loading"></i>
         &nbsp;&nbsp;点击上传
