@@ -48,7 +48,7 @@ export default {
       page_index: 1
     },
     filtersProductDetail: {
-      status: ''
+      status_list: ''
     },
     tableDataProductDetail: [],
     parentRowData: {}

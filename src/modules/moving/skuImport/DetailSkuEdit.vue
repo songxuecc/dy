@@ -35,20 +35,22 @@ export default {
         label: '修改失败',
         name: 'fail'
       },
-      //  {
-      //   id: 1,
-      //   label: '修改成功',
-      //   name: 'complete'
-      // },
+      {
+        id: 1,
+        label: '修改成功',
+        name: 'success'
+      },
       {
         id: 2,
         label: '修改中',
         name: 'running'
-      }, {
-        id: 3,
-        label: '终止',
-        name: 'stop'
-      }],
+      }
+      // {
+      //   id: 3,
+      //   label: '终止',
+      //   name: 'stop'
+      // }
+      ],
       activeName: 'fail'
     }
   },

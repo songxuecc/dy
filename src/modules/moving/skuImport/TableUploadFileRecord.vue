@@ -72,7 +72,7 @@ export default {
       filters: [
         {text: '导入中', value: 'running'},
         // {text: '中止', value: 'stop'},
-        {text: '失败', value: 'success'},
+        {text: '失败', value: 'fail'},
         {text: '修改完成', value: 'complete'}
       ]
     }
@@ -109,7 +109,7 @@ export default {
       const status = value.status
       this.getProductSkuExcelPage({
         filtersRecord: {
-          status: JSON.stringify(status)
+          status_list: JSON.stringify(status)
         }
       })
     },
