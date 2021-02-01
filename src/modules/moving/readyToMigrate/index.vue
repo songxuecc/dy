@@ -7,14 +7,14 @@
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleStatusFilterChange"
-                               popper-class="select-long" style="width: 120px"
+                               popper-class="select-long" style="width: 200px"
                     >
                         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="复制时间">
                     <el-select v-model="captureId" placeholder="请选择" size="small" @change="handleCaptureChange"
-                               popper-class="select-long" style="width: 175px"
+                               popper-class="select-long" style="width: 200px"
                     >
                         <el-option-group>
                             <el-option v-for="item in captureOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -29,22 +29,24 @@
                 <el-form-item>
                     <el-button type="primary" size="small" @click="handleFilterChange">搜索</el-button>
                 </el-form-item>
-                <br>
-                <div v-if="shopCaptureOptionList.length">
-                  <span style="font-size:14px;color: #606266;margin-right: 10px;">店铺复制</span>
+                <div class="flex">
+                  <div v-if="shopCaptureOptionList.length">
+                  <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span>
                   <el-button type="text" @click="handleShopCaptureChange(item.value)" v-for="item in shopCaptureOptions.slice(1,3)" :key="item.value">
-                    <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;">{{item.label}}
+                    <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;font-size:13px;">{{item.label}}
                     </el-link>
                   </el-button>
                   <el-form-item>
                       <el-select v-model="shopCaptureId" placeholder="请选择" size="small" @change="handleShopCaptureChange"
-                                popper-class="select-long" style="width: 175px"
+                                popper-class="select-long" style="width: 200px"
                       >
                           <el-option-group>
                               <el-option v-for="item in shopCaptureOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                           </el-option-group>
                       </el-select>
                   </el-form-item>
+                </div>
+
                 </div>
             </el-form>
         </div>
@@ -53,6 +55,7 @@
                       center>
             </el-alert>
         </div>
+
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
             <template slot='title'>
                 <div>
@@ -81,6 +84,14 @@
                 </div>
             </el-tooltip>
         </el-alert>
+        <BatchEdit
+            @onSizeChange="handleSizeChange"
+            :pageSize="pagination.size"
+            :selectIdBatchEditList="selectIdBatchEditList"
+            @toggleLoadingCnt="toggleLoadingCnt"
+            :tpProductList="tpProductList"
+            @reload="getProductList"
+          />
         <product-list-view ref="productListView" :tpProductList="tpProductList">
             <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
                 <el-button size="small" type="danger" @click="forceGetCapture" style="right: 0px; margin-right: 10px;">重新复制本页</el-button>
@@ -97,30 +108,32 @@
         <br>
         <el-tooltip v-if="isShopCapture"  content="本页复制完才能复制下一页" placement="top">
           <el-pagination :disabled="getCaptureStatus !== 'finish'"
-                  v-show="loadingCnt == 0"
-                  @current-change="handleCurrentChange"
-                  :current-page="pagination.index"
-                  :page-size="pagination.size"
-                  layout="total, prev, pager, next, jumper"
-                  :total="pagination.total">
+            v-show="loadingCnt == 0"
+            @current-change="handleCurrentChange"
+            :current-page="pagination.index"
+            :page-size="pagination.size"
+            layout="total, prev, pager, next, jumper"
+            :total="pagination.total">
           </el-pagination>
         </el-tooltip>
         <el-pagination v-else
-                v-show="loadingCnt == 0"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="pagination.index"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="pagination.size"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="pagination.total">
+          v-show="loadingCnt == 0"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagination.index"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="pagination.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pagination.total">
         </el-pagination>
         <div  class="common-bottom">
             <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
                 <span style="line-height:21px">准备搬家</span>
                 <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
             </el-button>
+            <div class="info mt-10"><span class="fail">*</span>搬家仅针对<span class="fail">待上线、失败、驳回</span>状态商品进行搬家；其余状态商品会自动过滤</div>
         </div>
+
         <div>
           <el-dialog
             title="淘宝登录验证"
@@ -194,13 +207,13 @@
     </div>
 </template>
 <script>
-import productListView from '@/components/ProductListView.vue'
+import productListView from '@/components/ProductListView'
+import BatchEdit from './components/BatchEdit'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import { createNamespacedHelpers, mapActions } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
-
 const {
   mapActions: mapActionsMoving
 } = createNamespacedHelpers('moving/migrateSettingTemplate')
@@ -209,7 +222,8 @@ export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productListView
+    productListView,
+    BatchEdit
   },
   data () {
     return {
@@ -227,7 +241,7 @@ export default {
       },
       pagination: {
         index: 1,
-        size: 10,
+        size: 50,
         total: 0
       },
       capture: {},
@@ -312,6 +326,20 @@ export default {
       return options
     },
     selectIdList () {
+      if (!this.isMounted) {
+        return []
+      }
+      let retList = []
+      const tpProductList = this.tpProductList || []
+      for (let id in this.$refs.productListView.dicSelectId) {
+        const product = tpProductList.find(item => Number(item.tp_product_id) === Number(id))
+        if (product && this.$refs.productListView.dicSelectId[id] && [common.productStatus.WAIT_ONLINE, common.productStatus.FAILED, common.productStatus.REJECT].includes(product.status)) {
+          retList.push(id)
+        }
+      }
+      return retList
+    },
+    selectIdBatchEditList () {
       if (!this.isMounted) {
         return []
       }
@@ -441,7 +469,7 @@ export default {
       this.captureId = '-1'
       this.shopCaptureId = '-1'
       this.pagination.index = 1
-      this.pagination.size = 10
+      this.pagination.size = 50
       this.pagination.total = 0
       this.search.key = ''
       this.search.status = '-1'
@@ -469,7 +497,7 @@ export default {
       this.$refs.productListView.dicSelectId = {}
     },
     resetPagination () {
-      this.pagination.size = 10
+      this.pagination.size = 50
       this.pagination.index = 1
     },
     resetPaginationIndex () {
@@ -919,6 +947,9 @@ export default {
     },
     onOpenedCate () {
       this.$refs.categorySelectView.initCate()
+    },
+    toggleLoadingCnt (value) {
+      this.loadingCnt = value
     }
   }
 }
@@ -930,5 +961,11 @@ export default {
     /deep/ .el-link.el-link--default.isSelect {
          color: #409EFF;
           border-bottom: 1px solid #409EFF;
+    }
+    /deep/ .el-form--inline .el-form-item {
+        display: inline-block;
+        margin-right: 10px;
+        vertical-align: top;
+        margin-bottom: 10px;
     }
 </style>

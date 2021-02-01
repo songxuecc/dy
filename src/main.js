@@ -10,37 +10,16 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from './store/store'
 import utils from '@/common/utils'
-import upperFirst from 'lodash/upperFirst'
-import camelCase from 'lodash/camelCase'
 import HhIcon from '@/components/HhIcon'
 import VueClipboard from 'vue-clipboard2'
+import {registerComponent, registerDirectives, requireAll} from '@/common/register'
 
 Vue.use(VueClipboard)
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.component('hh-icon', HhIcon)
-
-// global components register
-const requireComponent = require.context(
-  './components/ui',
-  false,
-  /([\w\W]*)\.(vue|js)$/
-)
-requireComponent.keys().forEach(fileName => {
-  const componentConfig = requireComponent(fileName)
-  const componentName = upperFirst(
-    camelCase(
-      fileName
-        .split('/')
-        .pop()
-        .replace(/\.\w+$/, '')
-    )
-  )
-  Vue.component(
-    componentName,
-    componentConfig.default || componentConfig
-  )
-})
+registerComponent()
+registerDirectives()
 
 // Vue.use(ELEMENT)
 
@@ -55,3 +34,6 @@ new Vue({
     utils.initMoment()
   }
 })
+
+const req = require.context('@/assets/icon/icons', true, /\.svg$/)
+requireAll(req)

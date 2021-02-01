@@ -1,5 +1,5 @@
 <template lang="html">
-    <div style="height: 450px;">
+    <div>
         <el-row v-loading="loadingCnt">
             <el-input v-model="cateSearchStr" size="mini" prefix-icon="el-icon-search" placeholder="请输入关键词搜索分类"
                       @keyup.enter.native="searchCategory"
@@ -35,15 +35,15 @@
                 <div x-arrow="true" class="popper__arrow" style="left: 35px;"></div>
                 {{ "已选：" + selectCate.name }}
             </div>
-            <br>
-            <div  class="common-bottom">
-              <el-link type="primary" target="_blank" :underline="false" style="float: left" @click="realSyncCategory">
-                <i class="el-icon-refresh"></i>
-                获取新类目
-                <span><el-progress v-if="isShowProgress" type="line" :percentage="percentage" :width="20"></el-progress></span>
-              </el-link>
-              <el-button :disabled="selectCate.leaf !== 1" type="primary" @click="confirm">保存</el-button>
+            <div class="mt-10">
+              <el-link type="primary" target="_blank" :underline="false" @click="realSyncCategory">
+              <i class="el-icon-refresh"></i>
+              获取新类目
+              <span><el-progress v-if="isShowProgress" type="line" :percentage="percentage" :width="20"></el-progress></span>
+            </el-link>
             </div>
+            <div class="flex justify-c common-bottom" v-if="!$slots.footer"><el-button :disabled="selectCate.leaf !== 1" type="primary" @click="confirm" style="width:120px">保存</el-button></div>
+            <slot name="footer"></slot>
         </el-row>
     </div>
 </template>

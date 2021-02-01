@@ -308,7 +308,11 @@ const hhgjAPIs = {
   },
   getCostTemplateList: (params) => {
     return api.actionCreateGet('/api/product/costTemplate/list', params)
+  },
+  updateTpproductBrand: (params) => {
+    return api.actionCreatorPost('/api/tpproduct/brand/update', params)
   }
+
 }
 
 export default {

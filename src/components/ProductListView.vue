@@ -1,6 +1,6 @@
 <template lang="html">
     <div>
-        <div class="text-left" style="padding: 10px 0">
+        <!-- <div class="text-left" style="padding: 10px 0">
             <el-row>
                 <el-col :span="16">
                     商品列表&nbsp;&nbsp;
@@ -15,7 +15,7 @@
                     <slot name="upperRight"></slot>
                 </el-col>
             </el-row>
-        </div>
+        </div> -->
         <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
                   :row-style="{height:'68px'}"
                   @select-all="handleSelectAll" @select="handleSelect"
@@ -171,7 +171,7 @@
           :show-close="false"
           :visible.sync="deleteProductVisible"
           width="30%">
-          <p>只删除软件的记录，对抖音商品没影响，您确定要操作吗？</p>
+          <p>只删除软件的记录，对小店后台商品没影响，删除后已复制的商品可进行再次复制搬家，您确定要操作吗？</p>
           <span slot="footer" class="dialog-footer">
             <el-button type="plain" @click="deleteProductVisible=false">取消</el-button>
             <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
@@ -480,13 +480,13 @@ export default {
       if (this.isSyncSource) {
         return true
       }
-      if (parseInt(row.status) === 0) {
-        return true
-      }
-      if (parseInt(row.check) === 0 && (parseInt(row.status) === 5 || parseInt(row.status) === 10)) {
-        return true
-      }
-      return false
+      // if (parseInt(row.status) === 0) {
+      //   return true
+      // }
+      // if (parseInt(row.check) === 0 && (parseInt(row.status) === 5 || parseInt(row.status) === 10)) {
+      //   return true
+      // }
+      return true
     },
     isModifyEnable (row) {
       // 兼容之前数据
