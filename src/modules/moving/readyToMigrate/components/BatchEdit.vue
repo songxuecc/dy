@@ -352,9 +352,10 @@ export default {
         fn,
         (data) => {
           const successLists = data.filter(item => item.is_brand_update)
+          const message = !this.shutdown && successLists.length === list.length ? '修改成功' : `成功数${successLists.length},失败数${list.length - successLists.length},失败可能原因是商品未填写类目或该类目不在品牌授权范围内`
           this.$message({
             message: !this.shutdown
-              ? `成功数${successLists.length},失败数${list.length - successLists.length},失败可能原因是商品未填写类目或该类目不在品牌授权范围内`
+              ? message
               : '中止成功',
             type: 'success',
             duration: 5000
