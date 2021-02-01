@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="TableProductDetail">
-    <el-table :data="tableDataProductDetail" stripe style="width: 100%;margin-bottom:100px" row-key="dy_product_id">
+    <el-table :data="tableDataProductDetail" stripe style="width: 100%;" row-key="dy_product_id">
       <el-table-empty slot="empty" />
       <el-table-column prop="sku_img_url" label="图片" width="80">
         <template slot-scope="scope">
@@ -22,8 +22,8 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <div style="position:absolute;bottom:0;right:35px;width:100%;text-align:right;background:#ffffff">
+    <div style="width: 100%;margin-bottom:100px;text-align:center" class="pt-10">滚动到底部～</div>
+    <div style="position:absolute;bottom:0;right:0;width:100%;text-align:right;background:#ffffff">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
         :current-page="paginationProductDetail.page_index" class=" pt-20 right mr-20" :page-sizes="sizes"
         :page-size="paginationProductDetail.page_size" layout="total, sizes, prev, pager, next, jumper"
