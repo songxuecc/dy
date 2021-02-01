@@ -41,6 +41,7 @@
           row-key="tp_product_id"
           style="width: 100%"
           :cell-class-name="cellClassName">
+          <el-table-empty slot="empty"/>
             <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id">
                 <template slot="header" slot-scope="scope">
                     <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.name }}</span>

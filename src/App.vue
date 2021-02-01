@@ -69,7 +69,10 @@
 </template>
 
 <script>
+import '@/assets/css/theme/index.css'
+import '@/assets/css/theme/index.less'
 import '@/assets/css/base.less'
+
 import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import navBar from '@/components/Navbar'
@@ -323,6 +326,7 @@ export default {
 </script>
 
 <style lang="less">
+
   #app {
     font-family: 14px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
     -webkit-font-smoothing: antialiased;

@@ -5,6 +5,7 @@
               :header-cell-style="{padding: '9px 0', 'line-height': '30px'}" stripe
               @selection-change="handleSelectionChange" @cell-click="onCellClick"
     >
+    <el-table-empty slot="empty"/>
       <el-table-column v-if="canSelect" type="selection" :reserve-selection="true" :key="Math.random()" :selectable="selectable">
       </el-table-column>
       <el-table-column label="商品">

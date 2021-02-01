@@ -18,6 +18,7 @@
         <el-table ref="dyProductListTable" :data="dyProductList" row-key="goods_id" border style="width: 100%"
                   :row-style="{height:'68px'}" :cell-style="{padding:0}"
         >
+        <el-table-empty slot="empty"/>
 <!--            <el-table-column type="selection" :reserve-selection="true" :selectable="this.$parent.isSelectionEnable ===undefined ? function(){return true}:this.$parent.isSelectionEnable">-->
 <!--            </el-table-column>-->
             <el-table-column label="图片" width="100" align="center">
