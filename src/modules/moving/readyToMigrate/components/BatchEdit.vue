@@ -231,7 +231,6 @@ export default {
           return new Promise(async (resolve, reject) => {
             try {
               const sliceList = list.slice(previous, current)
-              console.log(sliceList)
               const data = await fn.call(_this, sliceList)
               previous = current
               current = Math.min(previous + step, length)
@@ -248,12 +247,15 @@ export default {
             succeesCallback && succeesCallback(result)
             return false
           }
+          const percentage = Math.floor(previous / length * 100)
+          vm.percentage = percentage
           if (previous < length) {
             resultFn()
-            const percentage = Math.floor(current / length * 100)
-            vm.percentage = percentage
           } else {
-            succeesCallback && succeesCallback(result)
+            // 满足到达100%进度条的动画
+            setTimeout(() => {
+              succeesCallback && succeesCallback(result)
+            }, 500)
           }
         }).catch(error => {
           if (error) {
