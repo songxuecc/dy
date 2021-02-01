@@ -65,7 +65,7 @@
                         </span>
           </el-tooltip>
             <el-button type="text" class="table-header-btn" @click="showSkuPrice(scope.row)">
-              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+              <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial;font-weight:bold">修改</span>
             </el-button>
           <el-tooltip v-if="scope.row.groupPriceError !== ''" placement="top"
                       :content="scope.row.groupPriceError"
