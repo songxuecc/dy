@@ -34,11 +34,13 @@ export default {
         id: 0,
         label: '修改失败',
         name: 'fail'
-      }, {
-        id: 1,
-        label: '修改成功',
-        name: 'complete'
-      }, {
+      },
+      //  {
+      //   id: 1,
+      //   label: '修改成功',
+      //   name: 'complete'
+      // },
+      {
         id: 2,
         label: '修改中',
         name: 'running'

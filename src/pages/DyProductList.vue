@@ -64,7 +64,7 @@
       <batch-edit-view ref="batchEditView" @saved="onBatchEditSaved"></batch-edit-view>
     </el-dialog>
 
-    <el-dialog title="选择需要导出的字段" :visible.sync="dialogExportVisible" @opened="dialogExportOpened">
+    <el-dialog title="选择需要导出的字段" :visible.sync="dialogExportVisible" @opened="dialogExportOpened" v-hh-modal>
       <div v-loading="loadingCnt">
         <div>
           <el-checkbox v-model="isAllFieldSelected" @change="changeAllFieldSelected">全选</el-checkbox>

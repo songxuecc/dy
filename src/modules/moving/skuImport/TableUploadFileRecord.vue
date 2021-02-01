@@ -1,7 +1,7 @@
 <!-- sku导入列表 -->
 <template>
   <div class="TableUploadFileRecord mt-20">
-    <el-table :data="tableDataRecord"  :row-style="{height:'53px'}" :header-cell-style="{padding: 0}" stripe style="width: 100%;" header-row-class-name="label"   row-key="id" >
+    <el-table :data="tableDataRecord" @filter-change="filterHandler"  :row-style="{height:'53px'}" :header-cell-style="{padding: 0}" stripe style="width: 100%;" header-row-class-name="label"   row-key="id">
       <el-table-empty slot="empty"/>
       <el-table-column prop="create_time" label="修改时间" width="180">
       </el-table-column>
@@ -11,10 +11,10 @@
       </el-table-column>
       <el-table-column prop="fail_nums" label="失败数" class-name="fail" label-class-name="label">
       </el-table-column>
-      <el-table-column prop="status" label="状态" width="120"  :filters="filters" :filter-method="filterHandler">
+      <el-table-column prop="status" label="状态" width="120"  :filters="filters" :filter-multiple="true"  column-key="status">
         <template slot-scope="scope">
           <div v-if="scope.row.status === 'running'" class="flex column warning ">
-            导入中
+            <span>导入中<span v-if="scope.row.percent !== 100"> - {{scope.row.percent}}%</span></span>
             <el-progress :percentage="scope.row.percent" :show-text="false" style="width:80px" :stroke-width="10"></el-progress>
           </div>
           <div v-else-if="scope.row.status === 'stop'">终止</div>
@@ -30,8 +30,8 @@
       </el-table-column>
     </el-table>
     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="paginationRecord.page_index"
-      class=" pt-20 right mr-20" :page-sizes="paginationRecord.sizes" :page-size="paginationRecord.page_size"
-      layout="total, sizes, prev, pager, next, jumper" :total="paginationRecord.total">
+      class=" pt-20 right mr-20" :page-sizes="sizes" :page-size="paginationRecord.page_size"
+      layout="total, sizes, prev, pager, next, jumper" :total="totalRecord">
     </el-pagination>
 
      <el-dialog title="提示" :visible="visibleDelete || visibleShutDown" v-hh-modal width="30%" center @close="closeDelete">
@@ -71,9 +71,9 @@ export default {
       visibleShutDown: false,
       filters: [
         {text: '导入中', value: 'running'},
-        {text: '中止', value: 'stop'},
+        // {text: '中止', value: 'stop'},
         {text: '失败', value: 'success'},
-        {text: '修改完成', value: 'fail'}
+        {text: '修改完成', value: 'complete'}
       ]
     }
   },
@@ -81,15 +81,12 @@ export default {
     this.init()
   },
   computed: {
-    ...mapState(['tableDataRecord', 'paginationRecord', 'filtersRecord', 'progressIds'])
+    ...mapState(['tableDataRecord', 'sizes', 'totalRecord', 'paginationRecord', 'filtersRecord', 'progressIds'])
   },
   methods: {
     ...mapActions(['getProductSkuExcelPage', 'deleteProductSkuExcelPage']),
     init () {
-      this.getProductSkuExcelPage({
-        filtersRecord: this.filtersRecord,
-        paginationRecord: this.paginationRecord
-      })
+      this.getProductSkuExcelPage()
     },
     handleEdit (type, id) {
       this.$emit(type, id)
@@ -97,7 +94,6 @@ export default {
     handleSizeChange (pageSize) {
       this.getProductSkuExcelPage({
         paginationRecord: {
-          ...this.paginationRecord,
           page_size: pageSize
         }
       })
@@ -105,16 +101,15 @@ export default {
     handleCurrentChange (pageIndex) {
       this.getProductSkuExcelPage({
         paginationRecord: {
-          ...this.paginationRecord,
           page_index: pageIndex
         }
       })
     },
     filterHandler (value, row, column) {
+      const status = value.status
       this.getProductSkuExcelPage({
         filtersRecord: {
-          ...this.filtersRecord,
-          [column.property]: value
+          status: JSON.stringify(status)
         }
       })
     },

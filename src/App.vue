@@ -70,8 +70,9 @@
 
 <script>
 import '@/assets/css/theme/index.css'
-import '@/assets/css/base.less'
 import '@/assets/css/theme/index.less'
+import '@/assets/css/base.less'
+
 import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import navBar from '@/components/Navbar'

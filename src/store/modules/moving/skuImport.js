@@ -34,17 +34,16 @@ import Api from '@/api/apis'
 export default {
   namespaced: true,
   state: () => ({
+    sizes: [10, 20, 50, 100],
+    totalRecord: 0,
+    totalProductDetail: 0,
     paginationRecord: {
-      sizes: [10, 20, 50, 100],
       page_size: 10,
       page_index: 1
     },
-    filtersRecord: {
-      status: ''
-    },
+    filtersRecord: {},
     tableDataRecord: [],
     paginationProductDetail: {
-      sizes: [10, 20, 50, 100],
       page_size: 10,
       page_index: 1
     },
@@ -61,23 +60,30 @@ export default {
   },
   actions: {
     async getProductSkuExcelPage ({commit, state}, payload) {
-      const {paginationRecord, filtersRecord} = payload
+      const {paginationRecord, filtersRecord} = payload || {}
+
       let loading = this._vm.$loading({
         target: '.TableUploadFileRecord'
       })
       try {
-        const parmas = {
-          page_size: paginationRecord.page_size,
-          page_index: paginationRecord.page_index,
+        const nextPaginationRecord = {
+          ...state.paginationRecord,
+          ...paginationRecord
+        }
+        const nextFiltersRecord = {
+          ...state.filtersRecord,
           ...filtersRecord
         }
+        const parmas = {
+          ...nextPaginationRecord,
+          ...nextFiltersRecord
+        }
         const data = await Api.hhgjAPIs.getProductSkuExcelPage(parmas)
-        console.log(data)
-        paginationRecord.total = data.total
         commit('save', {
-          paginationRecord,
-          filtersRecord,
-          tableDataRecord: data.item_list
+          paginationRecord: nextPaginationRecord,
+          filtersRecord: nextFiltersRecord,
+          tableDataRecord: data.item_list,
+          totalRecord: data.total
         })
 
         this.dispatch('moving/skuImport/getperprogress', data.item_list)
@@ -112,18 +118,26 @@ export default {
       let loading = this._vm.$loading({
         target: '.TableProductDetail'
       })
-      const parmas = {
-        page_size: paginationProductDetail.page_size,
-        page_index: paginationProductDetail.page_index,
-        ...filtersProductDetail
-      }
       try {
+        const nextPaginationProductDetail = {
+          ...state.paginationProductDetail,
+          ...paginationProductDetail
+        }
+        const nextFiltersProductDetail = {
+          ...state.filtersProductDetail,
+          ...filtersProductDetail
+        }
+        const parmas = {
+          ...nextPaginationProductDetail,
+          ...nextFiltersProductDetail
+        }
+
         const data = await Api.hhgjAPIs.getProductSkuExcelDetailPage(parmas)
-        paginationProductDetail.total = data.total
         commit('save', {
-          paginationProductDetail,
-          filtersProductDetail,
-          tableDataProductDetail: data.item_list
+          paginationProductDetail: nextPaginationProductDetail,
+          filtersProductDetail: nextFiltersProductDetail,
+          tableDataProductDetail: data.item_list,
+          totalProductDetail: data.total
         })
       } catch (err) {
         console.log(err)

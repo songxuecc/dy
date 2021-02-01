@@ -24,8 +24,8 @@
       </el-table-column>
     </el-table>
      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="paginationProductDetail.page_index"
-      class=" pt-20 right mr-20" :page-sizes="paginationProductDetail.sizes" :page-size="paginationProductDetail.page_size"
-      layout="total, sizes, prev, pager, next, jumper" :total="paginationProductDetail.total">
+      class=" pt-20 right mr-20" :page-sizes="sizes" :page-size="paginationProductDetail.page_size"
+      layout="total, sizes, prev, pager, next, jumper" :total="totalProductDetail">
     </el-pagination>
   </div>
 </template>
@@ -49,15 +49,16 @@ export default {
     }
   },
   mounted () {
-    const data = {status: this.activeName, parent_id: this.parentId}
+    const data = {status: this.activeName, parent_id: this.parentRowData.id}
     this.getProductSkuExcelDetailPage({
       filtersProductDetail: data,
       paginationProductDetail: this.paginationProductDetail
     })
   },
   computed: {
-    ...mapState(['tableDataProductDetail', 'paginationProductDetail', 'parentRowData']),
+    ...mapState(['tableDataProductDetail', 'sizes', 'totalProductDetail', 'paginationProductDetail', 'parentRowData']),
     filters: function () {
+      console.log(this.parentRowData)
       if (!this.active || !this.parentRowData) return false
       const data = {status: this.active, parentRowData: this.parentRowData.id}
       return data
@@ -76,7 +77,6 @@ export default {
     handleSizeChange (pageSize) {
       this.getProductSkuExcelDetailPage({
         paginationProductDetail: {
-          ...this.paginationProductDetail,
           page_size: pageSize
         }
       })
@@ -84,7 +84,6 @@ export default {
     handleCurrentChange (pageIndex) {
       this.getProductSkuExcelDetailPage({
         paginationProductDetail: {
-          ...this.paginationProductDetail,
           page_index: pageIndex
         }
       })
