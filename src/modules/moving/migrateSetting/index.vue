@@ -22,14 +22,15 @@
             </el-form-item>
         </el-form>
         <div style="display:flex" >
-            <p style="width: 35%;text-align:center;position:relative" >
-                <el-input :value="back_words" @input="formatBlackWords($event)" type="textarea"
-                :autosize="{ minRows: 3}"  size="small" placeholder="请输入自定义违规词，换行分隔多个违规词"
-                style="width: 100%;" />
-                <el-button size="small" style="margin-top:10px;position:absolute;right:20px;bottom:10px" type="primary" @click="createBlackWords">添加</el-button>
+            <p style="width: 35%;text-align:right;position:relative" >
+                <el-input v-model="back_words" @input="formatBlackWords" type="textarea"
+                 size="small" placeholder="请输入自定义违规词，换行或空格，分隔多个违规词"
+                 :autosize="{ minRows: 4}"
+                style="width: 100%;"/>
+                <el-button size="small" style="margin-top:10px;" type="primary" @click="createBlackWords">添加</el-button>
             </p>
-            <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px">
-                <el-tag v-for="tag in blackWords" :key="tag" closable :type="tag">
+            <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px" v-loading="tagLoading">
+                <el-tag v-for="(tag,index) in blackWords" :disable-transitions="true" :key="tag" closable :type="typeList[index%5]" @close="handleClose(tag)">
                     {{tag}}
                 </el-tag>
             </div>
@@ -83,7 +84,10 @@ export default {
       ],
       blackWords: [],
       back_words: '',
-      auto_delete: ''
+      auto_delete: '',
+      tagLoading: false,
+      typeList: ['default', 'success', 'info', 'warning', 'danger']
+
     }
   },
   computed: {
@@ -208,22 +212,48 @@ export default {
       }
       this.goods_property_list.splice(idx, 1)
     },
-    formatBlackWords: function (target) {
-    //   const reg = /^\n\s/g
-    //   const value = target.replace(reg, '')
-
-      let value = target.split('\n')
+    formatBlackWords () {
+      let value = this.back_words.split(/[\s\n]/)
       value = value.map(s => s.trim()).filter(s => s !== '')
-      console.log(value.length)
-      this.back_words = target
+      this.black_word_list = [...new Set(value)]
     },
-    async createBlackWords () {
-      const params = {black_word_list: JSON.stringify(this.back_words)}
-      await apis.hhgjAPIs.createBlackWords(params)
-      this.$message('保存成功')
+    getBlackWords () {
       apis.hhgjAPIs.getBlackWordList({}).then(data => {
         this.blackWords = data
       })
+    },
+    async createBlackWords () {
+      const params = {black_word_list: JSON.stringify(this.black_word_list)}
+      try {
+        await apis.hhgjAPIs.createBlackWords(params)
+        this.$message.success('保存成功')
+        this.getBlackWords()
+      } catch (error) {
+        if (error) {
+          console.error(error)
+        }
+        this.$message.error(`${error}`)
+      }
+
+      this.back_words = ''
+    },
+    async handleClose (word) {
+      console.log(word)
+      console.log(this.$loading)
+      this.tagLoading = true
+
+      try {
+        await apis.hhgjAPIs.deleteBlackWords({
+          word
+        })
+        this.getBlackWords()
+      } catch (error) {
+        if (error) {
+          console.error(error)
+        }
+        this.$message.error(`${error}`)
+      }
+      this.tagLoading = false
     }
   }
 }
@@ -239,4 +269,12 @@ export default {
     .title {
       font-size: 14px;
     }
+    // .input-text {
+    //   width: 100%;
+    //   min-height:100%;
+    //   /deep/ .el-textarea__inner {
+    //     min-height:100% !important;
+    //     height:100% !important;
+    //   }
+    // }
 </style>

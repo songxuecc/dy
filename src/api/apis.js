@@ -314,6 +314,9 @@ const hhgjAPIs = {
   },
   createBlackWords: (params) => {
     return api.actionCreatorPost('/api/black_word/create', params)
+  },
+  deleteBlackWords: (params) => {
+    return api.actionCreatorPost('/api/black_word/delete', params)
   }
 
 }
