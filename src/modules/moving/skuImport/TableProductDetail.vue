@@ -1,7 +1,7 @@
 <!--  -->
 <template>
-  <div class="TableProductDetail">
-    <el-table :data="tableDataProductDetail" stripe style="width: 100%;" row-key="dy_product_id">
+  <div>
+    <el-table :data="tableDataProductDetail" stripe style="width: 100%;" row-key="dy_product_id" class="TableProductDetail">
       <el-table-empty slot="empty" />
       <el-table-column prop="sku_img_url" label="图片" width="80">
         <template slot-scope="scope">
