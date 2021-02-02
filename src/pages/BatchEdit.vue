@@ -30,6 +30,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="改价格" name="price"></el-tab-pane>
+          <el-tab-pane label="改发货模式" name="presellType"></el-tab-pane>
 <!--         <el-tab-pane label="轮播图" name="banner"></el-tab-pane>-->
 <!--         <el-tab-pane label="改编码" name="outerSn"></el-tab-pane>-->
 <!--          <el-tab-pane label="改模板" name="template"></el-tab-pane>-->
@@ -108,6 +109,10 @@
                                @rollback="rollbackChange" @confirm="confirmChange"
 
       ></edit-outer-sn-drawer>
+      <edit-presell-drawer v-else-if="activeTabName==='presellType'"  ref="editPresellDrawer"
+                               :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
+                               @rollback="rollbackChange" @confirm="confirmChange"
+      ></edit-presell-drawer>
     </el-drawer>
     <el-dialog title="修改提示" width="800px" :visible.sync="dialogEditVisible" @close="closeDialog" append-to-body center>
       <div v-if="Object.keys(auditingProductDict).length > 0">
@@ -159,6 +164,7 @@ import editBannerDrawer from '@/components/EditBannerDrawer.vue'
 import editStockDrawer from '@/components/EditStockDrawer.vue'
 import editPriceDrawer from '@/components/EditPriceDrawer.vue'
 import editOuterSnDrawer from '@/components/EditOuterSnDrawer.vue'
+import editPresellDrawer from '@/components/EditPresellDrawer.vue'
 import helpTips from '@/components/HelpTips.vue'
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
@@ -176,6 +182,7 @@ export default {
     editStockDrawer,
     editPriceDrawer,
     editOuterSnDrawer,
+    editPresellDrawer,
     helpTips
   },
   data () {
@@ -213,6 +220,8 @@ export default {
     }),
     drawerHeight () {
       if (this.activeTabName === 'price') {
+        return '180px'
+      } else if (this.activeTabName === 'presellType') {
         return '180px'
       } else if (this.activeTabName === 'stock') {
         return this.tabPresellType === 2 ? '180px' : '130px'
@@ -399,6 +408,10 @@ export default {
         this.$message('商品未改动')
         return
       }
+      if (row.model.status === 1 && row.model.check_status === 1 && this.activeTabName === 'title') {
+        // 下架商品单个保存
+        row.model.commit = this.$refs['editTitleDrawer'].commitType
+      }
       let productNew = this.genCommitProduct(row)
       let params = {goods: [JSON.stringify(productNew)], type: 1}
       this.request('updateProduct', params, data => {
@@ -451,6 +464,18 @@ export default {
         productNew['sku_list'].forEach((sku) => {
           sku['skip_update_stock'] = true
         })
+      } else if (this.activeTabName === 'presellType') {
+        productNew['presell_type'] = product.model.presell_type
+        if (product.model.presell_type > 0) {
+          productNew['presell_delay'] = product.model.presell_delay
+        }
+        if (product.model.presell_type === 1) {
+          productNew['pre_sale_date'] = product.model.presell_end_time
+        }
+      }
+      if (product.model.status === 1 && product.model.check_status === 1 && product.model.commit) {
+        // 下架商品设置commit字段的情况
+        productNew['commit'] = product.model.commit
       }
       return productNew
     },
@@ -521,7 +546,7 @@ export default {
           if (product.code === 0) {
             if (product.goods_commit_id) {
               auditingProductDict[product.goods_id] = {
-                'message': '拼多多后台审核中',
+                'message': '平台后台审核中',
                 'goods_commit_id': product.goods_commit_id
               }
             }
