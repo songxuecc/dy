@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loadingCnt">
-    <dy-search-filter-view ref="dySearchFilterView" @filterChange="onSearchChange"></dy-search-filter-view>
+    <dy-search-filter-view ref="dySearchFilterView" @filterChange="onSearchChange" :onlyEditable="true"></dy-search-filter-view>
     <el-alert v-if="updateJobIdList.length !== 0" type="success" :closable="false" center style="margin-bottom: 10px;"
               :title="'有' + updateJobIdList.length + '组商品修改提交正在后台处理...'"
     ></el-alert>
