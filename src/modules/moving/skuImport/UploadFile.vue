@@ -61,6 +61,7 @@ export default {
     ...mapGetters({
       exportFields: 'getExportFields',
       getTokenHeaders: 'getTokenHeaders',
+      isAuth: 'getIsAuth',
       syncStatus: 'getSyncStatus'
     }),
     ...mapStateSkuImport(['tableDataRecord', 'paginationRecord', 'filtersRecord'])
@@ -81,6 +82,14 @@ export default {
     ...mapActions([
       'requestSyncProducts'
     ]),
+    async asyncUserAndNotice () { // 同步获取userInfo及notification
+      try {
+        await this.requestUserInfo()
+        this.requestNotification()
+      } catch (error) {
+        console.error(error)
+      }
+    },
     ...mapActionsSkuImport(['getProductSkuExcelPage']),
     // 同步商品
     handleSyncProducts () {
