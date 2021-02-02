@@ -38,8 +38,9 @@
           v-model="presellEndTime"
           type="datetime"
           placeholder="选择日期时间"
-          default-time="00:00:00">
-        </el-date-picker>
+          default-time="00:00:00"
+          :picker-options="pickerOptions"
+        > </el-date-picker>
         <p class="info">最多支持设置距离当前30天</p>
       </div>
       <div v-if="presellType > 0" style="display: inline-block">
@@ -48,7 +49,6 @@
           v-model="presellDelay"
           size="small"
           controls-position="right"
-          @change="handleChange"
           :min="3"
           :max="30"
           class="input-number margin-bottom-4"></el-input-number>
@@ -76,7 +76,13 @@ export default {
       commitType: 1,
       presellType: 0,
       presellEndTime: '',
-      presellDelay: 3
+      presellDelay: 3,
+      pickerOptions: {
+        disabledDate (time) {
+          let selectTime = time.getTime()
+          return selectTime < moment() || selectTime > moment().startOf('day').add(30, 'days').valueOf()
+        }
+      }
     }
   },
   computed: {
