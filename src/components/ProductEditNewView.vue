@@ -204,12 +204,7 @@
                       <el-table-column key="5" width="150">
                           <template slot="header" slot-scope="scope">
                             <span @click="toggleVisibleSkuImport">商品编码</span>
-                            <el-tooltip manua="true" @click="toggleVisibleSkuImport" class="item" effect="dark" placement="top" style="vertical-align: middle">
-                                <div slot="content">
-                                  <ul style="padding: 0; margin: 0;" @click="toggleVisibleSkuImport">无法抓取,点击查看获取方法</ul>
-                                </div>
-                                <i class="el-icon-question"></i>
-                            </el-tooltip>
+                                <span class="info pointer" @click="toggleVisibleSkuImport">无法抓取</span><i class="el-icon-question"></i>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model="scope.row.code" size="mini" type="text" :class="['input-text-left']"></el-input>
@@ -417,13 +412,16 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="visibleSkuImport" width="30%" title="提示"
+    <el-dialog :visible.sync="visibleSkuImport" width="30%"
       :append-to-body="true" v-hh-modal>
+      <div slot="title" class="center" style="font-size: large;text-align:center">提示</div>
       <div style="text-align:center">
         <p>因商品编码属于商家后台的字段，故无法获取。</p>
         <p>您可在搬家上线成功后在【导入修改】中导入"规格名称-</p>
         <p>sku编码"对应表格进行修改。</p>
-        <p src="">我是图片</p>
+        <div class="flex  justify-c align-c skuImportDialoag">
+          <img :src="skuImport"  style="width:176px;"/>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -440,6 +438,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
+import skuImport from '@/assets/images/sku_import.png'
 
 export default {
   inject: ['reload'],
@@ -457,6 +456,7 @@ export default {
   },
   data () {
     return {
+      skuImport,
       dialogVisible: false,
       dialogQuantityVisible: false,
       dialogPromoPriceVisible: false,
@@ -1487,5 +1487,15 @@ export default {
     .show {
       opacity: 1;
     }
+  }
+
+  .skuImportDialoag {
+    width: 260px;
+    height: 184px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    margin:auto;
+    margin-top:20px;
   }
 </style>

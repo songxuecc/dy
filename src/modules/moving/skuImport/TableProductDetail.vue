@@ -5,7 +5,7 @@
       <el-table-empty slot="empty" />
       <el-table-column prop="sku_img_url" label="图片" width="80">
         <template slot-scope="scope">
-          <img :src="scope.row.sku_img_url" alt="图片" class="product-img">
+          <img :src="scope.row.sku_img_url" alt="sku图片" class="product-img">
         </template>
       </el-table-column>
       <el-table-column prop="goods_name" label="商品信息" width="200">
@@ -14,11 +14,11 @@
       </el-table-column>
       <el-table-column prop="sku_code" label="SKU编码">
       </el-table-column>
-      <el-table-column prop="fail_reason" label="理由">
+      <el-table-column prop="fail_reason" label="理由" v-if="activeName === 'fail'">
       </el-table-column>
-      <el-table-column prop="edit" label="操作" width="100">
+      <el-table-column prop="edit" label="操作" width="100" v-if="activeName === 'success'">
         <template slot-scope="scope">
-          <a class="pramiry" @click="open('onDetail',scope.row.id)">查看</a>
+          <a class="pramiry" @click="open(scope.row.dy_goods_id)">查看</a>
         </template>
       </el-table-column>
     </el-table>
@@ -102,6 +102,8 @@ export default {
       }
       if (id) {
         window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + id)
+      } else {
+        console.log(id)
       }
     }
   }
