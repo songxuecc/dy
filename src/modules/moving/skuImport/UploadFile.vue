@@ -189,7 +189,7 @@ export default {
         window._hmt.push(['_trackEvent', '全部商品', '下载', '下载sku编码模板'])
       }
       window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code.xlsx'
-      this.$message.success('下载实例文件成功，请到浏览器下载内容查看')
+      this.$message.success('下载示例文件成功，请到浏览器下载内容查看')
     }
   }
 }
