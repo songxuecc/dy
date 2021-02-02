@@ -1,5 +1,6 @@
 import Api from '@/api/apis'
 import { Message } from 'element-ui'
+import moment from 'moment'
 const dyHarf = '&response_type=code&redirect_uri=https://dy.huhuguanjia.com/authorize'
 
 export default {
@@ -129,6 +130,15 @@ export default {
       return unescape(r[2])
     } else {
       return null
+    }
+  },
+  checkDeliveryDelayDay (rule, value, callback) {
+    const startTime = new Date()
+    const days = moment(value).diff(moment(startTime), 'days', true)
+    if (days > 30) {
+      callback(new Error('不可以超过30天'))
+    } else {
+      callback()
     }
   }
 }
