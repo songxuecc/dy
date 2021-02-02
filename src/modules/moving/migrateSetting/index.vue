@@ -28,7 +28,7 @@
                 :autosize="{ minRows: 4}"
                 style="width: 100%;" >
                 </el-input>
-                <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" @click="createBlackWords">添加</el-button>
+                <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" :disabled="!this.black_word_list.length" @click="createBlackWords" :loading="createBlackWordsLoading">添加</el-button>
             </p>
             <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px" v-loading="tagLoading">
                 <el-tag v-for="(tag,index) in defaultBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
@@ -90,8 +90,8 @@ export default {
       back_words: '',
       auto_delete: '',
       tagLoading: false,
-      typeList: ['default', 'success', 'info', 'warning', 'danger']
-
+      typeList: ['default', 'success', 'info', 'warning', 'danger'],
+      black_word_list: []
     }
   },
   computed: {
@@ -226,7 +226,9 @@ export default {
       })
     },
     async createBlackWords () {
+      if (!this.black_word_list.length) return false
       const params = {black_word_list: JSON.stringify(this.black_word_list)}
+      this.createBlackWordsLoading = true
       try {
         await apis.hhgjAPIs.createBlackWords(params)
         this.$message.success('保存成功')
@@ -237,7 +239,7 @@ export default {
         }
         this.$message.error(`${error}`)
       }
-
+      this.createBlackWordsLoading = false
       this.back_words = ''
     },
     async handleClose (word) {
