@@ -14,7 +14,7 @@
       <el-table-column prop="status" label="状态" width="120"  :filters="filters" :filter-multiple="true"  column-key="status">
         <template slot-scope="scope">
           <div v-if="scope.row.status === 'running'" class="flex column warning ">
-            <span>导入中<span v-if="scope.row.percent !== 100"> - {{scope.row.percent}}%</span></span>
+            <span>导入中<span v-if="scope.row.percent !== 100"> - {{scope.row.percent || 0}}%</span></span>
             <el-progress :percentage="scope.row.percent" :show-text="false" style="width:80px" :stroke-width="10"></el-progress>
           </div>
           <div v-else-if="scope.row.status === 'stop'">终止</div>
@@ -36,10 +36,10 @@
 
      <el-dialog title="提示" :visible="visibleDelete || visibleShutDown" v-hh-modal width="30%" center @close="closeDelete">
       <p style="text-align:center;" v-if="visibleDelete">
-        确定要终止当前操作吗？
+        确定要删除当前操作吗？
       </p>
       <p style="text-align:center;" v-if="visibleShutDown">
-        确定要删除当前记录吗？
+        确定要中止当前记录吗？
       </p>
       <span slot="footer">
         <el-button  style="width:120px" @click="closeDelete">

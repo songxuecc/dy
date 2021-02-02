@@ -54,30 +54,35 @@ export default {
           totalRecord: data.total
         })
 
-        this.dispatch('moving/skuImport/getperprogress', data.item_list)
+        this.dispatch('moving/skuImport/getperprogress')
       } catch (err) {
         console.log(err)
         this._vm.$message.error(`${err}`)
       }
       loading && loading.close()
     },
-    async getperprogress ({commit, state}, payload) {
-      const runingsIds = payload.filter(item => item.status === 'running').map(item => item.id)
+    async getperprogress ({commit, state}) {
+      const runingsIds = state.tableDataRecord.filter(item => item.status === 'running').map(item => item.id)
+      console.log(runingsIds)
       if (!runingsIds.length) return false
       const progressData = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
         id_list: JSON.stringify(runingsIds)
       })
       const tableDataRecord = state.tableDataRecord.map(originItem => {
         const progressItem = progressData.find(progressItem => progressItem.id === originItem.id)
-        if (!progressItem) return originItem
-        return Object.assign(originItem, progressItem)
+        console.log(progressItem)
+        if (progressItem) {
+          return {...originItem, ...progressItem}
+        } else {
+          return originItem
+        }
       })
+      console.log(tableDataRecord)
       commit('save', {
-        progressData,
         tableDataRecord
       })
       setTimeout(() => {
-        this.dispatch('moving/skuImport/getperprogress', progressData)
+        this.dispatch('moving/skuImport/getperprogress')
       }, 1000)
     },
     async getProductSkuExcelDetailPage ({commit, state}, payload) {
