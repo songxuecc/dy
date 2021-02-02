@@ -1,5 +1,5 @@
 <template lang="html">
-    <div style="text-align: left; font-size: 14px;">
+    <div style="text-align: left; font-size: 14px;" class="migrateSetting">
         <el-form ref="template" :rules="rules" style="width: 100%;">
             <el-form-item size="small" label="sku编码:" required style="margin-bottom: 0px;">
                 <el-select v-model="goods_code_type" placeholder="请选择生成方式" style="width: 350px;">
@@ -25,11 +25,15 @@
             <p style="width: 35%;text-align:right;position:relative" >
                 <el-input v-model="back_words" @input="formatBlackWords" type="textarea"
                  size="small" placeholder="请输入自定义违规词，换行或空格，分隔多个违规词"
-                 :autosize="{ minRows: 4}"
-                style="width: 100%;"/>
-                <el-button size="small" style="margin-top:10px;" type="primary" @click="createBlackWords">添加</el-button>
+                :autosize="{ minRows: 4}"
+                style="width: 100%;" >
+                </el-input>
+                <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" @click="createBlackWords">添加</el-button>
             </p>
             <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px" v-loading="tagLoading">
+                <el-tag v-for="(tag,index) in defaultBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
+                    {{tag}}
+                </el-tag>
                 <el-tag v-for="(tag,index) in blackWords" :disable-transitions="true" :key="tag" closable :type="typeList[index%5]" @close="handleClose(tag)">
                     {{tag}}
                 </el-tag>
@@ -137,9 +141,7 @@ export default {
       apis.hhgjAPIs.getMigrateSetting({}).then(data => {
         this.updateMigrateSettingData(data)
       })
-      apis.hhgjAPIs.getBlackWordList({}).then(data => {
-        this.blackWords = data
-      })
+      this.getBlackWords()
       // this.request('getMigrateSetting', {}, data => {
       //   this.updateMigrateSettingData(data)
       // })
@@ -219,7 +221,8 @@ export default {
     },
     getBlackWords () {
       apis.hhgjAPIs.getBlackWordList({}).then(data => {
-        this.blackWords = data
+        this.blackWords = data.customer
+        this.defaultBlackWords = data.default
       })
     },
     async createBlackWords () {
@@ -260,21 +263,24 @@ export default {
 </script>
 <style lang="less" scoped>
     @import '~@/assets/css/base.less';
-    .el-tag {
-      margin: 5px;
+    .migrateSetting {
+      .el-tag {
+        margin: 5px;
+      }
+      .info {
+        margin-top:10px;
+      }
+      .title {
+        font-size: 14px;
+      }
+      /deep/ .el-textarea{
+        height: 100%;
+        /deep/  .el-textarea__inner {
+          min-height: 100% !important;
+          box-sizing: border-box;
+          padding-bottom: 20px;
+        }
+      }
     }
-    .info {
-      margin-top:10px;
-    }
-    .title {
-      font-size: 14px;
-    }
-    // .input-text {
-    //   width: 100%;
-    //   min-height:100%;
-    //   /deep/ .el-textarea__inner {
-    //     min-height:100% !important;
-    //     height:100% !important;
-    //   }
-    // }
+
 </style>
