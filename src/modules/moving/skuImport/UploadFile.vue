@@ -9,7 +9,7 @@
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
       :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders" :on-success="skuExcelImportSuccess"
       :before-upload="beforeUpload" :on-progress="skuExcelImporting" :on-error="skuExcelImportError">
-      <el-button size="small" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick" style="height:26px">
+      <el-button size="small" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick">
         <i class="el-icon-upload" v-if="!isSkuImporting"></i>
         <i v-if="isSkuImporting" class="el-icon-loading"></i>
         &nbsp;&nbsp;点击上传
@@ -61,11 +61,16 @@ export default {
     ...mapGetters({
       exportFields: 'getExportFields',
       getTokenHeaders: 'getTokenHeaders',
-      isAuth: 'getIsAuth',
-      syncStatus: 'getSyncStatus'
+      syncStatus: 'getSyncStatus',
+      isAuth: 'getIsAuth'
     }),
     ...mapStateSkuImport(['tableDataRecord', 'paginationRecord', 'filtersRecord'])
 
+  },
+  mounted () {
+    if (this.isAuth && window.location.pathname !== 'authorize') {
+      this.asyncUserAndNotice()
+    }
   },
   watch: {
     isAuth (val) {
@@ -188,8 +193,8 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '全部商品', '下载', '下载sku编码模板'])
       }
-      window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code.xlsx'
       this.$message.success('下载示例文件成功，请到浏览器下载内容查看')
+      window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code.xlsx'
     }
   }
 }
