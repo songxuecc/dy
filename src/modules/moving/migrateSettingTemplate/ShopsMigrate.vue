@@ -137,7 +137,7 @@
                   :max="30"
                   class="input-number margin-bottom-4"></el-input-number>
                 <span>天发货</span>
-                <p class="info">预售商品发货时间以此限制为主，仅可设置3-30天</p>
+                <p class="info">阶梯发货期间商品发货时间以此限制为主，仅可设置3-30天</p>
                 </template>
             </el-form-item>
             <!-- 阶梯发货 -->
@@ -590,97 +590,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.help-tips {
-  width: 100px;
-  right: 0px;
-  bottom: 15px;
-  position: absolute;
-  font-size: 12px;
-  color: #409EFF;
-  cursor: pointer;
-  i {
-    font-size: 13px;
-    color: #efb947;
-    padding-right: 2px;
-  }
-}
-
-.setting-content-with-tip {
-  /deep/ .el-checkbox__label {
-    font-size: 12px;
-  }
-  /deep/ .el-checkbox__inner {
-    width: 12px;
-    height: 12px;
-  }
-  /deep/ .el-checkbox__inner::after {
-    left: 3px;
-    top: 0px;
-  }
-  /deep/ .label-tip {
-    position:absolute;
-    font-size: 12px;
-    color:#999999
-  }
-  .checkbox {
-    margin-bottom: 8px;
-  }
-  .current-shop {
-    margin-bottom: 10px;
-    line-height: 12px;
-  }
-  .group {
-    margin-bottom: 14px;
-  }
-  .is-main {
-    font-family: MicrosoftYaHei;
-    font-size: 12px;
-    color: #333333;
-  }
-  .label-name {
-    position:relative;
-  }
-  .diffrent-category-tip {
-    margin-top: 14px;
-    color:#999999;
-    font-size: 12px;
-    span {
-      color: red;
-      margin-right: 4px;
-    }
-  }
-}
-
-.step-delivery {
-  .info {
-    color: #999999;
-    font-size: 12px;
-    line-height: 12px;
-  }
-  .presell_type {
-    display: block;
-    margin-bottom: 8px;
-    p {
-      color: #999999;
-      font-size: 12px;
-      line-height: 14px;
-      margin-left: 26px;
-    }
-  }
-
-  /deep/ .el-input-number.is-controls-right .el-input__inner {
-    padding: 0;
-  }
-  .input-number {
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-  span {
-    color:#606266;
-  }
-  .margin-bottom-4 {
-    margin-bottom: 4px;
-  }
-}
-
+    @import '~@/assets/css/migratesetting.less';
 </style>

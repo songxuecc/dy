@@ -132,6 +132,21 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column v-if="activeTabName == 'presellType'" label="发货模式" :key="Math.random()">
+        <template slot-scope="scope">
+          <div>
+            <span v-if="scope.row.model.presell_type === 0">
+              现货发货
+            </span>
+            <span v-if="scope.row.model.presell_type === 1">
+              预售发货 {{ presellDelay }}
+            </span>
+            <span v-if="scope.row.model.presell_type === 2">
+              阶梯发货 {{ presellDelay }}
+            </span>
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -158,7 +173,9 @@ export default {
     },
     activeTabName: String,
     dyProductModelList: Array,
-    selectProductDict: Object
+    selectProductDict: Object,
+    presellEndTime: '',
+    presellDelay: ''
   },
   data () {
     return {
