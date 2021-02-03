@@ -16,9 +16,9 @@ import PayOrder from '@/pages/PayOrder'
 import CustomerService from '@/pages/CustomerService.vue'
 import shopsBand from '@/modules/moving/shopsBand'
 import MigrateSettingTemplate from '@/modules/moving/migrateSettingTemplate'
-import ReadyToMigrate from '@/modules/moving/readyToMigrate'
 import SkuImport from '@/modules/moving/skuImport'
 import MigrateSetting from '@/modules/moving/migrateSetting'
+import ProductList from '@/modules/moving/readyToMigrate'
 
 Vue.use(Router)
 
@@ -89,9 +89,9 @@ const router = new Router({
       }
     },
     {
-      path: '/readyToMigrate',
-      name: 'ReadyToMigrate',
-      component: ReadyToMigrate,
+      path: '/productList',
+      name: 'ProductList',
+      component: ProductList,
       meta: {
         keepAlive: true,
         requiresAuth: true
