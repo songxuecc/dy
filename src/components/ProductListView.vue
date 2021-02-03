@@ -365,7 +365,7 @@ export default {
         [common.productStatus.WAIT_ONLINE]: [edit, deleteItem],
         [common.productStatus.WAIT_MIGRATE]: [deleteItem],
         [common.productStatus.MIGRATING]: [deleteItem],
-        [common.productStatus.SAVE_DRAFT]: [houtai, deleteItem],
+        [common.productStatus.SAVE_DRAFT]: [edit, houtai, deleteItem],
         [common.productStatus.ONLINE]: [edit, houtai, deleteItem],
         [common.productStatus.FAILED]: [edit, deleteItem],
         [common.productStatus.WAIT_MODIFY]: [edit, deleteItem],
