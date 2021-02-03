@@ -14,11 +14,11 @@ import Fake from '@/pages/Fake'
 import SubscribeList from '@/pages/SubscribeList'
 import PayOrder from '@/pages/PayOrder'
 import CustomerService from '@/pages/CustomerService.vue'
-import MigrateSetting from '@/components/MigrateSetting.vue'
 import shopsBand from '@/modules/moving/shopsBand'
 import MigrateSettingTemplate from '@/modules/moving/migrateSettingTemplate'
-import ProductList from '@/modules/moving/readyToMigrate'
+import ReadyToMigrate from '@/modules/moving/readyToMigrate'
 import SkuImport from '@/modules/moving/skuImport'
+import MigrateSetting from '@/modules/moving/migrateSetting'
 
 Vue.use(Router)
 
@@ -89,9 +89,9 @@ const router = new Router({
       }
     },
     {
-      path: '/productList',
-      name: 'ProductList',
-      component: ProductList,
+      path: '/readyToMigrate',
+      name: 'ReadyToMigrate',
+      component: ReadyToMigrate,
       meta: {
         keepAlive: true,
         requiresAuth: true

@@ -323,6 +323,15 @@ const hhgjAPIs = {
   },
   getProductSkuExcelDetailPage: (params) => {
     return api.actionCreateGet('/api/product/sku/excel/detail/page', params)
+  },
+  getBlackWordList: (params) => {
+    return api.actionCreateGet('/api/black_word/list', params)
+  },
+  createBlackWords: (params) => {
+    return api.actionCreatorPost('/api/black_word/create', params)
+  },
+  deleteBlackWords: (params) => {
+    return api.actionCreatorPost('/api/black_word/delete', params)
   }
 
 }

@@ -18,7 +18,7 @@
     <svg v-if="type" v-bind="innerSvgProps" :viewBox="viewBox" >
       <use :xlink:href="`#${this.type}`"></use>
     </svg>
-    <slot v-else></slot>
+    <slot></slot>
   </span>
 </template>
 
