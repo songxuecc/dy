@@ -362,16 +362,16 @@ export default {
         text: '删除'
       }
       const productStatusMap = {
-        0: [edit, deleteItem],
-        1: [deleteItem],
-        2: [deleteItem],
-        3: [houtai, deleteItem],
-        4: [houtai, deleteItem],
-        5: [edit, deleteItem],
-        6: [edit, deleteItem],
-        7: [tryAgian, deleteItem],
-        8: [houtai, edit, deleteItem],
-        9: [deleteItem]
+        [common.productStatus.WAIT_ONLINE]: [edit, deleteItem],
+        [common.productStatus.WAIT_MIGRATE]: [deleteItem],
+        [common.productStatus.MIGRATING]: [deleteItem],
+        [common.productStatus.SAVE_DRAFT]: [houtai, deleteItem],
+        [common.productStatus.ONLINE]: [edit, houtai, deleteItem],
+        [common.productStatus.FAILED]: [edit, deleteItem],
+        [common.productStatus.WAIT_MODIFY]: [edit, deleteItem],
+        [common.productStatus.CAPTURE_FAILED]: [tryAgian, deleteItem],
+        [common.productStatus.REJECT]: [edit, houtai, deleteItem],
+        [common.productStatus.DY_APPROVING]: [deleteItem]
       }
       return productStatusMap[product.status]
     },
