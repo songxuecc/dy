@@ -357,7 +357,6 @@ export default {
           retList.push(id)
         }
       }
-      console.log(retList)
       return retList
     },
     selectIdBatchEditList () {

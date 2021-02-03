@@ -962,6 +962,7 @@ export default {
             this.productRemoveFirstBannerDic[this.productList[i].tp_product_id] = false
             this.productRemoveLastDescDic[this.productList[i].tp_product_id] = false
           }
+
           self.setProduct(self.productDic[self.product.model.tp_product_id])
           this.updateProductEditStatus()
           this.isProductEditSaving = false

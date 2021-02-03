@@ -593,7 +593,15 @@ export default {
     },
     dialogOpened () {
       if (this.curTPProduct.tp_product_id) {
-        this.$refs.productEditNewView.initList(this.curTPProduct, this.tpProductList.filter(product => [0, 5, 6, 8, 10].includes(product.status)))
+        this.$refs.productEditNewView
+          .initList(this.curTPProduct, this.tpProductList
+            .filter(product => [
+              common.productStatus.WAIT_ONLINE,
+              common.productStatus.SAVE_DRAFT,
+              common.productStatus.ONLINE,
+              common.productStatus.FAILED,
+              common.productStatus.WAIT_MODIFY,
+              common.productStatus.REJECT].includes(product.status)))
       }
     },
     dialogClose () {
