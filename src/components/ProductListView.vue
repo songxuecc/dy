@@ -235,17 +235,20 @@ export default {
     }
   },
   watch: {
-    tpProductList: function (arrNew, arrOld) {
-      this.$nextTick(function () {
-        for (let i in arrNew) {
-          let product = arrNew[i]
-          if (this.dicSelectId[product.tp_product_id]) {
-            this.$refs.productListTable.toggleRowSelection(product, true)
-          } else {
-            this.$refs.productListTable.toggleRowSelection(product, false)
+    tpProductList: {
+      handler: function (arrNew, arrOld) {
+        this.$nextTick(function () {
+          for (let i in arrNew) {
+            let product = arrNew[i]
+            if (this.dicSelectId[product.tp_product_id]) {
+              this.$refs.productListTable.toggleRowSelection(product, true)
+            } else {
+              this.$refs.productListTable.toggleRowSelection(product, false)
+            }
           }
-        }
-      })
+        })
+      },
+      deep: true
     }
   },
   methods: {
@@ -360,16 +363,16 @@ export default {
         text: '删除'
       }
       const productStatusMap = {
-        0: [edit, deleteItem],
-        1: [deleteItem],
-        2: [deleteItem],
-        3: [houtai, deleteItem],
-        4: [houtai, deleteItem],
-        5: [edit, deleteItem],
-        6: [edit, deleteItem],
-        7: [tryAgian, deleteItem],
-        8: [houtai, edit, deleteItem],
-        9: [deleteItem]
+        [common.productStatus.WAIT_ONLINE]: [edit, deleteItem],
+        [common.productStatus.WAIT_MIGRATE]: [deleteItem],
+        [common.productStatus.MIGRATING]: [deleteItem],
+        [common.productStatus.SAVE_DRAFT]: [edit, houtai, deleteItem],
+        [common.productStatus.ONLINE]: [edit, houtai, deleteItem],
+        [common.productStatus.FAILED]: [edit, deleteItem],
+        [common.productStatus.WAIT_MODIFY]: [edit, deleteItem],
+        [common.productStatus.CAPTURE_FAILED]: [tryAgian, deleteItem],
+        [common.productStatus.REJECT]: [edit, houtai, deleteItem],
+        [common.productStatus.DY_APPROVING]: [deleteItem]
       }
       return productStatusMap[product.status]
     },
@@ -591,7 +594,15 @@ export default {
     },
     dialogOpened () {
       if (this.curTPProduct.tp_product_id) {
-        this.$refs.productEditNewView.initList(this.curTPProduct, this.tpProductList.filter(product => [0, 5, 6, 8, 10].includes(product.status)))
+        this.$refs.productEditNewView
+          .initList(this.curTPProduct, this.tpProductList
+            .filter(product => [
+              common.productStatus.WAIT_ONLINE,
+              common.productStatus.SAVE_DRAFT,
+              common.productStatus.ONLINE,
+              common.productStatus.FAILED,
+              common.productStatus.WAIT_MODIFY,
+              common.productStatus.REJECT].includes(product.status)))
       }
     },
     dialogClose () {

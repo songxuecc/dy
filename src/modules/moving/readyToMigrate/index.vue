@@ -127,11 +127,21 @@
           :total="pagination.total">
         </el-pagination>
         <div  class="common-bottom">
-            <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
-                <span style="line-height:21px">准备搬家</span>
-                <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
-            </el-button>
-            <div class="info mt-10"><span class="fail">*</span>搬家仅针对<span class="fail">待上线、失败、驳回</span>状态商品进行搬家；其余状态商品会自动过滤</div>
+            <div>
+              <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
+                  <span style="line-height:21px">准备搬家</span>
+                  <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
+              </el-button>
+            </div>
+            <div class="info mt-10 flex filterOnlineProducts  align-c justify-c"><span class="fail">*</span>搬家仅针对
+              <el-checkbox-group v-model="filterOnlineProducts" class="flex ml-5">
+                <el-checkbox :label="common.productStatus.WAIT_ONLINE" >待上线</el-checkbox>
+                <el-checkbox :label="common.productStatus.FAILED" >失败</el-checkbox>
+                <el-checkbox :label="common.productStatus.REJECT" >驳回</el-checkbox>
+                <el-checkbox :label="common.productStatus.ONLINE" >已上线</el-checkbox>
+                <el-checkbox :label="common.productStatus.SAVE_DRAFT" >保存草稿箱</el-checkbox>
+              </el-checkbox-group>；其余状态商品会自动过滤
+            </div>
         </div>
 
         <div>
@@ -262,7 +272,13 @@ export default {
       isForceGetCapture: 0,
       batchDeleteCaptureVisible: false,
       captureSelection: [],
-      isFinishLogin: false
+      isFinishLogin: false,
+      filterOnlineProducts: [
+        common.productStatus.WAIT_ONLINE,
+        common.productStatus.FAILED,
+        common.productStatus.REJECT
+      ],
+      common
     }
   },
   computed: {
@@ -334,7 +350,11 @@ export default {
       const tpProductList = this.tpProductList || []
       for (let id in this.$refs.productListView.dicSelectId) {
         const product = tpProductList.find(item => Number(item.tp_product_id) === Number(id))
-        if (product && this.$refs.productListView.dicSelectId[id] && [common.productStatus.WAIT_ONLINE, common.productStatus.FAILED, common.productStatus.REJECT].includes(product.status)) {
+        // 对上线商品进行配置
+        if (
+          product &&
+          this.$refs.productListView.dicSelectId[id] &&
+          this.filterOnlineProducts.includes(product.status)) {
           retList.push(id)
         }
       }
@@ -969,4 +989,27 @@ export default {
         vertical-align: top;
         margin-bottom: 10px;
     }
+    .filterOnlineProducts {
+      /deep/ .el-checkbox {
+      color: #606266;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+      margin-right: 5px;
+  }
+  /deep/ .el-checkbox__label {
+    display: inline-block;
+    /* padding-left: 10px; */
+    line-height: 19px;
+    font-size: 12px;
+    padding-left: 2px;
+    color:#999999;
+
+}
+    }
+    .ml-5 {
+      margin-left: 5px;
+    }
+
 </style>
