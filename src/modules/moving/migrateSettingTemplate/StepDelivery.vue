@@ -103,6 +103,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex'
 import moment from 'moment'
+import commonUtils from '@/common/commonUtils'
 
 const {
   mapGetters: mapGettersMoving
@@ -110,15 +111,6 @@ const {
 
 export default {
   data () {
-    const checkDeliveryDelayDay = (rule, value, callback) => {
-      const startTime = new Date()
-      const days = moment(value).diff(moment(startTime), 'days', true)
-      if (days > 30) {
-        callback(new Error('不可以超过30天'))
-      } else {
-        callback()
-      }
-    }
     return {
       rules: {
         presell_type: [
@@ -129,7 +121,7 @@ export default {
         ],
         presell_end_time: [
           { required: true, message: '请输入预售结束时间', trigger: ['blur', 'change'] },
-          { validator: checkDeliveryDelayDay, trigger: ['blur', 'change'] }
+          { validator: commonUtils.checkDeliveryDelayDay, trigger: ['blur', 'change'] }
         ],
         presell_delay: [
           { required: true, message: '请输入发货时间', trigger: ['blur', 'change'] }

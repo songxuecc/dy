@@ -207,6 +207,7 @@
 <script>
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
+import commonUtils from '@/common/commonUtils'
 import { createNamespacedHelpers, mapGetters, mapState, mapActions } from 'vuex'
 import moment from 'moment'
 import cloneDeep from 'lodash/cloneDeep'
@@ -233,16 +234,6 @@ export default {
     //     callback()
     //   }
     // }
-    const checkDeliveryDelayDay = (rule, value, callback) => {
-      const startTime = new Date()
-      const days = moment(value).diff(moment(startTime), 'days')
-      if (days > 30) {
-        callback(new Error('不可以超过30天'))
-      } else {
-        callback()
-      }
-    }
-
     return {
       pay_type: 1,
       preSaleDate: null,
@@ -277,7 +268,7 @@ export default {
         ],
         presell_end_time: [
           { required: true, message: '请输入预售结束时间', trigger: 'blur' },
-          { validator: checkDeliveryDelayDay, trigger: 'blur' }
+          { validator: commonUtils.checkDeliveryDelayDay, trigger: 'blur' }
         ],
         presell_delay: [
           { required: true, message: '请输入发货时间', trigger: 'blur' }

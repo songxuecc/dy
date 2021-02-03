@@ -24,46 +24,56 @@
     <div class="step-delivery setting-content-with-tip">
       <div style="padding: 8px 0;">
         <span>发货模式: </span>&nbsp;
-        <el-radio-group v-model="presellType">
+        <el-radio-group v-model="presell.presellType">
           <el-radio :label="0">现货发货</el-radio>
           <el-radio :label="1">预售发货</el-radio>
           <el-radio :label="2">阶梯发货</el-radio>
         </el-radio-group>
       </div>
-      <div v-if="presellType === 1" style="display: inline-block; padding-right: 20px;">
-        <span>预售结束时间</span>
-        <el-date-picker
-          class="margin-bottom-4"
-          size="small"
-          v-model="presellEndTime"
-          type="datetime"
-          placeholder="选择日期时间"
-          default-time="00:00:00"
-          :picker-options="pickerOptions"
-        > </el-date-picker>
-        <p class="info">最多支持设置距离当前30天</p>
-      </div>
-      <div v-if="presellType > 0" style="display: inline-block">
-        <span>{{ presellType === 1 ? '预售结束后' : '订单生成后' }}</span>
-        <el-input-number
-          v-model="presellDelay"
-          size="small"
-          controls-position="right"
-          :min="3"
-          :max="30"
-          class="input-number margin-bottom-4"></el-input-number>
-        <span>天发货</span>
-        <p class="info">{{ presellType === 1 ?
-          '预售商品发货时间以此限制为主，仅可设置3-30天' :
-          '阶梯发货期间商品发货时间以此限制为主，仅可设置3-30天'}}
-        </p>
-      </div>
+      <el-form
+        label-width="120px"
+        size="small"
+        :inline="true"
+        :rules="presellRules"
+        :model="presell"
+        label-position="left"
+        ref="presellRef"
+      >
+        <el-form-item v-if="presell.presellType === 1" label="预售结束时间:" style="padding-right: 30px;" prop="presellEndTime">
+          <el-date-picker
+            class="margin-bottom-4"
+            size="small"
+            v-model="presell.presellEndTime"
+            type="datetime"
+            placeholder="选择日期时间"
+            default-time="00:00:00"
+            :picker-options="pickerOptions"
+          > </el-date-picker>
+          <p class="info">最多支持设置距离当前30天</p>
+        </el-form-item>
+        <el-form-item v-if="presell.presellType > 0" :label="presell.presellType === 1 ? '预售发货时间:':'阶梯发货时间:'" prop="presellDelay">
+          <span>{{ presell.presellType === 1 ? '预售结束后' : '订单生成后' }}</span>
+          <el-input-number
+            v-model="presell.presellDelay"
+            size="small"
+            controls-position="right"
+            :min="3"
+            :max="30"
+            class="input-number margin-bottom-4"></el-input-number>
+          <span>天发货</span>
+          <p class="info">{{ presell.presellType === 1 ?
+            '预售商品发货时间以此限制为主，仅可设置3-30天' :
+            '阶梯发货期间商品发货时间以此限制为主，仅可设置3-30天'}}
+          </p>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import commonUtils from '@/common/commonUtils'
 
 export default {
   components: {},
@@ -74,9 +84,20 @@ export default {
   data () {
     return {
       commitType: 1,
-      presellType: 0,
-      presellEndTime: '',
-      presellDelay: 3,
+      presell: {
+        presellType: 0,
+        presellEndTime: '',
+        presellDelay: 3
+      },
+      presellRules: {
+        presellEndTime: [
+          { required: true, message: '请输入预售结束时间', trigger: 'blur' },
+          { validator: commonUtils.checkDeliveryDelayDay, trigger: 'blur' }
+        ],
+        presellDelay: [
+          { required: true, message: '请输入发货时间', trigger: 'blur' }
+        ]
+      },
       pickerOptions: {
         disabledDate (time) {
           let selectTime = time.getTime()
@@ -96,13 +117,13 @@ export default {
     applyChange () {
       for (let key in this.selectProductDict) {
         let product = this.selectProductDict[key]
-        product.model.presell_type = this.presellType
-        if (this.presellType > 0) {
-          product.model.presell_delay = this.presellDelay
+        product.model.presell_type = this.presell.presellType
+        product.model.delivery_delay_day = 2
+        if (this.presell.presellType > 0) {
+          product.model.presell_delay = this.presell.presellDelay
         }
-        if (this.presellType === 1) {
-          // product.model.presell_end_time = this.presellEndTime
-          product.model.presell_end_time = moment(this.presellEndTime).format('YYYY-MM-DD HH:mm:ss')
+        if (this.presell.presellType === 1) {
+          product.model.presell_end_time = moment(this.presell.presellEndTime).format('YYYY-MM-DD HH:mm:ss')
         }
         if (product.model.status === 1 && product.model.check_status === 1) {
           // 下架商品
