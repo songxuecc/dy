@@ -106,9 +106,7 @@
                         >添加品牌</el-link>
                         <el-button size="mini" type="primary" @click="applySelectBrandToSelection()">应用到选中的商品</el-button>
                       </el-form-item>
-                    <el-form-item label="商品编码:" style="width:300px" v-if="product.model.outer_id">
-                        <el-input v-model="product.model.outer_id" size="mini" class="input-text-left"></el-input>
-                    </el-form-item>
+
                     <el-form-item  label="抖音属性:">
                         <property-set
                           @change="handlePropertyset"
@@ -148,7 +146,7 @@
                                            trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                               >
                                   <span class="el-dropdown-link" style="color:#909399">
-                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial;font-weight:bold">修改</span>
+                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                                   </span>
                                   <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
                                       <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
@@ -182,7 +180,7 @@
                       <el-table-column key="2" width="130">
                           <template slot="header" slot-scope="scope">
                               <span>总库存</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial;font-weight:bold">修改</span></el-button>
+                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model.number="scope.row.quantity" size="mini" type="number"></el-input>
@@ -205,7 +203,8 @@
                       </el-table-column>
                       <el-table-column key="5" width="150">
                           <template slot="header" slot-scope="scope">
-                              <span>商品编码</span>
+                            <span @click="toggleVisibleSkuImport">商品编码</span>
+                                <span class="info pointer" @click="toggleVisibleSkuImport">无法抓取</span><i class="el-icon-question"></i>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model="scope.row.code" size="mini" type="text" :class="['input-text-left']"></el-input>
@@ -412,6 +411,19 @@
         </div>
       </div>
     </el-dialog>
+
+    <el-dialog :visible.sync="visibleSkuImport" width="30%"
+      :append-to-body="true" v-hh-modal>
+      <div slot="title" class="center" style="font-size: large;text-align:center">提示</div>
+      <div style="text-align:center">
+        <p>因商品编码属于商家后台的字段，故无法获取。</p>
+        <p>您可在搬家上线成功后在【导入修改】中导入"规格名称-</p>
+        <p>sku编码"对应表格进行修改。</p>
+        <div class="flex  justify-c align-c skuImportDialoag">
+          <img :src="skuImport"  style="width:176px;"/>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -426,6 +438,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
+import skuImport from '@/assets/images/sku_import.png'
 
 export default {
   inject: ['reload'],
@@ -443,6 +456,7 @@ export default {
   },
   data () {
     return {
+      skuImport,
       dialogVisible: false,
       dialogQuantityVisible: false,
       dialogPromoPriceVisible: false,
@@ -488,7 +502,8 @@ export default {
       textHandler: new TextHandler(),
       closeAfterSave: false,
       // 属性商品应用到所有 的数据记录
-      propertyBatchMap: new Map()
+      propertyBatchMap: new Map(),
+      visibleSkuImport: false
     }
   },
   watch: {
@@ -1424,6 +1439,10 @@ export default {
         }
       })
       Object.assign(this.product.model, {attrList})
+    },
+    // sku抓取
+    toggleVisibleSkuImport: function () {
+      this.visibleSkuImport = !this.visibleSkuImport
     }
   }
 }
@@ -1468,5 +1487,15 @@ export default {
     .show {
       opacity: 1;
     }
+  }
+
+  .skuImportDialoag {
+    width: 260px;
+    height: 184px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    margin:auto;
+    margin-top:20px;
   }
 </style>
