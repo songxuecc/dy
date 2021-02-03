@@ -234,17 +234,20 @@ export default {
     }
   },
   watch: {
-    tpProductList: function (arrNew, arrOld) {
-      this.$nextTick(function () {
-        for (let i in arrNew) {
-          let product = arrNew[i]
-          if (this.dicSelectId[product.tp_product_id]) {
-            this.$refs.productListTable.toggleRowSelection(product, true)
-          } else {
-            this.$refs.productListTable.toggleRowSelection(product, false)
+    tpProductList: {
+      handler: function (arrNew, arrOld) {
+        this.$nextTick(function () {
+          for (let i in arrNew) {
+            let product = arrNew[i]
+            if (this.dicSelectId[product.tp_product_id]) {
+              this.$refs.productListTable.toggleRowSelection(product, true)
+            } else {
+              this.$refs.productListTable.toggleRowSelection(product, false)
+            }
           }
-        }
-      })
+        })
+      },
+      deep: true
     }
   },
   methods: {
