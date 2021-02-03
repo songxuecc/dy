@@ -41,12 +41,12 @@ export default {
         id: 1,
         label: '修改成功',
         name: 'success'
-      },
-      {
-        id: 2,
-        label: '修改中',
-        name: 'running'
       }
+      // {
+      //   id: 2,
+      //   label: '修改中',
+      //   name: 'running'
+      // }
       // {
       //   id: 3,
       //   label: '终止',
