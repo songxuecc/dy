@@ -24,8 +24,8 @@
       <el-table-column prop="edit" label="操作" width="220">
         <template slot-scope="scope">
           <!-- <a class="pramiry" @click="onShutdown(scope.row.id)">终止</a> -->
-          <a :class="[ scope.row.status !== 'complete' ? 'info no-decoration' : 'pramiry pointer']" @click="handleEdit('onDetail',scope.row)">查看详情</a>
-          <a :class="[ scope.row.status !== 'complete' ? 'info no-decoration' : 'pramiry pointer']" @click="onDelete(scope.row)" >删除记录</a>
+          <a class="pramiry pointer" @click="handleEdit('onDetail',scope.row)">查看详情</a>
+          <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDelete(scope.row)" >删除记录</a>
         </template>
       </el-table-column>
     </el-table>
@@ -89,9 +89,7 @@ export default {
       this.getProductSkuExcelPage()
     },
     handleEdit (type, row) {
-      if (row.status === 'complete') {
-        this.$emit(type, row)
-      }
+      this.$emit(type, row)
     },
     handleSizeChange (pageSize) {
       this.getProductSkuExcelPage({

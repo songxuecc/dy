@@ -32,7 +32,13 @@ export default {
   components: {TableProductDetail},
   data () {
     return {
-      tabs: [{
+      activeName: 'fail'
+    }
+  },
+  computed: {
+    ...mapState(['parentRowData']),
+    tabs () {
+      const tabs = [{
         id: 0,
         label: '修改失败',
         name: 'fail'
@@ -42,22 +48,17 @@ export default {
         label: '修改成功',
         name: 'success'
       }
-      // {
-      //   id: 2,
-      //   label: '修改中',
-      //   name: 'running'
-      // }
-      // {
-      //   id: 3,
-      //   label: '终止',
-      //   name: 'stop'
-      // }
-      ],
-      activeName: 'fail'
+      ]
+      if (this.parentRowData.status === 'running') {
+        tabs.push(
+          {
+            id: 2,
+            label: '修改中',
+            name: 'running'
+          })
+      }
+      return tabs
     }
-  },
-  computed: {
-    ...mapState(['parentRowData'])
   }
 }
 </script>
