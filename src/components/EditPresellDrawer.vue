@@ -118,6 +118,7 @@ export default {
       for (let key in this.selectProductDict) {
         let product = this.selectProductDict[key]
         product.model.presell_type = this.presell.presellType
+        product.model.delivery_delay_day = 2
         if (this.presell.presellType > 0) {
           product.model.presell_delay = this.presell.presellDelay
         }

@@ -466,6 +466,7 @@ export default {
         })
       } else if (this.activeTabName === 'presellType') {
         productNew['presell_type'] = product.model.presell_type
+        productNew['delivery_delay_day'] = product.model.delivery_delay_day
         if (product.model.presell_type > 0) {
           productNew['presell_delay'] = product.model.presell_delay
         }
