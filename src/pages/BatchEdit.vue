@@ -119,6 +119,7 @@
       <div v-if="Object.keys(auditingProductDict).length > 0">
         <div style="text-align: center; border-bottom: 1px solid rgb(228, 228, 228);">下列商品的修改正在拼多多后台审核</div>
         <el-table :data="Object.values(auditingProductDict)" row-key="goods_id" :show-header="false">
+          <el-table-empty slot="empty"/>
           <el-table-column label="图片" width="100" align="center">
               <template slot-scope="scope">
                   <img style="height:60px;max-width:79px;" :src="scope.row.image_url">

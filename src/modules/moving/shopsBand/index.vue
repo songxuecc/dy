@@ -10,6 +10,7 @@
 </template>
 
 <script>
+
 import CardRealizableAfterBind from './CardRealizableAfterBind'
 import EditHowToBindStore from './EditHowToBindStore'
 import TableShopManagement from './TableShopManagement'

@@ -5,6 +5,7 @@
         </div>
         <div>
             <el-table :data="mySubscOrder" border style="width: 100%" highlight-current-row>
+              <el-table-empty slot="empty"/>
                 <el-table-column label="订单号" width="220" prop="order_sn"> </el-table-column>
                 <el-table-column label="订购时间" width="200" prop="pay_time"></el-table-column>
                 <el-table-column label="费用" width="100" prop="real_fee"></el-table-column>

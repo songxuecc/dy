@@ -13,6 +13,7 @@
               :header-cell-class-name="headCellClassName"
               :cell-class-name="cellClassName"
     >
+    <el-table-empty slot="empty"/>
       <el-table-column label="图片" width="100" align="center">
         <template slot-scope="scope">
           <img style="height:60px" :src="scope.row.thumbnail">

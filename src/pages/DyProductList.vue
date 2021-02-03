@@ -10,7 +10,7 @@
         <template slot="upperRight">
           <el-button size="small" style="right: 0px;" @click="downloadExcel">sku模板下载</el-button>
           <!-- 商品sku编码导入 upload组件 start -->
-          <el-upload
+          <!-- <el-upload
             class="sku-excel-import-btn"
             action="/api/product/sku/excel/create"
             :multiple="false"
@@ -30,7 +30,7 @@
                 <i v-if="isSkuImporting" class="el-icon-loading"></i>
               </el-button>
             </el-tooltip>
-          </el-upload>
+          </el-upload> -->
           <!-- 商品sku编码导入 upload组件 end -->
           <el-button size="small" @click="openDialogExport" class="nodim" style="right: 0px;">商品导出</el-button>
         </template>
@@ -66,7 +66,7 @@
       <batch-edit-view ref="batchEditView" @saved="onBatchEditSaved"></batch-edit-view>
     </el-dialog>
 
-    <el-dialog title="选择需要导出的字段" :visible.sync="dialogExportVisible" @opened="dialogExportOpened">
+    <el-dialog title="选择需要导出的字段" :visible.sync="dialogExportVisible" @opened="dialogExportOpened" v-hh-modal>
       <div v-loading="loadingCnt">
         <div>
           <el-checkbox v-model="isAllFieldSelected" @change="changeAllFieldSelected">全选</el-checkbox>

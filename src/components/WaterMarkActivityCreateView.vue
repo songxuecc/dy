@@ -85,7 +85,7 @@
                   @selection-change="handleSelectionChange"
                   @cell-click="onCellClick" @select="onSelect"
         >
-          <el-table-empty slot="empty"></el-table-empty>
+          <el-table-empty slot="empty"/>
             <el-table-column width="50" type="selection" :reserve-selection="true" :selectable="isSelectionEnable">
             </el-table-column>
             <el-table-column width="30" label="全选"  header-align="right" :selectable="isSelectionEnable"></el-table-column>

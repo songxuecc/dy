@@ -311,6 +311,27 @@ const hhgjAPIs = {
   },
   updateTpproductBrand: (params) => {
     return api.actionCreatorPost('/api/tpproduct/brand/update', params)
+  },
+  getProductSkuExcelPage: (params) => {
+    return api.actionCreateGet('/api/product/sku/excel/page', params)
+  },
+  deleteProductSkuExcelPage: (params) => {
+    return api.actionCreatorPost('/api/product/sku/excel/delete', params)
+  },
+  getProductSkuExcelProgressQuery: (params) => {
+    return api.actionCreateGet('/api/product/sku/excel/progress/query', params)
+  },
+  getProductSkuExcelDetailPage: (params) => {
+    return api.actionCreateGet('/api/product/sku/excel/detail/page', params)
+  },
+  getBlackWordList: (params) => {
+    return api.actionCreateGet('/api/black_word/list', params)
+  },
+  createBlackWords: (params) => {
+    return api.actionCreatorPost('/api/black_word/create', params)
+  },
+  deleteBlackWords: (params) => {
+    return api.actionCreatorPost('/api/black_word/delete', params)
   }
 
 }
