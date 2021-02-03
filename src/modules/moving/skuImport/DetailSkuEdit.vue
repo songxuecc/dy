@@ -2,7 +2,7 @@
 <template>
 <div>
   <el-alert type="warning" :closable="false" @tab-click="handleClick">
-    <div slot="title" class="font-12 flex">
+    <div slot="title" class="font-12 flex justify-b">
       <span><b>·</b>修改字段:&nbsp;导入修改sku编码</span>
       <span><b>·</b>修改时间:&nbsp;{{parentRowData.create_time}}</span>
       <span><b>·</b>修改数量:&nbsp;共计{{parentRowData.total_nums}}条成功{{parentRowData.success_nums}}条，失败{{parentRowData.fail_nums}}条</span>
@@ -62,4 +62,11 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+/deep/ .el-alert__content {
+  width:100%;
+  box-sizing: border-box;
+  .el-alert__title {
+    display: block;
+  }
+}
 </style>

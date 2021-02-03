@@ -18,7 +18,7 @@
       </el-table-column>
       <el-table-column prop="edit" label="操作" width="100" v-if="activeName === 'success'">
         <template slot-scope="scope">
-          <a class="pramiry" @click="open(scope.row.dy_goods_id)">查看</a>
+          <a class="pramiry pointer" @click="open(scope.row.dy_goods_id)">查看</a>
         </template>
       </el-table-column>
     </el-table>
