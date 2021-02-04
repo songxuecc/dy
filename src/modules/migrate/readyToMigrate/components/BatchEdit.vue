@@ -440,22 +440,11 @@ export default {
         return this.$message.error('请选择分类')
       }
       const list = this.selectList
-        .map(item => {
-          return ({
-            tp_product_id: item.tp_product_id,
-            category_id: category.id,
-            title: item.title,
-            tp_outer_iid: '',
-            price: null,
-            tp_property_json: {
-              'remove_first_banner': false,
-              'remove_last_desc': false
-            }
-          })
-        })
+        .map(item => item.tp_product_id)
       const fn = async (list) => {
-        const data = await Api.hhgjAPIs.batchUpdateTPProduct({
-          tp_product_list: JSON.stringify(list)
+        const data = await Api.hhgjAPIs.batchUpdateCategory({
+          tp_product_ids: list,
+          cid: category.id
         })
         return data
       }
