@@ -1,19 +1,21 @@
 <!-- 新功能提示 -->
 <template>
-    <hh-icon type="icon60" class="left-translate" v-if="visible && type">
+    <hh-icon type="icon60" class="left-translate" v-if="visible && type && isAuth()">
         <span class="font-12 new-features">新功能</span>
     </hh-icon>
 </template>
 
 <script>
 import moment from 'moment'
+import {mapGetters} from 'vuex'
+
 class GetNewFeature {
   constructor () {
     this.instance = null
     this.hasMounted = true
     this.delay = {
       time: 20,
-      unit: 'seconds'
+      unit: 'days'
     }
   }
   static getInstance () {
@@ -35,21 +37,23 @@ class GetNewFeature {
     const newFeature = localStorage.getItem('newFeature')
     let newFeatureMap = new Map(JSON.parse(newFeature))
     const value = newFeatureMap.get(type)
+    let visible = false
     if (value && value.expiredTime) {
       const expiredTime = moment(value.expiredTime)
       const now = moment()
       const diff = now.diff(expiredTime, this.delay.unit, true)
-      if (diff > this.delay.day) {
-        return false
+      if (diff > this.delay.time) {
+        visible = false
       } else {
-        return true
+        visible = true
       }
     } else {
       const expiredTime = {expiredTime: moment()}
       newFeatureMap.set(type, expiredTime)
       localStorage.setItem('newFeature', JSON.stringify(newFeatureMap))
-      return true
+      visible = true
     }
+    return visible
   }
 }
 export default {
@@ -71,6 +75,11 @@ export default {
   },
   beforeDestroy () {
     this.newFeature = null
+  },
+  methods: {
+    ...mapGetters({
+      isAuth: 'getIsAuth'
+    })
   }
 }
 </script>
