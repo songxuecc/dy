@@ -166,14 +166,14 @@
                             <span v-else>{{scope.row.promo_price}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column key="6" width="130">
+                    <el-table-column key="6" >
                         <template slot="header" slot-scope="scope">
                             <span>sku编码</span>
                         </template>
                         <template slot-scope="scope">
-                            <el-input v-if="isDyProduct" v-model="scope.row.sku_code" size="mini"></el-input>
-                            <el-input v-else-if="scope.row.sku_code===0" v-model="scope.row.sku_code" size="mini"></el-input>
-                            <span v-else>{{scope.row.sku_code}}</span>
+                            <el-input v-if="isDyProduct" v-model="scope.row.sku_id" size="mini"></el-input>
+                            <el-input v-else-if="scope.row.sku_id===0" v-model="scope.row.sku_id" size="mini"></el-input>
+                            <span v-else>{{scope.row.sku_id}}</span>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column key="6" width="130" v-if="Number(product.model.presell_type) === 0">
