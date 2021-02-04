@@ -138,8 +138,8 @@
                 <el-checkbox :label="common.productStatus.WAIT_ONLINE" >待上线</el-checkbox>
                 <el-checkbox :label="common.productStatus.FAILED" >失败</el-checkbox>
                 <el-checkbox :label="common.productStatus.REJECT" >驳回</el-checkbox>
-                <el-checkbox :label="common.productStatus.ONLINE" >已上线</el-checkbox>
-                <el-checkbox :label="common.productStatus.SAVE_DRAFT" >保存草稿箱</el-checkbox>
+                <!-- <el-checkbox :label="common.productStatus.ONLINE" >已上线</el-checkbox>
+                <el-checkbox :label="common.productStatus.SAVE_DRAFT" >保存草稿箱</el-checkbox> -->
               </el-checkbox-group>；其余状态商品会自动过滤
             </div>
         </div>
