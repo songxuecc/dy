@@ -1,19 +1,76 @@
 <!-- 新功能提示 -->
 <template>
-    <hh-icon type="icon60" class="left-translate">
+    <hh-icon type="icon60" class="left-translate" v-if="visible && type">
         <span class="font-12 new-features">新功能</span>
     </hh-icon>
 </template>
 
 <script>
+import moment from 'moment'
+class GetNewFeature {
+  constructor () {
+    this.instance = null
+    this.hasMounted = true
+    this.delay = {
+      time: 2,
+      unit: 'days'
+    }
+  }
+  static getInstance () {
+    this.instance = this.instance || new GetNewFeature()
+    return this.instance
+  }
+
+  init (type) {
+    if (this.hasMounted) {
+      this.hasMounted = false
+      const newFeature = localStorage.getItem('newFeature')
+      if (!newFeature) {
+        let newFeatureMap = new Map()
+        localStorage.setItem('newFeature', JSON.stringify(newFeatureMap))
+      }
+    }
+  }
+  getVisible (type) {
+    const newFeature = localStorage.getItem('newFeature')
+    let newFeatureMap = new Map(JSON.parse(newFeature))
+    const value = newFeatureMap.get(type)
+    if (value && value.expiredTime) {
+      const expiredTime = moment(value.expiredTime)
+      const now = moment()
+      const diff = now.diff(expiredTime, this.delay.unit, true)
+      if (diff > this.delay.day) {
+        return false
+      } else {
+        return true
+      }
+    } else {
+      const expiredTime = {expiredTime: moment()}
+      newFeatureMap.set(type, expiredTime)
+      localStorage.setItem('newFeature', JSON.stringify(newFeatureMap))
+      return true
+    }
+  }
+}
 export default {
   name: 'NewFeatureTips',
   props: {
-    msg: String
+    type: String
   },
   data () {
     return {
+      visible: false
     }
+  },
+  created () {
+    this.newFeature = GetNewFeature.getInstance()
+    this.newFeature.init(this.type)
+  },
+  beforeMount () {
+    this.visible = this.newFeature.getVisible(this.type)
+  },
+  beforeDestroy () {
+    this.newFeature = null
   }
 }
 </script>
