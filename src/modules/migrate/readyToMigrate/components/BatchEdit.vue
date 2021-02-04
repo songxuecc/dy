@@ -443,7 +443,7 @@ export default {
         .map(item => item.tp_product_id)
       const fn = async (list) => {
         const data = await Api.hhgjAPIs.batchUpdateCategory({
-          tp_product_ids: JSON.stringify(list),
+          tp_product_ids: list,
           cid: category.id
         })
         return data
