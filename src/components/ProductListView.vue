@@ -96,11 +96,15 @@
                               <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101706">点击查询规则</a ></p>
                             </ul>
                         </div>
-
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               <p style="font-size:13px">根据官方规定，该类目需要填写品牌，请上传品牌</p>
                               <p><a  style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
+                            </ul>
+                        </div>
+                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,品牌不属于该类目') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                              品牌未更新，建议亲亲点击品牌旁的刷新按钮后，再次进行搬家
                             </ul>
                         </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
