@@ -54,7 +54,7 @@ export default {
           totalRecord: data.total
         })
 
-        this.dispatch('migrate/skuImport/getperprogress')
+        this.dispatch('productManagement/skuImport/getperprogress')
       } catch (err) {
         console.log(err)
         this._vm.$message.error(`${err}`)
@@ -63,26 +63,23 @@ export default {
     },
     async getperprogress ({commit, state}) {
       const runingsIds = state.tableDataRecord.filter(item => item.status === 'running').map(item => item.id)
-      console.log(runingsIds)
       if (!runingsIds.length) return false
       const progressData = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
         id_list: JSON.stringify(runingsIds)
       })
       const tableDataRecord = state.tableDataRecord.map(originItem => {
         const progressItem = progressData.find(progressItem => progressItem.id === originItem.id)
-        console.log(progressItem)
         if (progressItem) {
           return {...originItem, ...progressItem}
         } else {
           return originItem
         }
       })
-      console.log(tableDataRecord)
       commit('save', {
         tableDataRecord
       })
       setTimeout(() => {
-        this.dispatch('migrate/skuImport/getperprogress')
+        this.dispatch('productManagement/skuImport/getperprogress')
       }, 1000)
     },
     async getProductSkuExcelDetailPage ({commit, state}, payload) {
