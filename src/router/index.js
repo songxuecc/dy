@@ -16,7 +16,7 @@ import PayOrder from '@/pages/PayOrder'
 import CustomerService from '@/pages/CustomerService.vue'
 import shopsBand from '@/modules/moving/shopsBand'
 import MigrateSettingTemplate from '@/modules/moving/migrateSettingTemplate'
-import SkuImport from '@/modules/moving/skuImport'
+import SkuImport from '@/modules/productsManagement/skuImport'
 import MigrateSetting from '@/modules/moving/migrateSetting'
 import ProductList from '@/modules/moving/readyToMigrate'
 
