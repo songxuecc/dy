@@ -58,7 +58,7 @@ import Api from '@/api/apis'
 const {
   mapState,
   mapActions
-} = createNamespacedHelpers('moving/skuImport')
+} = createNamespacedHelpers('productManagement/skuImport')
 
 export default {
   name: 'TableUploadFileRecord',

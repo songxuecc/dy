@@ -3,7 +3,7 @@ import migrateSettingTemplate from './migrateSettingTemplate'
 import skuImport from './skuImport'
 
 const modules = {
-  moving: {
+  migrate: {
     namespaced: true,
     modules: {
       shopsBand,

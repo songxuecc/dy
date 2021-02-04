@@ -24,7 +24,7 @@ import { createNamespacedHelpers } from 'vuex'
 import TableProductDetail from './TableProductDetail'
 const {
   mapState
-} = createNamespacedHelpers('moving/skuImport')
+} = createNamespacedHelpers('productManagement/skuImport')
 export default {
   name: 'DetailSkuEdit',
   props: {

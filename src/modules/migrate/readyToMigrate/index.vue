@@ -226,8 +226,8 @@ import { createNamespacedHelpers, mapActions } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
 const {
-  mapActions: mapActionsMoving
-} = createNamespacedHelpers('moving/migrateSettingTemplate')
+  mapActions: mapActionsMigrate
+} = createNamespacedHelpers('migrate/migrateSettingTemplate')
 
 export default {
   inject: ['reload'],
@@ -473,7 +473,7 @@ export default {
     ...mapActions([
       'setSelectTPProductIdList'
     ]),
-    ...mapActionsMoving([
+    ...mapActionsMigrate([
       'removeTempTemplate'
     ]),
     calendarTime (strTime) {

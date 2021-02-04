@@ -52,7 +52,7 @@ import common from '@/common/common.js'
 
 const {
   mapActions: mapActionsNavbar
-} = createNamespacedHelpers('moving/shopsBand')
+} = createNamespacedHelpers('migrate/shopsBand')
 
 export default {
   data () {

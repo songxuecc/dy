@@ -69,7 +69,7 @@ const {
   mapActions,
   mapGetters,
   mapMutations
-} = createNamespacedHelpers('moving/shopsBand')
+} = createNamespacedHelpers('migrate/shopsBand')
 
 export default {
   name: 'TableShopManagement',

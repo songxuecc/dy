@@ -22,7 +22,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div style="width: 100%;margin-bottom:100px;text-align:center" class="pt-10">滚动到底部～</div>
+    <div style="width: 100%;margin-bottom:100px;text-align:center" class="pt-10" v-if="tableDataProductDetail && tableDataProductDetail.length">滚动到底部～</div>
     <div style="position:absolute;bottom:0;right:0;width:100%;text-align:right;background:#ffffff">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
         :current-page="paginationProductDetail.page_index" class=" pt-20 right mr-20" :page-sizes="sizes"
@@ -38,7 +38,7 @@ import { createNamespacedHelpers } from 'vuex'
 const {
   mapState,
   mapActions
-} = createNamespacedHelpers('moving/skuImport')
+} = createNamespacedHelpers('productManagement/skuImport')
 
 export default {
   name: 'TableProductDetail',

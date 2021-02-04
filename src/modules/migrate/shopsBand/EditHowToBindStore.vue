@@ -38,7 +38,7 @@ const {
   mapState,
   mapMutations,
   mapActions
-} = createNamespacedHelpers('moving/shopsBand')
+} = createNamespacedHelpers('migrate/shopsBand')
 
 export default {
   name: 'EditHowToBindStore',

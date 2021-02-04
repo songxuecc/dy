@@ -30,9 +30,9 @@ import StepDelivery from './StepDelivery'
 import ShopsMigrate from './ShopsMigrate'
 
 const {
-  mapState: mapStateMoving,
-  mapActions: mapActionsMoving
-} = createNamespacedHelpers('moving/migrateSettingTemplate')
+  mapState: mapStateMigrate,
+  mapActions: mapActionsMigrate
+} = createNamespacedHelpers('migrate/migrateSettingTemplate')
 
 export default {
   data () {
@@ -64,13 +64,13 @@ export default {
   watch: {},
   computed: {
     ...mapState(['ownerId']),
-    ...mapStateMoving(['template', 'dicCustomPrices']),
+    ...mapStateMigrate(['template', 'dicCustomPrices']),
     ...mapGetters({
       getSelectTPProductIdList: 'getSelectTPProductIdList'
     })
   },
   methods: {
-    ...mapActionsMoving([
+    ...mapActionsMigrate([
       'requestTemplate',
       'removeTempTemplate',
       'setPresellEndTime',

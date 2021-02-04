@@ -19,7 +19,7 @@ import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'
 const {
   mapMutations
-} = createNamespacedHelpers('moving/skuImport')
+} = createNamespacedHelpers('productManagement/skuImport')
 
 export default {
   data () {

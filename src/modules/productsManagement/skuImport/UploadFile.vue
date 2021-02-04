@@ -34,7 +34,7 @@ import common from '@/common/common.js'
 const {
   mapState: mapStateSkuImport,
   mapActions: mapActionsSkuImport
-} = createNamespacedHelpers('moving/skuImport')
+} = createNamespacedHelpers('productManagement/skuImport')
 
 export default {
   name: 'UploadFile',

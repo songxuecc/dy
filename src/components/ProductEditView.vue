@@ -176,6 +176,49 @@
                             <span v-else>{{scope.row.sku_code}}</span>
                         </template>
                     </el-table-column>
+                    <!-- <el-table-column key="6" width="130" v-if="Number(product.model.presell_type) === 0">
+                        <template slot="header" slot-scope="scope">
+                            <span>现货库存(现货模式)</span>
+                        </template>
+                        <template slot-scope="scope">
+                            <el-input v-if="isDyProduct" v-model="scope.row.step_quantity" size="mini"></el-input>
+                            <el-input v-else-if="scope.row.step_quantity===0" v-model="scope.row.step_quantity" size="mini"></el-input>
+                            <span v-else>{{scope.row.step_quantity}}</span>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column key="6" width="130" v-if="Number(product.model.presell_type) === 1">
+                        <template slot="header" slot-scope="scope">
+                            <span>预售库存(预售模式)</span>
+                        </template>
+                        <template slot-scope="scope">
+                            <el-input v-if="isDyProduct" v-model="scope.row.step_quantity" size="mini"></el-input>
+                            <el-input v-else-if="scope.row.step_quantity===0" v-model="scope.row.step_quantity" size="mini"></el-input>
+                            <span v-else>{{scope.row.step_quantity}}</span>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column key="6" width="130" v-if="Number(product.model.presell_type) === 2">
+                        <template slot="header" slot-scope="scope">
+                            <span>现货库存(阶梯模式)</span>
+                        </template>
+                        <template slot-scope="scope">
+                            <el-input v-if="isDyProduct" v-model="scope.row.quantity" size="mini"></el-input>
+                            <el-input v-else-if="scope.row.quantity===0" v-model="scope.row.quantity" size="mini"></el-input>
+                            <span v-else>{{scope.row.quantity}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column key="6" width="130" v-if="Number(product.model.presell_type) === 2">
+                        <template slot="header" slot-scope="scope">
+                            <span>阶梯库存(阶梯模式)</span>
+                        </template>
+                        <template slot-scope="scope">
+                            <el-input v-if="isDyProduct" v-model="scope.row.step_quantity" size="mini"></el-input>
+                            <el-input v-else-if="scope.row.step_quantity===0" v-model="scope.row.step_quantity" size="mini"></el-input>
+                            <span v-else>{{scope.row.step_quantity}}</span>
+                        </template>
+                    </el-table-column> -->
+
                     <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
                         <template slot-scope="scope">
                             <img style="height:40px" :src="scope.row.img">
