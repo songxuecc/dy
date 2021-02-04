@@ -253,9 +253,9 @@ import utils from '@/common/utils'
 import common from '@/common/common'
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 const {
-  mapActions: mapActionsMoving,
-  mapGetters: mapGettersMoving
-} = createNamespacedHelpers('moving/migrateSettingTemplate')
+  mapActions: mapActionsMigrate,
+  mapGetters: mapGettersMigrate
+} = createNamespacedHelpers('migrate/migrateSettingTemplate')
 
 export default {
   mixins: [request],
@@ -285,7 +285,7 @@ export default {
     ...mapGetters({
       tpProductIdList: 'getSelectTPProductIdList'
     }),
-    ...mapGettersMoving({
+    ...mapGettersMigrate({
       template: 'getTemplate',
       dicCustomPrices: 'getDicCustomPrices'
     })
@@ -310,7 +310,7 @@ export default {
     ...mapActions([
       'setSelectTPProductIdList'
     ]),
-    ...mapActionsMoving([
+    ...mapActionsMigrate([
       'requestTemplate',
       'saveTempTemplate'
     ]),

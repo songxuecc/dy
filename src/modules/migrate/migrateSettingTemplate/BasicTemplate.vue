@@ -50,9 +50,9 @@
 import { createNamespacedHelpers, mapGetters, mapState } from 'vuex'
 
 const {
-  mapState: mapStateMoving,
-  mapActions: mapActionsMoving
-} = createNamespacedHelpers('moving/migrateSettingTemplate')
+  mapState: mapStateMigrate,
+  mapActions: mapActionsMigrate
+} = createNamespacedHelpers('migrate/migrateSettingTemplate')
 
 export default {
   components: {
@@ -84,10 +84,10 @@ export default {
   computed: {
     ...mapGetters(['getSelectTPProductIdList']),
     ...mapState(['ownerId']),
-    ...mapStateMoving(['template', 'costTemplateList'])
+    ...mapStateMigrate(['template', 'costTemplateList'])
   },
   methods: {
-    ...mapActionsMoving(['getCostTemplateList']),
+    ...mapActionsMigrate(['getCostTemplateList']),
     resetForm () {
       this.$refs.form && this.$refs.form.resetFields()
     },

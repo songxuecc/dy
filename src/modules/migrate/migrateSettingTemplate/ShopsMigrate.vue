@@ -218,9 +218,9 @@ import isEmpty from 'lodash/isEmpty'
 // import Api from '@/api/apis'
 
 const {
-  mapActions: mapActionsMoving,
-  mapGetters: mapGettersMoving
-} = createNamespacedHelpers('moving/migrateSettingTemplate')
+  mapActions: mapActionsMigrate,
+  mapGetters: mapGettersMigrate
+} = createNamespacedHelpers('migrate/migrateSettingTemplate')
 
 export default {
   mixins: [request],
@@ -303,7 +303,7 @@ export default {
 
   },
   computed: {
-    ...mapGettersMoving({
+    ...mapGettersMigrate({
       template: 'getTemplate',
       dicCustomPrices: 'getDicCustomPrices'
     }),
@@ -320,7 +320,7 @@ export default {
     window.removeEventListener('beforeunload', this.beforeunloadFn)
   },
   methods: {
-    ...mapActionsMoving([
+    ...mapActionsMigrate([
       'requestTemplate',
       'loadTempTemplate',
       'removeTempTemplate',

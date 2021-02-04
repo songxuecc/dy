@@ -9,7 +9,8 @@ import notification from './modules/notification'
 import picture from './modules/picture'
 import controller from './modules/controller'
 
-import moving from './modules/moving'
+import migrate from './modules/migrate'
+import productManagement from './modules/productManagement'
 
 Vue.use(Vuex)
 const modules = {
@@ -21,7 +22,8 @@ const modules = {
   notification,
   picture,
   controller,
-  ...moving
+  ...migrate,
+  ...productManagement
 }
 
 export default new Vuex.Store({

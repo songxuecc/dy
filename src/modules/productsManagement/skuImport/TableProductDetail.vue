@@ -38,7 +38,7 @@ import { createNamespacedHelpers } from 'vuex'
 const {
   mapState,
   mapActions
-} = createNamespacedHelpers('moving/skuImport')
+} = createNamespacedHelpers('productManagement/skuImport')
 
 export default {
   name: 'TableProductDetail',

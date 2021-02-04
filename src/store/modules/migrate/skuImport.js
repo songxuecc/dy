@@ -54,7 +54,7 @@ export default {
           totalRecord: data.total
         })
 
-        this.dispatch('moving/skuImport/getperprogress')
+        this.dispatch('migrate/skuImport/getperprogress')
       } catch (err) {
         console.log(err)
         this._vm.$message.error(`${err}`)
@@ -82,7 +82,7 @@ export default {
         tableDataRecord
       })
       setTimeout(() => {
-        this.dispatch('moving/skuImport/getperprogress')
+        this.dispatch('migrate/skuImport/getperprogress')
       }, 1000)
     },
     async getProductSkuExcelDetailPage ({commit, state}, payload) {

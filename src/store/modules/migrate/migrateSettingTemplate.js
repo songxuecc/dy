@@ -19,7 +19,7 @@ export default {
     async requestTemplate ({commit, state}, params) {
       try {
         const data = await Api.hhgjAPIs.getTemplate(params)
-        const templateList = await this.dispatch('moving/migrateSettingTemplate/getCostTemplateList')
+        const templateList = await this.dispatch('migrate/migrateSettingTemplate/getCostTemplateList')
         // 运费模版id
         if (data.cost_template_id.toString() === '0' && templateList.length > 0) {
           data.cost_template_id = templateList[0].template.id
@@ -34,7 +34,7 @@ export default {
         Object.assign(template.model, data)
         commit('save', {template})
         // 先获取数据 再保存localstorege 最后合并两个数据 是为了保证再用户刷新数据的时候 可以保证用户操作记录还在
-        this.dispatch('moving/migrateSettingTemplate/loadTempTemplate', template)
+        this.dispatch('migrate/migrateSettingTemplate/loadTempTemplate', template)
         return true
       } catch (err) {
         console.log(err)
@@ -62,7 +62,7 @@ export default {
       if (strCustomPrices) {
         commit('save', {dicCustomPrices: JSON.parse(strCustomPrices)})
       }
-      this.dispatch('moving/migrateSettingTemplate/saveTempTemplate')
+      this.dispatch('migrate/migrateSettingTemplate/saveTempTemplate')
     },
     removeTempTemplate () {
       localStorage.removeItem('temp_template')

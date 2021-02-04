@@ -106,8 +106,8 @@ import moment from 'moment'
 import commonUtils from '@/common/commonUtils'
 
 const {
-  mapGetters: mapGettersMoving
-} = createNamespacedHelpers('moving/migrateSettingTemplate')
+  mapGetters: mapGettersMigrate
+} = createNamespacedHelpers('migrate/migrateSettingTemplate')
 
 export default {
   data () {
@@ -141,7 +141,7 @@ export default {
     }
   },
   computed: {
-    ...mapGettersMoving({
+    ...mapGettersMigrate({
       template: 'getTemplate'
     })
   },
