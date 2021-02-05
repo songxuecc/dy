@@ -661,6 +661,13 @@ export default {
               this.msgError = strError
             }
           }
+          if (marketPriceFen > 999999999) {
+            let strError = '划线价需小于等于9999999.99元'
+            tpProduct.marketPriceError = strError
+            if (this.msgError === '') {
+              this.msgError = strError
+            }
+          }
         }
       }
     },
