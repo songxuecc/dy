@@ -319,8 +319,9 @@ export default {
       this.setSelectRow()
     },
     productEdit (product) {
-      this.curProduct = product
-      this.dialogEditVisible = true
+      window.open('https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + product.goods_id)
+      // this.curProduct = product
+      // this.dialogEditVisible = true
     },
     getOptText (product) {
       if (product.status === 1) {
