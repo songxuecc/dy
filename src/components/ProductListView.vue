@@ -107,6 +107,12 @@
                               品牌未更新，建议亲亲点击品牌旁的刷新按钮后，再次进行搬家
                             </ul>
                         </div>
+                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,该类目下无品牌') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                              <p style="font-size:13px">商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
+                              <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
+                            </ul>
+                        </div>
                         <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               商品详情图中有空白图，建议将空白图删除后再次搬家
