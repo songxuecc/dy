@@ -9,7 +9,7 @@
       custom-class="expire-notify-box"
     >
       <div class="describe">
-        <span>您的虎虎商品管家还有<span class="left-days">{{leftDays}}</span>天到期</span>
+        <span>您的虎虎搬家助手还有<span class="left-days">{{leftDays}}</span>天到期</span>
       </div>
       <div class="countdown">
         <div class="time-day">{{ days }}天</div>
