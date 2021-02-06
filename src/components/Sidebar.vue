@@ -12,7 +12,7 @@
               <span slot="title">开始复制</span>
             </el-menu-item>
             <el-menu-item index="/productList" :disabled="!isAuth()">
-              <span slot="title">准备搬家</span>
+              <span slot="title">搬家列表</span>
             </el-menu-item>
             <el-menu-item index="/migrateSetting" :disabled="!isAuth()">
               <span slot="title" style="display: flex;align-items: center;">搬家设置<NewFeatureTips type="搬家设置" /></span>

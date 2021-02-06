@@ -129,7 +129,7 @@
         <div  class="common-bottom">
             <div>
               <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
-                  <span style="line-height:21px">准备搬家</span>
+                  <span style="line-height:21px">下一步: 修改价格</span>
                   <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
               </el-button>
             </div>
