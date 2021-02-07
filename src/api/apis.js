@@ -195,6 +195,9 @@ const hhgjAPIs = {
   getExcelFile: (params) => {
     return api.actionCreateGet('/api/product/excel/query', params)
   },
+  syncProductOne: (params) => {
+    return api.actionCreatorPost('/api/product/sync/create', params)
+  },
   downloadExcel: (params) => {
     return api.actionCreatorDownload('/api/downloadExcel', params)
   },
