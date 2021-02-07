@@ -85,12 +85,10 @@
                     <el-link type="primary" :underline="false" :href="dyGoodsLink(scope.row.goods_id_str)" target="view_window">{{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}</el-link>
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="操作" width="80" v-if="isProductEnableEdit">
+            <el-table-column prop="" label="操作" width="140" v-if="isProductEnableEdit">
                 <template slot-scope="scope">
-                    <el-button type="primary" size="small" @click="productEdit(scope.row)" :disabled="!checkProductEnableEdit(scope.row)">修改</el-button>
-<!--                    <el-button type="primary" size="small" @click="setSaleStatus(scope.row)">-->
-<!--                        {{ getOptText(scope.row) }}-->
-<!--                    </el-button>-->
+                  <el-button type="primary" size="small" @click="productEdit(scope.row)" :disabled="!checkProductEnableEdit(scope.row)">修改</el-button>
+                  <el-button type="primary" size="small" @click="syncProductOne(scope.row.goods_id_str)">同步</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -230,6 +228,11 @@ export default {
     }
   },
   methods: {
+    syncProductOne (dyGoodsId) {
+      this.request('syncProductOne', {dy_goods_id: dyGoodsId}, data => {
+        this.$message.success('成功')
+      })
+    },
     dyGoodsLink (dyGoodsId) {
       return 'https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + dyGoodsId
     },
