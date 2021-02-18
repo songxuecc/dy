@@ -2,6 +2,13 @@
     <div v-loading="loadingCnt">
         <div>
             <el-form ref="form" :model="search" :inline="true" style="text-align: left">
+              <el-form-item>
+                    <el-select v-model="search.child_shop_user_id" placeholder="请选择" size="small" @change="handleShopFilterChange"
+                               popper-class="select-long" style="width: 100px"
+                    >
+                        <el-option v-for="item in bindShopList" :key="item.user_id" :label="item.shop_name" :value="item.user_id"> </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="标题">
                     <el-input v-model="search.key" size="small" @keyup.enter.native="handleFilterChange" style="width: 200px"></el-input>
                 </el-form-item>
@@ -239,6 +246,7 @@ export default {
   data () {
     return {
       isMounted: false,
+      bindShopList: [],
       tpProductList: [],
       captureOptionList: [],
       captureId: '-1',
@@ -450,6 +458,7 @@ export default {
     }
     this.$refs.productListView.clearSelect()
     this.getCaptureOptionList()
+    this.getBindShopList()
     this.updateInfo()
     this.updateQuery()
     this.getMigrateStatusStatistics()
@@ -478,6 +487,26 @@ export default {
     ]),
     calendarTime (strTime) {
       return moment(strTime).calendar()
+    },
+    getBindShopList () {
+      // 查询绑定店铺列表
+      let self = this
+      this.request('getUserBindList', {}, data => {
+        self.bindShopList = []
+        let userDict = {}
+        data.forEach(item => {
+          item['user_list'].forEach(user => {
+            if (user['is_self']) {
+              user['shop_name'] = '本店铺'
+              user['user_id'] = '0'
+            }
+            userDict[user['user_id']] = user
+          })
+        })
+        for (let userId in userDict) {
+          self.bindShopList.push(userDict[userId])
+        }
+      })
     },
     getCaptureOptionList () {
       this.request('getCaptureOptionList', {}, data => {
@@ -693,6 +722,16 @@ export default {
       }
       this.request('triggerShopCapture', params, data => {
       }, undefined, isSilent)
+    },
+    handleShopFilterChange () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '复制商品', '点击', '店铺选择'])
+      }
+      this.$refs.productListView.clearSelect()
+      if (!this.isShopCapture) { // 店铺抓取，上面的筛选都针对本页抓取
+        this.resetPaginationIndex()
+      }
+      this.updateInfo()
     },
     handleStatusFilterChange () {
       if (window._hmt) {
