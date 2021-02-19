@@ -825,7 +825,7 @@ export default {
       this.dicCustomPrices[tpProductId][field] = value
     },
     deleteCustomPrices (tpProductId, field) {
-      if (this.dicCustomPrices[tpProductId] && this.dicCustomPrices[tpProductId][field]) {
+      if (this.dicCustomPrices[tpProductId] && this.dicCustomPrices[tpProductId][field] >= 0) {
         delete this.dicCustomPrices[tpProductId][field]
         if (this.dicCustomPrices[tpProductId] && Object.entries(this.dicCustomPrices[tpProductId]).length === 0) {
           delete this.dicCustomPrices[tpProductId]
