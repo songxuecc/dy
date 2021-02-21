@@ -128,6 +128,11 @@
                               轮播图+详情图+sku图不能超过50张
                             </ul>
                         </div>
+                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,非叶子节点不允许，创建或编辑商品') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                              请刷新分类后重新搬家
+                            </ul>
+                        </div>
                         <div slot="content" style="max-width: 180px;" v-else>
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" v-for="(v,i) in scope.row.migration_msg" :key="i">
                               <span v-html="v">{{v}}</span>
