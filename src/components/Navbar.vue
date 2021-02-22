@@ -149,7 +149,6 @@ export default {
       if (val.status === 'ready') {
         this.syncButtonText = '正在准备同步...'
       } else if (val.status === 'running') {
-        val.cur = val.cur || 1
         this.syncButtonText = '同步中...(' + val.cur + '/' + val.total + ')'
       } else {
         this.syncButtonText = '同步后台商品'
