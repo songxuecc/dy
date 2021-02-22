@@ -233,7 +233,7 @@
                                 >
                                     <img :src="scope.row.img" style="width: 40px; display: block;"/>
                                     <div :class="['mask' ,scope.row.maskShow ? 'show':'' ]" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
-                                      <icon-svg iconClass="tihuan" style="width:20px; height:20px"></icon-svg>
+                                      <hh-icon type="icontihuan" style="font-size: 20px;"/>
                                     </div>
                                 </el-upload>
                               </el-popover>
