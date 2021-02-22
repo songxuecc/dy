@@ -26,8 +26,8 @@
                 v-if="item.options.length || item.name === '品牌'"
                 :default-first-option="true">
                 <el-option
-                    v-for="option in item.options"
-                    :key="option.value"
+                    v-for="(option,index) in item.options"
+                    :key="index"
                     :label="option.name"
                     :value="option.value">
                 </el-option>
