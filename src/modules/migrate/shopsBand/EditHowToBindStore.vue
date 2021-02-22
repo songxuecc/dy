@@ -1,7 +1,7 @@
 <!-- 如何绑定店铺 -->
 <template>
     <div class="EditHowToBindStore">
-      <h1>绑定后可实现<span class="tutorials" @click="caozuojiaocheng">操作教程 ></span></h1>
+      <h1>如何绑定<span class="tutorials" @click="caozuojiaocheng">操作教程 ></span></h1>
       <h3><span>1、</span>当前店铺如果作为主店铺，授权码为</h3>
       <div class="code">
         <el-link

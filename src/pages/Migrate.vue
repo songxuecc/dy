@@ -1,164 +1,162 @@
 <template lang="html">
-    <div style="position: relative;">
-        <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10"></help-tips>
-        <el-tabs type="border-card" v-model="activeName">
-            <el-tab-pane v-loading="loadingCnt" label="链接抓取" name="single">
-                <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个" @input="changeCaptureUrl" v-model="textCaptureUrls">
-                </el-input>
-                <div class="support">
-                    <span>支持平台:</span>
-                    <el-tooltip placement="bottom" >
-                      <div slot="content" >淘宝</div>
-                      <img class="icon" src="@/assets/images/u72.png" @click="open('淘宝')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">天猫</div>
-                      <img class="icon" src="@/assets/images/u74.png" @click="open('天猫')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">1688</div>
-                      <img class="icon" src="@/assets/images/1688.png" @click="open('1688')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">京东</div>
-                      <img class="icon" src="@/assets/images/jd.png" @click="open('京东')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">苏宁</div>
-                      <img class="icon" src="@/assets/images/sn.png" @click="open('苏宁易购')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">唯品会</div>
-                      <img class="icon" src="@/assets/images/vip.png" @click="open('唯品会')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">网易考拉</div>
-                      <img class="icon" src="@/assets/images/kaola.png" @click="open('网易考拉')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">17网</div>
-                      <img class="icon" src="@/assets/images/17.jpg" @click="open('17网')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">抖音</div>
-                      <img class="icon" src="@/assets/images/douyin.jpg" @click="open('抖音')">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">拼多多</div>
-                      <img class="icon" src="@/assets/images/yangkeduo.png" @click="open('拼多多')">
-                    </el-tooltip>
-                </div>
-                <div  class="common-bottom">
-                    <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
-                      <span style="line-height:21px">开始抓取</span>
-                      <el-badge :value="captureUrlNums"></el-badge>
-                    </el-button>
-                </div>
-            </el-tab-pane>
-            <el-tab-pane v-loading="loadingCnt" label="整店抓取" name="shop">
-                <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls">
-                </el-input>
-                <div class="support">
-                    <span>支持平台:</span>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">淘宝</div>
-                      <img class="icon" src="@/assets/images/u72.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">天猫</div>
-                      <img class="icon" src="@/assets/images/u74.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">1688</div>
-                      <img class="icon" src="@/assets/images/1688.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">京东</div>
-                      <img class="icon" src="@/assets/images/jd.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">苏宁</div>
-                      <img class="icon" src="@/assets/images/sn.png">
-                    </el-tooltip>
-<!--                    <el-tooltip placement="bottom">-->
-<!--                      <div slot="content">唯品会</div>-->
-<!--                      <img class="icon" src="@/assets/images/vip.png">-->
-<!--                    </el-tooltip>-->
-                    <el-tooltip placement="bottom">
-                      <div slot="content">网易考拉</div>
-                      <img class="icon" src="@/assets/images/kaola.png">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">17网</div>
-                      <img class="icon" src="@/assets/images/17.jpg">
-                    </el-tooltip>
-                    <el-tooltip placement="bottom">
-                      <div slot="content">抖音</div>
-                      <img class="icon" src="@/assets/images/douyin.jpg">
-                    </el-tooltip>
-                </div>
-                <div  class="common-bottom">
-                    <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture">开始抓取</el-button>
-                </div>
-            </el-tab-pane>
-          <el-tab-pane v-loading="loadingCnt" label="导入复制"  name="file">
-              <div style="width: 435px; margin: auto;">
-                <el-upload class="capture-file-upload"
-                  drag
-                  :action="uploadAction"
-                  :headers="getTokenHeaders"
-                  :data="{'upload_type': 'local'}"
-                  :before-upload="uploadBeforeUpload"
-                  :on-progress="uploadOnProgress"
-                  :on-success="uploadOnSuccess"
-                  :on-change="uploadChange"
-                  :limit=1
-                  ref="upload"
-                  :show-file-list="false"
-                  :multiple="false"
-                  :disabled="!this.isAuth">
-                  <hh-icon type="iconshangchuanxiazai" class="el-icon-upload" style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
-                  <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
-                  <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span> 只能上传CSV文件，且不超过100KB，一次最多 200 条，一天最多支持 1200 条</div>
-                  <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
-                </el-upload>
-              </div>
-              <div style="text-align: left; margin-top: 50px;">
-                <span class="prompt">使用方式:</span>
-                <div class="prompt-content">方式1：下载导入模板，自行添加商品链接
-                  <el-link type="primary" size="mini" @click="downloadCSV()" :underline="false" class="prompt-link">下载模板</el-link>
-                </div>
-                <span class="prompt-content">方式2（推荐）：安装网页插件选取商品，然后下载并上传导入文件
-                  <el-link type="primary" size="mini" @click="navToHelp" :underline="false" class="prompt-link">安装及使用教程</el-link>
-                </span>
-                <span class="prompt-content" style="margin-left: 40px;">插件下载（暂不支持 IE 浏览器）：360浏览器、搜狗浏览器安装包
-                  <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false" @click="downloadCrx()" style="margin-right: 16px;">
-                    下载
-                  </el-link>
-                  Chrome 浏览器安装包
-                  <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false" @click="downloadZip()">
-                    下载
-                  </el-link>
-                </span>
-                <span class="prompt-content" style="margin-left: 40px;">插件支持平台：
-                  <div style="display: inline-block;">
-                    <img class="icon" src="@/assets/platformImg/taobao-tiny.png" style="width: 14px; height: 14px;">
-                  </div>
-                  <div style="display: inline-block;">
-                    <img class="icon" src="@/assets/platformImg/tmall-tiny.png" style="width: 14px; height: 14px;">
-                  </div>
-                </span>
-              </div>
-            </el-tab-pane>
-        </el-tabs>
-        <el-dialog
-            title="安装及使用教程"
-            :show-close="true"
-            :visible.sync="importFilePromptVisibe"
-            width="60%">
-          <iframe v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'" width='100%' height='800px;' frameborder='0'></iframe>
-        </el-dialog>
-    </div>
+<div style="position: relative;">
+  <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
+  </help-tips>
+  <el-tabs v-model="activeName">
+    <el-tab-pane v-loading="loadingCnt" label="链接抓取" name="single">
+      <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个" @input="changeCaptureUrl"
+        v-model="textCaptureUrls">
+      </el-input>
+      <div class="support">
+        <div class="color-767989 font-12">支持平台:</div>
+        <div class="flex color-666 ">
+            <div>
+            <img class="icon" src="@/assets/images/taobao.png" @click="open('淘宝')">
+            <p class="color-4e4e4e font-12">淘宝</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/tm.png" @click="open('天猫')">
+            <p class="font-12">天猫</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/1688.png" @click="open('1688')">
+            <p class="font-12">1688</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/jd.png" @click="open('京东')">
+            <p class="font-12">京东</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/sn.png" @click="open('苏宁易购')">
+            <p class="font-12">苏宁</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/vph.png" @click="open('唯品会')">
+            <p class="font-12">唯品会</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/kaola.png" @click="open('网易考拉')">
+            <p class="font-12">网易考拉</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/17.png" @click="open('17网')">
+            <p class="font-12">17网</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/dy.png" @click="open('抖音')">
+            <p class="font-12">抖音</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/pdd.png" @click="open('拼多多')">
+            <p class="font-12">拼多多</p>
+          </div>
+          <div>
+            <img class="icon" src="@/assets/images/chanmama.png" @click="open('禅妈妈')">
+            <p class="font-12">禅妈妈</p>
+          </div>
+        </div>
+      </div>
+      <div class="common-bottom">
+        <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
+          <span style="line-height:21px">开始抓取</span>
+          <el-badge :value="captureUrlNums"></el-badge>
+        </el-button>
+      </div>
+    </el-tab-pane>
+    <el-tab-pane v-loading="loadingCnt" label="整店抓取" name="shop">
+      <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls">
+      </el-input>
+      <div class="support">
+        <span>支持平台:</span>
+        <div>
+          <img class="icon" src="@/assets/images/taobao.png">
+          <p class="font-12">淘宝</p>
+        </div>
+        <div>
+          <img class="icon" src="@/assets/images/tm.png">
+          <p class="font-12">天猫</p>
+        </div>
+        <div>
+          <img class="icon" src="@/assets/images/1688.png">
+          <p class="font-12">1688</p>
+        </div>
+        <div>
+          <img class="icon" src="@/assets/images/jd.png">
+          <p class="font-12">京东</p>
+        </div>
+        <div>
+          <img class="icon" src="@/assets/images/sn.png">
+          <p class="font-12">苏宁</p>
+        </div>
+        <!-- <div> <p class="font-12">唯品会</p> -->
+        <div>
+          <img class="icon" src="@/assets/images/kaola.png">
+          <p class="font-12">网易考拉</p>
+        </div>
+        <div>
+          <img class="icon" src="@/assets/images/17.png">
+          <p class="font-12">17网</p>
+        </div>
+        <div>
+          <img class="icon" src="@/assets/images/dy.png">
+          <p class="font-12">抖音</p>
+        </div>
+      </div>
+      <div class="common-bottom">
+        <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture">开始抓取</el-button>
+      </div>
+    </el-tab-pane>
+    <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
+      <div style="width: 435px; margin: auto;">
+        <el-upload class="capture-file-upload" drag :action="uploadAction" :headers="getTokenHeaders"
+          :data="{'upload_type': 'local'}" :before-upload="uploadBeforeUpload" :on-progress="uploadOnProgress"
+          :on-success="uploadOnSuccess" :on-change="uploadChange" :limit=1 ref="upload" :show-file-list="false"
+          :multiple="false" :disabled="!this.isAuth">
+          <hh-icon type="iconshangchuanxiazai" class="el-icon-upload"
+            style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
+          <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
+          <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span> 只能上传CSV文件，且不超过100KB，一次最多 200
+            条，一天最多支持 1200 条</div>
+          <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
+        </el-upload>
+      </div>
+      <div style="text-align: left; margin-top: 50px;">
+        <span class="prompt">使用方式:</span>
+        <div class="prompt-content">方式1：下载导入模板，自行添加商品链接
+          <el-link type="primary" size="mini" @click="downloadCSV()" :underline="false" class="prompt-link">下载模板
+          </el-link>
+        </div>
+        <span class="prompt-content">方式2（推荐）：安装网页插件选取商品，然后下载并上传导入文件
+          <el-link type="primary" size="mini" @click="navToHelp" :underline="false" class="prompt-link">安装及使用教程
+          </el-link>
+        </span>
+        <span class="prompt-content" style="margin-left: 40px;">插件下载（暂不支持 IE 浏览器）：360浏览器、搜狗浏览器安装包
+          <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false" @click="downloadCrx()"
+            style="margin-right: 16px;">
+            下载
+          </el-link>
+          Chrome 浏览器安装包
+          <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false" @click="downloadZip()">
+            下载
+          </el-link>
+        </span>
+        <span class="prompt-content" style="margin-left: 40px;">插件支持平台：
+          <div style="display: inline-block;">
+            <img class="icon" src="@/assets/platformImg/taobao-tiny.png" style="width: 14px; height: 14px;">
+          </div>
+          <div style="display: inline-block;">
+            <img class="icon" src="@/assets/platformImg/tmall-tiny.png" style="width: 14px; height: 14px;">
+          </div>
+        </span>
+      </div>
+    </el-tab-pane>
+  </el-tabs>
+  <el-dialog title="安装及使用教程" :show-close="true" :visible.sync="importFilePromptVisibe" width="60%">
+    <iframe
+      v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'"
+      width='100%' height='800px;' frameborder='0'></iframe>
+  </el-dialog>
+</div>
 </template>
 <script>
 import request from '@/mixins/request.js'
@@ -211,7 +209,8 @@ export default {
         '网易考拉': 'https://www.kaola.com/',
         '17网': 'https://gz.17zwd.com/',
         '抖音': 'https://www.yuque.com/huxiao-rkndm/ksui6u/muvtyt',
-        '拼多多': 'https://www.yuque.com/huxiao-rkndm/ksui6u/yd9cd1'
+        '拼多多': 'https://www.yuque.com/huxiao-rkndm/ksui6u/yd9cd1',
+        '禅妈妈': 'https://www.chanmama.com/'
       }
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '搬家上货', '开始复制', name])

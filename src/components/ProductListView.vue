@@ -319,9 +319,9 @@ export default {
     },
     getIcon (product) {
       if (product.source === '淘宝') {
-        return require('@/assets/images/u72.png')
+        return require('@/assets/images/taobao.png')
       } else if (product.source === '天猫') {
-        return require('@/assets/images/u74.png')
+        return require('@/assets/images/tm.png')
       } else if (product.source === '1688') {
         return require('@/assets/images/1688.png')
       } else if (product.source === '京东') {
@@ -331,13 +331,15 @@ export default {
       } else if (product.source === '网易考拉') {
         return require('@/assets/images/kaola.png')
       } else if (product.source === '唯品会') {
-        return require('@/assets/images/vip.png')
+        return require('@/assets/images/vph.png')
       } else if (product.source === '一起做网店17zwd') {
-        return require('@/assets/images/17.jpg')
+        return require('@/assets/images/17.png')
       } else if (product.source === '抖音') {
-        return require('@/assets/images/douyin.jpg')
+        return require('@/assets/images/dy.png')
       } else if (product.source === '拼多多') {
-        return require('@/assets/images/yangkeduo.png')
+        return require('@/assets/images/pdd.png')
+      } else if (product.source === '蝉妈妈') {
+        return require('@/assets/images/chanmama.png')
       }
       return ''
     },
