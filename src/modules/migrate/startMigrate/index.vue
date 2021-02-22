@@ -8,52 +8,12 @@
                     @input="changeCaptureUrl" v-model="textCaptureUrls">
                 </el-input>
                 <div class="support">
-                    <div class="color-767989 font-12">支持平台:</div>
-                    <div class="flex color-666 PlatformIcon ">
-                        <div @mouseenter="setActive('淘宝')" @mouseleave="setActive('')">
-                            <img class="icon" :src="platformIconActive=='淘宝' ? require('@/assets/images/taobao-active.png') : require('@/assets/images/taobao.png')" @click="open('淘宝')">
-                            <p :class="platformIconActive == '淘宝' ? 'color-4e4e4e font-12 bold':'font-12'">淘宝</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/tm.png" @click="open('天猫')">
-                            <p class="font-12">天猫</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/1688.png" @click="open('1688')">
-                            <p class="font-12">1688</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/jd.png" @click="open('京东')">
-                            <p class="font-12">京东</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/sn.png" @click="open('苏宁易购')">
-                            <p class="font-12">苏宁</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/vph.png" @click="open('唯品会')">
-                            <p class="font-12">唯品会</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/kaola.png" @click="open('网易考拉')">
-                            <p class="font-12">网易考拉</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/17.png" @click="open('17网')">
-                            <p class="font-12">17网</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/dy.png" @click="open('抖音')">
-                            <p class="font-12">抖音</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/pdd.png" @click="open('拼多多')">
-                            <p class="font-12">拼多多</p>
-                        </div>
-                        <div>
-                            <img class="icon" src="@/assets/images/chanmama.png" @click="open('禅妈妈')">
-                            <p class="font-12">禅妈妈</p>
-                        </div>
+                    <div class="color-767989 font-12 mb-10 bold">支持平台:</div>
+                    <div class="flex color-666 PlatformIcon">
+                      <div @mouseenter="setActive(item.key)" @mouseleave="moveActive" v-for="item in platformIconsUrl" :key="item.key">
+                          <img :class="[platformIconActive==item.key ? 'active' :'']" :src="item.src"   @click="open(item.key)">
+                          <p :class="platformIconActive == item.key ? 'color-4e4e4e font-12 bold':'font-12'">{{item.tip}}</p>
+                      </div>
                     </div>
                 </div>
                 <div class="common-bottom">
@@ -67,40 +27,12 @@
                 <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls">
                 </el-input>
                 <div class="support">
-                    <div class="color-767989 font-12">支持平台:</div>
-                    <div class="flex color-666 PlatformIcon">
-                        <div>
-                        <img class="icon" src="@/assets/images/taobao.png">
-                        <p class="font-12">淘宝</p>
-                    </div>
-                    <div>
-                        <img class="icon" src="@/assets/images/tm.png">
-                        <p class="font-12">天猫</p>
-                    </div>
-                    <div>
-                        <img class="icon" src="@/assets/images/1688.png">
-                        <p class="font-12">1688</p>
-                    </div>
-                    <div>
-                        <img class="icon" src="@/assets/images/jd.png">
-                        <p class="font-12">京东</p>
-                    </div>
-                    <div>
-                        <img class="icon" src="@/assets/images/sn.png">
-                        <p class="font-12">苏宁</p>
-                    </div>
-                    <div>
-                        <img class="icon" src="@/assets/images/kaola.png">
-                        <p class="font-12">网易考拉</p>
-                    </div>
-                    <div>
-                        <img class="icon" src="@/assets/images/17.png">
-                        <p class="font-12">17网</p>
-                    </div>
-                    <div>
-                        <img class="icon" src="@/assets/images/dy.png">
-                        <p class="font-12">抖音</p>
-                    </div>
+                    <div class="color-767989 font-12 mb-10 bold">支持平台:</div>
+                    <div class="flex color-666 PlatformIcon ">
+                      <div @mouseenter="setActive(item.key)" @mouseleave="moveActive" v-for="item in platformIconsStore" :key="item.key">
+                          <img :class="[platformIconActive==item.key ? 'active' :'']" :src="item.src"   @click="open(item.key)">
+                          <p :class="platformIconActive == item.key ? 'color-4e4e4e font-12 bold':'font-12'">{{item.tip}}</p>
+                      </div>
                     </div>
                 </div>
                 <div class="common-bottom">
@@ -184,7 +116,106 @@ export default {
       uploadAction: '/api/importCaptureFile',
       importFilePromptVisibe: false,
       isStartCapture: false,
-      platformIconActive: ''
+      platformIconActive: '',
+      platformIconsUrl: [
+        {
+          key: '淘宝',
+          src: require('@/assets/images/taobao.png'),
+          tip: '淘宝'
+        },
+        {
+          key: '天猫',
+          src: require('@/assets/images/tm.png'),
+          tip: '天猫'
+        },
+        {
+          key: '1688',
+          src: require('@/assets/images/1688.png'),
+          tip: '1688'
+        },
+        {
+          key: '京东',
+          src: require('@/assets/images/jd.png'),
+          tip: '京东'
+        },
+        {
+          key: '苏宁易购',
+          src: require('@/assets/images/sn.png'),
+          tip: '苏宁'
+        },
+        {
+          key: '唯品会',
+          src: require('@/assets/images/vph.png'),
+          tip: '唯品会'
+        },
+        {
+          key: '网易考拉',
+          src: require('@/assets/images/kaola.png'),
+          tip: '网易考拉'
+        },
+        {
+          key: '17网',
+          src: require('@/assets/images/17.png'),
+          tip: '17网'
+        },
+        {
+          key: '抖音',
+          src: require('@/assets/images/dy.png'),
+          tip: '抖音'
+        },
+        {
+          key: '拼多多',
+          src: require('@/assets/images/pdd.png'),
+          tip: '拼多多'
+        },
+        {
+          key: '禅妈妈',
+          src: require('@/assets/images/chanmama.png'),
+          tip: '禅妈妈'
+        }
+      ],
+      platformIconsStore: [
+        {
+          key: '淘宝',
+          src: require('@/assets/images/taobao.png'),
+          tip: '淘宝'
+        },
+        {
+          key: '天猫',
+          src: require('@/assets/images/tm.png'),
+          tip: '天猫'
+        },
+        {
+          key: '1688',
+          src: require('@/assets/images/1688.png'),
+          tip: '1688'
+        },
+        {
+          key: '京东',
+          src: require('@/assets/images/jd.png'),
+          tip: '京东'
+        },
+        {
+          key: '苏宁易购',
+          src: require('@/assets/images/sn.png'),
+          tip: '苏宁'
+        },
+        {
+          key: '网易考拉',
+          src: require('@/assets/images/kaola.png'),
+          tip: '网易考拉'
+        },
+        {
+          key: '17网',
+          src: require('@/assets/images/17.png'),
+          tip: '17网'
+        },
+        {
+          key: '抖音',
+          src: require('@/assets/images/dy.png'),
+          tip: '抖音'
+        }
+      ]
     }
   },
   components: {
@@ -387,8 +418,10 @@ export default {
       this.importFilePromptVisibe = true
     },
     setActive (val) {
-      console.log(val)
       this.platformIconActive = val
+    },
+    moveActive (val) {
+      this.platformIconActive = ''
     }
   }
 }
@@ -400,17 +433,36 @@ export default {
             flex-direction: column;
             align-items: center;
             margin-right: 20px;
-            transition:all 1s;
+            transition:all 0.3s;
         }
         img {
             width: 40px;
             height: 40px;
             margin-bottom: 5px;
-            transition:all 1s;
+            transition: all 0.3s;
         }
-
+        .active {
+          border-radius:14px;
+          animation: opacity 0.5s;
+        }
     }
-    .tm {
-        // background-url:""
+    @keyframes opacity {
+      0% {
+        opacity: 1;
+      }
+      15% {
+        opacity: 0.35;
+      }
+
+      30% {
+        opacity: 0.5;
+      }
+
+      75% {
+        opacity: 0.85;
+      }
+      100% {
+        opacity: 1;
+      }
     }
 </style>
