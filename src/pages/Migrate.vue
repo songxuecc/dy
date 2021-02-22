@@ -47,6 +47,10 @@
                       <div slot="content">拼多多</div>
                       <img class="icon" src="@/assets/images/yangkeduo.png" @click="open('拼多多')">
                     </el-tooltip>
+                    <el-tooltip placement="bottom">
+                      <div slot="content">禅妈妈</div>
+                      <img class="icon" src="@/assets/images/chanmama.png" @click="open('禅妈妈')">
+                    </el-tooltip>
                 </div>
                 <div  class="common-bottom">
                     <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
@@ -211,7 +215,8 @@ export default {
         '网易考拉': 'https://www.kaola.com/',
         '17网': 'https://gz.17zwd.com/',
         '抖音': 'https://www.yuque.com/huxiao-rkndm/ksui6u/muvtyt',
-        '拼多多': 'https://www.yuque.com/huxiao-rkndm/ksui6u/yd9cd1'
+        '拼多多': 'https://www.yuque.com/huxiao-rkndm/ksui6u/yd9cd1',
+        '禅妈妈': 'https://www.chanmama.com/'
       }
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '搬家上货', '开始复制', name])
