@@ -229,7 +229,7 @@
                                     :headers="getTokenHeaders"
                                     :data="{'belong_type': belongType}"
                                     :multiple="false"
-                                    style="width:50px; height: 50px; line-height: 80px;"
+                                    style="width:50px; height: 50px; line-height: 80px;overflow:hidden"
                                 >
                                     <img :src="scope.row.img" style="width: 40px; display: block;"/>
                                     <div :class="['mask' ,scope.row.maskShow ? 'show':'' ]" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
