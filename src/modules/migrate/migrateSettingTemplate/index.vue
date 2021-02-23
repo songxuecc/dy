@@ -4,14 +4,14 @@
     <Head></Head>
     <BasicTemplate ref="basicTemplate"></BasicTemplate>
     <StepDelivery ref="stepDelivery"></StepDelivery>
-    <!-- <ShopsMigrate ref="shopsMigrate"></ShopsMigrate> -->
+    <ShopsMigrate ref="shopsMigrate"></ShopsMigrate>
     <!-- 搬家店铺 end -->
     <div class="help-tips" @click="goHelpLink">
-      <span><i class="el-icon-s-opportunity"></i>如何填写？</span>
+      <span class="pointer"><i class="el-icon-s-opportunity"></i>如何填写？</span>
     </div>
     <div class="common-bottom">
-        <el-button style="margin-right: 15px" @click="goback">返回</el-button>
-        <el-button type="primary" @click="startMigrate">开始搬家</el-button>
+        <el-button style="margin-right: 15px;width:120px" @click="goback">返回</el-button>
+        <el-button type="primary" style="width:120px" @click="startMigrate">开始搬家</el-button>
     </div>
   </div>
 </template>
@@ -53,6 +53,7 @@ export default {
       await this.requestTemplate()
       this.loadingCnt = false
     }
+    // this.getUserBindList()
   },
   activated () {
     window.addEventListener('beforeunload', this.beforeunloadFn)
@@ -64,7 +65,7 @@ export default {
   watch: {},
   computed: {
     ...mapState(['ownerId']),
-    ...mapStateMigrate(['template', 'dicCustomPrices']),
+    ...mapStateMigrate(['template', 'dicCustomPrices', 'userBindList']),
     ...mapGetters({
       getSelectTPProductIdList: 'getSelectTPProductIdList'
     })
@@ -161,43 +162,48 @@ export default {
     },
     getMigrateShop () {
       // 检测必须要选择一个搬家店铺
-      // let selfShopId = ''
-      // this.originBindList.map(item => {
-      //   if (item.is_self) {
-      //     selfShopId = item.user_id
-      //   } else {
-      //     item.user_list.forEach(child => {
-      //       if (child.is_self) {
-      //         selfShopId = child.user_id
-      //       }
-      //     })
-      //   }
-      // })
-      // let migrateShop = cloneDeep(this.checkedBindShopList)
-      // if (this.checkSelf) {
-      //   migrateShop.push(selfShopId)
-      // } else {
-      //   migrateShop = migrateShop.filter(i => Number(i) !== Number(this.selfShopId))
-      // }
-      // if (!migrateShop.length) {
-      //   this.$message.error('请选择搬家店铺')
-      //   return false
-      // }
-      // 注释多店铺搬家
-      // let migrateShop = []
-      // if (this.template.model.migrate_shop_template) {
-      //   for (let i = 0; i < this.template.model.migrate_shop_template.length; i++) {
-      //     let item = this.template.model.migrate_shop_template[i]
-      //     if (item.is_migrate === true && item.cost_template_id !== '') {
-      //       migrateShop.push({
-      //         'user_id': item['user_id'],
-      //         'template': {
-      //           'cost_template_id': item.cost_template_id
-      //         }
-      //       })
-      //     }
-      //   }
-      // }
+      let migrateShop = []
+      let selfShopId = ''
+      this.userBindList.map(item => {
+        if (item.is_self) {
+          selfShopId = item.user_id
+        } else {
+          item.user_list.forEach(child => {
+            if (child.is_self) {
+              selfShopId = child.user_id
+            }
+          })
+        }
+      })
+
+      if (this.$refs.shopsMigrate) {
+        if (this.$refs.shopsMigrate.checkSelf) migrateShop.push(selfShopId)
+        if (this.$refs.shopsMigrate.checkedBindShopList) {
+          migrateShop = new Set([...migrateShop, ...this.$refs.shopsMigrate.checkedBindShopList])
+        }
+      }
+      if (!migrateShop.size) {
+        this.$message.error('请选择搬家店铺')
+        return false
+      }
+      const costTemplateMap = this.$refs.shopsMigrate.costTemplateMap
+      const hascontTemplate = this.$refs.shopsMigrate.checkedBindShopList.every(id => {
+        return typeof costTemplateMap.get(id) !== 'undefined'
+      })
+      if (!hascontTemplate) {
+        this.$message.error('搬家店铺有店铺没有选择运费模版，请审查！')
+        return false
+      }
+      const selfCostTemplateId = this.template.model.cost_template_id
+      const result = [...migrateShop].map(id => {
+        let costTemplateId = costTemplateMap.get(id)
+        if (id === selfShopId) {
+          costTemplateId = selfCostTemplateId
+        }
+        return {'user_id': id, template: {cost_template_id: costTemplateId}}
+      })
+      localStorage.setItem('migrate_shop', JSON.stringify(result))
+      return result
     },
     updateTemplate () {
       try {
@@ -207,7 +213,7 @@ export default {
           Api.hhgjAPIs.updateTemplate(template)
         }
       } catch (err) {
-        this.$message.error(err || err.message)
+        this.$message.error(`${err || err.message}`)
       }
     },
     async  startMigrate () {
@@ -226,7 +232,7 @@ export default {
         this.setPresellEndTime(template.presell_end_time)
         this.migrage()
       } catch (err) {
-        this.$message.error(err || err.message)
+        this.$message.error(`${err || err.message}`)
       }
     },
     async migrage () {
@@ -238,15 +244,14 @@ export default {
       this.isStartMigrate = true
       try {
         const {formatParmas} = this.getTemplateParams()
-      // const migrateShop = this.getMigrateShop()
+        const migrateShop = this.getMigrateShop()
         let params = {
           template: JSON.stringify(formatParmas),
           migration_type: this.migrate_type,
           pre_sale_date: formatParmas.presell_end_time,
           tp_product_ids: this.getSelectTPProductIdList,
-          custom_prices: JSON.stringify(this.dicCustomPrices)
-        // 注释多店铺搬家
-        // migrate_shop: JSON.stringify(migrateShop.map(userId => ({user_id: userId})))
+          custom_prices: JSON.stringify(this.dicCustomPrices),
+          migrate_shop: JSON.stringify(migrateShop)
         }
         await Api.hhgjAPIs.migrate(params)
         if (!this.loadingCnt) {
@@ -270,7 +275,7 @@ export default {
         }
       } catch (err) {
         this.isStartMigrate = false
-        this.$message.error(err || err.message)
+        this.$message.error(`${err || err.message}`)
       }
     }
   }
@@ -279,10 +284,13 @@ export default {
 
 <style lang='less' scoped>
 .help-tips {
-  width: 100px;
+  width: 100%;
   font-size: 12px;
   color: #409EFF;
-  cursor: pointer;
+  display: flex;
+  flex-direction: row-reverse;
+  padding-right: 100px;
+  box-sizing: border-box;
   i {
     font-size: 13px;
     color: #efb947;

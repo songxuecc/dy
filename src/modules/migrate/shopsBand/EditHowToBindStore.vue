@@ -24,7 +24,7 @@
         <el-button
           size="medium"
           type="primary"
-          style="width:120px"
+          style="width:120px;height:36px"
           :loading="postSubmitLoading"
           @click="submit">确认</el-button>
       </div>
