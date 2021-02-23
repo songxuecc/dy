@@ -165,10 +165,12 @@ export default {
         {value: false, field: 'pay_type_str', label: '支付方式'},
         {value: false, field: 'mobile', label: '客服手机'},
         {value: false, field: 'status_str', label: '商品状态'},
+        {value: false, field: 'tp_outer_iid', label: '货号'},
         {value: false, field: 'sku_id', label: 'skuid'},
         {value: false, field: 'sku_price', label: 'sku价格'},
         {value: false, field: 'spec_detail_names', label: 'sku规格'},
         {value: false, field: 'sku_quantity', label: 'sku库存'},
+        {value: false, field: 'sku_step_quantity', label: 'sku阶梯库存'},
         {value: false, field: 'sku_code', label: 'sku编码'}
       ],
       excelStatus: '',
