@@ -145,9 +145,6 @@ export default {
       template: 'getTemplate'
     })
   },
-  watch: {
-
-  },
   methods: {
     resetForm () {
       this.$refs.form.resetFields()

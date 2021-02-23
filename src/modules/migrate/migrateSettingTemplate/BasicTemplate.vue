@@ -55,8 +55,6 @@ const {
 } = createNamespacedHelpers('migrate/migrateSettingTemplate')
 
 export default {
-  components: {
-  },
   data () {
     return {
       rules: {
