@@ -18,10 +18,15 @@ export default {
   },
   actions: {
     async getUserBindList ({commit, state}, payload) {
-      const userBindList = await Api.hhgjAPIs.getUserBindList({
-        need_cost_template: 1
-      })
-      commit('save', {userBindList})
+      try {
+        const userBindList = await Api.hhgjAPIs.getUserBindList({
+          need_cost_template: 1
+        })
+        commit('save', {userBindList})
+      } catch (err) {
+        console.log(err)
+        this._vm.$message.error(`${err}`)
+      }
     },
     async requestTemplate ({commit, state}, params) {
       try {
