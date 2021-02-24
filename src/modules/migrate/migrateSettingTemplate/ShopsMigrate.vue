@@ -115,22 +115,36 @@ export default {
     },
     //  全选 反选
     handleCheckAllChange (value, userId, idx) {
-      const checkAllMap = new Map(this.checkAllMap)
-      checkAllMap.set(userId, value)
-      this.checkAllMap = checkAllMap
       const childShops = (cloneDeep(this.userBindList)[idx] || []).user_list
         .filter(item => !item.is_self)
         .map(item => Number(item.user_id))
       const checkedValue = cloneDeep(this.checkedBindShopList)
       const childShopsSet = new Set(childShops)
       const checkedValueSet = new Set(checkedValue)
+      let checkedBindShopList = []
       if (value) {
         const unionSet = new Set([...childShopsSet, ...checkedValueSet])
-        this.checkedBindShopList = [...unionSet]
+        checkedBindShopList = [...unionSet]
       } else {
         const differenceSet = new Set([...checkedValueSet].filter(checked => !childShopsSet.has(checked)))
-        this.checkedBindShopList = [...differenceSet]
+        checkedBindShopList = [...differenceSet]
       }
+      // 是否全选根据子元素全选满足
+      const checkAllMap = new Map(this.checkAllMap)
+      cloneDeep(this.userBindList).forEach(child => {
+        const childShopIds = child.user_list
+          .filter(item => !item.is_self)
+          .map(item => Number(item.user_id))
+        const checkAll = childShopIds.every(child => checkedBindShopList.find(item => item === child))
+        if (checkAll) {
+          checkAllMap.set(child.user_id, true)
+        } else {
+          checkAllMap.set(child.user_id, false)
+        }
+      })
+
+      this.checkAllMap = checkAllMap
+      this.checkedBindShopList = checkedBindShopList
     },
     handleSelect (value, id) {
       const costTemplateMap = new Map(this.costTemplateMap)
