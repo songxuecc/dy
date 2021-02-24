@@ -5,9 +5,7 @@
       <div v-for="(item,index) in list" :key="index" :class="['item', index === list.length-1 ? 'no-margin-bottom' :'']">
           <img :src="item.type" alt="图片" class="icon">
             <div>
-              <h3>{{item.h3}}<span v-if="item.extra" class="extra">
-                <hh-icon type="iconhotbeifen"></hh-icon>
-                </span></h3>
+              <h3>{{item.h3}}<el-link v-if="item.extra" type="primary" class="ml-5" :underline="false" @click="open">去使用</el-link></h3>
               <span>{{item.span}}</span>
           </div>
       </div>
@@ -17,6 +15,7 @@
 <script>
 import keyTab from './keyTab.png'
 import moving from './moving.png'
+import paintBoard from './paintBoard.png'
 export default {
   name: 'CardRealizableAfterBind',
   props: {
@@ -27,16 +26,30 @@ export default {
       list: [
         {
           type: moving,
-          h3: '搬家上货至多个店铺 (功能开发中)',
+          h3: '搬家上货至多个店铺',
           span: '绑定后，一次复制可以搬家至主店铺a和它所有子店铺bcd'
-          // extra: true
         },
         {
           type: keyTab,
-          h3: '店铺一键切换登录 (功能已上线)',
+          h3: '店铺一键切换登录',
           span: '绑定后，主店铺a和它所有子店铺bcd间可以相互切换账号登录(顶部导航栏“绑定店铺管理”处切换）'
+        },
+        {
+          type: paintBoard,
+          h3: '绑定复制',
+          span: '绑定后，主店铺a和它所有子店铺bcd可以进行店铺商品一键复制同步，包括sku编码的复制',
+          extra: true
         }
       ]
+    }
+  },
+  methods: {
+    open () {
+      this.$router.push({ name: 'Migrate',
+        params: {
+          'activeName': 'shop'
+        }
+      })
     }
   }
 }

@@ -222,6 +222,9 @@ export default {
     helpTips,
     PlatformIcon
   },
+  activated () {
+    this.activeName = this.$route.params.activeName || 'single'
+  },
   computed: {
     ...mapGetters({
       getCaptureIdList: 'getCaptureIdList',
