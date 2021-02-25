@@ -11,6 +11,7 @@ import controller from './modules/controller'
 
 import migrate from './modules/migrate'
 import productManagement from './modules/productManagement'
+import customerSetting from './modules/customerSetting'
 
 Vue.use(Vuex)
 const modules = {
@@ -23,7 +24,8 @@ const modules = {
   picture,
   controller,
   ...migrate,
-  ...productManagement
+  ...productManagement,
+  ...customerSetting
 }
 
 export default new Vuex.Store({

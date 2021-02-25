@@ -56,7 +56,7 @@ import common from '@/common/common.js'
 
 const {
   mapActions: mapActionsNavbar
-} = createNamespacedHelpers('migrate/shopsBand')
+} = createNamespacedHelpers('customerSetting/shopsBand')
 
 export default {
   data () {
@@ -192,7 +192,7 @@ export default {
         ['1-2', {
           handle: () => {
             if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
-            this.$router.push({ path: '/setting/shopsBand' })
+            this.$router.push({ path: '/customerSetting/shopsBand' })
           },
           comment: '绑定店铺'
         }]
@@ -202,7 +202,7 @@ export default {
     },
     manageShops () {
       if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
-      this.$router.push({ path: '/setting/shopsBand' })
+      this.$router.push({ path: '/customerSetting/shopsBand' })
     },
     goInfo () {
       this.$router.push({
