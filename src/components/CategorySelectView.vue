@@ -35,7 +35,7 @@
                 <div x-arrow="true" class="popper__arrow" style="left: 35px;"></div>
                 {{ "已选：" + selectCate.name }}
             </div>
-            <div class="mt-10">
+            <div style="margin-top: 40px;">
               <el-link type="primary" target="_blank" :underline="false" @click="realSyncCategory">
               <i class="el-icon-refresh"></i>
               获取新类目
