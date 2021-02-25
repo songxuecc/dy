@@ -99,7 +99,7 @@
             :tpProductList="tpProductList"
             @reload="getProductList"
           />
-        <product-list-view ref="productListView" :tpProductList="tpProductList">
+        <product-list-view ref="productListView" :tpProductList="tpProductList" :showOperate="search.child_shop_user_id == 0" :hasShowOperate="true">
             <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
                 <el-button size="small" type="danger" @click="forceGetCapture" style="right: 0px; margin-right: 10px;">重新复制本页</el-button>
             </template>
