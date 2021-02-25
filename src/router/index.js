@@ -14,6 +14,7 @@ import SubscribeList from '@/pages/SubscribeList'
 import PayOrder from '@/pages/PayOrder'
 import CustomerService from '@/pages/CustomerService.vue'
 import shopsBand from '@/modules/customerSetting/shopsBand'
+import PaidRecharge from '@/modules/customerSetting/paidRecharge'
 import MigrateSettingTemplate from '@/modules/migrate/migrateSettingTemplate'
 import MigrateSetting from '@/modules/migrate/migrateSetting'
 import ProductList from '@/modules/migrate/readyToMigrate'
@@ -58,6 +59,14 @@ const router = new Router({
       path: '/customerSetting/shopsBand',
       name: '绑定店铺',
       component: shopsBand,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/customerSetting/paidRecharge',
+      name: 'PaidRecharge',
+      component: PaidRecharge,
       meta: {
         keepAlive: true
       }
