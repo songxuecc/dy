@@ -62,8 +62,8 @@ export default {
         if (!item.is_self) {
           editBtns.push({
             text: '切换成TA',
-            handle: item.auth_status !== 'auth' ? () => {} : () => this.dispatch('customerSetting/shopsBand/changeShop', item),
-            diabled: item.auth_status !== 'auth'
+            handle: ['expire', 'un_login'].includes(item.auth_status) ? () => {} : () => this.dispatch('customerSetting/shopsBand/changeShop', item),
+            diabled: ['expire', 'un_login'].includes(item.auth_status)
           })
         }
         // 如果is_self为0，则为父店铺user_id, 如果is_self为1，则为子店铺user_id
