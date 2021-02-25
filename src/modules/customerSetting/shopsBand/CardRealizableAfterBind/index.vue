@@ -15,7 +15,7 @@
 <script>
 import keyTab from './keyTab.png'
 import moving from './moving.png'
-import paintBoard from './paintBoard.png'
+// import paintBoard from './paintBoard.png'
 export default {
   name: 'CardRealizableAfterBind',
   props: {
@@ -33,13 +33,13 @@ export default {
           type: keyTab,
           h3: '店铺一键切换登录',
           span: '绑定后，主店铺a和它所有子店铺bcd间可以相互切换账号登录(顶部导航栏“绑定店铺管理”处切换）'
-        },
-        {
-          type: paintBoard,
-          h3: '绑定复制',
-          span: '绑定后，主店铺a和它所有子店铺bcd可以进行店铺商品一键复制同步，包括sku编码的复制',
-          extra: true
         }
+        // {
+        //   type: paintBoard,
+        //   h3: '绑定复制',
+        //   span: '绑定后，主店铺a和它所有子店铺bcd可以进行店铺商品一键复制同步，包括sku编码的复制',
+        //   extra: true
+        // }
       ]
     }
   },
