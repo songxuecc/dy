@@ -91,8 +91,8 @@ export default {
       'getCostTemplateList'
     ]),
     getDisabled (shops) {
-      const able = shops.user_list.every(item => !item.is_self && !['expire', 'un_login'].includes(item.auth_status))
-      return !able
+      const disabled = shops.user_list.every(item => item.is_self && ['expire', 'un_login'].includes(item.auth_status))
+      return !disabled.length
     },
     getCannotMigrateShops (num) {
       if (!this.getSelectTPProductIdList) return ''
