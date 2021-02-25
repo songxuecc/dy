@@ -98,6 +98,7 @@
             @toggleLoadingCnt="toggleLoadingCnt"
             :tpProductList="tpProductList"
             @reload="getProductList"
+            v-if="search.child_shop_user_id == 0"
           />
         <product-list-view ref="productListView" :tpProductList="tpProductList" :showOperate="search.child_shop_user_id == 0" :hasShowOperate="true">
             <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
