@@ -18,7 +18,7 @@
                 :disabled="['expire','un_login'].includes(childShop.auth_status)" class="checkbox" >
                 <div class="label-name">
                   <span>{{childShop.shop_name}}</span>
-                  <span v-if="['expire'].includes(childShop.auth_status)">(过期)</span>
+                  <span v-if="['expire'].includes(childShop.auth_status)">(订购过期)</span>
                   <span v-if="['un_login'].includes(childShop.auth_status)">(需重新登录)</span>
                 </div>
               </el-checkbox>
