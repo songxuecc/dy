@@ -34,20 +34,20 @@ export default {
       const active = state.active
       // 如果切换的tab对应的user_id还存在 则切换当前tab
       if (mapData[active]) {
-        this.dispatch('migrate/shopsBand/getTabData', mapData[active])
+        this.dispatch('customerSetting/shopsBand/getTabData', mapData[active])
       } else if (!mapData[active] && data.length) {
         // 如果切换的tab对应的user_id不存在 取默认第一个
-        this.dispatch('migrate/shopsBand/getTabData', data[0])
+        this.dispatch('customerSetting/shopsBand/getTabData', data[0])
         commit('save', { active: data[0].user_id })
       } else {
-        this.dispatch('migrate/shopsBand/getTabData', undefined)
+        this.dispatch('customerSetting/shopsBand/getTabData', undefined)
         commit('save', { active: undefined })
       }
       commit('save', { data, mapData })
     },
     changeActive  ({commit, state}, payload) {
       commit('save', payload)
-      this.dispatch('migrate/shopsBand/getTabData', state.mapData[payload.active])
+      this.dispatch('customerSetting/shopsBand/getTabData', state.mapData[payload.active])
     },
     getTabData ({commit, state}, payload) {
         // 当前店铺是主店铺 可以踢人
@@ -62,7 +62,7 @@ export default {
         if (!item.is_self) {
           editBtns.push({
             text: '切换成TA',
-            handle: item.auth_status !== 'auth' ? () => {} : () => this.dispatch('migrate/shopsBand/changeShop', item),
+            handle: item.auth_status !== 'auth' ? () => {} : () => this.dispatch('customerSetting/shopsBand/changeShop', item),
             diabled: item.auth_status !== 'auth'
           })
         }
@@ -70,7 +70,7 @@ export default {
         if (!item.is_self & canChangeShops) {
           editBtns.push({
             text: '踢出多店铺管理',
-            handle: () => this.dispatch('migrate/shopsBand/kickOut', {
+            handle: () => this.dispatch('customerSetting/shopsBand/kickOut', {
               is_self: 0,
               target_user_id: item.user_id
             })
@@ -79,7 +79,7 @@ export default {
         if (item.is_self & !canChangeShops) {
           editBtns.push({
             text: '退出多店铺管理',
-            handle: () => this.dispatch('migrate/shopsBand/kickOut', {
+            handle: () => this.dispatch('customerSetting/shopsBand/kickOut', {
               is_self: 1,
               target_user_id: payload.user_id
             })
@@ -109,7 +109,7 @@ export default {
     async kickOut ({commit, state}, payload) {
       try {
         await Api.hhgjAPIs.deleteUserBind(payload)
-        this.dispatch('migrate/shopsBand/getUserBindList', {
+        this.dispatch('customerSetting/shopsBand/getUserBindList', {
           loading: true
         })
         this._vm.$message({

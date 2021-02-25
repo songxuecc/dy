@@ -13,7 +13,7 @@ import Fake from '@/pages/Fake'
 import SubscribeList from '@/pages/SubscribeList'
 import PayOrder from '@/pages/PayOrder'
 import CustomerService from '@/pages/CustomerService.vue'
-import shopsBand from '@/modules/migrate/shopsBand'
+import shopsBand from '@/modules/customerSetting/shopsBand'
 import MigrateSettingTemplate from '@/modules/migrate/migrateSettingTemplate'
 import MigrateSetting from '@/modules/migrate/migrateSetting'
 import ProductList from '@/modules/migrate/readyToMigrate'
@@ -55,7 +55,7 @@ const router = new Router({
       }
     },
     {
-      path: '/setting/shopsBand',
+      path: '/customerSetting/shopsBand',
       name: '绑定店铺',
       component: shopsBand,
       meta: {
