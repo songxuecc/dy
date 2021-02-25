@@ -184,7 +184,7 @@ export default {
       }
       if (!migrateShop.size) {
         this.$message.error('请选择搬家店铺')
-        return false
+        return undefined
       }
       const costTemplateMap = this.$refs.shopsMigrate.costTemplateMap
       const hascontTemplate = this.$refs.shopsMigrate.checkedBindShopList.every(id => {
@@ -192,7 +192,7 @@ export default {
       })
       if (!hascontTemplate) {
         this.$message.error('搬家店铺有店铺没有选择运费模版，请审查！')
-        return false
+        return undefined
       }
       const selfCostTemplateId = this.template.model.cost_template_id
       const result = [...migrateShop].map(id => {
@@ -202,8 +202,11 @@ export default {
         }
         return {'user_id': id, template: {cost_template_id: costTemplateId}}
       })
-      localStorage.setItem('migrate_shop', JSON.stringify(result))
-      return result
+      if (result) {
+        localStorage.setItem('migrate_shop', JSON.stringify(result))
+        return result
+      }
+      return undefined
     },
     updateTemplate () {
       try {
@@ -245,6 +248,9 @@ export default {
       try {
         const {formatParmas} = this.getTemplateParams()
         const migrateShop = this.getMigrateShop()
+        if (!migrateShop) {
+          return false
+        }
         let params = {
           template: JSON.stringify(formatParmas),
           migration_type: this.migrate_type,
