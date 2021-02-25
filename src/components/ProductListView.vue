@@ -149,7 +149,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="操作" :width="isSyncSource ? 140 : 120" align="center">
+            <el-table-column prop="" label="操作" :width="isSyncSource ? 140 : 120" align="center" v-if="hasShowOperate ? showOperate : true">
                 <template slot-scope="scope">
                     <div v-if="[0,1].includes(scope.row.capture_status)"></div>
                     <div v-else-if="isSyncSource">
@@ -211,7 +211,9 @@ export default {
     isSyncSource: {
       type: Boolean,
       default: false
-    }
+    },
+    showOperate: Boolean,
+    hasShowOperate: Boolean
   },
   data () {
     return {

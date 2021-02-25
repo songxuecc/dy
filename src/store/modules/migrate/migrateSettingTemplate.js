@@ -8,7 +8,8 @@ export default {
   state: () => ({
     template: new FormModel(),
     dicCustomPrices: {},
-    costTemplateList: []
+    costTemplateList: [],
+    userBindList: []
   }),
   mutations: {
     save (state, payload) {
@@ -16,6 +17,17 @@ export default {
     }
   },
   actions: {
+    async getUserBindList ({commit, state}, payload) {
+      try {
+        const userBindList = await Api.hhgjAPIs.getUserBindList({
+          need_cost_template: 1
+        })
+        commit('save', {userBindList})
+      } catch (err) {
+        console.log(err)
+        this._vm.$message.error(`${err}`)
+      }
+    },
     async requestTemplate ({commit, state}, params) {
       try {
         const data = await Api.hhgjAPIs.getTemplate(params)
@@ -75,7 +87,11 @@ export default {
       localStorage.setItem('presell_end_time', payload || '')
     },
     async getCostTemplateList ({commit, state}, payload) {
+      const targetUserId = payload && payload.targetUserId
       const params = {name: '', page_index: 0, page_size: 100}
+      if (targetUserId) {
+        params.target_user_id = targetUserId
+      }
       const data = await Api.hhgjAPIs.getCostTemplateList(params)
       commit('save', {costTemplateList: data.List})
       return data.List

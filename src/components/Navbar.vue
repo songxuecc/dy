@@ -15,6 +15,10 @@
                   <img style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" />
                 </li>
               </ul>
+              <!-- 付费充值 -->
+              <!-- <div class="syncProduct" @click="paidRecharge" :disabled="isSyncing">
+                <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>付费充值</p>
+              </div> -->
               <!-- 同步商品 & 绑定店铺 -->
               <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
                 <template slot="content">
@@ -52,7 +56,7 @@ import common from '@/common/common.js'
 
 const {
   mapActions: mapActionsNavbar
-} = createNamespacedHelpers('migrate/shopsBand')
+} = createNamespacedHelpers('customerSetting/shopsBand')
 
 export default {
   data () {
@@ -188,7 +192,7 @@ export default {
         ['1-2', {
           handle: () => {
             if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
-            this.$router.push({ path: '/setting/shopsBand' })
+            this.$router.push({ path: '/customerSetting/shopsBand' })
           },
           comment: '绑定店铺'
         }]
@@ -198,7 +202,7 @@ export default {
     },
     manageShops () {
       if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
-      this.$router.push({ path: '/setting/shopsBand' })
+      this.$router.push({ path: '/customerSetting/shopsBand' })
     },
     goInfo () {
       this.$router.push({
@@ -219,6 +223,10 @@ export default {
         window._hmt.push(['_trackEvent', '导航栏', '点击', '高效稳定banner'])
       }
       window.open('https://s.woda.com/9xS4C')
+    },
+    // 付费充值
+    paidRecharge () {
+      this.$router.push('paidRecharge')
     }
   }
 }

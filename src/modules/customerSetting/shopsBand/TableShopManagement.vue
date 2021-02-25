@@ -25,16 +25,24 @@
       <el-table-column
         prop="auth_status"
         label="授权状态"
-        width="180">
-        <span slot-scope="scope" :class="scope.row.auth_status === 'expire' ? 'expire':'auth'">
-          {{scope.row.auth_status === 'expire' ? '已过期' : '授权中' }}
-          <el-link
-            v-if="scope.row.auth_status === 'expire'"
+        width="220">
+        <span slot-scope="scope" :class="['expire', 'un_login'].includes(scope.row.auth_status) ? 'expire':'auth'">
+          <span v-if="scope.row.auth_status === 'auth'">授权中</span>
+          <span v-if="scope.row.auth_status === 'un_login'">登录过期
+            <el-link
+            style="display:inline;font-size:12px;margin-left:5px"
+            :underline="false"
+            >请用该店铺账号登录虎虎</el-link>
+          </span>
+          <span v-if="scope.row.auth_status === 'expire'">订购过期
+            <el-link
             type="primary"
             style="display:inline;font-size:12px;margin-left:5px"
             @click="openDinggou"
             :underline="false"
-          >去续订></el-link>
+            >去续订></el-link>
+          </span>
+
         </span>
       </el-table-column>
       <el-table-column
@@ -69,7 +77,7 @@ const {
   mapActions,
   mapGetters,
   mapMutations
-} = createNamespacedHelpers('migrate/shopsBand')
+} = createNamespacedHelpers('customerSetting/shopsBand')
 
 export default {
   name: 'TableShopManagement',
