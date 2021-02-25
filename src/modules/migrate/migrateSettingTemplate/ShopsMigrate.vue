@@ -91,7 +91,7 @@ export default {
       'getCostTemplateList'
     ]),
     getDisabled (shops) {
-      const disabled = shops.user_list.every(item => item.is_self && ['expire', 'un_login'].includes(item.auth_status))
+      const disabled = shops.user_list.filter(item => !item.is_self && !['expire', 'un_login'].includes(item.auth_status))
       return !disabled.length
     },
     getCannotMigrateShops (num) {
@@ -103,7 +103,7 @@ export default {
     },
     handleCheckboxGroupChange (value, userId, idx) {
       const childShops = (cloneDeep(this.userBindList)[idx] || []).user_list
-        .filter(item => !item.is_self)
+        .filter(item => !item.is_self && !['expire', 'un_login'].includes(item.auth_status))
         .map(item => Number(item.user_id))
       if (childShops.length) {
         const checkAllMap = new Map(this.checkAllMap)
