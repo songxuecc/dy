@@ -17,7 +17,7 @@
               </ul>
               <!-- 付费充值 -->
               <div class="syncProduct" @click="paidRecharge" :disabled="isSyncing">
-                <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi0101" style="font-size:16px;margin-right:2px"/>付费充值</p>
+                <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>付费充值</p>
               </div>
               <!-- 同步商品 & 绑定店铺 -->
               <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
