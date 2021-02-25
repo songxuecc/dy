@@ -114,10 +114,10 @@ export default {
         }
       }
     },
-    //  全选 反选
+    //  全选 反选 需要剔除disabled的店铺
     handleCheckAllChange (value, userId, idx) {
       const childShops = (cloneDeep(this.userBindList)[idx] || []).user_list
-        .filter(item => !item.is_self)
+        .filter(item => !item.is_self && !['expire', 'un_login'].includes(item.auth_status))
         .map(item => Number(item.user_id))
       const checkedValue = cloneDeep(this.checkedBindShopList)
       const childShopsSet = new Set(childShops)
@@ -134,7 +134,7 @@ export default {
       const checkAllMap = new Map(this.checkAllMap)
       cloneDeep(this.userBindList).forEach(child => {
         const childShopIds = child.user_list
-          .filter(item => !item.is_self)
+          .filter(item => !item.is_self && !['expire', 'un_login'].includes(item.auth_status))
           .map(item => Number(item.user_id))
         const checkAll = childShopIds.every(child => checkedBindShopList.find(item => item === child))
         if (checkAll) {
