@@ -75,7 +75,7 @@ export default {
   name: 'GoodAssessDialog',
   data () {
     return {
-      fiveStarAssessUrl: 'https://fuwu.jinritemai.com/evaluation/',
+      fiveStarAssessUrl: 'https://fuwu.jinritemai.com/evaluation?id=',
       isShowGoodAssessPopUp: false,
       isShowCustomerDialog: false,
       goods_assess_notify: {
