@@ -15,13 +15,14 @@
             @change="handleCheckboxGroupChange($event,Number(parentShop.user_id),idx)">
             <span v-for="childShop in parentShop.user_list" :key="Number(childShop.user_id)"  v-if="!childShop.is_self" style="width:calc(50% - 35px);display:inline-block">
               <el-checkbox :label="Number(childShop.user_id)"
-                :disabled="childShop.auth_status === 'expire'" class="checkbox" >
+                :disabled="['expire','un_login'].includes(childShop.auth_status)" class="checkbox" >
                 <div class="label-name">
                   <span>{{childShop.shop_name}}</span>
-                  <span v-if="childShop.auth_status === 'expire'">(过期)</span>
+                  <span v-if="['expire'].includes(childShop.auth_status)">(过期)</span>
+                  <span v-if="['un_login'].includes(childShop.auth_status)">(需重新登录)</span>
                 </div>
               </el-checkbox>
-              <span v-if="childShop.auth_status !== 'expire'" class="ml-10">
+              <span v-if="!['expire','un_login'].includes(childShop.auth_status)" class="ml-10">
                 <el-select :value="costTemplateMap.get(childShop.user_id)" placeholder="选择运费模版" size="mini"
                   @change="handleSelect($event,childShop.user_id,idx)">
                   <el-option v-for="item in (childShop.cost_template_list || [])" :key="item.template.id" :label="item.template.template_name"
