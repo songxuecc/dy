@@ -2,26 +2,26 @@
     <div v-loading="loadingCnt">
         <div>
             <el-form ref="form" :model="search" :inline="true" style="text-align: left">
-              <el-form-item>
+              <el-form-item label="多店铺切换">
                     <el-select v-model="search.child_shop_user_id" placeholder="请选择" size="small" @change="handleShopFilterChange"
-                               popper-class="select-long" style="width: 100px"
+                               popper-class="select-long" style="width: 140px"
                     >
                         <el-option v-for="item in bindShopList" :key="item.user_id" :label="item.shop_name" :value="item.user_id"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="标题">
-                    <el-input v-model="search.key" size="small" @keyup.enter.native="handleFilterChange" style="width: 200px"></el-input>
+                    <el-input v-model="search.key" size="small" @keyup.enter.native="handleFilterChange" style="width: 180px"></el-input>
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleStatusFilterChange"
-                               popper-class="select-long" style="width: 200px"
+                               popper-class="select-long" style="width: 180px"
                     >
                         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="复制时间">
                     <el-select v-model="captureId" placeholder="请选择" size="small" @change="handleCaptureChange"
-                               popper-class="select-long" style="width: 200px"
+                               popper-class="select-long" style="width: 180px"
                     >
                         <el-option-group>
                             <el-option v-for="item in captureOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
