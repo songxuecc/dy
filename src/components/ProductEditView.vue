@@ -39,7 +39,7 @@
                       <div v-else>
                         <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
                           <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
-                                     :label="item.brand_chinese_name || item.brand_english_name"
+                                     :label="(item.brand_chinese_name).trim() || item.brand_english_name"
                           ></el-option>
                         </el-select>
                         <el-button type="text" @click="reloadBrandList">
@@ -543,7 +543,7 @@ export default {
       for (let i in this.shopBrandList) {
         let item = this.shopBrandList[i]
         if (this.product.model.brand_id === item.id) {
-          brandName = item.brand_chinese_name || item.brand_english_name
+          brandName = item.brand_chinese_name.trim() || item.brand_english_name
           break
         }
       }

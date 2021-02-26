@@ -95,7 +95,7 @@
                       <el-form-item label="品牌:" :required="product.model.brand_id_require" style="display:none">
                         <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable :disabled="true">
                           <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
-                                    :label="item.brand_chinese_name || item.brand_english_name"
+                                    :label="(item.brand_chinese_name).trim() || item.brand_english_name"
                           ></el-option>
                         </el-select>
                         <el-button type="text" @click="reloadBrandList">
@@ -804,7 +804,7 @@ export default {
           if (item.name === '品牌') {
             item.options = data.map(item => ({
               value: `${item.id}`,
-              name: item.brand_english_name ? `${item.brand_chinese_name}(${item.brand_english_name})` : `${item.brand_chinese_name}`
+              name: item.brand_english_name.trim() ? `${item.brand_chinese_name.trim()}(${item.brand_english_name})` : `${item.brand_chinese_name}`
             }))
             if (data.length) {
               item.tp_value = `${data[0].id}`
