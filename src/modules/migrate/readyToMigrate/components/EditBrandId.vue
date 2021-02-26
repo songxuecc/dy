@@ -5,7 +5,7 @@
   :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
   <div class="flex align-c mb-10">
     <el-select v-model="value" placeholder="请选择" style="flex:1">
-      <el-option v-for="item in options" :key="item.id" :label="(item.brand_chinese_name).trim() || (item.brand_english_name).trim()" :value="item.id">
+      <el-option v-for="item in options" :key="item.id" :label="getBrandName(item)" :value="item.id">
       </el-option>
     </el-select>
     <el-button type="text" @click="loadData"><i class="el-icon-refresh"></i>刷新</el-button>
@@ -45,6 +45,15 @@ export default {
   methods: {
     close () {
       this.$emit('update:visible', false)
+    },
+    getBrandName (item) {
+      if (item.brand_english_name.trim() && item.brand_chinese_name.trim()) {
+        return `${item.brand_english_name.trim()}/${item.brand_chinese_name}`
+      } else if (item.brand_english_name.trim() && !item.brand_chinese_name.trim()) {
+        return item.brand_english_name.trim()
+      } else {
+        return item.brand_chinese_name.trim()
+      }
     },
     loadData () {
       Api.hhgjAPIs.getShopBrandList().then(data => {
