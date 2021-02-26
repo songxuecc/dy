@@ -247,10 +247,15 @@ export default {
       this.isStartMigrate = true
       try {
         const {formatParmas} = this.getTemplateParams()
-        const migrateShop = this.getMigrateShop()
-        if (!migrateShop) {
-          return false
+        let migrateShop = []
+        // 如果有多店铺绑定 则需要判断要搬家的店铺数量
+        if (this.userBindList.length) {
+          migrateShop = this.getMigrateShop()
+          if (!migrateShop) {
+            return false
+          }
         }
+
         let params = {
           template: JSON.stringify(formatParmas),
           migration_type: this.migrate_type,
@@ -259,6 +264,7 @@ export default {
           custom_prices: JSON.stringify(this.dicCustomPrices),
           migrate_shop: JSON.stringify(migrateShop)
         }
+
         await Api.hhgjAPIs.migrate(params)
         if (!this.loadingCnt) {
           this.isStartMigrate = false
