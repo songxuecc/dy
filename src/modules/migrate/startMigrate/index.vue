@@ -91,7 +91,7 @@
     </el-tabs>
 
     <Setting v-if="['single','shop'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)" />
-    <!-- 链接抓取 -->
+    <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <div class="common-bottom" v-if="activeName === 'single'">
       <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
@@ -106,7 +106,7 @@
     </div>
     <!-- 绑定复制 -->
     <div class="common-bottom" v-if="activeName === 'bindCopy' && userBindList.length ">
-      <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture" style="width:120px">开始复制</el-button>
+      <el-button type="primary" @click="onCapture(2)" :disabled="isStartCapture" style="width:120px">开始复制</el-button>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy' && userBindList.length " />
 
@@ -248,7 +248,7 @@ export default {
       this.captureUrlNums = urls.length
     },
     onCapture (captureType) {
-      if (this.isStartCapture) { // 当前有抓取请求
+      if (this.isStartCapture) { // 当前有复制请求
         return
       }
       let textUrls = ''
@@ -257,10 +257,12 @@ export default {
       if (captureType === 0) {
         textUrls = this.textCaptureUrls
         limit = 50
-        message = '链接抓取超过' + limit + '条限制'
-      } else {
+        message = '多商品复制超过' + limit + '条限制'
+      } else if (captureType === 1) {
         textUrls = this.textCaptureShopUrls
-        message = '整店抓取超过' + limit + '条限制'
+        message = '整店复制超过' + limit + '条限制'
+      } else {
+
       }
       let urls = textUrls.split('\n')
       urls = urls.map(s => s.trim()).filter(s => s !== '')
@@ -293,7 +295,7 @@ export default {
           }
         })
       }, err => {
-        this.$alert(err.message + "  <a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank'>查看帮助</a>", '警告', {
+        this.$alert(`${err.message}` + "  <a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank'>查看帮助</a>", '警告', {
           dangerouslyUseHTMLString: true,
           confirmButtonText: '确定',
           type: 'error',

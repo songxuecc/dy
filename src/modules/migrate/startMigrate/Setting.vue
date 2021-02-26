@@ -83,7 +83,7 @@ export default {
       }
     }
   },
-  activated () {
+  created () {
     this.loadData()
   },
   methods: {
