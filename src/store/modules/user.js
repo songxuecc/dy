@@ -230,7 +230,6 @@ const actions = {
 
 const mutations = {
   [ types.SET_USER ] (state, data) {
-    console.log(data)
     if (data.token) {
       localStorage.setItem('token', data.token)
       state.token = data.token
