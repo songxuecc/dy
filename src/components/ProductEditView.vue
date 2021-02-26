@@ -39,7 +39,7 @@
                       <div v-else>
                         <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable>
                           <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
-                                     :label="(item.brand_chinese_name).trim() || item.brand_english_name"
+                                     :label="getBrandName(item)"
                           ></el-option>
                         </el-select>
                         <el-button type="text" @click="reloadBrandList">
@@ -543,7 +543,7 @@ export default {
       for (let i in this.shopBrandList) {
         let item = this.shopBrandList[i]
         if (this.product.model.brand_id === item.id) {
-          brandName = item.brand_chinese_name.trim() || item.brand_english_name
+          brandName = this.getBrandName(item)
           break
         }
       }
@@ -783,6 +783,15 @@ export default {
           return curTime < moment().startOf('day').add(1, 'days').valueOf() + self.template.model.delivery_delay_day * 1000 ||
             curTime > moment().startOf('day').add(28, 'days').valueOf()
         }
+      }
+    },
+    getBrandName (item) {
+      if (item.brand_english_name.trim() && item.brand_chinese_name.trim()) {
+        return `${item.brand_english_name.trim()}/${item.brand_chinese_name}`
+      } else if (item.brand_english_name.trim() && !item.brand_chinese_name.trim()) {
+        return item.brand_english_name.trim()
+      } else {
+        return item.brand_chinese_name.trim()
       }
     }
   }
