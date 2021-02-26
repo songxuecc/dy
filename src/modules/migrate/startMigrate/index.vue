@@ -3,41 +3,14 @@
         <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
         </help-tips>
         <el-tabs v-model="activeName">
-            <el-tab-pane v-loading="loadingCnt" label="链接抓取" name="single">
-                <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个"
+            <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
+                <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个" class="mb-20"
                     @input="changeCaptureUrl" v-model="textCaptureUrls">
                 </el-input>
-                <div class="support">
-                    <div class="color-767989 font-12 mb-10 bold">支持平台:</div>
-                    <div class="flex color-666 PlatformIcon">
-                      <div @mouseenter="setActive(item.key)" @mouseleave="moveActive" v-for="item in platformIconsUrl" :key="item.key">
-                          <img :class="[platformIconActive==item.key ? 'active' :'']" :src="item.src"   @click="open(item.key)">
-                          <p :class="platformIconActive == item.key ? 'color-4e4e4e font-12 bold':'font-12'">{{item.tip}}</p>
-                      </div>
-                    </div>
-                </div>
-                <div class="common-bottom">
-                    <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
-                        <span style="line-height:21px">开始抓取</span>
-                        <el-badge :value="captureUrlNums"></el-badge>
-                    </el-button>
-                </div>
             </el-tab-pane>
-            <el-tab-pane v-loading="loadingCnt" label="整店抓取" name="shop">
-                <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls">
+            <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop">
+                <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls" class="mb-20">
                 </el-input>
-                <div class="support">
-                    <div class="color-767989 font-12 mb-10 bold">支持平台:</div>
-                    <div class="flex color-666 PlatformIcon ">
-                      <div @mouseenter="setActive(item.key)" @mouseleave="moveActive" v-for="item in platformIconsStore" :key="item.key">
-                          <img :class="[platformIconActive==item.key ? 'active' :'']" :src="item.src"   @click="open(item.key)">
-                          <p :class="platformIconActive == item.key ? 'color-4e4e4e font-12 bold':'font-12'">{{item.tip}}</p>
-                      </div>
-                    </div>
-                </div>
-                <div class="common-bottom">
-                    <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture">开始抓取</el-button>
-                </div>
             </el-tab-pane>
             <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
                 <div style="width: 435px; margin: auto;">
@@ -90,7 +63,60 @@
                     </span>
                 </div>
             </el-tab-pane>
+            <el-tab-pane v-loading="loadingCnt" label="绑定复制" name="bindCopy" class="left">
+              <div class="flex column align-c">
+                <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～"/>
+                <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link" style="margin-top:10px;">去绑定店铺</el-link>
+              </div>
+              <el-form :inline="true" :model="model" class="start-migrate-setting"  size="medium">
+                 <el-form-item label="被复制的店铺">
+                      <el-select v-model="model.brandId" placeholder="请选择店铺"  style="width:200px;margin-right:5px">
+                          <el-option label="本店铺" value="shanghai"></el-option>
+                          <el-option label="区域二" value="beijing"></el-option>
+                      </el-select>
+                      <el-button type="text" @click="getCostTemplateList" size="small">绑定新店铺</el-button>
+                      <div class="info">注：小虎跑得快最近更新时间2020.10.22  10:11:11</div>
+                  </el-form-item>
+                  <el-form-item label="状态选择">
+                      <el-select v-model="model.brandId" placeholder="商品状态选择"  style="width:200px;margin-right:5px">
+                          <el-option label="全部商品" value="shanghai"></el-option>
+                          <el-option label="在售中商品" value="beijing"></el-option>
+                          <el-option label="仓库中商品" value="beijing"></el-option>
+                      </el-select>
+                  </el-form-item>
+                  <el-form-item label="类目选择">
+                        <el-cascader
+                          v-model="model.user"
+                          placeholder="请选择复制后的选择"
+                          style="width:200px;margin-right:5px;"
+                          :options="options"
+                          :props="props"
+                          clearable></el-cascader>
+                  </el-form-item>
+              </el-form>
+            </el-tab-pane>
         </el-tabs>
+
+        <Setting v-if="['single','shop','bindCopy'].includes(activeName)" />
+        <!-- 链接抓取 -->
+        <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'"/>
+        <div class="common-bottom" v-if="activeName === 'single'">
+            <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
+                <span style="line-height:21px">开始复制</span>
+                <el-badge :value="captureUrlNums"></el-badge>
+            </el-button>
+        </div>
+        <!-- 导入复制 -->
+        <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'"/>
+        <div class="common-bottom" v-if="activeName === 'shop'">
+            <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture">开始复制</el-button>
+        </div>
+        <!-- 绑定复制 -->
+        <div class="common-bottom" v-if="activeName === 'bindCopy'">
+            <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture" style="width:120px">开始复制</el-button>
+        </div>
+        <BindCopyTip v-if="activeName === 'bindCopy'"/>
+
         <el-dialog title="安装及使用教程" :show-close="true" :visible.sync="importFilePromptVisibe" width="60%">
             <iframe
                 v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'"
@@ -100,10 +126,14 @@
 </template>
 <script>
 import request from '@/mixins/request.js'
-import PlatformIcon from './PlatformIcon'
 import { mapGetters, mapActions } from 'vuex'
 import common from '@/common/common.js'
 import helpTips from '@/components/HelpTips.vue'
+import Setting from './Setting'
+import SupportPlatForm from './SupportPlatForm'
+import BindCopyTip from './BindCopyTip'
+import { platformIconsUrl, platformIconsStore } from './config'
+// import Api from '@/api/apis'
 
 export default {
   mixins: [request],
@@ -111,119 +141,46 @@ export default {
     return {
       textCaptureUrls: '',
       textCaptureShopUrls: '',
-      activeName: 'single',
+      activeName: 'bindCopy',
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
       importFilePromptVisibe: false,
       isStartCapture: false,
       platformIconActive: '',
-      platformIconsUrl: [
-        {
-          key: '淘宝',
-          src: require('@/assets/images/taobao.png'),
-          tip: '淘宝'
-        },
-        {
-          key: '天猫',
-          src: require('@/assets/images/tm.png'),
-          tip: '天猫'
-        },
-        {
-          key: '1688',
-          src: require('@/assets/images/1688.png'),
-          tip: '1688'
-        },
-        {
-          key: '京东',
-          src: require('@/assets/images/jd.png'),
-          tip: '京东'
-        },
-        {
-          key: '苏宁易购',
-          src: require('@/assets/images/sn.png'),
-          tip: '苏宁'
-        },
-        {
-          key: '唯品会',
-          src: require('@/assets/images/vph.png'),
-          tip: '唯品会'
-        },
-        {
-          key: '网易考拉',
-          src: require('@/assets/images/kaola.png'),
-          tip: '网易考拉'
-        },
-        {
-          key: '17网',
-          src: require('@/assets/images/17.png'),
-          tip: '17网'
-        },
-        {
-          key: '抖音',
-          src: require('@/assets/images/dy.png'),
-          tip: '抖音'
-        },
-        {
-          key: '拼多多',
-          src: require('@/assets/images/pdd.png'),
-          tip: '拼多多'
-        },
-        {
-          key: '禅妈妈',
-          src: require('@/assets/images/chanmama.png'),
-          tip: '禅妈妈'
-        }
-      ],
-      platformIconsStore: [
-        {
-          key: '淘宝',
-          src: require('@/assets/images/taobao.png'),
-          tip: '淘宝'
-        },
-        {
-          key: '天猫',
-          src: require('@/assets/images/tm.png'),
-          tip: '天猫'
-        },
-        {
-          key: '1688',
-          src: require('@/assets/images/1688.png'),
-          tip: '1688'
-        },
-        {
-          key: '京东',
-          src: require('@/assets/images/jd.png'),
-          tip: '京东'
-        },
-        {
-          key: '苏宁易购',
-          src: require('@/assets/images/sn.png'),
-          tip: '苏宁'
-        },
-        {
-          key: '网易考拉',
-          src: require('@/assets/images/kaola.png'),
-          tip: '网易考拉'
-        },
-        {
-          key: '17网',
-          src: require('@/assets/images/17.png'),
-          tip: '17网'
-        },
-        {
-          key: '抖音',
-          src: require('@/assets/images/dy.png'),
-          tip: '抖音'
-        }
-      ]
+      platformIconsUrl,
+      platformIconsStore,
+      props: { multiple: true },
+      options: [{
+        value: 1,
+        label: '全选',
+        children: [{
+          value: 2,
+          label: '上海'
+        }, {
+          value: 7,
+          label: '江苏'
+        }, {
+          value: 12,
+          label: '浙江'
+        }]
+      }],
+      model: {
+        brandId: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        radio: 1
+      }
     }
   },
   components: {
     helpTips,
-    PlatformIcon
-  },
-  activated () {
-    this.activeName = this.$route.params.activeName || 'single'
+    Setting,
+    SupportPlatForm,
+    BindCopyTip
   },
   computed: {
     ...mapGetters({
@@ -243,6 +200,23 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    getUserBindList () {
+      // let selfShopId = ''
+      // Api.hhgjAPIs.getUserBindList({}).then(data => {
+      //   data.map(item => {
+      //     if (item.is_self) {
+      //       selfShopId = item.user_id
+      //       item.name=""
+      //     } else {
+      //       item.user_list.forEach(child => {
+      //         if (child.is_self) {
+      //           selfShopId = child.user_id
+      //         }
+      //       })
+      //     }
+      //   })
+      // })
+    },
     open (name) {
       const list = {
         '淘宝': 'https://www.taobao.com/',
@@ -425,47 +399,17 @@ export default {
     },
     moveActive (val) {
       this.platformIconActive = ''
+    },
+    gotoBindShop () {
+      this.$router.push({
+        name: 'ShopsBand'
+      })
     }
   }
 }
 </script>
 <style lang="less" scoped>
-    .PlatformIcon {
-        div {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-right: 20px;
-            transition:all 0.3s;
-        }
-        img {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 5px;
-            transition: all 0.3s;
-        }
-        .active {
-          border-radius:14px;
-          animation: opacity 0.5s;
-        }
-    }
-    @keyframes opacity {
-      0% {
-        opacity: 1;
-      }
-      15% {
-        opacity: 0.35;
-      }
-
-      30% {
-        opacity: 0.5;
-      }
-
-      75% {
-        opacity: 0.85;
-      }
-      100% {
-        opacity: 1;
-      }
-    }
+.left {
+  text-align: left;
+}
 </style>
