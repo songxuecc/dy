@@ -497,7 +497,7 @@ export default {
         let userDict = {}
         data.forEach(item => {
           item['user_list'].forEach(user => {
-            if (user['is_self']) {
+            if (!user['is_self']) {
               userDict[user['user_id']] = user
             }
           })
