@@ -257,7 +257,7 @@ export default {
         key: '',
         status: '-1',
         captureId: '-1',
-        child_shop_user_id: '0'
+        child_shop_user_id: 0
       },
       pagination: {
         index: 1,
@@ -492,16 +492,14 @@ export default {
     getBindShopList () {
       // 查询绑定店铺列表
       let self = this
+      self.bindShopList = [{'shop_name': '本店铺', 'user_id': 0}]
       this.request('getUserBindList', {}, data => {
-        self.bindShopList = []
         let userDict = {}
         data.forEach(item => {
           item['user_list'].forEach(user => {
             if (user['is_self']) {
-              user['shop_name'] = '本店铺'
-              user['user_id'] = '0'
+              userDict[user['user_id']] = user
             }
-            userDict[user['user_id']] = user
           })
         })
         for (let userId in userDict) {
@@ -525,7 +523,7 @@ export default {
       this.search.key = ''
       this.search.status = '-1'
       this.search.captureId = '-1'
-      this.search.child_shop_user_id = '0'
+      this.search.child_shop_user_id = 0
       this.capture = {}
       this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
       clearTimeout(this.timer)
