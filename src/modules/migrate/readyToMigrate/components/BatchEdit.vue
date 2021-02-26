@@ -13,7 +13,7 @@
               {{item.label}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <span style="margin-left: 10px; font-size: 12px">每页商品数
+        <span style="margin-left: 10px; font-size: 12px" v-if="!isShopCapture">每页商品数
           <el-select v-model="value" placeholder="请选择" size="small" style="width: 100px" @change="onChange">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
@@ -78,7 +78,8 @@ export default {
     selectIdBatchEditList: Array,
     onSizeChange: Object,
     tpProductList: Array,
-    reload: Object
+    reload: Object,
+    isShopCapture: Boolean
   },
   components: {
     EditDelteRecord,
