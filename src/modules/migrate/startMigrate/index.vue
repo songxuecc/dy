@@ -1,128 +1,121 @@
 <template lang="html">
-    <div style="position: relative;">
-        <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
-        </help-tips>
-        <el-tabs v-model="activeName">
-            <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
-                <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个" class="mb-20"
-                    @input="changeCaptureUrl" v-model="textCaptureUrls">
-                </el-input>
-            </el-tab-pane>
-            <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop">
-                <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls" class="mb-20">
-                </el-input>
-            </el-tab-pane>
-            <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
-                <div style="width: 435px; margin: auto;">
-                    <el-upload class="capture-file-upload" drag :action="uploadAction" :headers="getTokenHeaders"
-                        :data="{'upload_type': 'local'}" :before-upload="uploadBeforeUpload"
-                        :on-progress="uploadOnProgress" :on-success="uploadOnSuccess" :on-change="uploadChange" :limit=1
-                        ref="upload" :show-file-list="false" :multiple="false" :disabled="!this.isAuth">
-                        <hh-icon type="iconshangchuanxiazai" class="el-icon-upload"
-                            style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
-                        <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
-                        <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span>
-                            只能上传CSV文件，且不超过100KB，一次最多 200
-                            条，一天最多支持 1200 条</div>
-                        <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
-                    </el-upload>
-                </div>
-                <div style="text-align: left; margin-top: 50px;">
-                    <span class="prompt">使用方式:</span>
-                    <div class="prompt-content">方式1：下载导入模板，自行添加商品链接
-                        <el-link type="primary" size="mini" @click="downloadCSV()" :underline="false"
-                            class="prompt-link">
-                            下载模板
-                        </el-link>
-                    </div>
-                    <span class="prompt-content">方式2（推荐）：安装网页插件选取商品，然后下载并上传导入文件
-                        <el-link type="primary" size="mini" @click="navToHelp" :underline="false" class="prompt-link">
-                            安装及使用教程
-                        </el-link>
-                    </span>
-                    <span class="prompt-content" style="margin-left: 40px;">插件下载（暂不支持 IE 浏览器）：360浏览器、搜狗浏览器安装包
-                        <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false"
-                            @click="downloadCrx()" style="margin-right: 16px;">
-                            下载
-                        </el-link>
-                        Chrome 浏览器安装包
-                        <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false"
-                            @click="downloadZip()">
-                            下载
-                        </el-link>
-                    </span>
-                    <span class="prompt-content" style="margin-left: 40px;">插件支持平台：
-                        <div style="display: inline-block;">
-                            <img class="icon" src="@/assets/platformImg/taobao-tiny.png"
-                                style="width: 14px; height: 14px;">
-                        </div>
-                        <div style="display: inline-block;">
-                            <img class="icon" src="@/assets/platformImg/tmall-tiny.png"
-                                style="width: 14px; height: 14px;">
-                        </div>
-                    </span>
-                </div>
-            </el-tab-pane>
-            <el-tab-pane v-loading="loadingCnt" label="绑定复制" name="bindCopy" class="left">
-              <div class="flex column align-c">
-                <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～"/>
-                <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link" style="margin-top:10px;">去绑定店铺</el-link>
-              </div>
-              <el-form :inline="true" :model="model" class="start-migrate-setting"  size="medium">
-                 <el-form-item label="被复制的店铺">
-                      <el-select v-model="model.brandId" placeholder="请选择店铺"  style="width:200px;margin-right:5px">
-                          <el-option label="本店铺" value="shanghai"></el-option>
-                          <el-option label="区域二" value="beijing"></el-option>
-                      </el-select>
-                      <el-button type="text" @click="getCostTemplateList" size="small">绑定新店铺</el-button>
-                      <div class="info">注：小虎跑得快最近更新时间2020.10.22  10:11:11</div>
-                  </el-form-item>
-                  <el-form-item label="状态选择">
-                      <el-select v-model="model.brandId" placeholder="商品状态选择"  style="width:200px;margin-right:5px">
-                          <el-option label="全部商品" value="shanghai"></el-option>
-                          <el-option label="在售中商品" value="beijing"></el-option>
-                          <el-option label="仓库中商品" value="beijing"></el-option>
-                      </el-select>
-                  </el-form-item>
-                  <el-form-item label="类目选择">
-                        <el-cascader
-                          v-model="model.user"
-                          placeholder="请选择复制后的选择"
-                          style="width:200px;margin-right:5px;"
-                          :options="options"
-                          :props="props"
-                          clearable></el-cascader>
-                  </el-form-item>
-              </el-form>
-            </el-tab-pane>
-        </el-tabs>
+  <div style="position: relative;">
+    <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
+    </help-tips>
+    <el-tabs v-model="activeName">
+      <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
+        <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个" class="mb-20"
+          @input="changeCaptureUrl" v-model="textCaptureUrls">
+        </el-input>
+      </el-tab-pane>
+      <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop">
+        <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls" class="mb-20">
+        </el-input>
+      </el-tab-pane>
+      <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
+        <div style="width: 435px; margin: auto;">
+          <el-upload class="capture-file-upload" drag :action="uploadAction" :headers="getTokenHeaders"
+            :data="{'upload_type': 'local'}" :before-upload="uploadBeforeUpload" :on-progress="uploadOnProgress"
+            :on-success="uploadOnSuccess" :on-change="uploadChange" :limit=1 ref="upload" :show-file-list="false"
+            :multiple="false" :disabled="!this.isAuth">
+            <hh-icon type="iconshangchuanxiazai" class="el-icon-upload"
+              style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
+            <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
+            <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span>
+              只能上传CSV文件，且不超过100KB，一次最多 200
+              条，一天最多支持 1200 条</div>
+            <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
+          </el-upload>
+        </div>
+        <div style="text-align: left; margin-top: 50px;">
+          <span class="prompt">使用方式:</span>
+          <div class="prompt-content">方式1：下载导入模板，自行添加商品链接
+            <el-link type="primary" size="mini" @click="downloadCSV()" :underline="false" class="prompt-link">
+              下载模板
+            </el-link>
+          </div>
+          <span class="prompt-content">方式2（推荐）：安装网页插件选取商品，然后下载并上传导入文件
+            <el-link type="primary" size="mini" @click="navToHelp" :underline="false" class="prompt-link">
+              安装及使用教程
+            </el-link>
+          </span>
+          <span class="prompt-content" style="margin-left: 40px;">插件下载（暂不支持 IE 浏览器）：360浏览器、搜狗浏览器安装包
+            <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false"
+              @click="downloadCrx()" style="margin-right: 16px;">
+              下载
+            </el-link>
+            Chrome 浏览器安装包
+            <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false"
+              @click="downloadZip()">
+              下载
+            </el-link>
+          </span>
+          <span class="prompt-content" style="margin-left: 40px;">插件支持平台：
+            <div style="display: inline-block;">
+              <img class="icon" src="@/assets/platformImg/taobao-tiny.png" style="width: 14px; height: 14px;">
+            </div>
+            <div style="display: inline-block;">
+              <img class="icon" src="@/assets/platformImg/tmall-tiny.png" style="width: 14px; height: 14px;">
+            </div>
+          </span>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane v-loading="loadingCnt" label="绑定复制" name="bindCopy" class="left">
+        <div class="flex column align-c" v-if="!userBindList.length ">
+          <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
+          <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link"
+            style="margin-top:10px;">去绑定店铺</el-link>
+        </div>
+        <el-form :inline="true" :model="model" class="start-migrate-setting" size="medium" v-if="userBindList.length ">
+          <el-form-item label="被复制的店铺">
+            <el-select v-model="model.bandShop" placeholder="请选择店铺" style="width:220px;margin-right:5px">
+              <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList"
+                :key="item.user_id"></el-option>
+            </el-select>
+            <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
+            <div class="info" style="height:12px"><span v-if="model.bandShop">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.auth_deadline}}</span></div>
+          </el-form-item>
+          <el-form-item label="状态选择">
+            <el-select v-model="model.brandId" placeholder="商品状态选择" style="width:220px;margin-right:5px">
+              <el-option label="全部商品" value="shanghai"></el-option>
+              <el-option label="在售中商品" value="beijing"></el-option>
+              <el-option label="仓库中商品" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="类目选择">
+            <el-cascader v-model="model.user" placeholder="请选择复制后的选择" style="width:220px;margin-right:5px;"
+              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"></el-cascader>
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
+    </el-tabs>
 
-        <Setting v-if="['single','shop','bindCopy'].includes(activeName)" />
-        <!-- 链接抓取 -->
-        <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'"/>
-        <div class="common-bottom" v-if="activeName === 'single'">
-            <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
-                <span style="line-height:21px">开始复制</span>
-                <el-badge :value="captureUrlNums"></el-badge>
-            </el-button>
-        </div>
-        <!-- 导入复制 -->
-        <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'"/>
-        <div class="common-bottom" v-if="activeName === 'shop'">
-            <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture">开始复制</el-button>
-        </div>
-        <!-- 绑定复制 -->
-        <div class="common-bottom" v-if="activeName === 'bindCopy'">
-            <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture" style="width:120px">开始复制</el-button>
-        </div>
-        <BindCopyTip v-if="activeName === 'bindCopy'"/>
-
-        <el-dialog title="安装及使用教程" :show-close="true" :visible.sync="importFilePromptVisibe" width="60%">
-            <iframe
-                v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'"
-                width='100%' height='800px;' frameborder='0'></iframe>
-        </el-dialog>
+    <Setting v-if="['single','shop'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)" />
+    <!-- 链接抓取 -->
+    <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
+    <div class="common-bottom" v-if="activeName === 'single'">
+      <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
+        <span style="line-height:21px">开始复制</span>
+        <el-badge :value="captureUrlNums"></el-badge>
+      </el-button>
     </div>
+    <!-- 导入复制 -->
+    <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
+    <div class="common-bottom" v-if="activeName === 'shop'">
+      <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture">开始复制</el-button>
+    </div>
+    <!-- 绑定复制 -->
+    <div class="common-bottom" v-if="activeName === 'bindCopy' && userBindList.length ">
+      <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture" style="width:120px">开始复制</el-button>
+    </div>
+    <BindCopyTip v-if="activeName === 'bindCopy' && userBindList.length " />
+
+    <el-dialog title="安装及使用教程" :show-close="true" :visible.sync="importFilePromptVisibe" width="60%">
+      <iframe
+        v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'"
+        width='100%' height='800px;' frameborder='0'></iframe>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import request from '@/mixins/request.js'
@@ -133,7 +126,7 @@ import Setting from './Setting'
 import SupportPlatForm from './SupportPlatForm'
 import BindCopyTip from './BindCopyTip'
 import { platformIconsUrl, platformIconsStore } from './config'
-// import Api from '@/api/apis'
+import Api from '@/api/apis'
 
 export default {
   mixins: [request],
@@ -150,22 +143,9 @@ export default {
       platformIconsUrl,
       platformIconsStore,
       props: { multiple: true },
-      options: [{
-        value: 1,
-        label: '全选',
-        children: [{
-          value: 2,
-          label: '上海'
-        }, {
-          value: 7,
-          label: '江苏'
-        }, {
-          value: 12,
-          label: '浙江'
-        }]
-      }],
+
       model: {
-        brandId: '',
+        bandShop: undefined,
         region: '',
         date1: '',
         date2: '',
@@ -173,7 +153,8 @@ export default {
         type: [],
         resource: '',
         radio: 1
-      }
+      },
+      userBindList: []
     }
   },
   components: {
@@ -184,38 +165,63 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getCaptureIdList: 'getCaptureIdList',
-      isAuth: 'getIsAuth',
-      getTokenHeaders: 'getTokenHeaders'
+      isAuth: 'getIsAuth'
     }),
-
+    ...mapGetters(['getTokenHeaders', 'getCaptureIdList', 'getUserId']),
     subscItemLevelMap () {
       return common.subscItemLevelMap
+    },
+    bandShopTip () {
+      if (this.model.bandShop) {
+        return this.userBindList.find(item => this.model.bandShop === item.user_id)
+      }
+      return {}
+    },
+    cascaderOptions () {
+      if (this.model.bandShop) {
+        const bandShopTip = this.userBindList.find(item => this.model.bandShop === item.user_id)
+        const children = (bandShopTip.first_category_list || []).map(item => {
+          return {
+            value: item.category_id,
+            label: `${item.category_name}-${item.category_id}`
+          }
+        })
+        return [{
+          value: 1,
+          label: '全选',
+          children
+        }]
+      }
+      return []
     }
+  },
+  activated () {
+    this.getUserBindList()
   },
   methods: {
     ...mapActions([
       'setCaptureIdList'
     ]),
-    ...mapGetters({
-      subsc: 'getCurrentSubsc'
-    }),
-    getUserBindList () {
-      // let selfShopId = ''
-      // Api.hhgjAPIs.getUserBindList({}).then(data => {
-      //   data.map(item => {
-      //     if (item.is_self) {
-      //       selfShopId = item.user_id
-      //       item.name=""
-      //     } else {
-      //       item.user_list.forEach(child => {
-      //         if (child.is_self) {
-      //           selfShopId = child.user_id
-      //         }
-      //       })
-      //     }
-      //   })
-      // })
+    async getUserBindList () {
+      const data = await Api.hhgjAPIs.getUserBindList({need_first_category: 1})
+      let arr = []
+      const selfUserId = this.getUserId
+      let bandShopsMap = new Map()
+      data.forEach(item => {
+        if (item.user_list) {
+          arr = [...arr, ...item.user_list]
+        }
+      })
+      arr.forEach(item => {
+        if (!bandShopsMap.get(item.user_id)) {
+          if (item.user_id === selfUserId) {
+            item.shop_name = `${item.shop_name}(本店铺)`
+          }
+          bandShopsMap.set(item.user_id, item)
+        }
+      })
+      this.userBindList = [...bandShopsMap.values()]
+      console.log(this.userBindList)
     },
     open (name) {
       const list = {
@@ -405,6 +411,7 @@ export default {
         name: 'ShopsBand'
       })
     }
+
   }
 }
 </script>

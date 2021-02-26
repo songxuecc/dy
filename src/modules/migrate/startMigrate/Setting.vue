@@ -3,7 +3,7 @@
     <div>
         <el-form :inline="true" :model="model" class="start-migrate-setting" size="medium">
           <el-form-item label="复制后的品牌">
-                <el-select v-model="model.brandId" placeholder="默认无品牌设置" style="width:200px;margin-right:5px">
+                <el-select v-model="model.brandId" placeholder="默认无品牌设置" style="width:220px;margin-right:5px">
                     <el-option label="默认无品牌" value="shanghai"></el-option>
                     <el-option v-for="item in brandList" :key="item.id" :label="item.brand_chinese_name" :value="item.id" />
                 </el-select>
@@ -83,7 +83,7 @@ export default {
       }
     }
   },
-  created () {
+  activated () {
     this.loadData()
   },
   methods: {
