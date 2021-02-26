@@ -39,6 +39,7 @@ const state = {
 const getters = {
   getName: state => state.name,
   getShopName: state => state.shopName,
+  getUserId: state => state.userId,
   getToken: state => state.token,
   getTokenHeaders: state => {
     if (state.fakeToken) {
@@ -229,6 +230,7 @@ const actions = {
 
 const mutations = {
   [ types.SET_USER ] (state, data) {
+    console.log(data)
     if (data.token) {
       localStorage.setItem('token', data.token)
       state.token = data.token
@@ -248,6 +250,10 @@ const mutations = {
     if (data.shop_name) {
       localStorage.setItem('shop_name', data.shop_name)
       state.shopName = data.shop_name
+    }
+    if (data.user_id) {
+      localStorage.setItem('user_id', data.user_id)
+      state.userId = data.user_id
     }
     if (data.login_num) {
       localStorage.setItem('login_num', data.login_num)

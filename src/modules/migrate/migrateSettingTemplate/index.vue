@@ -64,11 +64,10 @@ export default {
   updated () { },
   watch: {},
   computed: {
-    ...mapState(['ownerId']),
+    ...mapState(['userId']),
     ...mapStateMigrate(['template', 'dicCustomPrices', 'userBindList']),
-    ...mapGetters({
-      getSelectTPProductIdList: 'getSelectTPProductIdList'
-    })
+    ...mapGetters(['getUserId', 'getSelectTPProductIdList'])
+
   },
   methods: {
     ...mapActionsMigrate([
@@ -163,19 +162,7 @@ export default {
     getMigrateShop () {
       // 检测必须要选择一个搬家店铺
       let migrateShop = []
-      let selfShopId = ''
-      this.userBindList.map(item => {
-        if (item.is_self) {
-          selfShopId = item.user_id
-        } else {
-          item.user_list.forEach(child => {
-            if (child.is_self) {
-              selfShopId = child.user_id
-            }
-          })
-        }
-      })
-
+      let selfShopId = this.getUserId
       if (this.$refs.shopsMigrate) {
         if (this.$refs.shopsMigrate.checkSelf) migrateShop.push(selfShopId)
         if (this.$refs.shopsMigrate.checkedBindShopList) {
@@ -200,7 +187,7 @@ export default {
         if (id === selfShopId) {
           costTemplateId = selfCostTemplateId
         }
-        return {'user_id': id, template: {cost_template_id: costTemplateId}}
+        return {user_id: id, template: {cost_template_id: costTemplateId}}
       })
       if (result) {
         localStorage.setItem('migrate_shop', JSON.stringify(result))
@@ -251,6 +238,7 @@ export default {
         if (!migrateShop) {
           return false
         }
+
         let params = {
           template: JSON.stringify(formatParmas),
           migration_type: this.migrate_type,
@@ -259,6 +247,7 @@ export default {
           custom_prices: JSON.stringify(this.dicCustomPrices),
           migrate_shop: JSON.stringify(migrateShop)
         }
+
         await Api.hhgjAPIs.migrate(params)
         if (!this.loadingCnt) {
           this.isStartMigrate = false
