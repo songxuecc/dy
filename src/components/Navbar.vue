@@ -226,7 +226,9 @@ export default {
     },
     // 付费充值
     paidRecharge () {
-      this.$router.push('paidRecharge')
+      this.$router.push({
+        name: 'PaidRecharge'
+      })
     }
   }
 }
