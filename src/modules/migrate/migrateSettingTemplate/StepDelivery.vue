@@ -26,11 +26,11 @@
                 <div style="display:flex">
                   <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:150px;margin-right:10px;align-items:center">
                     <el-option label="2天" :value="2"></el-option>
-                    <el-option label="3天" :value="3"></el-option>
-                    <el-option label="5天" :value="5"></el-option>
-                    <el-option label="7天" :value="7"></el-option>
-                    <el-option label="10天" :value="10"></el-option>
-                    <el-option label="15天" :value="15"></el-option>
+                    <el-option :value="3">3天 <el-link type="danger" :underline="false"  class="font-12" href="https://www.yuque.com/huxiao-rkndm/ksui6u/fpa940">仅支持特殊类目选择</el-link></el-option>
+                    <el-option :value="5">5天 <el-link type="danger" :underline="false"  class="font-12" href="https://www.yuque.com/huxiao-rkndm/ksui6u/fpa940">仅支持特殊类目选择</el-link></el-option>
+                    <el-option :value="7">7天 <el-link type="danger" :underline="false"  class="font-12" href="https://www.yuque.com/huxiao-rkndm/ksui6u/fpa940">仅支持特殊类目选择</el-link></el-option>
+                    <el-option :value="10">10天 <el-link type="danger" :underline="false"  class="font-12" href="https://www.yuque.com/huxiao-rkndm/ksui6u/fpa940">仅支持特殊类目选择</el-link></el-option>
+                    <el-option :value="15">15天 <el-link type="danger" :underline="false"  class="font-12" href="https://www.yuque.com/huxiao-rkndm/ksui6u/fpa940">仅支持特殊类目选择</el-link></el-option>
                 </el-select>
                 <span class="info" style="line-height:16px;flex:1" v-if="template.model.delivery_delay_day !==2">
                   注：目前抖店官方对发货模式及发货时限规则开始调整，若选择现货发货模式，需在消费者下单后<span style="color:red;font-size:12px">&nbsp;&nbsp;2天&nbsp;&nbsp;</span>内发货。部分特殊类目可自主设置【2-15天】的发货时间，具体类目以商家后台展示为准。建议选择阶梯发货模式，将现货库存设为0。点击查看&nbsp;&nbsp;<el-link @click="open" type="primary" style="font-size:12px" :underline="false">官方文档</el-link>&nbsp;&nbsp;说明  。
