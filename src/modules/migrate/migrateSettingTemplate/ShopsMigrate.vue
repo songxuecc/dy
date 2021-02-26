@@ -29,7 +29,9 @@
                     :value="item.template.id">
                   </el-option>
                 </el-select>
-                <el-button type="text"><i class="el-icon-refresh" @click="getTargetCostTemplateList(childShop.user_id)">刷新</i></el-button>
+                <el-button type="text" @click="getTargetCostTemplateList(childShop.user_id)" class="mr-5" >
+                  <hh-icon type="iconjiazai" style="font-size:12px;margin-right:3px"/>刷新
+                </el-button>
                 <el-button type="text" @click="open()">添加运费模版</el-button>
               </span>
             </span>

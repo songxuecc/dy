@@ -26,7 +26,7 @@
                     v-for="(costTemplate,index) in costTemplateList"
                     :key="index"></el-option>
                 </el-select>
-                <el-button type="text" @click="getCostTemplateList"><i class="el-icon-refresh"></i>刷新</el-button>
+                <el-button type="text" @click="getCostTemplateList"><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
                 <el-button type="text" @click="open()">添加运费模版</el-button>
             </el-form-item>
             <el-form-item label="商品类型:" prop="product_type">
