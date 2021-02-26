@@ -64,11 +64,10 @@ export default {
   updated () { },
   watch: {},
   computed: {
-    ...mapState(['ownerId']),
+    ...mapState(['userId']),
     ...mapStateMigrate(['template', 'dicCustomPrices', 'userBindList']),
-    ...mapGetters({
-      getSelectTPProductIdList: 'getSelectTPProductIdList'
-    })
+    ...mapGetters(['getUserId', 'getSelectTPProductIdList'])
+
   },
   methods: {
     ...mapActionsMigrate([
@@ -163,19 +162,7 @@ export default {
     getMigrateShop () {
       // 检测必须要选择一个搬家店铺
       let migrateShop = []
-      let selfShopId = ''
-      this.userBindList.map(item => {
-        if (item.is_self) {
-          selfShopId = item.user_id
-        } else {
-          item.user_list.forEach(child => {
-            if (child.is_self) {
-              selfShopId = child.user_id
-            }
-          })
-        }
-      })
-
+      let selfShopId = this.getUserId
       if (this.$refs.shopsMigrate) {
         if (this.$refs.shopsMigrate.checkSelf) migrateShop.push(selfShopId)
         if (this.$refs.shopsMigrate.checkedBindShopList) {
@@ -200,7 +187,7 @@ export default {
         if (id === selfShopId) {
           costTemplateId = selfCostTemplateId
         }
-        return {'user_id': id, template: {cost_template_id: costTemplateId}}
+        return {user_id: id, template: {cost_template_id: costTemplateId}}
       })
       if (result) {
         localStorage.setItem('migrate_shop', JSON.stringify(result))
@@ -247,13 +234,9 @@ export default {
       this.isStartMigrate = true
       try {
         const {formatParmas} = this.getTemplateParams()
-        let migrateShop = []
-        // 如果有多店铺绑定 则需要判断要搬家的店铺数量
-        if (this.userBindList.length) {
-          migrateShop = this.getMigrateShop()
-          if (!migrateShop) {
-            return false
-          }
+        const migrateShop = this.getMigrateShop()
+        if (!migrateShop) {
+          return false
         }
 
         let params = {

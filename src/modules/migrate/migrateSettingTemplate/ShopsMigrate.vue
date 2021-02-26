@@ -58,7 +58,7 @@ export default {
       costTemplateMap: new Map()
     }
   },
-  created () {
+  activated () {
     this.getUserBindList()
   },
   watch: {
