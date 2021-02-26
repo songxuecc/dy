@@ -23,6 +23,7 @@
               <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
                 <template slot="content">
                   <p style="font-size: 12px;margin-bottom:2px">将抖店后台的商品立马同步至本软件，每隔24小时自动同步一次</p>
+                  <p style="font-size: 12px;margin-bottom:2px">若使用了其他第三方软件修改商品，可能会导致同步数据不准确；若同步数据有问题请联系客服</p>
                   <div> 最近同步时间 {{ syncStatus.last_sync_time }} </div>
                 </template>
                 <div class="syncProduct" @click="handleSyncProducts" :disabled="isSyncing">
