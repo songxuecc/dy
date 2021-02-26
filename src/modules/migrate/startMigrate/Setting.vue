@@ -7,8 +7,8 @@
                     <el-option label="默认无品牌" value="shanghai"></el-option>
                     <el-option v-for="item in brandList" :key="item.id" :label="item.brand_chinese_name" :value="item.id" />
                 </el-select>
-                <el-button type="text" @click="loadData" :loading="loadingBrandList">
-                    <hh-icon type="iconjiazai" style="font-size:14px;margin-right:3px" v-if="!loadingBrandList"/>刷新</el-button>
+                <el-button type="text" @click="loadData" :loading="loadingBrandList" size="small">
+                    <hh-icon type="iconjiazai" style="font-size:10px;margin-right:3px" v-if="!loadingBrandList"/>刷新</el-button>
             </el-form-item>
             <el-form-item label="复制后的类目:" style="max-width:374px">
                 <el-button size="mini" v-if="!category" @click="chooseCategory" type="text">选择类目</el-button>

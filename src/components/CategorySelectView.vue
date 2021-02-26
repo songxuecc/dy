@@ -37,7 +37,7 @@
             </div>
             <div style="margin-top: 40px;">
               <el-link type="primary" target="_blank" :underline="false" @click="realSyncCategory">
-              <i class="el-icon-refresh"></i>
+              <hh-icon type="iconjiazai" style="font-size:12px;"/>
               获取新类目
               <span><el-progress v-if="isShowProgress" type="line" :percentage="percentage" :width="20"></el-progress></span>
             </el-link>
