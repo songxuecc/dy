@@ -570,7 +570,7 @@ export default {
         keyword: this.search.key,
         status: this.search.status,
         capture_id: this.search.captureId,
-        child_shop_user_id: this.search.child_shop_user_id
+        child_shop_user_id: parseInt(this.search.child_shop_user_id)
       }
       if (params['page_size'] === 0) {
         return
@@ -803,7 +803,7 @@ export default {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '选择复制历史'])
       }
       // 如果进行抓取选择，将店铺选择改为本店铺
-      this.search.child_shop_user_id = '0'
+      this.search.child_shop_user_id = 0
       this.handleCaptureOptionChange(captureId)
       this.handleCommonCaptureChange()
     },
@@ -812,7 +812,7 @@ export default {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '选择店铺复制历史'])
       }
       // 如果进行抓取选择，将店铺选择改为本店铺
-      this.search.child_shop_user_id = '0'
+      this.search.child_shop_user_id = 0
       this.handleCaptureOptionChange(captureId)
       this.handleCommonCaptureChange()
     },
