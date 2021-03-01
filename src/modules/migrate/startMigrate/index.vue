@@ -66,9 +66,9 @@
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
-        <el-form :inline="true" :model="model" class="start-migrate-setting" size="medium" v-if="userBindList.length ">
+        <el-form :inline="true" :model="model" class="start-migrate-setting flex justify-b" size="medium" v-if="userBindList.length ">
           <el-form-item label="被复制的店铺">
-            <el-select v-model="model.bandShop" placeholder="请选择店铺" style="width:220px;margin-right:5px">
+            <el-select v-model="model.bandShop" placeholder="请选择店铺" style="width:235px;margin-right:5px">
               <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList"
                 :key="item.user_id"></el-option>
             </el-select>
@@ -76,21 +76,21 @@
             <div class="info" style="height:12px"><span v-if="model.bandShop">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.auth_deadline}}</span></div>
           </el-form-item>
           <el-form-item label="状态选择">
-            <el-select v-model="model.brandId" placeholder="商品状态选择" style="width:220px;margin-right:5px">
+            <el-select v-model="model.brandId" placeholder="商品状态选择" style="width:235px;">
               <el-option label="全部商品" value="shanghai"></el-option>
               <el-option label="在售中商品" value="beijing"></el-option>
               <el-option label="仓库中商品" value="beijing"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="类目选择">
-            <el-cascader v-model="model.user" placeholder="请选择复制后的选择" style="width:220px;margin-right:5px;"
+          <el-form-item label="类目选择" class="categorySelect">
+            <el-cascader v-model="model.user" placeholder="请选择复制后的选择" style="width:235px;"
               :options="cascaderOptions" :props="props" clearable :show-all-levels="false"></el-cascader>
           </el-form-item>
         </el-form>
       </el-tab-pane>
     </el-tabs>
 
-    <Setting v-if="['single','shop'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)" />
+    <Setting v-if="['single','shop'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)" ref="setting"/>
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <div class="common-bottom" v-if="activeName === 'single'">
@@ -420,5 +420,8 @@ export default {
 <style lang="less" scoped>
 .left {
   text-align: left;
+}
+.categorySelect {
+  margin-right:0 !important;
 }
 </style>
