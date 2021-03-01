@@ -66,50 +66,54 @@
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
-        <el-form :inline="true" :model="model" class="start-migrate-setting flex justify-b" size="medium" v-if="userBindList.length ">
-          <el-form-item label="被复制的店铺">
-            <el-select v-model="model.bandShop" placeholder="请选择店铺" style="width:235px;margin-right:5px">
-              <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList"
-                :key="item.user_id"></el-option>
+        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex justify-b" size="medium"
+          v-if="userBindList.length ">
+          <el-form-item label="被复制的店铺" style="position:relative;padding-bottom:5px">
+            <el-select v-model="modelBindCopy.target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
+              <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id">
+              </el-option>
             </el-select>
             <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
-            <div class="info" style="height:12px"><span v-if="model.bandShop">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.auth_deadline}}</span></div>
+            <div class="info" style="height:12px;position:absolute;left:0;bottom:-8px;width:500px"><span v-if="modelBindCopy.target_user_id">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.auth_deadline}}</span>
+            </div>
           </el-form-item>
           <el-form-item label="状态选择">
-            <el-select v-model="model.brandId" placeholder="商品状态选择" style="width:235px;">
-              <el-option label="全部商品" value="shanghai"></el-option>
-              <el-option label="在售中商品" value="beijing"></el-option>
-              <el-option label="仓库中商品" value="beijing"></el-option>
+            <el-select v-model="modelBindCopy.status" placeholder="商品状态选择" style="width:230px;" >
+              <el-option label="全部商品" :value="0"></el-option>
+              <el-option label="在售中商品" :value="1"></el-option>
+              <el-option label="仓库中商品" :value="2"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="类目选择" class="categorySelect">
-            <el-cascader v-model="model.user" placeholder="请选择复制后的选择" style="width:235px;"
-              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"></el-cascader>
+            <el-cascader v-model="modelBindCopy.category_root_id_list" placeholder="请选择复制店铺后再选择类目" style="width:230px;"
+              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"  >
+            </el-cascader>
           </el-form-item>
         </el-form>
       </el-tab-pane>
     </el-tabs>
 
-    <Setting v-if="['single','shop'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)" ref="setting"/>
+    <Setting v-if="['single','shop'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)"
+      ref="setting" />
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <div class="common-bottom" v-if="activeName === 'single'">
-      <el-button type="primary" @click="onCapture(0)" :disabled="isStartCapture">
+      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture">
         <span style="line-height:21px">开始复制</span>
         <el-badge :value="captureUrlNums"></el-badge>
       </el-button>
     </div>
-    <!-- 导入复制 -->
+    <!-- 整店复制 -->
     <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
     <div class="common-bottom" v-if="activeName === 'shop'">
-      <el-button type="primary" @click="onCapture(1)" :disabled="isStartCapture">开始复制</el-button>
+      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture">开始复制</el-button>
     </div>
     <!-- 绑定复制 -->
     <div class="common-bottom" v-if="activeName === 'bindCopy' && userBindList.length ">
-      <el-button type="primary" @click="onCapture(2)" :disabled="isStartCapture" style="width:120px">开始复制</el-button>
+      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture" style="width:120px">开始复制
+      </el-button>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy' && userBindList.length " />
-
     <el-dialog title="安装及使用教程" :show-close="true" :visible.sync="importFilePromptVisibe" width="60%">
       <iframe
         v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'"
@@ -142,17 +146,11 @@ export default {
       platformIconActive: '',
       platformIconsUrl,
       platformIconsStore,
-      props: { multiple: true },
-
-      model: {
-        bandShop: undefined,
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        radio: 1
+      props: { multiple: true, expandTrigger: 'hover' },
+      modelBindCopy: {
+        target_user_id: undefined,
+        status: 0,
+        category_root_id_list: []
       },
       userBindList: []
     }
@@ -172,27 +170,34 @@ export default {
       return common.subscItemLevelMap
     },
     bandShopTip () {
-      if (this.model.bandShop) {
-        return this.userBindList.find(item => this.model.bandShop === item.user_id)
+      if (this.modelBindCopy.target_user_id) {
+        return this.userBindList.find(item => this.modelBindCopy.target_user_id === item.user_id)
       }
       return {}
     },
     cascaderOptions () {
-      if (this.model.bandShop) {
-        const bandShopTip = this.userBindList.find(item => this.model.bandShop === item.user_id)
+      if (this.modelBindCopy.target_user_id) {
+        const bandShopTip = this.userBindList.find(item => this.modelBindCopy.target_user_id === item.user_id)
         const children = (bandShopTip.first_category_list || []).map(item => {
           return {
             value: item.category_id,
-            label: `${item.category_name}-${item.category_id}`
+            label: `${item.category_name}`
           }
         })
         return [{
-          value: 1,
+          value: 'all',
           label: '全选',
           children
         }]
       }
-      return []
+    }
+  },
+  watch: {
+    cascaderOptions (n) {
+      if (n && n[0] && n[0].children) {
+        const children = (n[0].children || []).map(item => item.value)
+        this.modelBindCopy.category_root_id_list = [['all', ...children]]
+      }
     }
   },
   activated () {
@@ -247,23 +252,17 @@ export default {
       urls = urls.map(s => s.trim()).filter(s => s !== '')
       this.captureUrlNums = urls.length
     },
-    onCapture (captureType) {
+    // 多商品复制
+    async onCaptureUrls () {
       if (this.isStartCapture) { // 当前有复制请求
         return
       }
       let textUrls = ''
       let limit = 1
       let message = ''
-      if (captureType === 0) {
-        textUrls = this.textCaptureUrls
-        limit = 50
-        message = '多商品复制超过' + limit + '条限制'
-      } else if (captureType === 1) {
-        textUrls = this.textCaptureShopUrls
-        message = '整店复制超过' + limit + '条限制'
-      } else {
-
-      }
+      textUrls = this.textCaptureUrls
+      limit = 50
+      message = '多商品复制超过' + limit + '条限制'
       let urls = textUrls.split('\n')
       urls = urls.map(s => s.trim()).filter(s => s !== '')
       if (urls.length === 0) {
@@ -283,9 +282,77 @@ export default {
         })
         return
       }
+      const updateResult = await this.$refs.setting.updateMigrateSetting()
+      if (updateResult === 'error') {
+        return
+      }
+      this.capture({ urls, capture_type: 0 })
+    },
+    // 整店复制
+    onCaptureShops () {
+      if (this.isStartCapture) { // 当前有复制请求
+        return
+      }
+      let textUrls = ''
+      let limit = 1
+      let message = ''
+      textUrls = this.textCaptureShopUrls
+      message = '整店复制超过' + limit + '条限制'
+      let urls = textUrls.split('\n')
+      urls = urls.map(s => s.trim()).filter(s => s !== '')
+      if (urls.length === 0) {
+        this.$alert('复制链接未填写', '警告', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+          }
+        })
+        return
+      } else if (urls.length > limit) {
+        this.$alert(message, '警告', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+          }
+        })
+        return
+      }
+      this.capture({ urls, capture_type: 1 })
+    },
+    // 绑定复制
+    async onCaptureBindCopy () {
+      // check_status  -1  status  -1   全部商品
+      // check_status  3   status  0     在售中
+      // check_status  1   status   1      仓库中
+      console.log(this.modelBindCopy.category_root_id_list)
+      if (!this.modelBindCopy.target_user_id) {
+        return this.$message.warn('请选择被复制的店铺')
+      }
+      if (!this.modelBindCopy.category_root_id_list.length) {
+        return this.$message.warn('请选择类目')
+      }
+      const updateResult = await this.$refs.setting.updateMigrateSetting()
+      if (updateResult === 'error') {
+        return
+      }
+      const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
+      const obj = {
+        0: { check_status: -1, status: -1 },
+        1: { check_status: 3, status: 0 },
+        2: { check_status: 1, status: 1 }
+      }
+      const status = obj[this.modelBindCopy.status]
+      const targetUserId = this.modelBindCopy.target_user_id
+      const parmas = {
+        category_root_id_list: categoryRootIDList, status, target_user_id: targetUserId, capture_type: 2
+      }
+      console.log(parmas)
+      // this.capture(parmas)
+    },
+    capture (parmas) {
       let self = this
       this.isStartCapture = true
-      this.request('capture', { urls, capture_type: captureType }, data => {
+      this.request('capture', parmas, data => {
         this.isStartCapture = false
         let captureId = data.capture_id
         this.$router.push({
@@ -412,6 +479,9 @@ export default {
       this.$router.push({
         name: 'ShopsBand'
       })
+    },
+    clearTargetUserId () {
+      this.modelBindCopy.target_user_id = undefined
     }
 
   }

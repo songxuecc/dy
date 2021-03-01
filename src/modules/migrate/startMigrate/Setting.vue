@@ -3,8 +3,8 @@
     <div>
         <el-form :inline="true" :model="model" class="start-migrate-setting  flex justify-b" size="medium">
           <el-form-item label="复制后的品牌">
-                <el-select v-model="model.brandId" placeholder="默认无品牌设置" style="width:235px;margin-right:5px">
-                    <el-option label="默认无品牌" value="shanghai"></el-option>
+                <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:235px;margin-right:5px" clearable @clear="clear">
+                    <el-option label="默认无品牌" :value="0"></el-option>
                     <el-option v-for="item in brandList" :key="item.id" :label="item.brand_chinese_name" :value="item.id" />
                 </el-select>
                 <el-button type="text" @click="loadData" :loading="loadingBrandList" size="small">
@@ -12,10 +12,10 @@
             </el-form-item>
             <el-form-item label="复制后的类目" style="max-width:374px">
                 <div style="width:192px">
-                  <el-button size="mini" v-if="!model.category" @click="chooseCategory" type="text">点击选择类目</el-button>
-                <div class="flex align-c" style="height:36px" v-if="model.category">
-                    <el-tooltip :content="model.category && model.category.name" :disabled="model.category.name.length < 18">
-                        <el-button  size="mini" type="text" @click="chooseCategory" class="brand">{{model.category && model.category.name}}</el-button>
+                  <el-button size="mini" v-if="model.default_category &&  !model.default_category.name" @click="chooseCategory" type="text">点击选择类目</el-button>
+                <div class="flex align-c" style="height:36px" v-if="model.default_category && model.default_category.name">
+                    <el-tooltip :content="model.default_category && model.default_category.name" :disabled="model.default_category.name && model.default_category.name.length < 18">
+                        <el-button  size="mini" type="text" @click="chooseCategory" class="brand">{{model.default_category && model.default_category.name}}</el-button>
                     </el-tooltip>
                     <el-button size="mini"  @click="removeCategory" type="text" class="ml-5">删除</el-button>
                 </div>
@@ -38,6 +38,7 @@
 <script>
 import categorySelectView from '@/components/CategorySelectView'
 import Api from '@/api/apis'
+import isEqual from 'lodash/isEqual'
 
 export default {
   name: 'setting',
@@ -56,20 +57,12 @@ export default {
       options: [{
         value: 1,
         label: '全选',
-        children: [{
-          value: 2,
-          label: '上海'
-        }, {
-          value: 7,
-          label: '江苏'
-        }, {
-          value: 12,
-          label: '浙江'
-        }]
+        children: []
       }],
       model: {
-        brandId: '',
-        category: undefined
+        default_brand_id: 0,
+        default_category: {},
+        is_banner_auto_5: false
       }
     }
   },
@@ -81,15 +74,43 @@ export default {
     this.loadData()
     this.getMigrateSetting()
   },
-  watch: {
-    model (n) {
-      console.log(n)
-    }
-  },
   methods: {
     async getMigrateSetting () {
       const setting = await Api.hhgjAPIs.getMigrateSetting()
       this.model.is_banner_auto_5 = setting.is_banner_auto_5
+      this.model.default_brand_id = setting.default_brand_id
+      if (setting.default_category_id) {
+        setting.default_category.name = setting.default_category.levels.map(item => item.name).join(' > ')
+        setting.default_category.id = setting.default_category_id
+        this.model.default_category_id = setting.default_category.id
+      }
+      this.model.default_category = setting.default_category
+      this.originSetting = setting
+    },
+    async updateMigrateSetting () {
+      try {
+        const params = {...this.originSetting, ...this.model}
+        if (!this.model.default_category) {
+          delete params.default_category
+        } else {
+          params.default_category_id = params.default_category.id
+        }
+        if (!isEqual(params, this.originSetting)) {
+          await Api.hhgjAPIs.updateMigrateSetting({json: JSON.stringify(params)})
+          return 'update'
+        } else {
+          return 'equal'
+        }
+      } catch (err) {
+        this.$message.error(`搬家设置更新失败，失败原因：${err}`)
+        return 'error'
+      }
+    },
+    clear () {
+      this.model.default_brand_id = 0
+    },
+    debounceUpdateMigrateSetting (params) {
+      console.log(params)
     },
     loadData () {
       this.loadingBrandList = true
@@ -102,18 +123,17 @@ export default {
       })
     },
     onChangeCate (category) {
-      console.log(category)
       if (!category || (category && !category.id)) {
         return this.$message.error('请选择分类')
       }
       this.visvileCategory = false
-      this.model.category = category
+      this.model.default_category = category
     },
     chooseCategory () {
       this.visvileCategory = true
     },
     removeCategory () {
-      this.model.category = undefined
+      this.model.default_category = {}
     },
     moreSetting () {
       this.$router.push({
