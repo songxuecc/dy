@@ -4,12 +4,14 @@
         <div class="mb-10 color-333 font-12">抓取拼多多剩余额度数：10条 <el-link class="font-12" :underline="false" type="primary" @click="toggleVisible">额度计算规则</el-link></div>
         <div class="mb-10 color-333 font-12">拼多多抓取充值：<span v-for="(tag,idx) in tags" :key="idx" :class="['tag',idx === active?'active' :'']" @click="handleChange(idx)">{{tag}}条</span></div>
         <div class="mb-20 color-333 font-12">价格：<span class="price font-24">10</span><span class="price">元</span></div>
-        <el-button type="primary" style="width:120px">立即充值</el-button>
+        <el-button type="primary" style="width:120px" @click="onCharge">立即充值</el-button>
         <ModalEvalRules :visible.sync="visible" @toggleVisible="toggleVisible"/>
     </div>
 </template>
 
 <script>
+import Api from '@/api/apis'
+
 import ModalEvalRules from './ModalEvalRules'
 export default {
   name: 'payRecord',
@@ -29,6 +31,14 @@ export default {
     },
     toggleVisible () {
       this.visible = !this.visible
+    },
+    async onCharge () {
+      try {
+        const price = this.tags[this.active]
+        const data = await Api.hhgjAPIs.userAccountFlowCreate()
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }

@@ -5,8 +5,8 @@
             <el-radio-button label="PayRecord">额度充值</el-radio-button>
             <el-radio-button label="Recharge">充值记录</el-radio-button>
         </el-radio-group>
-        <PayRecord v-if="tabType === 'PayRecord' "/>
-        <Recharge v-if="tabType === 'Recharge' " />
+        <PayRecord v-if="tabType === 'PayRecord'"/>
+        <TableRecharge v-if="tabType === 'Recharge'"  :tableData="tableData"/>
         <el-dialog title="额度计算规则" class="product-dialog" :visible.sync="vislble" @close="dialogEditClose" v-hh-modal  width="400px" >
             <div>
                 <p>1、订购免费版赠送10条额度，订购1个月版赠送100条额度，订购3个月版赠送300条额度，订购了6个月版赠送600条额度，订购12个月版赠送1200条额度；</p>
@@ -21,32 +21,40 @@
 
 <script>
 import PayRecord from './PayRecord.vue'
-import Recharge from './Recharge.vue'
+import TableRecharge from './TableRecharge.vue'
+// import Api from '@/api/apis'
+
 export default {
   data () {
     return {
       tabType: 'PayRecord',
-      vislble: false
+      vislble: false,
+      tableData: [],
+      available_pdd_capture_nums: 0,
+      total_pdd_capture_nums: 0
     }
   },
   components: {
     PayRecord,
-    Recharge
+    TableRecharge
   },
-  computed: {
-
+  craeted () {
+    this.init()
   },
-  watch: {},
-  created () {
-
-  },
-  mounted () {
+  activated () {
+    this.init()
   },
   updated () { },
   methods: {
     // 事件名称
     methodsName () {
       this.dialogVisible = false
+    },
+    async init () {
+      // const data = await Api.hhgjAPIs.userAccountFlowCreate()
+      // this.tableData = data.version_list
+      // this.available_pdd_capture_nums = data.available_pdd_capture_nums
+      // this.total_pdd_capture_nums = data.total_pdd_capture_nums
     }
   }
 }

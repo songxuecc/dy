@@ -335,6 +335,12 @@ const hhgjAPIs = {
   },
   deleteBlackWords: (params) => {
     return api.actionCreatorPost('/api/black_word/delete', params)
+  },
+  userAccountFlowCreate: (params) => {
+    return api.actionCreatorPost('/api/user/account/flow/create', params)
+  },
+  userAccountQuery: (params) => {
+    return api.actionCreateGet('/api/user/account/query', params)
   }
 
 }
