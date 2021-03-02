@@ -61,7 +61,7 @@ export default {
         children: []
       }],
       model: {
-        default_brand_id: '',
+        default_brand_id: 0,
         default_category: {},
         is_banner_auto_5: false
       }
