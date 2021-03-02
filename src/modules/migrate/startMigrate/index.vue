@@ -197,6 +197,9 @@ export default {
   },
   activated () {
     this.getUserBindList()
+    if (this.$route.params.activeName) {
+      this.activeName = this.$route.params.activeName
+    }
   },
   methods: {
     ...mapActions([
