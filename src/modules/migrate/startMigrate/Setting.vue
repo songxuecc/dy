@@ -5,7 +5,7 @@
           <el-form-item label="复制后的品牌">
                 <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:230px;margin-right:12px" clearable @clear="clear">
                     <el-option label="默认无品牌" :value="0"></el-option>
-                    <el-option v-for="item in brandList" :key="item.id" :label="item.brand_chinese_name" :value="item.id" />
+                    <el-option v-for="item in brandList" :key="item.id" :label="getBrandName(item)" :value="item.id" />
                 </el-select>
                 <el-button type="text" @click="loadData" :loading="loadingBrandList" size="small">
                     <hh-icon type="iconjiazai" style="font-size:10px;margin-right:3px" v-if="!loadingBrandList"/><span>{{!loadingBrandList ? '刷新':'加载中'}}</span>
@@ -111,6 +111,15 @@ export default {
     },
     clear () {
       this.model.default_brand_id = 0
+    },
+    getBrandName (item) {
+      if (item.brand_english_name.trim() && item.brand_chinese_name.trim()) {
+        return `${item.brand_english_name.trim()}/${item.brand_chinese_name}`
+      } else if (item.brand_english_name.trim() && !item.brand_chinese_name.trim()) {
+        return item.brand_english_name.trim()
+      } else {
+        return item.brand_chinese_name.trim()
+      }
     },
     async loadData () {
       this.loadingBrandList = true
