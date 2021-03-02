@@ -98,8 +98,8 @@
                                     :label="getBrandName(item)"
                           ></el-option>
                         </el-select>
-                        <el-button type="text" @click="reloadBrandList">
-                            <i class="el-icon-refresh"></i>
+                        <el-button type="text" @click="reloadBrandList" :loading="loadingBrandList">
+                            <hh-icon type="iconjiazai" style="font-size:12px;" v-if="!loadingBrandList"/>
                         </el-button>
                         <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
                                 :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
@@ -798,7 +798,9 @@ export default {
     //   return skuName.length > 18
     // },
     reloadBrandList () {
+      this.loadingBrandList = true
       this.request('getShopBrandList', {}, data => {
+        this.loadingBrandList = false
         this.shopBrandList = data
         const attrList = this.product.model.attrList.map(item => {
           if (item.name === '品牌') {

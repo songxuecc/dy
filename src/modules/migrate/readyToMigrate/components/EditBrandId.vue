@@ -8,7 +8,7 @@
       <el-option v-for="item in options" :key="item.id" :label="getBrandName(item)" :value="item.id">
       </el-option>
     </el-select>
-    <el-button type="text" @click="loadData"><i class="el-icon-refresh"></i>刷新</el-button>
+    <el-button :laoding="loadingGetShopBrandList" type="text" @click="loadData"><hh-icon type="iconjiazai" style="font-size:12px;" v-if="!loadingGetShopBrandList"/>刷新</el-button>
     <el-button type="text" @click="open()"> 添加品牌 </el-button>
   </div>
   <span class="info">&nbsp;&nbsp;<span class="fail">*&nbsp;</span>仅针对&nbsp;<b>已填写类目且该类目是在品牌授权范围内</b>&nbsp;的商品生效</span>
@@ -36,7 +36,8 @@ export default {
   data () {
     return {
       options: [],
-      value: ''
+      value: '',
+      loadingGetShopBrandList: false
     }
   },
   created () {
@@ -56,8 +57,10 @@ export default {
       }
     },
     loadData () {
+      this.loadingGetShopBrandList = true
       Api.hhgjAPIs.getShopBrandList().then(data => {
         this.options = data
+        this.loadingGetShopBrandList = false
         if (data.length) {
           this.value = data[0].id
         }

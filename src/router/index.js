@@ -56,7 +56,7 @@ const router = new Router({
     },
     {
       path: '/customerSetting/shopsBand',
-      name: '绑定店铺',
+      name: 'ShopsBand',
       component: shopsBand,
       meta: {
         keepAlive: true
