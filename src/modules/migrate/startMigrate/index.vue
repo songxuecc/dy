@@ -68,7 +68,7 @@
         </div>
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex justify-b" size="medium"
           v-if="userBindList.length ">
-          <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': target_user_id ? '15px' : '0'}">
+          <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px'}">
             <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
               <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
               </el-option>
@@ -97,7 +97,7 @@
       </el-tab-pane>
     </el-tabs>
 
-    <Setting v-if="['single','shop','file'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)"
+    <Setting v-if="['single','shop','file'].includes(activeName)"
       ref="setting" />
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
@@ -331,13 +331,15 @@ export default {
       const parmas = {
         category_root_id_list: JSON.stringify(categoryRootIDList), status, target_user_id: targetUserId, capture_type: 2
       }
-      this.capture(parmas)
+      this.capture(parmas, false)
     },
-    async capture (parmas) {
+    async capture (parmas, needUpdateMigrateSetting = true) {
       try {
-        const updateResult = await this.$refs.setting.updateMigrateSetting()
-        if (updateResult === 'error') {
-          return false
+        if (needUpdateMigrateSetting) {
+          const updateResult = await this.$refs.setting.updateMigrateSetting()
+          if (updateResult === 'error') {
+            return false
+          }
         }
         let self = this
         this.isStartCapture = true
