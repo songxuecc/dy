@@ -8,7 +8,8 @@
                     <el-option v-for="item in brandList" :key="item.id" :label="item.brand_chinese_name" :value="item.id" />
                 </el-select>
                 <el-button type="text" @click="loadData" :loading="loadingBrandList" size="small">
-                    <hh-icon type="iconjiazai" style="font-size:10px;margin-right:3px" v-if="!loadingBrandList"/>刷新</el-button>
+                    <hh-icon type="iconjiazai" style="font-size:10px;margin-right:3px" v-if="!loadingBrandList"/><span>{{!loadingBrandList ? '刷新':'加载中'}}</span>
+                </el-button>
             </el-form-item>
             <el-form-item label="复制后的类目" style="max-width:379px">
                 <div>
@@ -60,24 +61,23 @@ export default {
         children: []
       }],
       model: {
-        default_brand_id: 0,
+        default_brand_id: '',
         default_category: {},
         is_banner_auto_5: false
       }
     }
   },
-  created () {
-    this.loadData()
-    this.getMigrateSetting()
-  },
-  activated () {
-    this.loadData()
+  async activated () {
+    await this.loadData()
     this.getMigrateSetting()
   },
   methods: {
     async getMigrateSetting () {
       const setting = await Api.hhgjAPIs.getMigrateSetting()
       this.model.is_banner_auto_5 = setting.is_banner_auto_5
+      if (setting.default_brand_id) {
+        this.model.default_brand_id = setting.default_brand_id
+      }
       if (setting.default_category_id) {
         setting.default_category.name = setting.default_category.levels.map(item => item.name).join(' > ')
         setting.default_category.id = setting.default_category_id
@@ -108,12 +108,11 @@ export default {
     clear () {
       this.model.default_brand_id = 0
     },
-    loadData () {
+    async loadData () {
       this.loadingBrandList = true
-      Api.hhgjAPIs.getShopBrandList().then(data => {
-        this.brandList = data
-        this.loadingBrandList = false
-      })
+      const data = await Api.hhgjAPIs.getShopBrandList()
+      this.brandList = data
+      this.loadingBrandList = false
     },
     onChangeCate (category) {
       if (!category || (category && !category.id)) {
