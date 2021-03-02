@@ -3,15 +3,15 @@
     <div>
         <el-form :inline="true" :model="model" class="start-migrate-setting  flex justify-b" size="medium">
           <el-form-item label="复制后的品牌">
-                <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:235px;margin-right:5px" clearable @clear="clear">
+                <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:230px;margin-right:12px" clearable @clear="clear">
                     <el-option label="默认无品牌" :value="0"></el-option>
                     <el-option v-for="item in brandList" :key="item.id" :label="item.brand_chinese_name" :value="item.id" />
                 </el-select>
                 <el-button type="text" @click="loadData" :loading="loadingBrandList" size="small">
                     <hh-icon type="iconjiazai" style="font-size:10px;margin-right:3px" v-if="!loadingBrandList"/>刷新</el-button>
             </el-form-item>
-            <el-form-item label="复制后的类目" style="max-width:374px">
-                <div style="width:192px">
+            <el-form-item label="复制后的类目" style="max-width:379px">
+                <div style="width:198px">
                   <el-button size="mini" v-if="model.default_category &&  !model.default_category.name" @click="chooseCategory" type="text">点击选择类目</el-button>
                 <div class="flex align-c" style="height:36px" v-if="model.default_category && model.default_category.name">
                     <el-tooltip :content="model.default_category && model.default_category.name" :disabled="model.default_category.name && model.default_category.name.length < 18">

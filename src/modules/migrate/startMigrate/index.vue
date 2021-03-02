@@ -69,12 +69,12 @@
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex justify-b" size="medium"
           v-if="userBindList.length ">
           <el-form-item label="被复制的店铺" style="position:relative;padding-bottom:5px">
-            <el-select v-model="modelBindCopy.target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
+            <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
               <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id">
               </el-option>
             </el-select>
             <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
-            <div class="info" style="height:12px;position:absolute;left:0;bottom:-8px;width:500px"><span v-if="modelBindCopy.target_user_id">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.auth_deadline}}</span>
+            <div class="info" style="height:12px;position:absolute;left:0;bottom:-8px;width:500px"><span v-if="target_user_id">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.auth_deadline}}</span>
             </div>
           </el-form-item>
           <el-form-item label="状态选择">
@@ -148,11 +148,12 @@ export default {
       platformIconsStore,
       props: { multiple: true, expandTrigger: 'hover' },
       modelBindCopy: {
-        target_user_id: undefined,
         status: 0,
         category_root_id_list: []
       },
-      userBindList: []
+      userBindList: [],
+      target_user_id: '',
+      bandShopTip: {}
     }
   },
   components: {
@@ -168,35 +169,29 @@ export default {
     ...mapGetters(['getTokenHeaders', 'getCaptureIdList', 'getUserId']),
     subscItemLevelMap () {
       return common.subscItemLevelMap
-    },
-    bandShopTip () {
-      if (this.modelBindCopy.target_user_id) {
-        return this.userBindList.find(item => this.modelBindCopy.target_user_id === item.user_id)
-      }
-      return {}
-    },
-    cascaderOptions () {
-      if (this.modelBindCopy.target_user_id) {
-        const bandShopTip = this.userBindList.find(item => this.modelBindCopy.target_user_id === item.user_id)
+    }
+  },
+  watch: {
+    target_user_id (newVal) {
+      if (newVal) {
+        const bandShopTip = this.userBindList.find(item => this.target_user_id === item.user_id)
+        this.bandShopTip = bandShopTip
         const children = (bandShopTip.first_category_list || []).map(item => {
           return {
             value: item.category_id,
             label: `${item.category_name}`
           }
         })
-        return [{
+        this.cascaderOptions = [{
           value: 'all',
           label: '全选',
           children
         }]
-      }
-    }
-  },
-  watch: {
-    cascaderOptions (n) {
-      if (n && n[0] && n[0].children) {
-        const children = (n[0].children || []).map(item => item.value)
-        this.modelBindCopy.category_root_id_list = [['all', ...children]]
+        const ids = (children || []).map(item => item.value)
+        this.modelBindCopy.category_root_id_list = [['all', ...ids]]
+      } else {
+        this.modelBindCopy.category_root_id_list = []
+        this.bandShopTip = {}
       }
     }
   },
@@ -207,6 +202,9 @@ export default {
     ...mapActions([
       'setCaptureIdList'
     ]),
+    clearTargetUserId () {
+      this.target_user_id = undefined
+    },
     async getUserBindList () {
       const data = await Api.hhgjAPIs.getUserBindList({need_first_category: 1})
       let arr = []
@@ -226,7 +224,6 @@ export default {
         }
       })
       this.userBindList = [...bandShopsMap.values()]
-      console.log(this.userBindList)
     },
     open (name) {
       const list = {
@@ -324,12 +321,17 @@ export default {
       // check_status  -1  status  -1   全部商品
       // check_status  3   status  0     在售中
       // check_status  1   status   1      仓库中
-      console.log(this.modelBindCopy.category_root_id_list)
-      if (!this.modelBindCopy.target_user_id) {
-        return this.$message.warn('请选择被复制的店铺')
+      if (!this.target_user_id) {
+        return this.$message({
+          message: '请选择被复制的店铺',
+          type: 'warning'
+        })
       }
       if (!this.modelBindCopy.category_root_id_list.length) {
-        return this.$message.warn('请选择类目')
+        return this.$message({
+          message: '请选择类目',
+          type: 'warning'
+        })
       }
       const updateResult = await this.$refs.setting.updateMigrateSetting()
       if (updateResult === 'error') {
@@ -342,12 +344,12 @@ export default {
         2: { check_status: 1, status: 1 }
       }
       const status = obj[this.modelBindCopy.status]
-      const targetUserId = this.modelBindCopy.target_user_id
+      const targetUserId = this.target_user_id
       const parmas = {
-        category_root_id_list: categoryRootIDList, status, target_user_id: targetUserId, capture_type: 2
+        category_root_id_list: JSON.stringify(categoryRootIDList), status, target_user_id: targetUserId, capture_type: 2
       }
       console.log(parmas)
-      // this.capture(parmas)
+      this.capture(parmas)
     },
     capture (parmas) {
       let self = this
@@ -479,9 +481,6 @@ export default {
       this.$router.push({
         name: 'ShopsBand'
       })
-    },
-    clearTargetUserId () {
-      this.modelBindCopy.target_user_id = undefined
     }
 
   }
