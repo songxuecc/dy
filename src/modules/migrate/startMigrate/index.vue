@@ -27,7 +27,7 @@
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
         </div>
-        <div style="text-align: left; margin-top: 50px;">
+        <div style="text-align: left; margin-top: 50px;margin-bottom:20px">
           <span class="prompt">使用方式:</span>
           <div class="prompt-content">方式1：下载导入模板，自行添加商品链接
             <el-link type="primary" size="mini" @click="downloadCSV()" :underline="false" class="prompt-link">
@@ -93,7 +93,7 @@
       </el-tab-pane>
     </el-tabs>
 
-    <Setting v-if="['single','shop'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)"
+    <Setting v-if="['single','shop','file'].includes(activeName) || (activeName === 'bindCopy' && userBindList.length)"
       ref="setting" />
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
@@ -228,25 +228,7 @@ export default {
       })
       this.userBindList = [...bandShopsMap.values()]
     },
-    open (name) {
-      const list = {
-        '淘宝': 'https://www.taobao.com/',
-        '天猫': 'https://www.tmall.com/',
-        '1688': 'https://www.1688.com/',
-        '京东': 'https://www.jd.com/',
-        '苏宁易购': 'https://www.suning.com/',
-        '唯品会': 'https://www.vip.com/',
-        '网易考拉': 'https://www.kaola.com/',
-        '17网': 'https://gz.17zwd.com/',
-        '抖音': 'https://www.yuque.com/huxiao-rkndm/ksui6u/muvtyt',
-        '拼多多': 'https://www.yuque.com/huxiao-rkndm/ksui6u/yd9cd1',
-        '禅妈妈': 'https://www.chanmama.com/'
-      }
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '搬家上货', '开始复制', name])
-      }
-      window.open(list[name])
-    },
+
     changeCaptureUrl () {
       let urls = this.textCaptureUrls.split('\n')
       urls = urls.map(s => s.trim()).filter(s => s !== '')
@@ -280,10 +262,6 @@ export default {
           callback: action => {
           }
         })
-        return
-      }
-      const updateResult = await this.$refs.setting.updateMigrateSetting()
-      if (updateResult === 'error') {
         return
       }
       this.capture({ urls, capture_type: 0 })
@@ -336,10 +314,6 @@ export default {
           type: 'warning'
         })
       }
-      const updateResult = await this.$refs.setting.updateMigrateSetting()
-      if (updateResult === 'error') {
-        return
-      }
       const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
       const obj = {
         0: { check_status: -1, status: -1 },
@@ -351,35 +325,41 @@ export default {
       const parmas = {
         category_root_id_list: JSON.stringify(categoryRootIDList), status, target_user_id: targetUserId, capture_type: 2
       }
-      console.log(parmas)
       this.capture(parmas)
     },
-    capture (parmas) {
-      let self = this
-      this.isStartCapture = true
-      this.request('capture', parmas, data => {
-        this.isStartCapture = false
-        let captureId = data.capture_id
-        this.$router.push({
-          path: '/productList',
-          query: {
-            captureId: captureId
-          }
-        })
-      }, err => {
-        this.$alert(`${err.message}` + "  <a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank'>查看帮助</a>", '警告', {
-          dangerouslyUseHTMLString: true,
-          confirmButtonText: '确定',
-          type: 'error',
-          callback: action => {
-            self.isStartCapture = false
-          }
-        })
-      }, true)
+    async capture (parmas) {
+      try {
+        const updateResult = await this.$refs.setting.updateMigrateSetting()
+        if (updateResult === 'error') {
+          return false
+        }
+        let self = this
+        this.isStartCapture = true
+        this.request('capture', parmas, data => {
+          this.isStartCapture = false
+          let captureId = data.capture_id
+          this.$router.push({
+            path: '/productList',
+            query: {
+              captureId: captureId
+            }
+          })
+        }, err => {
+          this.$alert(`${err.message}` + "  <a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank'>查看帮助</a>", '警告', {
+            dangerouslyUseHTMLString: true,
+            confirmButtonText: '确定',
+            type: 'error',
+            callback: action => {
+              self.isStartCapture = false
+            }
+          })
+        }, true)
+      } catch (err) {
+        console.log(err)
+      }
     },
-    uploadBeforeUpload (file) {
+    async uploadBeforeUpload (file) {
       // let type = file.type
-       // todo
       let size = file.size / 1024
       // if (type !== 'text/csv' && type !== 'application/vnd.ms-excel') {
       //   this.$message.error('只能上传 csv 文件')
@@ -387,6 +367,11 @@ export default {
       // }
       if (size > 100) {
         this.$message.error('上传文件太大')
+        return false
+      }
+      // 修改搬家配置
+      const updateResult = await this.$refs.setting.updateMigrateSetting()
+      if (updateResult === 'error') {
         return false
       }
       this.isStartCapture = true

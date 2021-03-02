@@ -11,7 +11,7 @@
                     <hh-icon type="iconjiazai" style="font-size:10px;margin-right:3px" v-if="!loadingBrandList"/>刷新</el-button>
             </el-form-item>
             <el-form-item label="复制后的类目" style="max-width:379px">
-                <div style="width:198px">
+                <div>
                   <el-button size="mini" v-if="model.default_category &&  !model.default_category.name" @click="chooseCategory" type="text">点击选择类目</el-button>
                 <div class="flex align-c" style="height:36px" v-if="model.default_category && model.default_category.name">
                     <el-tooltip :content="model.default_category && model.default_category.name" :disabled="model.default_category.name && model.default_category.name.length < 18">
@@ -21,7 +21,7 @@
                 </div>
                 </div>
             </el-form-item>
-            <el-form-item label="仅保留5张轮播图"  style="margin-right:68px">
+            <el-form-item label="仅保留5张轮播图">
                 <el-radio-group v-model="model.is_banner_auto_5">
                     <el-radio :label="1">是</el-radio>
                     <el-radio :label="0">否</el-radio>
