@@ -329,7 +329,7 @@ export default {
       const status = obj[this.modelBindCopy.status]
       const targetUserId = this.target_user_id
       const parmas = {
-        category_root_id_list: JSON.stringify(categoryRootIDList), status, target_user_id: targetUserId, capture_type: 2
+        category_root_id_list: JSON.stringify(categoryRootIDList), ...status, target_user_id: targetUserId, capture_type: 2
       }
       this.capture(parmas, false)
     },
