@@ -44,7 +44,7 @@
                 v-else
               />
             <span v-if="item.name === '品牌'" style="">
-                <el-button type="text" @click="reloadBrandList"><i class="el-icon-refresh"></i>刷新</el-button>
+                <el-button type="text" @click="reloadBrandList" ><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
                 <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
                 <el-checkbox
                   border

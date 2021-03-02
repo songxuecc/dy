@@ -1,14 +1,16 @@
 <template slot="empty">
-  <div class="table-empty">
+  <div class="table-empty flex column align-c">
     <hh-icon type="icon-table-empty" style="font-size:300px;"/>
-    <div class="empty-text">这里暂时什么都没有哦～</div>
-    <hh-icon type="icon-quxiao1" style="font-size:300px;"/>
+    <div class="empty-text">{{msg || '这里暂时什么都没有哦～'}}</div>
   </div>
 </template>
 
 <script>
 import '@/assets/icon/icons/icon-table-empty.svg'
 export default {
+  props: {
+    msg: String
+  },
   data () {
     return {
     }
