@@ -76,7 +76,7 @@
             <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
             <div class="info" v-if="target_user_id" style="height:12px;position:absolute;left:0;bottom:-12px;width:500px">
               <div  class="font-12">
-                  <p class="font-12">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.auth_deadline}}</p>
+                  <p class="font-12">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.last_goods_sync_time}}</p>
                   <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺即可更新一次</p>
               </div>
             </div>
