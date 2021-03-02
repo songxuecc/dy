@@ -138,7 +138,7 @@ export default {
     return {
       textCaptureUrls: '',
       textCaptureShopUrls: '',
-      activeName: 'bindCopy',
+      activeName: 'single',
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
       importFilePromptVisibe: false,
