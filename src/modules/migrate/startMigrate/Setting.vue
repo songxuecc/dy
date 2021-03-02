@@ -108,9 +108,6 @@ export default {
     clear () {
       this.model.default_brand_id = 0
     },
-    debounceUpdateMigrateSetting (params) {
-      console.log(params)
-    },
     loadData () {
       this.loadingBrandList = true
       Api.hhgjAPIs.getShopBrandList().then(data => {
