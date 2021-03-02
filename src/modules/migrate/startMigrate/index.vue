@@ -68,14 +68,14 @@
         </div>
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex justify-b" size="medium"
           v-if="userBindList.length ">
-          <el-form-item label="被复制的店铺" style="position:relative;padding-bottom:15px">
+          <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': target_user_id ? '15px' : '0'}">
             <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
               <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
               </el-option>
             </el-select>
             <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
-            <div class="info" style="height:12px;position:absolute;left:0;bottom:-12px;width:500px">
-              <div v-if="target_user_id" class="font-12">
+            <div class="info" v-if="target_user_id" style="height:12px;position:absolute;left:0;bottom:-12px;width:500px">
+              <div  class="font-12">
                   <p class="font-12">注：{{bandShopTip.shop_name}}最近更新时间{{bandShopTip.auth_deadline}}</p>
                   <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺即可更新一次</p>
               </div>
