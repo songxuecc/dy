@@ -8,11 +8,14 @@
             <el-table-column
                 prop="date"
                 label="时间"
+                align="center"
                >
             </el-table-column>
             <el-table-column
                 prop="name"
-                label="记录">
+                label="记录"
+                align="center"
+                >
             </el-table-column>
             </el-table>
     </div>

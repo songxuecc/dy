@@ -54,5 +54,7 @@ export default {
 
 <style lang='less' scoped>
 //@import url(); 引入公共css类
-
+/deep/ .el-radio-button__inner {
+        width: 100px !important;
+    }
 </style>
