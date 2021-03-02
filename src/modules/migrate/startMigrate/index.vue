@@ -99,14 +99,14 @@
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <div class="common-bottom" v-if="activeName === 'single'">
       <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture">
-        <span style="line-height:21px">开始复制</span>
+        <span style="width:120px">开始复制</span>
         <el-badge :value="captureUrlNums"></el-badge>
       </el-button>
     </div>
     <!-- 整店复制 -->
     <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
     <div class="common-bottom" v-if="activeName === 'shop'">
-      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture">开始复制</el-button>
+      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture"  style="width:120px">开始复制</el-button>
     </div>
     <!-- 绑定复制 -->
     <div class="common-bottom" v-if="activeName === 'bindCopy' && userBindList.length ">
