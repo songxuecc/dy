@@ -78,7 +78,6 @@ export default {
     async getMigrateSetting () {
       const setting = await Api.hhgjAPIs.getMigrateSetting()
       this.model.is_banner_auto_5 = setting.is_banner_auto_5
-      this.model.default_brand_id = setting.default_brand_id
       if (setting.default_category_id) {
         setting.default_category.name = setting.default_category.levels.map(item => item.name).join(' > ')
         setting.default_category.id = setting.default_category_id
@@ -116,9 +115,6 @@ export default {
       this.loadingBrandList = true
       Api.hhgjAPIs.getShopBrandList().then(data => {
         this.brandList = data
-        if (data.length) {
-          this.value = data[0].id
-        }
         this.loadingBrandList = false
       })
     },
