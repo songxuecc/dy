@@ -166,6 +166,9 @@ export default {
     SupportPlatForm,
     BindCopyTip
   },
+  activated () {
+    this.activeName = this.$route.params.activeName || 'single'
+  },
   computed: {
     ...mapGetters({
       isAuth: 'getIsAuth'

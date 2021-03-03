@@ -238,7 +238,6 @@ export default {
         if (!migrateShop) {
           return false
         }
-
         let params = {
           template: JSON.stringify(formatParmas),
           migration_type: this.migrate_type,
