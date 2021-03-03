@@ -77,7 +77,7 @@
             <div class="info" v-if="target_user_id" style="height:12px;position:absolute;left:0;bottom:-12px;width:500px">
               <div  class="font-12">
                   <p class="font-12">注：{{bandShopTip.shop_name}}&nbsp;&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}</p>
-                  <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺即可更新一次</p>
+                  <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
               </div>
             </div>
           </el-form-item>
@@ -222,6 +222,7 @@ export default {
           arr = [...arr, ...item.user_list]
         }
       })
+      // 去重
       arr.forEach(item => {
         if (!bandShopsMap.get(item.user_id)) {
           if (item.user_id === selfUserId) {
