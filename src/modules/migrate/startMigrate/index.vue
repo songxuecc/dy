@@ -76,8 +76,8 @@
             <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
             <div class="info" v-if="target_user_id" style="height:12px;position:absolute;left:0;bottom:-12px;width:500px">
               <div  class="font-12">
-                  <p class="font-12">注：{{bandShopTip.shop_name}}&nbsp;&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}</p>
-                  <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
+                  <p class="font-12">注: {{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}</p>
+                  <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
               </div>
             </div>
           </el-form-item>
@@ -212,10 +212,31 @@ export default {
     clearTargetUserId () {
       this.target_user_id = undefined
     },
+    getSelfShopId (data) {
+      let selfShopId = ''
+      data.map(item => {
+        if (item.is_self) {
+          selfShopId = item.user_id
+          item.name = ''
+        } else {
+          item.user_list.forEach(child => {
+            if (child.is_self) {
+              selfShopId = child.user_id
+            }
+          })
+        }
+      })
+      return selfShopId
+    },
     async getUserBindList () {
       const data = await Api.hhgjAPIs.getUserBindList({need_first_category: 1})
       let arr = []
-      const selfUserId = this.getUserId
+      let selfUserId = this.getUserId
+      console.log(selfUserId, 'selfUserId1')
+      if (!selfUserId) {
+        selfUserId = this.getSelfShopId(data)
+      }
+      console.log(selfUserId, 'selfUserId')
       let bandShopsMap = new Map()
       data.forEach(item => {
         if (item.user_list) {
