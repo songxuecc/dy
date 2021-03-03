@@ -159,10 +159,31 @@ export default {
         template
       }
     },
+    getSelfShopId (data) {
+      let selfShopId = ''
+      this.userBindList.map(item => {
+        if (item.is_self) {
+          selfShopId = item.user_id
+          item.name = ''
+        } else {
+          item.user_list.forEach(child => {
+            if (child.is_self) {
+              selfShopId = child.user_id
+            }
+          })
+        }
+      })
+      return selfShopId
+    },
     getMigrateShop () {
       // 检测必须要选择一个搬家店铺
       let migrateShop = []
       let selfShopId = this.getUserId
+      console.log(selfShopId, 'selfShopId1')
+      if (!selfShopId) {
+        selfShopId = this.getSelfShopId()
+      }
+      console.log(selfShopId, 'selfShopId')
       if (this.$refs.shopsMigrate) {
         if (this.$refs.shopsMigrate.checkSelf) migrateShop.push(selfShopId)
         if (this.$refs.shopsMigrate.checkedBindShopList) {
