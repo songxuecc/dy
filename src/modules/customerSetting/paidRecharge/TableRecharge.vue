@@ -1,28 +1,26 @@
 <!-- Recharge -->
 <template>
-    <div class="Recharge">
-         <el-table
-            :data="tableData"
-            style="width: 100%">
-            <el-table-empty slot="empty"/>
-            <el-table-column
-                prop="remark"
-                label="时间"
-                align="center"
-               >
-            </el-table-column>
-            <el-table-column
-                prop="name"
-                label="记录"
-                align="center"
-                >
-            </el-table-column>
-            </el-table>
-    </div>
+<div class="Recharge">
+  <el-table :data="tableData" style="width: 100%">
+    <el-table-empty slot="empty" />
+    <el-table-column prop="order_id" label="订单号" align="center">
+    </el-table-column>
+    <el-table-column prop="remark" label="记录" align="center">
+    </el-table-column>
+    <el-table-column prop="pay_time" label="时间" align="center">
+    </el-table-column>
+    <el-table-column prop="amount" label="金额" align="center">
+    </el-table-column>
+  </el-table>
+</div>
 </template>
 
 <script>
-import Api from '@/api/apis'
+import { createNamespacedHelpers } from 'vuex'
+const {
+  mapState,
+  mapActions
+} = createNamespacedHelpers('customerSetting/paidRecharge')
 
 export default {
   components: { },
@@ -32,36 +30,20 @@ export default {
   },
   data () {
     return {
-      tableData: [{
-        remark: '2016-05-02',
-        name: '订购7天-全免费版赠送额度10条'
-      }, {
-        remark: '2016-05-04',
-        name: '订购7天-全免费版赠送额度10条'
-      }, {
-        remark: '2016-05-01',
-        name: '订购7天-全免费版赠送额度10条'
-      }, {
-        remark: '2016-05-03',
-        name: '订购7天-全免费版赠送额度10条'
-      }]
     }
   },
-  created () {
-    this.init()
+  craeted () {
+    this.userAccountFlowList()
   },
   activated () {
-    this.init()
+    this.userAccountFlowList()
+  },
+  computed: {
+    ...mapState['tableData']
   },
   methods: {
-    async init () {
-      const data = await Api.hhgjAPIs.userAccountQuery()
-      // this.tableData = data.version_list
-      // this.available_pdd_capture_nums = data.available_pdd_capture_nums
-      // this.total_pdd_capture_nums = data.total_pdd_capture_nums
-    }
+    ...mapActions(['userAccountFlowList'])
   }
-
 }
 </script>
 <style lang="less" scoped>

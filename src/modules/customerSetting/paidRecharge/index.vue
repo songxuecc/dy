@@ -20,10 +20,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+
 import PayRecord from './PayRecord.vue'
 import TableRecharge from './TableRecharge.vue'
-// import Api from '@/api/apis'
-
+const {
+  mapActions
+} = createNamespacedHelpers('customerSetting/paidRecharge')
 export default {
   data () {
     return {
@@ -39,22 +42,17 @@ export default {
     TableRecharge
   },
   craeted () {
-    this.init()
+    this.getUserAccountQuery()
   },
   activated () {
-    this.init()
+    this.getUserAccountQuery()
   },
   updated () { },
   methods: {
+    ...mapActions(['getUserAccountQuery']),
     // 事件名称
     methodsName () {
       this.dialogVisible = false
-    },
-    async init () {
-      // const data = await Api.hhgjAPIs.userAccountFlowCreate()
-      // this.tableData = data.version_list
-      // this.available_pdd_capture_nums = data.available_pdd_capture_nums
-      // this.total_pdd_capture_nums = data.total_pdd_capture_nums
     }
   }
 }

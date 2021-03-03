@@ -339,8 +339,17 @@ const hhgjAPIs = {
   userAccountFlowCreate: (params) => {
     return api.actionCreatorPost('/api/user/account/flow/create', params)
   },
+  thirdpartPayCreate: (params) => {
+    return api.actionCreatorPost('/api/thirdpart/pay/create', params)
+  },
   userAccountQuery: (params) => {
     return api.actionCreateGet('/api/user/account/query', params)
+  },
+  userAccountFlowQuery: (params) => {
+    return api.actionCreateGet('/api/user/account/flow/query', params)
+  },
+  userAccountFlowList: (params) => {
+    return api.actionCreateGet('/api/user/account/flow/list', params)
   }
 
 }
