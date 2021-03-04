@@ -8,7 +8,7 @@
 <!--      <help-tips :helpLink="activeTabName" positionT="10" positionR="400"></help-tips>-->
       <el-col :span="14" style="text-align: left; padding-left: 10px;">
         <el-tabs v-model="activeTabName" @tab-click="handleTabClick" :before-leave="beforeLeaveTab">
-<!--          <el-tab-pane label="上下架" name="saleStatus"></el-tab-pane>-->
+         <el-tab-pane label="上下架" name="saleStatus"></el-tab-pane>
           <el-tab-pane label="改标题" name="title"></el-tab-pane>
 <!--          <el-tab-pane label="改描述" name="description"></el-tab-pane>-->
 <!--          <el-tab-pane label="改类目" name="category"></el-tab-pane>-->
@@ -416,6 +416,7 @@ export default {
       }
       let productNew = this.genCommitProduct(row)
       let params = {goods: [JSON.stringify(productNew)], type: 1}
+      console.log(params)
       this.request('updateProduct', params, data => {
         this.$message('商品修改已提交，正在后台处理中...')
         this.addUpdateJobId(data.job_id)

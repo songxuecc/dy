@@ -681,8 +681,9 @@ export default {
     },
     updateProperty (tpProductId) {
       this.isLoading = true
-      const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
-      let params = { tp_product_id: tpProductId, cat_id: catId }
+      // const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
+      // let params = { tp_product_id: tpProductId, cat_id: catId }
+      let params = { tp_product_id: tpProductId, cat_id: 26091 }
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
         this.attribute_json = isEmpty(data.attribute_json) ? [] : data.attribute_json
