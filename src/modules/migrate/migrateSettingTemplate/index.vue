@@ -179,11 +179,9 @@ export default {
       // 检测必须要选择一个搬家店铺
       let migrateShop = []
       let selfShopId = this.getUserId
-      console.log(selfShopId, 'selfShopId1')
       if (!selfShopId) {
         selfShopId = this.getSelfShopId()
       }
-      console.log(selfShopId, 'selfShopId')
       if (this.$refs.shopsMigrate) {
         if (this.$refs.shopsMigrate.checkSelf) migrateShop.push(selfShopId)
         if (this.$refs.shopsMigrate.checkedBindShopList) {
