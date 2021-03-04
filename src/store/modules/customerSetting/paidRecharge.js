@@ -7,7 +7,12 @@ export default {
     tableData: [],
     versionList: [],
     availablePddCaptureNums: 0,
-    totalPddCaptureNums: 0
+    totalPddCaptureNums: 0,
+    pagination: {
+      index: 0,
+      size: 10,
+      total: 100
+    }
   }),
   mutations: {
     save (state, payload) {
@@ -29,15 +34,21 @@ export default {
         })
       }
     },
-    async userAccountFlowList ({commit, state}, payload) {
+    async userAccountFlowList ({commit}, payload) {
       try {
-        const data = await Api.hhgjAPIs.userAccountFlowList()
-        const tableData = data.map(item => {
+        const pagination = payload.pagination
+        const data = await Api.hhgjAPIs.userAccountFlowList({
+          page_index: pagination.index,
+          page_size: pagination.size
+        })
+        const tableData = (data.items || []).map(item => {
           item.amount = `${item.amount / 100} 元`
           return item
         })
-        commit('save', { tableData })
+        pagination.total = data.total
+        commit('save', {tableData, pagination})
       } catch (err) {
+        console.log(err)
         this._vm.$message({
           message: `${err}`,
           type: 'error'

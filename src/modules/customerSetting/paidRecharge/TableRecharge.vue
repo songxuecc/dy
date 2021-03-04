@@ -12,6 +12,10 @@
     <el-table-column prop="pay_time" label="时间" align="center">
     </el-table-column>
   </el-table>
+  <el-pagination v-if="tableData.length " @size-change="handleSizeChange" @current-change="handleCurrentChange"
+    :current-page="pagination.index" :page-size="pagination.size" :page-sizes="[10, 20, 50, 100]"
+    layout="sizes, prev, pager, next, jumper" :total="pagination.total">
+  </el-pagination>
 </div>
 </template>
 
@@ -33,16 +37,34 @@ export default {
     }
   },
   created () {
-    this.userAccountFlowList()
+    this.userAccountFlowList({
+      pagination: this.pagination
+    })
   },
   activated () {
-    this.userAccountFlowList()
+    this.userAccountFlowList({
+      pagination: this.pagination
+    })
   },
   computed: {
-    ...mapState(['tableData'])
+    ...mapState(['tableData', 'pagination'])
   },
   methods: {
-    ...mapActions(['userAccountFlowList'])
+    ...mapActions(['userAccountFlowList']),
+    handleCurrentChange (index) {
+      this.userAccountFlowList({
+        pagination: {
+          ...this.pagination, index
+        }
+      })
+    },
+    handleSizeChange (size) {
+      this.userAccountFlowList({
+        pagination: {
+          ...this.pagination, size
+        }
+      })
+    }
   }
 }
 </script>
