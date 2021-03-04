@@ -3,7 +3,7 @@
     <div v-loading="loading">
         <div class="mb-10 color-333 font-12">抓取拼多多剩余额度数：{{availablePddCaptureNums}}条 <el-link class="font-12" :underline="false" type="primary" @click="toggleVisible">额度计算规则</el-link></div>
         <div class="mb-10 color-333 font-12">拼多多抓取充值：<span v-for="(tag,idx) in versionList" :key="idx" :class="['tag',idx === active?'active' :'']" @click="handleChange(idx)">{{tag.nums}}条</span></div>
-        <div class="mb-20 color-333 font-12">价格：<span class="price font-24" v-if="versionList && versionList.length">{{versionList[active].amount / 100}}</span><span class="price">元</span></div>
+        <div class="mb-20 color-333 font-12">价格：<span class="price font-24 bold" v-if="versionList && versionList.length">{{versionList[active].amount / 100}}</span><span class="price">元</span></div>
         <el-button type="primary" style="width:120px" @click="onCharge" :loading="loading" :diabled="loading">立即充值</el-button>
         <ModalEvalRules :visible.sync="visible" @toggleVisible="toggleVisible"/>
         <el-dialog title="微信扫码支付" :visible.sync="visiblePayChat"  v-hh-modal width="500px" center @closed="closed">
@@ -130,6 +130,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
     .tag {
         text-align: center;
         line-height: 24px;
@@ -173,7 +174,8 @@ export default {
     }
     .font-24 {
       font-size: 24px;
-      font-family: FZLTTHK--GBK1-0, FZLTTHK--GBK1;
+      font-weight: bolder;
+      font-family: 'Noto Sans SC';
     }
 
     .qrcode {

@@ -326,7 +326,6 @@ export default {
 </script>
 
 <style lang="less">
-
   #app {
     font-family: 14px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
     -webkit-font-smoothing: antialiased;
