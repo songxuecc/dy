@@ -167,7 +167,10 @@ export default {
     BindCopyTip
   },
   activated () {
-    this.activeName = this.$route.params.activeName || 'single'
+    this.getUserBindList()
+    if (this.$route.params.activeName) {
+      this.activeName = this.$route.params.activeName || 'single'
+    }
   },
   computed: {
     ...mapGetters({
@@ -200,12 +203,6 @@ export default {
         this.modelBindCopy.category_root_id_list = []
         this.bandShopTip = {}
       }
-    }
-  },
-  activated () {
-    this.getUserBindList()
-    if (this.$route.params.activeName) {
-      this.activeName = this.$route.params.activeName
     }
   },
   methods: {

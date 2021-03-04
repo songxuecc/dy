@@ -76,11 +76,13 @@ export default {
           this.startGetOrderStatus()
           const delay = await this.delay(this.seconds)
           if (delay) {
+            console.log(delay, '000')
             this.visiblePayChat = false
           }
         }
       } catch (err) {
         this.loading = false
+        this.visiblePayChat = false
         this.$message.error(`${err}`)
       }
     },
