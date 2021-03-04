@@ -31,7 +31,11 @@ export default {
     },
     async userAccountFlowList ({commit, state}, payload) {
       try {
-        const tableData = await Api.hhgjAPIs.userAccountFlowList()
+        const data = await Api.hhgjAPIs.userAccountFlowList()
+        const tableData = data.map(item => {
+          item.amount = item.amount / 100
+          return item
+        })
         commit('save', { tableData })
       } catch (err) {
         this._vm.$message({

@@ -7,9 +7,9 @@
     </el-table-column>
     <el-table-column prop="remark" label="记录" align="center">
     </el-table-column>
-    <el-table-column prop="pay_time" label="时间" align="center">
-    </el-table-column>
     <el-table-column prop="amount" label="金额" align="center">
+    </el-table-column>
+    <el-table-column prop="pay_time" label="时间" align="center">
     </el-table-column>
   </el-table>
 </div>
