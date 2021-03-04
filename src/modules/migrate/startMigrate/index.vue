@@ -76,8 +76,8 @@
             <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
             <div class="info" v-if="target_user_id" style="height:12px;position:absolute;left:0;bottom:-12px;width:500px">
               <div  class="font-12">
-                  <p class="font-12">注：{{bandShopTip.shop_name}}&nbsp;&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}</p>
-                  <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺即可更新一次</p>
+                  <p class="font-12">注: {{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}</p>
+                  <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
               </div>
             </div>
           </el-form-item>
@@ -88,11 +88,11 @@
               <el-option label="仓库中商品" :value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="类目选择" class="categorySelect">
-            <el-cascader v-model="modelBindCopy.category_root_id_list" placeholder="请选择复制店铺后再选择类目" style="width:230px;"
-              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"  >
-            </el-cascader>
-          </el-form-item>
+<!--          <el-form-item label="类目选择" class="categorySelect">-->
+<!--            <el-cascader v-model="modelBindCopy.category_root_id_list" placeholder="请选择复制店铺后再选择类目" style="width:230px;"-->
+<!--              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"  >-->
+<!--            </el-cascader>-->
+<!--          </el-form-item>-->
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -212,16 +212,36 @@ export default {
     clearTargetUserId () {
       this.target_user_id = undefined
     },
+    getSelfShopId (data) {
+      let selfShopId = ''
+      data.map(item => {
+        if (item.is_self) {
+          selfShopId = item.user_id
+          item.name = ''
+        } else {
+          item.user_list.forEach(child => {
+            if (child.is_self) {
+              selfShopId = child.user_id
+            }
+          })
+        }
+      })
+      return selfShopId
+    },
     async getUserBindList () {
       const data = await Api.hhgjAPIs.getUserBindList({need_first_category: 1})
       let arr = []
-      const selfUserId = this.getUserId
+      let selfUserId = this.getUserId
+      if (!selfUserId) {
+        selfUserId = this.getSelfShopId(data)
+      }
       let bandShopsMap = new Map()
       data.forEach(item => {
         if (item.user_list) {
           arr = [...arr, ...item.user_list]
         }
       })
+      // 去重
       arr.forEach(item => {
         if (!bandShopsMap.get(item.user_id)) {
           if (item.user_id === selfUserId) {
@@ -314,13 +334,13 @@ export default {
           type: 'warning'
         })
       }
-      if (!this.modelBindCopy.category_root_id_list.length) {
-        return this.$message({
-          message: '请选择类目',
-          type: 'warning'
-        })
-      }
-      const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
+      // if (!this.modelBindCopy.category_root_id_list.length) {
+      //   return this.$message({
+      //     message: '请选择类目',
+      //     type: 'warning'
+      //   })
+      // }
+      // const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
       const obj = {
         0: { check_status: -1, status: -1 },
         1: { check_status: 3, status: 0 },
@@ -329,7 +349,7 @@ export default {
       const status = obj[this.modelBindCopy.status]
       const targetUserId = this.target_user_id
       const parmas = {
-        category_root_id_list: JSON.stringify(categoryRootIDList), ...status, target_user_id: targetUserId, capture_type: 2
+        category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
       }
       this.capture(parmas, false)
     },
