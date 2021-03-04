@@ -25,6 +25,7 @@ import ModalEvalRules from './ModalEvalRules'
 const {
   mapState
 } = createNamespacedHelpers('customerSetting/paidRecharge')
+const TIME = 30
 export default {
   name: 'payRecord',
   props: {
@@ -40,7 +41,7 @@ export default {
       payType: 'alipay',
       orderData: undefined,
       orderStatus: false,
-      seconds: 5
+      seconds: TIME
     }
   },
   computed: {
@@ -87,12 +88,12 @@ export default {
       }
     },
     closed () {
-      this.seconds = 5
+      this.seconds = TIME
       this.orderStatus = false
     },
     delay (seconds) {
       return new Promise(resolve => {
-        if (this.seconds === 5) {
+        if (this.seconds === TIME) {
           this.resolve = resolve
         }
         if (this.seconds > 0 && this.orderStatus) {

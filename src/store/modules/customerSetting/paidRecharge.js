@@ -16,15 +16,29 @@ export default {
   },
   actions: {
     async getUserAccountQuery ({commit, state}, payload) {
-      const data = await Api.hhgjAPIs.userAccountQuery()
-      const versionList = data.version_list
-      const availablePddCaptureNums = data.available_pdd_capture_nums
-      const totalPddCaptureNums = data.total_pdd_capture_nums
-      commit('save', { versionList, availablePddCaptureNums, totalPddCaptureNums })
+      try {
+        const data = await Api.hhgjAPIs.userAccountQuery()
+        const versionList = data.version_list
+        const availablePddCaptureNums = data.available_pdd_capture_nums
+        const totalPddCaptureNums = data.total_pdd_capture_nums
+        commit('save', { versionList, availablePddCaptureNums, totalPddCaptureNums })
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     },
     async userAccountFlowList ({commit, state}, payload) {
-      const tableData = await Api.hhgjAPIs.userAccountFlowList()
-      commit('save', { tableData })
+      try {
+        const tableData = await Api.hhgjAPIs.userAccountFlowList()
+        commit('save', { tableData })
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     }
   },
   getters: {

@@ -39,7 +39,7 @@ export default {
     this.userAccountFlowList()
   },
   computed: {
-    ...mapState['tableData']
+    ...mapState(['tableData'])
   },
   methods: {
     ...mapActions(['userAccountFlowList'])
