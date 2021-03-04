@@ -33,7 +33,7 @@ export default {
       try {
         const data = await Api.hhgjAPIs.userAccountFlowList()
         const tableData = data.map(item => {
-          item.amount = item.amount / 100
+          item.amount = `${item.amount / 100} 元`
           return item
         })
         commit('save', { tableData })
