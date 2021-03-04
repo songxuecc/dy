@@ -108,7 +108,7 @@ export default {
         if (this.orderStatus) {
           console.log('startGetOrderStatus')
           const status = await Api.hhgjAPIs.userAccountFlowQuery({
-            order_id: 'this.orderData.order_id'
+            order_id: this.orderData.order_id
           })
           if (status.order_status !== 'pay') {
             setTimeout(() => {

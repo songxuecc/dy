@@ -32,7 +32,7 @@ export default {
     return {
     }
   },
-  craeted () {
+  created () {
     this.userAccountFlowList()
   },
   activated () {
