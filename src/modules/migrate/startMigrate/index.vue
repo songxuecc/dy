@@ -88,11 +88,11 @@
               <el-option label="仓库中商品" :value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="类目选择" class="categorySelect">
-            <el-cascader v-model="modelBindCopy.category_root_id_list" placeholder="请选择复制店铺后再选择类目" style="width:230px;"
-              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"  >
-            </el-cascader>
-          </el-form-item>
+<!--          <el-form-item label="类目选择" class="categorySelect">-->
+<!--            <el-cascader v-model="modelBindCopy.category_root_id_list" placeholder="请选择复制店铺后再选择类目" style="width:230px;"-->
+<!--              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"  >-->
+<!--            </el-cascader>-->
+<!--          </el-form-item>-->
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -336,13 +336,13 @@ export default {
           type: 'warning'
         })
       }
-      if (!this.modelBindCopy.category_root_id_list.length) {
-        return this.$message({
-          message: '请选择类目',
-          type: 'warning'
-        })
-      }
-      const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
+      // if (!this.modelBindCopy.category_root_id_list.length) {
+      //   return this.$message({
+      //     message: '请选择类目',
+      //     type: 'warning'
+      //   })
+      // }
+      // const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
       const obj = {
         0: { check_status: -1, status: -1 },
         1: { check_status: 3, status: 0 },
@@ -351,7 +351,7 @@ export default {
       const status = obj[this.modelBindCopy.status]
       const targetUserId = this.target_user_id
       const parmas = {
-        category_root_id_list: JSON.stringify(categoryRootIDList), ...status, target_user_id: targetUserId, capture_type: 2
+        category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
       }
       this.capture(parmas, false)
     },
