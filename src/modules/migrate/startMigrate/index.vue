@@ -66,9 +66,9 @@
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
-        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex justify-b" size="medium"
+        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
           v-if="userBindList.length ">
-          <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px'}">
+          <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
             <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
               <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
               </el-option>
