@@ -1,6 +1,6 @@
 <!-- TableRecharge -->
 <template>
-<div class="TableRecharge">
+<div class="recharge">
   <el-table :data="tableData" style="width: 100%" class="TableRecharge">
     <el-table-empty slot="empty" />
     <el-table-column prop="order_id" label="订单号" align="center">
@@ -69,7 +69,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.TableRecharge {
+.recharge {
     width: 100%;
 }
 </style>
