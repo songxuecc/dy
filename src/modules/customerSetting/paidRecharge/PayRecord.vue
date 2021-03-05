@@ -8,10 +8,10 @@
         <ModalEvalRules :visible.sync="visible" @toggleVisible="toggleVisible"/>
         <el-dialog title="微信扫码支付" :visible.sync="visiblePayChat"  v-hh-modal width="500px" center @closed="closed">
           <div class="flex align-c column">
-            <el-alert title="微信扫一扫支付" :type="orderStatus ? 'info':'success'" show-icon :closable="false" :center="true" ></el-alert>
-            <img :src="'data:image/png;base64,'+ qrCode" class="qrcode" v-if="orderStatus"/>
-            <div class="mt-20"  v-if="!orderStatus"><hh-icon type="iconzhifuchenggong" style="font-size:106px"></hh-icon></div>
-            <div  class="mb-5 mt-20 color-success bold  font-18"  v-if="!orderStatus">支付成功</div>
+            <el-alert title="微信扫一扫支付" type="info" show-icon :closable="false" :center="true" ></el-alert>
+            <img :src="'data:image/png;base64,'+ qrCode" class="qrcode" v-if="orderStatus === 'unpay'"/>
+            <div class="mt-20"  v-if="orderStatus === 'pay'"><hh-icon type="iconzhifuchenggong" style="font-size:106px"></hh-icon></div>
+            <div  class="mb-5 mt-20 color-success bold  font-18" v-if="orderStatus === 'pay'">支付成功</div>
             <span class="info font-12">{{seconds}}秒后自动关闭</span>
           </div>
       </el-dialog>
@@ -25,7 +25,9 @@ import ModalEvalRules from './ModalEvalRules'
 const {
   mapState
 } = createNamespacedHelpers('customerSetting/paidRecharge')
-const TIME = 30
+const PAY_TIME = 60
+const CLOSE_TIME = 5
+
 export default {
   name: 'payRecord',
   props: {
@@ -40,8 +42,8 @@ export default {
       visiblePayChat: false,
       payType: 'alipay',
       orderData: undefined,
-      orderStatus: false,
-      seconds: TIME
+      orderStatus: 'unpay',
+      seconds: 0
     }
   },
   computed: {
@@ -72,13 +74,14 @@ export default {
         if (qrCode) {
           this.loading = false
           this.qrCode = qrCode
-          this.orderStatus = true
+          this.orderStatus = 'unpay'
           this.visiblePayChat = true
+          this.isWaiting = true
           this.startGetOrderStatus()
+          this.seconds = PAY_TIME
           const delay = await this.delay(this.seconds)
           if (delay) {
-            console.log(delay, '000')
-            this.visiblePayChat = false
+            this.isWaiting = false
           }
         }
       } catch (err) {
@@ -87,16 +90,12 @@ export default {
         this.$message.error(`${err}`)
       }
     },
-    closed () {
-      this.seconds = TIME
-      this.orderStatus = false
-    },
     delay (seconds) {
       return new Promise(resolve => {
-        if (this.seconds === TIME) {
+        if (this.seconds === PAY_TIME) {
           this.resolve = resolve
         }
-        if (this.seconds > 0 && this.orderStatus) {
+        if (this.seconds > 0) {
           setTimeout(() => {
             this.seconds--
             this.delay(this.seconds)
@@ -107,22 +106,45 @@ export default {
       })
     },
     async startGetOrderStatus () {
+      // 后台报错 支付失败 直接关闭
+      // 时间到了 还未支付 直接关闭 1
+      // 时间未到 支付成功 倒计时关闭 1
+      // 时间未到 还未支付 继续轮训 1
       try {
-        if (this.orderStatus) {
-          console.log('startGetOrderStatus')
+        // 时间未到 还未支付 继续轮训
+        if (this.orderStatus !== 'pay' && this.isWaiting) {
+          console.log('时间未到 还未支付 继续轮训')
           const status = await Api.hhgjAPIs.userAccountFlowQuery({
             order_id: this.orderData.order_id
           })
           if (status.order_status !== 'pay') {
             setTimeout(() => {
               this.startGetOrderStatus()
-            }, 200)
+            }, 1000)
           } else {
-            // 支付成功
-            this.orderStatus = false
+            console.log('支付成功')
+            this.orderStatus = 'pay'
+            this.startGetOrderStatus()
           }
+          // 时间未到 支付成功 倒计时关闭
+        } else if (this.orderStatus === 'pay' && this.isWaiting) {
+          console.log('时间未到 支付成功 倒计时关闭')
+          this.seconds = CLOSE_TIME
+          const delay = await this.delay(this.seconds)
+          if (delay) {
+            this.visiblePayChat = false
+          }
+          // 时间到了 还未支付 直接关闭
+        } else if (this.orderStatus !== 'pay' && !this.isWaiting) {
+          this.visiblePayChat = false
         }
+        // else if (this.orderStatus === 'pay' && !this.isWaiting)  {
+
+        // }
       } catch (err) {
+        console.log('后台报错 支付失败 直接关闭')
+        this.orderStatus = 'payfail'
+        this.visiblePayChat = false
         this.$message.error(`${err}`)
       }
     }
