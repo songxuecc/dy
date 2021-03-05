@@ -101,6 +101,7 @@
       ref="setting" />
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
+    <p class="left font-12 mt-20 bold">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="common-bottom" v-if="activeName === 'single'">
       <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture">
         <span style="width:120px">开始复制</span>
@@ -127,7 +128,7 @@
 </template>
 <script>
 import request from '@/mixins/request.js'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import common from '@/common/common.js'
 import helpTips from '@/components/HelpTips.vue'
 import Setting from './Setting'
@@ -135,6 +136,11 @@ import SupportPlatForm from './SupportPlatForm'
 import BindCopyTip from './BindCopyTip'
 import { platformIconsUrl, platformIconsStore } from './config'
 import Api from '@/api/apis'
+
+const {
+  mapActions: mapActionsPaidRecharge,
+  mapState: mapStatePaidRecharge
+} = createNamespacedHelpers('customerSetting/paidRecharge')
 
 export default {
   mixins: [request],
@@ -168,6 +174,7 @@ export default {
   },
   activated () {
     this.getUserBindList()
+    this.getUserAccountQuery()
     if (this.$route.params.activeName) {
       this.activeName = this.$route.params.activeName || 'single'
     }
@@ -176,6 +183,7 @@ export default {
     ...mapGetters({
       isAuth: 'getIsAuth'
     }),
+    ...mapStatePaidRecharge(['availablePddCaptureNums']),
     ...mapGetters(['getTokenHeaders', 'getCaptureIdList', 'getUserId']),
     subscItemLevelMap () {
       return common.subscItemLevelMap
@@ -209,6 +217,7 @@ export default {
     ...mapActions([
       'setCaptureIdList'
     ]),
+    ...mapActionsPaidRecharge(['getUserAccountQuery']),
     clearTargetUserId () {
       this.target_user_id = undefined
     },
@@ -496,6 +505,11 @@ export default {
     gotoBindShop () {
       this.$router.push({
         name: 'ShopsBand'
+      })
+    },
+    goCharge () {
+      this.$router.push({
+        name: 'PaidRecharge'
       })
     }
 

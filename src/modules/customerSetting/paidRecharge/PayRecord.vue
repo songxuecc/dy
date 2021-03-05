@@ -1,9 +1,9 @@
 <!-- PayRecord -->
 <template>
     <div v-loading="loading">
-        <div class="mb-10 color-333 font-12">抓取拼多多剩余额度数：{{availablePddCaptureNums}}条 <el-link class="font-12" :underline="false" type="primary" @click="toggleVisible">额度计算规则</el-link></div>
-        <div class="mb-10 color-333 font-12">拼多多抓取充值：<span v-for="(tag,idx) in versionList" :key="idx" :class="['tag',idx === active?'active' :'']" @click="handleChange(idx)">{{tag.nums}}条</span></div>
-        <div class="mb-20 color-333 font-12">价格：<span class="price font-24 bold" v-if="versionList && versionList.length">{{versionList[active].amount / 100}}</span><span class="price">元</span></div>
+        <div class="mb-10 color-333 font-12 bold">抓取拼多多剩余额度数：{{availablePddCaptureNums}}条 <el-link class="font-12 bold" :underline="false" type="primary" @click="toggleVisible">额度计算规则</el-link></div>
+        <div class="mb-10 color-333 font-12 bold">拼多多抓取充值：<span v-for="(tag,idx) in versionList" :key="idx" :class="['tag',idx === active?'active' :'']" @click="handleChange(idx)">{{tag.nums}}条</span></div>
+        <div class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" v-if="versionList && versionList.length">{{versionList[active].amount / 100}}</span><span class="price">元</span></div>
         <el-button type="primary" style="width:120px" @click="onCharge" :loading="loading" :diabled="loading">立即充值</el-button>
         <ModalEvalRules :visible.sync="visible" @toggleVisible="toggleVisible"/>
         <el-dialog title="微信扫码支付" :visible.sync="visiblePayChat"  v-hh-modal width="500px" center @closed="closed">
@@ -25,8 +25,8 @@ import ModalEvalRules from './ModalEvalRules'
 const {
   mapState
 } = createNamespacedHelpers('customerSetting/paidRecharge')
-const PAY_TIME = 60
-const CLOSE_TIME = 5
+const PAY_TIME = 120
+const CLOSE_TIME = 3
 
 export default {
   name: 'payRecord',
@@ -164,9 +164,9 @@ export default {
         width: 60px;
         height: 24px;
         border-radius: 4px;
-        border: 1px solid @border-color-light;
+        border: 1px solid @color-text-regular;
         font-size: 12px;
-        color:@border-color-light;
+        color:@color-text-regular;
         margin-right: 10px;
         display: inline-block;
         font-family: MicrosoftYaHei;
