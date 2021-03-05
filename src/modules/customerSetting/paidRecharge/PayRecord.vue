@@ -105,6 +105,9 @@ export default {
         }
       })
     },
+    closed () {
+      this.isWaiting = false
+    },
     async startGetOrderStatus () {
       // 后台报错 支付失败 直接关闭
       // 时间到了 还未支付 直接关闭 1
