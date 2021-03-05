@@ -1,7 +1,7 @@
 <template lang="html">
     <div class="DySearchFilterView">
-        <el-form ref="form" :model="search" :inline="true" style="text-align: left">
-            <el-form-item label="商品ID" class="form-textarea">
+        <el-form ref="form" :model="search" :inline="true" class="left" >
+            <el-form-item label="商品ID" class="form-textarea mb-5" >
                 <el-input
                   :value="search.goods_ids"
                   @input="formatGoods_ids($event)"
@@ -10,23 +10,30 @@
                   resize="none"
                   size="small"
                   placeholder="多个查询请换行或空格依次输入"
-                  style="width: 218px;" />
+                  style="width: 258px;" />
             </el-form-item>
-            <el-form-item label="商品名称">
-                <el-input v-model="search.keyword" size="small"   style="width: 218px"></el-input>
+            <el-form-item class="mb-5"  label="商品名称" >
+                <el-input v-model="search.keyword" size="small"   style="width: 258px"></el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item class="mb-5"  >
                 <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleFilterChange"
-                           popper-class="select-long" style="width: 100px"
+                           popper-class="select-long" style="width: 160px"
                 >
                     <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item>
+            <el-form-item class="mb-5"  >
                 <el-select v-model="search.captureStatus" placeholder="请选择" size="small" @change="handleFilterChange"
-                           popper-class="select-long" style="width: 100px"
+                           popper-class="select-long" style="width: 160px"
                 >
                     <el-option v-for="item in captureStatusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item class="mb-5"  >
+                <el-select v-model="search.presell_type" placeholder="请选择发货模式" size="small" @change="handleFilterChange"
+                           popper-class="select-long" style="width: 160px"
+                >
+                    <el-option v-for="item in presellTypeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
             </el-form-item>
 <!--            <el-form-item>-->
@@ -51,7 +58,7 @@
               <el-checkbox v-model="search.ignoreHasWaterMark" @change="handleFilterChange" v-if="$route.name=='WaterMarkActivityCreate'"
               border size="small">忽略已有水印</el-checkbox>
             </el-form-item> -->
-            <el-form-item>
+            <el-form-item class="mb-5" >
                 <el-button type="primary" size="medium" @click="handleFilterChange">搜索</el-button>
             </el-form-item>
         </el-form>
@@ -75,6 +82,7 @@ export default {
         // key: '',
         status: '0-3',
         captureStatus: -1,
+        presell_type: -1,
         minMultiPrice: '',
         maxMultiPrice: '',
         minScore: '',
@@ -87,7 +95,14 @@ export default {
         {value: -1, label: '是否抓取'},
         {value: 0, label: '非抓取'},
         {value: 1, label: '抓取'}
+      ],
+      presellTypeOptions: [
+        {value: -1, label: '全部发货模式'},
+        {value: 0, label: '现货发货'},
+        {value: 1, label: '预售发货'},
+        {value: 2, label: '阶梯发货'}
       ]
+
     }
   },
   computed: {
@@ -136,7 +151,8 @@ export default {
         keyword: this.search.keyword,
         status: status,
         check_status: checkStatus,
-        capture_status: this.search.captureStatus
+        capture_status: this.search.captureStatus,
+        presell_type: this.search.presell_type
         // ignore_has_watermark: this.search.ignoreHasWaterMark
       }
       if (this.search.minMultiPrice && !isNaN(this.search.minMultiPrice)) {
