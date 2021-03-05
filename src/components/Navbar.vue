@@ -16,9 +16,9 @@
                 </li>
               </ul>
               <!-- 付费充值 -->
-              <!-- <div class="syncProduct" @click="paidRecharge" :disabled="isSyncing">
+              <div class="syncProduct pointer" @click="paidRecharge" :disabled="isSyncing">
                 <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>付费充值</p>
-              </div> -->
+              </div>
               <!-- 同步商品 & 绑定店铺 -->
               <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
                 <template slot="content">
@@ -227,7 +227,9 @@ export default {
     },
     // 付费充值
     paidRecharge () {
-      this.$router.push('paidRecharge')
+      this.$router.push({
+        name: 'PaidRecharge'
+      })
     }
   }
 }

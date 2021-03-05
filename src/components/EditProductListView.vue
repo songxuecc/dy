@@ -9,13 +9,13 @@
       <el-table-column v-if="canSelect" type="selection" :reserve-selection="true" :key="Math.random()" :selectable="selectable">
       </el-table-column>
       <el-table-column label="商品">
-        <template slot="header" slot-scope="scope">
+        <!-- <template slot="header" slot-scope="scope">
           <span>已选择商品({{ Object.keys(selectProductDict).length }})</span>&nbsp;
           <span v-if="Object.keys(selectProductDict).length >= 100" style="color:red;">最多选择100个</span>
           <el-button v-if="canSelect && Object.keys(selectProductDict).length" size="mini" @click="clearSelection">
             取消选择
           </el-button>
-        </template>
+        </template> -->
         <template slot-scope="scope">
           <div style="display: flex;">
             <div style="padding-right: 10px; margin: auto 0;">
