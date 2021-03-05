@@ -350,6 +350,9 @@ const hhgjAPIs = {
   },
   userAccountFlowList: (params) => {
     return api.actionCreateGet('/api/user/account/flow/list', params)
+  },
+  userAccountFlowPage: (params) => {
+    return api.actionCreateGet('/api/user/account/flow/page', params)
   }
 
 }

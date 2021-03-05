@@ -9,7 +9,7 @@ export default {
     availablePddCaptureNums: 0,
     totalPddCaptureNums: 0,
     pagination: {
-      index: 0,
+      index: 1,
       size: 10,
       total: 100
     }
@@ -37,11 +37,11 @@ export default {
     async userAccountFlowList ({commit}, payload) {
       try {
         const pagination = payload.pagination
-        const data = await Api.hhgjAPIs.userAccountFlowList({
+        const data = await Api.hhgjAPIs.userAccountFlowPage({
           page_index: pagination.index,
           page_size: pagination.size
         })
-        const tableData = (data.items || []).map(item => {
+        const tableData = (data.item_list || []).map(item => {
           item.amount = `${item.amount / 100} 元`
           return item
         })
