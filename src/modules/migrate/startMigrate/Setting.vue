@@ -75,16 +75,20 @@ export default {
     async getMigrateSetting () {
       try {
         const setting = await Api.hhgjAPIs.getMigrateSetting()
-        this.model.is_banner_auto_5 = setting.is_banner_auto_5
+        if (typeof setting.is_banner_auto_5 !== 'undefined') {
+          this.model.is_banner_auto_5 = setting.is_banner_auto_5
+        }
         if (setting.default_brand_id) {
           this.model.default_brand_id = setting.default_brand_id
         }
-        if (setting.default_category_id) {
+        if (setting.default_category_id && setting.default_category) {
           setting.default_category.name = setting.default_category.levels.map(item => item.name).join(' > ')
           setting.default_category.id = setting.default_category_id
           this.model.default_category_id = setting.default_category.id
         }
-        this.model.default_category = setting.default_category
+        if (setting.default_category) {
+          this.model.default_category = setting.default_category
+        }
         this.originSetting = setting
       } catch (err) {
         this.$message.error(`${err}`)
