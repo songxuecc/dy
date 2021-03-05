@@ -92,13 +92,15 @@ export default {
     },
     delay (seconds) {
       return new Promise(resolve => {
-        if (this.seconds === PAY_TIME) {
+        if (this.seconds === seconds) {
           this.resolve = resolve
         }
         if (this.seconds > 0) {
-          setTimeout(() => {
+          this.timer = setTimeout(() => {
             this.seconds--
-            this.delay(this.seconds)
+            clearTimeout(this.timer)
+            this.timer = null
+            this.delay()
           }, 1000)
         } else {
           this.resolve(true)
