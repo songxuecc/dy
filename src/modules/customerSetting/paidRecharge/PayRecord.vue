@@ -164,7 +164,7 @@ export default {
         width: 60px;
         height: 24px;
         border-radius: 4px;
-        border: 1px solid @color-text-regular;
+        border: 1px solid @border-color-light;
         font-size: 12px;
         color:@color-text-regular;
         margin-right: 10px;
