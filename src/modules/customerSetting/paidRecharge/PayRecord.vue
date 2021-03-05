@@ -26,7 +26,7 @@ const {
   mapState
 } = createNamespacedHelpers('customerSetting/paidRecharge')
 const PAY_TIME = 120
-const CLOSE_TIME = 3
+// const CLOSE_TIME = 3
 
 export default {
   name: 'payRecord',
