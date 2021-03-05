@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="DySearchFilterView">
-        <el-form ref="form" :model="search" :inline="true" class="left" >
+        <el-form ref="form" :model="search" :inline="true" class="flex justify-b" >
             <el-form-item label="商品ID" class="form-textarea mb-5" >
                 <el-input
                   :value="search.goods_ids"
@@ -10,28 +10,28 @@
                   resize="none"
                   size="small"
                   placeholder="多个查询请换行或空格依次输入"
-                  style="width: 258px;" />
+                  style="width: 217px;" />
             </el-form-item>
             <el-form-item class="mb-5"  label="商品名称" >
-                <el-input v-model="search.keyword" size="small"   style="width: 258px"></el-input>
+                <el-input v-model="search.keyword" size="small"   style="width: 217px"></el-input>
             </el-form-item>
             <el-form-item class="mb-5"  >
                 <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleFilterChange"
-                           popper-class="select-long" style="width: 160px"
+                           popper-class="select-long" style="width: 108px"
                 >
                     <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item class="mb-5"  >
                 <el-select v-model="search.captureStatus" placeholder="请选择" size="small" @change="handleFilterChange"
-                           popper-class="select-long" style="width: 160px"
+                           popper-class="select-long" style="width: 108px"
                 >
                     <el-option v-for="item in captureStatusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item class="mb-5"  >
                 <el-select v-model="search.presell_type" placeholder="请选择发货模式" size="small" @change="handleFilterChange"
-                           popper-class="select-long" style="width: 160px"
+                           popper-class="select-long" style="width: 120px"
                 >
                     <el-option v-for="item in presellTypeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
@@ -58,7 +58,7 @@
               <el-checkbox v-model="search.ignoreHasWaterMark" @change="handleFilterChange" v-if="$route.name=='WaterMarkActivityCreate'"
               border size="small">忽略已有水印</el-checkbox>
             </el-form-item> -->
-            <el-form-item class="mb-5" >
+            <el-form-item class="mb-5"  style="margin-right:0">
                 <el-button type="primary" size="medium" @click="handleFilterChange">搜索</el-button>
             </el-form-item>
         </el-form>
