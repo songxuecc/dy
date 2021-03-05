@@ -118,7 +118,7 @@ export default {
       try {
         // 时间未到 还未支付 继续轮训
         if (this.orderStatus !== 'pay' && this.isWaiting) {
-          console.log('时间未到 还未支付 继续轮训')
+          // console.log('时间未到 还未支付 继续轮训')
           const status = await Api.hhgjAPIs.userAccountFlowQuery({
             order_id: this.orderData.order_id
           })
@@ -127,7 +127,7 @@ export default {
               this.startGetOrderStatus()
             }, 1000)
           } else {
-            console.log('支付成功')
+            // console.log('支付成功')
             this.$message.success('支付成功')
             this.orderStatus = 'pay'
             this.visiblePayChat = false
@@ -135,7 +135,7 @@ export default {
           }
           // 时间未到 支付成功 倒计时关闭
         } else if (this.orderStatus === 'pay' && this.isWaiting) {
-          console.log('时间未到 支付成功 倒计时关闭')
+          // console.log('时间未到 支付成功 倒计时关闭')
           // this.seconds = CLOSE_TIME
           // const delay = await this.delay(this.seconds)
           // if (delay) {
@@ -149,7 +149,7 @@ export default {
 
         // }
       } catch (err) {
-        console.log('后台报错 支付失败 直接关闭')
+        // console.log('后台报错 支付失败 直接关闭')
         this.orderStatus = 'payfail'
         this.visiblePayChat = false
         this.$message.error(`${err}`)
