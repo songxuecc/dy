@@ -101,7 +101,7 @@
       ref="setting" />
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
-    <p class="left font-12 mt-20 bold">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
+    <p class="left font-12 mt-20 bold"  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="common-bottom" v-if="activeName === 'single'">
       <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture">
         <span style="width:120px">开始复制</span>

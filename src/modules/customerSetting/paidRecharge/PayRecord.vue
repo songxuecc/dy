@@ -10,8 +10,8 @@
           <div class="flex align-c column">
             <el-alert title="微信扫一扫支付" type="info" show-icon :closable="false" :center="true" ></el-alert>
             <img :src="'data:image/png;base64,'+ qrCode" class="qrcode" v-if="orderStatus === 'unpay'"/>
-            <div class="mt-20"  v-if="orderStatus === 'pay'"><hh-icon type="iconzhifuchenggong" style="font-size:106px"></hh-icon></div>
-            <div  class="mb-5 mt-20 color-success bold  font-18" v-if="orderStatus === 'pay'">支付成功</div>
+            <!-- <div class="mt-20"  v-if="orderStatus === 'pay'"><hh-icon type="iconzhifuchenggong" style="font-size:106px"></hh-icon></div> -->
+            <!-- <div  class="mb-5 mt-20 color-success bold  font-18" v-if="orderStatus === 'pay'">支付成功</div> -->
             <span class="info font-12">{{seconds}}秒后自动关闭</span>
           </div>
       </el-dialog>
@@ -128,17 +128,19 @@ export default {
             }, 1000)
           } else {
             console.log('支付成功')
+            this.$message.success('支付成功')
             this.orderStatus = 'pay'
-            this.startGetOrderStatus()
+            this.visiblePayChat = false
+            // this.startGetOrderStatus()
           }
           // 时间未到 支付成功 倒计时关闭
         } else if (this.orderStatus === 'pay' && this.isWaiting) {
           console.log('时间未到 支付成功 倒计时关闭')
-          this.seconds = CLOSE_TIME
-          const delay = await this.delay(this.seconds)
-          if (delay) {
-            this.visiblePayChat = false
-          }
+          // this.seconds = CLOSE_TIME
+          // const delay = await this.delay(this.seconds)
+          // if (delay) {
+          //   this.visiblePayChat = false
+          // }
           // 时间到了 还未支付 直接关闭
         } else if (this.orderStatus !== 'pay' && !this.isWaiting) {
           this.visiblePayChat = false
