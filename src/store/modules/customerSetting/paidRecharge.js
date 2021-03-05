@@ -35,8 +35,12 @@ export default {
       }
     },
     async userAccountFlowList ({commit}, payload) {
+      let loading = this._vm.$loading({
+        target: '.TableRecharge'
+      })
       try {
         const pagination = payload.pagination
+
         const data = await Api.hhgjAPIs.userAccountFlowPage({
           page_index: pagination.index,
           page_size: pagination.size
@@ -47,8 +51,10 @@ export default {
         })
         pagination.total = data.total
         commit('save', {tableData, pagination})
+        loading && loading.close()
       } catch (err) {
         console.log(err)
+        loading && loading.close()
         this._vm.$message({
           message: `${err}`,
           type: 'error'
