@@ -16,7 +16,7 @@
                 </li>
               </ul>
               <!-- 付费充值 -->
-              <div class="syncProduct pointer" @click="paidRecharge" :disabled="isSyncing">
+              <div v-if="shopName" class="syncProduct pointer" @click="paidRecharge" :disabled="isSyncing">
                 <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>付费充值</p>
               </div>
               <!-- 同步商品 & 绑定店铺 -->
