@@ -293,7 +293,7 @@ export default {
           if (data.items[i].goods_id in this.selectProductDict) {
             product = this.selectProductDict[data.items[i].goods_id]
           } else {
-            // data.items[i].is_onsale = (data.items[i].status === 2 ? 0 : 1)
+            data.items[i].is_onsale = (data.items[i].status === 2 ? 0 : 1)
             for (let j in data.items[i].sku_list) {
               data.items[i].sku_list[j].price /= 100.0
             }
