@@ -85,6 +85,8 @@ export default {
 </script>
 <style lang="less" scoped>
 .left-translate {
+    display: inline-flex;
+    align-items: center;
     margin-left:-2px;
     color:#ffffff;
     font-size:16px;
@@ -121,7 +123,7 @@ export default {
     color:#d81e06;
     transform:scale(0.8);
     display:inline-block;
-    margin-left: -6px;
+    margin-left: -3px;
     padding-top: 2px !important;
 }
 

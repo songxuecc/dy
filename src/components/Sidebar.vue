@@ -56,14 +56,12 @@
 <script>
 import {mapGetters} from 'vuex'
 import common from '@/common/common.js'
-import NewFeatureTips from '@/components/NewFeatureTips.vue'
 
 export default {
   data () {
     return {}
   },
   inject: ['reload'],
-  components: {NewFeatureTips},
   methods: {
     ...mapGetters({
       isAuth: 'getIsAuth',

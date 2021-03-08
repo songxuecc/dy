@@ -60,7 +60,8 @@
           </span>
         </div>
       </el-tab-pane>
-      <el-tab-pane v-loading="loadingCnt" label="绑定复制" name="bindCopy" class="left">
+      <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left" >
+        <span slot="label">绑定复制<NewFeatureTips type="绑定复制" /></span>
         <div class="flex column align-c" v-if="!userBindList.length ">
           <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link"
@@ -190,6 +191,13 @@ export default {
     }
   },
   watch: {
+    activeName (newVal) {
+      if (newVal === 'bindCopy') {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '开始复制', '绑定复制', 'tabs'])
+        }
+      }
+    },
     target_user_id (newVal) {
       if (newVal) {
         const bandShopTip = this.userBindList.find(item => this.target_user_id === item.user_id)
