@@ -6,7 +6,6 @@ import WodaInfo from '@/pages/WodaInfo'
 import MigrateList from '@/pages/MigrateList'
 import CaptureList from '@/pages/CaptureList'
 import DyProductList from '@/pages/DyProductList'
-import BatchEdit from '@/pages/BatchEdit'
 import MigrateSettingPrice from '@/pages/MigrateSettingPrice.vue'
 import Login from '@/pages/Login'
 import Fake from '@/pages/Fake'
@@ -20,6 +19,7 @@ import MigrateSetting from '@/modules/migrate/migrateSetting'
 import ProductList from '@/modules/migrate/readyToMigrate'
 import Migrate from '@/modules/migrate/startMigrate'
 import SkuImport from '@/modules/productsManagement/skuImport'
+import BatchEdit from '@/modules/productsManagement/batchEdit/BatchEdit'
 
 Vue.use(Router)
 
