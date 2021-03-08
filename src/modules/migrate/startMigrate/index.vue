@@ -66,9 +66,9 @@
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
-        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex justify-b" size="medium"
+        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
           v-if="userBindList.length ">
-          <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px'}">
+          <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
             <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
               <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
               </el-option>
@@ -88,11 +88,11 @@
               <el-option label="仓库中商品" :value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="类目选择" class="categorySelect">
-            <el-cascader v-model="modelBindCopy.category_root_id_list" placeholder="请选择复制店铺后再选择类目" style="width:230px;"
-              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"  >
-            </el-cascader>
-          </el-form-item>
+<!--          <el-form-item label="类目选择" class="categorySelect">-->
+<!--            <el-cascader v-model="modelBindCopy.category_root_id_list" placeholder="请选择复制店铺后再选择类目" style="width:230px;"-->
+<!--              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"  >-->
+<!--            </el-cascader>-->
+<!--          </el-form-item>-->
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -101,6 +101,7 @@
       ref="setting" />
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
+    <p class="left font-12 mt-20 bold"  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="common-bottom" v-if="activeName === 'single'">
       <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture">
         <span style="width:120px">开始复制</span>
@@ -127,7 +128,7 @@
 </template>
 <script>
 import request from '@/mixins/request.js'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import common from '@/common/common.js'
 import helpTips from '@/components/HelpTips.vue'
 import Setting from './Setting'
@@ -135,6 +136,11 @@ import SupportPlatForm from './SupportPlatForm'
 import BindCopyTip from './BindCopyTip'
 import { platformIconsUrl, platformIconsStore } from './config'
 import Api from '@/api/apis'
+
+const {
+  mapActions: mapActionsPaidRecharge,
+  mapState: mapStatePaidRecharge
+} = createNamespacedHelpers('customerSetting/paidRecharge')
 
 export default {
   mixins: [request],
@@ -166,10 +172,18 @@ export default {
     SupportPlatForm,
     BindCopyTip
   },
+  activated () {
+    this.getUserBindList()
+    this.getUserAccountQuery()
+    if (this.$route.params.activeName) {
+      this.activeName = this.$route.params.activeName || 'single'
+    }
+  },
   computed: {
     ...mapGetters({
       isAuth: 'getIsAuth'
     }),
+    ...mapStatePaidRecharge(['availablePddCaptureNums']),
     ...mapGetters(['getTokenHeaders', 'getCaptureIdList', 'getUserId']),
     subscItemLevelMap () {
       return common.subscItemLevelMap
@@ -199,16 +213,11 @@ export default {
       }
     }
   },
-  activated () {
-    this.getUserBindList()
-    if (this.$route.params.activeName) {
-      this.activeName = this.$route.params.activeName
-    }
-  },
   methods: {
     ...mapActions([
       'setCaptureIdList'
     ]),
+    ...mapActionsPaidRecharge(['getUserAccountQuery']),
     clearTargetUserId () {
       this.target_user_id = undefined
     },
@@ -232,11 +241,9 @@ export default {
       const data = await Api.hhgjAPIs.getUserBindList({need_first_category: 1})
       let arr = []
       let selfUserId = this.getUserId
-      console.log(selfUserId, 'selfUserId1')
       if (!selfUserId) {
         selfUserId = this.getSelfShopId(data)
       }
-      console.log(selfUserId, 'selfUserId')
       let bandShopsMap = new Map()
       data.forEach(item => {
         if (item.user_list) {
@@ -336,13 +343,13 @@ export default {
           type: 'warning'
         })
       }
-      if (!this.modelBindCopy.category_root_id_list.length) {
-        return this.$message({
-          message: '请选择类目',
-          type: 'warning'
-        })
-      }
-      const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
+      // if (!this.modelBindCopy.category_root_id_list.length) {
+      //   return this.$message({
+      //     message: '请选择类目',
+      //     type: 'warning'
+      //   })
+      // }
+      // const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
       const obj = {
         0: { check_status: -1, status: -1 },
         1: { check_status: 3, status: 0 },
@@ -351,7 +358,7 @@ export default {
       const status = obj[this.modelBindCopy.status]
       const targetUserId = this.target_user_id
       const parmas = {
-        category_root_id_list: JSON.stringify(categoryRootIDList), ...status, target_user_id: targetUserId, capture_type: 2
+        category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
       }
       this.capture(parmas, false)
     },
@@ -498,6 +505,11 @@ export default {
     gotoBindShop () {
       this.$router.push({
         name: 'ShopsBand'
+      })
+    },
+    goCharge () {
+      this.$router.push({
+        name: 'PaidRecharge'
       })
     }
 

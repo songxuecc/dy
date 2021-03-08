@@ -1,10 +1,12 @@
 import shopsBand from './shopsBand'
+import paidRecharge from './paidRecharge'
 
 const modules = {
   customerSetting: {
     namespaced: true,
     modules: {
-      shopsBand
+      shopsBand,
+      paidRecharge
     }
   }
 }

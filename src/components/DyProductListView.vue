@@ -85,6 +85,11 @@
                     <el-link type="primary" :underline="false" :href="dyGoodsLink(scope.row.goods_id_str)" target="view_window">{{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}</el-link>
                 </template>
             </el-table-column>
+            <el-table-column label="发货模式" width="80">
+                <template slot-scope="scope">
+                    <span :class="getPresellType(scope.row.presell_type).class">{{getPresellType(scope.row.presell_type).text}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="" label="操作" width="140" v-if="isProductEnableEdit">
                 <template slot-scope="scope">
                   <el-button type="primary" size="small" @click="productEdit(scope.row)" :disabled="!checkProductEnableEdit(scope.row)">修改</el-button>
@@ -232,6 +237,14 @@ export default {
       this.request('syncProductOne', {dy_goods_id: dyGoodsId}, data => {
         this.$message.success('成功')
       })
+    },
+    getPresellType (type) {
+      const obj = {
+        0: {text: '现货发货', class: 'info'},
+        1: {text: '预售发货', class: 'success'},
+        2: {text: '阶梯发货', class: 'warning'}
+      }
+      return obj[Number(type)]
     },
     dyGoodsLink (dyGoodsId) {
       return 'https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + dyGoodsId
