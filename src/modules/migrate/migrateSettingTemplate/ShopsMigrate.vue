@@ -8,7 +8,7 @@
           <div v-if="parentShop.is_main" class="is-main">
             <el-checkbox :value="checkAllMap.get(Number(parentShop.user_id))" style="margin-right:10px"
               @change="handleCheckAllChange($event,Number(parentShop.user_id),idx)" :disabled="getDisabled(parentShop)">
-              全选&nbsp;&nbsp;{{parentShop.shop_name}} 是主店铺
+              全选
             </el-checkbox>
           </div>
           <el-checkbox-group v-model="checkedBindShopList"
