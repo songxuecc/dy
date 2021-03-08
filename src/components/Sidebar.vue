@@ -15,7 +15,7 @@
               <span slot="title">搬家列表</span>
             </el-menu-item>
             <el-menu-item index="/migrateSetting" :disabled="!isAuth()">
-              <span slot="title" style="display: flex;align-items: center;">搬家设置<NewFeatureTips type="搬家设置" /></span>
+              <span slot="title" style="display: flex;align-items: center;">搬家设置</span>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="2">
@@ -27,10 +27,10 @@
               <span slot="title">全部商品</span>
             </el-menu-item>
             <el-menu-item index="/batchEdit/saleStatus" :disabled="!isAuth()">
-              <span slot="title" style="display: flex;align-items: center;">批量处理<NewFeatureTips type="批量处理" /></span>
+              <span slot="title" style="display: flex;align-items: center;">批量处理</span>
             </el-menu-item>
             <el-menu-item index="/SkuImport" :disabled="!isAuth()">
-              <span slot="title">sku导入修改<NewFeatureTips type="sku导入修改" /></span>
+              <span slot="title">sku导入修改</span>
             </el-menu-item>
 <!--            <el-menu-item index="/poster/dg/list" :disabled="!isAuth()">-->
 <!--              <span slot="title">详情海报</span>-->
