@@ -26,7 +26,7 @@
             <el-menu-item index="/dyProductList" :disabled="!isAuth()">
               <span slot="title">全部商品</span>
             </el-menu-item>
-            <el-menu-item index="/batchEdit/title" :disabled="!isAuth()">
+            <el-menu-item index="/batchEdit/saleStatus" :disabled="!isAuth()">
               <span slot="title" style="display: flex;align-items: center;">批量处理</span>
             </el-menu-item>
             <el-menu-item index="/SkuImport" :disabled="!isAuth()">
