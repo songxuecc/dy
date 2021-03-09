@@ -171,6 +171,7 @@ import editPriceDrawer from '@productsManagement/batchEdit/EditPriceDrawer.vue'
 import editOuterSnDrawer from '@productsManagement/batchEdit/EditOuterSnDrawer.vue'
 import editPresellDrawer from '@productsManagement/batchEdit/EditPresellDrawer.vue'
 
+import {dyProductCanShelfMap} from '@/common/common.js'
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
@@ -296,7 +297,8 @@ export default {
           if (data.items[i].goods_id in this.selectProductDict) {
             product = this.selectProductDict[data.items[i].goods_id]
           } else {
-            data.items[i].is_onsale = (data.items[i].status === 2 ? 0 : 1)
+            const isOnSaleKey = data.items[i].status + '-' + data.items[i].check_status
+            data.items[i].is_onsale = dyProductCanShelfMap[isOnSaleKey]
             for (let j in data.items[i].sku_list) {
               data.items[i].sku_list[j].price /= 100.0
             }
@@ -304,7 +306,6 @@ export default {
           }
           this.dyProductModelList.push(product)
         }
-
         if (!this.isInit) {
           this.isInit = true
           this.isShowDrawer = true
@@ -515,7 +516,7 @@ export default {
           let product = this.selectProductDict[key]
           this.updatingProductDict[key] = product
         }
-        this.$refs.editProductListView.clearSelection()
+        // this.$refs.editProductListView.clearSelection()
         this.isShowSelect = false
         this.checkUpdateStatus()
       })

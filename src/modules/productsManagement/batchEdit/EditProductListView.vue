@@ -83,9 +83,10 @@
           <el-row>
             <el-col :offset="8" :span="8">
               <div @click.stop>
-                <el-switch v-model="scope.row.model.is_onsale" @change="editCell(scope.row)"
-                           :active-value="1" active-text="上架"
-                           :inactive-value="0" inactive-text="下架"
+                <el-switch :value="scope.row.model.is_onsale" @change="editCellOnSale($event, scope.row, index)"
+                           active-value="on" active-text="上架"
+                           inactive-value="off" inactive-text="下架"
+                           :disabled="scope.row.model.is_onsale === 'disabled'"
                 ></el-switch>
               </div>
             </el-col>
@@ -232,6 +233,13 @@ export default {
       if (this.canSelect) {
         this.$refs.dyProductListTable.toggleRowSelection(row, true)
       }
+    },
+    editCellOnSale (event, row, index) {
+      row.model.is_onsale = row.model.is_onsale === 'off' ? 'on' : 'off'
+      this.$set(this.dyProductModelList, index, row)
+      // if (this.canSelect) {
+      //   this.$refs.dyProductListTable.toggleRowSelection(row, true)
+      // }
     },
     saveCell (row) {
       this.$emit('saveCell', row)

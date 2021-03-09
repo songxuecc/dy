@@ -80,7 +80,7 @@ export default {
     return {
       search: {
         // key: '',
-        status: '0-3',
+        status: '0-1',
         captureStatus: -1,
         presell_type: -1,
         minMultiPrice: '',
@@ -110,9 +110,9 @@ export default {
       let options = []
       for (let key in common.dyProductStatusMap) {
         let label = common.dyProductStatusMap[key] === '全部' ? '商品状态' : common.dyProductStatusMap[key]
-        if (this.onlyEditable && ['草稿箱', '封禁中'].includes(label)) {
-          continue
-        }
+        // if (this.onlyEditable && ['草稿箱', '封禁中'].includes(label)) {
+        //   continue
+        // }
         options.push({ value: key, label: label })
       }
       // return options.sort((a, b) => a.value - b.value)
