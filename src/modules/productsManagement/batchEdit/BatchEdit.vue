@@ -158,16 +158,19 @@
 </template>
 
 <script>
+
 import dySearchFilterView from '@/components/DySearchFilterView.vue'
-import editProductListView from '@/components/EditProductListView.vue'
-import editTextDrawer from '@/components/EditTextDrawer.vue'
-import editSaleStatusDrawer from '@/components/EditSaleStatusDrawer.vue'
-import editBannerDrawer from '@/components/EditBannerDrawer.vue'
-import editStockDrawer from '@/components/EditStockDrawer.vue'
-import editPriceDrawer from '@/components/EditPriceDrawer.vue'
-import editOuterSnDrawer from '@/components/EditOuterSnDrawer.vue'
-import editPresellDrawer from '@/components/EditPresellDrawer.vue'
 import helpTips from '@/components/HelpTips.vue'
+
+import editSaleStatusDrawer from '@productsManagement/batchEdit/EditSaleStatusDrawer.vue'
+import editProductListView from '@productsManagement/batchEdit/EditProductListView.vue'
+import editBannerDrawer from '@productsManagement/batchEdit/EditBannerDrawer.vue'
+import editTextDrawer from '@productsManagement/batchEdit/EditTextDrawer.vue'
+import editStockDrawer from '@productsManagement/batchEdit/EditStockDrawer.vue'
+import editPriceDrawer from '@productsManagement/batchEdit/EditPriceDrawer.vue'
+import editOuterSnDrawer from '@productsManagement/batchEdit/EditOuterSnDrawer.vue'
+import editPresellDrawer from '@productsManagement/batchEdit/EditPresellDrawer.vue'
+
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'

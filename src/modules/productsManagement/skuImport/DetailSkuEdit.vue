@@ -21,7 +21,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex'
 
-import TableProductDetail from './TableProductDetail'
+import TableProductDetail from '@productsManagement/skuImport/TableProductDetail'
 const {
   mapState
 } = createNamespacedHelpers('productManagement/skuImport')
