@@ -41,6 +41,9 @@
               <hh-icon type="icongengduogongneng" style="font-size:14px; padding-left: 28px;margin-right:4px" />
               <span>更多功能</span>
             </template>
+            <el-menu-item @click="openPdd">
+              <span slot="title">虎虎搬家（拼多多）</span>
+            </el-menu-item>
             <el-menu-item index="/meizhe">
               <span slot="title">短信水印</span>
             </el-menu-item>
@@ -74,6 +77,9 @@ export default {
     },
     openHelp () {
       window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')
+    },
+    openPdd () {
+      window.open('https://pdd.huhuguanjia.com/?from=douyin')
     }
   },
   computed: {
