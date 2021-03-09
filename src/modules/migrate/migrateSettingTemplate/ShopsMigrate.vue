@@ -3,12 +3,12 @@
     <el-form label-width="120px" size="small">
       <el-form-item label="搬家店铺:">
         <el-checkbox v-model="checkSelf" class="current-shop">
-          本店铺</el-checkbox>
+          本店铺<span v-if="getShopName"> ({{getShopName}}) </span></el-checkbox>
         <div v-for="(parentShop,idx) in userBindList" :key="idx">
           <div v-if="parentShop.is_main" class="is-main">
             <el-checkbox :value="checkAllMap.get(Number(parentShop.user_id))" style="margin-right:10px"
               @change="handleCheckAllChange($event,Number(parentShop.user_id),idx)" :disabled="getDisabled(parentShop)">
-              全选&nbsp;&nbsp;{{parentShop.shop_name}} 是主店铺
+              全选
             </el-checkbox>
           </div>
           <el-checkbox-group v-model="checkedBindShopList"
@@ -83,9 +83,8 @@ export default {
   },
   computed: {
     ...mapState(['userBindList']),
-    ...mapGetters({
-      getSelectTPProductIdList: 'getSelectTPProductIdList'
-    })
+    ...mapState(['shopName']),
+    ...mapGetters(['getSelectTPProductIdList', 'getShopName'])
   },
   methods: {
     ...mapActions([
