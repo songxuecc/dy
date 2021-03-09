@@ -44,6 +44,7 @@ export default {
           data.delivery_delay_day = 2
         }
         Object.assign(template.model, data)
+        template.assign({...template.model, ...data})
         commit('save', {template})
         // 先获取数据 再保存localstorege 最后合并两个数据 是为了保证再用户刷新数据的时候 可以保证用户操作记录还在
         this.dispatch('migrate/migrateSettingTemplate/loadTempTemplate', template)
