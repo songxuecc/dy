@@ -25,7 +25,7 @@
 <script>
 // import common from '@/common/common.js'
 import { mapGetters } from 'vuex'
-import EditBannerList from '@/components/EditBannerList.vue'
+import EditBannerList from '@productsManagement/batchEdit/EditBannerList.vue'
 export default {
   components: {
     EditBannerList

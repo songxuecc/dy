@@ -155,10 +155,10 @@
 <script>
 import common from '@/common/common.js'
 import utils from '@/common/utils'
-import EditBannerList from '@/components/EditBannerList.vue'
-import EditProductStock from '@/components/EditProductStock.vue'
-import EditProductPrice from '@/components/EditProductPrice.vue'
-import EditProductOuterSn from '@/components/EditProductOuterSn.vue'
+import EditBannerList from '@productsManagement/batchEdit/EditBannerList.vue'
+import EditProductStock from '@productsManagement/batchEdit/EditProductStock.vue'
+import EditProductPrice from '@productsManagement/batchEdit/EditProductPrice.vue'
+import EditProductOuterSn from '@productsManagement/batchEdit/EditProductOuterSn.vue'
 
 export default {
   components: {
