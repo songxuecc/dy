@@ -80,7 +80,7 @@ export default {
     return {
       search: {
         // key: '',
-        status: '0-1',
+        status: '-',
         captureStatus: -1,
         presell_type: -1,
         minMultiPrice: '',

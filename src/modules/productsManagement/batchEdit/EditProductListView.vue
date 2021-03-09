@@ -84,8 +84,8 @@
             <el-col :offset="8" :span="8">
               <div @click.stop>
                 <el-switch :value="scope.row.model.is_onsale" @change="editCellOnSale($event, scope.row, index)"
-                           active-value="on" active-text="上架"
-                           inactive-value="off" inactive-text="下架"
+                           :active-value="0" active-text="上架"
+                           :inactive-value="1" inactive-text="下架"
                            :disabled="scope.row.model.is_onsale === 'disabled'"
                 ></el-switch>
               </div>
@@ -235,7 +235,7 @@ export default {
       }
     },
     editCellOnSale (event, row, index) {
-      row.model.is_onsale = row.model.is_onsale === 'off' ? 'on' : 'off'
+      row.model.is_onsale = row.model.is_onsale === 1 ? 0 : 1
       this.$set(this.dyProductModelList, index, row)
       // if (this.canSelect) {
       //   this.$refs.dyProductListTable.toggleRowSelection(row, true)

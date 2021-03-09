@@ -40,10 +40,10 @@ module.exports = {
     '2-1': 'disabled',
     '0-1': 'disabled',
     '1-5': 'disabled',
-    '0-3': 'on',
-    '0-2': 'on',
-    '0-4': 'on',
-    '1-1': 'off'
+    '0-3': 0,
+    '0-2': 0,
+    '0-4': 0,
+    '1-1': 1
   },
   dyProductStatusMap: {
     '-': '全部',
