@@ -246,7 +246,7 @@
 </template>
 <script>
 import request from '@/mixins/request.js'
-import skuPriceListView from '@/components/SkuPriceListView.vue'
+import skuPriceListView from '@migrate/migrateSettingPrice/SkuPriceListView.vue'
 import DyTips from '@/components/DyTips.vue'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'

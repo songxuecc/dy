@@ -83,9 +83,10 @@
           <el-row>
             <el-col :offset="8" :span="8">
               <div @click.stop>
-                <el-switch v-model="scope.row.model.is_onsale" @change="editCell(scope.row)"
-                           :active-value="1" active-text="上架"
-                           :inactive-value="0" inactive-text="下架"
+                <el-switch :value="scope.row.model.is_onsale" @change="editCellOnSale($event, scope.row, index)"
+                           :active-value="0" active-text="上架"
+                           :inactive-value="1" inactive-text="下架"
+                           :disabled="scope.row.model.is_onsale === 'disabled'"
                 ></el-switch>
               </div>
             </el-col>
@@ -155,10 +156,10 @@
 <script>
 import common from '@/common/common.js'
 import utils from '@/common/utils'
-import EditBannerList from '@/components/EditBannerList.vue'
-import EditProductStock from '@/components/EditProductStock.vue'
-import EditProductPrice from '@/components/EditProductPrice.vue'
-import EditProductOuterSn from '@/components/EditProductOuterSn.vue'
+import EditBannerList from '@productsManagement/batchEdit/EditBannerList.vue'
+import EditProductStock from '@productsManagement/batchEdit/EditProductStock.vue'
+import EditProductPrice from '@productsManagement/batchEdit/EditProductPrice.vue'
+import EditProductOuterSn from '@productsManagement/batchEdit/EditProductOuterSn.vue'
 
 export default {
   components: {
@@ -232,6 +233,13 @@ export default {
       if (this.canSelect) {
         this.$refs.dyProductListTable.toggleRowSelection(row, true)
       }
+    },
+    editCellOnSale (event, row, index) {
+      row.model.is_onsale = row.model.is_onsale === 1 ? 0 : 1
+      this.$set(this.dyProductModelList, index, row)
+      // if (this.canSelect) {
+      //   this.$refs.dyProductListTable.toggleRowSelection(row, true)
+      // }
     },
     saveCell (row) {
       this.$emit('saveCell', row)

@@ -24,10 +24,10 @@ import pick from 'lodash/pick'
 import moment from 'moment'
 import utils from '@/common/utils'
 import Api from '@/api/apis'
-import Head from './Head'
-import BasicTemplate from './BasicTemplate'
-import StepDelivery from './StepDelivery'
-import ShopsMigrate from './ShopsMigrate'
+import Head from '@migrate/migrateSettingTemplate/Head'
+import BasicTemplate from '@migrate/migrateSettingTemplate/BasicTemplate'
+import StepDelivery from '@migrate/migrateSettingTemplate/StepDelivery'
+import ShopsMigrate from '@migrate/migrateSettingTemplate/ShopsMigrate'
 
 const {
   mapState: mapStateMigrate,

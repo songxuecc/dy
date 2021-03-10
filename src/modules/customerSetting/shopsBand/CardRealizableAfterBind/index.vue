@@ -40,12 +40,6 @@ export default {
           span: '绑定后，主店铺a和它所有子店铺bcd可以进行店铺商品一键复制同步，包括sku编码的复制',
           extra: true
         }
-        // {
-        //   type: paintBoard,
-        //   h3: '绑定复制',
-        //   span: '绑定后，主店铺a和它所有子店铺bcd可以进行店铺商品一键复制同步，包括sku编码的复制',
-        //   extra: true
-        // }
       ]
     }
   },
