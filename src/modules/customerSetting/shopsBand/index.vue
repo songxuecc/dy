@@ -11,9 +11,9 @@
 
 <script>
 
-import CardRealizableAfterBind from './CardRealizableAfterBind'
-import EditHowToBindStore from './EditHowToBindStore'
-import TableShopManagement from './TableShopManagement'
+import CardRealizableAfterBind from '@customerSetting/shopsBand/CardRealizableAfterBind'
+import EditHowToBindStore from '@customerSetting/shopsBand/EditHowToBindStore'
+import TableShopManagement from '@customerSetting/shopsBand/TableShopManagement'
 export default {
   data () {
     return {

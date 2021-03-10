@@ -8,7 +8,7 @@
 <!--      <help-tips :helpLink="activeTabName" positionT="10" positionR="400"></help-tips>-->
       <el-col :span="14" style="text-align: left; padding-left: 10px;">
         <el-tabs v-model="activeTabName" @tab-click="handleTabClick" :before-leave="beforeLeaveTab">
-<!--          <el-tab-pane label="上下架" name="saleStatus"></el-tab-pane>-->
+         <el-tab-pane label="上下架" name="saleStatus"></el-tab-pane>
           <el-tab-pane label="改标题" name="title"></el-tab-pane>
 <!--          <el-tab-pane label="改描述" name="description"></el-tab-pane>-->
 <!--          <el-tab-pane label="改类目" name="category"></el-tab-pane>-->
@@ -158,16 +158,20 @@
 </template>
 
 <script>
+
 import dySearchFilterView from '@/components/DySearchFilterView.vue'
-import editProductListView from '@/components/EditProductListView.vue'
-import editTextDrawer from '@/components/EditTextDrawer.vue'
-import editSaleStatusDrawer from '@/components/EditSaleStatusDrawer.vue'
-import editBannerDrawer from '@/components/EditBannerDrawer.vue'
-import editStockDrawer from '@/components/EditStockDrawer.vue'
-import editPriceDrawer from '@/components/EditPriceDrawer.vue'
-import editOuterSnDrawer from '@/components/EditOuterSnDrawer.vue'
-import editPresellDrawer from '@/components/EditPresellDrawer.vue'
 import helpTips from '@/components/HelpTips.vue'
+
+import editSaleStatusDrawer from '@productsManagement/batchEdit/EditSaleStatusDrawer.vue'
+import editProductListView from '@productsManagement/batchEdit/EditProductListView.vue'
+import editBannerDrawer from '@productsManagement/batchEdit/EditBannerDrawer.vue'
+import editTextDrawer from '@productsManagement/batchEdit/EditTextDrawer.vue'
+import editStockDrawer from '@productsManagement/batchEdit/EditStockDrawer.vue'
+import editPriceDrawer from '@productsManagement/batchEdit/EditPriceDrawer.vue'
+import editOuterSnDrawer from '@productsManagement/batchEdit/EditOuterSnDrawer.vue'
+import editPresellDrawer from '@productsManagement/batchEdit/EditPresellDrawer.vue'
+
+import {dyProductCanShelfMap} from '@/common/common.js'
 import request from '@/mixins/request.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
@@ -221,6 +225,7 @@ export default {
       updateJobIdList: 'getUpdateJobIdList'
     }),
     drawerHeight () {
+      console.log('99999')
       if (this.activeTabName === 'price') {
         return '180px'
       } else if (this.activeTabName === 'presellType') {
@@ -292,7 +297,8 @@ export default {
           if (data.items[i].goods_id in this.selectProductDict) {
             product = this.selectProductDict[data.items[i].goods_id]
           } else {
-            // data.items[i].is_onsale = (data.items[i].status === 2 ? 0 : 1)
+            const isOnSaleKey = data.items[i].status + '-' + data.items[i].check_status
+            data.items[i].is_onsale = dyProductCanShelfMap[isOnSaleKey]
             for (let j in data.items[i].sku_list) {
               data.items[i].sku_list[j].price /= 100.0
             }
@@ -300,7 +306,6 @@ export default {
           }
           this.dyProductModelList.push(product)
         }
-
         if (!this.isInit) {
           this.isInit = true
           this.isShowDrawer = true
@@ -416,6 +421,7 @@ export default {
       }
       let productNew = this.genCommitProduct(row)
       let params = {goods: [JSON.stringify(productNew)], type: 1}
+      console.log(params)
       this.request('updateProduct', params, data => {
         this.$message('商品修改已提交，正在后台处理中...')
         this.addUpdateJobId(data.job_id)
@@ -510,7 +516,7 @@ export default {
           let product = this.selectProductDict[key]
           this.updatingProductDict[key] = product
         }
-        this.$refs.editProductListView.clearSelection()
+        // this.$refs.editProductListView.clearSelection()
         this.isShowSelect = false
         this.checkUpdateStatus()
       })

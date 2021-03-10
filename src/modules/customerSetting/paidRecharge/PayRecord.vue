@@ -21,7 +21,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex'
 import Api from '@/api/apis'
-import ModalEvalRules from './ModalEvalRules'
+import ModalEvalRules from '@customerSetting/paidRecharge/ModalEvalRules'
 const {
   mapState
 } = createNamespacedHelpers('customerSetting/paidRecharge')
