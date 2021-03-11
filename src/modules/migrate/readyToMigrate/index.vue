@@ -141,6 +141,12 @@
                   <span style="line-height:21px">下一步: 修改价格</span>
                   <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
               </el-button>
+              <NewComer type="下一步: 修改价格" ref="newComer">
+                <div>
+                  <div>点击修改点击修改点击修改点击修改</div>
+                  <span @click="closeNewComer">点击修改</span>
+                </div>
+              </NewComer>
             </div>
             <div class="info mt-10 flex filterOnlineProducts  align-c justify-c"><span class="fail">*</span>搬家仅针对
               <el-checkbox-group v-model="filterOnlineProducts" class="flex ml-5">
@@ -229,6 +235,7 @@
 <script>
 import productListView from '@/components/ProductListView'
 import BatchEdit from './components/BatchEdit'
+import NewComer from '@/components/NewComer.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import { createNamespacedHelpers, mapActions } from 'vuex'
@@ -243,7 +250,8 @@ export default {
   mixins: [request],
   components: {
     productListView,
-    BatchEdit
+    BatchEdit,
+    NewComer
   },
   data () {
     return {
@@ -1010,6 +1018,9 @@ export default {
     },
     toggleLoadingCnt (value) {
       this.loadingCnt = value
+    },
+    closeNewComer () {
+      this.$refs.newComer.close && this.$refs.newComer.close()
     }
   }
 }

@@ -206,13 +206,20 @@
       <!-- 划线价 end -->
     </el-table>
     <br>
-    <div class="common-bottom">
+    <div class="common-bottom flex justify-c">
       <el-button style="margin-right: 15px" @click="goback">返回</el-button>
       <el-tooltip placement="top" :disabled="msgError === ''" :content="msgError">
-                <span>
-                    <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
-                </span>
+        <div>
+            <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
+            <NewComer type="下一步：修改模板" ref="newComer" >
+              <div>
+                <div style="width:200px">搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
+                <span @click="closeNewComer">点击修改</span>
+              </div>
+            </NewComer>
+        </div>
       </el-tooltip>
+
     </div>
     <el-dialog
       center
@@ -247,6 +254,8 @@
 <script>
 import request from '@/mixins/request.js'
 import skuPriceListView from '@migrate/migrateSettingPrice/SkuPriceListView.vue'
+import NewComer from '@/components/NewComer.vue'
+
 import DyTips from '@/components/DyTips.vue'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
@@ -261,7 +270,8 @@ export default {
   mixins: [request],
   components: {
     DyTips,
-    skuPriceListView
+    skuPriceListView,
+    NewComer
   },
   data () {
     return {
@@ -869,6 +879,9 @@ export default {
         }
         // this.addCustomPrices(product.tp_product_id, 'discount_price', utils.yuanToFen(product.discount_price_obj.model.price))
       }
+    },
+    closeNewComer () {
+      this.$refs.newComer.close && this.$refs.newComer.close()
     }
   }
 }

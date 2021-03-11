@@ -24,12 +24,13 @@ const state = {
     last_sync_order_time: ''
   },
   currentSubsc: {
-    'is_subsc': false,
-    'item_name': '',
-    'item_level': 0,
-    'deadline': '',
-    'goods_assess_notify': {},
-    'expire_notify': {}
+    is_subsc: false,
+    item_name: '',
+    item_level: 0,
+    deadline: '',
+    goods_assess_notify: {},
+    expire_notify: {},
+    is_newcomer: false
   },
   getFirstCategoryList: [],
   changeShop: localStorage.getItem('change_shop') || '',
@@ -292,12 +293,13 @@ const mutations = {
   [ types.SET_CURRENT_SUBSC ] (state, data) {
     if (data.is_subsc) {
       state.currentSubsc = {
-        'is_subsc': true,
-        'item_name': data.item_name,
-        'item_level': data.item_level,
-        'deadline': data.deadline,
-        'goods_assess_notify': data.goods_assess_notify,
-        'expire_notify': data.expire_notify
+        is_subsc: true,
+        item_name: data.item_name,
+        item_level: data.item_level,
+        deadline: data.deadline,
+        goods_assess_notify: data.goods_assess_notify,
+        expire_notify: data.expire_notify,
+        is_newcomer: data.is_newcomer
       }
       state.orderTimes = data.order_times
       if (data.deadline) state.leftDays = utils.diffDate(data.deadline) + 1 // 剩余天数
