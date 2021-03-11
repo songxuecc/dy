@@ -1,9 +1,9 @@
 <!-- newComer 新手指引 -->
 <template>
-    <div v-if="show && visible"  class="newComer" @click="close" >
+    <div v-if="show && visible"  class="newComer" @click="close" :style="{left: `calc(50% - ${left}px)`}">
         <slot></slot>
-        <span class="triangle"></span>
-        <span class="triangle-white"></span>
+        <span class="triangle" :style="{left: `calc(50% + ${left}px)`}"></span>
+        <span class="triangle-white"  :style="{left: `calc(50% + ${left}px)`}"></span>
     </div>
 </template>
 
@@ -13,7 +13,8 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'NewComer',
   props: {
-    type: String
+    type: String,
+    left: Number
   },
   data () {
     return {
@@ -23,7 +24,6 @@ export default {
   mounted () {
     const newComer = this.$el.parentNode
     newComer.style.position = 'relative'
-    newComer.style.overflow = 'inherit'
   },
   computed: {
     ...mapGetters(['getCurrentSubsc']),

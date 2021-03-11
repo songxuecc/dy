@@ -70,7 +70,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="状态" width="110" style="overflow:auto" cell-style="overflow: inherit;" align="center">
+             <el-table-column v-if="!isSyncSource" label="状态" width="110" style="overflow:auto"  align="center" class-name="cell-class">
                 <template slot-scope="scope">
                     <el-link :underline="false" style="text-decoration:none;font-size:13px" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
                     <el-link :underline="false" style="text-decoration:none;font-size:13px"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
@@ -81,24 +81,11 @@
                       {{ productStatusMap[scope.row.status] }}
                       <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
                     </el-link>
-                    <NewComer type="失败" ref="newComerFail" v-if="getFirstShow(5,scope.row.index)">
+
+                    <NewComer type="失败" ref="newComerFail" v-if="getFirstShow(5,scope.row.index,scope.row.status)">
                       <div>
-                        <div style="width:200px">搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
+                        <div style="width:172px">{{scope.row.status}}失败 搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
                         <span @click="closeNewComer('newComerFail')">点击修改</span>
-                      </div>
-                    </NewComer>
-
-                    <NewComer type="待修改" ref="newComerEdit" v-if="getFirstShow(6,scope.row.index)">
-                      <div>
-                        <div style="width:200px">搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
-                        <span @click="closeNewComer('newComerEdit')">点击修改</span>
-                      </div>
-                    </NewComer>
-
-                    <NewComer type="驳回" ref="newComerExit" v-if="getFirstShow(8,scope.row.index)">
-                      <div>
-                        <div style="width:200px">搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
-                        <span @click="closeNewComer('newComerExit')">点击修改</span>
                       </div>
                     </NewComer>
 
@@ -170,7 +157,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="操作" :width="isSyncSource ? 140 : 120" align="center" v-if="hasShowOperate ? showOperate : true">
+            <el-table-column prop="" label="操作" :width="isSyncSource ? 140 : 120" align="center" v-if="hasShowOperate ? showOperate : true" class-name="cell-class">
                 <template slot-scope="scope">
                     <div v-if="[0,1].includes(scope.row.capture_status)"></div>
                     <div v-else-if="isSyncSource">
@@ -183,8 +170,19 @@
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
                     </div>
                     <el-link  v-else v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:13px;margin-right:4px">{{item.text}}
+                      <NewComer type="待修改" ref="newComerEdit" :left="25" v-if="getFirstShow(6,scope.row.index,scope.row.status) && item.text== '修改'">
+                        <div>
+                          <div style="width:172px">{{scope.row.status}}待修改 搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
+                          <span @click="closeNewComer('newComerEdit')">点击修改</span>
+                        </div>
+                      </NewComer>
+                      <NewComer type="驳回" ref="newComerExit"  :left="45" v-if="getFirstShow(8,scope.row.index,scope.row.status) && item.text== '后台'">
+                        <div>
+                          <div style="width:172px">{{scope.row.status}}驳回 搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
+                          <span @click="closeNewComer('newComerExit')">点击修改</span>
+                        </div>
+                      </NewComer>
                     </el-link>
-
                 </template>
             </el-table-column>
         </el-table>
@@ -759,11 +757,11 @@ export default {
     closeNewComer (key) {
       this.$refs[key].close && this.$refs[key].close()
     },
-    getFirstShow (status, idx) {
+    getFirstShow (status, idx, dataStatus) {
       const index = this.tpProductList.findIndex((product, index) => {
-        return product.status === status && index !== 0
+        return product.status === status && index !== 0 && index !== 1
       })
-      return index === idx
+      return idx === index && status === dataStatus
     }
   }
 }
@@ -772,5 +770,10 @@ export default {
     @import '~@/assets/css/base.less';
     /deep/ .el-drawer__body {
       height: 100%;
+    }
+   /deep/ .cell-class {
+      .cell {
+        overflow: inherit;
+      }
     }
 </style>
