@@ -400,12 +400,23 @@ export default {
     //  搬迁中
 
     getButtonNames (product) {
+      const refs = this.$refs
       const edit = {
-        handle: () => this.productEditOpen(product),
+        handle: () => {
+          if (refs.newComerEdit[0]) {
+            refs.newComerEdit[0].close && refs.newComerEdit[0].close()
+          }
+          this.productEditOpen(product)
+        },
         text: '修改'
       }
       const houtai = {
-        handle: () => this.productHoutai(product),
+        handle: () => {
+          if (refs.newComerExit && refs.newComerExit[0]) {
+            refs.newComerExit[0].close && refs.newComerExit[0].close()
+          }
+          this.productHoutai(product)
+        },
         text: '后台'
       }
       const tryAgian = {

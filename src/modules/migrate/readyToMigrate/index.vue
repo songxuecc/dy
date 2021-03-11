@@ -837,6 +837,7 @@ export default {
     },
     toMigrate () {
       this.removeTempTemplate()
+      this.closeNewComer()
       this.setSelectTPProductIdList(this.selectIdList)
       this.$router.push({
         path: '/migrateSettingPrice'

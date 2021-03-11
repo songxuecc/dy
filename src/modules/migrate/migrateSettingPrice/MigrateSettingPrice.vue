@@ -823,6 +823,7 @@ export default {
       if (this.msgError !== '') {
         return
       }
+      this.closeNewComer()
       this.saveTempTemplate()
       this.$router.push({
         path: '/migrateSettingTemplate'
