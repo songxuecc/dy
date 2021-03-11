@@ -13,9 +13,9 @@
         <el-button style="margin-right: 15px;width:120px" @click="goback">返回</el-button>
         <div>
           <el-button type="primary" style="width:120px" @click="startMigrate">开始搬家</el-button>
-          <NewComer type="下一步：修改模板" ref="newComer" >
+          <NewComer type="开始搬家" ref="newComer" >
             <div class="left">
-              <div style="width:200px">勾选待上线商品，并点击此处进行下一步操作</div>
+              <div style="width:200px">点击此处开始搬家</div>
               <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
             </div>
           </NewComer>
