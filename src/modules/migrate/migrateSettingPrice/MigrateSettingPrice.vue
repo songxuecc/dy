@@ -212,9 +212,9 @@
         <div>
             <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
             <NewComer type="下一步：修改模板" ref="newComer" >
-              <div>
-                <div style="width:200px">搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
-                <span @click="closeNewComer">点击修改</span>
+              <div class="left">
+                <div style="width:200px">勾选待上线商品，并点击此处进行下一步操作</div>
+                <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
               </div>
             </NewComer>
         </div>

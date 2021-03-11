@@ -1,6 +1,6 @@
 <!-- newComer 新手指引 -->
 <template>
-    <div v-if="show && visible"  class="newComer" @click="close" :style="{left: `calc(50% - ${left}px)`}">
+    <div v-if="status"  class="newComer" @click="close" :style="{left: `calc(50% - ${left}px)`}">
         <slot></slot>
         <span class="triangle" :style="{left: `calc(50% + ${left}px)`}"></span>
         <span class="triangle-white"  :style="{left: `calc(50% + ${left}px)`}"></span>
@@ -34,6 +34,9 @@ export default {
       }
       const isNewTips = JSON.parse(localStorage.getItem('is_new_tips') || '{}') || {}
       return (this.getCurrentSubsc.is_newcomer && !isNewTips[this.type])
+    },
+    status () {
+      return this.show && this.visible
     }
   },
   methods: {

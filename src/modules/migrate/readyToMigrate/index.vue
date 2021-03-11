@@ -142,9 +142,9 @@
                   <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
               </el-button>
               <NewComer type="下一步: 修改价格" ref="newComer">
-                <div>
-                  <div>点击修改点击修改点击修改点击修改</div>
-                  <span @click="closeNewComer">点击修改</span>
+                <div class="left">
+                  <div style="width:200px">勾选待上线商品，并点击此处进行下一步操作</div>
+                  <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
                 </div>
               </NewComer>
             </div>

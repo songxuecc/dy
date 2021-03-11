@@ -84,8 +84,10 @@
 
                     <NewComer type="失败" ref="newComerFail" v-if="getFirstShow(5,scope.row.index,scope.row.status)">
                       <div>
-                        <div style="width:172px">{{scope.row.status}}失败 搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
-                        <span @click="closeNewComer('newComerFail')">点击修改</span>
+                        <div style="width:172px" class="color-666 font-12">
+                          搬家操作<span class="fail">待上线</span>，请查看【失败理由】，并在对应的进行修改后再次搬家上架～
+                        </div>
+                        <span @click="closeNewComer('newComerFail')">好的</span>
                       </div>
                     </NewComer>
 
@@ -172,14 +174,19 @@
                     <el-link  v-else v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:13px;margin-right:4px">{{item.text}}
                       <NewComer type="待修改" ref="newComerEdit" :left="25" v-if="getFirstShow(6,scope.row.index,scope.row.status) && item.text== '修改'">
                         <div>
-                          <div style="width:172px">{{scope.row.status}}待修改 搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
-                          <span @click="closeNewComer('newComerEdit')">点击修改</span>
+                          <div style="width:172px" class="color-666 font-12 left">
+                            请点击【修改】按钮，按照【修改理由】进行修改。
+                            修改正确后商品状态会变成 <span class="warning">待上线</span>，接着您可进行下一步操作～
+                          </div>
+                          <div @click="closeNewComer('newComerEdit')" class="right pointer underline primary">好的</div>
                         </div>
                       </NewComer>
                       <NewComer type="驳回" ref="newComerExit"  :left="45" v-if="getFirstShow(8,scope.row.index,scope.row.status) && item.text== '后台'">
                         <div>
-                          <div style="width:172px">{{scope.row.status}}驳回 搬家操作失败，请查看【失败理由】，并在对搬家操作，请查看【失败理由】，并在对应的进行修改后再次搬家上架～</div>
-                          <span @click="closeNewComer('newComerExit')">点击修改</span>
+                          <div style="width:172px" class="color-666 font-12 left">
+                            这是抖音官方返回的<span class="fail">驳回</span>信息，请点击【后台】按钮跳转到抖音商家后台，按照官方指示进行修改后再上传。
+                          </div>
+                          <div @click="closeNewComer('newComerEdit')" class="right pointer underline primary">好的</div>
                         </div>
                       </NewComer>
                     </el-link>
