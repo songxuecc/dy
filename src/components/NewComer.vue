@@ -1,9 +1,9 @@
 <!-- newComer 新手指引 -->
 <template>
-    <div v-if="status"  class="newComer" @click="close" :style="{left: `calc(50% - ${left}px)`}">
+    <div v-if="status"  :class="['newComer',`newComer-${direction}`]" :style="{left: `calc(50% - ${left}px)`}">
         <slot></slot>
-        <span class="triangle" :style="{left: `calc(50% + ${left}px)`}"></span>
-        <span class="triangle-white"  :style="{left: `calc(50% + ${left}px)`}"></span>
+        <span :class="['triangle',`triangle-${direction}`]" :style="{left: `calc(50% + ${left}px)`}"></span>
+        <span :class="['triangle-white',`triangle-white-${direction}`]"  :style="{left: `calc(50% + ${left}px)`}"></span>
     </div>
 </template>
 
@@ -13,8 +13,15 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'NewComer',
   props: {
+    // 类型
     type: String,
-    left: Number
+    // 偏移量
+    left: Number,
+    // 方向
+    direction: {
+      type: 'top' | 'bottom',
+      default: 'top'
+    }
   },
   data () {
     return {
@@ -50,14 +57,12 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
 .newComer {
     position: absolute;
     background: #FFFFFF;
     box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
     left: 50%;
-    top: -8px;
-    transform: translate(-50%, -100%);
-    border-bottom: 3px solid #1D8FFF;
     border-radius: 3px;
     padding: 10px 14px 8px;
     z-index: 1;
@@ -69,10 +74,8 @@ export default {
     width: 0;
     height: 0;
     left: 50%;
-    bottom: -17px;
     transform: translateX(-50%);
     border: 9px solid transparent;
-    border-top: 6px solid #1D8FFF;
 }
 
 .triangle-white{
@@ -81,10 +84,36 @@ export default {
     width: 0;
     height: 0;
     left: 50%;
-    bottom: -14px;
     transform: translateX(-50%);
     border: 9px solid transparent;
-    border-top: 6px solid #ffffff;
 }
 
+.newComer-top {
+  top: -8px;
+  transform: translate(-50%, -100%);
+  border-bottom: 3px solid #1D8FFF;
+}
+.triangle-top {
+  bottom: -17px;
+  border-top: 6px solid #1D8FFF;
+}
+.triangle-white-top {
+  bottom: -14px;
+  border-top: 6px solid #ffffff;
+}
+
+  .newComer-bottom {
+      bottom: -8px;
+      transform: translate(-50%, 100%);
+      border-top: 3px solid #1D8FFF;
+  }
+  .triangle-bottom {
+      top: -17px;
+      border-bottom: 6px solid #1D8FFF;
+  }
+
+  .triangle-white-bottom {
+      top: -14px;
+      border-bottom: 6px solid #ffffff;
+  }
 </style>
