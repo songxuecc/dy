@@ -84,7 +84,7 @@
 
                     <NewComer type="失败" ref="newComerFail" v-if="getFirstShow(5,scope.row.index,scope.row.status)">
                       <div>
-                        <div style="width:172px" class="color-666 font-12">
+                        <div style="width:172px" class="color-666 font-12 left">
                           搬家操作<span class="fail">待上线</span>，请查看【失败理由】，并在对应的进行修改后再次搬家上架～
                         </div>
                         <div @click="closeNewComer('newComerFail')" class="right pointer underline primary">好的</div>
