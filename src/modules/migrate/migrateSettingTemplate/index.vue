@@ -9,9 +9,17 @@
     <div class="help-tips" @click="goHelpLink">
       <span class="pointer"><i class="el-icon-s-opportunity"></i>如何填写？</span>
     </div>
-    <div class="common-bottom">
-        <el-button style="margin-right: 15px;width:120px" @click="goback">返回</el-button>
-        <el-button type="primary" style="width:120px" @click="startMigrate">开始搬家</el-button>
+    <div class="common-bottom  flex justify-c">
+        <el-button style="margin-right: 15px;width:120px" @click="goback"  plain type="primary">返回</el-button>
+        <div>
+          <el-button type="primary" style="width:120px" @click="startMigrate">开始搬家</el-button>
+          <NewComer type="开始搬家" ref="newComer" >
+            <div class="left">
+              <div style="width:200px">点击此处开始搬家</div>
+              <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
+            </div>
+          </NewComer>
+        </div>
     </div>
   </div>
 </template>
@@ -28,6 +36,7 @@ import Head from '@migrate/migrateSettingTemplate/Head'
 import BasicTemplate from '@migrate/migrateSettingTemplate/BasicTemplate'
 import StepDelivery from '@migrate/migrateSettingTemplate/StepDelivery'
 import ShopsMigrate from '@migrate/migrateSettingTemplate/ShopsMigrate'
+import NewComer from '@/components/NewComer.vue'
 
 const {
   mapState: mapStateMigrate,
@@ -45,7 +54,8 @@ export default {
     Head,
     BasicTemplate,
     StepDelivery,
-    ShopsMigrate
+    ShopsMigrate,
+    NewComer
   },
   async created () {
     if (isEmpty(this.template.model)) {
@@ -290,6 +300,9 @@ export default {
         this.isStartMigrate = false
         this.$message.error(`${err || err.message}`)
       }
+    },
+    closeNewComer () {
+      this.$refs.newComer.close && this.$refs.newComer.close()
     }
   }
 }

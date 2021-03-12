@@ -16,7 +16,7 @@
                 </el-col>
             </el-row>
         </div> -->
-        <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
+        <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%" :class="tpProductList.length < 2 ? 'table-cal-2' : ''"
                   :row-style="{height:'68px'}"
                   @select-all="handleSelectAll" @select="handleSelect"
                   @selection-change="handleSelectionChange" :cell-style="cellStyle" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut"
@@ -49,7 +49,7 @@
                     <span style="font-size:13px;">{{ scope.row.max_price / 100 }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="类目" width="100">
+            <el-table-column label="类目" width="100" align="center">
                 <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">
                         <span style="font-size:13px;"> {{ getLastCategory(scope.row.category_show) }} </span>
@@ -70,7 +70,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="状态" width="110">
+             <el-table-column v-if="!isSyncSource" label="状态" width="110" style="overflow:auto"  align="center" class-name="cell-class">
                 <template slot-scope="scope">
                     <el-link :underline="false" style="text-decoration:none;font-size:13px" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
                     <el-link :underline="false" style="text-decoration:none;font-size:13px"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
@@ -81,9 +81,19 @@
                       {{ productStatusMap[scope.row.status] }}
                       <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
                     </el-link>
+
+                    <NewComer type="失败" ref="newComerFail" :direction="[0,1].includes(scope.row.index) ? 'bottom' : 'top'" v-if="getFirstShow(5,scope.row.index,scope.row.status)">
+                      <div>
+                        <div style="width:172px" class="color-666 font-12 left">
+                          搬家操作<span class="fail"> 失败</span>，请查看【失败理由】，并在对应页面进行修改后再次搬家上架～
+                        </div>
+                        <div @click="closeNewComer($event,'newComerFail')" class="right pointer underline primary">好的</div>
+                      </div>
+                    </NewComer>
+
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="理由">
+             <el-table-column v-if="!isSyncSource" label="理由" align="center">
                 <template slot-scope="scope">
                     <div style="text-decoration:none;font-size:13px" >
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
@@ -149,7 +159,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="操作" :width="isSyncSource ? 140 : 120" align="center" v-if="hasShowOperate ? showOperate : true">
+            <el-table-column prop="" label="操作" :width="isSyncSource ? 140 : 120" align="center" v-if="hasShowOperate ? showOperate : true" class-name="cell-class">
                 <template slot-scope="scope">
                     <div v-if="[0,1].includes(scope.row.capture_status)"></div>
                     <div v-else-if="isSyncSource">
@@ -161,9 +171,25 @@
                         </el-dropdown>
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
                     </div>
-                    <div v-else>
-                      <el-link  v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:13px;margin-right:4px">{{item.text}}</el-link>
-                    </div>
+                    <el-link  v-else v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:13px;margin-right:4px">{{item.text}}
+                      <NewComer type="待修改" ref="newComerEdit"   :direction="[0,1].includes(scope.row.index) ? 'bottom' : 'top'"  :left="25" v-if="getFirstShow(6,scope.row.index,scope.row.status) && item.text== '修改'">
+                        <div>
+                          <div style="width:172px" class="color-666 font-12 left">
+                            请点击【修改】按钮，按照【修改理由】进行修改。
+                            修改正确后商品状态会变成 <span class="warning">待上线</span>，接着您可进行下一步操作～
+                          </div>
+                          <div @click="closeNewComer($event,'newComerEdit')" class="right pointer underline primary">好的</div>
+                        </div>
+                      </NewComer>
+                      <NewComer type="驳回" ref="newComerExit"   :direction="[0,1].includes(scope.row.index) ? 'bottom' : 'top'"   :left="45" v-if="getFirstShow(8,scope.row.index,scope.row.status) && item.text== '后台'">
+                        <div>
+                          <div style="width:172px" class="color-666 font-12 left">
+                            这是抖音官方返回的<span class="fail">驳回</span>信息，请点击【后台】按钮跳转到抖音商家后台，按照官方指示进行修改后再上传。
+                          </div>
+                          <div @click="closeNewComer($event,'newComerExit')" class="right pointer underline primary">好的</div>
+                        </div>
+                      </NewComer>
+                    </el-link>
                 </template>
             </el-table-column>
         </el-table>
@@ -197,6 +223,8 @@
 </template>
 <script>
 import productEditNewView from '@/components/ProductEditNewView.vue'
+import NewComer from '@/components/NewComer.vue'
+
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
@@ -204,7 +232,8 @@ export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditNewView
+    productEditNewView,
+    NewComer
   },
   props: {
     tpProductList: Array,
@@ -269,6 +298,12 @@ export default {
     }
   },
   methods: {
+    getshow () {
+      if (!this.nubk) {
+        this.nubk = true
+        return true
+      }
+    },
     getSkuDuplicateFormatText (msg) {
       msg = msg.replace('添加规格失败err=', '')
       msg = msg.replace('对应的规格值不能重复，请核对', '')
@@ -365,12 +400,23 @@ export default {
     //  搬迁中
 
     getButtonNames (product) {
+      const refs = this.$refs
       const edit = {
-        handle: () => this.productEditOpen(product),
+        handle: () => {
+          if (refs.newComerEdit[0]) {
+            refs.newComerEdit[0].close && refs.newComerEdit[0].close()
+          }
+          this.productEditOpen(product)
+        },
         text: '修改'
       }
       const houtai = {
-        handle: () => this.productHoutai(product),
+        handle: () => {
+          if (refs.newComerExit && refs.newComerExit[0]) {
+            refs.newComerExit[0].close && refs.newComerExit[0].close()
+          }
+          this.productHoutai(product)
+        },
         text: '后台'
       }
       const tryAgian = {
@@ -725,6 +771,17 @@ export default {
     },
     handleMouseOut (row, column, cell, event) {
       this.mouseOverIndex = -1
+    },
+    closeNewComer (event, key) {
+      event.stopPropagation()
+      const ref = this.$refs[key]
+      ref && ref[0] && ref[0].close && ref[0].close()
+    },
+    getFirstShow (status, idx, dataStatus) {
+      const index = this.tpProductList.findIndex((product, index) => {
+        return product.status === status
+      })
+      return idx === index && status === dataStatus
     }
   }
 }
@@ -733,5 +790,18 @@ export default {
     @import '~@/assets/css/base.less';
     /deep/ .el-drawer__body {
       height: 100%;
+    }
+   /deep/ .cell-class {
+      .cell {
+        overflow: inherit;
+      }
+    }
+
+    /deep/ .table-cal-2 {
+      overflow: inherit !important;
+      min-height: 200px;
+      .el-table__body-wrapper {
+        overflow: inherit !important;
+      }
     }
 </style>

@@ -4,8 +4,12 @@
         <div class="color-767989 font-12 mb-10 bold">支持平台:</div>
         <div class="flex color-666 PlatformIcon">
             <div @mouseenter="setActive(item.key)" @mouseleave="moveActive" v-for="item in list" :key="item.key">
-                <img :class="[platformIconActive==item.key ? 'active' :'']" :src="item.src"   @click="open(item.key)">
+                <img :class="[platformIconActive==item.key ? 'active' :'', 'pointer']" :src="item.src"   @click="open(item.key)">
                 <p :class="platformIconActive == item.key ? 'color-4e4e4e font-12 bold':'font-12'">{{item.tip}}</p>
+            </div>
+            <div class="newcomer" v-if="visibleNewcomerBtn">
+              <img class="newcomer-btn pointer" src="@/assets/images/newguy_banner.gif" @click="goTutorials"/>
+              <div @click.stop="close" class="close pointer flex align-c justify-c" ><i class="el-icon-close " ></i></div>
             </div>
         </div>
     </div>
@@ -19,8 +23,13 @@ export default {
   },
   data () {
     return {
-      platformIconActive: ''
+      platformIconActive: '',
+      visibleNewcomerBtn: false
     }
+  },
+  created () {
+    const visibleNewcomerBtn = !localStorage.getItem('newcomer-btn')
+    this.visibleNewcomerBtn = visibleNewcomerBtn
   },
   methods: {
     setActive (val) {
@@ -47,6 +56,13 @@ export default {
         window._hmt.push(['_trackEvent', '搬家上货', '开始复制', name])
       }
       window.open(list[name])
+    },
+    goTutorials () {
+      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')
+    },
+    close () {
+      localStorage.setItem('newcomer-btn', 1)
+      this.visibleNewcomerBtn = false
     }
   }
 }
@@ -70,6 +86,37 @@ export default {
         border-radius:14px;
         animation: opacity 0.5s;
     }
+    .newcomer {
+      position: relative;
+      .close {
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        margin-right: 0;
+        right: -10px;
+        top: -10px;
+        border-radius: 50%;
+      }
+      .newcomer-btn {
+        width: 161.89px;
+        height: 58px;
+        margin-left: 20px;
+        cursor: pointer;
+      }
+      .el-icon-close {
+        color:#ffffff;
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+        font-weight: bolder;
+        text-align: center;
+        line-height: 16px;
+        background:#b8b7b7;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+    }
+
 }
 @keyframes opacity {
     0% {

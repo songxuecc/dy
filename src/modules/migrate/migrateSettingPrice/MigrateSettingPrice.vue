@@ -206,13 +206,20 @@
       <!-- 划线价 end -->
     </el-table>
     <br>
-    <div class="common-bottom">
-      <el-button style="margin-right: 15px" @click="goback">返回</el-button>
+    <div class="common-bottom flex justify-c">
+      <el-button style="margin-right: 15px; width:120px" @click="goback" plain type="primary">返回</el-button>
       <el-tooltip placement="top" :disabled="msgError === ''" :content="msgError">
-                <span>
-                    <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
-                </span>
+        <div>
+            <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
+            <NewComer type="下一步：修改模板" ref="newComer" >
+              <div class="left">
+                <div style="width:120px">点击此处进行下一步操作</div>
+                <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
+              </div>
+            </NewComer>
+        </div>
       </el-tooltip>
+
     </div>
     <el-dialog
       center
@@ -247,6 +254,8 @@
 <script>
 import request from '@/mixins/request.js'
 import skuPriceListView from '@migrate/migrateSettingPrice/SkuPriceListView.vue'
+import NewComer from '@/components/NewComer.vue'
+
 import DyTips from '@/components/DyTips.vue'
 import FormModel from '@/common/formModel'
 import utils from '@/common/utils'
@@ -261,7 +270,8 @@ export default {
   mixins: [request],
   components: {
     DyTips,
-    skuPriceListView
+    skuPriceListView,
+    NewComer
   },
   data () {
     return {
@@ -813,6 +823,7 @@ export default {
       if (this.msgError !== '') {
         return
       }
+      this.closeNewComer()
       this.saveTempTemplate()
       this.$router.push({
         path: '/migrateSettingTemplate'
@@ -869,6 +880,9 @@ export default {
         }
         // this.addCustomPrices(product.tp_product_id, 'discount_price', utils.yuanToFen(product.discount_price_obj.model.price))
       }
+    },
+    closeNewComer () {
+      this.$refs.newComer.close && this.$refs.newComer.close()
     }
   }
 }

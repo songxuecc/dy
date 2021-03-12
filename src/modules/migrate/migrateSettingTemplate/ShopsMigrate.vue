@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="setting-content-with-tip" v-if="userBindList.length">
     <el-form label-width="120px" size="small">
-      <el-form-item label="搬家店铺:">
+      <el-form-item label="将商品搬家到:">
         <el-checkbox v-model="checkSelf" class="current-shop">
           本店铺<span v-if="getShopName"> ({{getShopName}}) </span></el-checkbox>
         <div v-for="(parentShop,idx) in userBindList" :key="idx">
