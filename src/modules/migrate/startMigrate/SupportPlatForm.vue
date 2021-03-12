@@ -7,6 +7,7 @@
                 <img :class="[platformIconActive==item.key ? 'active' :'']" :src="item.src"   @click="open(item.key)">
                 <p :class="platformIconActive == item.key ? 'color-4e4e4e font-12 bold':'font-12'">{{item.tip}}</p>
             </div>
+            <img class="newcomer-btn" src="@/assets/images/newguy_banner.gif" @click="goTutorials"/>
         </div>
     </div>
 </template>
