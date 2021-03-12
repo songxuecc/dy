@@ -167,7 +167,6 @@ export default {
     getSetting () {
       apis.hhgjAPIs.getMigrateSetting({}).then(data => {
         this.originMigrateSetting = data
-        console.log(this.originMigrateSetting)
         this.updateMigrateSettingData(data)
       })
       this.getBlackWords()
