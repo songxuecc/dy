@@ -40,13 +40,14 @@
             </div>
         </div>
         <br />
-        <el-button type="primary" @click="saveSetting()" style="margin-top: 20px;">保存设置</el-button>
+        <el-button type="primary" @click="saveSetting()" style="margin-top: 20px;" :loading="createBlackWordsLoading" :disabled="shouldUpdate">保存设置</el-button>
     </div>
 </template>
 
 <script>
 import request from '@/mixins/request.js'
 import apis from '@/api/apis.js'
+import isEqual from 'lodash/isEqual'
 
 export default {
   mixins: [request],
@@ -91,10 +92,36 @@ export default {
       auto_delete: '',
       tagLoading: false,
       typeList: ['default', 'success', 'info', 'warning', 'danger'],
-      black_word_list: []
+      black_word_list: [],
+      createBlackWordsLoading: false,
+      originMigrateSetting: undefined,
+      customerBlackWords: [],
+      defaultBlackWords: []
     }
   },
   computed: {
+    shouldUpdate () {
+      const product = {
+        ...this.originMigrateSetting,
+        title_cut_off: Number(this.title_cut_off),
+        title_ban_words: Number(this.title_ban_words),
+        detail_img_cut: Number(this.detail_img_cut),
+        is_cut_sku_spec: Number(this.is_cut_sku_spec),
+        is_cut_black_word: Number(this.is_cut_black_word),
+        is_banner_auto_5: Number(this.is_banner_auto_5),
+        banner_completion: Number(this.banner_completion),
+        property_radio: this.property_radio,
+        goods_code_prefix: this.goods_code_prefix,
+        goods_code_suffix: this.goods_code_suffix,
+        goods_code_type: Number(this.goods_code_type),
+        goods_property: this.goods_property_options
+      }
+      const isEqualSetting = isEqual(this.originMigrateSetting, product)
+      const blackWords = new Set(this.blackWords)
+      const originBlackWords = new Set([...this.customerBlackWords, ...this.defaultBlackWords])
+      const newBlackWords = [...blackWords].filter(item => !originBlackWords.has(item))
+      return isEqualSetting && !newBlackWords.length
+    }
   },
   methods: {
     updateMigrateSettingData (data) {
@@ -139,6 +166,8 @@ export default {
     },
     getSetting () {
       apis.hhgjAPIs.getMigrateSetting({}).then(data => {
+        this.originMigrateSetting = data
+        console.log(this.originMigrateSetting)
         this.updateMigrateSettingData(data)
       })
       this.getBlackWords()
@@ -146,33 +175,53 @@ export default {
       //   this.updateMigrateSettingData(data)
       // })
     },
-    saveSetting () {
+    async saveSetting () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
       }
-      let productParams = {
-        json: JSON.stringify({
-          title_cut_off: Number(this.title_cut_off),
-          title_ban_words: Number(this.title_ban_words),
-          detail_img_cut: Number(this.detail_img_cut),
-          is_cut_sku_spec: Number(this.is_cut_sku_spec),
-          is_cut_black_word: Number(this.is_cut_black_word),
-          is_banner_auto_5: Number(this.is_banner_auto_5),
-          banner_completion: Number(this.banner_completion),
-          property_radio: this.property_radio,
-          goods_code_prefix: this.goods_code_prefix,
-          goods_code_suffix: this.goods_code_suffix,
-          goods_code_type: Number(this.goods_code_type),
-          goods_property: this.goods_property_options
-        })
+      const product = {
+        ...this.originMigrateSetting,
+        title_cut_off: Number(this.title_cut_off),
+        title_ban_words: Number(this.title_ban_words),
+        detail_img_cut: Number(this.detail_img_cut),
+        is_cut_sku_spec: Number(this.is_cut_sku_spec),
+        is_cut_black_word: Number(this.is_cut_black_word),
+        is_banner_auto_5: Number(this.is_banner_auto_5),
+        banner_completion: Number(this.banner_completion),
+        property_radio: this.property_radio,
+        goods_code_prefix: this.goods_code_prefix,
+        goods_code_suffix: this.goods_code_suffix,
+        goods_code_type: Number(this.goods_code_type),
+        goods_property: this.goods_property_options
       }
-      this.request('updateMigrateSetting', productParams, data => {
-        this.$message({
-          message: '设置成功',
-          type: 'success'
-        })
-        this.updateMigrateSettingData(data)
-      })
+      let productParams = {
+        json: JSON.stringify(product)
+      }
+
+      const blackWords = new Set(this.blackWords)
+      const originBlackWords = new Set([...this.customerBlackWords, ...this.defaultBlackWords])
+      const params = [...blackWords].filter(item => !originBlackWords.has(item))
+      this.createBlackWordsLoading = true
+
+      console.log(!isEqual(this.originMigrateSetting, product))
+      try {
+        const updateBlackWords = apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(params)})
+        const isEqualSetting = isEqual(this.originMigrateSetting, product)
+        const updateSetting = !isEqualSetting
+          ? apis.hhgjAPIs.updateMigrateSetting(productParams)
+          : Promise.resolve(this.originMigrateSetting)
+        const [, data] = await Promise.all([updateBlackWords, updateSetting])
+        this.$message.success('保存成功')
+        this.createBlackWordsLoading = false
+        this.back_words = ''
+        !isEqualSetting && this.updateMigrateSettingData(data)
+      } catch (error) {
+        if (error) {
+          console.error(error)
+        }
+        this.createBlackWordsLoading = false
+        this.$message.error(`${error}`)
+      }
     },
     onChangePropertySelect () {
       if (this.goods_property_selected !== '') {
@@ -222,24 +271,12 @@ export default {
     getBlackWords () {
       apis.hhgjAPIs.getBlackWordList({}).then(data => {
         this.blackWords = data.customer
+        this.customerBlackWords = data.customer
         this.defaultBlackWords = data.default
       })
     },
     async createBlackWords () {
-      if (!this.black_word_list.length) return false
-      const params = {black_word_list: JSON.stringify(this.black_word_list)}
-      this.createBlackWordsLoading = true
-      try {
-        await apis.hhgjAPIs.createBlackWords(params)
-        this.$message.success('保存成功')
-        this.getBlackWords()
-      } catch (error) {
-        if (error) {
-          console.error(error)
-        }
-        this.$message.error(`${error}`)
-      }
-      this.createBlackWordsLoading = false
+      this.blackWords = this.blackWords.concat(this.black_word_list)
       this.back_words = ''
     },
     async handleClose (word) {
