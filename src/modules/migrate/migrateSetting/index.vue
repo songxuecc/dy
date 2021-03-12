@@ -167,6 +167,7 @@ export default {
     getSetting () {
       apis.hhgjAPIs.getMigrateSetting({}).then(data => {
         this.originMigrateSetting = data
+        console.log(this.originMigrateSetting)
         this.updateMigrateSettingData(data)
       })
       this.getBlackWords()
@@ -209,11 +210,12 @@ export default {
         const updateSetting = !isEqualSetting
           ? apis.hhgjAPIs.updateMigrateSetting(productParams)
           : Promise.resolve(this.originMigrateSetting)
-        const [, data] = await Promise.all([updateBlackWords, updateSetting])
+        await Promise.all([updateBlackWords, updateSetting])
         this.$message.success('保存成功')
         this.createBlackWordsLoading = false
         this.back_words = ''
-        !isEqualSetting && this.updateMigrateSettingData(data)
+        this.getSetting()
+        // !isEqualSetting && this.updateMigrateSettingData(data)
       } catch (error) {
         if (error) {
           console.error(error)
@@ -275,7 +277,7 @@ export default {
       })
     },
     async createBlackWords () {
-      this.blackWords = this.blackWords.concat(this.black_word_list)
+      this.blackWords = [...new Set(this.blackWords.concat(this.black_word_list))]
       this.back_words = ''
     },
     async handleClose (word) {
