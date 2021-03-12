@@ -202,10 +202,10 @@ export default {
       const originBlackWords = new Set([...this.customerBlackWords, ...this.defaultBlackWords])
       const params = [...blackWords].filter(item => !originBlackWords.has(item))
       this.createBlackWordsLoading = true
-
-      console.log(!isEqual(this.originMigrateSetting, product))
       try {
-        const updateBlackWords = apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(params)})
+        const updateBlackWords = params.length
+          ? apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(params)})
+          : Promise.resolve([])
         const isEqualSetting = isEqual(this.originMigrateSetting, product)
         const updateSetting = !isEqualSetting
           ? apis.hhgjAPIs.updateMigrateSetting(productParams)
@@ -215,7 +215,6 @@ export default {
         this.createBlackWordsLoading = false
         this.back_words = ''
         this.getSetting()
-        // !isEqualSetting && this.updateMigrateSettingData(data)
       } catch (error) {
         if (error) {
           console.error(error)
