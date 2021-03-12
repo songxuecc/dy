@@ -207,13 +207,13 @@
     </el-table>
     <br>
     <div class="common-bottom flex justify-c">
-      <el-button style="margin-right: 15px" @click="goback">返回</el-button>
+      <el-button style="margin-right: 15px; width:120px" @click="goback" plain type="primary">返回</el-button>
       <el-tooltip placement="top" :disabled="msgError === ''" :content="msgError">
         <div>
             <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
             <NewComer type="下一步：修改模板" ref="newComer" >
               <div class="left">
-                <div style="width:200px">点击此处进行下一步操作</div>
+                <div style="width:120px">点击此处进行下一步操作</div>
                 <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
               </div>
             </NewComer>

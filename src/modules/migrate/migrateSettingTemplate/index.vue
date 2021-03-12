@@ -10,7 +10,7 @@
       <span class="pointer"><i class="el-icon-s-opportunity"></i>如何填写？</span>
     </div>
     <div class="common-bottom  flex justify-c">
-        <el-button style="margin-right: 15px;width:120px" @click="goback">返回</el-button>
+        <el-button style="margin-right: 15px;width:120px" @click="goback"  plain type="primary">返回</el-button>
         <div>
           <el-button type="primary" style="width:120px" @click="startMigrate">开始搬家</el-button>
           <NewComer type="开始搬家" ref="newComer" >
