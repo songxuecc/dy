@@ -403,7 +403,7 @@ export default {
       const refs = this.$refs
       const edit = {
         handle: () => {
-          if (refs.newComerEdit[0]) {
+          if (refs.newComerEdit && refs.newComerEdit[0]) {
             refs.newComerEdit[0].close && refs.newComerEdit[0].close()
           }
           this.productEditOpen(product)
