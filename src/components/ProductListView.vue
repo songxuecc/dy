@@ -16,7 +16,7 @@
                 </el-col>
             </el-row>
         </div> -->
-        <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%" :class="tpProductList.length < 2 ? 'table-cal-2' : ''"
+        <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%" :class="tpProductList.length < 3 ? 'table-cal-2' : ''"
                   :row-style="{height:'68px'}"
                   @select-all="handleSelectAll" @select="handleSelect"
                   @selection-change="handleSelectionChange" :cell-style="cellStyle" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut"
