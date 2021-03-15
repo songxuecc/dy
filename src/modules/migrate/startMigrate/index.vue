@@ -4,7 +4,7 @@
     </help-tips>
     <el-tabs v-model="activeName">
       <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
-        <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个" class="mb-20"
+        <el-input type="textarea" :rows="10" :placeholder="`输入其他平台的商品链接地址，换行分隔多个链接，最多不超过${limit}个`" class="mb-20"
           @input="changeCaptureUrl" v-model="textCaptureUrls">
         </el-input>
       </el-tab-pane>
@@ -147,6 +147,7 @@ export default {
   mixins: [request],
   data () {
     return {
+      limit: 100,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
       activeName: 'single',

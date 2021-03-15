@@ -58,6 +58,9 @@ export default {
       window.open(list[name])
     },
     goTutorials () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '搬家上货', '搬家教程', name])
+      }
       window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')
     },
     close () {
