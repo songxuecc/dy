@@ -1,236 +1,217 @@
 <template lang="html">
-    <div v-loading="loadingCnt">
+  <div v-loading="loadingCnt" class="readyToMigrate">
+    <div>
+      <div class="test" ref="test">
+        <el-form ref="form" :model="search" :inline="true" style="text-align: left">
+          <el-form-item label="多店铺切换">
+            <el-select v-model="search.child_shop_user_id" placeholder="请选择" size="small" @change="handleShopFilterChange"
+              popper-class="select-long" style="width: 140px">
+              <el-option v-for="item in bindShopList" :key="item.user_id" :label="item.shop_name" :value="item.user_id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="标题">
+            <el-input v-model="search.key" size="small" @keyup.enter.native="handleFilterChange" style="width: 180px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleStatusFilterChange"
+              popper-class="select-long" style="width: 180px">
+              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="复制时间">
+            <el-select v-model="captureId" placeholder="请选择" size="small" @change="handleCaptureChange"
+              popper-class="select-long" style="width: 180px">
+              <el-option-group>
+                <el-option v-for="item in captureOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-option-group>
+              <el-option-group v-if="isShowCaptureExtendOpt">
+                <el-option :key="capture.capture_id" :label="calendarTime(capture.create_time)"
+                  :value="capture.capture_id.toString()" disabled>
+                </el-option>
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="medium" @click="handleFilterChange">搜索</el-button>
+          </el-form-item>
+          <div class="flex">
+            <div v-if="shopCaptureOptionList.length">
+              <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span>
+              <el-button type="text" @click="handleShopCaptureChange(item.value)"
+                v-for="item in shopCaptureOptions.slice(1,3)" :key="item.value">
+                <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;font-size:13px;">
+                  {{item.label}}
+                </el-link>
+              </el-button>
+              <el-form-item>
+                <el-select v-model="shopCaptureId" placeholder="请选择" size="small" @change="handleShopCaptureChange"
+                  popper-class="select-long" style="width: 200px">
+                  <el-option-group>
+                    <el-option v-for="item in shopCaptureOptions" :key="item.value" :label="item.label"
+                      :value="item.value"> </el-option>
+                  </el-option-group>
+                </el-select>
+              </el-form-item>
+            </div>
+          </div>
+        </el-form>
         <div>
-            <el-form ref="form" :model="search" :inline="true" style="text-align: left">
-              <el-form-item label="多店铺切换">
-                    <el-select v-model="search.child_shop_user_id" placeholder="请选择" size="small" @change="handleShopFilterChange"
-                               popper-class="select-long" style="width: 140px"
-                    >
-                        <el-option v-for="item in bindShopList" :key="item.user_id" :label="item.shop_name" :value="item.user_id"> </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="标题">
-                    <el-input v-model="search.key" size="small" @keyup.enter.native="handleFilterChange" style="width: 180px"></el-input>
-                </el-form-item>
-                <el-form-item label="状态">
-                    <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleStatusFilterChange"
-                               popper-class="select-long" style="width: 180px"
-                    >
-                        <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="复制时间">
-                    <el-select v-model="captureId" placeholder="请选择" size="small" @change="handleCaptureChange"
-                               popper-class="select-long" style="width: 180px"
-                    >
-                        <el-option-group>
-                            <el-option v-for="item in captureOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                        </el-option-group>
-                        <el-option-group v-if="isShowCaptureExtendOpt">
-                            <el-option :key="capture.capture_id" :label="calendarTime(capture.create_time)"
-                                       :value="capture.capture_id.toString()" disabled>
-                            </el-option>
-                        </el-option-group>
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" size="medium" @click="handleFilterChange">搜索</el-button>
-                </el-form-item>
-                <div class="flex">
-                  <div v-if="shopCaptureOptionList.length">
-                  <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span>
-                  <el-button type="text" @click="handleShopCaptureChange(item.value)" v-for="item in shopCaptureOptions.slice(1,3)" :key="item.value">
-                    <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;font-size:13px;">{{item.label}}
-                    </el-link>
-                  </el-button>
-                  <el-form-item>
-                      <el-select v-model="shopCaptureId" placeholder="请选择" size="small" @change="handleShopCaptureChange"
-                                popper-class="select-long" style="width: 200px"
-                      >
-                          <el-option-group>
-                              <el-option v-for="item in shopCaptureOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                          </el-option-group>
-                      </el-select>
-                  </el-form-item>
-                </div>
-
-                </div>
-            </el-form>
-        </div>
-        <div>
-            <el-alert v-if="getMigrateInfo.length>0" :title=getMigrateInfo type="success" :closable="false"
-                      center>
-            </el-alert>
+          <el-alert v-if="getMigrateInfo.length>0" :title=getMigrateInfo type="success" :closable="false" center>
+          </el-alert>
         </div>
 
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
-            <template slot='title'>
-                <div>
-                    <span v-if="isShopCapture">店铺<span v-if="capture.shop_name!=''">【{{capture.shop_name}}】</span> {{captureShopStatusMap[capture.status]}}, 商品数量({{captureNum}}个) </span>
-                    <span v-if="isShopCapture">—— 第{{pagination.index}}页【</span>
-                    <span v-if="capture.status_statistics.length == 0">
-                        {{ captureStatusMap[capture.page_status] }}
-                    </span>
-                    <span v-if="capture.status_statistics.length > 0"
-                          v-for="(item, index) in capture.status_statistics" :key="index"
-                    >
-                        {{ captureStatusMap[item.status] }} {{ item.count }} 条 &nbsp;&nbsp;
-                    </span>
-                    <span v-if="capture.status_statistics.length > 0">
-                        总共 {{ capture.capture_num }} 条
-                    </span>
-                    <span v-if="isShopCapture">】</span>
-                </div>
-            </template>
-            <el-tooltip v-show="getCaptureStatus ==='capture-item' && [0, 1].includes(this.capture.page_status)"
-                        class="item" effect="light" placement="bottom"
-                        :content="calcProgressText(capture)"
-            >
-                <div class="progress-bar blue stripes" style="width: 200px;margin: 5px auto;">
-                    <span :style="{ width: calcProgressVal(capture) }"></span>
-                </div>
-            </el-tooltip>
+          <template slot='title'>
+            <div>
+              <span v-if="isShopCapture">店铺<span v-if="capture.shop_name!=''">【{{capture.shop_name}}】</span>
+                {{captureShopStatusMap[capture.status]}}, 商品数量({{captureNum}}个) </span>
+              <span v-if="isShopCapture">—— 第{{pagination.index}}页【</span>
+              <span v-if="capture.status_statistics.length == 0">
+                {{ captureStatusMap[capture.page_status] }}
+              </span>
+              <span v-if="capture.status_statistics.length > 0" v-for="(item, index) in capture.status_statistics"
+                :key="index">
+                {{ captureStatusMap[item.status] }} {{ item.count }} 条 &nbsp;&nbsp;
+              </span>
+              <span v-if="capture.status_statistics.length > 0">
+                总共 {{ capture.capture_num }} 条
+              </span>
+              <span v-if="isShopCapture">】</span>
+            </div>
+          </template>
+          <el-tooltip v-show="getCaptureStatus ==='capture-item' && [0, 1].includes(this.capture.page_status)"
+            class="item" effect="light" placement="bottom" :content="calcProgressText(capture)">
+            <div class="progress-bar blue stripes" style="width: 200px;margin: 5px auto;">
+              <span :style="{ width: calcProgressVal(capture) }"></span>
+            </div>
+          </el-tooltip>
         </el-alert>
-        <BatchEdit
-            @onSizeChange="handleSizeChange"
-            :pageSize="pagination.size"
-            :selectIdBatchEditList="selectIdBatchEditList"
-            @toggleLoadingCnt="toggleLoadingCnt"
-            :tpProductList="tpProductList"
-            @reload="getProductList"
-            :isShopCapture="isShopCapture"
-            v-if="search.child_shop_user_id == 0"
-          />
-        <product-list-view ref="productListView" :tpProductList="tpProductList" :showOperate="search.child_shop_user_id == 0" :hasShowOperate="true">
-            <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
-                <el-button size="small" type="danger" @click="forceGetCapture" style="right: 0px; margin-right: 10px;">重新复制本页</el-button>
-            </template>
-<!--            <template slot="upperRight">-->
-<!--                <router-link to="/productsSync">-->
-<!--                    <el-button size="small" @click="toProductsSync" style="right: 0px; margin-right: 10px;">商品源同步</el-button>-->
-<!--                </router-link>-->
-<!--            </template>-->
-            <template slot="upperRight">
-                <el-button size="small" @click="showBatchDeleteCapture" style="right: 0px;">批量删除</el-button>
-            </template>
+        <BatchEdit @onSizeChange="handleSizeChange" :pageSize="pagination.size"
+          :selectIdBatchEditList="selectIdBatchEditList" @toggleLoadingCnt="toggleLoadingCnt"
+          :tpProductList="tpProductList" @reload="getProductList" :isShopCapture="isShopCapture"
+          v-if="search.child_shop_user_id == 0" />
+        <product-list-view ref="productListView" :tpProductList="tpProductList"
+          :showOperate="search.child_shop_user_id == 0" :hasShowOperate="true">
+          <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
+            <el-button size="small" type="danger" @click="forceGetCapture" style="right: 0px; margin-right: 10px;">重新复制本页
+            </el-button>
+          </template>
+          <!--            <template slot="upperRight">-->
+          <!--                <router-link to="/productsSync">-->
+          <!--                    <el-button size="small" @click="toProductsSync" style="right: 0px; margin-right: 10px;">商品源同步</el-button>-->
+          <!--                </router-link>-->
+          <!--            </template>-->
+          <template slot="upperRight">
+            <el-button size="small" @click="showBatchDeleteCapture" style="right: 0px;">批量删除</el-button>
+          </template>
         </product-list-view>
         <br>
-        <el-tooltip v-if="isShopCapture"  content="本页复制完才能复制下一页" placement="top">
-          <el-pagination :disabled="getCaptureStatus !== 'finish'"
-            v-show="loadingCnt == 0"
-            @current-change="handleCurrentChange"
-            :current-page="pagination.index"
-            :page-size="pagination.size"
-            layout="total, prev, pager, next, jumper"
-            :total="pagination.total">
+        <el-tooltip v-if="isShopCapture" content="本页复制完才能复制下一页" placement="top">
+          <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0"
+            @current-change="handleCurrentChange" :current-page="pagination.index" :page-size="pagination.size"
+            layout="total, prev, pager, next, jumper" :total="pagination.total">
           </el-pagination>
         </el-tooltip>
-        <el-pagination v-else
-          v-show="loadingCnt == 0"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="pagination.index"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pagination.size"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pagination.total">
+        <el-pagination v-else v-show="loadingCnt == 0" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" :current-page="pagination.index" :page-sizes="[10, 20, 50, 100]"
+          :page-size="pagination.size" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
         </el-pagination>
-        <div  class="common-bottom">
-            <div>
-              <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
-                  <span style="line-height:21px">下一步: 修改价格</span>
-                  <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
-              </el-button>
-              <NewComer type="下一步: 修改价格" ref="newComer">
-                <div class="left">
-                  <div style="width:200px">勾选待上线商品，并点击此处进行下一步操作</div>
-                  <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
-                </div>
-              </NewComer>
-            </div>
-            <div class="info mt-10 flex filterOnlineProducts  align-c justify-c"><span class="fail">*</span>搬家仅针对
-              <el-checkbox-group v-model="filterOnlineProducts" class="flex ml-5">
-                <el-checkbox :label="common.productStatus.WAIT_ONLINE" >待上线</el-checkbox>
-                <el-checkbox :label="common.productStatus.FAILED" >失败</el-checkbox>
-                <el-checkbox :label="common.productStatus.REJECT" >驳回</el-checkbox>
-                <el-checkbox :label="common.productStatus.ONLINE" >已上线</el-checkbox>
-                <el-checkbox :label="common.productStatus.SAVE_DRAFT" >保存草稿箱</el-checkbox>
-              </el-checkbox-group>；其余状态商品会自动过滤
-            </div>
-        </div>
 
-        <div>
-          <el-dialog
-            title="淘宝登录验证"
-            :show-close="false"
-            :close-on-click-modal="false"
-            :close-on-press-escape="false"
-            :visible.sync="loginDialogVisible"
-            width="30%">
-            <p>由于淘宝原因，搜索复制店铺商品需先<span style="color: #dd6161; font-weight:bold; vertical-align:baseline;">登录淘宝</span>，<br/>请登陆成功后再返回当前页面继续操作。</p>
-            <span slot="footer" class="dialog-footer">
-              <el-button type="plain" @click="finishLogin">已完成验证，继续操作</el-button>
-              <el-button type="primary" @click="gotoLoginPage">立即登录</el-button>
-            </span>
-          </el-dialog>
-          <el-dialog
-            title="滑动验证"
-            :show-close="false"
-            :close-on-click-modal="false"
-            :close-on-press-escape="false"
-            :visible.sync="slideDialogVisible"
-            width="30%">
-            <iframe id="slide" v-bind:src="slideUrl" style="width:100%; height: 350px;" scrolling="no" frameborder="0"></iframe>
-            <span slot="footer" class="dialog-footer">
-              <el-button type="primary" @click="finishSlide">已完成验证，继续操作</el-button>
-            </span>
-          </el-dialog>
-          <el-dialog
-            :visible.sync="batchDeleteCaptureVisible"
-            @opened="captureSelectAll()">
-            <span slot="title">删除选中的商品</span>
-            <div style="margin-top: -30px;">
-              <p style="text-align: left;">*只删除软件的记录，对抖音商品没影响。</p>
-              <el-table ref="selectCaptureTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
-                    :row-style="{height:'30px'}" max-height="320"
-                    @selection-change="handleCaptureSelectionChange"
-              >
-              <el-table-empty slot="empty"/>
-                <el-table-column type="selection">
-                </el-table-column>
-                <el-table-column label="图片" width="100" align="center">
-                    <template slot-scope="scope">
-                        <img style="height:30px" :src="scope.row.thumbnail">
-                    </template>
-                </el-table-column>
-                <el-table-column label="标题">
-                    <template slot-scope="scope">
-                        <el-link type="primary" :href="scope.row.url" target="_blank" :underline="false">
-                            {{ scope.row.title }}
-                        </el-link>
-                    </template>
-                </el-table-column>
-                <el-table-column label="状态" width="100">
-                    <template slot-scope="scope">
-                        <el-button type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-button>
-                        <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2">
-                          {{ productStatusMap[scope.row.status] }}
-                        </el-button>
-                        <div v-else>
-                          {{ productStatusMap[scope.row.status] }}
-                          <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
-                        </div>
-                    </template>
-                </el-table-column>
-              </el-table>
-            </div>
-            <span slot="footer" class="dialog-footer">
-              <el-button type="primary" @click="batchDeleteCapture">确定</el-button>
-              <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
-            </span>
-          </el-dialog>
-        </div>
+      </div>
     </div>
+
+    <!-- 开始搬家按钮 -->
+    <div :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex'] " ref="startMigrateBtn">
+      <div style="width:210px;height:100px;" v-if="startMigrateBtnFixed"></div>
+      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;">
+        <div>
+          <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
+            <span style="line-height:21px">下一步: 修改价格</span>
+            <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
+          </el-button>
+          <NewComer type="下一步: 修改价格" ref="newComer">
+            <div class="left">
+              <div style="width:200px">勾选待上线商品，并点击此处进行下一步操作</div>
+              <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
+            </div>
+          </NewComer>
+        </div>
+        <div class="info mt-10 flex filterOnlineProducts  align-c justify-c " style="height:25px"><span class="fail">*</span>
+          搬家仅针对
+          <el-checkbox-group v-model="filterOnlineProducts" class="flex ml-5">
+            <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
+            <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
+            <el-checkbox :label="common.productStatus.REJECT">驳回</el-checkbox>
+            <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
+            <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
+          </el-checkbox-group>；其余状态商品会自动过滤
+        </div>
+      </div>
+    </div>
+
+      <el-dialog title="淘宝登录验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
+        :visible.sync="loginDialogVisible" width="30%">
+        <p>由于淘宝原因，搜索复制店铺商品需先<span
+            style="color: #dd6161; font-weight:bold; vertical-align:baseline;">登录淘宝</span>，<br />请登陆成功后再返回当前页面继续操作。</p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="plain" @click="finishLogin">已完成验证，继续操作</el-button>
+          <el-button type="primary" @click="gotoLoginPage">立即登录</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
+        :visible.sync="slideDialogVisible" width="30%">
+        <iframe id="slide" v-bind:src="slideUrl" style="width:100%; height: 350px;" scrolling="no"
+          frameborder="0"></iframe>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="finishSlide">已完成验证，继续操作</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog :visible.sync="batchDeleteCaptureVisible" @opened="captureSelectAll()">
+        <span slot="title">删除选中的商品</span>
+        <div style="margin-top: -30px;">
+          <p style="text-align: left;">*只删除软件的记录，对抖音商品没影响。</p>
+          <el-table ref="selectCaptureTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%"
+            :row-style="{height:'30px'}" max-height="320" @selection-change="handleCaptureSelectionChange">
+            <el-table-empty slot="empty" />
+            <el-table-column type="selection">
+            </el-table-column>
+            <el-table-column label="图片" width="100" align="center">
+              <template slot-scope="scope">
+                <img style="height:30px" :src="scope.row.thumbnail">
+              </template>
+            </el-table-column>
+            <el-table-column label="标题">
+              <template slot-scope="scope">
+                <el-link type="primary" :href="scope.row.url" target="_blank" :underline="false">
+                  {{ scope.row.title }}
+                </el-link>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" width="100">
+              <template slot-scope="scope">
+                <el-button type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-button>
+                <el-button :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2">
+                  {{ productStatusMap[scope.row.status] }}
+                </el-button>
+                <div v-else>
+                  {{ productStatusMap[scope.row.status] }}
+                  <el-progress :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process"
+                    status="success"></el-progress>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="batchDeleteCapture">确定</el-button>
+          <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
+        </span>
+      </el-dialog>
+  </div>
 </template>
 <script>
 import productListView from '@/components/ProductListView'
@@ -296,7 +277,8 @@ export default {
         common.productStatus.FAILED,
         common.productStatus.REJECT
       ],
-      common
+      common,
+      startMigrateBtnFixed: false
     }
   },
   computed: {
@@ -449,6 +431,23 @@ export default {
       elementList[i].style.maxHeight = '300px'
     }
     this.isMounted = true
+
+    window.addEventListener('scroll', (e) => {
+      const test = this.$refs.test
+    // 屏幕高度
+      const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
+      const rect = test.getBoundingClientRect()
+      const height = rect.height + 124
+      const dist = 5
+      const disdance = height - clientHeight - dist
+      const scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop)
+      console.log(scrollTop < disdance, scrollTop, disdance, clientHeight, top)
+      if (scrollTop < disdance) {
+        this.startMigrateBtnFixed = true
+      } else {
+        this.startMigrateBtnFixed = false
+      }
+    })
   },
   activated () {
     if (this.$route.params.keepStatus) {
@@ -1027,7 +1026,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
     @import '~@/assets/css/progress.less';
 
     /deep/ .el-link.el-link--default.isSelect {
@@ -1062,5 +1060,42 @@ export default {
     .ml-5 {
       margin-left: 5px;
     }
+
+  .start-migrate-btn-fadeIn {
+    position:fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin:auto;
+    width: 1280px;
+    z-index: 999999;
+    transition: all 0.3s;
+    animation: fadeIn ease 0.3s;
+  }
+
+  .start-migrate-btn-fadeOut {
+    // transition: all 0.3s;
+    // animation: fadeOut ease 0.3s;
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity:0;
+      transform: translateY(100%);
+    }
+    100% {
+      opacity:1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity:0;
+    }
+    100% {
+      opacity:1;
+    }
+  }
 
 </style>
