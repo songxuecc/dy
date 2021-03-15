@@ -125,9 +125,9 @@
     </div>
 
     <!-- 开始搬家按钮 -->
-    <div :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex'] " ref="startMigrateBtn">
+    <div :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex'] " ref="startMigrateBtn" v-if="!loadingCnt">
       <div style="width:210px;height:100px;" v-if="startMigrateBtnFixed"></div>
-      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;">
+      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;" >
         <div>
           <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
             <span style="line-height:21px">下一步: 修改价格</span>
@@ -222,6 +222,7 @@ import common from '@/common/common.js'
 import { createNamespacedHelpers, mapActions } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
+import debounce from 'lodash/debounce'
 const {
   mapActions: mapActionsMigrate
 } = createNamespacedHelpers('migrate/migrateSettingTemplate')
@@ -431,23 +432,20 @@ export default {
       elementList[i].style.maxHeight = '300px'
     }
     this.isMounted = true
-
-    window.addEventListener('scroll', (e) => {
+    window.addEventListener('scroll', debounce((e) => {
       const test = this.$refs.test
-    // 屏幕高度
       const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
       const rect = test.getBoundingClientRect()
       const height = rect.height + 124
       const dist = 5
       const disdance = height - clientHeight - dist
       const scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop)
-      console.log(scrollTop < disdance, scrollTop, disdance, clientHeight, top)
       if (scrollTop < disdance) {
         this.startMigrateBtnFixed = true
       } else {
         this.startMigrateBtnFixed = false
       }
-    })
+    }, 0))
   },
   activated () {
     if (this.$route.params.keepStatus) {
@@ -1071,6 +1069,7 @@ export default {
     z-index: 999999;
     transition: all 0.3s;
     animation: fadeIn ease 0.3s;
+
   }
 
   .start-migrate-btn-fadeOut {

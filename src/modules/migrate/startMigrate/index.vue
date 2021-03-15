@@ -287,7 +287,7 @@ export default {
       let limit = 1
       let message = ''
       textUrls = this.textCaptureUrls
-      limit = 50
+      limit = this.limit
       message = '多商品复制超过' + limit + '条限制'
       let urls = textUrls.split('\n')
       urls = urls.map(s => s.trim()).filter(s => s !== '')
