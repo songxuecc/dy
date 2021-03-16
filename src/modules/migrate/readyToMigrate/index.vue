@@ -127,7 +127,7 @@
       </div>
     </div>
 
-    <div v-if="startMigrateBtnFixed" style="height:120px;width:100%"></div>
+    <div v-if="startMigrateBtnFixed" style="height:102px;width:100%"></div>
     <!-- 开始搬家按钮 -->
     <div
     :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex'] "
@@ -230,27 +230,6 @@ import { createNamespacedHelpers, mapActions } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
-
-// 判断是否有滚动条的方法
-function hasScrolled (el, direction = 'vertical') {
-  console.log(el.scrollHeight)
-  console.log(el.clientHeight)
-  if (direction === 'vertical') {
-    return el.scrollHeight > el.clientHeight
-  } else if (direction === 'horizontal') {
-    return el.scrollWidth > el.clientWidth
-  }
-}
-
-function getScrollbarWidth (el) {
-  el = el || document.body
-  var scrollDiv = document.createElement('div')
-  scrollDiv.style.cssText = 'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;'
-  el.appendChild(scrollDiv)
-  var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
-  el.removeChild(scrollDiv)
-  return scrollbarWidth
-}
 
 const {
   mapActions: mapActionsMigrate
@@ -468,7 +447,11 @@ export default {
     }
     this.isMounted = true
     const scrollEl = document.querySelector('.page-component__scroll')
-    scrollEl.addEventListener('scroll', debounce(this.scroll, 300))
+    scrollEl.addEventListener('scroll', this.scroll)
+  },
+  beforeDestroy () {
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.removeEventListener('scroll', this.scroll)
   },
   activated () {
     if (this.$route.params.keepStatus) {
@@ -518,28 +501,43 @@ export default {
     calendarTime (strTime) {
       return moment(strTime).calendar()
     },
-    scroll () {
-      const scrollEl = document.querySelector('.page-component__scroll')
-      console.log(scrollEl)
-      const isScroll = hasScrolled(scrollEl)
-      const scrollWidth = getScrollbarWidth(scrollEl)
-      console.log(scrollWidth, isScroll, 'isScroll')
-      this.scrollWidth = scrollWidth
-
-      const test = this.$refs.test
-      const clientHeight = scrollEl.clientHeight
-      const rect = test.getBoundingClientRect()
-      const height = rect.height
-      const dist = 0
-      const disdance = height - clientHeight - dist
-      const scrollTop = scrollEl.scrollTop
-      console.log(scrollTop, clientHeight)
-      if (scrollTop < disdance) {
-        this.startMigrateBtnFixed = true
-      } else {
-        this.startMigrateBtnFixed = false
+    scroll: debounce(function () {
+      // 判断是否有滚动条的方法
+      function hasScrolled (el, direction = 'vertical') {
+        if (direction === 'vertical') {
+          return el.scrollHeight > el.clientHeight
+        } else if (direction === 'horizontal') {
+          return el.scrollWidth > el.clientWidth
+        }
       }
-    },
+      function getScrollbarWidth (el) {
+        el = el || document.body
+        var scrollDiv = document.createElement('div')
+        scrollDiv.style.cssText = 'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;'
+        el.appendChild(scrollDiv)
+        var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
+        el.removeChild(scrollDiv)
+        return scrollbarWidth
+      }
+      const scrollEl = document.querySelector('.page-component__scroll')
+      const isScroll = hasScrolled(scrollEl)
+      if (isScroll) {
+        const scrollWidth = getScrollbarWidth(scrollEl)
+        this.scrollWidth = scrollWidth
+        const test = this.$refs.test
+        const clientHeight = scrollEl.clientHeight
+        const rect = test.getBoundingClientRect()
+        const height = rect.height
+        const dist = 5
+        const disdance = height - clientHeight - dist
+        const scrollTop = scrollEl.scrollTop
+        if (scrollTop < disdance) {
+          this.startMigrateBtnFixed = true
+        } else {
+          this.startMigrateBtnFixed = false
+        }
+      }
+    }, 30),
     getBindShopList () {
       // 查询绑定店铺列表
       let self = this
@@ -548,7 +546,6 @@ export default {
         let userDict = {}
         data.forEach(item => {
           item['user_list'].forEach(user => {
-            console.log(user)
             if (!user['is_self']) {
               userDict[user['user_id']] = user
             }
