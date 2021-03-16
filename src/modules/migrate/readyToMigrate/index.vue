@@ -2,28 +2,28 @@
   <div v-loading="loadingCnt" class="readyToMigrate">
     <div>
       <div class="test" ref="test">
-        <el-form ref="form" :model="search" :inline="true" style="text-align: left">
-          <el-form-item label="多店铺切换">
+        <el-form ref="form" :model="search" :inline="true" style="text-align: left" class="flex align-c wrap">
+          <el-form-item>
             <el-select v-model="search.child_shop_user_id" placeholder="请选择" size="small" @change="handleShopFilterChange"
-              popper-class="select-long" style="width: 140px">
+              popper-class="select-long" style="width: 200px">
               <el-option v-for="item in bindShopList" :key="item.user_id" :label="item.shop_name" :value="item.user_id">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="标题">
-            <el-input v-model="search.key" size="small" @keyup.enter.native="handleFilterChange" style="width: 180px">
+          <el-form-item>
+            <el-input v-model="search.key" size="small" placeholder="商品标题" @keyup.enter.native="handleFilterChange" style="width: 200px">
             </el-input>
           </el-form-item>
-          <el-form-item label="状态">
-            <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleStatusFilterChange"
-              popper-class="select-long" style="width: 180px">
+          <el-form-item >
+            <el-select v-model="search.status" placeholder="商品状态" size="small" @change="handleStatusFilterChange"
+              popper-class="select-long" style="width: 200px">
               <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="复制时间">
-            <el-select v-model="captureId" placeholder="请选择" size="small" @change="handleCaptureChange"
-              popper-class="select-long" style="width: 180px">
+          <el-form-item>
+            <el-select v-model="captureId" placeholder="复制时间" size="small" @change="handleCaptureChange"
+              popper-class="select-long" style="width: 200px">
               <el-option-group>
                 <el-option v-for="item in captureOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
@@ -35,9 +35,12 @@
               </el-option-group>
             </el-select>
           </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="medium" @click="handleFilterChange">搜索</el-button>
-          </el-form-item>
+          <el-form-item style="margin-right:0;margin-bottom:5px" >
+              <el-button type="primary" size="medium" @click="handleFilterChange">
+                <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
+              </el-button>
+            </el-form-item>
+
           <div class="flex">
             <div v-if="shopCaptureOptionList.length">
               <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span>
@@ -126,7 +129,7 @@
 
     <!-- 开始搬家按钮 -->
     <div :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex'] " ref="startMigrateBtn" v-if="!loadingCnt">
-      <div style="width:210px;height:100px;" v-if="startMigrateBtnFixed"></div>
+      <div style="width:220px;height:100px;margin-right:10px" v-if="startMigrateBtnFixed"></div>
       <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;" >
         <div>
           <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
@@ -285,7 +288,7 @@ export default {
   watch: {
     tpProductList (newVal) {
       console.log(newVal, 'tpProductList')
-      // this.scroll()
+      this.scroll()
     }
   },
   computed: {
@@ -301,12 +304,12 @@ export default {
     statusOptions () {
       let options = []
       for (let key in this.productStatusMap) {
-        options.push({ value: key, label: this.productStatusMap[key] })
+        options.push({ value: key, label: this.productStatusMap[key] === '全部' ? `商品状态: ${this.productStatusMap[key]}` : this.productStatusMap[key] })
       }
       return options.sort((a, b) => a.value - b.value)
     },
     captureOptions () {
-      let options = [{ value: '-1', label: '全部' }]
+      let options = [{ value: '-1', label: '复制时间: 全部' }]
       for (let i in this.captureOptionList) {
         let capture = this.captureOptionList[i]
         let label = this.calendarTime(capture.create_time)
@@ -339,12 +342,12 @@ export default {
       return true
     },
     shopCaptureOptions () {
-      let options = [{ value: '-1', label: '全部' }]
+      let options = [{ value: '-1', label: '店铺复制: 全部' }]
       for (let i in this.shopCaptureOptionList) {
         let capture = this.shopCaptureOptionList[i]
         options.push({
           value: capture.capture_id.toString(),
-          label: capture.shop_name
+          label: `店铺复制: ${capture.shop_name}`
         })
       }
       return options
@@ -438,10 +441,10 @@ export default {
       elementList[i].style.maxHeight = '300px'
     }
     this.isMounted = true
-    // this.scroll()
-    // window.addEventListener('scroll', debounce((e) => {
-    // this.scroll()
-    // }, 0))
+    this.scroll()
+    window.addEventListener('scroll', debounce((e) => {
+      this.scroll()
+    }, 0))
   },
   activated () {
     if (this.$route.params.keepStatus) {
@@ -514,14 +517,16 @@ export default {
     getBindShopList () {
       // 查询绑定店铺列表
       let self = this
-      self.bindShopList = [{'shop_name': '本店铺', 'user_id': 0}]
+      self.bindShopList = [{'shop_name': '多店铺切换:本店铺', 'user_id': 0}]
       this.request('getUserBindList', {}, data => {
         let userDict = {}
         data.forEach(item => {
           item['user_list'].forEach(user => {
+            console.log(user)
             if (!user['is_self']) {
               userDict[user['user_id']] = user
             }
+            userDict[user['shop_name']] = `${user['shop_name']}`
           })
         })
         for (let userId in userDict) {
@@ -1077,13 +1082,14 @@ export default {
 
   .start-migrate-btn-fadeIn {
     position:fixed;
-    bottom: 0;
+    bottom: 60px;
     left: 0;
     right: 0;
-    margin:auto;
-    width: 1280px;
+    // margin:auto;
+    // width: 1280px;
     z-index: 999999;
     animation: fadeIn ease 0.3s;
+    margin: 0 40px;
   }
 
   .start-migrate-btn-fadeOut {
@@ -1109,5 +1115,8 @@ export default {
       opacity:1;
     }
   }
+  /deep/ .el-button--medium {
+      padding: 7px 7px;
+    }
 
 </style>

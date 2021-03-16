@@ -20,8 +20,8 @@
                 <side-bar></side-bar>
               </div>
           </el-aside>
-          <el-main style="background:#f9f9f9;height:100%;overflow:auto">
-            <div style="padding-left:30px;padding-top:20px;padding-right:30px;margin-right:30px;background:#FFFFFF;min-height: 100%;
+          <el-main style="background:#f9f9f9;height:100%;overflow:auto" class="page-component__scroll">
+            <div style="padding-left:30px;padding-top:20px;padding-right:30px;margin-right:40px;background:#FFFFFF;min-height: 100%;
     box-sizing: border-box;">
               <keep-alive>
                 <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
@@ -64,7 +64,6 @@
 </template>
 
 <script>
-import '@/assets/css/theme/index.css'
 import '@/assets/css/theme/index.less'
 import '@/assets/css/base.less'
 

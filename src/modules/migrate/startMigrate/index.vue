@@ -64,7 +64,7 @@
         <span slot="label">绑定复制<NewFeatureTips type="绑定复制" /></span>
         <div class="flex column align-c" v-if="!userBindList.length ">
           <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
-          <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link"
+          <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"

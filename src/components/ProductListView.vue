@@ -16,7 +16,7 @@
                 </el-col>
             </el-row>
         </div> -->
-        <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" border style="width: 100%" :class="tpProductList.length < 3 ? 'table-cal-2' : ''"
+        <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" style="width: 100%" :class="tpProductList.length < 3 ? 'table-cal-2' : ''"
                   :row-style="{height:'68px'}"
                   @select-all="handleSelectAll" @select="handleSelect"
                   @selection-change="handleSelectionChange" :cell-style="cellStyle" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut"
@@ -26,33 +26,36 @@
             </el-table-column>
             <el-table-column type="selection" :selectable="isSelectionEnable">
             </el-table-column>
-            <el-table-column label="图片" width="80" align="center">
+            <el-table-column label="图片" width="60" align="center">
                 <template slot-scope="scope">
-                    <img style="height:50px" :src="scope.row.thumbnail">
+                    <img v-if="scope.row.thumbnail" style="height:50px;border-radius:4px" :src="scope.row.thumbnail">
+                    <hh-icon v-else type="iconwuzhaopian" style="font-size:50px" />
                 </template>
             </el-table-column>
             <el-table-column label="标题"  width="300">
                 <template slot-scope="scope">
-                    <el-link  :href="scope.row.url" target="_blank" :underline="false" style="font-size:13px">
+                    <el-link  :href="scope.row.url" target="_blank" :underline="false">
                         {{ scope.row.title }}
                     </el-link><br>
-                    <div style="display: flex;align-items: center;flex-wrap: wrap;">
-                      <img style="width: 12px; height: 12px;margin-right: 5px;" class="icon" :src="getIcon(scope.row)">
-                      <label style="font-size:12px; margin-right: 5px;color:#999999">{{scope.row.source}}</label>
-                      <label style="font-size:12px; margin-right: 5px;color:#999999" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</label>
-                      <label style="font-size:12px;color:#999999">创建时间: {{scope.row.create_time}}</label>
+                    <div class="flex align-c wrap">
+                      <span class="flex align-c" style="margin-right:27px">
+                        <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(scope.row)">
+                        <label class="info">{{scope.row.source}}</label>
+                      </span>
+                      <div class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</div>
+                      <div class="info">创建时间: {{scope.row.create_time}}</div>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="价格" width="80" >
+            <el-table-column label="价格" width="80" align="center">
                 <template slot-scope="scope">
-                    <span style="font-size:13px;">{{ scope.row.max_price / 100 }}</span>
+                    <span>{{ scope.row.max_price / 100 }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="类目" width="100" align="center">
                 <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">
-                        <span style="font-size:13px;"> {{ getLastCategory(scope.row.category_show) }} </span>
+                        <span> {{ getLastCategory(scope.row.category_show) }} </span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -72,12 +75,12 @@
             </el-table-column>
              <el-table-column v-if="!isSyncSource" label="状态" width="110" style="overflow:auto"  align="center" class-name="cell-class">
                 <template slot-scope="scope">
-                    <el-link :underline="false" style="text-decoration:none;font-size:13px" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
-                    <el-link :underline="false" style="text-decoration:none;font-size:13px"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
+                    <el-link :underline="false" style="text-decoration:none;" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
+                    <el-link :underline="false" style="text-decoration:none;"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
                       {{ productStatusMap[scope.row.status] }}
                       <i v-if="scope.row.isMigrating && scope.row.status!==2" class="el-icon-loading"></i>
                     </el-link>
-                    <el-link v-else :underline="false"  style="text-decoration:none;font-size:13px;display:block" type="warning">
+                    <el-link v-else :underline="false"  style="text-decoration:none;;display:block" type="warning">
                       {{ productStatusMap[scope.row.status] }}
                       <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
                     </el-link>
@@ -95,56 +98,56 @@
             </el-table-column>
              <el-table-column v-if="!isSyncSource" label="理由" align="center">
                 <template slot-scope="scope">
-                    <div style="text-decoration:none;font-size:13px" >
+                    <div style="text-decoration:none;" >
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
                         <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
-                              <p style="font-size:13px">当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。</p>
-                              <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101706">点击查询规则</a ></p>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              <p style="">当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。</p>
+                              <p><a style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101706">点击查询规则</a ></p>
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
-                              <p style="font-size:13px">根据官方规定，该类目需要填写品牌，请上传品牌</p>
-                              <p><a  style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              <p style="">根据官方规定，该类目需要填写品牌，请上传品牌</p>
+                              <p><a  style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,品牌不属于该类目') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               品牌未更新，建议亲亲点击品牌旁的刷新按钮后，再次进行搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,该类目下无品牌') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
-                              <p style="font-size:13px">商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
-                              <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              <p style="">商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
+                              <p><a style="color: #409EFF;" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               商品详情图中有空白图，建议将空白图删除后再次搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               {{getSkuDuplicateFormatText(scope.row.migration_msg[0])}}
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败30-2,transImgToLocal failed') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               轮播图+详情图+sku图不能超过50张
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,非叶子节点不允许，创建或编辑商品') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               请刷新分类后重新搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else>
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" v-for="(v,i) in scope.row.migration_msg" :key="i">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
                               <span v-html="v">{{v}}</span>
                             </ul>
                         </div>
@@ -152,7 +155,7 @@
                       <span style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-else-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content">
                             <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
-                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;font-size:13px">联系客服</a>。</ul>
+                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;">联系客服</a>。</ul>
                           </div>
                       </span>
                       <span v-if="[0,1,2,3,4,9].includes(Number(scope.row.status))">无</span>
@@ -171,7 +174,7 @@
                         </el-dropdown>
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
                     </div>
-                    <el-link  v-else v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="font-size:13px;margin-right:4px">{{item.text}}
+                    <el-link  v-else v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style=";margin-right:4px">{{item.text}}
                       <NewComer type="待修改" ref="newComerEdit"   :direction="[0,1].includes(scope.row.index) ? 'bottom' : 'top'"  :left="25" v-if="getFirstShow(6,scope.row.index,scope.row.status) && item.text== '修改'">
                         <div>
                           <div style="width:172px" class="color-666 font-12 left">

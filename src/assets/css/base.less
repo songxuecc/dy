@@ -462,12 +462,11 @@ div.block-content {
 
 .float-view {
   position: fixed;
-  //right: calc(25% - @width-main * 0.25);
-  left: 50%;
   margin-left: 650px;
-  //bottom: 20%;
-  top: 110px;
   z-index: 9999;
+  transform: translate(0,-50%);
+  top: 50%;
+  right: 15px;
 
   .float-button {
     padding: 4px;
@@ -549,12 +548,6 @@ div.block-content {
       padding: 5px;
       width: 200px;
     }
-  }
-}
-
-@media (max-width: @width-main * 1.05) {
-  .float-view {
-    right: 10px;
   }
 }
 
@@ -784,7 +777,7 @@ div .like-button-disabled {
 
 /* 右侧导航 */
 .float-nav {
-  width: 66px;
+  width: 56px;
   text-align: center;
   background: #ffffff;
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);

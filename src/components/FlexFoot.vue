@@ -25,8 +25,9 @@
       <div class="column-name">收藏</div>
     </div>
     <div class="float-button nav-go-top" @click="backToTop">
-<!--      <span class="nav-icon nav-gotop"></span>-->
-      <hh-icon type="iconshanglajiantou" style="font-size:17px;" />
+        <hh-icon type="iconshanglajiantou" style="font-size:17px;" />
+      <!-- <el-backtop target=".page-component__scroll" :visibility-height="0">
+      </el-backtop> -->
     </div>
     <hh-dialog width="600" :visible.sync="dialogNotificationVisible" :isClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog">
       <template v-slot:content>
@@ -94,7 +95,12 @@ export default {
       })
     },
     backToTop () {
-      scrollTo(0, 0)
+      const el = document.querySelector('.page-component__scroll')
+      el.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      })
     },
     closeService () {
       this.isServiceBoxShow = false
