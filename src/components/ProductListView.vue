@@ -790,7 +790,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
     /deep/ .el-drawer__body {
       height: 100%;
     }

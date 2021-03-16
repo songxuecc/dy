@@ -3,7 +3,7 @@
     <el-header>
        <div class="navbar">
         <div class="navbar-content">
-            <div class="nav-title">{{虎虎搬家助手}}</div>
+            <div class="nav-title">抖音小店</div>
             <div class="nav-right" style="margin-top: 15px">
                 <el-button size="small" @click="openSaveDialog">保存</el-button>
                 <el-button size="small" @click="leftDialogVisible=true" type="primary">返回</el-button>

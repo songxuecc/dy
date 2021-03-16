@@ -161,6 +161,42 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
+.float-button {
+    padding: 4px;
+    position: relative;
+    .notice-icon {
+      font-family: 'Avenir', Helvetica, Arial, sans-serif;
+      position: absolute;
+      z-index: 1;
+      left: 20px;
+      top: 0;
+      display: inline-block;
+      //min-width: 16px;
+      padding: 2px 4px;
+      font-size: 12px;
+      line-height: 1;
+      color: #ffffff;
+      border-radius: 8px;
+      background: #E02020;
+      cursor: pointer;
+      transform: scale(0.8, 0.8);
+    }
+    /deep/ .el-button.is-circle {
+      font-size: 26px;
+    }
+  }
+  .wechat-button {
+    position: relative;
+    span.wechat-icon {
+      display: block;
+      width: 26px;
+      height: 26px;
+      background: url('~@/assets/icon/service-white.png') no-repeat;
+      background-size: 100%;
+    }
+  }
+
 .icon {
     background: #fff;
     color: #409EFF;
@@ -179,4 +215,50 @@ export default {
       }
     }
   }
+
+  /* 右侧导航 */
+.float-nav {
+  width: 56px;
+  text-align: center;
+  background: #ffffff;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  .float-button {
+    cursor: pointer;
+    span.nav-icon {
+      padding: 10px 0 0 0;
+      width: 26px;
+      height: 26px;
+      display: block;
+      margin: 0 auto;
+      background-position: 0 10px;
+      background-repeat: no-repeat;
+    }
+    .column-name {
+      color: #666666;
+      padding: 1px 0 8px;
+    }
+    .comments-icon {
+      font-size: 26px;
+      color: #409eff;
+    }
+  }
+  .float-button:first-child {
+    padding-top: 12px;
+  }
+  .nav-go-top {
+    height: 20px;
+    padding: 7px 0 6px;
+    border-top: 4px solid @body-bg;
+  }
+  .nav-go-top:hover {
+    background: #ffffff;
+  }
+  .collect-button:hover {
+    background: #ffffff;
+    .column-name {
+      color: #666666;
+    }
+  }
+}
 </style>

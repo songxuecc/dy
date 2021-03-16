@@ -3,11 +3,11 @@
         <div class="navbar-content">
           <div class="main-inner clearfix">
             <div class="nav-title" @click="goInfo">
-              <img src="../assets/icon/logo.png" alt="虎虎搬家助手">
+              <img src="@/assets/icon/logo.png" alt="虎虎搬家助手">
               <hh-icon type="icondouyinban" style="font-size:42px;position:absolute;margin-left:4px;top:12px" />
             </div>
             <div class="nav-right">
-              <img v-if="shopName" src="../assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable" />
+              <img v-if="shopName" src="@/assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable" />
               <!-- 用户使用天数 -->
               <ul v-if="shopName" class="menu-content">
                 <li @click="goToOrder()">
@@ -235,7 +235,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
     .navbar {
       background: @navbar-bg;
       /deep/ .el-menu .el-menu--popup {

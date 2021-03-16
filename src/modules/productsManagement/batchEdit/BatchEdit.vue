@@ -616,5 +616,53 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
+
+    .multi-fun-tab {
+      background-color: #e4e7ed;
+
+      /deep/ .el-tabs__header {
+        margin: 0;
+      }
+    }
+
+    .no-cover-bottom-drawer {
+  height: 200px;
+  top: auto;
+
+  :focus {
+    outline: 0;
+  }
+
+  /deep/ .el-drawer {
+    height: 90% !important;
+    box-shadow: 0 16px 20px 2px rgba(0, 0, 0, 1);
+  }
+
+  .drawer-container {
+    width: @width-main - 40px;
+    margin: auto;
+    padding-left: 200px;
+    text-align: left;
+  }
+  .drawer-title {
+    padding: 5px 0;
+    border-bottom: 1px solid lightgray;
+  }
+  .drawer-content {
+    padding: 5px 0;
+    font-size: 14px;
+
+    span.drawer-immediate {
+      display: inline-block;
+      height: 28px;
+      line-height: 28px;
+      padding: 5px 0;
+    }
+
+    /deep/ .el-input {
+      padding: 5px;
+      width: 200px;
+    }
+  }
+}
 </style>

@@ -33,5 +33,5 @@ new Vue({
   }
 })
 
-const req = require.context('@/assets/icon/icons', true, /\.svg$/)
+const req = require.context('@/assets/icon', true, /\.svg$/)
 requireAll(req)

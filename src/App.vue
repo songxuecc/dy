@@ -64,8 +64,7 @@
 </template>
 
 <script>
-import '@/assets/css/theme/index.less'
-import '@/assets/css/base.less'
+import '@/assets/css/index.less'
 
 import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
@@ -319,11 +318,6 @@ export default {
 }
 </script>
 
-<style>
-  /* .main-wrapper .aside .el-submenu .el-menu-item{
-    padding: 0 6px;
-  } */
-</style>
 <style lang="less">
   body,#app {
     font-family: 14px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
@@ -370,4 +364,56 @@ export default {
     align-items: center;
     justify-content: center;
   }
+
+</style>
+
+<style lang="less" scoped>
+  /deep/ .notice-foot {
+    margin-top: -1px;
+    margin-bottom: -6px;
+    .el-button {
+      min-width: 126px;
+    }
+  }
+
+  /* 新通知弹框样式 */
+  .notice-main {
+    margin-top: -28px;
+    .notice-title {
+      font-size: 20px;
+      color: #333333;
+      line-height: 62px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .notice-content {
+      padding: 22px 45px;
+      color: #4e4e4e  ;
+      font-size: 14px;
+      text-align: left;
+    }
+  }
+
+  .header-notice {
+    background: #fff6ed;
+    /deep/ .el-alert.is-light .el-alert__closebtn {
+      padding-right: 6px;
+    }
+}
+
+  /* 头尾默认设置为全屏 */
+  #app {
+    /deep/ .el-header {
+      padding: 0;
+    }
+  }
+
+  .float-view {
+    position: fixed;
+    margin-left: 650px;
+    z-index: 9999;
+    transform: translate(0,-50%);
+    top: 50%;
+    right: 15px;
+  }
+
 </style>
