@@ -394,6 +394,13 @@ export default {
 
   .header-notice {
     background: #fff6ed;
+    .main-inner {
+      width: 1000px;
+      margin: auto;
+    }
+    .el-alert.is-light {
+      background: #fff6ed;
+    }
     /deep/ .el-alert.is-light .el-alert__closebtn {
       padding-right: 6px;
     }
@@ -423,4 +430,10 @@ export default {
     min-height: 100%;
     box-sizing: border-box;
   }
+  .full-screen {
+    min-width: @full-screen-width;
+    position: absolute;
+    width: 100%;
+  }
+
 </style>
