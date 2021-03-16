@@ -303,7 +303,3 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
-    @import '~@/assets/css/var.less';
-
-</style>

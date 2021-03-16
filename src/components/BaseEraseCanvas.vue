@@ -181,5 +181,18 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/whitebackgroundview.less';
+    a {text-decoration: none;}
+    .canvas {
+      width:480px;
+      height:480px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .plus-mouse{
+      cursor: url('~@/assets/icon/plus.svg') ,auto
+    }
+    .remove-mouse{
+      cursor: url('~@/assets/icon/remove.svg') ,auto
+    }
 </style>

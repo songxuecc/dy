@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="info-page">
-        <el-tabs type="border-card" v-model="activeName">
+        <el-tabs v-model="activeName">
           <el-tab-pane label="关于我们" class="my-info" name="company">
             <div class="title">
               虎虎搬家助手
@@ -32,7 +32,16 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-  @import '~@/assets/css/appinfo.less';
+
+  /deep/ .el-button {
+    vertical-align: middle;
+    width: 100px;
+  }
+
+  /deep/ .desc-img {
+    float: left;
+  }
+
   .info {
     margin: 0 auto;
     .el-image {

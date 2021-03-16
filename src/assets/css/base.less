@@ -1,4 +1,3 @@
-@import 'var';
 
 blockquote,
 body,
@@ -182,7 +181,7 @@ img {
 
   .el-input__inner {
     border: 1px solid #E02020;
-    background-color: @color-light-red;
+    background-color: @background-color-danger;
   }
   .hint {
     color: #E02020;
@@ -190,7 +189,7 @@ img {
 }
 
 .warn-view {
-  background-color: @color-light-red;
+  background-color: @background-color-danger;
 }
 
 .great {
@@ -308,7 +307,7 @@ img {
 .select-list {
   margin: 5px 0;
   padding: 0;
-  border: 1px solid @normal-border-color;
+  border: 1px solid @color-light-gray;
   overflow: auto;
 
   .select-list-item {
@@ -318,14 +317,14 @@ img {
     cursor: pointer;
     list-style-type: none;
     color: @color-dark-gray;
-    border-bottom: 1px solid @normal-border-color;
+    border-bottom: 1px solid @color-light-gray;
 
     &:hover {
       background-color: @hover-background-color;
     }
   }
   .current-item {
-    color: @select-color;
+    color: @color-purple;
     background-color: @select-background-color;
   }
 }
@@ -356,7 +355,7 @@ img {
   .el-input__inner,
   .el-textarea__inner {
     border: 1px solid #E02020;
-    background-color: @color-light-red;
+    background-color: @background-color-danger;
   }
 }
 

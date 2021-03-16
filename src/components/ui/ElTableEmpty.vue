@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import '@/assets/icon/icons/icon-table-empty.svg'
+import '@/assets/icon/icon-table-empty.svg'
 export default {
   props: {
     msg: String
