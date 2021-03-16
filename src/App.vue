@@ -2,7 +2,7 @@
     <div id="app">
         <good-assess-dialog></good-assess-dialog>
         <expire-notify-dialog></expire-notify-dialog>
-        <el-header :style="{height:(curNavNotification ? 'auto' : '80px')}">
+        <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
           <nav-bar></nav-bar>
           <div class="full-screen">
             <div class="header-notice">
@@ -14,35 +14,30 @@
             </div>
           </div>
         </el-header>
-        <el-container class="main-wrapper" v-if="!$route.meta.specialShow">
-            <el-container>
-                <el-aside class="aside" width="220px">
-                    <div class="aside-bar">
-                      <side-bar></side-bar>
-                    </div>
-                </el-aside>
-                <el-main>
-                  <div class="mainer">
-                    <div class="inner">
-                      <keep-alive>
-                          <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
-                      </keep-alive>
-                      <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
-                    </div>
-                  </div>
-                </el-main>
-            </el-container>
+        <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
+          <el-aside class="aside" width="220px">
+              <div class="aside-bar">
+                <side-bar></side-bar>
+              </div>
+          </el-aside>
+          <el-main style="background:#f9f9f9;height:100%;overflow:auto">
+            <div style="padding-left:30px;padding-top:20px;padding-right:30px;margin-right:30px;background:#FFFFFF;min-height: 100%;
+    box-sizing: border-box;">
+              <keep-alive>
+                <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
+            </keep-alive>
+            <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
+            </div>
+          </el-main>
         </el-container>
         <div v-else>
           <keep-alive>
-              <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
+              <router-view v-if="$route.meta.keepAliv.main-wrappere && isRouterAlive"></router-view>
           </keep-alive>
           <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
         </div>
-        <el-footer>
-          <div class="inner-foot full-screen">
-            <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
-          </div>
+        <el-footer class="footer">
+          <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer>
         <div v-if="isShowFloatView" class="float-view">
           <flex-foot></flex-foot>
@@ -325,31 +320,35 @@ export default {
 }
 </script>
 
+<style>
+  /* .main-wrapper .aside .el-submenu .el-menu-item{
+    padding: 0 6px;
+  } */
+</style>
 <style lang="less">
-  #app {
+  body,#app {
     font-family: 14px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    min-height:100%;
-    height: auto !important;
-    height: 100%; /*IE6不识别min-height*/
+    min-height: 100vh;
     position: relative;
-    /*margin-top: 60px;*/
+    height:auto!important;
+    height:100vh; /*IE6不识别min-height*/
+    min-height: 100vh;
+    background: #F9F9F9;
   }
 
   .main-wrapper {
-    width: 1320px;
-    margin: auto;
-    /deep/ .el-container {
-      padding-bottom: 60px;
-    }
+    margin-left: 40px;
+    margin-top: 20px;
+    height: calc(100vh - 140px);
+    overflow: hidden;
   }
-
   .aside {
-    padding: 14px 0 14px 20px;
     text-align: left;
+    margin-right: 10px;
   }
 
   .aside .aside-bar {
@@ -361,12 +360,15 @@ export default {
     background: #ffffff;
     height: 100%
   }
-  .inner {
-    padding: 30px;
-  }
-
   .notification-box {
     width: auto !important;
     min-width: 420px !important;
+  }
+  .footer {
+    width: 100%;
+    background: #F9F9F9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>

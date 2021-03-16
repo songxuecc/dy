@@ -97,60 +97,60 @@
                 <template slot-scope="scope">
                     <div style="text-decoration:none;font-size:13px" >
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
-                        <div slot="content" style="max-width: 180px;" v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               <p style="font-size:13px">当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。</p>
                               <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101706">点击查询规则</a ></p>
                             </ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               <p style="font-size:13px">根据官方规定，该类目需要填写品牌，请上传品牌</p>
                               <p><a  style="color: #409EFF;font-size:13px" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
                             </ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,品牌不属于该类目') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,品牌不属于该类目') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               品牌未更新，建议亲亲点击品牌旁的刷新按钮后，再次进行搬家
                             </ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,该类目下无品牌') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,该类目下无品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               <p style="font-size:13px">商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
                               <p><a style="color: #409EFF;font-size:13px" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
                             </ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               商品详情图中有空白图，建议将空白图删除后再次搬家
                             </ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               {{getSkuDuplicateFormatText(scope.row.migration_msg[0])}}
                             </ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败30-2,transImgToLocal failed') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败30-2,transImgToLocal failed') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               轮播图+详情图+sku图不能超过50张
                             </ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,非叶子节点不允许，创建或编辑商品') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,非叶子节点不允许，创建或编辑商品') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" :key="0">
                               请刷新分类后重新搬家
                             </ul>
                         </div>
-                        <div slot="content" style="max-width: 180px;" v-else>
+                        <div slot="content"  v-else>
                             <ul style="padding: 0; margin: 0; margin-top: 6px;font-size:13px" v-for="(v,i) in scope.row.migration_msg" :key="i">
                               <span v-html="v">{{v}}</span>
                             </ul>
                         </div>
                       </span>
                       <span style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-else-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
-                          <div slot="content" style="max-width: 180px;">
+                          <div slot="content">
                             <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
                             <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;font-size:13px">联系客服</a>。</ul>
                           </div>

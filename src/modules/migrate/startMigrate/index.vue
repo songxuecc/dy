@@ -119,7 +119,7 @@
       <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture" style="width:120px">开始复制
       </el-button>
     </div>
-    <BindCopyTip v-if="activeName === 'bindCopy' && userBindList.length " />
+    <BindCopyTip v-if="activeName === 'bindCopy'"/>
     <el-dialog title="安装及使用教程" :show-close="true" :visible.sync="importFilePromptVisibe" width="60%">
       <iframe
         v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'"

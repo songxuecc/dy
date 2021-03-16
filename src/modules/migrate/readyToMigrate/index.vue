@@ -282,6 +282,12 @@ export default {
       startMigrateBtnFixed: false
     }
   },
+  watch: {
+    tpProductList (newVal) {
+      console.log(newVal, 'tpProductList')
+      // this.scroll()
+    }
+  },
   computed: {
     productStatusMap () {
       return common.productStatusMap
@@ -432,20 +438,10 @@ export default {
       elementList[i].style.maxHeight = '300px'
     }
     this.isMounted = true
-    window.addEventListener('scroll', debounce((e) => {
-      const test = this.$refs.test
-      const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
-      const rect = test.getBoundingClientRect()
-      const height = rect.height + 124
-      const dist = 5
-      const disdance = height - clientHeight - dist
-      const scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop)
-      if (scrollTop < disdance) {
-        this.startMigrateBtnFixed = true
-      } else {
-        this.startMigrateBtnFixed = false
-      }
-    }, 0))
+    // this.scroll()
+    // window.addEventListener('scroll', debounce((e) => {
+    // this.scroll()
+    // }, 0))
   },
   activated () {
     if (this.$route.params.keepStatus) {
@@ -494,6 +490,26 @@ export default {
     ]),
     calendarTime (strTime) {
       return moment(strTime).calendar()
+    },
+    scroll () {
+      setTimeout(() => {
+        const test = this.$refs.test
+        const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
+        const rect = test.getBoundingClientRect()
+        console.log(rect)
+        console.log(this.$refs.productListView.tpProductList, 'tpProductList')
+        const height = rect.height + 124
+        const dist = 5
+        const disdance = height - clientHeight - dist
+        const scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop)
+        console.log(scrollTop, disdance, height, clientHeight)
+        if (scrollTop < disdance) {
+          this.startMigrateBtnFixed = true
+        } else {
+          this.startMigrateBtnFixed = false
+        }
+        console.log(this.startMigrateBtnFixed)
+      }, 300)
     },
     getBindShopList () {
       // 查询绑定店铺列表
@@ -1067,14 +1083,11 @@ export default {
     margin:auto;
     width: 1280px;
     z-index: 999999;
-    transition: all 0.3s;
     animation: fadeIn ease 0.3s;
-
   }
 
   .start-migrate-btn-fadeOut {
-    // transition: all 0.3s;
-    // animation: fadeOut ease 0.3s;
+    transition: none;
   }
 
   @keyframes fadeIn {
