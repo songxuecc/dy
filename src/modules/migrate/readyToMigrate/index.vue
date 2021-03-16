@@ -127,8 +127,12 @@
       </div>
     </div>
 
+    <div v-if="startMigrateBtnFixed" style="height:120px;width:100%"></div>
     <!-- 开始搬家按钮 -->
-    <div :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex'] " ref="startMigrateBtn" v-if="!loadingCnt">
+    <div
+    :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex'] "
+    ref="startMigrateBtn" v-if="!loadingCnt"
+    :style="{'margin-right': startMigrateBtnFixed ? `${scrollWidth + 40}px` : 0}">
       <div style="width:220px;height:100px;margin-right:10px" v-if="startMigrateBtnFixed"></div>
       <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;" >
         <div>
@@ -226,6 +230,28 @@ import { createNamespacedHelpers, mapActions } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
+
+// 判断是否有滚动条的方法
+function hasScrolled (el, direction = 'vertical') {
+  console.log(el.scrollHeight)
+  console.log(el.clientHeight)
+  if (direction === 'vertical') {
+    return el.scrollHeight > el.clientHeight
+  } else if (direction === 'horizontal') {
+    return el.scrollWidth > el.clientWidth
+  }
+}
+
+function getScrollbarWidth (el) {
+  el = el || document.body
+  var scrollDiv = document.createElement('div')
+  scrollDiv.style.cssText = 'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;'
+  el.appendChild(scrollDiv)
+  var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
+  el.removeChild(scrollDiv)
+  return scrollbarWidth
+}
+
 const {
   mapActions: mapActionsMigrate
 } = createNamespacedHelpers('migrate/migrateSettingTemplate')
@@ -282,13 +308,13 @@ export default {
         common.productStatus.REJECT
       ],
       common,
-      startMigrateBtnFixed: false
+      startMigrateBtnFixed: false,
+      scrollWidth: 0
     }
   },
   watch: {
     tpProductList (newVal) {
-      console.log(newVal, 'tpProductList')
-      this.scroll()
+      this.$nextTick(this.scroll)
     }
   },
   computed: {
@@ -441,10 +467,8 @@ export default {
       elementList[i].style.maxHeight = '300px'
     }
     this.isMounted = true
-    this.scroll()
-    window.addEventListener('scroll', debounce((e) => {
-      this.scroll()
-    }, 0))
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.addEventListener('scroll', debounce(this.scroll, 300))
   },
   activated () {
     if (this.$route.params.keepStatus) {
@@ -495,24 +519,26 @@ export default {
       return moment(strTime).calendar()
     },
     scroll () {
-      setTimeout(() => {
-        const test = this.$refs.test
-        const clientHeight = document.documentElement.clientHeight || document.body.clientHeight
-        const rect = test.getBoundingClientRect()
-        console.log(rect)
-        console.log(this.$refs.productListView.tpProductList, 'tpProductList')
-        const height = rect.height + 124
-        const dist = 5
-        const disdance = height - clientHeight - dist
-        const scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop)
-        console.log(scrollTop, disdance, height, clientHeight)
-        if (scrollTop < disdance) {
-          this.startMigrateBtnFixed = true
-        } else {
-          this.startMigrateBtnFixed = false
-        }
-        console.log(this.startMigrateBtnFixed)
-      }, 300)
+      const scrollEl = document.querySelector('.page-component__scroll')
+      console.log(scrollEl)
+      const isScroll = hasScrolled(scrollEl)
+      const scrollWidth = getScrollbarWidth(scrollEl)
+      console.log(scrollWidth, isScroll, 'isScroll')
+      this.scrollWidth = scrollWidth
+
+      const test = this.$refs.test
+      const clientHeight = scrollEl.clientHeight
+      const rect = test.getBoundingClientRect()
+      const height = rect.height
+      const dist = 0
+      const disdance = height - clientHeight - dist
+      const scrollTop = scrollEl.scrollTop
+      console.log(scrollTop, clientHeight)
+      if (scrollTop < disdance) {
+        this.startMigrateBtnFixed = true
+      } else {
+        this.startMigrateBtnFixed = false
+      }
     },
     getBindShopList () {
       // 查询绑定店铺列表
@@ -1085,9 +1111,7 @@ export default {
     bottom: 60px;
     left: 0;
     right: 0;
-    // margin:auto;
-    // width: 1280px;
-    z-index: 999999;
+    z-index: 99;
     animation: fadeIn ease 0.3s;
     margin: 0 40px;
   }
@@ -1109,10 +1133,10 @@ export default {
 
   @keyframes fadeOut {
     0% {
-      opacity:0;
+      transform: translateY(-100%);
     }
     100% {
-      opacity:1;
+      transform: translateY(0);
     }
   }
   /deep/ .el-button--medium {
