@@ -1,18 +1,19 @@
 <template>
     <div id="app">
+
         <good-assess-dialog></good-assess-dialog>
         <expire-notify-dialog></expire-notify-dialog>
         <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
           <nav-bar></nav-bar>
           <div class="full-screen">
-            <div class="header-notice">
-              <div class="main-inner clearfix">
-                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
-                          :closable="notificationClosable" close-text="不再显示" title="-"
-                ></el-alert>
-              </div>
+          <div class="header-notice">
+            <div class="main-inner clearfix">
+              <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
+                        :closable="notificationClosable" close-text="不再显示" title="-"
+              ></el-alert>
             </div>
           </div>
+        </div>
         </el-header>
         <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
           <el-aside class="aside" width="220px">
@@ -434,6 +435,7 @@ export default {
     min-width: @full-screen-width;
     position: absolute;
     width: 100%;
+    z-index: 1;
   }
 
 </style>
