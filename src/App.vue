@@ -21,7 +21,7 @@
               </div>
           </el-aside>
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
-            <div style="main-layout">
+            <div class="main-layout">
               <keep-alive>
                 <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
             </keep-alive>
@@ -414,7 +414,6 @@ export default {
     top: 50%;
     right: 15px;
   }
-
   .main-layout{
     padding-left:30px;
     padding-top:20px;
