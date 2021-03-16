@@ -20,7 +20,7 @@
                 <side-bar></side-bar>
               </div>
           </el-aside>
-          <el-main style="background:#f9f9f9;height:100%;overflow:auto" class="page-component__scroll">
+          <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
             <div style="padding-left:30px;padding-top:20px;padding-right:30px;margin-right:40px;background:#FFFFFF;min-height: 100%;
     box-sizing: border-box;">
               <keep-alive>
