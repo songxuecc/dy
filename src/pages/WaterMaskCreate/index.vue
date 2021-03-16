@@ -813,8 +813,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
-    @import '~@/assets/css/navbar.less';
+    @import '~./index.less';
 
     /deep/ .el-slider__input{
       width:55px !important;
@@ -858,19 +857,19 @@ export default {
     }
     // @font-face {
     //   font-family: "SourceHanSansSC-Bold";
-    //   src: url('../assets/fonts/SourceHanSansSC-Bold.otf');
+    //   src: url('~@/assets/fonts/SourceHanSansSC-Bold.otf');
     //   font-weight: normal;
     //   font-style: normal;
     // }
     // @font-face {
     //   font-family: "SourceHanSansSC-Heavy";
-    //   src: url('../assets/fonts/SourceHanSansSC-Heavy.otf');
+    //   src: url('~@/assets/fonts/SourceHanSansSC-Heavy.otf');
     //   font-weight: normal;
     //   font-style: normal;
     // }
     @font-face {
       font-family: "SourceHanSansSC-Normal";
-      src: url('../assets/fonts/SourceHanSansSC-Normal.otf');
+      src: url('~@/assets/fonts/SourceHanSansSC-Normal.otf');
       font-weight: normal;
       font-style: normal;
     }

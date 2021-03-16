@@ -91,6 +91,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import '~@/assets/css/sidebar.less';
+  @import '~./index.less';
 
 </style>
