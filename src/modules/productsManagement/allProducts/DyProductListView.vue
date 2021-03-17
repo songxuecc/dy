@@ -6,7 +6,7 @@
         <div class="text-left" style="padding: 10px 0">
             <el-row>
                 <el-col :span="16">
-                    商品列表&nbsp;&nbsp;
+                    &nbsp;&nbsp;
                     <slot name="upperLeft"></slot>
                     <el-button plain size='mini' v-if="isSelectMultiPage" @click="showSelectProduct">已选择商品({{selectAllProductList.length}})</el-button>
                 </el-col>
@@ -15,7 +15,7 @@
                 </el-col>
             </el-row>
         </div>
-        <el-table ref="dyProductListTable" :data="dyProductList" row-key="goods_id" border style="width: 100%"
+        <el-table ref="dyProductListTable" :data="dyProductList" row-key="goods_id"  style="width: 100%"
                   :row-style="{height:'68px'}" :cell-style="{padding:0}"
         >
         <el-table-empty slot="empty"/>
@@ -23,7 +23,7 @@
 <!--            </el-table-column>-->
             <el-table-column label="图片" width="100" align="center">
                 <template slot-scope="scope">
-                    <img style="height:60px;max-width:79px;" :src="scope.row.image_url">
+                    <img class="size" :src="scope.row.image_url">
                 </template>
             </el-table-column>
             <el-table-column label="标题">
@@ -461,3 +461,9 @@ export default {
   }
 }
 </script>
+
+<style lang="less">
+  .size{
+    .wh(70px,70px)
+  }
+</style>
