@@ -16,11 +16,13 @@
         </div>
         </el-header>
         <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
-          <el-aside class="aside" width="220px">
-              <div class="aside-bar">
+          <!-- <el-aside class="aside" width="220px"> -->
+              <div class="aside">
+                <vue-custom-scrollbar class="scroll-area"  :settings="settings" @ps-scroll-y="scrollHanle">
                 <side-bar></side-bar>
+                </vue-custom-scrollbar>
               </div>
-          </el-aside>
+          <!-- </el-aside> -->
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
             <div class="main-layout">
               <keep-alive>
@@ -65,7 +67,7 @@
 
 <script>
 import '@/assets/css/index.less'
-
+import vueCustomScrollbar from 'vue-custom-scrollbar'
 import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import navBar from '@/components/Navbar'
@@ -77,6 +79,7 @@ import common from '@/common/common.js'
 import commonUtils from '@/common/commonUtils.js'
 import utils from '@/common/utils'
 import request from '@/mixins/request.js'
+import 'vue-custom-scrollbar/dist/vueScrollbar.css'
 
 export default {
   name: 'App',
@@ -99,7 +102,13 @@ export default {
       dialogTimer: null,
       expireNotifyStyle: {},
       msgNotificationData: {},
-      msgDialogShow: false
+      msgDialogShow: false,
+
+      settings: {
+        suppressScrollY: false,
+        suppressScrollX: false,
+        wheelPropagation: false
+      }
     }
   },
   components: {
@@ -107,7 +116,8 @@ export default {
     sideBar,
     FlexFoot,
     GoodAssessDialog,
-    ExpireNotifyDialog
+    ExpireNotifyDialog,
+    vueCustomScrollbar
   },
   computed: {
     ...mapGetters({
@@ -436,6 +446,13 @@ export default {
     position: absolute;
     width: 100%;
     z-index: 1;
+  }
+
+  .scroll-area {
+    position: relative;
+    margin: auto;
+    width: 200px;
+    height: calc(100vh - 140px);
   }
 
 </style>

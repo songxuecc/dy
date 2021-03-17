@@ -23,12 +23,13 @@
 <!--            </el-table-column>-->
             <el-table-column label="图片" width="100" align="center">
                 <template slot-scope="scope">
-                    <img class="size" :src="scope.row.image_url">
+                    <img v-if="scope.row.image_url" class="size" :src="scope.row.image_url">
+                    <hh-icon v-else type="iconwuzhaopian" style="font-size:50px" />
                 </template>
             </el-table-column>
             <el-table-column label="标题">
                 <template slot-scope="scope">
-                    <el-link type="primary" :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
+                    <el-link :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
                         {{ scope.row.goods_name }}
                     </el-link><br>
                     <div>
@@ -463,7 +464,7 @@ export default {
 </script>
 
 <style lang="less">
-  .size{
-    .wh(70px,70px)
+  .size {
+    .size()
   }
 </style>
