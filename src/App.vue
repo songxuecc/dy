@@ -455,4 +455,17 @@ export default {
     height: calc(100vh - 140px);
   }
 
+  /deep/ .ps__rail-y {
+    width: 11px;
+  }
+  /deep/ .ps__rail-y:hover > .ps__thumb-y{
+    width: 8px;
+  }
+  /deep/ .ps__rail-y:focus > .ps__thumb-y{
+    width: 8px;
+  }
+  /deep/ .ps__rail-y.ps--clicking .ps__thumb-y{
+    width: 8px;
+  }
+
 </style>
