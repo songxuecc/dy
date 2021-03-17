@@ -26,6 +26,7 @@
           <!-- <a class="pramiry" @click="onShutdown(scope.row.id)">终止</a> -->
           <a class="pramiry pointer" @click="handleEdit('onDetail',scope.row)">查看详情</a>
           <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDelete(scope.row)" >删除记录</a>
+          <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDownloadFail(scope.row)" >下载失败详情</a>
         </template>
       </el-table-column>
     </el-table>
@@ -120,6 +121,11 @@ export default {
       if (row.status === 'complete') {
         this.visibleDelete = true
         this.deleteId = row.id
+      }
+    },
+    onDownloadFail (row) {
+      if (row.status === 'complete') {
+        window.open(location.origin + '/api/product/sku/excel/query?id=' + row.id + '&token=' + localStorage.getItem('token'))
       }
     },
     async confirmDelete () {
