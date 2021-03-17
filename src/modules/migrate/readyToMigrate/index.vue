@@ -36,14 +36,14 @@
             </el-select>
           </el-form-item>
           <el-form-item style="margin-right:0;margin-bottom:5px" >
-              <el-button type="primary" size="medium" @click="handleFilterChange">
-                <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
-              </el-button>
-            </el-form-item>
+            <el-button type="primary" size="medium" @click="handleFilterChange">
+              <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
+            </el-button>
+          </el-form-item>
 
-          <div class="flex">
+          <div class="flex ml-20">
             <div v-if="shopCaptureOptionList.length">
-              <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span>
+              <!-- <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span> -->
               <el-button type="text" @click="handleShopCaptureChange(item.value)"
                 v-for="item in shopCaptureOptions.slice(1,3)" :key="item.value">
                 <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;font-size:13px;">
@@ -352,7 +352,7 @@ export default {
         let capture = this.shopCaptureOptionList[i]
         options.push({
           value: capture.capture_id.toString(),
-          label: `店铺复制: ${capture.shop_name}`
+          label: `${capture.shop_name}`
         })
       }
       return options
