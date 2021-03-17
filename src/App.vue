@@ -16,13 +16,11 @@
         </div>
         </el-header>
         <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
-          <!-- <el-aside class="aside" width="220px"> -->
-              <div class="aside">
-                <vue-custom-scrollbar class="scroll-area"  :settings="settings" @ps-scroll-y="scrollHanle">
-                <side-bar></side-bar>
-                </vue-custom-scrollbar>
-              </div>
-          <!-- </el-aside> -->
+            <div class="aside">
+              <vue-custom-scrollbar class="scroll-area"  :settings="settings" @ps-scroll-y="scrollHanle">
+              <side-bar></side-bar>
+              </vue-custom-scrollbar>
+            </div>
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
             <div class="main-layout">
               <keep-alive>
@@ -284,9 +282,9 @@ export default {
       this.$nextTick(function () {
         let elem = this.$el.querySelector('span.el-alert__title')
         if (notification.title === '-') {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
         } else {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
         }
       })
     },
@@ -412,8 +410,15 @@ export default {
     .el-alert.is-light {
       background: #fff6ed;
     }
+    /deep/ .el-alert {
+      padding: 2px;
+    }
     /deep/ .el-alert.is-light .el-alert__closebtn {
       padding-right: 6px;
+    }
+    /deep/ .el-alert__closebtn.is-customed {
+      font-size: 12px;
+      top: 5px
     }
 }
 

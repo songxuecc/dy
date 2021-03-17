@@ -65,7 +65,7 @@ export default {
     left: 50%;
     border-radius: 3px;
     padding: 10px 14px 8px;
-    z-index: 1;
+    z-index: 2;
 }
 
 .triangle{

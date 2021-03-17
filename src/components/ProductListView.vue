@@ -98,7 +98,8 @@
             </el-table-column>
              <el-table-column v-if="!isSyncSource" label="理由" align="center">
                 <template slot-scope="scope">
-                    <div style="text-decoration:none;" >
+                    <div class="flex justify-c">
+                      <div style="text-decoration:none;text-align:left" >
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
                         <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
@@ -159,6 +160,7 @@
                           </div>
                       </span>
                       <span v-if="[0,1,2,3,4,9].includes(Number(scope.row.status))">无</span>
+                    </div>
                     </div>
                 </template>
             </el-table-column>
