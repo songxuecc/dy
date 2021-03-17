@@ -5,15 +5,25 @@
   <el-divider class="mb-20 mt-10"></el-divider>
   <UploadFile />
   <TableUploadFileRecord @onDetail="onDetail" />
-  <el-dialog title="sku编码修改详情" :visible.sync="visibleSkuEdit"  v-hh-modal width="780px" center
-    @close="toggleEdit">
+  <el-drawer
+    title="sku编码修改详情"
+    :visible.sync="visibleSkuEdit"
+    :direction="drawerDirection"
+    size="1000px"
+    custom-class="sku-import-drawer"
+    style="padding: 10px"
+    :before-close="toggleEdit">
     <DetailSkuEdit v-if="visibleSkuEdit"/>
-  </el-dialog>
+  </el-drawer>
+<!--  <el-dialog title="sku编码修改详情" :visible.sync="visibleSkuEdit"  v-hh-modal width="780px" center-->
+<!--    @close="toggleEdit">-->
+<!--    <DetailSkuEdit v-if="visibleSkuEdit"/>-->
+<!--  </el-dialog>-->
 </div>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
+import {createNamespacedHelpers, mapActions} from 'vuex'
 import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'
@@ -26,7 +36,8 @@ export default {
     return {
       visibleSkuEdit: false,
       parenId: undefined,
-      loading: false
+      loading: false,
+      drawerDirection: 'rtl'
     }
   },
   components: {
@@ -37,11 +48,16 @@ export default {
   updated () { },
   methods: {
     ...mapMutations(['save']),
+    ...mapActions([
+      'setIsShowFloatView'
+    ]),
     toggleEdit () {
       this.visibleSkuEdit = false
+      this.setIsShowFloatView(true)
     },
     onDetail (rowData) {
       this.visibleSkuEdit = true
+      this.setIsShowFloatView(false)
       this.save({
         parentRowData: rowData
       })
@@ -49,6 +65,12 @@ export default {
   }
 }
 </script>
+
+<style lang="less">
+.sku-import-drawer {
+  padding: 10px;
+}
+</style>
 
 <style lang='less' scoped>
 //@import url(); 引入公共css类

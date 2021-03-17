@@ -8,14 +8,13 @@
           <img :src="scope.row.sku_img_url" alt="sku图片" class="product-img">
         </template>
       </el-table-column>
-      <el-table-column prop="goods_name" label="商品信息" width="200">
-      </el-table-column>
-      <el-table-column prop="sku_spec_names" label="SKU名称">
-      </el-table-column>
-      <el-table-column prop="sku_code" label="SKU编码">
-      </el-table-column>
-      <el-table-column prop="fail_reason" label="理由" v-if="activeName === 'fail'">
-      </el-table-column>
+      <el-table-column prop="goods_name" label="商品信息" width="200"></el-table-column>
+      <el-table-column prop="sku_spec_names" label="SKU名称"></el-table-column>
+      <el-table-column prop="sku_code" label="SKU编码"></el-table-column>
+      <el-table-column prop="sku_stock" label="SKU库存"></el-table-column>
+      <el-table-column prop="sku_step_stock" label="SKU阶梯库存"></el-table-column>
+      <el-table-column prop="sku_price" label="SKU价格"></el-table-column>
+      <el-table-column prop="fail_reason" label="理由" v-if="activeName === 'fail'"></el-table-column>
       <el-table-column prop="edit" label="操作" width="100" v-if="activeName === 'success'">
         <template slot-scope="scope">
           <a class="pramiry pointer" @click="open(scope.row.dy_goods_id)">查看</a>
