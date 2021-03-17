@@ -260,7 +260,7 @@ export default {
       },
       pagination: {
         index: 1,
-        size: 50,
+        size: 100,
         total: 0
       },
       capture: {},
@@ -568,7 +568,7 @@ export default {
       this.captureId = '-1'
       this.shopCaptureId = '-1'
       this.pagination.index = 1
-      this.pagination.size = 50
+      this.pagination.size = 100
       this.pagination.total = 0
       this.search.key = ''
       this.search.status = '-1'
@@ -596,7 +596,7 @@ export default {
       this.$refs.productListView.dicSelectId = {}
     },
     resetPagination () {
-      this.pagination.size = 50
+      this.pagination.size = 100
       this.pagination.index = 1
     },
     resetPaginationIndex () {

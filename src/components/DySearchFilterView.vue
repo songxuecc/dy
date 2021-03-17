@@ -181,6 +181,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .DySearchFilterView{
+    width: calc(100% - 20px);
     /deep/ .form-textarea {
       margin-bottom: 5px ;
       height: 41px;
