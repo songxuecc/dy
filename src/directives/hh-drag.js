@@ -100,9 +100,6 @@ const hhDrag = {
   },
 
   update (el) {
-    const target = el.parentNode
-    target.style.right = '15px'
-    target.style.top = '50%'
     unbindEvents()
   },
 
