@@ -26,17 +26,15 @@ const hhDrag = {
     // 鼠标手型
     el.style.cursor = 'move'
     const parentRight = parseInt(getAttr(target, 'right'))
-    const change = debounce(() => {
+    const change = () => {
       const flexFoot = vnode.context.$refs.flexFoot
       flexFoot.changeIsDragging && flexFoot.changeIsDragging()
-    }, 300)
+    }
     el.onmousedown = (e) => {
       change()
       currentX = e.clientX
       currentY = e.clientY
-      document.body.onselectstart = document.body.ondrag = function () {
-        return false
-      }
+      document.body.style.cssText += 'user-select: none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select: none'
       right = parseInt(getAttr(target, 'right'))
       top = parseInt(getAttr(target, 'top'))
       minRight = parseInt(getAttr(document.body, 'width')) - (target.offsetLeft + parseInt(getAttr(target, 'width'))) - parentRight
@@ -53,6 +51,7 @@ const hhDrag = {
       document.addEventListener('mouseleave', onMouseUp)
     }
     unbindEvents = () => {
+      console.log('unbindEvents')
       right = 0
       top = 0
       minRight = 0
@@ -65,17 +64,12 @@ const hhDrag = {
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseleave', onMouseUp)
       change()
+      document.body.style.cssText += 'user-select: text;-webkit-user-select:text;-moz-user-select:text;-ms-user-select: text'
     }
     const onMouseUp = event => {
       unbindEvents()
     }
     const onMouseMove = debounce(function (event) {
-      document.body.unselectable = 'on'
-      document.body.onselectstart = 'return false;'
-      document.body.style['-moz-user-select'] = 'none'
-      document.body.onselectstart = document.body.ondrag = function () {
-        return false
-      }
       // 鼠标移动时计算每次移动的距离，并改变拖拽元素的定位
       const disX = event.clientX - currentX
       const disY = event.clientY - currentY
