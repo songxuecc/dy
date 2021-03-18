@@ -40,8 +40,8 @@
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer>
         <div v-if="isShowFloatView" class="float-view" v-hh-drag="">
-          <div style="width:58px;height:36px;" class="huhutitle" @mouseover="huhutitleHover = true" @mouseleave="huhutitleHover = false">
-            <div :class="['tip',huhutitleHover ? 'tip-active':'']" >点我拖动哦 ~ </div>
+          <div style="width:58px;height:36px;" class="huhutitle" >
+            <div :class="['huhutitle-tip']" ref="tip">点我拖动哦 ~ </div>
           </div>
           <flex-foot ref="flexFoot"></flex-foot>
         </div>
@@ -193,6 +193,17 @@ export default {
   created () {
     this.getChannelInfo()
     window.onClickNotiLink = this.onClickNotiLink
+  },
+  mounted () {
+    // const huhutitle = document.querySelector('.huhutitle')
+    // const huhutitleTip = document.querySelector('.huhutitle-tip')
+    // huhutitle.addEventListener('mouseover', () => {
+    //   this.huhutitleHover = true
+    // })
+
+    // huhutitle.addEventListener('mouseleave', () => {
+    //   this.huhutitleHover = false
+    // })
   },
   methods: {
     ...mapActions([
@@ -481,7 +492,7 @@ export default {
     background-size: 100%;
     background-repeat: no-repeat;
     position: relative;
-    .tip {
+    .huhutitle-tip {
       position:absolute;
       right:50px;
       top:-30px;
@@ -497,10 +508,10 @@ export default {
       transition: all 0.2s;
       opacity: 0;
     }
-    .tip-active {
+    .huhutitle-tip-active {
       opacity: 1;
     }
-    .tip::before {
+    .huhutitle-tip::before {
           /*伪元素必须添加content*/
           position:absolute;
           z-index: -1;

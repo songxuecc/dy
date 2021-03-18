@@ -1,5 +1,6 @@
 // 这个助手方法下面会用到，用来获取 css 相关属性值
-
+import debounce from 'lodash/debounce'
+import throttle from 'lodash/throttle'
 const getAttr = (obj, key) => (
   obj.currentStyle
     ? obj.currentStyle[key]
@@ -30,7 +31,23 @@ const hhDrag = {
       const flexFoot = vnode.context.$refs.flexFoot
       flexFoot.changeIsDragging && flexFoot.changeIsDragging()
     }
+
+    el.onmouseover = debounce((e) => {
+      const tip = vnode.context.$refs.tip
+      let classes = tip.getAttribute('class')
+      classes = classes.concat(' huhutitle-tip-active')
+      tip.setAttribute('class', classes)
+    }, 100)
+
+    el.onmouseleave = debounce((e) => {
+      const tip = vnode.context.$refs.tip
+      let classes = tip.getAttribute('class')
+      classes = classes.replace('huhutitle-tip-active', '')
+      tip.setAttribute('class', classes)
+    }, 100)
+
     el.onmousedown = (e) => {
+      e.preventDefault()
       change()
       document.body.style.cssText += 'user-select: none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select: none'
 
@@ -57,7 +74,6 @@ const hhDrag = {
 
     unbindEvents = () => {
       if (isDown) {
-        console.log('unbindEvents')
         document.removeEventListener('mousemove', onMouseMove)
         right = 15
         top = parseInt(getAttr(document.body, 'height')) / 2
@@ -73,8 +89,10 @@ const hhDrag = {
       }
     }
 
-    const onMouseMove = function (event) {
+    const onMouseMove = throttle((event) => {
       if (isDown) {
+        event.preventDefault()
+        // const flexFoot = vnode.context.$refs.flexFoot
       // 鼠标移动时计算每次移动的距离，并改变拖拽元素的定位
         const disX = event.clientX - currentX
         const disY = event.clientY - currentY
@@ -96,7 +114,9 @@ const hhDrag = {
         }
         return false
       }
-    }
+    }, 10, {
+      leading: true
+    })
   },
 
   update (el) {
