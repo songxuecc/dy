@@ -36,14 +36,14 @@
             </el-select>
           </el-form-item>
           <el-form-item style="margin-right:0;margin-bottom:5px" >
-              <el-button type="primary" size="medium" @click="handleFilterChange">
-                <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
-              </el-button>
-            </el-form-item>
+            <el-button type="primary" size="medium" @click="handleFilterChange">
+              <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
+            </el-button>
+          </el-form-item>
 
-          <div class="flex">
+          <div class="flex ml-20">
             <div v-if="shopCaptureOptionList.length">
-              <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span>
+              <!-- <span style="font-size:13px;color: #606266;margin-right: 10px;">店铺复制</span> -->
               <el-button type="text" @click="handleShopCaptureChange(item.value)"
                 v-for="item in shopCaptureOptions.slice(1,3)" :key="item.value">
                 <el-link :class="{isSelect: search.captureId === item.value}" style="font-weight: 400;font-size:13px;">
@@ -260,7 +260,7 @@ export default {
       },
       pagination: {
         index: 1,
-        size: 50,
+        size: 100,
         total: 0
       },
       capture: {},
@@ -352,7 +352,7 @@ export default {
         let capture = this.shopCaptureOptionList[i]
         options.push({
           value: capture.capture_id.toString(),
-          label: `店铺复制: ${capture.shop_name}`
+          label: `${capture.shop_name}`
         })
       }
       return options
@@ -568,7 +568,7 @@ export default {
       this.captureId = '-1'
       this.shopCaptureId = '-1'
       this.pagination.index = 1
-      this.pagination.size = 50
+      this.pagination.size = 100
       this.pagination.total = 0
       this.search.key = ''
       this.search.status = '-1'
@@ -596,7 +596,7 @@ export default {
       this.$refs.productListView.dicSelectId = {}
     },
     resetPagination () {
-      this.pagination.size = 50
+      this.pagination.size = 100
       this.pagination.index = 1
     },
     resetPaginationIndex () {
@@ -1108,7 +1108,7 @@ export default {
     bottom: 60px;
     left: 0;
     right: 0;
-    z-index: 99;
+    z-index: 1;
     animation: fadeIn ease 0.3s;
     margin: 0 40px;
   }

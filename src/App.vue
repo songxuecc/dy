@@ -16,11 +16,11 @@
         </div>
         </el-header>
         <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
-          <el-aside class="aside" width="220px">
-              <div class="aside-bar">
-                <side-bar></side-bar>
-              </div>
-          </el-aside>
+            <div class="aside">
+              <vue-custom-scrollbar class="scroll-area"  :settings="settings" @ps-scroll-y="scrollHanle">
+              <side-bar></side-bar>
+              </vue-custom-scrollbar>
+            </div>
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
             <div class="main-layout">
               <keep-alive>
@@ -39,8 +39,9 @@
         <el-footer class="footer">
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer>
-        <div v-if="isShowFloatView" class="float-view">
-          <flex-foot></flex-foot>
+        <div v-if="isShowFloatView" class="float-view" v-hh-drag="">
+          <div style="width:48px;height:30px;" class="huhutitle"></div>
+          <flex-foot ref="flexFoot"></flex-foot>
         </div>
         <hh-dialog width="500" :visible.sync="msgDialogShow" :isClose="false" :isBgClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog(curMsgNotification)">
             <template v-slot:content>
@@ -65,7 +66,7 @@
 
 <script>
 import '@/assets/css/index.less'
-
+import vueCustomScrollbar from 'vue-custom-scrollbar'
 import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import navBar from '@/components/Navbar'
@@ -77,6 +78,7 @@ import common from '@/common/common.js'
 import commonUtils from '@/common/commonUtils.js'
 import utils from '@/common/utils'
 import request from '@/mixins/request.js'
+import 'vue-custom-scrollbar/dist/vueScrollbar.css'
 
 export default {
   name: 'App',
@@ -99,7 +101,13 @@ export default {
       dialogTimer: null,
       expireNotifyStyle: {},
       msgNotificationData: {},
-      msgDialogShow: false
+      msgDialogShow: false,
+
+      settings: {
+        suppressScrollY: false,
+        suppressScrollX: false,
+        wheelPropagation: false
+      }
     }
   },
   components: {
@@ -107,7 +115,8 @@ export default {
     sideBar,
     FlexFoot,
     GoodAssessDialog,
-    ExpireNotifyDialog
+    ExpireNotifyDialog,
+    vueCustomScrollbar
   },
   computed: {
     ...mapGetters({
@@ -274,9 +283,9 @@ export default {
       this.$nextTick(function () {
         let elem = this.$el.querySelector('span.el-alert__title')
         if (notification.title === '-') {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
         } else {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
         }
       })
     },
@@ -402,8 +411,15 @@ export default {
     .el-alert.is-light {
       background: #fff6ed;
     }
+    /deep/ .el-alert {
+      padding: 2px;
+    }
     /deep/ .el-alert.is-light .el-alert__closebtn {
       padding-right: 6px;
+    }
+    /deep/ .el-alert__closebtn.is-customed {
+      font-size: 12px;
+      top: 5px
     }
 }
 
@@ -415,8 +431,8 @@ export default {
   }
 
   .float-view {
-    position: fixed;
-    margin-left: 650px;
+    position: absolute;
+    // margin-left: 650px;
     z-index: 9999;
     transform: translate(0,-50%);
     top: 50%;
@@ -436,6 +452,31 @@ export default {
     position: absolute;
     width: 100%;
     z-index: 1;
+  }
+
+  .scroll-area {
+    position: relative;
+    margin: auto;
+    width: 200px;
+    height: calc(100vh - 140px);
+  }
+
+  /deep/ .ps__rail-y {
+    width: 11px;
+  }
+  /deep/ .ps__rail-y:hover > .ps__thumb-y{
+    width: 8px;
+  }
+  /deep/ .ps__rail-y:focus > .ps__thumb-y{
+    width: 8px;
+  }
+  /deep/ .ps__rail-y.ps--clicking .ps__thumb-y{
+    width: 8px;
+  }
+  .huhutitle {
+    background-image: url("~@/assets/images/huhutitle.gif");
+    background-size: 100%;
+    background-repeat: no-repeat;
   }
 
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="drawer-container">
-    <el-row class="drawer-title">
+    <el-row class="drawer-title  pt-10">
       <el-col :span="8">
         <span>批量设置</span>
       </el-col>

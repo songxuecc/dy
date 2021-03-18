@@ -225,7 +225,6 @@ export default {
       updateJobIdList: 'getUpdateJobIdList'
     }),
     drawerHeight () {
-      console.log('99999')
       if (this.activeTabName === 'price') {
         return '180px'
       } else if (this.activeTabName === 'presellType') {
