@@ -52,23 +52,25 @@ const hhDrag = {
     }
 
     document.addEventListener('mouseup', function (e) {
-      isDown = false
       unbindEvents()
     })
 
     unbindEvents = () => {
-      console.log('unbindEvents')
-      document.removeEventListener('mousemove', onMouseMove)
-      right = 15
-      top = parseInt(getAttr(document.body, 'height')) / 2
-      minRight = 0
-      maxRight = 0
-      minTop = 0
-      maxTop = 0
-      currentX = 0
-      currentY = 0
-      change()
-      document.body.style.cssText += 'user-select: text;-webkit-user-select:text;-moz-user-select:text;-ms-user-select: text'
+      if (isDown) {
+        console.log('unbindEvents')
+        document.removeEventListener('mousemove', onMouseMove)
+        right = 15
+        top = parseInt(getAttr(document.body, 'height')) / 2
+        minRight = 0
+        maxRight = 0
+        minTop = 0
+        maxTop = 0
+        currentX = 0
+        currentY = 0
+        change()
+        isDown = false
+        document.body.style.cssText += 'user-select: text;-webkit-user-select:text;-moz-user-select:text;-ms-user-select: text'
+      }
     }
 
     const onMouseMove = function (event) {
