@@ -37,14 +37,18 @@ const hhDrag = {
       let classes = tip.getAttribute('class')
       classes = classes.concat(' huhutitle-tip-active')
       tip.setAttribute('class', classes)
-    }, 100)
+    }, 100, {
+      leading: true
+    })
 
     el.onmouseleave = debounce((e) => {
       const tip = vnode.context.$refs.tip
       let classes = tip.getAttribute('class')
       classes = classes.replace('huhutitle-tip-active', '')
       tip.setAttribute('class', classes)
-    }, 100)
+    }, 100, {
+      leading: true
+    })
 
     el.onmousedown = (e) => {
       e.preventDefault()
