@@ -90,7 +90,7 @@
                         <div style="width:172px" class="color-666 font-12 left">
                           搬家操作<span class="fail"> 失败</span>，请查看【失败理由】，并在对应页面进行修改后再次搬家上架～
                         </div>
-                        <div @click="closeNewComer($event,'newComerFail')" class="right pointer underline primary">好的</div>
+                        <div @click="closeNewComerFail($event,'newComerFail')" class="right pointer underline primary">好的</div>
                       </div>
                     </NewComer>
 
@@ -781,6 +781,11 @@ export default {
       event.stopPropagation()
       const ref = this.$refs[key]
       ref && ref[0] && ref[0].close && ref[0].close()
+    },
+    closeNewComerFail (event, key) {
+      event.stopPropagation()
+      const ref = this.$refs[key]
+      ref && ref.close && ref.close()
     },
     getFirstShow (status, idx, dataStatus) {
       const index = this.tpProductList.findIndex((product, index) => {
