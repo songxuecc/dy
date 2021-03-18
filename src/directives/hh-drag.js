@@ -23,14 +23,13 @@ const hhDrag = {
      * el：组件的头部区域，也是就是拖拽的区域
      */
     const target = el
-    // .parentNode
     // 鼠标手型
     el.style.cursor = 'move'
     const parentRight = parseInt(getAttr(target, 'right'))
-    const change = () => {
-      const flexFootComponent = vnode.children[vnode.children.length - 1]
-      flexFootComponent.componentInstance.changeIsDragging()
-    }
+    const change = debounce(() => {
+      const flexFoot = vnode.context.$refs.flexFoot
+      flexFoot.changeIsDragging && flexFoot.changeIsDragging()
+    }, 300)
     el.onmousedown = (e) => {
       change()
       currentX = e.clientX
@@ -44,7 +43,7 @@ const hhDrag = {
       maxRight = parseInt(getAttr(document.body, 'width')) - parseInt(getAttr(target, 'width')) - 200
       minTop = target.offsetTop - 200
       maxTop = parseInt(getAttr(document.body, 'height')) -
-        target.offsetTop - parseInt(getAttr(el, 'height'))
+        target.offsetTop - parseInt(getAttr(el, 'height')) + 70
       bindEvents()
     }
 

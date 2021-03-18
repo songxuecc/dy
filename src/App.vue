@@ -39,9 +39,9 @@
         <el-footer class="footer">
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer>
-        <div v-if="isShowFloatView" class="float-view" v-hh-drag>
-          <div style="width:48px">按钮</div>
-          <flex-foot ></flex-foot>
+        <div v-if="isShowFloatView" class="float-view" v-hh-drag="">
+          <div style="width:48px;height:30px;" class="huhutitle"></div>
+          <flex-foot ref="flexFoot"></flex-foot>
         </div>
         <hh-dialog width="500" :visible.sync="msgDialogShow" :isClose="false" :isBgClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog(curMsgNotification)">
             <template v-slot:content>
@@ -432,7 +432,7 @@ export default {
 
   .float-view {
     position: absolute;
-    margin-left: 650px;
+    // margin-left: 650px;
     z-index: 9999;
     transform: translate(0,-50%);
     top: 50%;
@@ -472,6 +472,11 @@ export default {
   }
   /deep/ .ps__rail-y.ps--clicking .ps__thumb-y{
     width: 8px;
+  }
+  .huhutitle {
+    background-image: url("~@/assets/images/huhutitle.gif");
+    background-size: 100%;
+    background-repeat: no-repeat;
   }
 
 </style>
