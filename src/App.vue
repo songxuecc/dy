@@ -40,7 +40,9 @@
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer>
         <div v-if="isShowFloatView" class="float-view" v-hh-drag="">
-          <div style="width:48px;height:30px;" class="huhutitle"></div>
+          <div style="width:58px;height:36px;" class="huhutitle" @mouseover="huhutitleHover = true" @mouseleave="huhutitleHover = false">
+            <div :class="['tip',huhutitleHover ? 'tip-active':'']" >点我拖动哦 ~ </div>
+          </div>
           <flex-foot ref="flexFoot"></flex-foot>
         </div>
         <hh-dialog width="500" :visible.sync="msgDialogShow" :isClose="false" :isBgClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog(curMsgNotification)">
@@ -107,7 +109,8 @@ export default {
         suppressScrollY: false,
         suppressScrollX: false,
         wheelPropagation: false
-      }
+      },
+      huhutitleHover: false
     }
   },
   components: {
@@ -477,6 +480,44 @@ export default {
     background-image: url("~@/assets/images/huhutitle.gif");
     background-size: 100%;
     background-repeat: no-repeat;
+    position: relative;
+    .tip {
+      position:absolute;
+      right:50px;
+      top:-30px;
+      width: 100px;
+      background:#f3e0a1;
+      height: 28px;
+      line-height: 28px;
+      font-size: 12px;
+      border-radius: 4px;
+      color: #755d0b;
+      font-weight: bold;
+      text-align: center;
+      transition: all 0.2s;
+      opacity: 0;
+    }
+    .tip-active {
+      opacity: 1;
+    }
+    .tip::before {
+          /*伪元素必须添加content*/
+          position:absolute;
+          z-index: -1;
+          content: "";
+          width: 0;
+          height: 0;
+          /*IE6下，height:0;不顶用，可使用font-size:0; + overflow:hidden;修复此问题*/
+          font-size:0;
+          // overflow:hidden;
+          border-width: 20px;
+          /*保留我们需要的那边的三角形，其他三角形设置为透明*/
+          border-color: transparent #f3e0a1 transparent transparent;
+          border-style: dashed solid dashed dashed;
+          // top:  0; /*相对于矩形高度的位置*/
+          left: 50px; /* 向左移动 矩形的左边框 + 自己边框*2 */
+      }
+
   }
 
 </style>
