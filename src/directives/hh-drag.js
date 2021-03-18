@@ -35,8 +35,11 @@ const hhDrag = {
     el.onmouseover = debounce((e) => {
       const tip = vnode.context.$refs.tip
       let classes = tip.getAttribute('class')
-      classes = classes.concat(' huhutitle-tip-active')
-      tip.setAttribute('class', classes)
+      const classesArr = classes.split(' ').filter(item => item)
+      if (!classesArr.includes('huhutitle-tip-active')) {
+        classes = classesArr.join('').concat(' huhutitle-tip-active')
+        tip.setAttribute('class', classes)
+      }
     }, 100, {
       leading: true
     })
@@ -44,7 +47,8 @@ const hhDrag = {
     el.onmouseleave = debounce((e) => {
       const tip = vnode.context.$refs.tip
       let classes = tip.getAttribute('class')
-      classes = classes.replace('huhutitle-tip-active', '')
+      const regex = /huhutitle-tip-active/ig
+      classes = classes.replaceAll(regex, '')
       tip.setAttribute('class', classes)
     }, 100, {
       leading: true
