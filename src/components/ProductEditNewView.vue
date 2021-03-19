@@ -855,8 +855,12 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
-      // 没有修改分类时不用传参数
+      // const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
+      // console.log(propertySetValid, 'propertySetValid')
+      // if (propertySetValid) {
+        // 没有修改分类时不用传参数
       this.saveProducts()
+      // }
     },
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
       let tpProductList = []

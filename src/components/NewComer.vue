@@ -1,6 +1,6 @@
 <!-- newComer 新手指引 -->
 <template>
-    <div v-if="status"  :class="['newComer',`newComer-${direction}`]" :style="{left: `calc(50% - ${left}px)`}">
+    <div v-if="status"  :class="['newComer',className,`newComer-${direction}`]" :style="{left: `calc(50% - ${left}px)`,...style}">
         <slot></slot>
         <span :class="['triangle',`triangle-${direction}`]" :style="{left: `calc(50% + ${left}px)`}"></span>
         <span :class="['triangle-white',`triangle-white-${direction}`]"  :style="{left: `calc(50% + ${left}px)`}"></span>
@@ -21,7 +21,9 @@ export default {
     direction: {
       type: 'top' | 'bottom',
       default: 'top'
-    }
+    },
+    className: String,
+    style: Object
   },
   data () {
     return {
