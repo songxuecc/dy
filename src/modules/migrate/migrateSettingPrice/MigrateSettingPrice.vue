@@ -213,7 +213,7 @@
             <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
             <NewComer type="下一步：修改模板" ref="newComer" >
               <div class="left">
-                <div style="width:120px"  class="color-666 font-12">点击此处进行下一步操作</div>
+                <div style="width:180px"  class="color-666 font-12">点击此处进行下一步操作</div>
                 <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
               </div>
             </NewComer>
