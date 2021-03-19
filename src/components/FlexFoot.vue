@@ -64,7 +64,6 @@ export default {
   methods: {
     changeIsDragging () {
       this.isDragging = !this.isDragging
-      console.log(this.isDragging)
     },
     handleClick (event) {
       // this.isServiceBoxShow = true

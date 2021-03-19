@@ -60,7 +60,7 @@
           </span>
         </div>
       </el-tab-pane>
-      <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left" >
+      <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="height:200px">
         <span slot="label">绑定复制<NewFeatureTips type="绑定复制" /></span>
         <div class="flex column align-c" v-if="!userBindList.length ">
           <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
@@ -70,15 +70,14 @@
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
           v-if="userBindList.length ">
           <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
-            <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
+            <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
               <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
               </el-option>
             </el-select>
             <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
-            <div class="info" v-if="target_user_id" style="height:12px;position:absolute;left:0;bottom:-12px;width:500px">
+            <div class="info" v-if="target_user_id" style="position:absolute;left:0;bottom:-12px;width:500px;transform: translateY(100%);">
               <div  class="font-12">
-                  <p class="font-12">注: {{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}（复制的是更新时间当下的商品详情）</p>
-                  <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
+                  <p class="font-12" style="width:350px;word-break:break-all">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}，复制的是更新时间当下的商品详情，登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
               </div>
             </div>
           </el-form-item>

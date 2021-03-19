@@ -15,7 +15,7 @@
           <el-button type="primary" style="width:120px" @click="startMigrate">开始搬家</el-button>
           <NewComer type="开始搬家" ref="newComer" >
             <div class="left">
-              <div style="width:200px">点击此处开始搬家</div>
+              <div style="width:200px"  class="color-666 font-12">点击此处开始搬家</div>
               <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
             </div>
           </NewComer>

@@ -142,7 +142,7 @@
           </el-button>
           <NewComer type="下一步: 修改价格" ref="newComer">
             <div class="left">
-              <div style="width:200px">勾选待上线商品，并点击此处进行下一步操作</div>
+              <div style="width:200px " class="color-666 font-12">勾选待上线商品，并点击此处进行下一步操作</div>
               <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
             </div>
           </NewComer>
