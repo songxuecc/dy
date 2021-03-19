@@ -390,7 +390,7 @@ export default {
             }
           })
         }, err => {
-          this.$alert(`${err.message}` + "  <a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank'>查看帮助</a>", '警告', {
+          this.$alert(`${err.message}`, '警告', {
             dangerouslyUseHTMLString: true,
             confirmButtonText: '确定',
             type: 'error',
