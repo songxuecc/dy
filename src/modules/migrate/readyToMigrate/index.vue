@@ -133,7 +133,7 @@
     :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex'] "
     ref="startMigrateBtn" v-if="!loadingCnt"
     :style="{'margin-right': startMigrateBtnFixed ? `${scrollWidth + 40}px` : 0}">
-      <div style="width:220px;height:100px;margin-right:10px" v-if="startMigrateBtnFixed"></div>
+      <div style="width:200px;height:100px;margin-right:10px" v-if="startMigrateBtnFixed"></div>
       <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;" >
         <div>
           <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
