@@ -1,51 +1,49 @@
 <template>
     <div id="app">
+
         <good-assess-dialog></good-assess-dialog>
         <expire-notify-dialog></expire-notify-dialog>
-        <el-header :style="{height:(curNavNotification ? 'auto' : '80px')}">
+        <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
           <nav-bar></nav-bar>
           <div class="full-screen">
-            <div class="header-notice">
-              <div class="main-inner clearfix">
-                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
-                          :closable="notificationClosable" close-text="不再显示" title="-"
-                ></el-alert>
-              </div>
+          <div class="header-notice">
+            <div class="main-inner clearfix">
+              <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
+                        :closable="notificationClosable" close-text="不再显示" title="-"
+              ></el-alert>
             </div>
           </div>
+        </div>
         </el-header>
-        <el-container class="main-wrapper" v-if="!$route.meta.specialShow">
-            <el-container>
-                <el-aside class="aside" width="220px">
-                    <div class="aside-bar">
-                      <side-bar></side-bar>
-                    </div>
-                </el-aside>
-                <el-main>
-                  <div class="mainer">
-                    <div class="inner">
-                      <keep-alive>
-                          <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
-                      </keep-alive>
-                      <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
-                    </div>
-                  </div>
-                </el-main>
-            </el-container>
+        <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
+            <div class="aside">
+              <vue-custom-scrollbar class="scroll-area"  :settings="settings" @ps-scroll-y="scrollHanle">
+              <side-bar></side-bar>
+              </vue-custom-scrollbar>
+            </div>
+          <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
+            <div class="main-layout">
+              <keep-alive>
+                <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
+            </keep-alive>
+            <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
+            </div>
+          </el-main>
         </el-container>
         <div v-else>
           <keep-alive>
-              <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
+              <router-view v-if="$route.meta.keepAliv.main-wrappere && isRouterAlive"></router-view>
           </keep-alive>
           <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
         </div>
-        <el-footer>
-          <div class="inner-foot full-screen">
-            <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
-          </div>
+        <el-footer class="footer">
+          <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer>
-        <div v-if="isShowFloatView" class="float-view">
-          <flex-foot></flex-foot>
+        <div v-if="isShowFloatView" class="float-view" v-hh-drag="">
+          <div style="width:50px;height:31px;" class="huhutitle" >
+            <div :class="['huhutitle-tip']" ref="tip">点我拖动哦 ~ </div>
+          </div>
+          <flex-foot ref="flexFoot"></flex-foot>
         </div>
         <hh-dialog width="500" :visible.sync="msgDialogShow" :isClose="false" :isBgClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog(curMsgNotification)">
             <template v-slot:content>
@@ -69,14 +67,12 @@
 </template>
 
 <script>
-import '@/assets/css/theme/index.css'
-import '@/assets/css/theme/index.less'
-import '@/assets/css/base.less'
-
+import '@/assets/css/index.less'
+import vueCustomScrollbar from 'vue-custom-scrollbar'
 import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import navBar from '@/components/Navbar'
-import sideBar from '@/components/Sidebar.vue'
+import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
@@ -84,6 +80,7 @@ import common from '@/common/common.js'
 import commonUtils from '@/common/commonUtils.js'
 import utils from '@/common/utils'
 import request from '@/mixins/request.js'
+import 'vue-custom-scrollbar/dist/vueScrollbar.css'
 
 export default {
   name: 'App',
@@ -106,7 +103,14 @@ export default {
       dialogTimer: null,
       expireNotifyStyle: {},
       msgNotificationData: {},
-      msgDialogShow: false
+      msgDialogShow: false,
+
+      settings: {
+        suppressScrollY: false,
+        suppressScrollX: false,
+        wheelPropagation: false
+      },
+      huhutitleHover: false
     }
   },
   components: {
@@ -114,7 +118,8 @@ export default {
     sideBar,
     FlexFoot,
     GoodAssessDialog,
-    ExpireNotifyDialog
+    ExpireNotifyDialog,
+    vueCustomScrollbar
   },
   computed: {
     ...mapGetters({
@@ -188,6 +193,17 @@ export default {
   created () {
     this.getChannelInfo()
     window.onClickNotiLink = this.onClickNotiLink
+  },
+  mounted () {
+    // const huhutitle = document.querySelector('.huhutitle')
+    // const huhutitleTip = document.querySelector('.huhutitle-tip')
+    // huhutitle.addEventListener('mouseover', () => {
+    //   this.huhutitleHover = true
+    // })
+
+    // huhutitle.addEventListener('mouseleave', () => {
+    //   this.huhutitleHover = false
+    // })
   },
   methods: {
     ...mapActions([
@@ -281,9 +297,9 @@ export default {
       this.$nextTick(function () {
         let elem = this.$el.querySelector('span.el-alert__title')
         if (notification.title === '-') {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
         } else {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
         }
       })
     },
@@ -326,30 +342,29 @@ export default {
 </script>
 
 <style lang="less">
-  #app {
+  body,#app {
     font-family: 14px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    min-height:100%;
-    height: auto !important;
-    height: 100%; /*IE6不识别min-height*/
+    min-height: 100vh;
     position: relative;
-    /*margin-top: 60px;*/
+    height:auto!important;
+    height:100vh; /*IE6不识别min-height*/
+    min-height: 100vh;
+    background: #F9F9F9;
   }
 
   .main-wrapper {
-    width: 1320px;
-    margin: auto;
-    /deep/ .el-container {
-      padding-bottom: 60px;
-    }
+    margin-left: 40px;
+    margin-top: 20px;
+    height: calc(100vh - 140px);
+    overflow: hidden;
   }
-
   .aside {
-    padding: 14px 0 14px 20px;
     text-align: left;
+    margin-right: 10px;
   }
 
   .aside .aside-bar {
@@ -361,12 +376,159 @@ export default {
     background: #ffffff;
     height: 100%
   }
-  .inner {
-    padding: 30px;
-  }
-
   .notification-box {
     width: auto !important;
     min-width: 420px !important;
   }
+  .footer {
+    width: 100%;
+    background: #F9F9F9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+</style>
+
+<style lang="less" scoped>
+  /deep/ .notice-foot {
+    margin-top: -1px;
+    margin-bottom: -6px;
+    .el-button {
+      min-width: 126px;
+    }
+  }
+
+  /* 新通知弹框样式 */
+  .notice-main {
+    margin-top: -28px;
+    .notice-title {
+      font-size: 20px;
+      color: #333333;
+      line-height: 62px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .notice-content {
+      padding: 22px 45px;
+      color: #4e4e4e  ;
+      font-size: 14px;
+      text-align: left;
+    }
+  }
+
+  .header-notice {
+    background: #fff6ed;
+    .main-inner {
+      width: 1000px;
+      margin: auto;
+    }
+    .el-alert.is-light {
+      background: #fff6ed;
+    }
+    /deep/ .el-alert {
+      padding: 2px;
+    }
+    /deep/ .el-alert.is-light .el-alert__closebtn {
+      padding-right: 6px;
+    }
+    /deep/ .el-alert__closebtn.is-customed {
+      font-size: 12px;
+      top: 5px
+    }
+}
+
+  /* 头尾默认设置为全屏 */
+  #app {
+    /deep/ .el-header {
+      padding: 0;
+    }
+  }
+
+  .float-view {
+    position: absolute;
+    // margin-left: 650px;
+    z-index: 9999;
+    transform: translate(0,-50%);
+    top: 50%;
+    right: 15px;
+  }
+  .main-layout{
+    padding-left:30px;
+    padding-top:20px;
+    padding-right:30px;
+    margin-right:40px;
+    background:#FFFFFF;
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+  .full-screen {
+    min-width: @full-screen-width;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+  }
+
+  .scroll-area {
+    position: relative;
+    margin: auto;
+    width: 200px;
+    height: calc(100vh - 140px);
+  }
+
+  /deep/ .ps__rail-y {
+    width: 11px;
+  }
+  /deep/ .ps__rail-y:hover > .ps__thumb-y{
+    width: 8px;
+  }
+  /deep/ .ps__rail-y:focus > .ps__thumb-y{
+    width: 8px;
+  }
+  /deep/ .ps__rail-y.ps--clicking .ps__thumb-y{
+    width: 8px;
+  }
+  .huhutitle {
+    background-image: url("~@/assets/images/huhutitle.gif");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    position: relative;
+    .huhutitle-tip {
+      position:absolute;
+      right:50px;
+      top:-30px;
+      width: 100px;
+      background:#f3e0a1;
+      height: 28px;
+      line-height: 28px;
+      font-size: 12px;
+      border-radius: 4px;
+      color: #755d0b;
+      font-weight: bold;
+      text-align: center;
+      transition: all 0.2s;
+      opacity: 0;
+    }
+    .huhutitle-tip-active {
+      opacity: 1;
+    }
+    .huhutitle-tip::before {
+          /*伪元素必须添加content*/
+          position:absolute;
+          z-index: -1;
+          content: "";
+          width: 0;
+          height: 0;
+          /*IE6下，height:0;不顶用，可使用font-size:0; + overflow:hidden;修复此问题*/
+          font-size:0;
+          // overflow:hidden;
+          border-width: 20px;
+          /*保留我们需要的那边的三角形，其他三角形设置为透明*/
+          border-color: transparent #f3e0a1 transparent transparent;
+          border-style: dashed solid dashed dashed;
+          // top:  0; /*相对于矩形高度的位置*/
+          left: 50px; /* 向左移动 矩形的左边框 + 自己边框*2 */
+      }
+
+  }
+
 </style>

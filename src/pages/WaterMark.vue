@@ -1,5 +1,5 @@
 <template lang="html">
-    <div class="content-relative">
+    <div class="relative">
       <help-tips helpLink="waterList" positionT="6" positionR="10"></help-tips>
       <el-menu :default-active='$route.path'  mode="horizontal" router active-text-color="#409EFF">
         <el-menu-item index="/wm/list">
@@ -47,7 +47,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
     /deep/ .el-menu--horizontal>.el-submenu .el-submenu__title{
       height: 30px;
       line-height: 30px;

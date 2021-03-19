@@ -1,32 +1,32 @@
 <template lang="html">
   <div class="float-nav">
-    <div class="float-button" @click="goToHelp" @mouseover="changeFlexFootIndex(1)" @mouseout="changeFlexFootIndex(0)">
-      <hh-icon :type="flexFootIndex === 1 ? 'iconjiaochengbarhover' : 'iconjiaochengbar'" style="font-size:28px;" />
-      <div class="column-name">教程</div>
+    <div :class="['float-button relative',isDragging ?'move':'']" @click="goToHelp" @mouseover.stop="changeFlexFootIndex(1)" @mouseout.stop="changeFlexFootIndex(0)">
+      <hh-icon :type="flexFootIndex === 1 ? 'iconjiaochengbarhover':'iconjiaochengbar'" style="font-size:26px;" />
+      <div :class="['column-name text', flexFootIndex === 1 ? 'text-in' : '']" >教程</div>
     </div>
-    <div class="float-button wechat-button" @mouseover="changeFlexFootIndex(3)" @mouseout="changeFlexFootIndex(0)">
-      <div class="service-content" v-if="isServiceBoxShow" ref="ServiceBox">
+    <div :class="['float-button wechat-button',isDragging ?'move':'']" @mouseover.stop="changeFlexFootIndex(2)" @mouseout.stop="changeFlexFootIndex(0)">
+      <div class="'service-content" v-if="isServiceBoxShow" ref="ServiceBox">
         <service-box @serviceHandle="closeService"></service-box>
       </div>
-      <hh-icon @click="handleClick" :type="flexFootIndex === 3 ? 'iconkefuweixinbarhover' : 'iconkefuweixinbar'" style="font-size:28px;" />
-      <div class="column-name" @click="handleClick">客服</div>
+      <hh-icon @click="handleClick" :type="flexFootIndex === 2 ? 'iconkefuweixinbarhover':'iconkefuweixinbar'" style="font-size:26px;" />
+      <div  :class="['column-name text', flexFootIndex === 2 ? 'text-in' : '']"  @click="handleClick">客服</div>
     </div>
-    <div class="float-button" @click="goToComments" @mouseover="changeFlexFootIndex(2)" @mouseout="changeFlexFootIndex(0)">
-      <hh-icon :type="flexFootIndex === 2 ? 'iconyijianbarhover' : 'iconyijianbar'" style="font-size:28px;" />
-      <div class="column-name">意见</div>
+    <div :class="['float-button',isDragging ?'move':'']" @click="goToComments" @mouseover.stop="changeFlexFootIndex(3)" @mouseout.stop="changeFlexFootIndex(0)">
+      <hh-icon :type="flexFootIndex === 3 ? 'iconyijianbarhover':'iconyijianbar'" style="font-size:26px;" />
+      <div  :class="['column-name text', flexFootIndex === 3 ? 'text-in' : '']" >意见</div>
     </div>
-    <div class="float-button" @click="openNotificationBox" @mouseover="changeFlexFootIndex(4)" @mouseout="changeFlexFootIndex(0)">
+    <div :class="['float-button',isDragging ?'move':'']" @click="openNotificationBox" @mouseover.stop="changeFlexFootIndex(4)" @mouseout.stop="changeFlexFootIndex(0)">
       <span v-if="unRead > 0" class="notice-icon" @click="openNotificationBox">{{unRead}}</span>
-      <hh-icon :type="flexFootIndex === 4 ? 'icontongzhibarhover' : 'icontongzhibar'" style="font-size:28px;" />
-      <div class="column-name">通知</div>
+      <hh-icon :type="flexFootIndex === 4 ? 'icontongzhibarhover':'icontongzhibar'" style="font-size:26px;" />
+      <div  :class="['column-name text', flexFootIndex === 4 ? 'text-in' : '']" >通知</div>
     </div>
-    <div class="float-button collect-button" @click="addToFavorite" @mouseover="changeFlexFootIndex(5)" @mouseout="changeFlexFootIndex(0)">
-      <hh-icon :type="flexFootIndex === 5 ? 'iconshoucangbarhover' : 'iconshoucangbar'" style="font-size:28px;" />
-      <div class="column-name">收藏</div>
+    <div :class="['float-button collect-button',isDragging ?'move':'']" @click="addToFavorite" @mouseover.stop="changeFlexFootIndex(5)" @mouseout.stop="changeFlexFootIndex(0)">
+      <hh-icon :type="flexFootIndex === 5 ? 'iconshoucangbarhover':'iconshoucangbar'" style="font-size:26px;" />
+      <div  :class="['column-name text', flexFootIndex === 5 ? 'text-in' : '']" >收藏</div>
     </div>
-    <div class="float-button nav-go-top" @click="backToTop">
-<!--      <span class="nav-icon nav-gotop"></span>-->
-      <hh-icon type="iconshanglajiantou" style="font-size:17px;" />
+    <div :class="['float-button nav-go-top',isDragging ?'move':'']" @click="backToTop" @mouseover.stop="changeFlexFootIndex(6)" @mouseout.stop="changeFlexFootIndex(0)">
+        <hh-icon type="iconshanglajiantou" style="font-size:18px;" />
+        <div  :class="['go-to-top text', flexFootIndex === 6 ? 'text-in' : '']" >到顶部</div>
     </div>
     <hh-dialog width="600" :visible.sync="dialogNotificationVisible" :isClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog">
       <template v-slot:content>
@@ -48,7 +48,8 @@ export default {
     return {
       isServiceBoxShow: false,
       dialogNotificationVisible: false,
-      flexFootIndex: 0
+      flexFootIndex: 0,
+      isDragging: false
     }
   },
   components: {
@@ -61,6 +62,9 @@ export default {
     })
   },
   methods: {
+    changeIsDragging () {
+      this.isDragging = !this.isDragging
+    },
     handleClick (event) {
       // this.isServiceBoxShow = true
       if (window._hmt) {
@@ -94,7 +98,12 @@ export default {
       })
     },
     backToTop () {
-      scrollTo(0, 0)
+      const el = document.querySelector('.page-component__scroll')
+      el.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      })
     },
     closeService () {
       this.isServiceBoxShow = false
@@ -146,6 +155,7 @@ export default {
       }
     },
     changeFlexFootIndex (index) {
+      if (this.isDragging) { return false }
       this.flexFootIndex = parseInt(index)
     }
   },
@@ -155,22 +165,105 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.icon {
-    background: #fff;
-    color: #409EFF;
-    height: 58px;
+
+  /* 右侧导航 */
+.float-nav {
+  width: 50px;
+  text-align: center;
+  background: #ffffff;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  .float-button {
     padding: 4px;
-    .column-name {
-      color: #666666;
-      height: 21px;
-      padding: 5px 0;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: solid 1px #ebeaea;
+    cursor: pointer;
+
+    .notice-icon {
+      font-family: 'Avenir', Helvetica, Arial, sans-serif;
+      position: absolute;
+      z-index: 1;
+      left: 20px;
+      top: 0;
+      display: inline-block;
+      padding: 2px 4px;
+      font-size: 12px;
+      line-height: 1;
+      color: #ffffff;
+      border-radius: 8px;
+      background: #E02020;
+      cursor: pointer;
+      transform: scale(0.8, 0.8);
     }
-    &:hover {
-      color: #fff;
-      background: #409EFF;
-      .column-name {
-        color: #fff;
-      }
+    /deep/ .el-button.is-circle {
+      font-size: 26px;
     }
   }
+  .wechat-button {
+    position: relative;
+    span.wechat-icon {
+      display: block;
+      width: 26px;
+      height: 26px;
+      background: url('~@/assets/icon/service-white.png') no-repeat;
+      background-size: 100%;
+    }
+  }
+  .nav-go-top {
+    height: 24px;
+    padding: 7px 0 6px;
+    border-top: 4px solid @body-bg;
+  }
+  .nav-go-top:hover {
+    background: #ffffff;
+  }
+
+  .collect-button:hover {
+    background: #ffffff;
+  }
+  .text {
+    position: absolute;
+    font-size: 12px;
+    top:0;
+    left: 0;
+    height: 40px;
+    width: 0;
+    background: #1D8FFF;
+    line-height: 40px;
+    text-align: center;
+    color: #fff ;
+    border-radius: 4px 0 0 4px;
+    transition: all 0.2s;
+    opacity:0;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+  }
+  .go-to-top {
+    height: 37px;
+    line-height: 37px;
+  }
+  .text-in {
+    animation: fadeLeftIn ease 0.2s;
+    width: 48px;
+    opacity:1;
+    left: -48px;
+  }
+
+  @keyframes fadeLeftIn {
+    0% {
+      opacity:0;
+      left: 0;
+    }
+    100% {
+      opacity:1;
+      left: -48px;
+    }
+  }
+  .move {
+    cursor:move !important;
+  }
+}
 </style>

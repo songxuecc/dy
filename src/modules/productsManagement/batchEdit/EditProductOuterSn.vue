@@ -163,7 +163,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
     /deep/ .el-divider--horizontal{
       margin:5px 0;
     }

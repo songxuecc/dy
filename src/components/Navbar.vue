@@ -3,11 +3,11 @@
         <div class="navbar-content">
           <div class="main-inner clearfix">
             <div class="nav-title" @click="goInfo">
-              <img src="../assets/icon/logo.png" alt="虎虎搬家助手">
+              <img src="@/assets/icon/logo.png" alt="虎虎搬家助手">
               <hh-icon type="icondouyinban" style="font-size:42px;position:absolute;margin-left:4px;top:12px" />
             </div>
             <div class="nav-right">
-              <img v-if="shopName" src="../assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable" />
+              <img v-if="shopName" src="@/assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable" />
               <!-- 用户使用天数 -->
               <ul v-if="shopName" class="menu-content">
                 <li @click="goToOrder()">
@@ -41,8 +41,8 @@
                   </el-submenu>
               </el-menu>
               <div class="nav-not-login" v-if="!shopName">
-                <el-button type="primary" @click="goToServiceMarket">购买</el-button>
-                <el-button type="primary" @click="onLogin">登录</el-button>
+                <el-button type="primary" @click="goToServiceMarket" >购买</el-button>
+                <el-button type="primary" @click="onLogin"  >登录</el-button>
               </div>
             </div>
           </div>
@@ -235,7 +235,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
     .navbar {
       background: @navbar-bg;
       /deep/ .el-menu .el-menu--popup {
@@ -250,8 +249,6 @@ export default {
         }
         .el-submenu__title {
           color: #ffffff;
-          height: 80px;
-          line-height: 80px;
           border-bottom: 2px solid #ffffff;
           background: @navbar-bg;
           padding: 0 8px;
@@ -281,29 +278,29 @@ export default {
         min-width: 130px !important;
       }
       .navbar-content {
-        padding: 0 20px;
         color: @color-white;
-        height: 80px;
+        height: 60px;
         .nav-title {
           float: left;
-          padding: 20px 0 0 20px;
+          padding: 12px 0 12px 20px;
           position:relative;
           cursor: pointer;
           img {
-            width: 153px;
+            height: 36px;
           }
         }
         .nav-right {
-          float: right;
+          position:absolute;
+          right: 30px;
+          height: 60px;
           display: flex;
           align-items: flex-start;
-          position: relative;
           align-items: center;
           color: #333333;
           background: @navbar-bg;
           .efficientAndStable {
             cursor: pointer;
-            width: 100px;
+            height: 36px;
             margin-right: 10px;
           }
           .el-button {
@@ -359,9 +356,9 @@ export default {
       margin: 0;
       padding: 0;
       display: inline-block;
-      line-height: 80px;
-      height: 80px;
       overflow: hidden;
+      height: 100%;
+      line-height: 60px;
       li {
         border: 0;
         padding: 0 8px;
@@ -398,7 +395,7 @@ export default {
 
     /* 未登陆头部导航样式 */
     .nav-not-login {
-      padding: 20px 20px 20px 0;
+      padding: 11px 40px 11px 0;
     }
 
     .nav-menu-popup {
@@ -414,10 +411,10 @@ export default {
       color: white;
       transition: all 0.3s;
       padding: 0 8px;
-      height: 80px;
       align-items: center;
       display: flex;
       cursor: pointer;
+      height: 100%;
       span {
         font-size:12px;
         padding-top: 2px;
@@ -431,9 +428,9 @@ export default {
       color: white;
       transition: all 0.3s;
       padding: 0 8px;
-      height: 80px;
       align-items: center;
       display: flex;
+      height: 100%;
       span {
         font-size:12px;
         padding-top: 2px;

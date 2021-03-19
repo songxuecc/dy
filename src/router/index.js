@@ -5,7 +5,6 @@ import MeizheInfo from '@/pages/MeizheInfo'
 import WodaInfo from '@/pages/WodaInfo'
 import MigrateList from '@/pages/MigrateList'
 import CaptureList from '@/pages/CaptureList'
-import DyProductList from '@/pages/DyProductList'
 import Login from '@/pages/Login'
 import Fake from '@/pages/Fake'
 import SubscribeList from '@/pages/SubscribeList'
@@ -20,6 +19,7 @@ import ProductList from '@/modules/migrate/readyToMigrate'
 import Migrate from '@/modules/migrate/startMigrate'
 import SkuImport from '@/modules/productsManagement/skuImport'
 import BatchEdit from '@/modules/productsManagement/batchEdit/BatchEdit'
+import DyProductList from '@/modules/productsManagement/allProducts/DyProductList'
 
 Vue.use(Router)
 

@@ -586,7 +586,6 @@ export default {
     }
 </style>
 <style lang="less" scoped>
-    @import '~@/assets/css/var.less';
 
     /deep/ .el-table {
       .el-table__header th:nth-child(2) .cell {

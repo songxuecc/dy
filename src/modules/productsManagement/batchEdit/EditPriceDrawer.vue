@@ -1,8 +1,8 @@
 <template>
   <div class="drawer-container">
-    <el-row class="drawer-title">
+    <el-row class="drawer-title pt-10">
       <el-col :span="8">
-        <span>批量设置(不支持SKU维度的筛选) (价格小于 0 设为 0)</span>
+        <span >批量设置(不支持SKU维度的筛选) (价格小于 0 设为 0)</span>
       </el-col>
       <el-col :span="16" style="text-align: right">
         <el-button type="info" size="small" @click="rollbackChange">全部重置</el-button>
@@ -52,7 +52,7 @@
           ></el-input>
           <span style="display:inline-block;">%</span>
       </el-radio>
-      <el-button type="primary" size="mini" @click="batchEditPrice">应用</el-button>
+      <el-button type="primary" size="small" @click="batchEditPrice">应用</el-button>
     </div>
   </div>
 </template>
@@ -98,5 +98,4 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~@/assets/css/base.less';
 </style>

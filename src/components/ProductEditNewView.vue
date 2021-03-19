@@ -1460,7 +1460,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-  @import '~@/assets/css/base.less';
   /deep/ .el-tabs__content {
     height: 100%;
     overflow-y: auto;

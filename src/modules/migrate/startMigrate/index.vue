@@ -4,7 +4,7 @@
     </help-tips>
     <el-tabs v-model="activeName">
       <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
-        <el-input type="textarea" :rows="10" placeholder="输入其他平台的商品链接地址，换行分隔多个链接，最多不超过50个" class="mb-20"
+        <el-input type="textarea" :rows="10" :placeholder="`输入其他平台的商品链接地址，换行分隔多个链接，最多不超过${limit}个`" class="mb-20"
           @input="changeCaptureUrl" v-model="textCaptureUrls">
         </el-input>
       </el-tab-pane>
@@ -60,25 +60,24 @@
           </span>
         </div>
       </el-tab-pane>
-      <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left" >
+      <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="height:200px">
         <span slot="label">绑定复制<NewFeatureTips type="绑定复制" /></span>
         <div class="flex column align-c" v-if="!userBindList.length ">
           <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
-          <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link"
+          <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
           v-if="userBindList.length ">
           <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
-            <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:230px;margin-right:5px" clearable @clear="clearTargetUserId">
+            <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
               <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
               </el-option>
             </el-select>
             <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
-            <div class="info" v-if="target_user_id" style="height:12px;position:absolute;left:0;bottom:-12px;width:500px">
+            <div class="info" v-if="target_user_id" style="position:absolute;left:0;bottom:-12px;width:500px;transform: translateY(100%);">
               <div  class="font-12">
-                  <p class="font-12">注: {{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}</p>
-                  <p class="font-12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
+                  <p class="font-12" style="width:350px;word-break:break-all">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}，复制的是更新时间当下的商品详情，登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
               </div>
             </div>
           </el-form-item>
@@ -119,7 +118,7 @@
       <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture" style="width:120px">开始复制
       </el-button>
     </div>
-    <BindCopyTip v-if="activeName === 'bindCopy' && userBindList.length " />
+    <BindCopyTip v-if="activeName === 'bindCopy'"/>
     <el-dialog title="安装及使用教程" :show-close="true" :visible.sync="importFilePromptVisibe" width="60%">
       <iframe
         v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'"
@@ -147,6 +146,7 @@ export default {
   mixins: [request],
   data () {
     return {
+      limit: 100,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
       activeName: 'single',
@@ -286,7 +286,7 @@ export default {
       let limit = 1
       let message = ''
       textUrls = this.textCaptureUrls
-      limit = 50
+      limit = this.limit
       message = '多商品复制超过' + limit + '条限制'
       let urls = textUrls.split('\n')
       urls = urls.map(s => s.trim()).filter(s => s !== '')

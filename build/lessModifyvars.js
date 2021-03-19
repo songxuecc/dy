@@ -18,6 +18,21 @@ const lessModifyvars = {
   "color-text-secondary": "#666666", 
   // 辅助提示信息色 
   "color-text-placeholder": "#999999",
+  // 自定义颜色
+  "color-light-green":"#e7ffeb",
+  "color-dark-gray":"#606266",
+  "color-blue": "#409EFF",
+  "color-light-blue": "#50AEFF",
+  "color-purple": "#004686",
+  "color-light-purple": "#026ccc",
+  "color-white": "#fff",
+  "color-yellow": "#fed67e",
+  "color-light-yellow": "#fffffb",
+  "color-light-gray": "#ebeef5",
+  "hover-background-color":"#f5f7fa",
+  "select-background-color":"#f5f7fa",
+  "navbar-bg":"#282828",
+  "body-bg": "#F3F4F9",
   // 背景色 基础色
   "background-color-base": "#F2F8FF",
   // 背景色 危险色 
@@ -29,7 +44,9 @@ const lessModifyvars = {
   "font-size-medium": "16px",
   "font-size-large": "18px",
   "font-size-extra-large": "20px",
+  "navbar-title-font-size":"28px",
   "width-main":"1280px",
+  "full-screen-width":"1280px",
   // 边框
   "border-color-base": "#D4D4D4",
   "border-color-light": "#E5E5E5",
@@ -58,7 +75,6 @@ const lessModifyvars = {
   "pagination-font-size": "12px",
   "pagination-button-height": "24px",
   "pagination-button-width": "24px",
-  // table头部颜色
-  "table-header-background-color": "#F3F4F9"
+  
 }
 module.exports = lessModifyvars

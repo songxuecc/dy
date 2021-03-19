@@ -110,10 +110,10 @@
   </div>
 </template>
 <script>
-import dyProductListView from '@/components/DyProductListView.vue'
-import batchEditView from '@/components/BatchEditView.vue'
 import dySearchFilterView from '@/components/DySearchFilterView.vue'
-import dyUnsalableFilterView from '@/components/DyUnsalableFilterView.vue'
+import batchEditView from '@productsManagement/allProducts/BatchEditView.vue'
+import dyUnsalableFilterView from '@productsManagement/allProducts/DyUnsalableFilterView.vue'
+import dyProductListView from '@productsManagement/allProducts/DyProductListView.vue'
 import request from '@/mixins/request.js'
 import {mapGetters, mapActions} from 'vuex'
 import utils from '@/common/utils.js'
@@ -545,5 +545,5 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import '~@/assets/css/productlist.less';
+@import '~./index.less';
 </style>

@@ -1,41 +1,41 @@
 <template lang="html">
     <div class="DySearchFilterView">
-        <el-form ref="form" :model="search" :inline="true" class="flex justify-b" >
-            <el-form-item label="商品ID" class="form-textarea mb-5" >
-                <el-input
-                  :value="search.goods_ids"
-                  @input="formatGoods_ids($event)"
-                  type="textarea"
-                  :autosize="{ minRows: 1, maxRows: 2 }"
-                  resize="none"
-                  size="small"
-                  placeholder="多个查询请换行或空格依次输入"
-                  style="width: 217px;" />
-            </el-form-item>
-            <el-form-item class="mb-5"  label="商品名称" >
-                <el-input v-model="search.keyword" size="small"   style="width: 217px"></el-input>
-            </el-form-item>
-            <el-form-item class="mb-5"  >
-                <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleFilterChange"
-                           popper-class="select-long" style="width: 108px"
-                >
-                    <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item class="mb-5"  >
-                <el-select v-model="search.captureStatus" placeholder="请选择" size="small" @change="handleFilterChange"
-                           popper-class="select-long" style="width: 108px"
-                >
-                    <el-option v-for="item in captureStatusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item class="mb-5"  >
-                <el-select v-model="search.presell_type" placeholder="请选择发货模式" size="small" @change="handleFilterChange"
-                           popper-class="select-long" style="width: 120px"
-                >
-                    <el-option v-for="item in presellTypeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                </el-select>
-            </el-form-item>
+        <el-form ref="form" :model="search" :inline="true" class="flex wrap align-c" >
+           <el-form-item class="mb-5 " style="margin-right:20px"  >
+              <el-select v-model="search.status" placeholder="请选择" size="small" @change="handleFilterChange" popper-class="select-long" style="width: 200px">
+                  <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+          </el-form-item>
+
+          <el-form-item class="mb-5 " style="margin-right:20px"  >
+              <el-select v-model="search.presell_type" placeholder="请选择发货模式" size="small" @change="handleFilterChange" popper-class="select-long" style="width: 200px" >
+                  <el-option v-for="item in presellTypeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+          </el-form-item>
+
+          <el-form-item class="mb-5 " style="margin-right:20px"  >
+              <el-select v-model="search.captureStatus" placeholder="请选择" size="small" @change="handleFilterChange" popper-class="select-long" style="width: 200px" >
+                  <el-option v-for="item in captureStatusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+          </el-form-item>
+
+          <el-form-item class="form-textarea" style="margin-right:20px">
+              <el-input
+                :value="search.goods_ids"
+                @input="formatGoods_ids($event)"
+                type="textarea"
+                :autosize="{ minRows: 1, maxRows: 2 }"
+                resize="none"
+                size="small"
+                placeholder="商品ID查询"
+                style="width: 257px;" />
+                <span style="position:absolute;left:0;bottom:-32px" class="info">多个查询请换行或空格依次输入</span>
+          </el-form-item>
+
+          <el-form-item class="mb-5" style="margin-right:10px" >
+              <el-input v-model="search.keyword" size="small"  placeholder="商品名称"   style="width: 300px"></el-input>
+          </el-form-item>
+
 <!--            <el-form-item>-->
 <!--                <el-input v-model="search.minMultiPrice" size="small" placeholder="团购最低价"-->
 <!--                          @keyup.enter.native="handleFilterChange" style="width: 80px" class="input-text-mini">-->
@@ -58,9 +58,16 @@
               <el-checkbox v-model="search.ignoreHasWaterMark" @change="handleFilterChange" v-if="$route.name=='WaterMarkActivityCreate'"
               border size="small">忽略已有水印</el-checkbox>
             </el-form-item> -->
-            <el-form-item class="mb-5"  style="margin-right:0">
+            <!-- <el-form-item class="mb-5"  style="margin-right:0">
                 <el-button type="primary" size="medium" @click="handleFilterChange">搜索</el-button>
+            </el-form-item> -->
+
+            <el-form-item style="margin-right:0;" class="mb-5">
+              <el-button type="primary" size="medium" @click="handleFilterChange">
+                <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
+              </el-button>
             </el-form-item>
+
         </el-form>
     </div>
 </template>
@@ -174,13 +181,25 @@ export default {
 </script>
 <style lang="less" scoped>
   .DySearchFilterView{
+    width: calc(100% - 20px);
     /deep/ .form-textarea {
+      margin-bottom: 5px ;
+      height: 41px;
       .el-form-item__content {
-        line-height: 37px;
-          .el-textarea__inner {
-            min-height: 32px  !important;
-          }
+        height: 41px;
+        .el-textarea {
+          height: 41px;
+          line-height: 41px;
+          display: flex;
+          align-items: center;
+        }
+        .el-textarea__inner {
+          min-height: 32px  !important;
+        }
       }
+    }
+    /deep/ .el-button--medium {
+      padding: 7px 7px;
     }
   }
 </style>

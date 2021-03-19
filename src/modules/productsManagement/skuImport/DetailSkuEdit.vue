@@ -11,7 +11,7 @@
   <el-tabs v-model="activeName" >
     <el-tab-pane :label="tab.label" :name="tab.name" :key="tab.name" v-for="tab in tabs" >
       <div style="position:relative">
-        <TableProductDetail :activeName="activeName" style="height:50vh;min-height:50vh;overflow:auto;" :currentName="tab.name" v-if="tab.name === activeName"/>
+        <TableProductDetail :activeName="activeName" style="height:75vh;min-height:75vh;overflow:auto;" :currentName="tab.name" v-if="tab.name === activeName"/>
       </div>
     </el-tab-pane>
   </el-tabs>

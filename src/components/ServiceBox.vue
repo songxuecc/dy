@@ -40,3 +40,88 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+.service-box {
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.05);
+  position: absolute;
+  right: 70px;
+  top: -280px;
+  z-index: 99;
+  .service-area {
+    width: 270px;
+    .service-pdd {
+      padding: 10px;
+      background: #3fa0ff;
+      box-shadow: inset 0 1px 7px 0 #2890e1;
+      border-radius: 4px;
+      border-radius: 0px;
+      .service-title {
+        color: #ffffff;
+        font-size: 14px;
+        img {
+          width: 20px;
+        }
+        span {
+          color: #ffffff;
+        }
+      }
+      .service-time {
+        color: #ffffff;
+      }
+    }
+    .service-wechat {
+      padding: 20px 4px 0;
+      img {
+        width: 20px;
+      }
+      .service-title {
+        font-size: 14px;
+        color: #ffffff;
+        line-height: 21px;
+        background: #3fa0ff;
+        padding: 10px;
+      }
+      .wechat-box {
+        display: block;
+        padding-top: 0;
+        .wechat-img {
+          padding: 0;
+          width: 200px;
+          margin: 0 auto;
+          img {
+            width: 100%;
+          }
+        }
+        .question-area {
+          padding-top: 24px;
+          h4 {
+            font-weight: normal;
+            margin-bottom: 10px;
+          }
+          p {
+            padding-bottom: 4px;
+            a {
+              color: #999999;
+            }
+          }
+          .see-more {
+            padding-top: 18px;
+          }
+        }
+      }
+    }
+  }
+  .close-btn {
+    text-align: right;
+    img {
+      cursor: pointer;
+      width: 24px;
+      height: auto;
+      padding: 0 0 8px;
+      position: relative;
+      right: -4px;
+    }
+  }
+}
+</style>

@@ -1,5 +1,5 @@
 <template lang="html">
-  <div style="background:#ffffff; padding: 20px 0;">
+  <div style="background:#ffffff; padding: 20px 0;min-height:100%;box-sizing:border-box">
     <el-row class="tac">
       <div class="sideBar">
         <el-menu :default-active='$route.path' router @select="handleSelect" :default-openeds="['1', '2', '3']" >
@@ -91,6 +91,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import '~@/assets/css/sidebar.less';
+  @import '~./index.less';
 
 </style>

@@ -5,7 +5,7 @@
         <el-dropdown @command="handleCommand">
           <el-button type="primary" size="small" style="padding:5px 20px;height:32px">
             批量操作
-            <el-badge v-if="selectList && selectList.length" :value="selectList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i>
+            <el-badge v-if="selecEdittList && selecEdittList.length" :value="selecEdittList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px"
@@ -159,6 +159,15 @@ export default {
         productStatus.WAIT_MODIFY,
         productStatus.SAVE_DRAFT,
         productStatus.ONLINE
+      ],
+      canDeleteStatus: [
+        productStatus.WAIT_ONLINE,
+        productStatus.REJECT,
+        productStatus.FAILED,
+        productStatus.WAIT_MODIFY,
+        productStatus.SAVE_DRAFT,
+        productStatus.ONLINE,
+        productStatus.CAPTURE_FAILED
       ]
     }
   },
@@ -169,6 +178,11 @@ export default {
   },
   computed: {
     selectList () {
+      return this.tpProductList.filter(item => {
+        return this.selectIdBatchEditList.includes(`${item.tp_product_id}`) && this.canDeleteStatus.includes(item.status)
+      })
+    },
+    selecEdittList () {
       return this.tpProductList.filter(item => {
         return this.selectIdBatchEditList.includes(`${item.tp_product_id}`) && this.canEditStatus.includes(item.status)
       })
@@ -278,7 +292,7 @@ export default {
       const carousel = options.carousel || false
       const detailImage = options.detailImage || false
       const title = options.title
-      const list = this.selectList
+      const list = this.selecEdittList
         .map(item => {
           return ({
             tp_product_id: item.tp_product_id,
@@ -334,7 +348,7 @@ export default {
     },
     // 修改品牌
     async updateBrands (id) {
-      const list = this.selectList
+      const list = this.selecEdittList
         .map(item => item.tp_product_id)
       if (!list.length) {
         return this.$message({
@@ -430,7 +444,7 @@ export default {
     },
     // 批量修改分类
     async onChangeCate (category) {
-      if (!this.selectList.length) {
+      if (!this.selecEdittList.length) {
         return this.$message({
           message: '只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改',
           type: 'error',
@@ -440,7 +454,7 @@ export default {
       if (!category || (category && !category.id)) {
         return this.$message.error('请选择分类')
       }
-      const list = this.selectList
+      const list = this.selecEdittList
         .map(item => item.tp_product_id)
       const fn = async (list) => {
         const data = await Api.hhgjAPIs.batchUpdateCategory({

@@ -29,9 +29,30 @@ exports.cssLoaders = function (options) {
     }
   }
 
+
+  const styleResourcesLoader = {
+    loader: 'style-resources-loader',
+    options: {
+        patterns: [
+          path.resolve(__dirname, '../src/assets/css/variables/*.less'),
+          path.resolve(__dirname, '../src/assets/css/mixins/*.less'),
+        ],
+        injector: (source, resources) => {
+            const combineAll = type => resources
+                .filter(({ file }) => file.includes(type))
+                .map(({ content }) => content)
+                .join('');
+
+            return combineAll('variables') + combineAll('mixins') + source;
+        }
+    }
+  }
+
   // generate loader string to be used with extract text plugin
   function generateLoaders (loader, loaderOptions) {
     const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
+
+    
 
     if (loader) {
       loaders.push({
@@ -40,6 +61,11 @@ exports.cssLoaders = function (options) {
           sourceMap: options.sourceMap
         })
       })
+    }
+
+    // 给less文件全局注入 mixin 和 variables
+    if(loader === 'less') {
+      loaders.push(styleResourcesLoader)
     }
 
     // Extract CSS when that option is specified

@@ -6,7 +6,7 @@
         <div class="text-left" style="padding: 10px 0">
             <el-row>
                 <el-col :span="16">
-                    商品列表&nbsp;&nbsp;
+                    &nbsp;&nbsp;
                     <slot name="upperLeft"></slot>
                     <el-button plain size='mini' v-if="isSelectMultiPage" @click="showSelectProduct">已选择商品({{selectAllProductList.length}})</el-button>
                 </el-col>
@@ -15,7 +15,7 @@
                 </el-col>
             </el-row>
         </div>
-        <el-table ref="dyProductListTable" :data="dyProductList" row-key="goods_id" border style="width: 100%"
+        <el-table ref="dyProductListTable" :data="dyProductList" row-key="goods_id"  style="width: 100%"
                   :row-style="{height:'68px'}" :cell-style="{padding:0}"
         >
         <el-table-empty slot="empty"/>
@@ -23,16 +23,20 @@
 <!--            </el-table-column>-->
             <el-table-column label="图片" width="100" align="center">
                 <template slot-scope="scope">
-                    <img style="height:60px;max-width:79px;" :src="scope.row.image_url">
+                    <img v-if="scope.row.image_url" class="size" :src="scope.row.image_url">
+                    <hh-icon v-else type="iconwuzhaopian" style="font-size:50px" />
                 </template>
             </el-table-column>
             <el-table-column label="标题">
                 <template slot-scope="scope">
-                    <el-link type="primary" :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
+                    <el-link :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
                         {{ scope.row.goods_name }}
                     </el-link><br>
-                    <div>
-                      <label style="font-size:12px">{{ scope.row.goods_id }}</label>
+                    <div class="font-12 flex align-c color-999 mt-5">
+                        <span>{{ scope.row.goods_id }}</span><hh-icon type="iconfuzhi " style="font-size:12px" class="pointer ml-5 mr-10" @click="copy(scope.row.goods_id)"></hh-icon>
+                        <span class="presell_type jieti" v-if="scope.row.presell_type === 2">阶梯发货</span>
+                        <span class="presell_type xianhuo" v-if="scope.row.presell_type === 0">现货发货</span>
+                        <span class="presell_type yushou" v-if="scope.row.presell_type === 1">预售发货</span>
                     </div>
 <!--                    <div>-->
 <!--                        <label style="font-size:12px" v-if="scope.row.outer_goods_id">商家编码: {{scope.row.outer_goods_id}}</label>-->
@@ -85,12 +89,12 @@
                     <el-link type="primary" :underline="false" :href="dyGoodsLink(scope.row.goods_id_str)" target="view_window">{{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}</el-link>
                 </template>
             </el-table-column>
-            <el-table-column label="发货模式" width="80">
+            <!-- <el-table-column label="发货模式" width="80">
                 <template slot-scope="scope">
                     <span :class="getPresellType(scope.row.presell_type).class">{{getPresellType(scope.row.presell_type).text}}</span>
                 </template>
-            </el-table-column>
-            <el-table-column prop="" label="操作" width="140" v-if="isProductEnableEdit">
+            </el-table-column> -->
+            <el-table-column prop="" label="操作" width="200" v-if="isProductEnableEdit" align="center">
                 <template slot-scope="scope">
                   <el-button type="primary" size="small" @click="productEdit(scope.row)" :disabled="!checkProductEnableEdit(scope.row)">修改</el-button>
                   <el-button type="primary" size="small" @click="syncProductOne(scope.row.goods_id_str)">同步</el-button>
@@ -124,7 +128,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="类目" width="110">
+            <el-table-column label="类目" width="150">
                 <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">
                         <span> {{ getLastCategory(scope.row.category_show) }} </span>
@@ -457,7 +461,50 @@ export default {
         this.curProduct.min_multi_price = minMultiPrice
         this.curProduct.max_multi_price = maxMultiPrice
       }
+    },
+    copy: async function (id) {
+      try {
+        await this.$copyText(id)
+        this.$message({
+          message: '复制成功',
+          type: 'success'
+        })
+      } catch (err) {
+        this.$message({
+          message: err,
+          type: 'error'
+        })
+      }
     }
   }
 }
 </script>
+
+<style lang="less">
+  .size {
+    .size()
+  }
+
+  .presell_type {
+    width: 58px;
+    height: 18px;
+    display: inline-block;
+    color:#fff;
+    text-align: center;
+    font-size: 12px;
+    font-family: MicrosoftYaHei;
+    border-radius: 8px 0px 8px 0px;
+  }
+
+  .jieti {
+    background: linear-gradient(205deg, #F2D1C2 0%, #DC9E85 100%);
+  }
+
+  .xianhuo {
+    background: linear-gradient(180deg, #757BC4 0%, #ADB7ED 100%);
+  }
+  .yushou {
+background: linear-gradient(180deg, #F9D6AF 0%, #D9A779 100%);
+border-radius: 8px 0px 8px 0px;
+  }
+</style>
