@@ -43,27 +43,38 @@
                 v-model="model[item.name]"
                 v-else
               />
-            <span v-if="item.name === '品牌'" style="">
-                <el-button type="text" @click="reloadBrandList" ><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
-                <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
-                <el-checkbox
-                  border
-                  :value="selected && selected[item.name]? selected[item.name]: false"
-                  @change="applyPropertiesToSelection($event,item.name)"
-                  size="small"
-                  class="batch" >
-                  批量修改同分类商品
-                </el-checkbox>
+            <span>
+              <span v-if="item.name === '品牌'" style="">
+                  <el-button type="text" @click="reloadBrandList" ><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
+                  <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
+                  <el-checkbox
+                    border
+                    :value="selected && selected[item.name]? selected[item.name]: false"
+                    @change="applyPropertiesToSelection($event,item.name)"
+                    size="small"
+                    class="batch" >
+                    批量修改同分类商品
+                  </el-checkbox>
+              </span>
+              <el-checkbox
+                v-if="item.name !== '品牌'"
+                border
+                @change="applyPropertiesToSelection($event,item.name)"
+                :value="selected && selected[item.name]? selected[item.name] : false"
+                size="small"
+                class="batch">
+                批量修改同分类商品
+              </el-checkbox>
+              <NewComer type="批量修改同分类商品" ref="newComer" v-if="index === 0"
+              :style="{top:'-14px',left:'48%'}">
+                <div style="line-height:16px">
+                  <div style="width:172px" class="color-666 font-12 left">
+                    勾选此处可以批量修改同分类商品的属性哦 ～
+                  </div>
+                  <div @click="closeNewComer" class="right pointer underline primary">好的</div>
+                </div>
+              </NewComer>
             </span>
-            <el-checkbox
-              v-if="item.name !== '品牌'"
-              border
-              @change="applyPropertiesToSelection($event,item.name)"
-              :value="selected && selected[item.name]? selected[item.name] : false"
-              size="small"
-              class="batch">
-              批量修改同分类商品
-            </el-checkbox>
             <slot name="error" v-if="item.name == '品牌' && validation['品牌']">
                 <div >
                     <p style="color:red;font-size:12px">当前商品所选类目根据官方要求必须填写品牌。</p>
@@ -84,10 +95,13 @@
 </template>
 
 <script>
-import request from '@/mixins/request.js'
+import NewComer from '@/components/NewComer.vue'
+
 export default {
   name: 'property-set',
-  mixins: [request],
+  components: {
+    NewComer
+  },
   props: {
     catId: {
       type: Number | String,
@@ -205,11 +219,16 @@ export default {
       this.$emit('applyPropertiesToSelection', false, name, '')
     },
     applyPropertiesToSelection (value, name) {
+      this.closeNewComer()
       const propertyValue = this.model[name]
       this.$emit('applyPropertiesToSelection', value, name, propertyValue)
     },
     open (catId) {
       window.open(`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`)
+    },
+    closeNewComer () {
+      const ref = this.$refs.newComer
+      ref[0] && ref[0].close && ref[0].close()
     }
   }
 }

@@ -507,9 +507,11 @@ export default {
       text-align: center;
       transition: all 0.2s;
       opacity: 0;
+      display:none;
     }
     .huhutitle-tip-active {
       opacity: 1;
+      display: block;
     }
     .huhutitle-tip::before {
           /*伪元素必须添加content*/
