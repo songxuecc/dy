@@ -390,7 +390,11 @@ export default {
             }
           })
         }, err => {
-          this.$alert(`${err.message}` + "  <a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank'>查看帮助</a>", '警告', {
+          let el = ''
+          if (this.activeName === 'bindCopy') {
+            el = `<br/><a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank' style="color:#1D8FFF;font-size:12px">点击查看帮助</a>`
+          }
+          this.$alert(`${err.message}` + el, '警告', {
             dangerouslyUseHTMLString: true,
             confirmButtonText: '确定',
             type: 'error',
