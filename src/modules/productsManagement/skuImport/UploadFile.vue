@@ -4,8 +4,9 @@
     <p class="font-12 ">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a :class="[isSyncing?'info':'pramiry','pointer']"
         @click="handleSyncProducts">{{syncButtonText}}</a> <span class="info">&nbsp;最近同步时间
         {{ syncStatus.last_sync_time }} </span></p>
-    <p class="font-12 ">2、每次支持3000个sku编码修改，文件格式支持.xlsx &nbsp;<a class="pramiry pointer" @click="downloadExcel">示例文件</a> </p>
+    <p class="font-12 ">2、每次支持3000个sku修改，文件格式支持.xlsx &nbsp;<a class="pramiry pointer" @click="downloadExcel">示例文件</a> </p>
     <p class="font-12 ">3、保证导入的商品标题、规格名与抖店后台一致 </p>
+    <p class="font-12 ">4、仅支持售卖中、已下架的商品进行修改 </p>
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
       :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders" :on-success="skuExcelImportSuccess"
       :before-upload="beforeUpload" :on-progress="skuExcelImporting" :on-error="skuExcelImportError">
