@@ -40,7 +40,7 @@
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer>
         <div v-if="isShowFloatView" class="float-view" v-hh-drag="">
-          <div style="width:58px;height:36px;" class="huhutitle" >
+          <div style="width:50px;height:31px;" class="huhutitle" >
             <div :class="['huhutitle-tip']" ref="tip">点我拖动哦 ~ </div>
           </div>
           <flex-foot ref="flexFoot"></flex-foot>

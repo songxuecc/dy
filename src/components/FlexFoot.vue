@@ -168,14 +168,14 @@ export default {
 
   /* 右侧导航 */
 .float-nav {
-  width: 58px;
+  width: 50px;
   text-align: center;
   background: #ffffff;
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   .float-button {
     padding: 4px;
-    height: 36px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -230,15 +230,16 @@ export default {
     font-size: 12px;
     top:0;
     left: 0;
-    height: 44px;
+    height: 40px;
     width: 0;
     background: #1D8FFF;
-    line-height: 44px;
+    line-height: 40px;
     text-align: center;
     color: #fff ;
     border-radius: 4px 0 0 4px;
     transition: all 0.2s;
     opacity:0;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
   }
   .go-to-top {
     height: 37px;

@@ -94,7 +94,7 @@
                     <span :class="getPresellType(scope.row.presell_type).class">{{getPresellType(scope.row.presell_type).text}}</span>
                 </template>
             </el-table-column> -->
-            <el-table-column prop="" label="操作" width="140" v-if="isProductEnableEdit">
+            <el-table-column prop="" label="操作" width="200" v-if="isProductEnableEdit" align="center">
                 <template slot-scope="scope">
                   <el-button type="primary" size="small" @click="productEdit(scope.row)" :disabled="!checkProductEnableEdit(scope.row)">修改</el-button>
                   <el-button type="primary" size="small" @click="syncProductOne(scope.row.goods_id_str)">同步</el-button>
