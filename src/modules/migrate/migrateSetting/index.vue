@@ -46,7 +46,7 @@
         <div style="display:flex;margin-top: 10px;" >
             <p style="width: 35%;text-align:right;position:relative" >
                 <el-input v-model="image_back_words" @input="formatImageBlackWords" type="textarea"
-                 size="small" placeholder="请输入自定义违规词，换行或空格，分隔多个违规词"
+                 size="small" :placeholder="placeholder"
                 :autosize="{ minRows: 4}"
                 style="width: 100%;" >
                 </el-input>
@@ -125,7 +125,8 @@ export default {
       customerBlackWords: [],
       customerImageBlackWords: [],
       defaultBlackWords: [],
-      defaultImageBlackWords: []
+      defaultImageBlackWords: [],
+      placeholder: `请输入自定义违规词，换行或空格分隔对个违规词\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n检测图片会影响抓取速度，若抓取抖音商品则不检测`
     }
   },
   computed: {
