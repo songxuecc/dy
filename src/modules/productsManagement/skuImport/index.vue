@@ -68,7 +68,8 @@ export default {
 
 <style lang="less">
 .sku-import-drawer {
-  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .el-drawer__header span:focus {
   outline: 0;
