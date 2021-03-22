@@ -5,7 +5,7 @@
     <div slot="title" class="font-12 flex">
 <!--      <span><b>·</b>修改字段:&nbsp;导入修改sku编码</span>-->
       <span><b>·</b>修改时间:&nbsp;{{parentRowData.create_time}}</span>
-      <span style="margin-left: 10px;"><b>·</b>修改数量:&nbsp;共计{{parentRowData.total_nums}}条成功{{parentRowData.success_nums}}条，失败{{parentRowData.fail_nums}}条</span>
+      <span style="margin-left: 30px;"><b>·</b>修改数量:&nbsp;共计{{parentRowData.total_nums}}条成功{{parentRowData.success_nums}}条，失败{{parentRowData.fail_nums}}条</span>
     </div>
   </el-alert>
   <el-tabs v-model="activeName" >
