@@ -1108,7 +1108,7 @@ export default {
     bottom: 60px;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 2;
     animation: fadeIn ease 0.3s;
     margin: 0 40px;
   }
