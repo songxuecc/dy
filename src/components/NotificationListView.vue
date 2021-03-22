@@ -6,7 +6,6 @@
         <el-table class="notification-box" v-if="mailNotificationList.length > 0" :data="mailNotificationList" :show-header="false" row-key="id"
                   style="max-height: 450px; overflow: auto; overflow-x: hidden;"  @cell-mouse-enter="showTipRead" @cell-mouse-leave="hideTipRead"
         >
-        <el-table-empty slot="empty"/>
             <el-table-column>
                 <template slot-scope="scope">
                     <el-row style="padding-bottom: 6px; display:flex;">
@@ -164,8 +163,8 @@ export default {
   }
   .mail-notice-box {
     /deep/ .el-table .cell {
-      padding-left: 33px;
-      padding-right: 30px;
+      // padding-left: 33px;
+      // padding-right: 30px;
     }
   }
   .red-circle {
