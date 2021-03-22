@@ -8,7 +8,7 @@
     <div v-if="activeTabName == 'normal'">
       <dy-product-list-view ref="dyProductListView" :dyProductList="dyProductList" @selectProductList="onSelectChange">
         <template slot="upperRight">
-          <el-button size="small" style="right: 0px;" @click="downloadExcel">sku模板下载</el-button>
+          <!-- <el-button size="small" style="right: 0px;" @click="downloadExcel">sku模板下载</el-button> -->
           <!-- 商品sku编码导入 upload组件 start -->
           <!-- <el-upload
             class="sku-excel-import-btn"
