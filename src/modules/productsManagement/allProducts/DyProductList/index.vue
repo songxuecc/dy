@@ -166,12 +166,13 @@ export default {
         {value: false, field: 'mobile', label: '客服手机'},
         {value: false, field: 'status_str', label: '商品状态'},
         {value: false, field: 'tp_outer_iid', label: '货号'},
+        {value: false, field: 'presell_type', label: '发货模式'},
         {value: false, field: 'sku_id', label: 'skuid'},
-        {value: false, field: 'sku_price', label: 'sku价格'},
         {value: false, field: 'spec_detail_names', label: 'sku规格'},
-        {value: false, field: 'sku_quantity', label: 'sku库存'},
+        {value: false, field: 'sku_code', label: 'sku编码'},
+        {value: false, field: 'sku_quantity', label: 'sku现货或预售库存'},
         {value: false, field: 'sku_step_quantity', label: 'sku阶梯库存'},
-        {value: false, field: 'sku_code', label: 'sku编码'}
+        {value: false, field: 'sku_price', label: 'sku价格'}
       ],
       excelStatus: '',
       excelPercent: -1,

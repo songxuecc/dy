@@ -43,13 +43,17 @@ const getters = {
   getUserId: state => state.userId,
   getToken: state => state.token,
   getTokenHeaders: state => {
+    let headers = {}
     if (state.fakeToken) {
-      return { 'token': state.token, 'fake-token': state.fakeToken }
+      headers['fake-token'] = state.fakeToken
     }
     if (state.token) {
-      return { 'token': state.token }
+      headers['token'] = state.token
     }
-    return {}
+    if (state.changeShop) {
+      headers['change-shop'] = state.changeShop
+    }
+    return headers
   },
   getIsAuth: state => state.isAuth,
   getOrderTimes: state => state.orderTimes,

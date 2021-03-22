@@ -118,13 +118,13 @@ export default {
       this.visibleShutDown = true
     },
     onDelete (row) {
-      if (row.status === 'complete') {
+      if (['complete', 'fail'].includes(row.status)) {
         this.visibleDelete = true
         this.deleteId = row.id
       }
     },
     onDownloadFail (row) {
-      if (row.status === 'complete') {
+      if (['complete', 'fail'].includes(row.status)) {
         window.open(location.origin + '/api/product/sku/excel/query?id=' + row.id + '&token=' + localStorage.getItem('token'))
       }
     },
