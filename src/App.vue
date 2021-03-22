@@ -43,8 +43,16 @@
           <div style="width:50px;height:31px;" class="huhutitle" >
             <div :class="['huhutitle-tip']" ref="tip">点我拖动哦 ~ </div>
           </div>
-          <flex-foot ref="flexFoot"></flex-foot>
+          <flex-foot ref="flexFoot" @toggleDialogNotificationVisible="toggleDialogNotificationVisible"></flex-foot>
         </div>
+        <hh-dialog width="600" :visible.sync="dialogNotificationVisible" :isClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialogNotification">
+          <template v-slot:content>
+            <div class="mail-notice-box">
+              <notification-list-view ref="notificationListView" @closeDialog="closeDialogNotification"
+              ></notification-list-view>
+            </div>
+          </template>
+        </hh-dialog>
         <hh-dialog width="500" :visible.sync="msgDialogShow" :isClose="false" :isBgClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog(curMsgNotification)">
             <template v-slot:content>
                 <div class="notice-main">
@@ -71,6 +79,7 @@ import '@/assets/css/index.less'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
+import NotificationListView from '@/components/NotificationListView.vue'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
@@ -110,7 +119,8 @@ export default {
         suppressScrollX: false,
         wheelPropagation: false
       },
-      huhutitleHover: false
+      huhutitleHover: false,
+      dialogNotificationVisible: false
     }
   },
   components: {
@@ -119,7 +129,8 @@ export default {
     FlexFoot,
     GoodAssessDialog,
     ExpireNotifyDialog,
-    vueCustomScrollbar
+    vueCustomScrollbar,
+    NotificationListView
   },
   computed: {
     ...mapGetters({
@@ -212,6 +223,15 @@ export default {
       'ignoreNotification',
       'requestOperate'
     ]),
+    toggleDialogNotificationVisible (bool) {
+      this.dialogNotificationVisible = bool
+    },
+    closeDialogNotification () {
+      this.dialogNotificationVisible = false
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '通知列表', '点击', '关闭通知列表'])
+      }
+    },
     getChannelInfo () {
       let channel = commonUtils.getURLSearchParams('from')
       if (common.CHANNEL_WHITE_LIST.indexOf(channel) !== -1) {

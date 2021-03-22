@@ -28,14 +28,6 @@
         <hh-icon type="iconshanglajiantou" style="font-size:18px;" />
         <div  :class="['go-to-top text', flexFootIndex === 6 ? 'text-in' : '']" >到顶部</div>
     </div>
-    <hh-dialog width="600" :visible.sync="dialogNotificationVisible" :isClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialog">
-      <template v-slot:content>
-        <div class="mail-notice-box">
-          <notification-list-view ref="notificationListView" @closeDialog="closeDialog"
-          ></notification-list-view>
-        </div>
-      </template>
-    </hh-dialog>
   </div>
 </template>
 <script>
@@ -92,7 +84,7 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '通知列表', '点击', '打开通知列表'])
       }
-      this.dialogNotificationVisible = true
+      this.$emit('toggleDialogNotificationVisible', true)
       this.$nextTick(function () {
         this.$refs.notificationListView.init()
       })
@@ -148,12 +140,7 @@ export default {
         })
       }
     },
-    closeDialog () {
-      this.dialogNotificationVisible = false
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '通知列表', '点击', '关闭通知列表'])
-      }
-    },
+
     changeFlexFootIndex (index) {
       if (this.isDragging) { return false }
       this.flexFootIndex = parseInt(index)
