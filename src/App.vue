@@ -225,6 +225,11 @@ export default {
     ]),
     toggleDialogNotificationVisible (bool) {
       this.dialogNotificationVisible = bool
+      if (bool) {
+        this.$nextTick(function () {
+          this.$refs.notificationListView.init()
+        })
+      }
     },
     closeDialogNotification () {
       this.dialogNotificationVisible = false

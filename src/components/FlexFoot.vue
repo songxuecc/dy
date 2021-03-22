@@ -33,7 +33,6 @@
 <script>
 import {mapGetters} from 'vuex'
 import ServiceBox from './ServiceBox.vue'
-import notificationListView from './NotificationListView.vue'
 import common from '@/common/common.js'
 export default {
   data () {
@@ -45,8 +44,7 @@ export default {
     }
   },
   components: {
-    ServiceBox,
-    notificationListView
+    ServiceBox
   },
   computed: {
     ...mapGetters({
@@ -85,9 +83,6 @@ export default {
         window._hmt.push(['_trackEvent', '通知列表', '点击', '打开通知列表'])
       }
       this.$emit('toggleDialogNotificationVisible', true)
-      this.$nextTick(function () {
-        this.$refs.notificationListView.init()
-      })
     },
     backToTop () {
       const el = document.querySelector('.page-component__scroll')
