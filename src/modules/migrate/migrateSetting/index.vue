@@ -153,7 +153,7 @@ export default {
       const imageBlackWords = new Set(this.imageBlackWords)
       const originImageBlackWords = new Set([...this.customerImageBlackWords, ...this.defaultImageBlackWords])
       const newImageBlackWords = [...imageBlackWords].filter(item => !originImageBlackWords.has(item))
-      return isEqualSetting && !newBlackWords.length && !newImageBlackWords
+      return isEqualSetting && !newBlackWords.length && !newImageBlackWords.length
     }
   },
   methods: {
