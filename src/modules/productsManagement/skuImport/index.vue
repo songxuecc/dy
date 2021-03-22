@@ -70,6 +70,12 @@ export default {
 .sku-import-drawer {
   padding: 10px;
 }
+.el-drawer__header span:focus {
+  outline: 0;
+}
+.el-drawer:focus {
+    outline: none !important;
+}
 </style>
 
 <style lang='less' scoped>
