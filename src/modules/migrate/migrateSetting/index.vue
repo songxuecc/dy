@@ -39,6 +39,28 @@
                 </el-tag>
             </div>
         </div>
+        <div style="margin-top: 10px;">
+          <span style="font-size: 12px;"><span style="color: red;">*</span>轮播首图、详情尾图违规词自动删除</span>
+          <el-checkbox v-model="is_cut_image_black_word"></el-checkbox>
+        </div>
+        <div style="display:flex;margin-top: 10px;" >
+            <p style="width: 35%;text-align:right;position:relative" >
+                <el-input v-model="image_back_words" @input="formatImageBlackWords" type="textarea"
+                 size="small" placeholder="请输入自定义违规词，换行或空格，分隔多个违规词"
+                :autosize="{ minRows: 4}"
+                style="width: 100%;" >
+                </el-input>
+                <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" :disabled="!this.image_black_word_list.length" @click="createImageBlackWords" :loading="createBlackWordsLoading">添加</el-button>
+            </p>
+            <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px" v-loading="imgTagLoading">
+                <el-tag v-for="(tag,index) in defaultImageBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
+                    {{tag}}
+                </el-tag>
+                <el-tag v-for="(tag,index) in imageBlackWords" :disable-transitions="true" :key="tag" closable :type="typeList[index%5]" @close="handleClose(tag, 1)">
+                    {{tag}}
+                </el-tag>
+            </div>
+        </div>
         <br />
         <el-button type="primary" @click="saveSetting()" style="margin-top: 20px;" :loading="createBlackWordsLoading" :disabled="shouldUpdate">保存设置</el-button>
     </div>
@@ -67,6 +89,7 @@ export default {
       detail_img_cut: true,
       is_cut_sku_spec: true,
       is_cut_black_word: true,
+      is_cut_image_black_word: true,
       is_banner_auto_5: true,
       property_radio: '1',
       goods_property_selected: '',
@@ -89,14 +112,20 @@ export default {
       ],
       blackWords: [],
       back_words: '',
+      imageBlackWords: [],
+      image_back_words: '',
       auto_delete: '',
       tagLoading: false,
+      imgTagLoading: false,
       typeList: ['default', 'success', 'info', 'warning', 'danger'],
       black_word_list: [],
+      image_black_word_list: [],
       createBlackWordsLoading: false,
       originMigrateSetting: undefined,
       customerBlackWords: [],
-      defaultBlackWords: []
+      customerImageBlackWords: [],
+      defaultBlackWords: [],
+      defaultImageBlackWords: []
     }
   },
   computed: {
@@ -108,6 +137,7 @@ export default {
         detail_img_cut: Number(this.detail_img_cut),
         is_cut_sku_spec: Number(this.is_cut_sku_spec),
         is_cut_black_word: Number(this.is_cut_black_word),
+        is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
         banner_completion: Number(this.banner_completion),
         property_radio: this.property_radio,
@@ -120,14 +150,17 @@ export default {
       const blackWords = new Set(this.blackWords)
       const originBlackWords = new Set([...this.customerBlackWords, ...this.defaultBlackWords])
       const newBlackWords = [...blackWords].filter(item => !originBlackWords.has(item))
-      return isEqualSetting && !newBlackWords.length
+      const imageBlackWords = new Set(this.imageBlackWords)
+      const originImageBlackWords = new Set([...this.customerImageBlackWords, ...this.defaultImageBlackWords])
+      const newImageBlackWords = [...imageBlackWords].filter(item => !originImageBlackWords.has(item))
+      return isEqualSetting && !newBlackWords.length && !newImageBlackWords
     }
   },
   methods: {
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'title_cut_off', 'title_ban_words',
-        'banner_completion', 'detail_img_cut', 'is_cut_sku_spec', 'is_cut_black_word', 'is_banner_auto_5'
+        'banner_completion', 'detail_img_cut', 'is_cut_sku_spec', 'is_cut_black_word', 'is_banner_auto_5', 'is_cut_image_black_word'
       ]
       for (let key in boolPropertys) {
         if (data.hasOwnProperty(boolPropertys[key])) {
@@ -185,6 +218,7 @@ export default {
         detail_img_cut: Number(this.detail_img_cut),
         is_cut_sku_spec: Number(this.is_cut_sku_spec),
         is_cut_black_word: Number(this.is_cut_black_word),
+        is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
         banner_completion: Number(this.banner_completion),
         property_radio: this.property_radio,
@@ -200,19 +234,27 @@ export default {
       const blackWords = new Set(this.blackWords)
       const originBlackWords = new Set([...this.customerBlackWords, ...this.defaultBlackWords])
       const params = [...blackWords].filter(item => !originBlackWords.has(item))
+      const imageBlackWords = new Set(this.imageBlackWords)
+      const originImageBlackWords = new Set([...this.customerImageBlackWords, ...this.defaultImageBlackWords])
+      const imageParams = [...imageBlackWords].filter(item => !originImageBlackWords.has(item))
       this.createBlackWordsLoading = true
       try {
         const updateBlackWords = params.length
           ? apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(params)})
           : Promise.resolve([])
+        const updateImageBlackWords = imageParams.length
+          ? apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(imageParams), use_type: 1})
+          : Promise.resolve([])
+
         const isEqualSetting = isEqual(this.originMigrateSetting, product)
         const updateSetting = !isEqualSetting
           ? apis.hhgjAPIs.updateMigrateSetting(productParams)
           : Promise.resolve(this.originMigrateSetting)
-        await Promise.all([updateBlackWords, updateSetting])
+        await Promise.all([updateBlackWords, updateImageBlackWords, updateSetting])
         this.$message.success('保存成功')
         this.createBlackWordsLoading = false
         this.back_words = ''
+        this.image_back_words = ''
         this.getSetting()
       } catch (error) {
         if (error) {
@@ -267,34 +309,69 @@ export default {
       value = value.map(s => s.trim()).filter(s => s !== '')
       this.black_word_list = [...new Set(value)]
     },
-    getBlackWords () {
-      apis.hhgjAPIs.getBlackWordList({}).then(data => {
-        this.blackWords = data.customer
-        this.customerBlackWords = data.customer
-        this.defaultBlackWords = data.default
-      })
+    formatImageBlackWords () {
+      let value = this.image_back_words.split(/[\s\n]/)
+      value = value.map(s => s.trim()).filter(s => s !== '')
+      this.image_black_word_list = [...new Set(value)]
+    },
+    getBlackWords (useType = -1) {
+      if (useType === 0) {
+        apis.hhgjAPIs.getBlackWordList({}).then(data => {
+          this.blackWords = data.customer
+          this.customerBlackWords = data.customer
+          this.defaultBlackWords = data.default
+        })
+      } else if (useType === 1) {
+        // 查询图片违禁词
+        apis.hhgjAPIs.getBlackWordList({use_type: 1}).then(data => {
+          this.imageBlackWords = data.customer
+          this.customerImageBlackWords = data.customer
+          this.defaultImageBlackWords = data.default
+        })
+      } else {
+        apis.hhgjAPIs.getBlackWordList({}).then(data => {
+          this.blackWords = data.customer
+          this.customerBlackWords = data.customer
+          this.defaultBlackWords = data.default
+        })
+        apis.hhgjAPIs.getBlackWordList({use_type: 1}).then(data => {
+          this.imageBlackWords = data.customer
+          this.customerImageBlackWords = data.customer
+          this.defaultImageBlackWords = data.default
+        })
+      }
     },
     async createBlackWords () {
       this.blackWords = [...new Set(this.blackWords.concat(this.black_word_list))]
       this.back_words = ''
     },
-    async handleClose (word) {
-      console.log(word)
-      console.log(this.$loading)
-      this.tagLoading = true
-
+    async createImageBlackWords () {
+      this.imageBlackWords = [...new Set(this.imageBlackWords.concat(this.image_black_word_list))]
+      this.image_back_words = ''
+    },
+    async handleClose (word, useType = 0) {
+      if (useType === 0) {
+        this.tagLoading = true
+      } else {
+        this.imgTagLoading = true
+      }
       try {
         await apis.hhgjAPIs.deleteBlackWords({
-          word
+          word: word,
+          use_type: useType
         })
-        this.getBlackWords()
+        this.getBlackWords(useType)
       } catch (error) {
         if (error) {
           console.error(error)
         }
         this.$message.error(`${error}`)
       }
-      this.tagLoading = false
+      if (useType === 0) {
+        this.tagLoading = false
+      } else {
+        this.imgTagLoading = false
+      }
     }
   }
 }
