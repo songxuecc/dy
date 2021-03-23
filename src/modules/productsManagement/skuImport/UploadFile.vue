@@ -1,10 +1,10 @@
 <!-- sku上传文件 -->
 <template>
   <div class="left uploadFile pb-10">
-    <p class="font-14 ">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a :class="[isSyncing?'info':'pramiry','pointer']"
-        @click="handleSyncProducts">{{syncButtonText}}</a> <span class="info">&nbsp;最近同步时间
+    <p class="font-14 ">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a :class="[isSyncing?'color-info':'color-primary','pointer font-14']"
+        @click="handleSyncProducts">{{syncButtonText}}</a> <span class="color-767989">&nbsp;最近同步时间
         {{ syncStatus.last_sync_time }} </span></p>
-    <p class="font-14 ">2、每次支持3000个sku修改，可修改维度有：<span class="color-danger">sku编码</span>、<span class="color-danger">库存</span>、<span class="color-danger">价格</span>&nbsp;<a class="pramiry pointer" @click="downloadExcel">新版示例文件下载</a> </p>
+    <p class="font-14 ">2、每次支持3000个sku修改，可修改维度有：<span class="color-danger">sku编码</span>、<span class="color-danger">库存</span>、<span class="color-danger">价格</span></p>
     <p class="font-14 ">3、保证导入的商品标题、规格名与抖店后台一致 </p>
     <p class="font-14 ">4、仅支持售卖中、已下架的商品修改 </p>
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"

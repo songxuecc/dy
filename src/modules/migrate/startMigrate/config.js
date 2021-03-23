@@ -40,19 +40,29 @@ export const platformIconsUrl = [
     tip: '17网'
   },
   {
+    key: '禅妈妈',
+    src: require('@/assets/images/chanmama.png'),
+    tip: '禅妈妈'
+  },
+  {
+    key: '搜款网',
+    src: require('@/assets/images/soukuanwang.png'),
+    tip: '搜款网'
+  },
+  {
     key: '抖音',
     src: require('@/assets/images/dy.png'),
-    tip: '抖音'
+    tip: '抖音App'
   },
   {
     key: '拼多多',
     src: require('@/assets/images/pdd.png'),
-    tip: '拼多多'
+    tip: '拼多多App'
   },
   {
-    key: '禅妈妈',
-    src: require('@/assets/images/chanmama.png'),
-    tip: '禅妈妈'
+    key: '淘宝特价',
+    src: require('@/assets/images/tb-tejia.png'),
+    tip: '淘宝特价App'
   }
 ]
 
@@ -93,8 +103,13 @@ export const platformIconsStore = [
     tip: '17网'
   },
   {
+    key: '搜款网',
+    src: require('@/assets/images/soukuanwang.png'),
+    tip: '搜款网'
+  },
+  {
     key: '抖音',
     src: require('@/assets/images/dy.png'),
-    tip: '抖音'
+    tip: '抖音App'
   }
 ]

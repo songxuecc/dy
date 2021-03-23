@@ -50,7 +50,9 @@ export default {
         '17网': 'https://gz.17zwd.com/',
         '抖音': 'https://www.yuque.com/huxiao-rkndm/ksui6u/muvtyt',
         '拼多多': 'https://www.yuque.com/huxiao-rkndm/ksui6u/yd9cd1',
-        '禅妈妈': 'https://www.chanmama.com/'
+        '禅妈妈': 'https://www.chanmama.com/',
+        '搜款网': 'https://www.vvic.com/gz',
+        '淘宝特价': 'https://www.yuque.com/huxiao-rkndm/ksui6u/gb8emy'
       }
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '搬家上货', '开始复制', name])
