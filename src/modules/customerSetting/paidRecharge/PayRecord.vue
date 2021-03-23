@@ -4,7 +4,8 @@
         <div class="mb-10 color-333 font-12 bold flex align-c">抓取拼多多剩余额度数：{{availablePddCaptureNums}}条 <el-link class="font-12 bold ml-5" :underline="false" type="primary" @click="toggleVisible">额度计算规则</el-link></div>
         <div class="mb-10 color-333 font-12 bold">拼多多抓取充值：<span v-for="(tag,idx) in versionList" :key="idx" :class="['tag','pointer',idx === active?'active' :'']" @click="handleChange(idx)">{{tag.nums}}条</span></div>
         <div class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" v-if="versionList && versionList.length">{{versionList[active].amount / 100}}</span><span class="price">元</span></div>
-        <el-button type="primary" style="width:120px" @click="onCharge" :loading="loading" :diabled="loading">立即充值</el-button>
+        <el-button type="primary" class="mb-20" style="width:120px" @click="onCharge" :loading="loading" :diabled="loading">立即充值</el-button>
+        <TableRecharge />
         <ModalEvalRules :visible.sync="visible" @toggleVisible="toggleVisible"/>
         <el-dialog title="微信扫码支付" :visible.sync="visiblePayChat"  v-hh-modal width="500px" center @closed="closed">
           <div class="flex align-c column">
@@ -22,6 +23,8 @@
 import { createNamespacedHelpers } from 'vuex'
 import Api from '@/api/apis'
 import ModalEvalRules from '@customerSetting/paidRecharge/ModalEvalRules'
+import TableRecharge from './TableRecharge.vue'
+
 const {
   mapState
 } = createNamespacedHelpers('customerSetting/paidRecharge')
@@ -32,7 +35,7 @@ export default {
   name: 'payRecord',
   props: {
   },
-  components: {ModalEvalRules},
+  components: {ModalEvalRules, TableRecharge},
   data () {
     return {
       active: 0,

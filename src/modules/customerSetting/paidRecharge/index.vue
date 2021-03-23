@@ -3,10 +3,10 @@
     <div class='left'>
         <el-radio-group v-model="tabType" style="margin-bottom: 30px;">
             <el-radio-button label="PayRecord">额度充值</el-radio-button>
-            <el-radio-button label="Recharge">充值记录</el-radio-button>
+            <el-radio-button label="VersionUp">试用版本升级</el-radio-button>
         </el-radio-group>
         <PayRecord v-if="tabType === 'PayRecord'"/>
-        <TableRecharge v-if="tabType === 'Recharge'"  :tableData="tableData"/>
+        <VersionUp v-if="tabType === 'VersionUp'" />
         <el-dialog title="额度计算规则" class="product-dialog" :visible.sync="vislble" @close="dialogEditClose" v-hh-modal  width="400px" >
             <div>
                 <p>1、订购免费版赠送10条额度，订购1个月版赠送100条额度，订购3个月版赠送300条额度，订购了6个月版赠送600条额度，订购12个月版赠送1200条额度；</p>
@@ -22,24 +22,24 @@
 <script>
 import { createNamespacedHelpers } from 'vuex'
 
-import PayRecord from './PayRecord.vue'
-import TableRecharge from './TableRecharge.vue'
+import PayRecord from '@customerSetting/paidRecharge/PayRecord.vue'
+import VersionUp from '@customerSetting/paidRecharge/VersionUp.vue'
+
 const {
   mapActions
 } = createNamespacedHelpers('customerSetting/paidRecharge')
 export default {
   data () {
     return {
-      tabType: 'PayRecord',
+      tabType: 'VersionUp',
       vislble: false,
-      tableData: [],
       available_pdd_capture_nums: 0,
       total_pdd_capture_nums: 0
     }
   },
   components: {
     PayRecord,
-    TableRecharge
+    VersionUp
   },
   craeted () {
     this.getUserAccountQuery()
@@ -61,6 +61,6 @@ export default {
 <style lang='less' scoped>
 //@import url(); 引入公共css类
 /deep/ .el-radio-button__inner {
-        width: 100px !important;
+        min-width: 100px !important;
     }
 </style>
