@@ -60,6 +60,17 @@ export default {
           type: 'error'
         })
       }
+    },
+    async userVersionQuery ({commit}, payload) {
+      try {
+        const userVersion = await Api.hhgjAPIs.userVersionQuery()
+        commit('save', {userVersion})
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     }
   },
   getters: {

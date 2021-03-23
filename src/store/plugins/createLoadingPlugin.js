@@ -1,12 +1,13 @@
+
 const NAMESPACE = '@@loading'
 
 const createLoadingPlugin = ({
   namespace = NAMESPACE,
   includes = [],
-  excludes = []
+  excludes = [],
+  Vue
 } = {}) => {
   return store => {
-    console.log(store.state)
     if (store.state[namespace]) {
       throw new Error(
         `createLoadingPlugin: ${namespace} exited in current store`
@@ -23,7 +24,6 @@ const createLoadingPlugin = ({
       },
       mutations: {
         SHOW (state, { payload }) {
-          console.log(state, 'SHOW')
           state.global = true
           state.effects = {
             ...state.effects,
@@ -53,7 +53,9 @@ const createLoadingPlugin = ({
       },
       error: (action, state, error) => {
         console.log(`error action ${action.type}`)
-        console.log(error)
+        if (shouldEffect(action, includes, excludes)) {
+          store.commit({ type: namespace + '/HIDE', payload: action.type })
+        }
       }
     })
   }

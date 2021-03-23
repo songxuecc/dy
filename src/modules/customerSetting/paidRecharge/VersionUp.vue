@@ -1,6 +1,6 @@
 <!-- VersionUp试用版本升级 -->
 <template>
-    <div class="VersionUp">
+    <div class="VersionUp" v-loading="loadingUserVersionQuery">
         <div class="upVip">
             <p class="color-333 font-12 bold mb-10">
                 试用版升级高级版，仅需0.3元/日
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 import Api from '@/api/apis'
 import ModalWxPay from '@customerSetting/paidRecharge/ModalWxPay.vue'
 
@@ -41,8 +43,22 @@ export default {
       loading: false
     }
   },
+  created () {
+    this.userVersionQuery()
+  },
   components: {ModalWxPay},
+  computed: {
+    ...mapState({
+      loadingUserVersionQuery: state => state['@@loading'].effects['customerSetting/paidRecharge/userVersionQuery']
+    })
+  },
+  watch: {
+    loadingUserVersionQuery (n) {
+      console.log(n, 'loadingUserVersionQuery')
+    }
+  },
   methods: {
+    ...mapActions('customerSetting/paidRecharge', ['userVersionQuery']),
     async onVipUp () {
       this.loading = true
       try {
