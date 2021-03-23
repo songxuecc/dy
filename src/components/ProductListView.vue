@@ -146,6 +146,21 @@
                               请刷新分类后重新搬家
                             </ul>
                         </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,规格图片和规格值数量不匹配') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              规格图片和规格值数量不匹配,虎虎建议重新尝试搬家
+                            </ul>
+                        </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传主图有缺失，请重新上传') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              上传主图有缺失，请重新上传,虎虎建议重新尝试搬家
+                            </ul>
+                        </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失，请重新上传') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              上传产品详情有缺失，请重新上传,虎虎建议重新尝试搬家
+                            </ul>
+                        </div>
                         <div slot="content"  v-else>
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
                               <span v-html="v">{{v}}</span>
