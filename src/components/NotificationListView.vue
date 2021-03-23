@@ -174,8 +174,8 @@ export default {
     border-radius: 3px;
     display: inline-block;
     position: absolute;
-    top: 6px;
-    left: -10px;
+    top: 9px;
+    left: -2px;
   }
   .has_read {
     position: relative;
@@ -214,6 +214,9 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
+    }
+    /deep/ .el-table__row {
+      padding: 0 10px;
     }
     /deep/.el-table td {
       border-bottom: none;
