@@ -7,15 +7,7 @@
         <el-button type="primary" class="mb-20" style="width:120px" @click="onCharge" :loading="loading" :diabled="loading">立即充值</el-button>
         <TableRecharge />
         <ModalEvalRules :visible.sync="visible" @toggleVisible="toggleVisible"/>
-        <el-dialog title="微信扫码支付" :visible.sync="visiblePayChat"  v-hh-modal width="500px" center @closed="closed">
-          <div class="flex align-c column">
-            <el-alert title="微信扫一扫支付" type="info" show-icon :closable="false" :center="true" ></el-alert>
-            <img :src="'data:image/png;base64,'+ qrCode" class="qrcode" v-if="orderStatus === 'unpay'"/>
-            <!-- <div class="mt-20"  v-if="orderStatus === 'pay'"><hh-icon type="iconzhifuchenggong" style="font-size:106px"></hh-icon></div> -->
-            <!-- <div  class="mb-5 mt-20 color-success bold  font-18" v-if="orderStatus === 'pay'">支付成功</div> -->
-            <span class="info font-12">{{seconds}}秒后自动关闭</span>
-          </div>
-      </el-dialog>
+        <ModalWxPay ref="ModalWxPay" :qrCode="qrCode" />
     </div>
 </template>
 
@@ -23,19 +15,18 @@
 import { createNamespacedHelpers } from 'vuex'
 import Api from '@/api/apis'
 import ModalEvalRules from '@customerSetting/paidRecharge/ModalEvalRules'
-import TableRecharge from './TableRecharge.vue'
+import TableRecharge from '@customerSetting/paidRecharge/TableRecharge.vue'
+import ModalWxPay from '@customerSetting/paidRecharge/ModalWxPay.vue'
 
 const {
   mapState
 } = createNamespacedHelpers('customerSetting/paidRecharge')
-const PAY_TIME = 120
-// const CLOSE_TIME = 3
 
 export default {
   name: 'payRecord',
   props: {
   },
-  components: {ModalEvalRules, TableRecharge},
+  components: {ModalEvalRules, TableRecharge, ModalWxPay},
   data () {
     return {
       active: 0,
@@ -77,84 +68,11 @@ export default {
         if (qrCode) {
           this.loading = false
           this.qrCode = qrCode
-          this.orderStatus = 'unpay'
-          this.visiblePayChat = true
-          this.isWaiting = true
-          this.startGetOrderStatus()
-          this.seconds = PAY_TIME
-          const delay = await this.delay(this.seconds)
-          if (delay) {
-            this.isWaiting = false
-          }
+          this.$refs.ModalWxPay.visible = true
         }
       } catch (err) {
         this.loading = false
-        this.visiblePayChat = false
-        this.$message.error(`${err}`)
-      }
-    },
-    delay (seconds) {
-      return new Promise(resolve => {
-        if (this.seconds === seconds) {
-          this.resolve = resolve
-        }
-        if (this.seconds > 0) {
-          this.timer = setTimeout(() => {
-            this.seconds--
-            clearTimeout(this.timer)
-            this.timer = null
-            this.delay()
-          }, 1000)
-        } else {
-          this.resolve(true)
-        }
-      })
-    },
-    closed () {
-      this.isWaiting = false
-    },
-    async startGetOrderStatus () {
-      // 后台报错 支付失败 直接关闭
-      // 时间到了 还未支付 直接关闭 1
-      // 时间未到 支付成功 倒计时关闭 1
-      // 时间未到 还未支付 继续轮训 1
-      try {
-        // 时间未到 还未支付 继续轮训
-        if (this.orderStatus !== 'pay' && this.isWaiting) {
-          // console.log('时间未到 还未支付 继续轮训')
-          const status = await Api.hhgjAPIs.userAccountFlowQuery({
-            order_id: this.orderData.order_id
-          })
-          if (status.order_status !== 'pay') {
-            setTimeout(() => {
-              this.startGetOrderStatus()
-            }, 1000)
-          } else {
-            // console.log('支付成功')
-            this.$message.success('支付成功')
-            this.orderStatus = 'pay'
-            this.visiblePayChat = false
-            // this.startGetOrderStatus()
-          }
-          // 时间未到 支付成功 倒计时关闭
-        } else if (this.orderStatus === 'pay' && this.isWaiting) {
-          // console.log('时间未到 支付成功 倒计时关闭')
-          // this.seconds = CLOSE_TIME
-          // const delay = await this.delay(this.seconds)
-          // if (delay) {
-          //   this.visiblePayChat = false
-          // }
-          // 时间到了 还未支付 直接关闭
-        } else if (this.orderStatus !== 'pay' && !this.isWaiting) {
-          this.visiblePayChat = false
-        }
-        // else if (this.orderStatus === 'pay' && !this.isWaiting)  {
-
-        // }
-      } catch (err) {
-        // console.log('后台报错 支付失败 直接关闭')
-        this.orderStatus = 'payfail'
-        this.visiblePayChat = false
+        this.$refs.ModalWxPay.visible = false
         this.$message.error(`${err}`)
       }
     }
@@ -162,7 +80,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
     .tag {
         text-align: center;
         line-height: 24px;

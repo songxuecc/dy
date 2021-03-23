@@ -23,14 +23,14 @@
             <img src="@/assets/images/vip-tip.png" alt="" class="mb-20 ">
             <p>您目前已是VIP高级版，剩60天，无需升级～</p>
         </div>
-        <div>
-            <p>再想想</p>
-            <p>去升级</p>
-        </div>
+        <ModalWxPay ref="ModalWxPay" :qrCode="qrCode" />
     </div>
 </template>
 
 <script>
+import Api from '@/api/apis'
+import ModalWxPay from '@customerSetting/paidRecharge/ModalWxPay.vue'
+
 export default {
   name: 'VersionUp',
   props: {
@@ -41,9 +41,31 @@ export default {
       loading: false
     }
   },
+  components: {ModalWxPay},
   methods: {
-    onVipUp () {
-
+    async onVipUp () {
+      this.loading = true
+      try {
+        const data = await Api.hhgjAPIs.userAccountFlowCreate({
+          op_type: 'free_upgrate'
+        })
+        this.orderData = data
+        const qrCode = await Api.hhgjAPIs.thirdpartPayCreate({
+          pay_type: 'wechat',
+          order_id: data.order_id,
+          pay_title: '测试商品',
+          pay_desc: '商品描述'
+        })
+        if (qrCode) {
+          this.loading = false
+          this.qrCode = qrCode
+          this.$refs.ModalWxPay.visible = true
+        }
+      } catch (err) {
+        this.loading = false
+        this.$refs.ModalWxPay.visible = false
+        this.$message.error(`${err}`)
+      }
     }
   }
 }
