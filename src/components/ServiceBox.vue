@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="service-box" ref="main" :style="{top: serviceTop + 'px' }">
+  <div class="service-box " ref="main" :style="{top: serviceTop + 'px',background: '#fff' }">
     <div class="service-area">
       <div class="close-btn">
         <img @click="closeService" src="@/assets/icon/close.png">
