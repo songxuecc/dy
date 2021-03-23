@@ -46,6 +46,7 @@ module.exports = {
       '@productsManagement': resolve('src/modules/productsManagement'),
       '@customerSetting': resolve('src/modules/customerSetting'),
       '@migrate': resolve('src/modules/migrate'),
+      '@moreFeatures': resolve('src/modules/moreFeatures')
     }
   },
   module: {
