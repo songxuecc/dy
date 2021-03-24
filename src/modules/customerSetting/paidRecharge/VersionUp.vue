@@ -1,7 +1,7 @@
 <!-- VersionUp试用版本升级 -->
 <template>
-    <div class="VersionUp" v-loading="loadingVersion">
-        <div class="upVip" v-if="!userVersion.is_free_upgrate">
+    <div class="VersionUp" v-loading="loadingVersion" >
+        <div class="upVip" v-if="userVersion && !userVersion.is_free_upgrate">
             <p class="color-333 font-12 bold mb-10">
                 试用版升级高级版，仅需{{userVersion.unit_price / 100 || 0.3}}元/日
                 <el-popover
@@ -15,11 +15,11 @@
                     <a class="primary " slot="reference">版本区别</a>
                 </el-popover>
             </p>
-            <p class="color-333 font-12 bold mb-10">当前试用版还剩{{userVersion.left_days}}天，升级费用共计{{userVersion.left_days}}*{{userVersion.unit_price / 100 || 0.3}}={{userVersion.free_upgrate_amount / 100}}元</p>
-            <p class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" v-if="userVersion.free_upgrate_amount">{{userVersion.free_upgrate_amount / 100}}</span><span class="price">元</span></p>
+            <p class="color-333 font-12 bold mb-10" >当前试用版还剩{{userVersion.left_days}}天，升级费用共计{{userVersion.left_days}}*{{userVersion.unit_price / 100 || 0.3}}={{userVersion.free_upgrate_amount / 100 || 0}}元</p>
+            <p class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" >{{userVersion.free_upgrate_amount / 100 || 0}}</span><span class="price">元</span></p>
             <el-button type="primary" class="mb-20" style="width:120px" @click="onVipUp" :loading="loading" :diabled="loading">立即升级</el-button>
         </div>
-        <div class="isVip flex column align-c jutify-c" v-if="userVersion.is_free_upgrate">
+        <div class="isVip flex column align-c jutify-c" v-if="userVersion && userVersion.is_free_upgrate">
             <img src="@/assets/images/vip-tip.png" alt="" class="mb-20 ">
             <p>您目前已是VIP高级版，剩{{userVersion.left_days}}天，无需升级～</p>
         </div>
