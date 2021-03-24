@@ -12,7 +12,8 @@ export default {
       index: 1,
       size: 10,
       total: 100
-    }
+    },
+    userVersion: {}
   }),
   mutations: {
     save (state, payload) {
@@ -66,6 +67,7 @@ export default {
         const userVersion = await Api.hhgjAPIs.userVersionQuery()
         commit('save', {userVersion})
       } catch (err) {
+        console.log(err)
         this._vm.$message({
           message: `${err}`,
           type: 'error'

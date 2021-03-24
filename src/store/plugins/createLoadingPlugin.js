@@ -52,10 +52,13 @@ const createLoadingPlugin = ({
         }
       },
       error: (action, state, error) => {
-        console.log(`error action ${action.type}`)
         if (shouldEffect(action, includes, excludes)) {
           store.commit({ type: namespace + '/HIDE', payload: action.type })
         }
+        // store._vm.$message({
+        //   message: `${error}`,
+        //   type: 'error'
+        // })
       }
     })
   }

@@ -62,8 +62,8 @@ export default {
         const qrCode = await Api.hhgjAPIs.thirdpartPayCreate({
           pay_type: 'wechat',
           order_id: data.order_id,
-          pay_title: '测试商品',
-          pay_desc: '商品描述'
+          pay_title: '虎虎商品管家',
+          pay_desc: '额度充值'
         })
         if (qrCode) {
           this.loading = false
