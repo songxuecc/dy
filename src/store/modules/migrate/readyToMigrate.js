@@ -37,12 +37,14 @@ export default {
         let versionType = {}
         let versionTipType = 0
         console.log(userVersion, 'userVersion')
-
+        userVersion.left_cnt = 10 - (userVersion.today_cnt || 0) < 0 ? 0 : 10 - (userVersion.today_cnt || 0)
         if (userVersion && !userVersion.is_free_upgrate) {
           versionType = configs[userVersion.version_type]
           versionTipType = userVersion.version_type
         }
         console.log(versionTipType, 'versionTipType')
+        console.log(versionType, 'versionType')
+
         commit('save', {userVersion, versionType, versionTipType})
         return userVersion
       } catch (err) {

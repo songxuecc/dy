@@ -65,6 +65,7 @@ export default {
     async userVersionQuery ({commit}, payload) {
       try {
         const userVersion = await Api.hhgjAPIs.userVersionQuery()
+        userVersion.left_cnt = 10 - (userVersion.today_cnt || 0) < 0 ? 0 : 10 - (userVersion.today_cnt || 0)
         commit('save', {userVersion})
       } catch (err) {
         console.log(err)

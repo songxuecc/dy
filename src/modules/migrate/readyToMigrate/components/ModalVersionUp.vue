@@ -34,7 +34,7 @@
         当前版本为试用版，每日搬家数限10个。今日已搬家{{
           userVersion.today_cnt
         }}个商品，仅剩
-        <span class="price">{{ 10 - (userVersion.today_cnt || 0) }}</span>
+        <span class="price">{{ userVersion.left_cnt || 0 }}</span>
         个额度
       </div>
       <div class="color-666 font-14">

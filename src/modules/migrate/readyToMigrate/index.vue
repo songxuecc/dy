@@ -137,10 +137,10 @@
         </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
           <span v-if="versionTipType === 'free_three_months' && userVersion" class="pt-10">
-            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ 10 - (userVersion.today_cnt || 0) }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
+            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
           </span>
           <span v-if="versionTipType === 'free_seven_days' && userVersion" class="pt-10">
-            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ 10 - (userVersion.today_cnt || 0) }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 订购高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
+            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 订购高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
           </span>
         </div>
       </div>
@@ -281,7 +281,8 @@ export default {
     ...mapState('migrate/readyToMigrate', [
       'migrateSetting',
       'userVersion',
-      'versionTipType'
+      'versionTipType',
+      'versionType'
     ]),
     productStatusMap () {
       return common.productStatusMap
@@ -963,7 +964,8 @@ export default {
       const userVersion = this.userVersion || (await this.userVersionQuery())
       const isFreeUpgrate = userVersion.is_free_upgrate
       const limit = 10
-      if (!isFreeUpgrate && userVersion.today_cnt > limit) {
+      console.log(this.selectIdList.length, limit - userVersion.today_cnt)
+      if (!isFreeUpgrate && userVersion.today_cnt < limit && (this.selectIdList.length > limit - userVersion.today_cnt)) {
         this.visibleModalVersionUp = true
       } else {
         this.removeTempTemplate()
