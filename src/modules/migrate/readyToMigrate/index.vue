@@ -675,6 +675,7 @@ export default {
           this.$refs.productListView.selectAll()
           this.migrateProductList = migrateProduct
           this.getTPProductByIds()
+          this.userVersionQuery()
         },
         undefined,
         isSilent
