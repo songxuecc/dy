@@ -213,22 +213,23 @@
           <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
         </span>
       </el-dialog>
+      <ModalVersionUp
+        :visible="visibleModalVersionUp"
+        @visibleModalVersionUpChange="visibleModalVersionUpChange"
+      />
   </div>
 </template>
 <script>
 import productListView from '@/components/ProductListView'
-import BatchEdit from './components/BatchEdit'
+import BatchEdit from '@migrate/readyToMigrate/components/BatchEdit'
+import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
 import NewComer from '@/components/NewComer.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
-import { createNamespacedHelpers, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
-
-const {
-  mapActions: mapActionsMigrate
-} = createNamespacedHelpers('migrate/migrateSettingTemplate')
 
 export default {
   inject: ['reload'],
@@ -236,7 +237,8 @@ export default {
   components: {
     productListView,
     BatchEdit,
-    NewComer
+    NewComer,
+    ModalVersionUp
   },
   data () {
     return {
@@ -283,7 +285,8 @@ export default {
       ],
       common,
       startMigrateBtnFixed: false,
-      scrollWidth: 0
+      scrollWidth: 0,
+      visibleModalVersionUp: false
     }
   },
   watch: {
@@ -490,8 +493,11 @@ export default {
     ...mapActions([
       'setSelectTPProductIdList'
     ]),
-    ...mapActionsMigrate([
+    ...mapActions('migrate/migrateSettingTemplate', [
       'removeTempTemplate'
+    ]),
+    ...mapActions('migrate/readyToMigrate', [
+      'userVersionQuery'
     ]),
     calendarTime (strTime) {
       return moment(strTime).calendar()
@@ -871,13 +877,24 @@ export default {
       }
       this.$router.replace({ query })
     },
-    toMigrate () {
-      this.removeTempTemplate()
-      this.closeNewComer()
-      this.setSelectTPProductIdList(this.selectIdList)
-      this.$router.push({
-        path: '/migrateSettingPrice'
-      })
+    visibleModalVersionUpChange () {
+      this.visibleModalVersionUp = !this.visibleModalVersionUp
+    },
+    async toMigrate () {
+      const userVersion = await this.userVersionQuery()
+      if (userVersion) {
+        const isFreeUpgrate = userVersion.is_free_upgrate
+        if (isFreeUpgrate) {
+          this.visibleModalVersionUp = true
+        } else {
+          this.removeTempTemplate()
+          this.closeNewComer()
+          this.setSelectTPProductIdList(this.selectIdList)
+          this.$router.push({
+            path: '/migrateSettingPrice'
+          })
+        }
+      }
     },
     getTPProductByIds () {
       clearTimeout(this.productStatusSyncTimer)
