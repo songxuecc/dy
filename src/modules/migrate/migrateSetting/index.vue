@@ -79,7 +79,7 @@
 
 <script>
 import request from '@/mixins/request.js'
-import apis from '@/api/apis.js'
+import Api from '@/api/apis.js'
 import isEqual from 'lodash/isEqual'
 import common from '@/common/common.js'
 
@@ -191,9 +191,9 @@ export default {
     async getSetting () {
       try {
         const [setting, blackWords, imgBlackWords] = await Promise.all([
-          apis.hhgjAPIs.getMigrateSetting({}),
-          apis.hhgjAPIs.getBlackWordList({}),
-          apis.hhgjAPIs.getBlackWordList({use_type: 1})])
+          Api.hhgjAPIs.getMigrateSetting({}),
+          Api.hhgjAPIs.getBlackWordList({}),
+          Api.hhgjAPIs.getBlackWordList({use_type: 1})])
         this.originMigrateSetting = setting
         this.updateMigrateSettingData(setting)
         // 违规词
@@ -243,15 +243,15 @@ export default {
       this.createBlackWordsLoading = true
       try {
         const updateBlackWords = params.length
-          ? apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(params)})
+          ? Api.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(params)})
           : Promise.resolve([])
         const updateImageBlackWords = imageParams.length
-          ? apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(imageParams), use_type: 1})
+          ? Api.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(imageParams), use_type: 1})
           : Promise.resolve([])
 
         const isEqualSetting = isEqual(this.originMigrateSetting, product)
         const updateSetting = !isEqualSetting
-          ? apis.hhgjAPIs.updateMigrateSetting(productParams)
+          ? Api.hhgjAPIs.updateMigrateSetting(productParams)
           : Promise.resolve(this.originMigrateSetting)
         await Promise.all([updateBlackWords, updateImageBlackWords, updateSetting])
         this.$message.success('保存成功')
@@ -288,11 +288,11 @@ export default {
     async handleCloseWords (word) {
       this.wordsTagLoading = true
       try {
-        await apis.hhgjAPIs.deleteBlackWords({
+        await Api.hhgjAPIs.deleteBlackWords({
           word: word,
           use_type: 0
         })
-        apis.hhgjAPIs.getBlackWordList({}).then(data => {
+        Api.hhgjAPIs.getBlackWordList({}).then(data => {
           this.blackWords = data.customer
           this.customerBlackWords = data.customer
           this.defaultBlackWords = data.default
@@ -308,11 +308,11 @@ export default {
     async handleCloseImages (word) {
       this.imgTagLoading = true
       try {
-        await apis.hhgjAPIs.deleteBlackWords({
+        await Api.hhgjAPIs.deleteBlackWords({
           word: word,
           use_type: 1
         })
-        apis.hhgjAPIs.getBlackWordList({use_type: 1}).then(data => {
+        Api.hhgjAPIs.getBlackWordList({use_type: 1}).then(data => {
           this.imageBlackWords = data.customer
           this.customerImageBlackWords = data.customer
           this.defaultImageBlackWords = data.default
@@ -347,6 +347,24 @@ export default {
           padding-bottom: 20px;
         }
       }
+    }
+
+    /deep/ .el-checkbox {
+        color: #606266;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
+        margin-right: 5px;
+    }
+    /deep/ .el-checkbox__label {
+        display: inline-block;
+        /* padding-left: 10px; */
+        line-height: 19px;
+        font-size: 12px;
+        padding-left: 2px;
+        color:#999999;
+
     }
 
 </style>

@@ -5,7 +5,9 @@ export default {
   namespaced: true,
   state: () => ({
     userVersion: undefined,
-    versionType: undefined
+    versionType: undefined,
+    versionTipType: undefined,
+    migrateSetting: {}
   }),
   mutations: {
     save (state, payload) {
@@ -32,15 +34,30 @@ export default {
             btn: '订购高级版'
           }
         }
-        let versionType
-        if (userVersion) {
-          const isFreeUpgrate = userVersion.is_free_upgrate
-          versionType = !isFreeUpgrate ? configs[userVersion.versionType] : {}
-        // versionType = configs['free_seven_days']
-          console.log(versionType, 'versionType')
+        let versionType = {}
+        let versionTipType = 0
+        console.log(userVersion, 'userVersion')
+
+        if (userVersion && !userVersion.is_free_upgrate) {
+          versionType = configs[userVersion.version_type]
+          versionTipType = userVersion.version_type
         }
-        commit('save', {userVersion, versionType})
+        console.log(versionTipType, 'versionTipType')
+        commit('save', {userVersion, versionType, versionTipType})
         return userVersion
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+        return false
+      }
+    },
+
+    async getMigrateSetting ({commit}, payload) {
+      try {
+        const migrateSetting = await Api.hhgjAPIs.getMigrateSetting({})
+        commit('save', {migrateSetting})
       } catch (err) {
         this._vm.$message({
           message: `${err}`,

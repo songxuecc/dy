@@ -21,7 +21,8 @@ const PAY_TIME = 120
 export default {
   name: 'ModalWxPay',
   props: {
-    qrCode: String
+    qrCode: String,
+    orderData: Object
   },
   components: {},
   data () {
@@ -29,7 +30,6 @@ export default {
       active: 0,
       visible: false,
       payType: 'alipay',
-      orderData: undefined,
       orderStatus: 'unpay',
       seconds: 0
     }
@@ -57,7 +57,7 @@ export default {
         if (this.seconds === seconds) {
           this.resolve = resolve
         }
-        if (this.seconds > 0) {
+        if (this.seconds > 0 && this.isWaiting) {
           this.timer = setTimeout(() => {
             this.seconds--
             clearTimeout(this.timer)
@@ -65,6 +65,8 @@ export default {
             this.delay()
           }, 1000)
         } else {
+          clearTimeout(this.timer)
+          this.timer = null
           this.resolve(true)
         }
       })
@@ -73,6 +75,7 @@ export default {
       this.isWaiting = false
     },
     async startGetOrderStatus () {
+      console.log(this.orderData)
       // 后台报错 支付失败 直接关闭
       // 时间到了 还未支付 直接关闭 1
       // 时间未到 支付成功 倒计时关闭 1
