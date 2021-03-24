@@ -120,6 +120,11 @@
                               品牌未更新，建议亲亲点击品牌旁的刷新按钮后，再次进行搬家
                             </ul>
                         </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('品牌为必填属性且上传的品牌该店铺未授权') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              虎虎建议点击“修改”按钮，刷新品牌后重新选择品牌，进行再次搬家
+                            </ul>
+                        </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,该类目下无品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <p style="">商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
