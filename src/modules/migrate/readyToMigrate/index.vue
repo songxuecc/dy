@@ -1192,9 +1192,10 @@ export default {
     },
     versionTypeUp (btnText) {
       if (btnText === '去升级') {
-        this.$router.push({
-          name: 'PaidRecharge'
-        })
+        const host = window.location.host
+        window.open(
+          `${host}/customerSetting/paidRecharge`
+        )
       } else {
         window.open(
           'https://fuwu.jinritemai.com/detail?from=fuwu_market_myService&service_id=42'
