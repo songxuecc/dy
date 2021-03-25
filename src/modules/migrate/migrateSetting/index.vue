@@ -20,6 +20,17 @@
             <el-form-item label="商品标题、sku规格违规词自动删除" required style="margin-bottom: 0px;">
                 <el-checkbox v-model="is_cut_black_word"></el-checkbox>
             </el-form-item>
+
+            <el-form-item label="搬家仅针对" required class="flex migrateProductsFilter" style="height:25px">
+              <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
+                <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
+                <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
+                <el-checkbox :label="common.productStatus.REJECT">驳回</el-checkbox>
+                <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
+                <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
+              </el-checkbox-group>；其余状态商品会自动过滤
+            </el-form-item>
+
         </el-form>
         <div style="display:flex" >
             <p style="width: 35%;text-align:right;position:relative" >
@@ -30,11 +41,11 @@
                 </el-input>
                 <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" :disabled="!this.black_word_list.length" @click="createBlackWords" :loading="createBlackWordsLoading">添加</el-button>
             </p>
-            <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px" v-loading="tagLoading">
+            <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px" v-loading="wordsTagLoading">
                 <el-tag v-for="(tag,index) in defaultBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
                     {{tag}}
                 </el-tag>
-                <el-tag v-for="(tag,index) in blackWords" :disable-transitions="true" :key="tag" closable :type="typeList[index%5]" @close="handleClose(tag)">
+                <el-tag v-for="(tag,index) in blackWords" :disable-transitions="true" :key="tag" closable :type="typeList[index%5]" @close="handleCloseWords(tag)">
                     {{tag}}
                 </el-tag>
             </div>
@@ -56,7 +67,7 @@
                 <el-tag v-for="(tag,index) in defaultImageBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
                     {{tag}}
                 </el-tag>
-                <el-tag v-for="(tag,index) in imageBlackWords" :disable-transitions="true" :key="tag" closable :type="typeList[index%5]" @close="handleClose(tag, 1)">
+                <el-tag v-for="(tag,index) in imageBlackWords" :disable-transitions="true" :key="tag" closable :type="typeList[index%5]" @close="handleCloseImages(tag)">
                     {{tag}}
                 </el-tag>
             </div>
@@ -68,8 +79,9 @@
 
 <script>
 import request from '@/mixins/request.js'
-import apis from '@/api/apis.js'
+import Api from '@/api/apis.js'
 import isEqual from 'lodash/isEqual'
+import common from '@/common/common.js'
 
 export default {
   mixins: [request],
@@ -83,6 +95,7 @@ export default {
   },
   data () {
     return {
+      common,
       title_cut_off: true,
       title_ban_words: true,
       banner_completion: true,
@@ -115,7 +128,7 @@ export default {
       imageBlackWords: [],
       image_back_words: '',
       auto_delete: '',
-      tagLoading: false,
+      wordsTagLoading: false,
       imgTagLoading: false,
       typeList: ['default', 'success', 'info', 'warning', 'danger'],
       black_word_list: [],
@@ -126,7 +139,12 @@ export default {
       customerImageBlackWords: [],
       defaultBlackWords: [],
       defaultImageBlackWords: [],
-      placeholder: `请输入自定义违规词，换行或空格分隔对个违规词\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n检测图片会影响抓取速度，若抓取抖音商品则不检测`
+      placeholder: `请输入自定义违规词，换行或空格分隔对个违规词\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n检测图片会影响抓取速度，若抓取抖音商品则不检测`,
+      able_migrate_status_list: [
+        common.productStatus.WAIT_ONLINE,
+        common.productStatus.FAILED,
+        common.productStatus.REJECT
+      ]
     }
   },
   computed: {
@@ -145,7 +163,8 @@ export default {
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
         goods_code_type: Number(this.goods_code_type),
-        goods_property: this.goods_property_options
+        goods_property: this.goods_property_options,
+        able_migrate_status_list: this.able_migrate_status_list
       }
       const isEqualSetting = isEqual(this.originMigrateSetting, product)
       const blackWords = new Set(this.blackWords)
@@ -160,53 +179,34 @@ export default {
   methods: {
     updateMigrateSettingData (data) {
       let boolPropertys = [
-        'title_cut_off', 'title_ban_words',
-        'banner_completion', 'detail_img_cut', 'is_cut_sku_spec', 'is_cut_black_word', 'is_banner_auto_5', 'is_cut_image_black_word'
+        'is_cut_black_word',
+        'is_banner_auto_5',
+        'is_cut_sku_spec',
+        'detail_img_cut'
       ]
-      for (let key in boolPropertys) {
-        if (data.hasOwnProperty(boolPropertys[key])) {
-          this[boolPropertys[key]] = Boolean(data[boolPropertys[key]])
-        }
-      }
-      let strPropertys = [
-        'property_radio', 'goods_code_prefix', 'goods_code_suffix', 'goods_code_type'
-      ]
-      for (let key in strPropertys) {
-        if (data.hasOwnProperty(strPropertys[key])) {
-          this[strPropertys[key]] = data[strPropertys[key]]
-        }
-      }
-      if (data.hasOwnProperty('goods_property')) {
-        this.goods_property_options = []
-        this.goods_property_options_dic = {}
-        this.goods_property_list = []
-        for (let i in data['goods_property']) {
-          let item = {
-            'val': data['goods_property'][i]['val'],
-            'desc': data['goods_property'][i]['desc'],
-            'key': data['goods_property'][i]['key']
-          }
-          this.goods_property_options.push(item)
-          this.goods_property_options_dic[data['goods_property'][i]['key']] = item
-          if (data['goods_property'][i]['val'] !== '') {
-            this.goods_property_list.push({
-              'key': data['goods_property'][i]['key'],
-              'val': data['goods_property'][i]['val'],
-              'desc': data['goods_property'][i]['desc']
-            })
-          }
-        }
-      }
-    },
-    getSetting () {
-      apis.hhgjAPIs.getMigrateSetting({}).then(data => {
-        this.originMigrateSetting = data
-        this.updateMigrateSettingData(data)
+      Object.keys(data).forEach(key => {
+        this[key] = boolPropertys.includes(key) ? Boolean(data[key]) : data[key]
       })
-      this.getBlackWords()
-      // this.request('getMigrateSetting', {}, data => {
-      //   this.updateMigrateSettingData(data)
-      // })
+    },
+    async getSetting () {
+      try {
+        const [setting, blackWords, imgBlackWords] = await Promise.all([
+          Api.hhgjAPIs.getMigrateSetting({}),
+          Api.hhgjAPIs.getBlackWordList({}),
+          Api.hhgjAPIs.getBlackWordList({use_type: 1})])
+        this.originMigrateSetting = setting
+        this.updateMigrateSettingData(setting)
+        // 违规词
+        this.blackWords = blackWords.customer
+        this.customerBlackWords = blackWords.customer
+        this.defaultBlackWords = blackWords.default
+        // 违规图片
+        this.imageBlackWords = imgBlackWords.customer
+        this.customerImageBlackWords = imgBlackWords.customer
+        this.defaultImageBlackWords = imgBlackWords.default
+      } catch (error) {
+        this.$message.error(`${error}`)
+      }
     },
     async saveSetting () {
       if (window._hmt) {
@@ -226,8 +226,10 @@ export default {
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
         goods_code_type: Number(this.goods_code_type),
-        goods_property: this.goods_property_options
+        goods_property: this.goods_property_options,
+        able_migrate_status_list: this.able_migrate_status_list
       }
+
       let productParams = {
         json: JSON.stringify(product)
       }
@@ -241,15 +243,15 @@ export default {
       this.createBlackWordsLoading = true
       try {
         const updateBlackWords = params.length
-          ? apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(params)})
+          ? Api.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(params)})
           : Promise.resolve([])
         const updateImageBlackWords = imageParams.length
-          ? apis.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(imageParams), use_type: 1})
+          ? Api.hhgjAPIs.createBlackWords({black_word_list: JSON.stringify(imageParams), use_type: 1})
           : Promise.resolve([])
 
         const isEqualSetting = isEqual(this.originMigrateSetting, product)
         const updateSetting = !isEqualSetting
-          ? apis.hhgjAPIs.updateMigrateSetting(productParams)
+          ? Api.hhgjAPIs.updateMigrateSetting(productParams)
           : Promise.resolve(this.originMigrateSetting)
         await Promise.all([updateBlackWords, updateImageBlackWords, updateSetting])
         this.$message.success('保存成功')
@@ -265,46 +267,6 @@ export default {
         this.$message.error(`${error}`)
       }
     },
-    onChangePropertySelect () {
-      if (this.goods_property_selected !== '') {
-        this.goods_property_value = this.goods_property_options_dic[this.goods_property_selected]['val']
-      }
-    },
-    onChangePropertyInput () {
-      for (let i in this.goods_property_options) {
-        if (this.goods_property_options[i]['key'] === this.goods_property_selected) {
-          this.goods_property_options[i]['val'] = this.goods_property_value
-        }
-      }
-    },
-    updateGoodsProperty () {
-      let idx = -1
-      let exist = false
-      for (let i in this.goods_property_list) {
-        if (this.goods_property_list[i]['key'] === this.goods_property_selected) {
-          exist = true
-          if (this.goods_property_value === '') {
-            idx = i
-          } else {
-            this.goods_property_list[i]['val'] = this.goods_property_value
-          }
-        }
-      }
-      if (idx !== -1) {
-        this.goods_property_list.splice(idx, 1)
-      }
-      if (exist === false) {
-        this.goods_property_list.push(this.goods_property_options_dic[this.goods_property_selected])
-      }
-    },
-    onCloseGoodsProperty (item, idx) {
-      for (let i in this.goods_property_options) {
-        if (this.goods_property_options[i]['key'] === item['key']) {
-          this.goods_property_options[i]['val'] = ''
-        }
-      }
-      this.goods_property_list.splice(idx, 1)
-    },
     formatBlackWords () {
       let value = this.back_words.split(/[\s\n]/)
       value = value.map(s => s.trim()).filter(s => s !== '')
@@ -315,33 +277,6 @@ export default {
       value = value.map(s => s.trim()).filter(s => s !== '')
       this.image_black_word_list = [...new Set(value)]
     },
-    getBlackWords (useType = -1) {
-      if (useType === 0) {
-        apis.hhgjAPIs.getBlackWordList({}).then(data => {
-          this.blackWords = data.customer
-          this.customerBlackWords = data.customer
-          this.defaultBlackWords = data.default
-        })
-      } else if (useType === 1) {
-        // 查询图片违禁词
-        apis.hhgjAPIs.getBlackWordList({use_type: 1}).then(data => {
-          this.imageBlackWords = data.customer
-          this.customerImageBlackWords = data.customer
-          this.defaultImageBlackWords = data.default
-        })
-      } else {
-        apis.hhgjAPIs.getBlackWordList({}).then(data => {
-          this.blackWords = data.customer
-          this.customerBlackWords = data.customer
-          this.defaultBlackWords = data.default
-        })
-        apis.hhgjAPIs.getBlackWordList({use_type: 1}).then(data => {
-          this.imageBlackWords = data.customer
-          this.customerImageBlackWords = data.customer
-          this.defaultImageBlackWords = data.default
-        })
-      }
-    },
     async createBlackWords () {
       this.blackWords = [...new Set(this.blackWords.concat(this.black_word_list))]
       this.back_words = ''
@@ -350,29 +285,45 @@ export default {
       this.imageBlackWords = [...new Set(this.imageBlackWords.concat(this.image_black_word_list))]
       this.image_back_words = ''
     },
-    async handleClose (word, useType = 0) {
-      if (useType === 0) {
-        this.tagLoading = true
-      } else {
-        this.imgTagLoading = true
-      }
+    async handleCloseWords (word) {
+      this.wordsTagLoading = true
       try {
-        await apis.hhgjAPIs.deleteBlackWords({
+        await Api.hhgjAPIs.deleteBlackWords({
           word: word,
-          use_type: useType
+          use_type: 0
         })
-        this.getBlackWords(useType)
+        Api.hhgjAPIs.getBlackWordList({}).then(data => {
+          this.blackWords = data.customer
+          this.customerBlackWords = data.customer
+          this.defaultBlackWords = data.default
+        })
       } catch (error) {
         if (error) {
           console.error(error)
         }
         this.$message.error(`${error}`)
       }
-      if (useType === 0) {
-        this.tagLoading = false
-      } else {
-        this.imgTagLoading = false
+      this.wordsTagLoading = false
+    },
+    async handleCloseImages (word) {
+      this.imgTagLoading = true
+      try {
+        await Api.hhgjAPIs.deleteBlackWords({
+          word: word,
+          use_type: 1
+        })
+        Api.hhgjAPIs.getBlackWordList({use_type: 1}).then(data => {
+          this.imageBlackWords = data.customer
+          this.customerImageBlackWords = data.customer
+          this.defaultImageBlackWords = data.default
+        })
+      } catch (error) {
+        if (error) {
+          console.error(error)
+        }
+        this.$message.error(`${error}`)
       }
+      this.imgTagLoading = false
     }
   }
 }
@@ -395,6 +346,31 @@ export default {
           box-sizing: border-box;
           padding-bottom: 20px;
         }
+      }
+    }
+
+    /deep/ .el-checkbox {
+        color: #606266;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
+        margin-right: 5px;
+    }
+    /deep/ .el-checkbox__label {
+        display: inline-block;
+        /* padding-left: 10px; */
+        line-height: 19px;
+        font-size: 12px;
+        padding-left: 2px;
+        color:#999999;
+
+    }
+
+    .migrateProductsFilter {
+      /deep/ .el-form-item__content{
+        display: flex;
+        font-size: 12px;
       }
     }
 

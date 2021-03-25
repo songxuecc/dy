@@ -353,6 +353,9 @@ const hhgjAPIs = {
   },
   userAccountFlowPage: (params) => {
     return api.actionCreateGet('/api/user/account/flow/page', params)
+  },
+  userVersionQuery: (params) => {
+    return api.actionCreateGet('/api/user/version/query', params)
   }
 
 }

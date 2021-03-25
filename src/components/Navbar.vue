@@ -15,9 +15,9 @@
                   <img style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" />
                 </li>
               </ul>
-              <!-- 付费充值 -->
+              <!-- 充值升级 -->
               <div v-if="shopName" class="syncProduct pointer" @click="paidRecharge" :disabled="isSyncing">
-                <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>付费充值</p>
+                <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>充值升级</p>
               </div>
               <!-- 同步商品 & 绑定店铺 -->
               <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">

@@ -12,7 +12,8 @@ export default {
       index: 1,
       size: 10,
       total: 100
-    }
+    },
+    userVersion: {}
   }),
   mutations: {
     save (state, payload) {
@@ -55,6 +56,19 @@ export default {
       } catch (err) {
         console.log(err)
         loading && loading.close()
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
+    },
+    async userVersionQuery ({commit}, payload) {
+      try {
+        const userVersion = await Api.hhgjAPIs.userVersionQuery()
+        userVersion.left_cnt = 10 - (userVersion.today_cnt || 0) < 0 ? 0 : 10 - (userVersion.today_cnt || 0)
+        commit('save', {userVersion})
+      } catch (err) {
+        console.log(err)
         this._vm.$message({
           message: `${err}`,
           type: 'error'
