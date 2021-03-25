@@ -964,8 +964,8 @@ export default {
     async toMigrate () {
       const userVersion = this.userVersion || (await this.userVersionQuery())
       const isFreeUpgrate = userVersion.is_free_upgrate
-      const limit = 10
-      if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit) {
+      const limit = 11
+      if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt >= limit) {
         this.visibleModalVersionUp = true
       } else {
         this.removeTempTemplate()
