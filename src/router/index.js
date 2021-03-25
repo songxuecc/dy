@@ -1,26 +1,31 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import AppInfo from '@/pages/AppInfo'
-import CaptureList from '@/pages/CaptureList'
-import Login from '@/pages/Login'
-import Fake from '@/pages/Fake'
-import SubscribeList from '@/pages/SubscribeList'
-import PayOrder from '@/pages/PayOrder'
-
+// 个人设置
 import CustomerService from '@customerSetting/customerService'
 import shopsBand from '@customerSetting/shopsBand'
 import PaidRecharge from '@customerSetting/paidRecharge'
+import SubscribeList from '@customerSetting/subscribeList'
+import PayOrder from '@customerSetting/PayOrder'
+import Login from '@customerSetting/Login'
+import Fake from '@customerSetting/Fake'
+import AppInfo from '@customerSetting/AppInfo'
+// 搬家
 import MigrateSettingTemplate from '@migrate/migrateSettingTemplate'
 import MigrateSetting from '@migrate/migrateSetting'
 import MigrateSettingPrice from '@migrate/migrateSettingPrice/MigrateSettingPrice.vue'
 import ProductList from '@migrate/readyToMigrate'
 import Migrate from '@migrate/startMigrate'
 import MigrateList from '@migrate/migrateList'
+import CaptureList from '@migrate/captureList'
+// 商品管理
 import SkuImport from '@productsManagement/skuImport'
 import BatchEdit from '@productsManagement/batchEdit/BatchEdit'
 import DyProductList from '@productsManagement/allProducts/DyProductList'
+// 更多更能
 import MeizheInfo from '@moreFeatures/meizheInfo'
 import WodaInfo from '@moreFeatures/wodaInfo'
+
+// 店铺装修 shopDecorate
 
 Vue.use(Router)
 
@@ -203,7 +208,7 @@ const router = new Router({
     // {
     //   path: '/wm',
     //   name: 'watermark',
-    //   component: resolve => require(['@/pages/WaterMark'], resolve),
+    //   component: resolve => require(['@productsManagement/WaterMark'], resolve),
     //   meta: {
     //     requiresAuth: true
     //     // keepAlive: true,
@@ -246,7 +251,7 @@ const router = new Router({
     {
       path: '/wm/create/:water_mark_type/:water_mark_id',
       name: 'WaterMaskCreate',
-      component: resolve => require(['@/pages/WaterMaskCreate'], resolve),
+      component: resolve => require(['@shopDecorate/WaterMaskCreate'], resolve),
       meta: {
         requiresAuth: true,
         keepAlive: true,
@@ -256,7 +261,7 @@ const router = new Router({
     {
       path: '/poster/dg',
       name: 'PosterDg',
-      component: resolve => require(['@/pages/PosterDg.vue'], resolve),
+      component: resolve => require(['@shopDecorate/posterDg'], resolve),
       meta: {
         requiresAuth: true
       },
@@ -264,7 +269,7 @@ const router = new Router({
         {
           path: 'list',
           name: 'PosterDgList',
-          component: resolve => require(['@/components/WaterMarkListView.vue'], resolve),
+          component: resolve => require(['@shopDecorate/waterMarkListView'], resolve),
           meta: {
             keepAlive: true
           }
@@ -272,7 +277,7 @@ const router = new Router({
         {
           path: 'activity/create',
           name: 'PosterDgActivityCreate',
-          component: resolve => require(['@/components/WaterMarkActivityCreateView.vue'], resolve),
+          component: resolve => require(['@shopDecorate/waterMarkActivityCreateView'], resolve),
           meta: {
             keepAlive: true
           }
@@ -280,7 +285,7 @@ const router = new Router({
         {
           path: 'activity',
           name: 'PosterDgActivityList',
-          component: resolve => require(['@/components/WaterMarkActivityListView.vue'], resolve),
+          component: resolve => require(['@shopDecorate/waterMarkActivityListView'], resolve),
           meta: {
             keepAlive: true
           }
@@ -288,7 +293,7 @@ const router = new Router({
         {
           path: 'activity/detail/:id',
           name: 'PosterDgActivity',
-          component: resolve => require(['@/components/WaterMarkActivityView.vue'], resolve),
+          component: resolve => require(['@shopDecorate/waterMarkActivityView'], resolve),
           meta: {
             keepAlive: true
           }
