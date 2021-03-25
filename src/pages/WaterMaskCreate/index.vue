@@ -869,7 +869,7 @@ export default {
     // }
     @font-face {
       font-family: "SourceHanSansSC-Normal";
-      src: url('~@/assets/fonts/SourceHanSansSC-Normal.otf');
+      src: url('~@/assets/fonts/SourceHanSansSC-Normal.ttf');
       font-weight: normal;
       font-style: normal;
     }
