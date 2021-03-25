@@ -965,8 +965,7 @@ export default {
       const userVersion = this.userVersion || (await this.userVersionQuery())
       const isFreeUpgrate = userVersion.is_free_upgrate
       const limit = 10
-      console.log(this.selectIdList.length, limit - userVersion.today_cnt)
-      if (!isFreeUpgrate && userVersion.today_cnt < limit && (this.selectIdList.length > limit - userVersion.today_cnt)) {
+      if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit) {
         this.visibleModalVersionUp = true
       } else {
         this.removeTempTemplate()

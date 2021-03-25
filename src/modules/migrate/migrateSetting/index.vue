@@ -21,7 +21,7 @@
                 <el-checkbox v-model="is_cut_black_word"></el-checkbox>
             </el-form-item>
 
-            <el-form-item label="搬家仅针对" required class="" style="height:25px">
+            <el-form-item label="搬家仅针对" required class="flex migrateProductsFilter" style="height:25px">
               <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
                 <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
                 <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
@@ -365,6 +365,13 @@ export default {
         padding-left: 2px;
         color:#999999;
 
+    }
+
+    .migrateProductsFilter {
+      /deep/ .el-form-item__content{
+        display: flex;
+        font-size: 12px;
+      }
     }
 
 </style>

@@ -31,7 +31,7 @@ const {
 export default {
   data () {
     return {
-      tabType: 'VersionUp',
+      tabType: 'PayRecord',
       vislble: false,
       available_pdd_capture_nums: 0,
       total_pdd_capture_nums: 0

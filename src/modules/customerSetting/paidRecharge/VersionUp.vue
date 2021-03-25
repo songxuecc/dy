@@ -9,7 +9,7 @@
                     width="320"
                     trigger="hover">
                     <div class="left " >
-                        <p class="font-12">1、试用版每日搬家数为20，高级版每日搬家数不受限制</p>
+                        <p class="font-12">1、试用版每日搬家数为10，高级版每日搬家数不受限制</p>
                         <p class="font-12">2、试用版升级高级版费用为{{userVersion.unit_price / 100 || 0.3}}元/日，升级后使用时长不变</p>
                     </div>
                     <a class="primary " slot="reference">版本区别</a>
