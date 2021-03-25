@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createLoadingPlugin from './plugins/createLoadingPlugin'
 import user from './modules/user'
 import category from './modules/category'
 import capture from './modules/capture'
@@ -29,5 +30,6 @@ const modules = {
 }
 
 export default new Vuex.Store({
-  modules
+  modules,
+  plugins: [createLoadingPlugin({Vue})]
 })

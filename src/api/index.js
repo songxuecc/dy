@@ -21,7 +21,7 @@ const post = (relativePath, data, headers, resolve, reject) => Vue.axios.post(re
     reject(new Error('服务接口出错'))
   }
 }).catch(err => {
-  console.error(err)
+  // console.error(err)
   reject(err)
 })
 
@@ -48,7 +48,7 @@ const get = (relativePath, headers, resolve, reject) => Vue.axios
     }
   })
   .catch(err => {
-    console.error(err)
+    // console.error(err)
     reject(err)
   })
 
@@ -191,7 +191,7 @@ const actionCreatorDownload = async (relativePath, params) => {
       window.URL.revokeObjectURL(url)
       resolve(fileName)
     }).catch(err => {
-      console.error(err)
+      // console.error(err)
       reject(err)
     })
   })

@@ -9,6 +9,7 @@ yarn-error.log*
 /test/e2e/reports/
 selenium-debug.log
 yarn.lock
+.history
 
 # Editor directories and files
 .idea
@@ -17,4 +18,3 @@ yarn.lock
 *.ntvs*
 *.njsproj
 *.sln
-.history
