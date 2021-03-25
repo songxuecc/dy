@@ -1,7 +1,7 @@
 <template lang="html">
     <div>
         <div v-if="updateInfo.length>0">
-            <el-alert :title=updateInfo type="success" :closable="false" center></el-alert>
+            <el-alert :title="updateInfo" type="success" :closable="false" center></el-alert>
         </div>
         <div class="text-left" style="padding: 10px 0">
             <el-row>
@@ -480,7 +480,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   .size {
     .size()
   }
