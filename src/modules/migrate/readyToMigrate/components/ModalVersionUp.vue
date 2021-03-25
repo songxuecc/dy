@@ -80,10 +80,10 @@ export default {
     up (btnText) {
       this.close()
       if (btnText === '去升级') {
-        const host = window.location.host
-        window.open(
-          `${host}/customerSetting/paidRecharge`
-        )
+        let routeData = this.$router.resolve({
+          name: 'PaidRecharge'
+        })
+        window.open(routeData.href, '_blank')
       } else {
         window.open(
           'https://fuwu.jinritemai.com/detail?from=fuwu_market_myService&service_id=42'
