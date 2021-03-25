@@ -52,10 +52,10 @@
           </span>
           <span class="prompt-content" style="margin-left: 40px;">插件支持平台：
             <div style="display: inline-block;">
-              <img class="icon" src="@/assets/platformImg/taobao-tiny.png" style="width: 14px; height: 14px;">
+              <img class="icon" src="@/assets/images/taobao.png" style="width: 14px; height: 14px;">
             </div>
             <div style="display: inline-block;">
-              <img class="icon" src="@/assets/platformImg/tmall-tiny.png" style="width: 14px; height: 14px;">
+              <img class="icon" src="@/assets/images/tm.png" style="width: 14px; height: 14px;">
             </div>
           </span>
         </div>
