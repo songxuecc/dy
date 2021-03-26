@@ -45,7 +45,7 @@ export default {
     }
   },
   created () {
-    this.userVersionQuery()
+    // this.userVersionQuery()
   },
   components: {ModalWxPay},
   computed: {
