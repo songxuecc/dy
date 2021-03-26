@@ -21,7 +21,7 @@
                 <el-checkbox v-model="is_cut_black_word"></el-checkbox>
             </el-form-item>
 
-            <el-form-item label="搬家仅针对" required class="flex migrateProductsFilter" style="height:25px">
+            <!-- <el-form-item label="搬家仅针对" required class="flex migrateProductsFilter" style="height:25px">
               <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
                 <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
                 <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
@@ -29,7 +29,7 @@
                 <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
                 <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
               </el-checkbox-group>；其余状态商品会自动过滤
-            </el-form-item>
+            </el-form-item> -->
 
         </el-form>
         <div style="display:flex" >
@@ -163,8 +163,8 @@ export default {
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
         goods_code_type: Number(this.goods_code_type),
-        goods_property: this.goods_property_options,
-        able_migrate_status_list: this.able_migrate_status_list
+        goods_property: this.goods_property_options
+        // able_migrate_status_list: this.able_migrate_status_list
       }
       const isEqualSetting = isEqual(this.originMigrateSetting, product)
       const blackWords = new Set(this.blackWords)
@@ -226,8 +226,8 @@ export default {
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
         goods_code_type: Number(this.goods_code_type),
-        goods_property: this.goods_property_options,
-        able_migrate_status_list: this.able_migrate_status_list
+        goods_property: this.goods_property_options
+        // able_migrate_status_list: this.able_migrate_status_list
       }
 
       let productParams = {
