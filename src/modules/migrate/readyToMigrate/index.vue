@@ -487,7 +487,7 @@ export default {
     this.updateQuery()
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
-    this.userVersionQuery()
+    // this.userVersionQuery()
   },
   deactivated () {
     this.$refs.productListView.dialogEditVisible = false
@@ -675,7 +675,7 @@ export default {
           this.$refs.productListView.selectAll()
           this.migrateProductList = migrateProduct
           this.getTPProductByIds()
-          this.userVersionQuery()
+          // this.userVersionQuery()
         },
         undefined,
         isSilent
