@@ -251,7 +251,7 @@ const router = new Router({
     {
       path: '/wm/create/:water_mark_type/:water_mark_id',
       name: 'WaterMaskCreate',
-      component: resolve => require(['@shopDecorate/WaterMaskCreate'], resolve),
+      component: resolve => require(['@shopDecorate/waterMaskCreate'], resolve),
       meta: {
         requiresAuth: true,
         keepAlive: true,
