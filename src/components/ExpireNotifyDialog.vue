@@ -125,7 +125,7 @@ export default {
 </script>
 <style lang="less">
 .expire-notify-dialog .expire-notify-box{
-  background-image: url('https://imgcache1.wemartimg.cn/965eb7e1-acaf-cad5-abd7-9c5acd7f');
+  background-image: url('~@/assets/images/components/expire_notify_dialog/bg.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   border-radius: 12px;
