@@ -1,6 +1,10 @@
 <!--  -->
 <template>
   <div>
+    <div class="left">
+      <span @click="toFixFloat(1)" class="mr-10">抹角</span>
+      <span @click="toFixFloat(10)">抹分</span>
+    </div>
     <el-table :data="tableData" style="width: 100%">
       <el-table-empty slot="empty" />
       <el-table-column label="图片" width="86" align="center">
@@ -34,6 +38,7 @@
           <div>
             <span> 原价 - </span>
             <el-input
+              :debounce="500"
               style="width: 55px"
               v-model="template.model.origin_price_diff"
               size="mini"
@@ -41,6 +46,7 @@
             />
             <span> x </span>
             <el-input
+              :debounce="500"
               style="width: 55px"
               v-model="template.model.group_price_rate"
               size="mini"
@@ -48,6 +54,7 @@
             />
             <span class="th-title-text"> % - </span>
             <el-input
+              :debounce="500"
               style="width: 55px"
               v-model="template.model.group_price_diff"
               size="mini"
@@ -57,8 +64,8 @@
         </template>
         <template slot-scope="scope">
           <div>
-            <span>2999～5197</span>
-            <hh-icon type="iconbianji" style="font-size: 10px" />
+            <span class="price">{{scope.row.group_price_range}}</span>
+            <hh-icon type="iconbianji" style="font-size: 12px" />
           </div>
           <p class="info">(售价--%-</p>
         </template>
@@ -73,8 +80,9 @@
         </template>
         <template slot-scope="scope">
           <el-input
+            :debounce="500"
               style="width: 55px"
-              v-model="totalPriceSet"
+              v-model="scope.row.discount_price"
               size="mini"
               class="price-sale-input"
             />
@@ -82,10 +90,11 @@
         </el-table-column>
       <el-table-column align="center">
         <template slot="header" slot-scope="scope">
-          <p class="font-14 mb-10">划线价= <span class="color-primary">查看示例</span></p>
+          <p class="font-14 mb-10">售卖价= <span class="color-primary">查看示例</span></p>
           <div>
             <span> 原划线价 x </span>
             <el-input
+              :debounce="500"
               style="width: 55px"
               v-model="template.model.price_rate"
               size="mini"
@@ -93,6 +102,7 @@
             />
             <span class="th-title-text"> % - </span>
             <el-input
+              :debounce="500"
               style="width: 55px"
               v-model="template.model.price_diff"
               size="mini"
@@ -102,8 +112,9 @@
         </template>
         <template slot-scope="scope">
           <el-input
+            :debounce="500"
               style="width: 55px"
-              v-model="group_price_diff"
+              v-model="scope.row.market_price"
               size="mini"
               class="price-sale-input"
             />
@@ -128,9 +139,8 @@ export default {
       group_price_diff: ''
     }
   },
-  created () {
+  async activated () {
     this.getTPProductByIds()
-    this.reloadTemplate()
   },
   computed: {
     ...mapState('migrate/migrateSettingPrice', ['tableData']),
@@ -139,21 +149,33 @@ export default {
       dicCustomPrices: 'getDicCustomPrices'
     })
   },
+  watch: {
+    template: {
+      handler: function (newval) {
+        console.log(newval)
+        this.formatTableData({
+          tableData: this.tableData,
+          template: newval
+        })
+      },
+      deep: true
+    }
+  },
   methods: {
-    ...mapActions('migrate/migrateSettingPrice', ['getTPProductByIds']),
+    ...mapActions('migrate/migrateSettingPrice', ['getTPProductByIds', 'formatTableData']),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
       'saveTempTemplate'
     ]),
-    async reloadTemplate () {
-      this.isInitTemplate = true
-      await this.requestTemplate()
-      this.isInitTemplate = false
-      console.log(this.template)
-      // 拿到模板数据后再请求商品数据
-    //   this.getTPProductList()
+    toFixFloat (unit) {
+      this.formatTableData({
+        tableData: this.tableData,
+        template: this.template,
+        unit
+      })
     }
   }
+
 }
 </script>
 <style lang="less" scoped>
@@ -164,6 +186,7 @@ export default {
     height: 24px;
     border-radius: 4px;
     border: 1px solid #1d8fff;
+    font-weight: bold;
   }
 }
 .price-sale-input {
@@ -177,6 +200,17 @@ export default {
     font-family: MicrosoftYaHei;
     color: #4E4E4E;
     line-height: 24px;
+    font-weight: bold;
   }
+}
+
+.price {
+  width: 103px;
+  height: 24px;
+  font-size: 18px;
+  font-family: MicrosoftYaHei;
+  color: #4E4E4E;
+  line-height: 24px;
+  font-weight: bold;
 }
 </style>

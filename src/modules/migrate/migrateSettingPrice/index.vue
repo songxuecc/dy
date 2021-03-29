@@ -2,6 +2,7 @@
 <template>
   <div class=''>
     <Title class="mt-10 mb-10"/>
+
     <TableSkuPriceList />
     <div class="common-bottom flex justify-c">
       <el-button style="margin-right: 15px; width:120px" @click="goback" plain type="primary">返回</el-button>
@@ -59,8 +60,14 @@ export default {
 
     },
     goback () {
-
+      this.$router.push({
+        name: 'ProductList',
+        params: {
+          keepStatus: true
+        }
+      })
     }
+
   }
 }
 </script>
