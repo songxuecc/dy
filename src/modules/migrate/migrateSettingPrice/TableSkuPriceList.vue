@@ -64,33 +64,48 @@
         </template>
         <template slot-scope="scope">
           <div>
-            <span class="price">{{scope.row.group_price_range}}</span>
-            <hh-icon type="iconbianji" style="font-size: 12px" />
+            <span class="price">{{ scope.row.group_price_range }}</span>
+            <hh-icon
+              type="iconbianji"
+              style="font-size: 12px"
+              class="pointer"
+              @click="showSkuPrice(scope.row)"
+            />
           </div>
           <p class="info">(售价--%-</p>
         </template>
       </el-table-column>
       <el-table-column align="center">
         <template slot="header" slot-scope="scope">
-            <p class="font-14 mb-10">售卖价</p>
-            <el-radio-group class="font-14" v-model="template.model.is_sale_price_show_max" size="mini" @change="getSalePrice">
-                <el-radio-button label="0">最低价</el-radio-button>
-                <el-radio-button label="1">最高价</el-radio-button>
-            </el-radio-group>
+          <p class="font-14 mb-10">售卖价</p>
+          <el-radio-group
+            class="font-14"
+            v-model="template.model.is_sale_price_show_max"
+            size="mini"
+            @change="getSalePrice"
+          >
+            <el-radio-button label="0">最低价</el-radio-button>
+            <el-radio-button label="1">最高价</el-radio-button>
+          </el-radio-group>
         </template>
         <template slot-scope="scope">
           <el-input
             :debounce="500"
-              style="width: 55px"
-              v-model="scope.row.discount_price"
-              size="mini"
-              class="price-sale-input"
-            />
+            style="width: 55px"
+            v-model="scope.row.discount_price"
+            size="mini"
+            class="price-sale-input"
+          />
         </template>
-        </el-table-column>
+      </el-table-column>
       <el-table-column align="center">
         <template slot="header" slot-scope="scope">
-          <p class="font-14 mb-10">售卖价= <span class="color-primary">查看示例</span></p>
+          <p class="font-14 mb-10">
+            售卖价=
+            <span class="color-primary pointer" @click="toggleIsShowSample"
+              >查看示例</span
+            >
+          </p>
           <div>
             <span> 原划线价 x </span>
             <el-input
@@ -113,30 +128,71 @@
         <template slot-scope="scope">
           <el-input
             :debounce="500"
-              style="width: 55px"
-              v-model="scope.row.market_price"
-              size="mini"
-              class="price-sale-input"
-            />
+            style="width: 55px"
+            v-model="scope.row.market_price"
+            size="mini"
+            class="price-sale-input"
+          />
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+      center
+      append-to-body
+      title="批量修改单商品sku价格"
+      :visible.sync="dialogSkuPriceVisible"
+      width="900px"
+      @opened="dialogSkuPriceOpened"
+      @close="dialogSkuPriceClose"
+      :close-on-click-modal="false"
+      :show-close="false"
+    >
+      <sku-price-list-view
+        ref="skuPriceListView"
+        :defaultValue="skuPriceListViewMapActive"
+        :template="template"
+        @closeSkuPriceListView="closeSkuPriceListView"
+        :tpProduct="selectTpProduct"
+      />
+    </el-dialog>
+
+    <el-dialog
+      title="价格示例"
+      :visible.sync="isShowSample"
+      width="30%"
+      :append-to-body="true"
+    >
+      <el-image
+        src="https://sf1-ttcdn-tos.pstatp.com/obj/ecom-luban-cdn/shopfxg3/images/Z9gCP.png"
+      ></el-image>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="isShowSample = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex'
+import SkuPriceListView from './SkuPriceListView'
+
 export default {
   name: 'TableSkuPriceList',
   props: {
     msg: String
   },
+  components: {
+    SkuPriceListView
+  },
   data () {
     return {
-      totalPriceSet: '1',
-      origin_price_diff: '',
-      group_price_rate: '',
-      group_price_diff: ''
+      isShowSample: false,
+      dialogSkuPriceVisible: false,
+      skuPriceListViewMap: new Map(),
+      skuPriceListViewMapActive: undefined
     }
   },
   async activated () {
@@ -162,7 +218,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('migrate/migrateSettingPrice', ['getTPProductByIds', 'formatTableData']),
+    ...mapActions('migrate/migrateSettingPrice', [
+      'getTPProductByIds',
+      'formatTableData'
+    ]),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
       'saveTempTemplate'
@@ -173,9 +232,18 @@ export default {
         template: this.template,
         unit
       })
+    },
+    toggleIsShowSample () {
+      this.isShowSample = true
+    },
+    closeSkuPriceListView () {
+      this.dialogSkuPriceVisible = false
+    },
+    showSkuPrice (product) {
+      this.selectTpProduct = product
+      this.dialogSkuPriceVisible = true
     }
   }
-
 }
 </script>
 <style lang="less" scoped>
@@ -190,15 +258,15 @@ export default {
   }
 }
 .price-sale-input {
-/deep/ .el-input__inner {
+  /deep/ .el-input__inner {
     padding: 5px;
     width: 100px;
     height: 38px;
     border-radius: 4px;
-    border: 1px solid #EBEBEB;
+    border: 1px solid #ebebeb;
     font-size: 18px;
     font-family: MicrosoftYaHei;
-    color: #4E4E4E;
+    color: #4e4e4e;
     line-height: 24px;
     font-weight: bold;
   }
@@ -209,7 +277,7 @@ export default {
   height: 24px;
   font-size: 18px;
   font-family: MicrosoftYaHei;
-  color: #4E4E4E;
+  color: #4e4e4e;
   line-height: 24px;
   font-weight: bold;
 }
