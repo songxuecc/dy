@@ -143,7 +143,7 @@ export default {
 <style lang="less">
 .goods-assess-dialog {
   .good-assess-box {
-    background-image: url('./images/bg.png');
+    background-image: url('../assets/images/components/assess_dialog/bg.png');
     background-repeat: no-repeat;
     background-size: 100% 100%;
     background-color: rgba(255, 255, 255, 0);
@@ -221,7 +221,7 @@ export default {
 }
 
 .customer-qrcode {
-  background-image: url('./images/customer_qrcode.png');
+  background-image: url('../assets/images/components/assess_dialog/customer_qrcode.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   width: 188px;
@@ -239,7 +239,7 @@ export default {
   height: 45px;
   top: 273px;
   left: 94px;
-  background-image: url('./images/long-orange-btn.png');
+  background-image: url('../assets/images/components/assess_dialog/long-orange-btn.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   cursor: pointer;
@@ -251,7 +251,7 @@ export default {
 }
 
 .is-short {
-  background-image: url('./images/orange-btn.png');
+  background-image: url('../assets/images/components/assess_dialog/orange-btn.png');
   width: 140px;
   left: 198px;
   font-size: 18px;
@@ -315,7 +315,7 @@ export default {
 }
 
 .is-btn {
-  background-image: url('./images/grey-btn.png');
+  background-image: url('../assets/images/components/assess_dialog/grey-btn.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   cursor: pointer;
@@ -338,7 +338,7 @@ export default {
   height: 153px;
   left: -139px;
   top: 163px;
-  background-image: url('./images/good-assess.png');
+  background-image: url('../assets/images/components/assess_dialog/good-assess.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
