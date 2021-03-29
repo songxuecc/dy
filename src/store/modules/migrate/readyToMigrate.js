@@ -27,7 +27,7 @@ export default {
             btn: '去升级'
           },
           free_seven_days: {
-            price: '15元/月',
+            price: '0.3元/天',
             tip: '订购高级版',
             left: '订购前',
             right: '订购后',
