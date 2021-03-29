@@ -487,7 +487,7 @@ export default {
     this.updateQuery()
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
-    // this.userVersionQuery()
+    this.userVersionQuery()
   },
   deactivated () {
     this.$refs.productListView.dialogEditVisible = false
@@ -675,7 +675,7 @@ export default {
           this.$refs.productListView.selectAll()
           this.migrateProductList = migrateProduct
           this.getTPProductByIds()
-          // this.userVersionQuery()
+          this.userVersionQuery()
         },
         undefined,
         isSilent
@@ -962,26 +962,19 @@ export default {
       this.visibleModalVersionUp = !this.visibleModalVersionUp
     },
     async toMigrate () {
-      // const userVersion = this.userVersion || (await this.userVersionQuery())
-      // const isFreeUpgrate = userVersion.is_free_upgrate
-      // const limit = 11
-      // if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt >= limit) {
-      //   this.visibleModalVersionUp = true
-      // } else {
-      //   this.removeTempTemplate()
-      //   this.closeNewComer()
-      //   this.setSelectTPProductIdList(this.selectIdList)
-      //   this.$router.push({
-      //     path: '/migrateSettingPrice'
-      //   })
-      // }
-
-      this.removeTempTemplate()
-      this.closeNewComer()
-      this.setSelectTPProductIdList(this.selectIdList)
-      this.$router.push({
-        path: '/migrateSettingPrice'
-      })
+      const userVersion = this.userVersion || (await this.userVersionQuery())
+      const isFreeUpgrate = userVersion.is_free_upgrate
+      const limit = 11
+      if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt >= limit) {
+        this.visibleModalVersionUp = true
+      } else {
+        this.removeTempTemplate()
+        this.closeNewComer()
+        this.setSelectTPProductIdList(this.selectIdList)
+        this.$router.push({
+          path: '/migrateSettingPrice'
+        })
+      }
     },
     getTPProductByIds () {
       clearTimeout(this.productStatusSyncTimer)
