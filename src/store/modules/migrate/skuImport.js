@@ -63,7 +63,6 @@ export default {
     },
     async getperprogress ({commit, state}) {
       const runingsIds = state.tableDataRecord.filter(item => item.status === 'running').map(item => item.id)
-      console.log(runingsIds)
       if (!runingsIds.length) return false
       const progressData = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
         id_list: JSON.stringify(runingsIds)

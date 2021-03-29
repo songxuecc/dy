@@ -12,7 +12,7 @@ import AppInfo from '@customerSetting/appInfo'
 // 搬家
 import MigrateSettingTemplate from '@migrate/migrateSettingTemplate'
 import MigrateSetting from '@migrate/migrateSetting'
-import MigrateSettingPrice from '@migrate/migrateSettingPrice/MigrateSettingPrice.vue'
+import MigrateSettingPrice from '@migrate/migrateSettingPrice'
 import ProductList from '@migrate/readyToMigrate'
 import Migrate from '@migrate/startMigrate'
 import MigrateList from '@migrate/migrateList'

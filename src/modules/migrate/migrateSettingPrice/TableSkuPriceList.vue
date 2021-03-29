@@ -1,0 +1,182 @@
+<!--  -->
+<template>
+  <div>
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-empty slot="empty" />
+      <el-table-column label="图片" width="86" align="center">
+        <template slot-scope="scope">
+          <img
+            style="height: 50px"
+            :src="scope.row.thumbnail"
+            class="border-2"
+          />
+        </template>
+      </el-table-column>
+
+      <el-table-column label="标题" align="center" width="210">
+        <div slot-scope="scope" class="left">
+          <el-link
+            :href="scope.row.url"
+            target="_blank"
+            :underline="false"
+            class="font-13"
+            >{{ scope.row.title }}</el-link
+          >
+          <div class="font-12" v-if="scope.row.tp_outer_iid">
+            商家编码: {{ scope.row.tp_outer_iid }}
+          </div>
+        </div>
+      </el-table-column>
+
+      <el-table-column align="center">
+        <template slot="header" slot-scope="scope">
+          <p class="font-14 mb-10">sku价格=</p>
+          <div>
+            <span> 原价 - </span>
+            <el-input
+              style="width: 55px"
+              v-model="template.model.origin_price_diff"
+              size="mini"
+              class="price-sku-input"
+            />
+            <span> x </span>
+            <el-input
+              style="width: 55px"
+              v-model="template.model.group_price_rate"
+              size="mini"
+              class="price-sku-input"
+            />
+            <span class="th-title-text"> % - </span>
+            <el-input
+              style="width: 55px"
+              v-model="template.model.group_price_diff"
+              size="mini"
+              class="price-sku-input"
+            />
+          </div>
+        </template>
+        <template slot-scope="scope">
+          <div>
+            <span>2999～5197</span>
+            <hh-icon type="iconbianji" style="font-size: 10px" />
+          </div>
+          <p class="info">(售价--%-</p>
+        </template>
+      </el-table-column>
+      <el-table-column align="center">
+        <template slot="header" slot-scope="scope">
+            <p class="font-14 mb-10">售卖价</p>
+            <el-radio-group class="font-14" v-model="template.model.is_sale_price_show_max" size="mini" @change="getSalePrice">
+                <el-radio-button label="0">最低价</el-radio-button>
+                <el-radio-button label="1">最高价</el-radio-button>
+            </el-radio-group>
+        </template>
+        <template slot-scope="scope">
+          <el-input
+              style="width: 55px"
+              v-model="totalPriceSet"
+              size="mini"
+              class="price-sale-input"
+            />
+        </template>
+        </el-table-column>
+      <el-table-column align="center">
+        <template slot="header" slot-scope="scope">
+          <p class="font-14 mb-10">划线价= <span class="color-primary">查看示例</span></p>
+          <div>
+            <span> 原划线价 x </span>
+            <el-input
+              style="width: 55px"
+              v-model="template.model.price_rate"
+              size="mini"
+              class="price-sku-input"
+            />
+            <span class="th-title-text"> % - </span>
+            <el-input
+              style="width: 55px"
+              v-model="template.model.price_diff"
+              size="mini"
+              class="price-sku-input"
+            />
+          </div>
+        </template>
+        <template slot-scope="scope">
+          <el-input
+              style="width: 55px"
+              v-model="group_price_diff"
+              size="mini"
+              class="price-sale-input"
+            />
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+
+<script>
+import { mapActions, mapState, mapGetters } from 'vuex'
+export default {
+  name: 'TableSkuPriceList',
+  props: {
+    msg: String
+  },
+  data () {
+    return {
+      totalPriceSet: '1',
+      origin_price_diff: '',
+      group_price_rate: '',
+      group_price_diff: ''
+    }
+  },
+  created () {
+    this.getTPProductByIds()
+    this.reloadTemplate()
+  },
+  computed: {
+    ...mapState('migrate/migrateSettingPrice', ['tableData']),
+    ...mapGetters('migrate/migrateSettingTemplate', {
+      template: 'getTemplate',
+      dicCustomPrices: 'getDicCustomPrices'
+    })
+  },
+  methods: {
+    ...mapActions('migrate/migrateSettingPrice', ['getTPProductByIds']),
+    ...mapActions('migrate/migrateSettingTemplate', [
+      'requestTemplate',
+      'saveTempTemplate'
+    ]),
+    async reloadTemplate () {
+      this.isInitTemplate = true
+      await this.requestTemplate()
+      this.isInitTemplate = false
+      console.log(this.template)
+      // 拿到模板数据后再请求商品数据
+    //   this.getTPProductList()
+    }
+  }
+}
+</script>
+<style lang="less" scoped>
+.price-sku-input {
+  /deep/ .el-input__inner {
+    padding: 2px;
+    width: 44px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid #1d8fff;
+  }
+}
+.price-sale-input {
+/deep/ .el-input__inner {
+    padding: 5px;
+    width: 100px;
+    height: 38px;
+    border-radius: 4px;
+    border: 1px solid #EBEBEB;
+    font-size: 18px;
+    font-family: MicrosoftYaHei;
+    color: #4E4E4E;
+    line-height: 24px;
+  }
+}
+</style>
