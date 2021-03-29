@@ -6,7 +6,7 @@
     <img src="@/assets/images/tishi.gif" style="width:12px">新功能上线：现支持导入修改sku编码、sku库存、sku价格
     <a class="color-primary pointer font-12" @click="downloadExcel">新版示例文件下载</a>
   </p>
-  <el-divider class="mb-20 mt-10"></el-divider>
+  <el-divider class="mb-10 mt-10"></el-divider>
   <UploadFile />
   <TableUploadFileRecord @onDetail="onDetail" />
   <el-drawer

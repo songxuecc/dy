@@ -1,6 +1,6 @@
 <!-- sku导入列表 -->
 <template>
-  <div class="TableUploadFileRecord mt-20">
+  <div class="TableUploadFileRecord mt-10">
     <el-table :data="tableDataRecord" @filter-change="filterHandler"  :row-style="{height:'53px'}" :header-cell-style="{padding: 0}" stripe style="width: 100%;" header-row-class-name="label"   row-key="id">
       <el-table-empty slot="empty"/>
       <el-table-column prop="create_time" label="修改时间" width="180">
