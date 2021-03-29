@@ -36,9 +36,9 @@
           </keep-alive>
           <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
         </div>
-        <el-footer class="footer">
+        <!-- <el-footer class="footer">
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
-        </el-footer>
+        </el-footer> -->
         <div v-if="isShowFloatView" class="float-view" v-hh-drag="">
           <div style="width:50px;height:31px;" class="huhutitle" >
             <div :class="['huhutitle-tip']" ref="tip">点我拖动哦 ~ </div>
@@ -384,7 +384,7 @@ export default {
   .main-wrapper {
     margin-left: 40px;
     margin-top: 20px;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 100px);
     overflow: hidden;
   }
   .aside {
@@ -497,7 +497,7 @@ export default {
     position: relative;
     margin: auto;
     width: 200px;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 100px);
   }
 
   /deep/ .ps__rail-y {

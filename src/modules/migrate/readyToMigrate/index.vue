@@ -1226,7 +1226,7 @@ export default {
 
 .start-migrate-btn-fadeIn {
   position: fixed;
-  bottom: 60px;
+  bottom: 20px;
   left: 0;
   right: 0;
   z-index: 2;
