@@ -1192,7 +1192,10 @@ export default {
     },
     versionTypeUp (btnText) {
       let routeData = this.$router.resolve({
-        name: 'PaidRecharge'
+        name: 'PaidRecharge',
+        params: {
+          active: 'VersionUp'
+        }
       })
       window.open(routeData.href, '_blank')
     }
