@@ -17,7 +17,8 @@
             </p>
             <p class="color-333 font-12 bold mb-10" >当前试用版还剩{{userVersion.left_days}}天，升级费用共计{{userVersion.left_days}}*{{userVersion.unit_price / 100 || 0.3}}={{userVersion.free_upgrate_amount / 100 || 0}}元</p>
             <p class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" >{{userVersion.free_upgrate_amount / 100 || 0}}</span><span class="price">元</span></p>
-            <el-button type="primary" class="mb-20" style="width:120px" @click="onVipUp" :loading="loading" :diabled="loading">立即升级</el-button>  <span @click="reload" class="primary pointer"><hh-icon type="iconjiazai" style="font-size:12px;" class="ml-5"/> <a >已升级，刷新一下</a></span>
+            <el-button type="primary" class="mb-10" style="width:120px" @click="onVipUp" :loading="loading" :diabled="loading">立即升级</el-button>  <span @click="reload" class="primary pointer"><hh-icon type="iconjiazai" style="font-size:12px;" class="ml-5"/> <a >已升级，刷新一下</a></span>
+            <div class="info">注：版本升级不会增加拼多多抓取额度</div>
         </div>
         <div class="isVip flex column align-c jutify-c" v-if="userVersion && userVersion.is_free_upgrate">
             <img src="@/assets/images/vip-tip.png" alt="" class="mb-20 ">
@@ -45,7 +46,7 @@ export default {
     }
   },
   created () {
-    this.userVersionQuery()
+    // this.userVersionQuery()
   },
   components: {ModalWxPay},
   computed: {

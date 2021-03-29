@@ -5,10 +5,10 @@ import CustomerService from '@customerSetting/customerService'
 import shopsBand from '@customerSetting/shopsBand'
 import PaidRecharge from '@customerSetting/paidRecharge'
 import SubscribeList from '@customerSetting/subscribeList'
-import PayOrder from '@customerSetting/PayOrder'
-import Login from '@customerSetting/Login'
-import Fake from '@customerSetting/Fake'
-import AppInfo from '@customerSetting/AppInfo'
+import PayOrder from '@customerSetting/payOrder'
+import Login from '@customerSetting/login'
+import Fake from '@customerSetting/fake'
+import AppInfo from '@customerSetting/appInfo'
 // 搬家
 import MigrateSettingTemplate from '@migrate/migrateSettingTemplate'
 import MigrateSetting from '@migrate/migrateSetting'
@@ -70,7 +70,7 @@ const router = new Router({
       }
     },
     {
-      path: '/customerSetting/paidRecharge',
+      path: '/customerSetting/paidRecharge/:active',
       name: 'PaidRecharge',
       component: PaidRecharge,
       meta: {
@@ -251,7 +251,7 @@ const router = new Router({
     {
       path: '/wm/create/:water_mark_type/:water_mark_id',
       name: 'WaterMaskCreate',
-      component: resolve => require(['@shopDecorate/WaterMaskCreate'], resolve),
+      component: resolve => require(['@shopDecorate/waterMaskCreate'], resolve),
       meta: {
         requiresAuth: true,
         keepAlive: true,
