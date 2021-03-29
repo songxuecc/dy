@@ -70,7 +70,7 @@ const router = new Router({
       }
     },
     {
-      path: '/customerSetting/paidRecharge',
+      path: '/customerSetting/paidRecharge/:active',
       name: 'PaidRecharge',
       component: PaidRecharge,
       meta: {

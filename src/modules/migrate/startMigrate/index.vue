@@ -520,7 +520,10 @@ export default {
     },
     goCharge () {
       this.$router.push({
-        name: 'PaidRecharge'
+        name: 'PaidRecharge',
+        params: {
+          active: 'PayRecord'
+        }
       })
     }
 

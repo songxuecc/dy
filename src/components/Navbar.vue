@@ -9,16 +9,27 @@
             <div class="nav-right">
               <img v-if="shopName" src="@/assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable" />
               <!-- 用户使用天数 -->
-              <ul v-if="shopName" class="menu-content">
-                <li @click="goToOrder()">
-                  <span style="vertical-align: middle;">{{subscName}} 剩 {{leftDays}} 天</span>
-                  <img style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" />
-                </li>
-              </ul>
+              <div v-if="shopName">
+                 <el-tooltip>
+                  <div slot="content">
+                    <p v-for="order in subsc.order_list" :key="order.order_id">
+                      {{order.start_time}}~{{order.end_time}} 您的版本为 {{order.sku_spec || '-'}} <a v-if="!order.is_free_upgrate" class="primary pointer" @click="paidRecharge">升级为高级版</a>
+                    </p>
+                  </div>
+                  <div @click="goToOrder()" class="flex align-c" >
+                    <div class="flex column color-fff mr-5 ">
+                      <p v-for="order in subsc.order_list" :key="order.order_id" class="font-12">
+                        {{order.sku_spec || '-'}} 剩 {{order.left_days || '-'}} 天
+                      </p>
+                    </div>
+                    <img style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" />
+                  </div>
+                </el-tooltip>
+              </div>
               <!-- 充值升级 -->
               <div v-if="shopName" class="syncProduct pointer" @click="paidRecharge" :disabled="isSyncing">
-                <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>充值升级</p>
-              </div>
+                  <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>充值升级</p>
+                </div>
               <!-- 同步商品 & 绑定店铺 -->
               <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
                 <template slot="content">
@@ -54,10 +65,9 @@ import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import commonUtils from '@/common/commonUtils'
 import utils from '@/common/utils'
 import common from '@/common/common.js'
-
-const {
-  mapActions: mapActionsNavbar
-} = createNamespacedHelpers('customerSetting/shopsBand')
+const { mapActions: mapActionsNavbar } = createNamespacedHelpers(
+  'customerSetting/shopsBand'
+)
 
 export default {
   data () {
@@ -101,7 +111,10 @@ export default {
       return this.subsc.item_name.split(' ')[0]
     },
     isShowLastSyncTime () {
-      if (!this.syncStatus.last_sync_time || this.syncStatus.last_sync_time < '2019-01-01') {
+      if (
+        !this.syncStatus.last_sync_time ||
+        this.syncStatus.last_sync_time < '2019-01-01'
+      ) {
         return false
       }
       return true
@@ -119,7 +132,7 @@ export default {
       }
     },
     syncStatus (val, oldVal) {
-      this.isSyncing = (val.status !== 'complete' && val.status !== 'error')
+      this.isSyncing = val.status !== 'complete' && val.status !== 'error'
       this.refreshSyncButtonText()
     }
   },
@@ -131,7 +144,8 @@ export default {
       'requestSyncProducts'
     ]),
     ...mapActionsNavbar([]),
-    async asyncUserAndNotice () { // 同步获取userInfo及notification
+    async asyncUserAndNotice () {
+      // 同步获取userInfo及notification
       try {
         await this.requestUserInfo()
         this.requestNotification()
@@ -170,39 +184,57 @@ export default {
     },
     handleSelect (key, keyPath) {
       const selectMap = new Map([
-        ['1', {
-          handle: () => commonUtils.addToFavorite(),
-          comment: '添加到收藏'
-        }],
-        ['2-1', {
-          handle: () => this.onLogout(),
-          comment: '退出'
-        }],
-        ['3', {
-          handle: () => this.$router.push({path: '/meizhe'}),
-          comment: '短信水印'
-        }],
-        ['4', {
-          handle: () => this.$router.push({path: '/woda'}),
-          comment: '打单发货'
-        }],
-        ['1-0', {
-          handle: () => this.$router.push({path: '/woda'}),
-          comment: '返回主账号'
-        }],
-        ['1-2', {
-          handle: () => {
-            if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
-            this.$router.push({ path: '/customerSetting/shopsBand' })
-          },
-          comment: '绑定店铺'
-        }]
+        [
+          '1',
+          {
+            handle: () => commonUtils.addToFavorite(),
+            comment: '添加到收藏'
+          }
+        ],
+        [
+          '2-1',
+          {
+            handle: () => this.onLogout(),
+            comment: '退出'
+          }
+        ],
+        [
+          '3',
+          {
+            handle: () => this.$router.push({ path: '/meizhe' }),
+            comment: '短信水印'
+          }
+        ],
+        [
+          '4',
+          {
+            handle: () => this.$router.push({ path: '/woda' }),
+            comment: '打单发货'
+          }
+        ],
+        [
+          '1-0',
+          {
+            handle: () => this.$router.push({ path: '/woda' }),
+            comment: '返回主账号'
+          }
+        ],
+        [
+          '1-2',
+          {
+            handle: () => {
+              if (window._hmt) { window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定']) }
+              this.$router.push({ path: '/customerSetting/shopsBand' })
+            },
+            comment: '绑定店铺'
+          }
+        ]
       ])
       const value = selectMap.get(key)
       if (value && value.handle) value.handle()
     },
     manageShops () {
-      if (window._hmt) window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定'])
+      if (window._hmt) { window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定']) }
       this.$router.push({ path: '/customerSetting/shopsBand' })
     },
     goInfo () {
@@ -211,13 +243,15 @@ export default {
       })
     },
     goToServiceMarket () {
-      window.location.href = 'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
+      window.location.href =
+        'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
     },
     goToOrder () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '导航栏', '点击', '续费点击'])
       }
-      window.location.href = 'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
+      window.location.href =
+        'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
     },
     onEfficientAndStable () {
       if (window._hmt) {
@@ -228,216 +262,218 @@ export default {
     // 付费充值
     paidRecharge () {
       this.$router.push({
-        name: 'PaidRecharge'
+        name: 'PaidRecharge',
+        params: {
+          active: 'VersionUp'
+        }
       })
     }
   }
 }
 </script>
 <style lang="less" scoped>
-    .navbar {
+.navbar {
+  background: @navbar-bg;
+  /deep/ .el-menu .el-menu--popup {
+    color: blue !important;
+    min-width: 130px;
+  }
+  /deep/ .el-menu {
+    .el-menu-item {
+      &:hover {
+        background-color: @color-light-blue;
+      }
+    }
+    .el-submenu__title {
+      color: #ffffff;
+      border-bottom: 2px solid #ffffff;
       background: @navbar-bg;
-      /deep/ .el-menu .el-menu--popup {
-        color: blue !important;
-        min-width: 130px;
+      padding: 0 8px;
+      i {
+        color: #ffffff;
       }
-      /deep/ .el-menu {
-        .el-menu-item {
-          &:hover {
-            background-color: @color-light-blue;
-          }
-        }
-        .el-submenu__title {
-          color: #ffffff;
-          border-bottom: 2px solid #ffffff;
-          background: @navbar-bg;
-          padding: 0 8px;
-          i {
-            color: #ffffff;
-          }
-          &:hover {
-            background: #409eff;
-            color: #ffffff;
-            i {
-              color: @color-light-blue;
-            }
-          }
-        }
-        .el-icon-arrow-down:before {
-          color: #ffffff !important;
+      &:hover {
+        background: #409eff;
+        color: #ffffff;
+        i {
+          color: @color-light-blue;
         }
       }
-      /deep/ .el-menu.el-menu--horizontal {
-        border-bottom: none;
-      }
-      /deep/ .el-button--primary {
-        font-size: 16px;
-      }
-      /deep/ .el-menu--popup {
-        color: blue !important;
-        min-width: 130px !important;
-      }
-      .navbar-content {
-        color: @color-white;
-        height: 60px;
-        .nav-title {
-          float: left;
-          padding: 12px 0 12px 20px;
-          position:relative;
-          cursor: pointer;
-          img {
-            height: 36px;
-          }
-        }
-        .nav-right {
-          position:absolute;
-          right: 30px;
-          height: 60px;
-          display: flex;
-          align-items: flex-start;
-          align-items: center;
-          color: #333333;
-          background: @navbar-bg;
-          .efficientAndStable {
-            cursor: pointer;
-            height: 36px;
-            margin-right: 10px;
-          }
-          .el-button {
-            vertical-align: middle;
-            width: 100px;
-            padding: 10px;
-          }
-          .wx-box {
-            padding: 10px;
-            background: #50aeff;
-            position: absolute;
-            left: 0;
-            top: 58px;
-            z-index: 9999;
-            .wx-title {
-              font-size: 12px;
-              font-weight: bold;
-              margin: 0 auto;
-              line-height: 34px;
-            }
-            .wx-info {
-              p {
-                padding-left: 10px;
-                font-size: 12px;
-                text-align: left;
-                margin: 0;
-                line-height: 20px;
-              }
-            }
-          }
-          .order-board-box {
-            position: absolute;
-            z-index: 999;
-            right: -21px;
-            top: 60px;
-          }
-        }
-
-        .main-inner {
-          background: @navbar-bg;
-          height: 100%;
-        }
-        .nav-right .dialog-footer .el-button {
-          vertical-align: middle;
-          width: auto;
-          padding: 10px;
-        }
-      }
-
     }
-
-    .menu-content {
-      margin: 0;
-      padding: 0;
-      display: inline-block;
-      overflow: hidden;
-      height: 100%;
-      line-height: 60px;
-      li {
-        border: 0;
-        padding: 0 8px;
-        display: block;
-        float: left;
+    .el-icon-arrow-down:before {
+      color: #ffffff !important;
+    }
+  }
+  /deep/ .el-menu.el-menu--horizontal {
+    border-bottom: none;
+  }
+  /deep/ .el-button--primary {
+    font-size: 16px;
+  }
+  /deep/ .el-menu--popup {
+    color: blue !important;
+    min-width: 130px !important;
+  }
+  .navbar-content {
+    color: @color-white;
+    height: 60px;
+    .nav-title {
+      float: left;
+      padding: 12px 0 12px 20px;
+      position: relative;
+      cursor: pointer;
+      img {
+        height: 36px;
+      }
+    }
+    .nav-right {
+      position: absolute;
+      right: 30px;
+      height: 60px;
+      display: flex;
+      align-items: flex-start;
+      align-items: center;
+      color: #333333;
+      background: @navbar-bg;
+      .efficientAndStable {
         cursor: pointer;
-        color: #ffffff;
-        background: @navbar-bg;
+        height: 36px;
+        margin-right: 10px;
       }
-      li:hover {
-        color: @color-light-blue;
+      .el-button {
+        vertical-align: middle;
+        width: 100px;
+        padding: 10px;
       }
-    }
-    .more-shop-order-dialog {
-      line-height: normal;
-    }
-    .more-shop-order {
-      text-indent: 26px;
-      p {
-        font-size: 16px;
-        line-height: 30px;
-        padding: 20px 0;
+      .wx-box {
+        padding: 10px;
+        background: #50aeff;
+        position: absolute;
+        left: 0;
+        top: 58px;
+        z-index: 9999;
+        .wx-title {
+          font-size: 12px;
+          font-weight: bold;
+          margin: 0 auto;
+          line-height: 34px;
+        }
+        .wx-info {
+          p {
+            padding-left: 10px;
+            font-size: 12px;
+            text-align: left;
+            margin: 0;
+            line-height: 20px;
+          }
+        }
       }
-      em {
-        color: red;
-        font-weight: bold;
-      }
-      span {
-        font-size: 12px;
-        line-height: 24px;
-        color: #666666;
+      .order-board-box {
+        position: absolute;
+        z-index: 999;
+        right: -21px;
+        top: 60px;
       }
     }
 
-    /* 未登陆头部导航样式 */
-    .nav-not-login {
-      padding: 11px 40px 11px 0;
-    }
-
-    .nav-menu-popup {
-      color: blue !important;
-      min-width: 130px;
-    }
-
-    .syncProductToolTip {
-      cursor: pointer;
-    }
-
-    .manageShops {
-      color: white;
-      transition: all 0.3s;
-      padding: 0 8px;
-      align-items: center;
-      display: flex;
-      cursor: pointer;
+    .main-inner {
+      background: @navbar-bg;
       height: 100%;
-      span {
-        font-size:12px;
-        padding-top: 2px;
-      }
-      &:hover {
-        background: #409eff;
-        color: #ffffff;
-      }
     }
-    .syncProduct {
-      color: white;
-      transition: all 0.3s;
-      padding: 0 8px;
-      align-items: center;
-      display: flex;
-      height: 100%;
-      span {
-        font-size:12px;
-        padding-top: 2px;
-      }
-      &:hover {
-        background: #409eff;
-        color: #ffffff;
-      }
+    .nav-right .dialog-footer .el-button {
+      vertical-align: middle;
+      width: auto;
+      padding: 10px;
     }
+  }
+}
+
+.menu-content {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+  line-height: 60px;
+  li {
+    border: 0;
+    padding: 0 8px;
+    display: block;
+    float: left;
+    cursor: pointer;
+    color: #ffffff;
+    background: @navbar-bg;
+  }
+  li:hover {
+    color: @color-light-blue;
+  }
+}
+.more-shop-order-dialog {
+  line-height: normal;
+}
+.more-shop-order {
+  text-indent: 26px;
+  p {
+    font-size: 16px;
+    line-height: 30px;
+    padding: 20px 0;
+  }
+  em {
+    color: red;
+    font-weight: bold;
+  }
+  span {
+    font-size: 12px;
+    line-height: 24px;
+    color: #666666;
+  }
+}
+
+/* 未登陆头部导航样式 */
+.nav-not-login {
+  padding: 11px 40px 11px 0;
+}
+
+.nav-menu-popup {
+  color: blue !important;
+  min-width: 130px;
+}
+
+.syncProductToolTip {
+  cursor: pointer;
+}
+
+.manageShops {
+  color: white;
+  transition: all 0.3s;
+  padding: 0 8px;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+  height: 100%;
+  span {
+    font-size: 12px;
+    padding-top: 2px;
+  }
+  &:hover {
+    background: #409eff;
+    color: #ffffff;
+  }
+}
+.syncProduct {
+  color: white;
+  transition: all 0.3s;
+  padding: 0 8px;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  span {
+    font-size: 12px;
+    padding-top: 2px;
+  }
+  &:hover {
+    background: #409eff;
+    color: #ffffff;
+  }
+}
 </style>

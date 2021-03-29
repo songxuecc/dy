@@ -30,7 +30,8 @@ const state = {
     deadline: '',
     goods_assess_notify: {},
     expire_notify: {},
-    is_newcomer: false
+    is_newcomer: false,
+    order_list: []
   },
   getFirstCategoryList: [],
   changeShop: localStorage.getItem('change_shop') || '',
@@ -303,7 +304,12 @@ const mutations = {
         deadline: data.deadline,
         goods_assess_notify: data.goods_assess_notify,
         expire_notify: data.expire_notify,
-        is_newcomer: data.is_newcomer
+        is_newcomer: data.is_newcomer,
+        order_list: data.order_list.map(item => {
+          item.start_time = moment(item.start_time).format('YYYY-MM-DD')
+          item.end_time = moment(item.end_time).format('YYYY-MM-DD')
+          return item
+        })
       }
       state.orderTimes = data.order_times
       if (data.deadline) state.leftDays = utils.diffDate(data.deadline) + 1 // 剩余天数
