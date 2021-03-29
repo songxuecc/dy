@@ -12,7 +12,7 @@
               <div v-if="shopName">
                  <el-tooltip>
                   <div slot="content">
-                    <p v-for="order in subsc.order_list" :key="order.order_id" v-if="subsc.order_list.length" class="left">
+                    <p v-for="order in subsc.order_list" :key="order.order_id" v-if="subsc.order_list.length" class="left font-12">
                       {{order.start_time}}~{{order.end_time}} 您的版本为 {{order.sku_spec || '-'}} <a v-if="!order.is_free_upgrate " class="primary pointer" @click="paidRecharge">升级为高级版</a>
                     </p>
                   </div>
