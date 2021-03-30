@@ -462,7 +462,10 @@ export default {
       return {
         subtraction1: this.promoPriceHandler.arithmetic.subtraction1,
         subtraction2: this.promoPriceHandler.arithmetic.subtraction2,
-        subtraction3: this.promoPriceHandler.arithmetic.subtraction3
+        subtraction3: this.promoPriceHandler.arithmetic.subtraction3,
+        textPrice: this.promoPriceHandler.textPrice,
+        radio: this.promoPriceHandler.radio,
+        skuRealShowList: this.skuRealShowList
       }
     },
     addCustomPrices (key, field, value) {

@@ -72,7 +72,7 @@
               @click="showSkuPrice(scope.row)"
             />
           </div>
-          <p class="info">(售价--%-</p>
+          <p class="info" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</p>
         </template>
       </el-table-column>
       <el-table-column align="center">
@@ -92,7 +92,8 @@
           <el-input
             :debounce="500"
             style="width: 55px"
-            v-model="scope.row.discount_price"
+            :value="scope.row.discount_price"
+            @input="handleDiscountPrice($event,scope.row.tp_product_id)"
             size="mini"
             class="price-sale-input"
           />
@@ -101,7 +102,7 @@
       <el-table-column align="center">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">
-            售卖价=
+            划线价=
             <span class="color-primary pointer" @click="toggleIsShowSample"
               >查看示例</span
             >
@@ -129,7 +130,8 @@
           <el-input
             :debounce="500"
             style="width: 55px"
-            v-model="scope.row.market_price"
+            :value="scope.row.market_price"
+            @input="handleMarketPrice($event,scope.row.tp_product_id)"
             size="mini"
             class="price-sale-input"
           />
@@ -148,13 +150,16 @@
       :close-on-click-modal="false"
       :show-close="false"
     >
-      <sku-price-list-view
+    <ModalSingleSkuList
+    ref="ModalSingleSkuList"
+    :data="selectTpProduct"/>
+      <!-- <sku-price-list-view
         ref="skuPriceListView"
         :defaultValue="skuPriceListViewMapActive"
         :template="template"
         @closeSkuPriceListView="closeSkuPriceListView"
         :tpProduct="selectTpProduct"
-      />
+      /> -->
     </el-dialog>
 
     <el-dialog
@@ -177,7 +182,7 @@
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex'
-import SkuPriceListView from './SkuPriceListView'
+import ModalSingleSkuList from './ModalSingleSkuList'
 
 export default {
   name: 'TableSkuPriceList',
@@ -185,7 +190,7 @@ export default {
     msg: String
   },
   components: {
-    SkuPriceListView
+    ModalSingleSkuList
   },
   data () {
     return {
@@ -199,10 +204,10 @@ export default {
     this.getTPProductByIds()
   },
   computed: {
-    ...mapState('migrate/migrateSettingPrice', ['tableData']),
+    ...mapState('migrate/migrateSettingPrice', ['tableData', 'unit']),
     ...mapGetters('migrate/migrateSettingTemplate', {
       template: 'getTemplate',
-      dicCustomPrices: 'getDicCustomPrices'
+      dicCustomPrices: 'getDicCustomPrices' // 本地价格设置
     })
   },
   watch: {
@@ -211,7 +216,8 @@ export default {
         console.log(newval)
         this.formatTableData({
           tableData: this.tableData,
-          template: newval
+          template: newval,
+          unit: this.unit
         })
       },
       deep: true
@@ -220,7 +226,8 @@ export default {
   methods: {
     ...mapActions('migrate/migrateSettingPrice', [
       'getTPProductByIds',
-      'formatTableData'
+      'formatTableData',
+      'marketPriceChange'
     ]),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
@@ -233,6 +240,32 @@ export default {
         unit
       })
     },
+    handleMarketPrice (price, id) {
+      console.log(price, id)
+      this.marketPriceChange({
+        price, id
+      })
+      // this.formatTableData({
+      //   tableData: this.tableData,
+      //   template: this.template,
+      //   unit: this.unit,
+      //   singleMarketPrice: {
+      //     id,
+      //     price
+      //   }
+      // })
+    },
+    handleDiscountPrice (price, id) {
+      this.formatTableData({
+        tableData: this.tableData,
+        template: this.template,
+        unit: this.unit,
+        singleDiscountPrice: {
+          id,
+          price
+        }
+      })
+    },
     toggleIsShowSample () {
       this.isShowSample = true
     },
@@ -240,8 +273,27 @@ export default {
       this.dialogSkuPriceVisible = false
     },
     showSkuPrice (product) {
+      console.log(product, 'product')
       this.selectTpProduct = product
       this.dialogSkuPriceVisible = true
+    },
+    /**
+     * sku价格列表框打开时触发
+     */
+    dialogSkuPriceOpened () {
+    },
+    dialogSkuPriceClose () {
+      // const arithmetic = this.$refs.skuPriceListView.onSave()
+      // console.log(arithmetic)
+      // this.formatTableData({
+      //   tableData: this.tableData,
+      //   template: this.template,
+      //   unit: this.unit,
+      //   singleSkuPrice: {
+      //     id: this.selectTpProduct.tp_product_id,
+      //     arithmetic
+      //   }
+      // })
     }
   }
 }
