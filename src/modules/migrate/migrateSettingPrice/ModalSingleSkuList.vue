@@ -2,44 +2,44 @@
 <template>
     <div class="ModalSingleSkuList">
       <div class="priceChange">
-        <el-radio v-model="radio" label="1">
+        <el-radio v-model="radio" label="1" @change="handleChange">
           <span>(原sku价-</span>
           <el-input
             size="mini"
             style="width:100px;"
-            v-model="subtraction1 "
-            @input="handleChange($event,'subtraction1')"
+            v-model.number="subtraction1 "
+            @input="handleChange"
             @focus="radio='1'"/>
           <span>) x</span>
           <el-input
             size="mini"
             style="width:100px;"
-            v-model="subtraction2"
-            @input="handleChange($event,'subtraction2')"
+            v-model.number="subtraction2"
+            @input="handleChange"
             @focus="radio='1'"/>
           <span>% -</span>
           <el-input
             size="mini"
             style="width:100px;"
-            v-model="subtraction3"
-            @input="handleChange($event,'subtraction3')"
+            v-model.number="subtraction3"
+            @input="handleChange"
             @focus="radio='1'"/>
         </el-radio>
-        <el-radio v-model="radio" label="2">
+        <el-radio v-model="radio" label="2" @change="handleChange">
           <span>统一价格为</span>
           <el-input
             size="mini"
-            style="width:100px;"
-            v-model="textPrice"
-            @input="handleChange($event,'textPrice')"
+            style="width:150px;"
+            v-model.number="textPrice"
+            @input="handleChange"
             @focus="radio='2'" />
         </el-radio>
       </div>
 
-      <div class="left">
+      <!-- <div class="left">
         <span class="mr-10">抹角</span>
         <span >抹分</span>
-      </div>
+      </div> -->
 
       <!-- sku价格表 -->
         <el-table
@@ -61,7 +61,7 @@
                     {{ scope.row[item.name]}}
                 </template>
             </el-table-column>
-            <el-table-column key="3" width="150" align="center">
+            <el-table-column key="3" width="150" align="center" type="index">
                 <template slot="header" slot-scope="scope">
                     <span>sku价格</span>
                 </template>
@@ -69,7 +69,9 @@
                     <div style="display: flex">
                         <div >
                             <el-input
-                              v-model="scope.row.sku_price"
+                              :debounce="500"
+                              :value="scope.row.sku_price"
+                              @input="handleSkuChange($event,scope.$index,scope.row)"
                               size="mini"
                             >
                             </el-input>
@@ -99,13 +101,13 @@
           <el-button style="width: 120px" @click="handleCancelBatchEdit" plain type="primary">取消</el-button>
           <el-button style="width: 120px" type="primary" @click="handleSureBatchEdut">确定</el-button>
         </div>
-
     </div>
 </template>
 
 <script>
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
+import isEqual from 'lodash/isEqual'
 
 export default {
   name: 'ModalSingleSkuList',
@@ -115,21 +117,13 @@ export default {
   },
   data () {
     return {
-      radio: '1',
-      subtraction1: this.skuPriceStting.origin_price_diff,
-      subtraction2: this.skuPriceStting.group_price_rate,
-      subtraction3: this.skuPriceStting.group_price_diff,
-      textPrice: '',
+      radio: this.skuPriceStting.radio,
+      subtraction1: this.skuPriceStting.subtraction1,
+      subtraction2: this.skuPriceStting.subtraction2,
+      subtraction3: this.skuPriceStting.subtraction3,
+      textPrice: this.skuPriceStting.textPrice || '',
       unit: 100
     }
-  },
-  watch: {
-    // subtraction1 (n) {
-    //   console.log(n, 'n')
-    // },
-    // skuData (n) {
-    //   console.log(n, 'skuData')
-    // }
   },
   computed: {
     skuPropertyList () {
@@ -157,26 +151,32 @@ export default {
     },
     tableData: {
       get: function () {
-        console.log(this.skuData, 'this.skuData')
+        console.log(this.skuData, 'get')
         const skuMap = this.skuData.sku_map
         const skuPropertyMap = this.skuData.sku_property_map
         const skuPropertyValueMap = this.skuData.sku_property_value_map
-        const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
+
         const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
-        // const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
-      //  nameid valueid name value
+        //  nameid valueid name value
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           const currentColumnData = cloneDeep(skuMap[key])
-          const promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
-          currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
+          let promoPrice = 0
+          if (Number(this.radio) === 2 && this.textPrice) {
+            promoPrice = evalDiscountPrice(this.textPrice)
+          } else {
+            const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
+            promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
+          }
+
           currentColumnData.sku_price = promoPrice
+          currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
           const column = {}
-        // 默认规格设置
+          // 默认规格设置
           if (isEmpty(skuPropertyMap)) {
             return {...currentColumnData, '规格': '默认规格'}
           }
-        // 有规格的设置
+          // 有规格的设置
           properties.forEach(item => {
             const [propertyKey, propertyValueKey] = item.split(':')
             const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
@@ -191,16 +191,53 @@ export default {
         })
         return nextTableData
       },
-      set: function (newValue) {
-        console.log(newValue, 'newValue')
+      set: function (n) {
+        console.log(n)
       }
+    },
+    originTableData () {
+      const skuMap = this.skuData.sku_map
+      const skuPropertyMap = this.skuData.sku_property_map
+      const skuPropertyValueMap = this.skuData.sku_property_value_map
+      const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
+      const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+        //  nameid valueid name value
+      const nextTableData = Object.keys(skuMap).map(key => {
+        const properties = key.split(';')
+        const currentColumnData = cloneDeep(skuMap[key])
+        const promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
+        currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
+        currentColumnData.sku_price = promoPrice
+        const column = {}
+          // 默认规格设置
+        if (isEmpty(skuPropertyMap)) {
+          return {...currentColumnData, '规格': '默认规格'}
+        }
+          // 有规格的设置
+        properties.forEach(item => {
+          const [propertyKey, propertyValueKey] = item.split(':')
+          const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
+          const name = skuPropertyMap[propertyKey].name
+          const value = nextProperty.value
+          column[name] = value
+        })
+        return {
+          ...currentColumnData,
+          ...column
+        }
+      })
+      return nextTableData
     }
   },
   methods: {
     handleCancelBatchEdit () {
       this.$emit('handleCancelBatchEdit')
     },
+    // 点击确定
     handleSureBatchEdut () {
+      const bool = isEqual(this.originTableData, this.tableData)
+      console.log(bool)
+
       this.$emit('handleSureBatchEdut', {
         radio: this.radio,
         subtraction1: this.subtraction1,
@@ -216,10 +253,9 @@ export default {
     handlePriceChange () {
 
     },
-    handleChange (value, key) {
+    handleChange () {
       if (Number(this.radio) === 1) {
         // sku价格计算公式
-
         const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
         cloneDeep(this.tableData).forEach((item, index) => {
           this.$set(this.tableData, index, {
@@ -227,15 +263,22 @@ export default {
             sku_price: evalGroupPriceRange(item.promo_price / 100)
           })
         })
-      } else {
+      } else if (this.textPrice && Number(this.radio) === 2) {
         const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
         cloneDeep(this.tableData).forEach((item, index) => {
           this.$set(this.tableData, index, {
             ...item,
-            sku_price: evalDiscountPrice(value)
+            sku_price: evalDiscountPrice(this.textPrice)
           })
         })
       }
+    },
+    handleSkuChange (value, index, columnData) {
+      const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+      this.$set(this.tableData, index, {
+        ...columnData,
+        sku_price: evalDiscountPrice(value)
+      })
     }
   }
 }
@@ -263,6 +306,7 @@ export default {
     /deep/ .el-input__inner{
       font-size:18px;
       color:#1D8FFF;
+      padding: 5px;
     }
 
   }

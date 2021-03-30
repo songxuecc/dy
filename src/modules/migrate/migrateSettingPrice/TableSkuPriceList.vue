@@ -40,7 +40,7 @@
             <el-input
               :debounce="500"
               style="width: 55px"
-              v-model="template.model.origin_price_diff"
+              v-model.number="template.model.origin_price_diff"
               size="mini"
               class="price-sku-input"
             />
@@ -48,7 +48,7 @@
             <el-input
               :debounce="500"
               style="width: 55px"
-              v-model="template.model.group_price_rate"
+              v-model.number="template.model.group_price_rate"
               size="mini"
               class="price-sku-input"
             />
@@ -56,7 +56,7 @@
             <el-input
               :debounce="500"
               style="width: 55px"
-              v-model="template.model.group_price_diff"
+              v-model.number="template.model.group_price_diff"
               size="mini"
               class="price-sku-input"
             />
@@ -80,7 +80,7 @@
           <p class="font-14 mb-10">售卖价</p>
           <el-radio-group
             class="font-14"
-            v-model="template.model.is_sale_price_show_max"
+            v-model.number="template.model.is_sale_price_show_max"
             size="mini"
           >
             <el-radio-button label="0">最低价</el-radio-button>
@@ -90,7 +90,6 @@
         <template slot-scope="scope">
           <el-input
             :debounce="500"
-            style="width: 55px"
             :value="scope.row.discount_price"
             @input="handleDiscountPrice($event,scope.row.tp_product_id)"
             size="mini"
@@ -111,7 +110,7 @@
             <el-input
               :debounce="500"
               style="width: 55px"
-              v-model="template.model.price_rate"
+              v-model.number="template.model.price_rate"
               size="mini"
               class="price-sku-input"
             />
@@ -119,7 +118,7 @@
             <el-input
               :debounce="500"
               style="width: 55px"
-              v-model="template.model.price_diff"
+              v-model.number="template.model.price_diff"
               size="mini"
               class="price-sku-input"
             />
@@ -128,7 +127,6 @@
         <template slot-scope="scope">
           <el-input
             :debounce="500"
-            style="width: 55px"
             :value="scope.row.market_price"
             @input="handleMarketPrice($event,scope.row.tp_product_id)"
             size="mini"
@@ -154,7 +152,7 @@
       :unit="unit"
       @handleCancelBatchEdit="closeSkuPriceListView"
       @handleSureBatchEdut="handleSureBatchEdut"
-      :skuPriceStting="template.model" />
+      :skuPriceStting="selectTpProductSkuPriceStting" />
     </el-dialog>
 
     <el-dialog
@@ -193,10 +191,9 @@ export default {
     return {
       isShowSample: false,
       dialogSkuPriceVisible: false,
-      skuPriceListViewMap: new Map(),
-      skuPriceListViewMapActive: undefined,
       selectTpProductSkuJson: undefined,
-      selectTpProductSkuId: undefined
+      selectTpProductSkuId: undefined,
+      selectTpProductSkuPriceStting: undefined
     }
   },
   async activated () {
@@ -225,7 +222,9 @@ export default {
     ...mapActions('migrate/migrateSettingPrice', [
       'getTPProductByIds',
       'formatTableData',
-      'marketPriceChange'
+      'marketPriceChange',
+      'singleSkuPriceChange',
+      'discountPriceChange'
     ]),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
@@ -251,14 +250,9 @@ export default {
       })
     },
     handleDiscountPrice (price, id) {
-      this.formatTableData({
-        tableData: this.tableData,
-        template: this.template,
-        unit: this.unit,
-        singleDiscountPrice: {
-          id,
-          price
-        }
+      this.discountPriceChange({
+        price,
+        id
       })
     },
     toggleIsShowSample () {
@@ -268,21 +262,30 @@ export default {
       this.dialogSkuPriceVisible = false
     },
     showSkuPrice (selectTpProduct) {
-      this.dialogSkuPriceVisible = true
       this.selectTpProductSkuJson = selectTpProduct.sku_json
       this.selectTpProductSkuId = selectTpProduct.tp_product_id
+
+      if (selectTpProduct.selectPriceType) {
+        const arithmetic = selectTpProduct.selectPriceArithmetic
+        console.log(arithmetic, 'arithmetic')
+        this.selectTpProductSkuPriceStting = arithmetic
+      } else {
+        this.selectTpProductSkuPriceStting = {
+          subtraction1: this.template.model.origin_price_diff,
+          subtraction2: this.template.model.group_price_rate,
+          subtraction3: this.template.model.group_price_diff,
+          textPrice: '',
+          radio: '1'
+        }
+      }
+      this.dialogSkuPriceVisible = true
     },
     handleSureBatchEdut (arithmetic) {
       this.closeSkuPriceListView()
       console.log(arithmetic)
-      this.formatTableData({
-        tableData: this.tableData,
-        template: this.template,
-        unit: this.unit,
-        singleSkuPrice: {
-          id: this.selectTpProductSkuId,
-          arithmetic
-        }
+      this.singleSkuPriceChange({
+        id: this.selectTpProductSkuId,
+        arithmetic
       })
     }
   }
@@ -302,7 +305,7 @@ export default {
 .price-sale-input {
   /deep/ .el-input__inner {
     padding: 5px;
-    width: 100px;
+    width: 150px;
     height: 38px;
     border-radius: 4px;
     border: 1px solid #ebebeb;

@@ -1,7 +1,7 @@
 <!-- 我的页面 -->
 <template>
   <div class=''>
-    <Title class="mt-10 mb-10"/>
+    <Title class="mt-5 mb-5"/>
 
     <TableSkuPriceList />
     <div class="common-bottom flex justify-c">
