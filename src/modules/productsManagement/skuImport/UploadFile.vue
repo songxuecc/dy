@@ -10,7 +10,7 @@
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
       :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders" :on-success="skuExcelImportSuccess"
       :before-upload="beforeUpload" :on-progress="skuExcelImporting" :on-error="skuExcelImportError">
-      <el-button size="medium" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick">
+      <el-button v-if="!isBlackUser" size="medium" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick">
         <i class="el-icon-upload" v-if="!isSkuImporting"></i>
         <i v-if="isSkuImporting" class="el-icon-loading"></i>
         &nbsp;&nbsp;点击上传
@@ -65,8 +65,14 @@ export default {
       syncStatus: 'getSyncStatus',
       isAuth: 'getIsAuth'
     }),
-    ...mapStateSkuImport(['tableDataRecord', 'paginationRecord', 'filtersRecord'])
-
+    ...mapStateSkuImport(['tableDataRecord', 'paginationRecord', 'filtersRecord']),
+    isBlackUser () {
+      let userId = localStorage.getItem('user_id')
+      if (userId === '5009091') {
+        return true
+      }
+      return false
+    }
   },
   mounted () {
     if (this.isAuth && window.location.pathname !== 'authorize') {

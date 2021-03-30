@@ -136,10 +136,10 @@
           </NewComer>
         </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
-          <span v-if="versionTipType === 'free_three_months' && userVersion" class="pt-10">
+          <span v-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior" class="pt-10">
             提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
           </span>
-          <span v-if="versionTipType === 'free_seven_days' && userVersion" class="pt-10">
+          <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" class="pt-10">
             提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 订购高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
           </span>
         </div>
@@ -487,7 +487,7 @@ export default {
     this.updateQuery()
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
-    // this.userVersionQuery()
+    this.userVersionQuery()
   },
   deactivated () {
     this.$refs.productListView.dialogEditVisible = false
@@ -675,7 +675,7 @@ export default {
           this.$refs.productListView.selectAll()
           this.migrateProductList = migrateProduct
           this.getTPProductByIds()
-          // this.userVersionQuery()
+          this.userVersionQuery()
         },
         undefined,
         isSilent
@@ -962,26 +962,20 @@ export default {
       this.visibleModalVersionUp = !this.visibleModalVersionUp
     },
     async toMigrate () {
-      // const userVersion = this.userVersion || (await this.userVersionQuery())
-      // const isFreeUpgrate = userVersion.is_free_upgrate
-      // const limit = 11
-      // if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt >= limit) {
-      //   this.visibleModalVersionUp = true
-      // } else {
-      //   this.removeTempTemplate()
-      //   this.closeNewComer()
-      //   this.setSelectTPProductIdList(this.selectIdList)
-      //   this.$router.push({
-      //     path: '/migrateSettingPrice'
-      //   })
-      // }
-
-      this.removeTempTemplate()
-      this.closeNewComer()
-      this.setSelectTPProductIdList(this.selectIdList)
-      this.$router.push({
-        path: '/migrateSettingPrice'
-      })
+      const userVersion = this.userVersion || (await this.userVersionQuery())
+      const isFreeUpgrate = userVersion.is_free_upgrate
+      const isSenior = userVersion.is_senior
+      const limit = 10
+      if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit && !isSenior) {
+        this.visibleModalVersionUp = true
+      } else {
+        this.removeTempTemplate()
+        this.closeNewComer()
+        this.setSelectTPProductIdList(this.selectIdList)
+        this.$router.push({
+          path: '/migrateSettingPrice'
+        })
+      }
     },
     getTPProductByIds () {
       clearTimeout(this.productStatusSyncTimer)
@@ -1199,7 +1193,10 @@ export default {
     },
     versionTypeUp (btnText) {
       let routeData = this.$router.resolve({
-        name: 'PaidRecharge'
+        name: 'PaidRecharge',
+        params: {
+          active: 'VersionUp'
+        }
       })
       window.open(routeData.href, '_blank')
     }
