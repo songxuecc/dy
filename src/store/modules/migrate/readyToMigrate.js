@@ -20,14 +20,14 @@ export default {
         const userVersion = await Api.hhgjAPIs.userVersionQuery()
         const configs = {
           free_three_months: {
-            price: `${userVersion.unit_price}元/天`,
+            price: `${userVersion.unit_price / 100}元/天`,
             tip: '版本升级',
             left: '升级前',
             right: '升级后',
             btn: '去升级'
           },
           free_seven_days: {
-            price: `${userVersion.unit_price}元/天`,
+            price: `${userVersion.unit_price / 100}元/天`,
             tip: '订购高级版',
             left: '订购前',
             right: '订购后',
