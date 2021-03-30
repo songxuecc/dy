@@ -151,15 +151,10 @@
       :show-close="false"
     >
     <ModalSingleSkuList
-    ref="ModalSingleSkuList"
-    :data="selectTpProduct"/>
-      <!-- <sku-price-list-view
-        ref="skuPriceListView"
-        :defaultValue="skuPriceListViewMapActive"
-        :template="template"
-        @closeSkuPriceListView="closeSkuPriceListView"
-        :tpProduct="selectTpProduct"
-      /> -->
+      ref="ModalSingleSkuList"
+      :data="selectTpProductSkuJson"
+      :unit="unit"
+      @handleCancelBatchEdit="dialogSkuPriceVisible = false"/>
     </el-dialog>
 
     <el-dialog
@@ -183,6 +178,7 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex'
 import ModalSingleSkuList from './ModalSingleSkuList'
+import SkuPriceListView from './SkuPriceListView'
 
 export default {
   name: 'TableSkuPriceList',
@@ -190,7 +186,8 @@ export default {
     msg: String
   },
   components: {
-    ModalSingleSkuList
+    ModalSingleSkuList,
+    SkuPriceListView
   },
   data () {
     return {
@@ -273,16 +270,27 @@ export default {
       this.dialogSkuPriceVisible = false
     },
     showSkuPrice (product) {
-      console.log(product, 'product')
       this.selectTpProduct = product
+      this.selectTpProductSkuJson = product.sku_json
+      console.log(this.selectTpProductSkuJson, 'this.selectTpProductSkuJson')
+
       this.dialogSkuPriceVisible = true
     },
     /**
      * sku价格列表框打开时触发
      */
     dialogSkuPriceOpened () {
+      // let tpProductId = this.selectTpProduct.tp_product_id
+      // let skuCustomPrices = {}
+      // console.log(this.dicCustomPrices, 'dicCustomPrices')
+      // if (this.dicCustomPrices[tpProductId] && this.dicCustomPrices[tpProductId]['sku']) {
+      //   skuCustomPrices = this.dicCustomPrices[tpProductId]['sku']
+      // }
+      // this.skuPriceListViewMapActive = this.skuPriceListViewMap.get(tpProductId)
+      // this.$refs.skuPriceListView.init(skuCustomPrices)
     },
     dialogSkuPriceClose () {
+      this.dialogSkuPriceVisible = false
       // const arithmetic = this.$refs.skuPriceListView.onSave()
       // console.log(arithmetic)
       // this.formatTableData({

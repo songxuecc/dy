@@ -32,35 +32,29 @@
         </el-radio>
       </div>
 
+      <div class="left">
+        <span class="mr-10">抹角</span>
+        <span >抹分</span>
+      </div>
+
       <!-- sku价格表 -->
         <el-table
           ref="skuListTable"
-          :data="data"
+          :data="tableData"
           row-key="tp_product_id"
           style="width: 100%"
           :cell-class-name="cellClassName">
             <el-table-empty slot="empty"/>
-            <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id">
+            <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id"
+            :column-key="item.id"
+            :prop="item.name"
+            :filters="item.filters"
+            :filter-method="filterHandler">
                 <template slot="header" slot-scope="scope">
-                    <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.name }}</span>
-                    <!-- <el-dropdown v-if="skuPropertyValueMap[item.id] && Object.keys(skuPropertyValueMap[item.id]).length > 1"
-                                 style="line-height:0px; padding-left: 0px; cursor:pointer; vertical-align: middle;"
-                                 trigger="click" :hide-on-click="false"  placement="bottom"
-                    >
-                                <span class="el-dropdown-link">
-                                  <i class="el-icon-arrow-down el-icon--right"></i>
-                                </span>
-                        <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
-                            <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
-                                <div style="display:flex">
-                                    <el-checkbox v-model="ele.checked" @change="onSkuFilter">{{ele.value}}</el-checkbox>
-                                </div>
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown> -->
+                    <span >{{ item.name }}</span>
                 </template>
                 <template slot-scope="scope">
-                    {{ scope.row.property_list[index].name }}
+                    {{ scope.row[item.name]}}
                 </template>
             </el-table-column>
             <el-table-column key="3" width="150" align="center">
@@ -73,23 +67,8 @@
                             <el-input
                               v-model="scope.row.promo_price"
                               size="mini"
-                              @input="inputChange(scope.row,'promo_price')"
-                              :class="['input-medium', promoPriceClass(scope.row,scope.$index)]"
-                              style="width: 100%; "
                             >
-                                <i class="el-icon-error el-input__icon"
-                                   v-if="isEdited(scope.row, 'promo_price')"
-                                   slot="suffix"
-                                   @click="handleCancelEdit(scope.row, 'promo_price')">
-                                </i>
                             </el-input>
-                        </div>
-                        <div style="width: 16px; display:flex; align-items:center;">
-                            <el-tooltip v-if="scope.row.msgGroupError !== ''" placement="top" :content="scope.row.msgGroupError">
-                                <span style="display:inline-block; height:16px; line-height:16px; font-size: 16px;">
-                                    <i class="el-icon-warning warn" style=""></i>
-                                </span>
-                            </el-tooltip>
                         </div>
                     </div>
                 </template>
@@ -101,7 +80,7 @@
                 <template slot-scope="scope">
                     <div style="display: flex">
                         <div class="great" style="width: 100%; padding-left: 18px; font-size: 16px;">
-                          {{scope.row.originPrice}}
+                          {{scope.row.price}}
                         </div>
                     </div>
                 </template>
@@ -128,6 +107,64 @@ export default {
   },
   data () {
     return {
+      radio: '1',
+      subtraction1: 0,
+      subtraction2: 1,
+      subtraction3: 1,
+      textPrice: 4,
+      unit: 100
+    }
+  },
+  computed: {
+    skuPropertyList () {
+      const skuPropertyList = Object.keys(this.data.sku_property_map).map(key => {
+        const filters = Object.values(this.data.sku_property_value_map[key]).map(item => ({
+          text: item.value,
+          value: item.value
+        }))
+        return {...this.data.sku_property_map[key], filters}
+      })
+      return skuPropertyList
+    },
+    tableData () {
+      const skuMap = this.data.sku_map
+      const skuPropertyMap = this.data.sku_property_map
+      const skuPropertyValueMap = this.data.sku_property_value_map
+      const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+      //  nameid valueid name value
+      const nextTableData = Object.keys(skuMap).map(key => {
+        const properties = key.split(';')
+        const currentColumnData = skuMap[key]
+        currentColumnData.price = evalDiscountPrice(currentColumnData.price)
+        currentColumnData.promo_price = evalDiscountPrice(currentColumnData.promo_price)
+        const column = {}
+        properties.forEach(item => {
+          const [propertyKey, propertyValueKey] = item.split(':')
+          const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
+          // const nameId = skuPropertyMap[propertyKey].id
+          // const valueId = propertyValueKey
+          const name = skuPropertyMap[propertyKey].name
+          const value = nextProperty.value
+          column[name] = value
+        })
+        return {
+          ...currentColumnData,
+          ...column
+        }
+      })
+      return nextTableData
+    }
+  },
+  methods: {
+    handleCancelBatchEdit () {
+      this.$emit('handleCancelBatchEdit')
+    },
+    handleSureBatchEdut () {
+      this.$emit('handleCancelBatchEdit')
+    },
+    filterHandler (value, row, column) {
+      const property = column['property']
+      return row[property] === value
     }
   }
 }
