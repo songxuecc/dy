@@ -8,18 +8,21 @@
             size="mini"
             style="width:100px;"
             v-model="subtraction1 "
+            @input="handleChange($event,'subtraction1')"
             @focus="radio='1'"/>
           <span>) x</span>
           <el-input
             size="mini"
             style="width:100px;"
             v-model="subtraction2"
+            @input="handleChange($event,'subtraction2')"
             @focus="radio='1'"/>
           <span>% -</span>
           <el-input
             size="mini"
             style="width:100px;"
             v-model="subtraction3"
+            @input="handleChange($event,'subtraction3')"
             @focus="radio='1'"/>
         </el-radio>
         <el-radio v-model="radio" label="2">
@@ -28,6 +31,7 @@
             size="mini"
             style="width:100px;"
             v-model="textPrice"
+            @input="handleChange($event,'textPrice')"
             @focus="radio='2'" />
         </el-radio>
       </div>
@@ -65,7 +69,7 @@
                     <div style="display: flex">
                         <div >
                             <el-input
-                              v-model="scope.row.promo_price"
+                              v-model="scope.row.sku_price"
                               size="mini"
                             >
                             </el-input>
@@ -87,12 +91,12 @@
             </el-table-column>
             <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
                 <template slot-scope="scope">
-                    <img style="height:40px" :src="scope.row.img">
+                    <img style="height:50px" :src="scope.row.img" class="border-2">
                 </template>
             </el-table-column>
         </el-table>
         <div class="btns">
-          <el-button style="width: 120px" @click="handleCancelBatchEdit">取消</el-button>
+          <el-button style="width: 120px" @click="handleCancelBatchEdit" plain type="primary">取消</el-button>
           <el-button style="width: 120px" type="primary" @click="handleSureBatchEdut">确定</el-button>
         </div>
 
@@ -100,59 +104,96 @@
 </template>
 
 <script>
+import isEmpty from 'lodash/isEmpty'
+import cloneDeep from 'lodash/cloneDeep'
+
 export default {
   name: 'ModalSingleSkuList',
   props: {
-    data: Object
+    skuData: Object,
+    skuPriceStting: Object
   },
   data () {
     return {
       radio: '1',
-      subtraction1: 0,
-      subtraction2: 1,
-      subtraction3: 1,
-      textPrice: 4,
+      subtraction1: this.skuPriceStting.origin_price_diff,
+      subtraction2: this.skuPriceStting.group_price_rate,
+      subtraction3: this.skuPriceStting.group_price_diff,
+      textPrice: '',
       unit: 100
     }
   },
+  watch: {
+    // subtraction1 (n) {
+    //   console.log(n, 'n')
+    // },
+    // skuData (n) {
+    //   console.log(n, 'skuData')
+    // }
+  },
   computed: {
     skuPropertyList () {
-      const skuPropertyList = Object.keys(this.data.sku_property_map).map(key => {
-        const filters = Object.values(this.data.sku_property_value_map[key]).map(item => ({
+      const skuPropertyMap = this.skuData.sku_property_map
+      if (isEmpty(skuPropertyMap)) {
+        return [{
+          id: 0,
+          name: '规格',
+          filters: [
+            {
+              text: '默认规格',
+              value: '默认规格'
+            }
+          ]
+        }]
+      }
+      const skuPropertyList = Object.keys(this.skuData.sku_property_map).map(key => {
+        const filters = Object.values(this.skuData.sku_property_value_map[key]).map(item => ({
           text: item.value,
           value: item.value
         }))
-        return {...this.data.sku_property_map[key], filters}
+        return {...this.skuData.sku_property_map[key], filters}
       })
       return skuPropertyList
     },
-    tableData () {
-      const skuMap = this.data.sku_map
-      const skuPropertyMap = this.data.sku_property_map
-      const skuPropertyValueMap = this.data.sku_property_value_map
-      const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+    tableData: {
+      get: function () {
+        console.log(this.skuData, 'this.skuData')
+        const skuMap = this.skuData.sku_map
+        const skuPropertyMap = this.skuData.sku_property_map
+        const skuPropertyValueMap = this.skuData.sku_property_value_map
+        const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
+        const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+        // const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
       //  nameid valueid name value
-      const nextTableData = Object.keys(skuMap).map(key => {
-        const properties = key.split(';')
-        const currentColumnData = skuMap[key]
-        currentColumnData.price = evalDiscountPrice(currentColumnData.price)
-        currentColumnData.promo_price = evalDiscountPrice(currentColumnData.promo_price)
-        const column = {}
-        properties.forEach(item => {
-          const [propertyKey, propertyValueKey] = item.split(':')
-          const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
-          // const nameId = skuPropertyMap[propertyKey].id
-          // const valueId = propertyValueKey
-          const name = skuPropertyMap[propertyKey].name
-          const value = nextProperty.value
-          column[name] = value
+        const nextTableData = Object.keys(skuMap).map(key => {
+          const properties = key.split(';')
+          const currentColumnData = cloneDeep(skuMap[key])
+          const promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
+          currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
+          currentColumnData.sku_price = promoPrice
+          const column = {}
+        // 默认规格设置
+          if (isEmpty(skuPropertyMap)) {
+            return {...currentColumnData, '规格': '默认规格'}
+          }
+        // 有规格的设置
+          properties.forEach(item => {
+            const [propertyKey, propertyValueKey] = item.split(':')
+            const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
+            const name = skuPropertyMap[propertyKey].name
+            const value = nextProperty.value
+            column[name] = value
+          })
+          return {
+            ...currentColumnData,
+            ...column
+          }
         })
-        return {
-          ...currentColumnData,
-          ...column
-        }
-      })
-      return nextTableData
+        return nextTableData
+      },
+      set: function (newValue) {
+        console.log(newValue, 'newValue')
+      }
     }
   },
   methods: {
@@ -160,11 +201,41 @@ export default {
       this.$emit('handleCancelBatchEdit')
     },
     handleSureBatchEdut () {
-      this.$emit('handleCancelBatchEdit')
+      this.$emit('handleSureBatchEdut', {
+        radio: this.radio,
+        subtraction1: this.subtraction1,
+        subtraction2: this.subtraction2,
+        subtraction3: this.subtraction3,
+        textPrice: this.textPrice
+      })
     },
     filterHandler (value, row, column) {
-      const property = column['property']
+      const property = column.property
       return row[property] === value
+    },
+    handlePriceChange () {
+
+    },
+    handleChange (value, key) {
+      if (Number(this.radio) === 1) {
+        // sku价格计算公式
+
+        const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
+        cloneDeep(this.tableData).forEach((item, index) => {
+          this.$set(this.tableData, index, {
+            ...item,
+            sku_price: evalGroupPriceRange(item.promo_price / 100)
+          })
+        })
+      } else {
+        const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+        cloneDeep(this.tableData).forEach((item, index) => {
+          this.$set(this.tableData, index, {
+            ...item,
+            sku_price: evalDiscountPrice(value)
+          })
+        })
+      }
     }
   }
 }

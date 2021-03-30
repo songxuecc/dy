@@ -82,7 +82,6 @@
             class="font-14"
             v-model="template.model.is_sale_price_show_max"
             size="mini"
-            @change="getSalePrice"
           >
             <el-radio-button label="0">最低价</el-radio-button>
             <el-radio-button label="1">最高价</el-radio-button>
@@ -145,16 +144,17 @@
       title="批量修改单商品sku价格"
       :visible.sync="dialogSkuPriceVisible"
       width="900px"
-      @opened="dialogSkuPriceOpened"
-      @close="dialogSkuPriceClose"
       :close-on-click-modal="false"
       :show-close="false"
     >
     <ModalSingleSkuList
       ref="ModalSingleSkuList"
-      :data="selectTpProductSkuJson"
+      v-if="dialogSkuPriceVisible"
+      :skuData="selectTpProductSkuJson"
       :unit="unit"
-      @handleCancelBatchEdit="dialogSkuPriceVisible = false"/>
+      @handleCancelBatchEdit="closeSkuPriceListView"
+      @handleSureBatchEdut="handleSureBatchEdut"
+      :skuPriceStting="template.model" />
     </el-dialog>
 
     <el-dialog
@@ -194,7 +194,9 @@ export default {
       isShowSample: false,
       dialogSkuPriceVisible: false,
       skuPriceListViewMap: new Map(),
-      skuPriceListViewMapActive: undefined
+      skuPriceListViewMapActive: undefined,
+      selectTpProductSkuJson: undefined,
+      selectTpProductSkuId: undefined
     }
   },
   async activated () {
@@ -210,7 +212,6 @@ export default {
   watch: {
     template: {
       handler: function (newval) {
-        console.log(newval)
         this.formatTableData({
           tableData: this.tableData,
           template: newval,
@@ -238,19 +239,16 @@ export default {
       })
     },
     handleMarketPrice (price, id) {
-      console.log(price, id)
       this.marketPriceChange({
         price, id
       })
-      // this.formatTableData({
-      //   tableData: this.tableData,
-      //   template: this.template,
-      //   unit: this.unit,
-      //   singleMarketPrice: {
-      //     id,
-      //     price
-      //   }
-      // })
+    },
+    // 设置售卖价
+    setSalePrice () {
+      this.salePriceChange({
+        tableData: this.tableData,
+        isSalePriceShowMax: this.template.model.is_sale_price_show_max
+      })
     },
     handleDiscountPrice (price, id) {
       this.formatTableData({
@@ -269,39 +267,23 @@ export default {
     closeSkuPriceListView () {
       this.dialogSkuPriceVisible = false
     },
-    showSkuPrice (product) {
-      this.selectTpProduct = product
-      this.selectTpProductSkuJson = product.sku_json
-      console.log(this.selectTpProductSkuJson, 'this.selectTpProductSkuJson')
-
+    showSkuPrice (selectTpProduct) {
       this.dialogSkuPriceVisible = true
+      this.selectTpProductSkuJson = selectTpProduct.sku_json
+      this.selectTpProductSkuId = selectTpProduct.tp_product_id
     },
-    /**
-     * sku价格列表框打开时触发
-     */
-    dialogSkuPriceOpened () {
-      // let tpProductId = this.selectTpProduct.tp_product_id
-      // let skuCustomPrices = {}
-      // console.log(this.dicCustomPrices, 'dicCustomPrices')
-      // if (this.dicCustomPrices[tpProductId] && this.dicCustomPrices[tpProductId]['sku']) {
-      //   skuCustomPrices = this.dicCustomPrices[tpProductId]['sku']
-      // }
-      // this.skuPriceListViewMapActive = this.skuPriceListViewMap.get(tpProductId)
-      // this.$refs.skuPriceListView.init(skuCustomPrices)
-    },
-    dialogSkuPriceClose () {
-      this.dialogSkuPriceVisible = false
-      // const arithmetic = this.$refs.skuPriceListView.onSave()
-      // console.log(arithmetic)
-      // this.formatTableData({
-      //   tableData: this.tableData,
-      //   template: this.template,
-      //   unit: this.unit,
-      //   singleSkuPrice: {
-      //     id: this.selectTpProduct.tp_product_id,
-      //     arithmetic
-      //   }
-      // })
+    handleSureBatchEdut (arithmetic) {
+      this.closeSkuPriceListView()
+      console.log(arithmetic)
+      this.formatTableData({
+        tableData: this.tableData,
+        template: this.template,
+        unit: this.unit,
+        singleSkuPrice: {
+          id: this.selectTpProductSkuId,
+          arithmetic
+        }
+      })
     }
   }
 }
