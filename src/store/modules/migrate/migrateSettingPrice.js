@@ -286,6 +286,10 @@ export default {
         let discountPriceError = ''
         let marketPriceError = ''
         let groupPriceRangeError = ''
+        const hasRangeSkuPrice = item.group_price_range.includes('~')
+        const minPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[0] : item.group_price_range)
+        const maxPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[1] : item.group_price_range)
+
         if (
           !utils.isNumber(item.discount_price)
         ) {
@@ -300,20 +304,16 @@ export default {
           marketPriceError = '划线价请输入数字，最多保留两位小数点'
         } else if (Number(item.market_price) < 0.01 || Number(item.market_price) > 9999999.99) {
           marketPriceError = '划线价设置范围为：0.01-9999999.99'
+        } else if (maxPrice > Number(item.market_price) || Number(item.market_price) > 9999999.99) {
+          marketPriceError = `划线价设置范围为：sku价格最大(${maxPrice})-9999999.99`
         }
 
-        const hasRangeSkuPrice = item.group_price_range.includes('~')
-        const minPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[0] : item.group_price_range)
-        const maxPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[1] : item.group_price_range)
-
         if (Number(item.discount_price) > maxPrice || Number(item.discount_price) < minPrice) {
-          discountPriceError = `售卖价设置范围为：sku价格最小${minPrice}--sku价格最大${maxPrice}`
+          discountPriceError = `售卖价设置范围为：sku价格最小(${minPrice})-sku价格最大(${maxPrice})`
         }
 
         if (minPrice < 0.01 || maxPrice > 9999999.99) {
           groupPriceRangeError = 'SKU价设置范围为：0.01-9999999.99'
-        } else if (maxPrice > Number(item.market_price)) {
-          groupPriceRangeError = `sku规格最高价必须≤划线价${item.market_price}`
         }
 
         error = Object.assign(
