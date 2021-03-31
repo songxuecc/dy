@@ -251,9 +251,11 @@ export default {
   watch: {
     template: {
       handler: function (newval) {
-        if (Object.values(this.templateError).some(item => !item)) {
+        console.log(this.templateError)
+        if (Object.values(this.templateError).some(item => item)) {
           return false
         }
+        console.log(newval, '，‘newval')
         this.formatTableData({
           tableData: this.tableData,
           template: newval,
