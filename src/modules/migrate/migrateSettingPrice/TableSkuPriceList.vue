@@ -129,6 +129,7 @@
             :debounce="500"
             :value="scope.row.market_price"
             @input="handleMarketPrice($event,scope.row.tp_product_id)"
+            @onkeyup="value=value.replace(/[^\d\.-]/g,'')"
             size="mini"
             class="price-sale-input"
           />
@@ -238,9 +239,16 @@ export default {
       })
     },
     handleMarketPrice (price, id) {
-      this.marketPriceChange({
-        price, id
-      })
+      const regex = new RegExp(/[(^\- | ^\d)\.\d]/g)
+      console.log(price.replace(/[(^\- | ^\d)\.\d]/g, ''), 'price')
+      if (regex.test(price)) {
+        this.marketPriceChange({
+          price: price.replace(/[(^\- | ^\d)\.\d]/g, ''),
+          id
+        })
+      } else {
+        console.log('输入错误')
+      }
     },
     // 设置售卖价
     setSalePrice () {

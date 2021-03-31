@@ -39,9 +39,9 @@ export default {
       } = payload
 
       // sku价格计算公式
-      let evalGroupPriceRange = x => (Math.floor(((x - template.model.origin_price_diff) * template.model.group_price_rate / 100 - template.model.group_price_diff) * unit) / unit).toFixed(2)
+      let evalGroupPriceRange = x => (Math.floor(((x - template.model.origin_price_diff) * template.model.group_price_rate / 100 - template.model.group_price_diff) * unit) / unit)
       // 划线价计算公式
-      const evalMarketPrice = x => (Math.floor((x * template.model.price_rate / 100 - template.model.price_diff) * unit) / unit).toFixed(2)
+      const evalMarketPrice = x => (Math.floor((x * template.model.price_rate / 100 - template.model.price_diff) * unit) / unit)
 
       const nextTableData = (tableData || []).map(item => {
         const skuMap = item.sku_json.sku_map
@@ -59,7 +59,7 @@ export default {
         if (item.selectPriceType === 1) {
           console.log(item.selectPriceType, item.selectPriceArithmetic, 'item.selectPriceType')
           const arithmetic = item.selectPriceArithmetic
-          evalGroupPriceRange = x => (Math.floor(((x - arithmetic.subtraction1) * arithmetic.subtraction2 / 100 - arithmetic.subtraction3) * unit) / unit).toFixed(2)
+          evalGroupPriceRange = x => (Math.floor(((x - arithmetic.subtraction1) * arithmetic.subtraction2 / 100 - arithmetic.subtraction3) * unit) / unit)
         }
 
         // 设置价格公式
@@ -70,7 +70,7 @@ export default {
 
         // 设置单个商品自定义价格公式
         if (item.selectPriceType === 2) {
-          const evalDiscountPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+          const evalDiscountPrice = x => (Math.floor(x * unit) / unit)
           const arithmetic = item.selectPriceArithmetic
           // 如果是抖音商品，则取商品最小价格作为划线价
           const price = evalDiscountPrice(arithmetic.textPrice)
@@ -80,7 +80,7 @@ export default {
 
         // 设置单个商品自定义价格
         if (item.selectPriceType === 3) {
-          const evalDiscountPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+          const evalDiscountPrice = x => (Math.floor(x * unit) / unit)
           const arithmetic = item.selectPriceArithmetic
           const tableData = arithmetic.tableData
           const prices = tableData.map(sku => sku.sku_price)
@@ -105,7 +105,7 @@ export default {
       const tableData = state.tableData
       const unit = state.unit
       const {id, price} = payload
-      const evalDiscountPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      const evalDiscountPrice = x => (Math.floor(x * unit) / unit)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           item.market_price = evalDiscountPrice(price)
@@ -119,7 +119,7 @@ export default {
       const {id, price} = payload
       const tableData = state.tableData
       const unit = state.unit
-      const evalDiscountPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      const evalDiscountPrice = x => (Math.floor(x * unit) / unit)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           item.discount_price = evalDiscountPrice(price)
@@ -135,7 +135,7 @@ export default {
       const tableData = state.tableData
       const unit = state.unit
       const model = state.template.model
-      const evalDiscountPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      const evalDiscountPrice = x => (Math.floor(x * unit) / unit)
       const nextTableData = tableData.map(item => {
         const skuMap = item.sku_json.sku_map
         const prices = Object.values(skuMap).map(sku => sku.price)
@@ -152,7 +152,7 @@ export default {
           item.discount_price = price
         // 修改单个商品sku 选择价格公式
         } else if (item.tp_product_id === id && Number(arithmetic.radio) === 1) {
-          const evalSingleSkuGroupPriceRange = x => (Math.floor(((x - arithmetic.subtraction1) * arithmetic.subtraction2 / 100 - arithmetic.subtraction3) * unit) / unit).toFixed(2)
+          const evalSingleSkuGroupPriceRange = x => (Math.floor(((x - arithmetic.subtraction1) * arithmetic.subtraction2 / 100 - arithmetic.subtraction3) * unit) / unit)
           const singleGroupPriceRange = minPrices !== maxPrices ? evalSingleSkuGroupPriceRange(minPrices) + ' ~ ' + evalSingleSkuGroupPriceRange(maxPrices) : evalSingleSkuGroupPriceRange(minPrices)
           if (item.group_price_range !== singleGroupPriceRange) {
             item.group_price_range = singleGroupPriceRange
