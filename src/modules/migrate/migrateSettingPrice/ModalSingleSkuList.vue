@@ -149,83 +149,100 @@ export default {
       })
       return skuPropertyList
     },
-    tableData: {
-      get: function () {
-        console.log(this.skuData, 'get')
-        const skuMap = this.skuData.sku_map
-        const skuPropertyMap = this.skuData.sku_property_map
-        const skuPropertyValueMap = this.skuData.sku_property_value_map
-
-        const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
-        //  nameid valueid name value
-        const nextTableData = Object.keys(skuMap).map(key => {
-          const properties = key.split(';')
-          const currentColumnData = cloneDeep(skuMap[key])
-          let promoPrice = 0
-          if (Number(this.radio) === 2 && this.textPrice) {
-            promoPrice = evalDiscountPrice(this.textPrice)
-          } else {
-            const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
-            promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
-          }
-
-          currentColumnData.sku_price = promoPrice
-          currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
-          const column = {}
-          // 默认规格设置
-          if (isEmpty(skuPropertyMap)) {
-            return {...currentColumnData, '规格': '默认规格'}
-          }
-          // 有规格的设置
-          properties.forEach(item => {
-            const [propertyKey, propertyValueKey] = item.split(':')
-            const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
-            const name = skuPropertyMap[propertyKey].name
-            const value = nextProperty.value
-            column[name] = value
-          })
-          return {
-            ...currentColumnData,
-            ...column
-          }
-        })
-        return nextTableData
-      },
-      set: function (n) {
-        console.log(n)
-      }
-    },
-    originTableData () {
+    tableData () {
       const skuMap = this.skuData.sku_map
       const skuPropertyMap = this.skuData.sku_property_map
       const skuPropertyValueMap = this.skuData.sku_property_value_map
-      const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
+
       const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
-        //  nameid valueid name value
       const nextTableData = Object.keys(skuMap).map(key => {
         const properties = key.split(';')
         const currentColumnData = cloneDeep(skuMap[key])
-        const promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
-        currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
+        let promoPrice = 0
+        if (Number(this.radio) === 2 && this.textPrice) {
+          promoPrice = evalDiscountPrice(this.textPrice)
+        } else {
+          const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
+          promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
+        }
         currentColumnData.sku_price = promoPrice
-        const column = {}
+        currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
+        let column = {}
           // 默认规格设置
         if (isEmpty(skuPropertyMap)) {
           return {...currentColumnData, '规格': '默认规格'}
         }
-          // 有规格的设置
+        // 有规格的设置
         properties.forEach(item => {
           const [propertyKey, propertyValueKey] = item.split(':')
           const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
           const name = skuPropertyMap[propertyKey].name
           const value = nextProperty.value
           column[name] = value
+          const skuPriceStting = this.skuPriceStting
+          const originTableData = skuPriceStting.tableData
+          const equal = isEqual(skuPriceStting, originTableData)
+
+          // 曾经设置过的价格回显
+          if (!equal && originTableData && originTableData.length) {
+            const sku = originTableData.find(orginItem => orginItem.sku_id === currentColumnData.sku_id)
+            column = cloneDeep(sku)
+          }
         })
         return {
           ...currentColumnData,
           ...column
         }
       })
+
+      return nextTableData
+    },
+    originTableData () {
+      const skuMap = this.skuData.sku_map
+      const skuPropertyMap = this.skuData.sku_property_map
+      const skuPropertyValueMap = this.skuData.sku_property_value_map
+
+      const evalDiscountPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+      const nextTableData = Object.keys(skuMap).map(key => {
+        const properties = key.split(';')
+        const currentColumnData = cloneDeep(skuMap[key])
+        let promoPrice = 0
+        if (Number(this.radio) === 2 && this.textPrice) {
+          promoPrice = evalDiscountPrice(this.textPrice)
+        } else {
+          const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit).toFixed(2)
+          promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
+        }
+        currentColumnData.sku_price = promoPrice
+        currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
+        let column = {}
+          // 默认规格设置
+        if (isEmpty(skuPropertyMap)) {
+          return {...currentColumnData, '规格': '默认规格'}
+        }
+        // 有规格的设置
+        properties.forEach(item => {
+          const [propertyKey, propertyValueKey] = item.split(':')
+          const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
+          const name = skuPropertyMap[propertyKey].name
+          const value = nextProperty.value
+          column[name] = value
+          const skuPriceStting = this.skuPriceStting
+          const originTableData = skuPriceStting.tableData
+          const equal = isEqual(skuPriceStting, originTableData)
+
+          // 曾经设置过的价格回显
+          if (!equal && originTableData && originTableData.length) {
+            const sku = originTableData.find(orginItem => orginItem.sku_id === currentColumnData.sku_id)
+            column = cloneDeep(sku)
+          }
+        })
+        return {
+          ...currentColumnData,
+          ...column
+        }
+      })
+
       return nextTableData
     }
   },
@@ -243,15 +260,14 @@ export default {
         subtraction1: this.subtraction1,
         subtraction2: this.subtraction2,
         subtraction3: this.subtraction3,
-        textPrice: this.textPrice
+        textPrice: this.textPrice,
+        changeSingleSku: bool,
+        tableData: this.tableData
       })
     },
     filterHandler (value, row, column) {
       const property = column.property
       return row[property] === value
-    },
-    handlePriceChange () {
-
     },
     handleChange () {
       if (Number(this.radio) === 1) {

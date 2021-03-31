@@ -55,7 +55,7 @@ export default {
         // 售卖价格 sku -json的promo_price的最低和最高
         // 划线价  sku-json price的最高值
 
-        // 如果存在自选价格设置 先设置自选价格的公式
+        // 设置单个商品自定义自选价格的公式
         if (item.selectPriceType === 1) {
           console.log(item.selectPriceType, item.selectPriceArithmetic, 'item.selectPriceType')
           const arithmetic = item.selectPriceArithmetic
@@ -68,7 +68,7 @@ export default {
           // 如果是抖音商品，则取商品最小价格作为划线价
         item.market_price = evalMarketPrice(maxPrices)
 
-        // 设置价格公式
+        // 设置单个商品自定义价格公式
         if (item.selectPriceType === 2) {
           const evalDiscountPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
           const arithmetic = item.selectPriceArithmetic
@@ -76,6 +76,19 @@ export default {
           const price = evalDiscountPrice(arithmetic.textPrice)
           item.group_price_range = price
           item.discount_price = price
+        }
+
+        // 设置单个商品自定义价格
+        if (item.selectPriceType === 3) {
+          const evalDiscountPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+          const arithmetic = item.selectPriceArithmetic
+          const tableData = arithmetic.tableData
+          const prices = tableData.map(sku => sku.sku_price)
+          const minPrices = evalDiscountPrice(Math.min(...prices))
+          const maxPrices = evalDiscountPrice(Math.max(...prices))
+          const singleGroupPriceRange = minPrices !== maxPrices ? minPrices + ' ~ ' + maxPrices : minPrices
+          item.group_price_range = singleGroupPriceRange
+          item.discount_price = !Number(template.model.is_sale_price_show_max) ? minPrices : maxPrices
         }
 
         // 抖音商品 取真实划线价
@@ -118,6 +131,7 @@ export default {
     // 单个sku价格的修改
     singleSkuPriceChange ({commit, state}, payload) {
       const {id, arithmetic} = payload
+      console.log(arithmetic, 'arithmetic')
       const tableData = state.tableData
       const unit = state.unit
       const model = state.template.model
@@ -128,6 +142,7 @@ export default {
         const minPrices = Math.min(...prices) / 100
         const maxPrices = Math.max(...prices) / 100
         item.selectPriceArithmetic = arithmetic
+        // 修改单个商品sku 选择统一价格
         if (item.tp_product_id === id && Number(arithmetic.radio) === 2) {
             // 重设sku价格后 需要重新设置售卖价的范围
           const price = evalDiscountPrice(arithmetic.textPrice)
@@ -135,20 +150,40 @@ export default {
           item.selectPriceInfo = `统一价格为 ${price}`
           item.selectPriceType = 2
           item.discount_price = price
+        // 修改单个商品sku 选择价格公式
         } else if (item.tp_product_id === id && Number(arithmetic.radio) === 1) {
           const evalSingleSkuGroupPriceRange = x => (Math.floor(((x - arithmetic.subtraction1) * arithmetic.subtraction2 / 100 - arithmetic.subtraction3) * unit) / unit).toFixed(2)
           const singleGroupPriceRange = minPrices !== maxPrices ? evalSingleSkuGroupPriceRange(minPrices) + ' ~ ' + evalSingleSkuGroupPriceRange(maxPrices) : evalSingleSkuGroupPriceRange(minPrices)
-            // 只有设置的公式和统一设置的公式不一致时 需要重设并显示提示文案
-          if (singleGroupPriceRange !== item.group_price_range) {
+          if (item.group_price_range !== singleGroupPriceRange) {
             item.group_price_range = singleGroupPriceRange
+            // 重设sku价格后 需要重新设置售卖价的范围
+            item.discount_price = !Number(model.is_sale_price_show_max) ? evalSingleSkuGroupPriceRange(minPrices) : evalSingleSkuGroupPriceRange(maxPrices)
+          }
+          // 只有设置的公式和统一设置的公式不一致时 需要重设并显示提示文案
+          if (
+            arithmetic.subtraction1 !== model.origin_price_diff &&
+            arithmetic.subtraction2 !== model.group_price_rate &&
+            arithmetic.subtraction3 !== model.group_price_diff
+          ) {
             item.selectPriceInfo = `(原价-${arithmetic.subtraction1})x${arithmetic.subtraction2}%-${arithmetic.subtraction3}`
             item.selectPriceType = 1
-              // 重设sku价格后 需要重新设置售卖价的范围
-            item.discount_price = !Number(model.is_sale_price_show_max) ? evalSingleSkuGroupPriceRange(minPrices) : evalSingleSkuGroupPriceRange(maxPrices)
           } else {
             item.selectPriceInfo = ''
           }
         }
+
+        // 修改单个商品sku价格
+        if (item.tp_product_id === id && !arithmetic.changeSingleSku) {
+          const tableData = arithmetic.tableData
+          const prices = tableData.map(sku => sku.sku_price)
+          const minPrices = evalDiscountPrice(Math.min(...prices))
+          const maxPrices = evalDiscountPrice(Math.max(...prices))
+          const singleGroupPriceRange = minPrices !== maxPrices ? minPrices + ' ~ ' + maxPrices : minPrices
+          item.group_price_range = singleGroupPriceRange
+          item.discount_price = !Number(model.is_sale_price_show_max) ? minPrices : maxPrices
+          item.selectPriceType = 3
+        }
+
         return item
       })
       commit('save', {tableData: nextTableData})
