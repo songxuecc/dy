@@ -32,7 +32,6 @@
                 @focus="promoPriceHandler.radio='7'" />
             </el-radio>
           </div>
-
         </div>
         <!-- sku价格表 -->
         <el-table

@@ -25,12 +25,12 @@
                     </li>
                   </ul>
                 </div>
-                <div slot="reference">{{ '改库存(' + (tabPresellType === 2 ? '阶梯' : '现货') + ')'}}<i class="el-icon-arrow-down"></i> </div>
+                <div v-if="!isBlackUser" slot="reference">{{ '改库存(' + (tabPresellType === 2 ? '阶梯' : '现货') + ')'}}<i class="el-icon-arrow-down"></i> </div>
               </el-popover>
             </div>
           </el-tab-pane>
           <el-tab-pane label="改价格" name="price"></el-tab-pane>
-          <el-tab-pane label="改发货模式" name="presellType"></el-tab-pane>
+          <el-tab-pane v-if="!isBlackUser" label="改发货模式" name="presellType"></el-tab-pane>
 <!--         <el-tab-pane label="轮播图" name="banner"></el-tab-pane>-->
 <!--         <el-tab-pane label="改编码" name="outerSn"></el-tab-pane>-->
 <!--          <el-tab-pane label="改模板" name="template"></el-tab-pane>-->
@@ -224,6 +224,13 @@ export default {
     ...mapGetters({
       updateJobIdList: 'getUpdateJobIdList'
     }),
+    isBlackUser () {
+      let userId = localStorage.getItem('user_id')
+      if (userId === '5009091') {
+        return true
+      }
+      return false
+    },
     drawerHeight () {
       if (this.activeTabName === 'price') {
         return '180px'

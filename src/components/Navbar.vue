@@ -10,10 +10,10 @@
               <img v-if="shopName" src="@/assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable" />
               <!-- 用户使用天数 -->
               <div v-if="shopName">
-                 <el-tooltip>
-                  <div slot="content">
-                    <p v-for="order in subsc.order_list" :key="order.order_id" v-if="subsc.order_list.length" class="left font-12">
-                      {{order.start_time}}~{{order.end_time}} 您的版本为 {{order.sku_spec || '-'}} <a v-if="!order.is_free_upgrate " class="primary pointer" @click="paidRecharge">升级为高级版</a>
+                 <el-tooltip v-if="subsc.order_list.length">
+                  <div slot="content" >
+                    <p v-for="order in subsc.order_list" :key="order.order_id"  class="left font-12">
+                      {{order.start_time}}~{{order.end_time}} 您的版本为 {{order.sku_spec || '-'}} <a v-if="!order.is_free_upgrate " class="primary pointer" @click="paidUp">升级为高级版</a>
                     </p>
                   </div>
                   <div @click="goToOrder()" class="flex align-c" >
@@ -25,6 +25,7 @@
                     <img style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" />
                   </div>
                 </el-tooltip>
+                <img @click="goToOrder()" style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" v-else/>
               </div>
               <!-- 充值升级 -->
               <div v-if="shopName" class="syncProduct pointer" @click="paidRecharge" :disabled="isSyncing">
@@ -261,6 +262,14 @@ export default {
     },
     // 付费充值
     paidRecharge () {
+      this.$router.push({
+        name: 'PaidRecharge',
+        params: {
+          active: 'PayRecord'
+        }
+      })
+    },
+    paidUp () {
       this.$router.push({
         name: 'PaidRecharge',
         params: {

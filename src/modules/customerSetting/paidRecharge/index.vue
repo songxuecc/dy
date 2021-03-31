@@ -42,18 +42,31 @@ export default {
     VersionUp
   },
   created () {
-    this.tabType = this.$route.params.active || 'PayRecord'
+    if (this.$route.params.active) {
+      this.tabType = this.$route.params.active
+    }
   },
   activated () {
     this.getUserAccountQuery()
+    if (this.$route.params.active) {
+      this.tabType = this.$route.params.active
+    }
   },
-  updated () { },
+  watch: {
+    tabType (tabType) {
+      this.$router.replace({ path: tabType })
+    }
+  },
   methods: {
     ...mapActions(['getUserAccountQuery']),
     // 事件名称
     methodsName () {
       this.dialogVisible = false
     }
+  },
+  beforeRouteUpdate (to, from, next) {
+    this.tabType = to.params.active
+    next()
   }
 }
 </script>
