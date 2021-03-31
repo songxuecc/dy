@@ -285,6 +285,7 @@ export default {
       return row[property] === value
     },
     handleChange () {
+      console.log(utils.isNumber(this.textPrice))
       if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
         // sku价格计算公式
         const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
@@ -296,13 +297,18 @@ export default {
         this.tableData = tableData
       } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
         const tableData = this.tableData.map((item, index) => {
+          this.$set(this.tableData, index, {
+            ...item,
+            sku_price: this.textPrice
+          })
           return ({
             ...item,
             sku_price: this.textPrice
           })
         })
+        console.log(tableData, 'tableData2')
         this.oldTableData = cloneDeep(tableData)
-        this.tableData = tableData
+        // this.tableData = cloneDeep(tableData)
       }
     },
     handleSkuChange (price, index, columnData) {
@@ -311,6 +317,7 @@ export default {
         sku_price: price
       })
       this.oldTableData = cloneDeep(this.tableData)
+      console.log(this.oldTableData, 'this.oldTableData-handleSkuChange')
     },
     handleClearSkuPrice (index) {
       const column = this.originTableData[index]

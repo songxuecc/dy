@@ -1,10 +1,10 @@
 <!--  -->
 <template>
-  <div>
-    <div class="left">
-      <span @click="toFixFloat(1)" class="mr-10">抹角</span>
-      <span @click="toFixFloat(10)">抹分</span>
-    </div>
+  <div class="TableSkuPriceList">
+     <div class="left mb-10">
+        <el-button size="small" @click="toFixFloat(1)" type="primary">抹角</el-button>
+        <el-button size="small" @click="toFixFloat(10)" type="primary">抹分</el-button>
+      </div>
     <el-table :data="tableData" style="width: 100%">
       <el-table-empty slot="empty" />
       <el-table-column label="图片" width="86" align="center">
@@ -16,7 +16,6 @@
           />
         </template>
       </el-table-column>
-
       <el-table-column label="标题" align="center" width="210">
         <div slot-scope="scope" class="left">
           <el-link
@@ -32,34 +31,44 @@
         </div>
       </el-table-column>
 
-      <el-table-column align="center">
+      <el-table-column align="center" >
         <template slot="header" slot-scope="scope">
-          <p class="font-14 mb-10">sku价格=</p>
+          <p class="font-14 mb-10">sku价格=
+            <el-tooltip content="SKU价格公式输入必须为数字" v-if="templateError.origin_price_diff || templateError.group_price_rate || templateError.group_price_diff" placement="top">
+              <hh-icon type="iconjinggao1" style="font-size:14px"></hh-icon>
+            </el-tooltip>
+          </p>
           <div>
             <span> 原价 - </span>
-            <el-input
-              :debounce="500"
-              style="width: 55px"
-              v-model.number="template.model.origin_price_diff"
-              size="mini"
-              class="price-sku-input"
-            />
+            <el-tooltip content="一般填0，若源商品含运费则可以加上运费后再设置百分比。比如源商品运费是10元，则填-10" placement="top">
+              <el-input
+                :debounce="500"
+                style="width: 55px"
+                v-model.number="template.model.origin_price_diff"
+                size="mini"
+                class="price-sku-input"
+              />
+            </el-tooltip>
             <span> x </span>
-            <el-input
-              :debounce="500"
-              style="width: 55px"
-              v-model.number="template.model.group_price_rate"
-              size="mini"
-              class="price-sku-input"
-            />
+            <el-tooltip content="乘以百分比，比如填120，则是原价*120%，赚取20%的利润。保持不变请填100" placement="top">
+              <el-input
+                :debounce="500"
+                style="width: 55px"
+                v-model.number="template.model.group_price_rate"
+                size="mini"
+                class="price-sku-input"
+              />
+            </el-tooltip>
             <span class="th-title-text"> % - </span>
-            <el-input
-              :debounce="500"
-              style="width: 55px"
-              v-model.number="template.model.group_price_diff"
-              size="mini"
-              class="price-sku-input"
-            />
+            <el-tooltip content="可以为负数，若要加价50元，则填-50" placement="top">
+              <el-input
+                :debounce="500"
+                style="width: 55px"
+                v-model.number="template.model.group_price_diff"
+                size="mini"
+                class="price-sku-input"
+              />
+            </el-tooltip>
           </div>
         </template>
         <template slot-scope="scope">
@@ -70,12 +79,14 @@
               style="font-size: 12px"
               class="pointer"
               @click="showSkuPrice(scope.row)"
+              :class="[tableDataErrorMsg[scope.$index].group_price_range_error ? 'warn':'']"
             />
           </div>
           <p class="info" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</p>
+          <p class="fail" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</p>
         </template>
       </el-table-column>
-      <el-table-column align="center">
+      <el-table-column align="center" >
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">售卖价</p>
           <el-radio-group
@@ -88,22 +99,30 @@
           </el-radio-group>
         </template>
         <template slot-scope="scope">
-          <el-input
-            :debounce="500"
-            :value="scope.row.discount_price"
-            @input="handleDiscountPrice($event,scope.row.tp_product_id)"
-            size="mini"
-            class="price-sale-input"
-          />
+            <el-input
+              clearable
+              :debounce="500"
+              size="mini"
+              class="price-sale-input"
+              :value="scope.row.discount_price"
+              @input="handleDiscountPrice($event,scope.row.tp_product_id)"
+              @clear="handleClearDiscountPrice(scope.row.tp_product_id)"
+              :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
+
+            />
+            <p class="fail" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
       </el-table-column>
-      <el-table-column align="center">
+      <el-table-column align="center" >
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">
             划线价=
             <span class="color-primary pointer" @click="toggleIsShowSample"
               >查看示例</span
             >
+            <el-tooltip content="划线价公式输入必须为数字" v-if="templateError.price_rate || templateError.price_diff" placement="top">
+              <hh-icon type="iconjinggao1" style="font-size:14px"></hh-icon>
+            </el-tooltip>
           </p>
           <div>
             <span> 原划线价 x </span>
@@ -126,13 +145,16 @@
         </template>
         <template slot-scope="scope">
           <el-input
+            clearable
             :debounce="500"
-            :value="scope.row.market_price"
-            @input="handleMarketPrice($event,scope.row.tp_product_id)"
-            @onkeyup="value=value.replace(/[^\d\.-]/g,'')"
             size="mini"
             class="price-sale-input"
+            :value="scope.row.market_price"
+            @input="handleMarketPrice($event,scope.row.tp_product_id)"
+            @clear="handleClearMarketPrice(scope.row.tp_product_id)"
+            :class="[tableDataErrorMsg[scope.$index].market_price_error ? 'warn':'']"
           />
+          <p class="fail" v-if="tableDataErrorMsg[scope.$index].market_price_error">{{tableDataErrorMsg[scope.$index].market_price_error}}</p>
         </template>
       </el-table-column>
     </el-table>
@@ -153,7 +175,8 @@
       :unit="unit"
       @handleCancelBatchEdit="closeSkuPriceListView"
       @handleSureBatchEdut="handleSureBatchEdut"
-      :skuPriceStting="selectTpProductSkuPriceStting" />
+      :skuPriceStting="selectTpProductSkuPriceStting"
+      :marketPrice="marketPrice" />
     </el-dialog>
 
     <el-dialog
@@ -178,6 +201,7 @@
 import { mapActions, mapState, mapGetters } from 'vuex'
 import ModalSingleSkuList from './ModalSingleSkuList'
 import SkuPriceListView from './SkuPriceListView'
+import utils from '@/common/utils'
 
 export default {
   name: 'TableSkuPriceList',
@@ -194,7 +218,8 @@ export default {
       dialogSkuPriceVisible: false,
       selectTpProductSkuJson: undefined,
       selectTpProductSkuId: undefined,
-      selectTpProductSkuPriceStting: undefined
+      selectTpProductSkuPriceStting: undefined,
+      marketPrice: undefined
     }
   },
   async activated () {
@@ -202,14 +227,33 @@ export default {
   },
   computed: {
     ...mapState('migrate/migrateSettingPrice', ['tableData', 'unit']),
+    ...mapGetters('migrate/migrateSettingPrice', ['tableDataErrorMsg']),
     ...mapGetters('migrate/migrateSettingTemplate', {
       template: 'getTemplate',
       dicCustomPrices: 'getDicCustomPrices' // 本地价格设置
-    })
+    }),
+    templateError () {
+      const keys = [
+        {property: 'origin_price_diff'},
+        {property: 'group_price_rate'},
+        {property: 'group_price_diff'},
+        {property: 'price_rate'},
+        {property: 'price_diff'}
+      ]
+      let obj = {}
+      keys.map(key => {
+        obj[key.property] = !utils.isNumber(this.template.model[key.property])
+      })
+      console.log(obj, 'obj')
+      return obj
+    }
   },
   watch: {
     template: {
       handler: function (newval) {
+        if (Object.values(this.templateError).some(item => !item)) {
+          return false
+        }
         this.formatTableData({
           tableData: this.tableData,
           template: newval,
@@ -225,30 +269,36 @@ export default {
       'formatTableData',
       'marketPriceChange',
       'singleSkuPriceChange',
-      'discountPriceChange'
+      'discountPriceChange',
+      'clearMarketPrice',
+      'clearDiscountPrice',
+      'parsetIntFloat'
     ]),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
       'saveTempTemplate'
     ]),
     toFixFloat (unit) {
-      this.formatTableData({
-        tableData: this.tableData,
-        template: this.template,
+      // this.formatTableData({
+      //   tableData: this.tableData,
+      //   template: this.template,
+      //   unit
+      // })
+
+      this.parsetIntFloat({
         unit
       })
     },
     handleMarketPrice (price, id) {
-      const regex = new RegExp(/[(^\- | ^\d)\.\d]/g)
-      console.log(price.replace(/[(^\- | ^\d)\.\d]/g, ''), 'price')
-      if (regex.test(price)) {
-        this.marketPriceChange({
-          price: price.replace(/[(^\- | ^\d)\.\d]/g, ''),
-          id
-        })
-      } else {
-        console.log('输入错误')
-      }
+      this.marketPriceChange({
+        price,
+        id
+      })
+    },
+    handleClearMarketPrice (id) {
+      this.clearMarketPrice({
+        id
+      })
     },
     // 设置售卖价
     setSalePrice () {
@@ -258,8 +308,16 @@ export default {
       })
     },
     handleDiscountPrice (price, id) {
+      if (Number(price) > 9999999.99 || Number(price) < 0.01) {
+        return false
+      }
       this.discountPriceChange({
-        price,
+        price: price,
+        id
+      })
+    },
+    handleClearDiscountPrice (id) {
+      this.clearDiscountPrice({
         id
       })
     },
@@ -272,6 +330,7 @@ export default {
     showSkuPrice (selectTpProduct) {
       this.selectTpProductSkuJson = selectTpProduct.sku_json
       this.selectTpProductSkuId = selectTpProduct.tp_product_id
+      this.marketPrice = selectTpProduct.market_price
 
       if (selectTpProduct.selectPriceType) {
         const arithmetic = selectTpProduct.selectPriceArithmetic
@@ -300,38 +359,56 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.price-sku-input {
-  /deep/ .el-input__inner {
-    padding: 2px;
-    width: 44px;
-    height: 24px;
-    border-radius: 4px;
-    border: 1px solid #1d8fff;
-    font-weight: bold;
-  }
-}
-.price-sale-input {
-  /deep/ .el-input__inner {
-    padding: 5px;
+
+.TableSkuPriceList {
+  /deep/ .el-input {
     width: 150px;
-    height: 38px;
-    border-radius: 4px;
-    border: 1px solid #ebebeb;
+  }
+
+  .price-sku-input {
+    /deep/ .el-input__inner {
+      padding: 2px;
+      width: 44px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid #1d8fff;
+      font-weight: bold;
+    }
+  }
+  .price-sale-input {
+    /deep/ .el-input__inner {
+      padding: 5px;
+      width: 150px;
+      height: 38px;
+      border-radius: 4px;
+      border: 1px solid #ebebeb;
+      font-size: 18px;
+      font-family: MicrosoftYaHei;
+      color: #4e4e4e;
+      line-height: 24px;
+      font-weight: bold;
+    }
+  }
+
+  .price {
+    width: 103px;
+    height: 24px;
     font-size: 18px;
     font-family: MicrosoftYaHei;
     color: #4e4e4e;
     line-height: 24px;
     font-weight: bold;
   }
+
+  .warn {
+    color: #E02020;
+
+    /deep/ .el-input__inner {
+      border: 1px solid #E02020;
+      background-color: @background-color-danger;
+    }
+  }
+
 }
 
-.price {
-  width: 103px;
-  height: 24px;
-  font-size: 18px;
-  font-family: MicrosoftYaHei;
-  color: #4e4e4e;
-  line-height: 24px;
-  font-weight: bold;
-}
 </style>
