@@ -3,8 +3,10 @@
     <div v-loading="loading">
         <div class="mb-10 color-333 font-12 bold flex align-c">抓取拼多多剩余额度数：{{availablePddCaptureNums}}条 <el-link class="font-12 bold ml-5" :underline="false" type="primary" @click="toggleVisible">额度计算规则</el-link></div>
         <div class="mb-10 color-333 font-12 bold">拼多多抓取充值：<span v-for="(tag,idx) in versionList" :key="idx" :class="['tag','pointer',idx === active?'active' :'']" @click="handleChange(idx)">{{tag.nums}}条</span></div>
-        <div class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" v-if="versionList && versionList.length">{{versionList[active].amount / 100 || 0}}</span><span class="price">元</span></div>
-        <el-button type="primary" class="mb-20" style="width:120px" @click="onCharge" :loading="loading" :diabled="loading">立即充值</el-button>
+        <div class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" v-if="versionList && versionList.length">{{versionList[active].amount / 100 || 0}}</span><span class="price">元</span>
+        <span class="tutorials">支持开发票</span>
+        </div>
+        <el-button type="primary" class="mb-20" @click="onCharge" :loading="loading" :diabled="loading" style="width:120px" >立即充值</el-button>
         <TableRecharge />
         <ModalEvalRules :visible.sync="visible" @toggleVisible="toggleVisible"/>
         <ModalWxPay ref="ModalWxPay" :qrCode="qrCode" :orderData="orderData"/>
@@ -130,6 +132,21 @@ export default {
     .qrcode {
       width: 370px;
       height: 370px;
+    }
+
+    .tutorials{
+      background-image: linear-gradient(164deg, #FF9527 0%, #EB2202 100%);
+      border-radius: 8px 0 8px 0;
+      font-size: 10px;
+      color: #FFFFFF;
+      display: inline-block;
+      line-height: 18px;
+      text-align: center;
+      height: 18px;
+      padding: 0 4px;
+      margin-bottom: 3px;
+      margin-left: 5px;
+      font-weight: normal;
     }
 
 </style>
