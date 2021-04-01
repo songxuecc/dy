@@ -161,6 +161,7 @@ export default {
         {value: false, field: 'market_price', label: '划线价'},
         {value: false, field: 'discount_price', label: '售卖价'},
         {value: false, field: 'image_url', label: '主图'},
+        {value: false, field: 'detail_image', label: '详情图'},
         {value: false, field: 'category', label: '类目'},
         {value: false, field: 'pay_type_str', label: '支付方式'},
         {value: false, field: 'mobile', label: '客服手机'},
