@@ -2,43 +2,49 @@
 <template>
     <div class="ModalSingleSkuList">
       <div class="priceChange">
-        <el-radio v-model="radio" label="1" @change="handleChange">
+        <el-radio v-model="radio" label="1" >
           <span>(原sku价-</span>
           <el-input
             size="mini"
             style="width:100px;"
-            v-model.number="subtraction1 "
-            @input="handleChange"
+            v-model="subtraction1 "
             @focus="radio='1'"/>
           <span>) x</span>
           <el-input
             size="mini"
             style="width:100px;"
-            v-model.number="subtraction2"
-            @input="handleChange"
+            v-model="subtraction2"
             @focus="radio='1'"/>
           <span>% -</span>
           <el-input
             size="mini"
             style="width:100px;"
-            v-model.number="subtraction3"
-            @input="handleChange"
+            v-model="subtraction3"
             @focus="radio='1'"/>
         </el-radio>
-        <el-radio v-model="radio" label="2" @change="handleChange">
+        <el-radio v-model="radio" label="2" >
           <span>统一价格为</span>
           <el-input
             size="mini"
             style="width:150px;"
-            v-model.number="textPrice"
-            @input="handleChange"
+            v-model="textPrice"
             @focus="radio='2'" />
         </el-radio>
       </div>
+      <span v-if="errorMsgModel" class="fail">{{errorMsgModel}}</span>
 
-      <div class="left mb-10">
-        <el-button size="small" @click="toFixFloat(1)" type="primary">抹角</el-button>
-        <el-button size="small" @click="toFixFloat(10)" type="primary">抹分</el-button>
+      <div class="left mb-10 mt-10">
+        <el-radio-group v-model="unit" size="small" @change="toFixFloat">
+          <el-tooltip placement="top" content="价格保留到整数">
+            <el-radio-button :label="1" >抹角</el-radio-button>
+          </el-tooltip>
+          <el-tooltip placement="top" content="价格保留一位小数">
+            <el-radio-button :label="10" >抹分</el-radio-button>
+          </el-tooltip>
+          <el-tooltip placement="top" content="价格还原到初始化">
+            <el-radio-button :label="100" >还原</el-radio-button>
+          </el-tooltip>
+        </el-radio-group>
       </div>
 
       <!-- sku价格表 -->
@@ -87,7 +93,7 @@
                 </template>
                 <template slot-scope="scope">
                     <div class="great" style="width: 100%; padding-left: 18px; font-size: 16px;">
-                      {{scope.row.price}}
+                      {{scope.row.origin_price}}
                     </div>
                 </template>
             </el-table-column>
@@ -107,7 +113,6 @@
 <script>
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
-import isEqual from 'lodash/isEqual'
 import utils from '@/common/utils'
 
 export default {
@@ -124,8 +129,7 @@ export default {
       subtraction2: this.skuPriceStting.subtraction2,
       subtraction3: this.skuPriceStting.subtraction3,
       textPrice: this.skuPriceStting.textPrice || '',
-      unit: 100,
-      oldTableData: [],
+      unit: this.skuPriceStting.unit || 100,
       errorMsg: []
     }
   },
@@ -153,46 +157,45 @@ export default {
       })
       return skuPropertyList
     },
+    errorMsgModel () {
+      if (Number(this.radio) === 1 && (!utils.isNumber(this.subtraction1) || !utils.isNumber(this.subtraction2) || !utils.isNumber(this.subtraction3))) {
+        return 'sku价格公式设置 请输入数字，最多保留两位小数点'
+      } else if (Number(this.radio) === 2 && !utils.isNumber(this.textPrice)) {
+        return 'sku价格公式设置 请输入数字，最多保留两位小数点'
+      } else if (Number(this.radio) === 2 && (this.textPrice < 0.01 || this.textPrice > 9999999.99)) {
+        return '价格统一设置范围为：0.01-9999999.99'
+      }
+      return ''
+    },
     tableData: {
       get: function () {
         const skuMap = this.skuData.sku_map
         const skuPropertyMap = this.skuData.sku_property_map
         const skuPropertyValueMap = this.skuData.sku_property_value_map
-
-        const evalDiscountPrice = x => x
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           const currentColumnData = cloneDeep(skuMap[key])
-          let promoPrice = 0
-          if (Number(this.radio) === 2 && this.textPrice) {
-            promoPrice = evalDiscountPrice(this.textPrice)
-          } else {
-            const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit)
-            promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
+          // 抹角 抹分
+          const evalPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+          // 根据 自定义设置重设价格
+          if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
+            const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
+            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.sku_price))
+          } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
+            currentColumnData.sku_price = evalPrice(this.textPrice)
           }
-          currentColumnData.sku_price = promoPrice
-          currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
+          // 规格设置
           let column = {}
           // 默认规格设置
           if (isEmpty(skuPropertyMap)) {
             return {...currentColumnData, '规格': '默认规格'}
           }
-        // 有规格的设置
           properties.forEach(item => {
             const [propertyKey, propertyValueKey] = item.split(':')
             const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
             const name = skuPropertyMap[propertyKey].name
             const value = nextProperty.value
             column[name] = value
-            const skuPriceStting = this.skuPriceStting
-            const originTableData = skuPriceStting.tableData
-            const equal = isEqual(skuPriceStting, originTableData)
-
-          // 曾经设置过的价格回显
-            if (!equal && originTableData && originTableData.length) {
-              const sku = originTableData.find(orginItem => orginItem.sku_id === currentColumnData.sku_id)
-              column = cloneDeep(sku)
-            }
           })
           return {
             ...currentColumnData,
@@ -202,7 +205,9 @@ export default {
         return nextTableData
       },
       set: function (newVal) {
-        console.log(newVal, 'newVal')
+        function isInteger (obj) {
+          return Math.floor(obj * 100) === obj * 100
+        }
         this.errorMsg = newVal.map(item => {
           const price = item.sku_price
           let errorMsg = ''
@@ -210,119 +215,73 @@ export default {
             errorMsg = 'SKU价格请输入数字'
           } else if (price < 0.01 || price > 9999999.99) {
             errorMsg = 'SKU价格设置范围为：0.01-9999999.99'
+          } else if (!isInteger(price)) {
+            errorMsg = '价格最多最多保留两位小数点'
           }
-          console.log(errorMsg, 'errorMsg')
           return errorMsg
         })
       }
-    },
-    originTableData () {
-      const skuMap = this.skuData.sku_map
-      const skuPropertyMap = this.skuData.sku_property_map
-      const skuPropertyValueMap = this.skuData.sku_property_value_map
-      const evalDiscountPrice = x => x
-      const nextTableData = Object.keys(skuMap).map(key => {
-        const properties = key.split(';')
-        const currentColumnData = cloneDeep(skuMap[key])
-        let promoPrice = 0
-        if (Number(this.radio) === 2 && this.textPrice) {
-          promoPrice = evalDiscountPrice(this.textPrice)
-        } else {
-          const evalGroupPriceRange = x => (Math.floor(((x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3) * this.unit) / this.unit)
-          promoPrice = evalGroupPriceRange(currentColumnData.promo_price / 100)
-        }
-        currentColumnData.sku_price = promoPrice
-        currentColumnData.price = evalDiscountPrice(currentColumnData.price / 100)
-        let column = {}
-          // 默认规格设置
-        if (isEmpty(skuPropertyMap)) {
-          return {...currentColumnData, '规格': '默认规格'}
-        }
-        // 有规格的设置
-        properties.forEach(item => {
-          const [propertyKey, propertyValueKey] = item.split(':')
-          const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
-          const name = skuPropertyMap[propertyKey].name
-          const value = nextProperty.value
-          column[name] = value
-          const skuPriceStting = this.skuPriceStting
-          const originTableData = skuPriceStting.tableData
-          const equal = isEqual(skuPriceStting, originTableData)
-
-          // 曾经设置过的价格回显
-          if (!equal && originTableData && originTableData.length) {
-            const sku = originTableData.find(orginItem => orginItem.sku_id === currentColumnData.sku_id)
-            column = cloneDeep(sku)
-          }
-        })
-        return {
-          ...currentColumnData,
-          ...column
-        }
-      })
-      return nextTableData
     }
   },
   methods: {
     handleCancelBatchEdit () {
       this.$emit('handleCancelBatchEdit')
     },
+    filterHandler (value, row, column) {
+      const property = column.property
+      return row[property] === value
+    },
+    handleSkuChange (price, index, columnData) {
+      const tableData = this.tableData.map((item, idx) => {
+        if (idx !== index) return item
+        this.$set(this.tableData, index, {
+          ...columnData,
+          sku_price: price
+        })
+        return {
+          ...columnData,
+          sku_price: price
+        }
+      })
+      this.tableData = tableData
+    },
+    handleClearSkuPrice (index) {
+      const column = cloneDeep(this.tableData[index])
+      let price = column.promo_price / 100
+      // 抹角 抹分
+      const evalPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+      // 根据 自定义设置重设价格
+      if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
+        const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
+        price = evalPrice(evalGroupPriceRange(price))
+      } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
+        price = evalPrice(this.textPrice)
+      }
+      column.sku_price = price
+
+      const tableData = this.tableData.map((item, idx) => {
+        if (idx !== index) return item
+        this.$set(this.tableData, index, column)
+        return {
+          ...item,
+          sku_price: price
+        }
+      })
+      this.tableData = tableData
+    },
+    toFixFloat (unit) {
+      this.unit = unit
+    },
     // 点击确定
     handleSureBatchEdut () {
-      const bool = isEqual(this.originTableData, this.tableData)
       this.$emit('handleSureBatchEdut', {
         radio: this.radio,
         subtraction1: this.subtraction1,
         subtraction2: this.subtraction2,
         subtraction3: this.subtraction3,
         textPrice: this.textPrice,
-        changeSingleSku: bool,
-        tableData: this.tableData
-      })
-    },
-    filterHandler (value, row, column) {
-      const property = column.property
-      return row[property] === value
-    },
-    handleChange () {
-      if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
-        // sku价格计算公式
-        const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
-        const tableData = this.tableData.map(item => ({
-          ...item,
-          sku_price: evalGroupPriceRange(item.promo_price / 100)
-        }))
-        this.oldTableData = cloneDeep(tableData)
-        this.tableData = tableData
-      } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
-        const tableData = this.tableData.map((item, index) => {
-          return ({
-            ...item,
-            sku_price: this.textPrice
-          })
-        })
-        this.oldTableData = cloneDeep(tableData)
-        this.tableData = tableData
-      }
-    },
-    handleSkuChange (price, index, columnData) {
-      this.$set(this.tableData, index, {
-        ...columnData,
-        sku_price: price
-      })
-      this.oldTableData = cloneDeep(this.tableData)
-    },
-    handleClearSkuPrice (index) {
-      const column = this.originTableData[index]
-      this.$set(this.tableData, index, column)
-      this.oldTableData = cloneDeep(this.tableData)
-    },
-    toFixFloat (unit) {
-      this.oldTableData.map((item, index) => {
-        const column = cloneDeep(item)
-        const evalPrice = x => parseInt(x * unit) / unit
-        column.sku_price = evalPrice(item.sku_price)
-        this.$set(this.tableData, index, column)
+        tableData: this.tableData,
+        unit: this.unit
       })
     }
   }
@@ -340,10 +299,8 @@ export default {
     align-items: center;
     background: #F3F9FF;
     border: 1px dashed #1D8FFF;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    padding-top: 20px;
-    margin-top: 20px;
+    padding-bottom: 15px;
+    padding-top: 15px;
     span {
       font-size: 12px;
       color: #4E4E4E;

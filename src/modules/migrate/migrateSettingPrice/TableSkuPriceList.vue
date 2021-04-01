@@ -1,13 +1,22 @@
 <!--  -->
 <template>
   <div class="TableSkuPriceList">
-     <div class="left mb-10">
-        <el-button size="small" @click="toFixFloat(1)" type="primary">抹角</el-button>
-        <el-button size="small" @click="toFixFloat(10)" type="primary">抹分</el-button>
-      </div>
+    <div class="left mb-10">
+      <el-radio-group v-model="float" size="small" @change="toFixFloat">
+          <el-tooltip placement="top"  content="价格保留到整数">
+            <el-radio-button :label="1" >抹角</el-radio-button>
+          </el-tooltip>
+          <el-tooltip placement="top"  content="价格保留一位小数">
+            <el-radio-button :label="10" >抹分</el-radio-button>
+          </el-tooltip>
+          <el-tooltip placement="top"  content="价格还原到初始化">
+            <el-radio-button :label="100" >还原</el-radio-button>
+          </el-tooltip>
+      </el-radio-group>
+    </div>
     <el-table :data="tableData" style="width: 100%">
       <el-table-empty slot="empty" />
-      <el-table-column label="图片" width="86" align="center">
+      <el-table-column label="图片" width="60" align="center">
         <template slot-scope="scope">
           <img
             style="height: 50px"
@@ -16,7 +25,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="标题" align="center" width="210">
+      <el-table-column label="标题" align="center" width="220">
         <div slot-scope="scope" class="left">
           <el-link
             :href="scope.row.url"
@@ -100,7 +109,6 @@
         </template>
         <template slot-scope="scope">
             <el-input
-              clearable
               :debounce="500"
               size="mini"
               class="price-sale-input"
@@ -145,7 +153,6 @@
         </template>
         <template slot-scope="scope">
           <el-input
-            clearable
             :debounce="500"
             size="mini"
             class="price-sale-input"
@@ -219,7 +226,8 @@ export default {
       selectTpProductSkuJson: undefined,
       selectTpProductSkuId: undefined,
       selectTpProductSkuPriceStting: undefined,
-      marketPrice: undefined
+      marketPrice: undefined,
+      float: 100
     }
   },
   async activated () {
@@ -244,18 +252,15 @@ export default {
       keys.map(key => {
         obj[key.property] = !utils.isNumber(this.template.model[key.property])
       })
-      console.log(obj, 'obj')
       return obj
     }
   },
   watch: {
     template: {
       handler: function (newval) {
-        console.log(this.templateError)
         if (Object.values(this.templateError).some(item => item)) {
           return false
         }
-        console.log(newval, '，‘newval')
         this.formatTableData({
           tableData: this.tableData,
           template: newval,
@@ -281,16 +286,13 @@ export default {
       'saveTempTemplate'
     ]),
     toFixFloat (unit) {
-      // this.formatTableData({
-      //   tableData: this.tableData,
-      //   template: this.template,
-      //   unit
-      // })
-
-      this.parsetIntFloat({
+      this.formatTableData({
+        tableData: this.tableData,
+        template: this.template,
         unit
       })
     },
+    // 设置划线价
     handleMarketPrice (price, id) {
       this.marketPriceChange({
         price,
@@ -310,11 +312,8 @@ export default {
       })
     },
     handleDiscountPrice (price, id) {
-      if (Number(price) > 9999999.99 || Number(price) < 0.01) {
-        return false
-      }
       this.discountPriceChange({
-        price: price,
+        price,
         id
       })
     },
@@ -335,16 +334,15 @@ export default {
       this.marketPrice = selectTpProduct.market_price
 
       if (selectTpProduct.selectPriceType) {
-        const arithmetic = selectTpProduct.selectPriceArithmetic
-        console.log(arithmetic, 'arithmetic')
-        this.selectTpProductSkuPriceStting = arithmetic
+        this.selectTpProductSkuPriceStting = selectTpProduct.selectPriceArithmetic
       } else {
         this.selectTpProductSkuPriceStting = {
           subtraction1: this.template.model.origin_price_diff,
           subtraction2: this.template.model.group_price_rate,
           subtraction3: this.template.model.group_price_diff,
           textPrice: '',
-          radio: '1'
+          radio: '1',
+          unit: this.unit
         }
       }
       this.dialogSkuPriceVisible = true

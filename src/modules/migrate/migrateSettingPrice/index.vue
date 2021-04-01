@@ -58,6 +58,10 @@ export default {
       this.$refs.newComer.close && this.$refs.newComer.close()
     },
     toSetTemplate () {
+      // 1. 检查 列表的error和 model的error 是否为空
+      // 检查sku价格模版是否有设置为空 空则自动添加数据
+      // 检查模版是否更新 否则更新模版
+      // 拼接sku 自定义价格的数据
 
     },
     goback () {
