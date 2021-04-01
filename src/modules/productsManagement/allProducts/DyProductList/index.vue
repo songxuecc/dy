@@ -32,7 +32,7 @@
             </el-tooltip>
           </el-upload> -->
           <!-- 商品sku编码导入 upload组件 end -->
-          <el-button size="small" @click="openDialogExport" class="nodim" style="right: 0px;">商品导出</el-button>
+          <el-button size="medium" @click="openDialogExport" class="nodim" style="right: 0px;">商品导出</el-button>
         </template>
       </dy-product-list-view>
       <br>
@@ -160,7 +160,8 @@ export default {
         {value: false, field: 'goods_quantity', label: '商品库存'},
         {value: false, field: 'market_price', label: '划线价'},
         {value: false, field: 'discount_price', label: '售卖价'},
-        {value: false, field: 'image_url', label: '主图'},
+        {value: false, field: 'banner_image', label: '轮播图'},
+        {value: false, field: 'detail_image', label: '详情图'},
         {value: false, field: 'category', label: '类目'},
         {value: false, field: 'pay_type_str', label: '支付方式'},
         {value: false, field: 'mobile', label: '客服手机'},
