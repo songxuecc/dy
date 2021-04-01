@@ -259,7 +259,7 @@ export default {
       const tableData = state.originTableData
       const nextTableData = cloneDeep(tableData).map(item => {
         const evalPrice = x => parseInt(x * unit) / unit
-        const hasRangeSkuPrice = item.group_price_range.includes('~')
+        const hasRangeSkuPrice = item.group_price_range.toString().includes('~')
         let minPrice = Number(hasRangeSkuPrice ? (item.group_price_range.split('~')[0]) : item.group_price_range)
         let maxPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[1] : item.group_price_range)
         minPrice = evalPrice(minPrice)
@@ -286,7 +286,7 @@ export default {
         let discountPriceError = ''
         let marketPriceError = ''
         let groupPriceRangeError = ''
-        const hasRangeSkuPrice = item.group_price_range.includes('~')
+        const hasRangeSkuPrice = item.group_price_range.toString().includes('~')
         const minPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[0] : item.group_price_range)
         const maxPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[1] : item.group_price_range)
 
