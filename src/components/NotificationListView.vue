@@ -8,7 +8,7 @@
         >
             <el-table-column>
                 <template slot-scope="scope">
-                    <el-row style="padding-bottom: 6px; display:flex;">
+                    <el-row style="padding-bottom: 6px; display:flex;padding-right:6px">
                         <el-col :span="21" style="font-size: 18px; color: #333333">
                             <span class="red-circle" v-if="scope.row.is_read === 0"></span>
                             <span>{{ scope.row.title === '-' ? '通知' : scope.row.title }}</span>

@@ -32,7 +32,7 @@
         </el-container>
         <div v-else>
           <keep-alive>
-              <router-view v-if="$route.meta.keepAliv.main-wrappere && isRouterAlive"></router-view>
+              <router-view v-if="$route.meta.keepAlive && isRouterAlive"></router-view>
           </keep-alive>
           <router-view v-if="!$route.meta.keepAlive && isRouterAlive"></router-view>
         </div>
