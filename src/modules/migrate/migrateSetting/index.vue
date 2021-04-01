@@ -180,6 +180,7 @@ export default {
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'is_cut_black_word',
+        'is_cut_image_black_word',
         'is_banner_auto_5',
         'is_cut_sku_spec',
         'detail_img_cut'
