@@ -669,6 +669,13 @@ export default {
             minPrice = utils.yuanToFen(priceRange[0])
             maxPrice = utils.yuanToFen(priceRange[0])
           }
+          if (minPrice <= 0 || maxPrice <= 0) {
+            let strError = 'SKU价格必须大于0'
+            tpProduct.groupPriceError = strError
+            if (this.msgError === '') {
+              this.msgError = strError
+            }
+          }
           if (discountPriceFen > maxPrice || discountPriceFen < minPrice) {
             let strError = '售卖价必须在sku价格范围内'
             tpProduct.discountPriceError = strError
