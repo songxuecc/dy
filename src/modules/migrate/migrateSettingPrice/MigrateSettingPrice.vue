@@ -210,7 +210,7 @@
       <el-button style="margin-right: 15px; width:120px" @click="goback" plain type="primary">返回</el-button>
       <el-tooltip placement="top" :disabled="msgError === ''" :content="msgError">
         <div>
-            <el-button type="primary" :disabled="msgError !== ''" @click="toSetTemplate">下一步：修改模板</el-button>
+            <el-button type="primary" :disabled="msgError !== '' || isLoading" @click="toSetTemplate">下一步：修改模板</el-button>
             <NewComer type="下一步：修改模板" ref="newComer" >
               <div class="left">
                 <div style="width:180px"  class="color-666 font-12">点击此处进行下一步操作</div>
@@ -288,7 +288,8 @@ export default {
       isShowSample: false,
       isMounted: true,
       skuPriceListViewMap: new Map(),
-      skuPriceListViewMapActive: undefined
+      skuPriceListViewMapActive: undefined,
+      isLoading: false
     }
   },
   computed: {
@@ -354,6 +355,7 @@ export default {
       return ''
     },
     async reloadTemplate () {
+      this.isLoading = true
       this.isInitTemplate = true
       await this.requestTemplate()
       this.isInitTemplate = false
@@ -402,6 +404,7 @@ export default {
             tpProduct.market_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['price'])
           }
         }
+        this.isLoading = false
       })
     },
     /**
