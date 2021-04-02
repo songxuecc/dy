@@ -652,7 +652,7 @@ export default {
           //     this.msgError = strError
           //   }
           // }
-          if (!discountPriceFen) {
+          if (discountPriceFen <= 0) {
             let strError = '售卖价必须大于0'
             tpProduct.discountPriceError = strError
             if (this.msgError === '') {
