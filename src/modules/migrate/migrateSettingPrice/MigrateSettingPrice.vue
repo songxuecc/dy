@@ -354,13 +354,14 @@ export default {
       }
       return ''
     },
-    async reloadTemplate () {
+    reloadTemplate () {
       this.isLoading = true
       this.isInitTemplate = true
-      await this.requestTemplate()
-      this.isInitTemplate = false
+      this.requestTemplate().then(() => {
+        this.isInitTemplate = false
       // 拿到模板数据后再请求商品数据
-      this.getTPProductList()
+        this.getTPProductList()
+      })
     },
     /**
      * 请求搬家商品列表
@@ -396,11 +397,11 @@ export default {
         // 恢复历史价格
         for (let tpProduct of this.tpProductList) {
           // 恢复历史售卖价
-          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'] >= 0) {
+          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'] > 0) {
             tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'])
           }
           // 恢复历史划线价
-          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['price'] >= 0) {
+          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['price'] > 0) {
             tpProduct.market_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['price'])
           }
         }
@@ -487,11 +488,11 @@ export default {
           // 刷新划线价公式提示
           tpProduct.max_price = maxPriceFen
           // 恢复历史售卖价
-          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'] >= 0) {
+          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'] > 0) {
             tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'])
           }
           // 恢复历史划线价
-          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['price'] >= 0) {
+          if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['price'] > 0) {
             tpProduct.market_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['price'])
           }
           // 刷新价格范围
@@ -568,7 +569,7 @@ export default {
             tpProduct.max_price, this.template.model.single_price_rate, this.template.model.single_price_diff * 100
           ))
         })
-        if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'] >= 0) {
+        if (this.dicCustomPrices[tpProduct.tp_product_id] && this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'] > 0) {
           tpProduct.discount_price_obj.model.price = utils.fenToYuan(this.dicCustomPrices[tpProduct.tp_product_id]['discount_price'])
         }
       }
@@ -616,6 +617,7 @@ export default {
         let marketPriceFen = Math.round(tpProduct.market_price_obj.model.price * 100)
         tpProduct.singlePriceError = ''
         tpProduct.groupPriceError = ''
+
         if (tpProduct.sku_json && tpProduct.sku_json.sku_map) {
           let maxGroupPriceFen = 0
           let minGroupPriceFen = 999999
@@ -650,6 +652,13 @@ export default {
           //     this.msgError = strError
           //   }
           // }
+          if (!discountPriceFen) {
+            let strError = '售卖价必须大于0'
+            tpProduct.discountPriceError = strError
+            if (this.msgError === '') {
+              this.msgError = strError
+            }
+          }
           let priceRange = tpProduct.group_price_range.toString().split(' ~ ')
           let maxPrice = 0
           let minPrice = 0
