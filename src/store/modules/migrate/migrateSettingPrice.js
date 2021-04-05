@@ -31,7 +31,8 @@ export default {
         this.dispatch('migrate/migrateSettingPrice/formatTableData', {
           template,
           tableData,
-          unit
+          unit,
+          origin: true
         })
       } catch (err) {
         console.log(err)
@@ -45,7 +46,8 @@ export default {
       const {
         template,
         tableData,
-        unit = 100
+        unit = 100,
+        origin = false
       } = payload
 
       // sku价格计算公式
@@ -85,6 +87,10 @@ export default {
       })
 
       commit('save', {tableData: cloneDeep(nextTableData), unit, template})
+      // 保存初始化价格结果设置
+      if (origin) {
+        commit('save', {originTableData: cloneDeep(nextTableData)})
+      }
     },
     // 修改划线价
     marketPriceChange ({commit, state}, payload) {

@@ -47,8 +47,8 @@ export default {
         template.assign({...template.model, ...data})
         commit('save', {template})
         // 先获取数据 再保存localstorege 最后合并两个数据 是为了保证再用户刷新数据的时候 可以保证用户操作记录还在
-        this.dispatch('migrate/migrateSettingTemplate/loadTempTemplate', template)
-        return template
+        // 在这里真正保存模版
+        return this.dispatch('migrate/migrateSettingTemplate/loadTempTemplate', template)
       } catch (err) {
         console.log(err)
       }
@@ -67,8 +67,9 @@ export default {
     loadTempTemplate ({commit, state}, payload) {
       let strTemplate = localStorage.getItem('temp_template') || ''
       let strCustomPrices = localStorage.getItem('custom_prices') || ''
+      let template = payload
       if (strTemplate) {
-        const template = cloneDeep(payload)
+        template = cloneDeep(payload)
         Object.assign(template.model, JSON.parse(strTemplate))
         commit('save', {template})
       }
@@ -76,6 +77,7 @@ export default {
         commit('save', {dicCustomPrices: JSON.parse(strCustomPrices)})
       }
       this.dispatch('migrate/migrateSettingTemplate/saveTempTemplate')
+      return template
     },
     removeTempTemplate () {
       localStorage.removeItem('temp_template')

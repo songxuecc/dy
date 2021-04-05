@@ -986,14 +986,14 @@ export default {
       }
       let params = {
         tp_product_ids: this.migrateProductList,
-        child_shop_user_id: this.search.child_shop_user_id
+        child_shop_user_id: Number(this.search.child_shop_user_id)
       }
       this.request(
         'getTPProductByIds',
         params,
         (data) => {
           // 筛选子店铺，请求延后返回导致状态不对，因此将这种请求丢掉
-          if (params['child_shop_user_id'] !== this.search.child_shop_user_id) {
+          if (params['child_shop_user_id'] !== Number(this.search.child_shop_user_id)) {
             return
           }
           let productList = data['items']

@@ -25,7 +25,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="标题" align="center" width="220">
+      <el-table-column label="标题" align="center">
         <div slot-scope="scope" class="left">
           <el-link
             :href="scope.row.url"
@@ -40,7 +40,7 @@
         </div>
       </el-table-column>
 
-      <el-table-column align="center" >
+      <el-table-column align="center" width="270">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">sku价格=
             <el-tooltip content="SKU价格公式输入必须为数字" v-if="templateError.origin_price_diff || templateError.group_price_rate || templateError.group_price_diff" placement="top">
@@ -95,7 +95,7 @@
           <p class="fail" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</p>
         </template>
       </el-table-column>
-      <el-table-column align="center" >
+      <el-table-column align="center"  width="270">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">售卖价</p>
           <el-radio-group
@@ -121,7 +121,7 @@
             <p class="fail" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
       </el-table-column>
-      <el-table-column align="center" >
+      <el-table-column align="center"  width="250">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">
             划线价=
@@ -192,9 +192,13 @@
       width="30%"
       :append-to-body="true"
     >
-      <el-image
-        src="https://sf1-ttcdn-tos.pstatp.com/obj/ecom-luban-cdn/shopfxg3/images/Z9gCP.png"
-      ></el-image>
+       <el-image src="https://sf1-ttcdn-tos.pstatp.com/obj/ecom-luban-cdn/shopfxg3/images/Z9gCP.png">
+        <div slot="placeholder" class="image-slot">
+          <hh-icon type="iconwuzhaopian" style="font-size:390px"></hh-icon>
+          <div class="info mt-20">加载中...</div>
+        </div>
+      </el-image>
+
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="isShowSample = false"
           >确 定</el-button
@@ -294,7 +298,7 @@ export default {
       })
     },
     // 设置划线价
-    handleMarketPrice (price, id) {
+    handleMarketPrice (price, id, oldValue) {
       this.marketPriceChange({
         price,
         id
@@ -305,13 +309,14 @@ export default {
         id
       })
     },
-    // 设置售卖价
+    // 设置售卖价高低
     setSalePrice () {
       this.salePriceChange({
         tableData: this.tableData,
         isSalePriceShowMax: this.template.model.is_sale_price_show_max
       })
     },
+    // 设置售卖价
     handleDiscountPrice (price, id) {
       this.discountPriceChange({
         price,

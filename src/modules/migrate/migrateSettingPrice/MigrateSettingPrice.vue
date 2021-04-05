@@ -848,6 +848,9 @@ export default {
         path: '/migrateSettingTemplate'
       })
     },
+    // 抹角 抹分 last_discount_price 手工修改划线价触发price
+    // 手工修改售卖价触发 discount_price
+    // sku
     addCustomPrices (tpProductId, field, value) {
       if (!this.dicCustomPrices[tpProductId]) {
         this.dicCustomPrices[tpProductId] = {}
