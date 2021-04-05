@@ -2,6 +2,7 @@ import Api from '@/api/apis'
 import common from '@/common/common'
 import utils from '@/common/utils'
 import cloneDeep from 'lodash/cloneDeep'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   namespaced: true,
@@ -21,7 +22,7 @@ export default {
       try {
         commit('save', {tableData: []})
         const unit = state.unit
-        const template = await this.dispatch('migrate/migrateSettingTemplate/requestTemplate')
+        const {template, dicCustomPrices} = await this.dispatch('migrate/migrateSettingTemplate/requestTemplate')
         const params = {
           tp_product_ids: rootGetters.getSelectTPProductIdList,
           need_sku: true
@@ -32,7 +33,8 @@ export default {
           template,
           tableData,
           unit,
-          origin: true
+          origin: true,
+          dicCustomPrices
         })
       } catch (err) {
         console.log(err)
@@ -47,9 +49,11 @@ export default {
         template,
         tableData,
         unit = 100,
-        origin = false
+        origin = false,
+        dicCustomPrices
       } = payload
 
+      // todo 如果有dicCustomPrices 就使用历史价格dicCustomPrices
       // sku价格计算公式
       let evalGroupPriceRange = x => (x - template.model.origin_price_diff) * template.model.group_price_rate / 100 - template.model.group_price_diff
       // 划线价计算公式
@@ -58,13 +62,20 @@ export default {
       const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
 
       const nextTableData = (tableData || []).map(item => {
-        const skuMap = cloneDeep(item.sku_json.sku_map)
+        const id = item.tp_product_id
+        let skuMap = cloneDeep(item.sku_json.sku_map)
+
         let nextSkuMap = {}
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
           if (!value.sku_price) {
-            value.sku_price = evalPrice(value.promo_price / 100)
-            value.origin_price = evalPrice(value.promo_price / 100)
+            let promoPrice = value.promo_price
+            // 恢复历史sku价格
+            if (origin && !isEmpty(dicCustomPrices)) {
+              promoPrice = dicCustomPrices[id].sku[key].promo_price
+            }
+            value.sku_price = evalPrice(promoPrice / 100)
+            value.origin_price = evalPrice(promoPrice / 100)
             value.custome_key = key
           }
           nextSkuMap[key] = value
@@ -78,10 +89,23 @@ export default {
         // 设置价格公式
         item.group_price_range = minPrices !== maxPrices ? minPrices + '~' + maxPrices : maxPrices
         item.discount_price = !Number(template.model.is_sale_price_show_max) ? minPrices : maxPrices
+
+        // 恢复历史售卖价
+        if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id].discount_price) {
+          item.discount_price = evalPrice(dicCustomPrices[id].discount_price / 100)
+        }
+        if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id].last_discount_price) {
+          item.discount_price = evalPrice(dicCustomPrices[id].last_discount_price / 100)
+        }
+
         item.market_price = marketPrice
         // 如果是抖音商品，则取商品最小价格作为划线价
         if (item['tp_id'] === common.TpType.dy) {
           item.market_price = evalMarketPrice(minPrices)
+        }
+        // 恢复历史划线价格
+        if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id].price) {
+          item.market_price = evalPrice(dicCustomPrices[id].price / 100)
         }
         return cloneDeep(item)
       })

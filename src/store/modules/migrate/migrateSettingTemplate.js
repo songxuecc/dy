@@ -77,7 +77,10 @@ export default {
         commit('save', {dicCustomPrices: JSON.parse(strCustomPrices)})
       }
       this.dispatch('migrate/migrateSettingTemplate/saveTempTemplate')
-      return template
+      return {
+        template,
+        dicCustomPrices: strCustomPrices ? JSON.parse(strCustomPrices) : {}
+      }
     },
     removeTempTemplate () {
       localStorage.removeItem('temp_template')
