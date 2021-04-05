@@ -1,22 +1,23 @@
 <!-- 我的页面 -->
 <template>
-  <div class=''>
-    <Title class="mt-5 mb-5"/>
-
-    <TableSkuPriceList ref="tableSkuPriceList" @templateError="handleTemplateError"/>
+  <div >
+    <Title class="mt-5 mb-5" />
+    <TableSkuPriceList ref="tableSkuPriceList" @templateError="handleTemplateError"
+      v-loading="loadingGetTPProductByIds" />
     <div class="common-bottom flex justify-c">
-      <el-button style="margin-right: 15px; width:120px" @click="goback" plain type="primary" :loading="loadingGetTPProductByIds">返回</el-button>
+      <el-button style="margin-right: 15px; width:120px" @click="goback" :disabled="loadingGetTPProductByIds" plain
+        type="primary" :loading="loadingGetTPProductByIds">返回</el-button>
       <div>
-          <el-button type="primary" :disabled="msgError" @click="toSetTemplate" :loading="loadingGetTPProductByIds">下一步：修改模板</el-button>
-          <NewComer type="下一步：修改模板" ref="newComer" >
-            <div class="left">
-              <div style="width:180px"  class="color-666 font-12">点击此处进行下一步操作</div>
-              <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
-            </div>
-          </NewComer>
+        <el-button type="primary" :disabled="msgError || loadingGetTPProductByIds" @click="toSetTemplate"
+          :loading="loadingGetTPProductByIds">下一步：修改模板</el-button>
+        <NewComer type="下一步：修改模板" ref="newComer">
+          <div class="left">
+            <div style="width:180px" class="color-666 font-12">点击此处进行下一步操作</div>
+            <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
+          </div>
+        </NewComer>
       </div>
     </div>
-
   </div>
 </template>
 

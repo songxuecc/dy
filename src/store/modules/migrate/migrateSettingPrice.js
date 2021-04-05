@@ -19,6 +19,7 @@ export default {
   actions: {
     async getTPProductByIds ({commit, state, rootGetters}, payload) {
       try {
+        commit('save', {tableData: []})
         const unit = state.unit
         const template = await this.dispatch('migrate/migrateSettingTemplate/requestTemplate')
         const params = {
