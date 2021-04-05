@@ -105,7 +105,7 @@
         </el-table>
         <div class="btns">
           <el-button style="width: 120px" @click="handleCancelBatchEdit" plain type="primary">取消</el-button>
-          <el-button style="width: 120px" type="primary" @click="handleSureBatchEdut">确定</el-button>
+          <el-button style="width: 120px" type="primary" @click="handleSureBatchEdut" :disabled="disabledBtn">确定</el-button>
         </div>
     </div>
 </template>
@@ -166,6 +166,9 @@ export default {
         return '价格统一设置范围为：0.01-9999999.99'
       }
       return ''
+    },
+    disabledBtn () {
+      return this.errorMsg.some(item => !isEmpty(item)) && this.errorMsgModel
     },
     tableData: {
       get: function () {

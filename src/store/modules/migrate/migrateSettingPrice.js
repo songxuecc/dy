@@ -58,7 +58,6 @@ export default {
         const skuMap = cloneDeep(item.sku_json.sku_map)
         let nextSkuMap = {}
         Object.keys(skuMap).forEach(key => {
-          console.log(key, 'key')
           const value = skuMap[key]
           if (!value.sku_price) {
             value.sku_price = evalPrice(value.promo_price / 100)
@@ -264,11 +263,9 @@ export default {
           groupPriceRangeError = 'SKU价设置范围为：0.01-9999999.99'
         }
 
-        error = Object.assign(
-          discountPriceError && {discount_price_error: discountPriceError},
-          marketPriceError && {market_price_error: marketPriceError},
-          groupPriceRangeError && {group_price_range_error: groupPriceRangeError}
-        )
+        if (discountPriceError) error.discount_price_error = discountPriceError
+        if (marketPriceError) error.market_price_error = marketPriceError
+        if (groupPriceRangeError) error.group_price_range_error = groupPriceRangeError
         return error
       })
       return nextTableDataErrorMsg

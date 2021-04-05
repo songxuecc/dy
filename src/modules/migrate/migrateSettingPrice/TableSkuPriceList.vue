@@ -14,7 +14,7 @@
           </el-tooltip>
       </el-radio-group>
     </div>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%;min-height:270px">
       <el-table-empty slot="empty" />
       <el-table-column label="图片" width="60" align="center">
         <template slot-scope="scope">
@@ -252,6 +252,7 @@ export default {
       keys.map(key => {
         obj[key.property] = !utils.isNumber(this.template.model[key.property])
       })
+      this.$emit('templateError', obj)
       return obj
     }
   },
