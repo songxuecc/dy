@@ -186,7 +186,7 @@
                               <el-input v-model.number="scope.row.quantity" size="mini" type="number"></el-input>
                           </template>
                       </el-table-column>
-                      <el-table-column key="4" width="100">
+                      <!-- <el-table-column key="4" width="100">
                           <template slot="header" slot-scope="scope">
                               <span>价格</span>
                               <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
@@ -200,7 +200,7 @@
                               <el-input v-if="scope.row.promo_price===0" v-model.number="scope.row.promo_price" size="mini" type="number"></el-input>
                               <span v-else>{{scope.row.promo_price}}</span>
                           </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column key="5" width="150">
                           <template slot="header" slot-scope="scope">
                             <span @click="toggleVisibleSkuImport">商品编码</span>

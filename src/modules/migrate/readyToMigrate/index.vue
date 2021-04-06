@@ -52,7 +52,7 @@
           </el-form-item>
         </el-form>
         <div>
-          <el-alert v-if="getMigrateInfo.length>0" :title=getMigrateInfo type="success" :closable="false" center>
+          <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center>
           </el-alert>
         </div>
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
@@ -428,7 +428,7 @@ export default {
       this.statusStatistics.forEach(function (item) {
         let status = parseInt(item['status'])
         if ([1, 2].includes(status)) {
-          running += item['count']
+          running += item.count
         }
         // if (status === 9) {
         //   check += item['count']
@@ -440,6 +440,7 @@ export default {
       // if (check) {
       //   info += check + '个商品在后台审核'
       // }
+      console.log(info, 'info')
       return info
     }
   },
@@ -1041,7 +1042,7 @@ export default {
         'getMigrateStatusStatistics',
         {},
         (data) => {
-          this.statusStatistics = data['status_statistics']
+          this.statusStatistics = data.status_statistics
           let isFinish = true
           this.statusStatistics.forEach(function (value) {
             if ([1, 2].includes(parseInt(value.status))) {
