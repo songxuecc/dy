@@ -1,18 +1,25 @@
-<!--  -->
 <template>
-    <div style="text-align: left">
-      <el-steps :active="2" finish-status="success">
-          <el-step title="选择商品"></el-step>
-          <el-step title="编辑价格"></el-step>
-          <el-step title="修改模板"></el-step>
-      </el-steps>
-    </div>
+    <el-steps :icon="true" :active="3" class="left">
+        <el-step >
+            <div slot="icon"><hh-icon type="iconxuanzeshangpinguoqushi" style="font-size:40px" /> </div>
+            <div slot="title" class="color-4e font-12 ml">选择商品</div>
+        </el-step>
+        <el-step >
+            <div slot="icon"><hh-icon type="iconbianjijiageguoqushi" style="font-size:40px" /> </div>
+            <div slot="title"  class="color-4e font-12 ml" >编辑价格</div>
+        </el-step>
+        <el-step >
+            <div slot="icon"><hh-icon type="iconxiugaimobanxuanzhong" style="font-size:40px" /> </div>
+            <div slot="title"  class="color-primary font-12 ml">修改模板</div>
+        </el-step>
+    </el-steps>
 </template>
 
 <script>
 export default {
-  name: 'Head',
+  name: 'title',
   props: {
+    msg: String
   },
   data () {
     return {
@@ -21,4 +28,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.ml {
+    margin-left: -10px;
+}
 </style>
