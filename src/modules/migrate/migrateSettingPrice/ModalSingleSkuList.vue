@@ -1,23 +1,31 @@
 <template>
-    <div class="ModalSingleSkuList">
+    <div class="ModalSingleSkuList relative mt-20">
+      <div class="center font-12" style="position:absolute;top:-25px;left:0;right:0;margin-auto">
+        <span class="color-4e" v-if="unit === 1" >已选择保留整数</span>
+        <span class="color-4e" v-if="unit === 10" >已选择保留一位小数</span>
+        <span class="color-4e" v-if="unit === 100" >已选择保留两位小数</span>
+      </div>
       <div class="priceChange">
         <el-radio v-model="radio" label="1" >
           <span>(原sku价-</span>
           <el-input
             size="mini"
             style="width:100px;"
-            v-model="subtraction1 "
+            v-model="subtraction1"
+            @input="handleTemplate($event,'subtraction1')"
             @focus="radio='1'"/>
           <span>) x</span>
           <el-input
             size="mini"
             style="width:100px;"
+            @input="handleTemplate($event,'subtraction2')"
             v-model="subtraction2"
             @focus="radio='1'"/>
           <span>% -</span>
           <el-input
             size="mini"
             style="width:100px;"
+            @input="handleTemplate($event,'subtraction3')"
             v-model="subtraction3"
             @focus="radio='1'"/>
         </el-radio>
@@ -27,14 +35,12 @@
             <el-input
               size="mini"
               style="width:150px;"
-              :value="textPrice"
-              @input="handleTextPrice"
+              v-model="textPrice"
+              @input="handleTemplate($event,'textPrice')"
               @change="handleTextPriceChange"
               @focus="radio='2'" />
           </el-radio>
-          <span class="primary" v-if="unit === 1" >保留整数</span>
-          <span class="primary" v-if="unit === 10" >保留一位小数</span>
-          <span class="primary" v-if="unit === 100" >保持原价格</span>
+
         </span>
       </div>
       <span v-if="errorMsgModel" class="fail">{{errorMsgModel}}</span>
@@ -128,16 +134,68 @@ export default {
       subtraction3: this.skuPriceStting.subtraction3,
       textPrice: evalPrice(this.skuPriceStting.textPrice) || '',
       unit: this.skuPriceStting.unit || 100,
-      errorMsg: [],
-      hasRender: false
+      hasRender: false,
+      tableData: []
     }
   },
   watch: {
-    skuPriceStting (newVal) {
-      this.unit = newVal.unit
+    propsData: {
+      handler: function (n) {
+        const {skuData, unit} = n
+        const skuMap = skuData.sku_map
+        const skuPropertyMap = skuData.sku_property_map
+        const skuPropertyValueMap = skuData.sku_property_value_map
+        const nextTableData = Object.keys(skuMap).map(key => {
+          const properties = key.split(';')
+          let currentColumnData = cloneDeep(skuMap[key])
+          // const unit = this.skuPriceStting.unit
+          // 抹角 抹分
+          const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+          // 根据 定制公式重设价格
+          if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
+            const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
+            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_price))
+          } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
+            currentColumnData.sku_price = evalPrice(this.textPrice)
+          }
+          // 根据 自定义价格
+          if (currentColumnData.custom_price && !this.hasRender) {
+            currentColumnData.sku_price = evalPrice(currentColumnData.custom_price)
+          }
+          if (this.skuPriceStting.tabledata) {
+            currentColumnData = this.skuPriceStting.tabledata.find(item => item.custome_key === key)
+          }
+          // 规格设置
+          let column = {}
+          // 默认规格设置
+          if (isEmpty(skuPropertyMap)) {
+            return {...currentColumnData, '规格': '默认规格'}
+          }
+          properties.forEach(item => {
+            const [propertyKey, propertyValueKey] = item.split(':')
+            const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
+            const name = skuPropertyMap[propertyKey].name
+            const value = nextProperty.value
+            column[name] = value
+          })
+          return {
+            ...currentColumnData,
+            ...column
+          }
+        })
+
+        this.tableData = nextTableData
+      },
+      deep: true,
+      immediate: true
     }
   },
   computed: {
+    propsData () {
+      const skuData = this.skuData
+      const unit = this.skuPriceStting.unit
+      return {skuData, unit}
+    },
     skuPropertyList () {
       const skuPropertyMap = this.skuData.sku_property_map
       if (isEmpty(skuPropertyMap)) {
@@ -174,74 +232,50 @@ export default {
     disabledBtn () {
       return this.errorMsg.some(item => !isEmpty(item)) && this.errorMsgModel
     },
-    tableData: {
-      get: function () {
-        const skuMap = this.skuData.sku_map
-        const skuPropertyMap = this.skuData.sku_property_map
-        const skuPropertyValueMap = this.skuData.sku_property_value_map
-        const nextTableData = Object.keys(skuMap).map(key => {
-          const properties = key.split(';')
-          const currentColumnData = cloneDeep(skuMap[key])
-          const unit = this.skuPriceStting.unit
-          // 抹角 抹分
-          const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
-          // 根据 定制公式重设价格
-          if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
-            const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
-            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_price))
-          } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
-            currentColumnData.sku_price = evalPrice(this.textPrice)
-          }
-          // 根据 自定义价格
-          if (currentColumnData.custom_price && !this.hasRender) {
-            currentColumnData.sku_price = evalPrice(currentColumnData.custom_price)
-          }
-          // 规格设置
-          let column = {}
-          // 默认规格设置
-          if (isEmpty(skuPropertyMap)) {
-            return {...currentColumnData, '规格': '默认规格'}
-          }
-          properties.forEach(item => {
-            const [propertyKey, propertyValueKey] = item.split(':')
-            const nextProperty = skuPropertyValueMap[propertyKey][propertyValueKey]
-            const name = skuPropertyMap[propertyKey].name
-            const value = nextProperty.value
-            column[name] = value
-          })
-          return {
-            ...currentColumnData,
-            ...column
-          }
-        })
-        return nextTableData
-      },
-      set: function (newVal) {
-        if (!this.hasRender) {
-          this.hasRender = true
-        }
-        function isInteger (obj) {
-          return Math.floor(obj * 100) === obj * 100
-        }
-        this.errorMsg = newVal.map(item => {
-          const price = item.sku_price
-          let errorMsg = ''
-          if (!utils.isNumber(price)) {
-            errorMsg = 'SKU价格请输入数字'
-          } else if (price < 0.01 || price > 9999999.99) {
-            errorMsg = 'SKU价格设置范围为：0.01-9999999.99'
-          } else if (!isInteger(price)) {
-            errorMsg = '价格最多最多保留两位小数点'
-          }
-          return errorMsg
-        })
+    errorMsg () {
+      function isInteger (obj) {
+        return Math.floor(obj * 100) === obj * 100
       }
+      return this.tableData.map(item => {
+        const price = item.sku_price
+        let errorMsg = ''
+        if (!utils.isNumber(price)) {
+          errorMsg = 'SKU价格请输入数字'
+        } else if (price < 0.01 || price > 9999999.99) {
+          errorMsg = 'SKU价格设置范围为：0.01-9999999.99'
+        } else if (!isInteger(price)) {
+          errorMsg = '价格最多最多保留两位小数点'
+        }
+        return errorMsg
+      })
     }
   },
   methods: {
-    toggleHasRender () {
-      this.hasRender = false
-      console.log(this.hasRender, 'this.hasRender')
+    handleTemplate (value, key) {
+      if (Number(this.radio) === 1 && ['subtraction1', 'subtraction2', 'subtraction3'].includes(key)) {
+        const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
+        const evalPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+        const tableData = this.tableData.map((item, idx) => {
+          const nextItem = cloneDeep(item)
+          delete nextItem.custom_price
+          nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_price))
+          this.$set(this.tableData, idx, nextItem)
+          return nextItem
+        })
+        this.tableData = tableData
+        this[key] = value
+      } else if (utils.isNumber(value) && value && Number(this.radio) === 2 && ['textPrice'].includes(key)) {
+        const evalPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+        const tableData = this.tableData.map((item, idx) => {
+          const nextItem = cloneDeep(item)
+          delete nextItem.custom_price
+          nextItem.sku_price = evalPrice(value)
+          this.$set(this.tableData, idx, nextItem)
+          return nextItem
+        })
+        this.tableData = tableData
+        this[key] = value
+      }
     },
     handleCancelBatchEdit () {
       this.$emit('handleCancelBatchEdit')
@@ -251,21 +285,18 @@ export default {
       return row[property] === value
     },
     handleSkuChange (price, index, columnData) {
-      const unit = this.skuPriceStting.unit
-      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
       const tableData = this.tableData.map((item, idx) => {
         if (idx !== index) return item
         this.$set(this.tableData, index, {
           ...columnData,
-          sku_price: evalPrice(price),
+          sku_price: price,
           // 自定义价格
-          custom_price: evalPrice(price)
+          custom_price: price
         })
         return {
           ...columnData,
-          sku_price: evalPrice(price),
-          // 自定义价格
-          custom_price: evalPrice(price)
+          sku_price: price,
+          custom_price: price
         }
       })
       this.tableData = tableData
@@ -343,7 +374,7 @@ export default {
     }
     /deep/ .el-input__inner{
       font-size:18px;
-      color:#1D8FFF;
+      color:#333;
       padding: 5px;
     }
 
