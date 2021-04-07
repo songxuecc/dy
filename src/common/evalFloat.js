@@ -22,13 +22,13 @@ var countDecimals = function (num) {
         len = str.split('.')[1].length
       }
     }
+    return len
   } catch (e) {
     throw e
   } finally {
     if (isNaN(len) || len < 0) {
       len = 0
     }
-    return len
   }
 }
 
@@ -74,10 +74,8 @@ export const accAdd = function (num1, num2) {
   try { dec1 = countDecimals(num1) + 1 } catch (e) { dec1 = 0 }
   try { dec2 = countDecimals(num2) + 1 } catch (e) { dec2 = 0 }
   times = Math.pow(10, Math.max(dec1, dec2))
-      // var result = (num1 * times + num2 * times) / times;
   var result = (accMul(num1, times) + accMul(num2, times)) / times
   return getCorrectResult('add', num1, num2, result)
-      // return result;
 }
 
   // 减法
@@ -88,34 +86,33 @@ export const accSub = function (num1, num2) {
   try { dec1 = countDecimals(num1) + 1 } catch (e) { dec1 = 0 }
   try { dec2 = countDecimals(num2) + 1 } catch (e) { dec2 = 0 }
   times = Math.pow(10, Math.max(dec1, dec2))
-      // var result = Number(((num1 * times - num2 * times) / times);
   var result = Number((accMul(num1, times) - accMul(num2, times)) / times)
   return getCorrectResult('sub', num1, num2, result)
-      // return result;
 }
 
   // 除法
 export const accDiv = function (num1, num2) {
   num1 = Number(num1)
   num2 = Number(num2)
-  var t1 = 0, t2 = 0, dec1, dec2
+  var t1 = 0
+  var t2 = 0
   try { t1 = countDecimals(num1) } catch (e) { }
   try { t2 = countDecimals(num2) } catch (e) { }
-  dec1 = convertToInt(num1)
-  dec2 = convertToInt(num2)
+  var dec1 = convertToInt(num1)
+  var dec2 = convertToInt(num2)
   var result = accMul((dec1 / dec2), Math.pow(10, t2 - t1))
   return getCorrectResult('div', num1, num2, result)
-      // return result;
 }
 
   // 乘法
 export const accMul = function (num1, num2) {
   num1 = Number(num1)
   num2 = Number(num2)
-  var times = 0, s1 = num1.toString(), s2 = num2.toString()
+  var times = 0
+  var s1 = num1.toString()
+  var s2 = num2.toString()
   try { times += countDecimals(s1) } catch (e) { }
   try { times += countDecimals(s2) } catch (e) { }
   var result = convertToInt(s1) * convertToInt(s2) / Math.pow(10, times)
   return getCorrectResult('mul', num1, num2, result)
-      // return result;
 }

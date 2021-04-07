@@ -2,6 +2,7 @@ import Api from '@/api/apis'
 import common from '@/common/common'
 import utils from '@/common/utils'
 import cloneDeep from 'lodash/cloneDeep'
+import isEmpty from 'lodash/isEmpty'
 
 import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
 export default {
@@ -53,10 +54,12 @@ export default {
         tableData,
         unit = 100,
         origin = false,
-        dicCustomPrices = state.dicCustomPrices
+        dicCustomPrices
       } = payload
 
       const oldUnit = state.unit
+
+      console.log(dicCustomPrices, 'dicCustomPrices')
 
       // todo 如果有dicCustomPrices 就使用历史价格dicCustomPrices
       // sku价格计算公式
@@ -90,17 +93,14 @@ export default {
             let promoPrice = value.promo_price
             let marketPrice = value.price
             // 恢复历史sku价格
-            // if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id].sku && dicCustomPrices[id].sku[key]) {
-            //   promoPrice = dicCustomPrices[id].sku[key].promo_price
-            // }
+            if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].sku && dicCustomPrices[id].sku[key] && dicCustomPrices[id].sku[key].promo_price) {
+              promoPrice = dicCustomPrices[id].sku[key].promo_price
+            }
 
-            // if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id].sku && dicCustomPrices[id].sku[key]) {
-            //   marketPrice = dicCustomPrices[id].sku[key].price
-            // }
             value.sku_price = evalPrice(promoPrice / 100)
-            value.origin_price = evalPrice(promoPrice / 100)
+            value.origin_price = evalPrice(value.promo_price / 100)
             value.market_price = evalPrice(marketPrice / 100)
-            value.origin_market_price = evalPrice(marketPrice / 100)
+            value.origin_market_price = evalPrice(value.price / 100)
             value.custome_key = key
           }
           nextSkuMap[key] = value
@@ -125,12 +125,12 @@ export default {
         item.maxMarketPrices = Math.max(...marketPrices)
 
         // 恢复历史售卖价
-        // if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id].discount_price) {
-        //   item.discount_price = evalPrice(dicCustomPrices[id].discount_price / 100)
-        // }
-        // if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id].last_discount_price) {
-        //   item.discount_price = evalPrice(dicCustomPrices[id].last_discount_price / 100)
-        // }
+        if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].discount_price) {
+          item.discount_price = evalPrice(dicCustomPrices[id].discount_price / 100)
+        }
+        if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].last_discount_price) {
+          item.discount_price = evalPrice(dicCustomPrices[id].last_discount_price / 100)
+        }
 
         // 设置划线价
         item.market_price = marketPrice
@@ -139,9 +139,9 @@ export default {
           item.market_price = evalPrice(evalMarketPrice(item.min_price / 100))
         }
         // 恢复历史划线价格
-        // if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id].price) {
-        //   item.market_price = evalPrice(dicCustomPrices[id].price / 100)
-        // }
+        if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].price) {
+          item.market_price = evalPrice(dicCustomPrices[id].price / 100)
+        }
         return cloneDeep(item)
       })
 
