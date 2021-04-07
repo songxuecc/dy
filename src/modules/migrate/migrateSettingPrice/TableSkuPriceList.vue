@@ -104,6 +104,7 @@
           <el-radio-group
             class="font-14"
             v-model.number="template.model.is_sale_price_show_max"
+            @change="handleSetTemplate($event,'is_sale_price_show_max')"
             size="mini"
           >
             <el-radio-button label="0">最低价</el-radio-button>
@@ -119,6 +120,7 @@
               @input="handleDiscountPrice($event,scope.row.tp_product_id)"
               @clear="handleClearDiscountPrice(scope.row.tp_product_id)"
               :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
+              clearable
             />
             <p class="fail" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
@@ -139,7 +141,8 @@
             <el-input
               :debounce="500"
               style="width: 55px"
-              v-model.number="template.model.price_rate"
+              :value="template.model.price_rate"
+              @input="handleSetTemplate($event,'price_rate')"
               size="mini"
               class="price-sku-input"
             />
@@ -147,7 +150,8 @@
             <el-input
               :debounce="500"
               style="width: 55px"
-              v-model.number="template.model.price_diff"
+              :value="template.model.price_diff"
+              @input="handleSetTemplate($event,'price_diff')"
               size="mini"
               class="price-sku-input"
             />
@@ -162,6 +166,7 @@
             @input="handleMarketPrice($event,scope.row.tp_product_id)"
             @clear="handleClearMarketPrice(scope.row.tp_product_id)"
             :class="[tableDataErrorMsg[scope.$index].market_price_error ? 'warn':'']"
+            clearable
           />
           <p class="fail" v-if="tableDataErrorMsg[scope.$index].market_price_error">{{tableDataErrorMsg[scope.$index].market_price_error}}</p>
         </template>
@@ -263,19 +268,15 @@ export default {
     }
   },
   watch: {
-    template: {
-      handler: function (newval) {
-        if (Object.values(this.templateError).some(item => item)) {
-          return false
-        }
-        this.formatTableData({
-          tableData: this.tableData,
-          template: newval,
-          unit: this.unit
-        })
-      },
-      deep: true
-    }
+    // template: {
+    //   handler: function (template, oldTemplate) {
+    //     if (Object.values(this.templateError).some(item => item)) {
+    //       return false
+    //     }
+
+    //   },
+    //   deep: true
+    // }
   },
   methods: {
     ...mapActions('migrate/migrateSettingPrice', [
@@ -286,7 +287,8 @@ export default {
       'discountPriceChange',
       'clearMarketPrice',
       'clearDiscountPrice',
-      'parsetIntFloat'
+      'parsetIntFloat',
+      'updateTemplate'
     ]),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
@@ -364,10 +366,18 @@ export default {
       })
     },
     handleSetTemplate (value, key) {
+      if (!utils.isNumber(value)) {
+        return value
+      }
       if (!value) {
         value = 0
       }
-      this.template.model[key] = Number(value)
+      this.template.model[key] = value
+
+      this.updateTemplate({
+        template: this.template,
+        key
+      })
     }
   }
 }

@@ -183,7 +183,7 @@ export default {
           // 根据 自定义设置重设价格
           if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
             const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
-            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.sku_price))
+            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_price))
           } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
             currentColumnData.sku_price = evalPrice(this.textPrice)
           }
