@@ -53,7 +53,8 @@
               <el-input
                 :debounce="500"
                 style="width: 55px"
-                v-model.number="template.model.origin_price_diff"
+                :value="template.model.origin_price_diff"
+                @input="handleSetTemplate($event,'origin_price_diff')"
                 size="mini"
                 class="price-sku-input"
               />
@@ -63,7 +64,8 @@
               <el-input
                 :debounce="500"
                 style="width: 55px"
-                v-model.number="template.model.group_price_rate"
+                :value="template.model.group_price_rate"
+                @input="handleSetTemplate($event,'group_price_rate')"
                 size="mini"
                 class="price-sku-input"
               />
@@ -73,7 +75,8 @@
               <el-input
                 :debounce="500"
                 style="width: 55px"
-                v-model.number="template.model.group_price_diff"
+                :value="template.model.group_price_diff"
+                @input="handleSetTemplate($event,'group_price_diff')"
                 size="mini"
                 class="price-sku-input"
               />
@@ -116,7 +119,6 @@
               @input="handleDiscountPrice($event,scope.row.tp_product_id)"
               @clear="handleClearDiscountPrice(scope.row.tp_product_id)"
               :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
-
             />
             <p class="fail" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
@@ -355,11 +357,17 @@ export default {
     },
     handleSureBatchEdut (arithmetic) {
       this.closeSkuPriceListView()
-      console.log(arithmetic)
+      console.log(arithmetic, 'arithmetic')
       this.singleSkuPriceChange({
         id: this.selectTpProductSkuId,
         arithmetic
       })
+    },
+    handleSetTemplate (value, key) {
+      if (!value) {
+        value = 0
+      }
+      this.template.model[key] = Number(value)
     }
   }
 }
