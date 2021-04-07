@@ -6,27 +6,25 @@
         <span class="color-4e" v-if="unit === 100" >已选择保留两位小数</span>
       </div>
       <div class="priceChange">
-        <el-radio v-model="radio" label="1" >
+        <el-radio v-model="radio" label="1">
           <span>(原sku价-</span>
           <el-input
             size="mini"
             style="width:100px;"
             v-model="subtraction1"
-            @input="handleTemplate($event,'subtraction1')"
             @focus="radio='1'"/>
           <span>) x</span>
           <el-input
             size="mini"
             style="width:100px;"
-            @input="handleTemplate($event,'subtraction2')"
             v-model="subtraction2"
             @focus="radio='1'"/>
           <span>% -</span>
           <el-input
             size="mini"
             style="width:100px;"
-            @input="handleTemplate($event,'subtraction3')"
             v-model="subtraction3"
+            @change="handleYY"
             @focus="radio='1'"/>
         </el-radio>
         <span>
@@ -36,7 +34,6 @@
               size="mini"
               style="width:150px;"
               v-model="textPrice"
-              @input="handleTemplate($event,'textPrice')"
               @change="handleTextPriceChange"
               @focus="radio='2'" />
           </el-radio>
@@ -77,7 +74,7 @@
                     <div>
                       <el-input
                         :debounce="500"
-                        :class="[scope.row.errorMsg ? 'warn':'']"
+                        :class="[errorMsg[scope.$index] ? 'warn':'']"
                         clearable
                         :value="scope.row.sku_price"
                         @input="handleSkuChange($event,scope.$index,scope.row)"
@@ -115,6 +112,7 @@
 <script>
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
+import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
 import utils from '@/common/utils'
 
 export default {
@@ -126,7 +124,7 @@ export default {
   },
   data () {
     const unit = this.skuPriceStting.unit
-    const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+    const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit)
     return {
       radio: this.skuPriceStting.radio,
       subtraction1: this.skuPriceStting.subtraction1,
@@ -148,12 +146,10 @@ export default {
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           let currentColumnData = cloneDeep(skuMap[key])
-          // const unit = this.skuPriceStting.unit
-          // 抹角 抹分
-          const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+          const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
           // 根据 定制公式重设价格
           if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
-            const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
+            const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
             currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_price))
           } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
             currentColumnData.sku_price = evalPrice(this.textPrice)
@@ -188,9 +184,41 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    template (n) {
+      const evalPrice = x => accDiv(Math.floor(accMul(x, this.unit)), this.unit).toFixed(2)
+      if (Number(n.radio) === 1 && utils.isNumber(n.subtraction1) && utils.isNumber(n.subtraction2) && utils.isNumber(n.subtraction3)) {
+        const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, n.subtraction1), n.subtraction2), 100), n.subtraction3)
+        const tableData = this.tableData.map((item, idx) => {
+          const nextItem = cloneDeep(item)
+          delete nextItem.custom_price
+          nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_price))
+          this.$set(this.tableData, idx, nextItem)
+          return nextItem
+        })
+        this.tableData = tableData
+      } else if (Number(n.radio) === 2 && utils.isNumber(n.textPrice) && evalPrice(n.textPrice) > 0.01 && evalPrice(n.textPrice) < 9999999.99) {
+        const tableData = this.tableData.map((item, idx) => {
+          const nextItem = cloneDeep(item)
+          delete nextItem.custom_price
+          nextItem.sku_price = evalPrice(n.textPrice)
+          this.$set(this.tableData, idx, nextItem)
+          return nextItem
+        })
+        this.tableData = tableData
+      }
     }
   },
   computed: {
+    template () {
+      return {
+        radio: this.radio,
+        subtraction1: this.subtraction1,
+        subtraction2: this.subtraction2,
+        subtraction3: this.subtraction3,
+        textPrice: this.textPrice
+      }
+    },
     propsData () {
       const skuData = this.skuData
       const unit = this.skuPriceStting.unit
@@ -234,7 +262,7 @@ export default {
     },
     errorMsg () {
       function isInteger (obj) {
-        return Math.floor(obj * 100) === obj * 100
+        return Math.floor(accMul(obj, 100)) === accMul(obj, 100)
       }
       return this.tableData.map(item => {
         const price = item.sku_price
@@ -251,30 +279,10 @@ export default {
     }
   },
   methods: {
-    handleTemplate (value, key) {
-      if (Number(this.radio) === 1 && ['subtraction1', 'subtraction2', 'subtraction3'].includes(key)) {
-        const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
-        const evalPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
-        const tableData = this.tableData.map((item, idx) => {
-          const nextItem = cloneDeep(item)
-          delete nextItem.custom_price
-          nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_price))
-          this.$set(this.tableData, idx, nextItem)
-          return nextItem
-        })
-        this.tableData = tableData
-        this[key] = value
-      } else if (utils.isNumber(value) && value && Number(this.radio) === 2 && ['textPrice'].includes(key)) {
-        const evalPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
-        const tableData = this.tableData.map((item, idx) => {
-          const nextItem = cloneDeep(item)
-          delete nextItem.custom_price
-          nextItem.sku_price = evalPrice(value)
-          this.$set(this.tableData, idx, nextItem)
-          return nextItem
-        })
-        this.tableData = tableData
-        this[key] = value
+    handleYY (value, n) {
+      const evalPrice = x => accDiv(Math.floor(accMul(x, this.unit)), this.unit)
+      if (utils.isNumber(value)) {
+        this.subtraction3 = evalPrice(value)
       }
     },
     handleCancelBatchEdit () {
@@ -306,10 +314,10 @@ export default {
       let price = column.promo_price / 100
       // 抹角 抹分
       const unit = this.skuPriceStting.unit
-      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
       // 根据 自定义设置重设价格
       if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
-        const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
+        const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
         price = evalPrice(evalGroupPriceRange(price))
       } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
         price = evalPrice(this.textPrice)
@@ -345,7 +353,7 @@ export default {
     },
     handleTextPriceChange (value) {
       const unit = this.skuPriceStting.unit
-      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
       this.textPrice = evalPrice(value)
     }
   }

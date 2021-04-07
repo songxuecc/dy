@@ -344,7 +344,6 @@ export default {
       this.selectTpProductSkuJson = selectTpProduct.sku_json
       this.selectTpProductSkuId = selectTpProduct.tp_product_id
       this.marketPrice = selectTpProduct.market_price
-      console.log(this.$refs, 'this.$refs')
       if (selectTpProduct.selectPriceType) {
         this.selectTpProductSkuPriceStting = {...selectTpProduct.selectPriceArithmetic, unit: this.unit}
       } else {
@@ -357,8 +356,6 @@ export default {
           unit: this.unit
         }
       }
-
-      console.log(selectTpProduct.selectPriceType, this.selectTpProductSkuPriceStting, 'this.selectTpProductSkuPriceStting')
       this.dialogSkuPriceVisible = true
     },
     handleSureBatchEdut (arithmetic) {

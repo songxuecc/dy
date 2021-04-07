@@ -2,8 +2,8 @@ import Api from '@/api/apis'
 import common from '@/common/common'
 import utils from '@/common/utils'
 import cloneDeep from 'lodash/cloneDeep'
-import isEmpty from 'lodash/isEmpty'
 
+import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
 export default {
   namespaced: true,
   state: () => ({
@@ -60,11 +60,11 @@ export default {
 
       // todo 如果有dicCustomPrices 就使用历史价格dicCustomPrices
       // sku价格计算公式
-      let evalGroupPriceRange = x => (x - template.model.origin_price_diff) * template.model.group_price_rate / 100 - template.model.group_price_diff
+      let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
       // 划线价计算公式
-      const evalMarketPrice = x => x * template.model.price_rate / 100 - template.model.price_diff
+      const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
       // 抹角 抹分
-      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
 
       const nextTableData = (tableData || []).map(item => {
         // 修改unit 自定义设置数据只改变单位
@@ -182,8 +182,8 @@ export default {
       const template = state.template
       const unit = state.unit
       const {id} = payload
-      const evalMarketPrice = x => x * template.model.price_rate / 100 - template.model.price_diff
-      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
+      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           item.market_price = evalPrice(evalMarketPrice(item.maxMarketPrices))
@@ -198,8 +198,8 @@ export default {
       const tableData = state.tableData
       const template = state.template
       const unit = state.unit
-      let evalGroupPriceRange = x => (x - template.model.origin_price_diff) * template.model.group_price_rate / 100 - template.model.group_price_diff
-      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
+      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           const minSkuPrices = evalPrice(evalGroupPriceRange(item.minSkuPrices))
@@ -217,7 +217,7 @@ export default {
       const tableData = state.tableData
       const template = state.template
       const unit = state.unit
-      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id !== id) return item
         const skuMap = cloneDeep(item.sku_json.sku_map)
@@ -233,22 +233,15 @@ export default {
           nextSkuMap[key] = value
         })
         item.sku_json.sku_map = nextSkuMap
-        // 划线价计算公式
-        // const evalMarketPrice = x => x * template.model.price_rate / 100 - template.model.price_diff
         const prices = Object.values(skuMap).map(sku => sku.sku_price)
         const minSkuPrices = evalPrice(Math.min(...prices))
         const maxSkuPrices = evalPrice(Math.max(...prices))
-        // const marketPrice = evalMarketPrice(maxSkuPrices)
         item.group_price_range = minSkuPrices !== maxSkuPrices ? minSkuPrices + '~' + maxSkuPrices : maxSkuPrices
         item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
         item.minSkuPrices = Math.min(...prices)
         item.maxSkuPrices = Math.max(...prices)
-        // item.market_price = marketPrice
-        // if (item['tp_id'] === common.TpType.dy) {
-        //   item.market_price = evalMarketPrice(minSkuPrices)
-        // }
         if (Number(arithmetic.radio) === 2) {
-          // item.selectPriceInfo = `统一价格为 ${evalPrice(arithmetic.textPrice)}`
+          item.selectPriceInfo = ``
         } else if (
           Number(arithmetic.radio) === 1 &&
           (
@@ -273,9 +266,9 @@ export default {
       const unit = state.unit
       const nextTableData = tableData.map(item => {
         if (item.selectPriceInfo && ['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) return item
-        let evalGroupPriceRange = x => (x - template.model.origin_price_diff) * template.model.group_price_rate / 100 - template.model.group_price_diff
-        const evalMarketPrice = x => x * template.model.price_rate / 100 - template.model.price_diff
-        const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+        let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
+        const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
+        const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
 
         const minSkuPrices = evalPrice(evalGroupPriceRange(item.minSkuPrices))
         const maxSkuPrices = evalPrice(evalGroupPriceRange(item.maxSkuPrices))
