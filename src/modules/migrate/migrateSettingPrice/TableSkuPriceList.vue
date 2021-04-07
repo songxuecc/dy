@@ -47,6 +47,7 @@
             <span> (&nbsp;原价 - </span>
             <el-tooltip content="一般填0，若源商品含运费则可以加上运费后再设置百分比。比如源商品运费是10元，则填-10" placement="top">
               <el-input
+                :class="[templateError.origin_price_diff ? 'warn':'']"
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.origin_price_diff"
@@ -58,6 +59,7 @@
             <span> x </span>
             <el-tooltip content="乘以百分比，比如填120，则是原价*120%，赚取20%的利润。保持不变请填100" placement="top">
               <el-input
+                :class="[templateError.group_price_rate ? 'warn':'']"
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.group_price_rate"
@@ -69,6 +71,7 @@
             <span class="th-title-text"> % - </span>
             <el-tooltip content="可以为负数，若要加价50元，则填-50" placement="top">
               <el-input
+                :class="[templateError.group_price_diff ? 'warn':'']"
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.group_price_diff"
@@ -135,6 +138,7 @@
           <div>
             <span> 原划线价 x </span>
             <el-input
+              :class="[templateError.price_rate ? 'warn':'']"
               :debounce="500"
               style="width: 55px"
               :value="template.model.price_rate"
@@ -144,6 +148,7 @@
             />
             <span class="th-title-text"> % - </span>
             <el-input
+              :class="[templateError.price_diff ? 'warn':'']"
               :debounce="500"
               style="width: 55px"
               :value="template.model.price_diff"
@@ -340,7 +345,6 @@ export default {
       this.selectTpProductSkuId = selectTpProduct.tp_product_id
       this.marketPrice = selectTpProduct.market_price
       console.log(this.$refs, 'this.$refs')
-      this.$refs.modalSingleSkuList && this.$refs.modalSingleSkuList.toggleHasRender()
       if (selectTpProduct.selectPriceType) {
         this.selectTpProductSkuPriceStting = {...selectTpProduct.selectPriceArithmetic, unit: this.unit}
       } else {
@@ -366,18 +370,13 @@ export default {
       })
     },
     handleSetTemplate (value, key) {
-      if (!utils.isNumber(value)) {
-        return value
-      }
-      if (!value) {
-        value = 0
-      }
       this.template.model[key] = value
-
-      this.updateTemplate({
-        template: this.template,
-        key
-      })
+      if (utils.isNumber(value)) {
+        this.updateTemplate({
+          template: this.template,
+          key
+        })
+      }
     }
   }
 }
