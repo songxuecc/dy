@@ -26,9 +26,9 @@
             </el-table-column>
             <el-table-column type="selection" :selectable="isSelectionEnable">
             </el-table-column>
-            <el-table-column label="图片" width="60" align="center">
+            <el-table-column label="图片" width="78" align="center">
                 <template slot-scope="scope">
-                    <img v-if="scope.row.thumbnail" style="height:50px;border-radius:4px" :src="scope.row.thumbnail">
+                    <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail">
                     <hh-icon v-else type="iconwuzhaopian" style="font-size:50px" />
                 </template>
             </el-table-column>

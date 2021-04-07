@@ -216,7 +216,7 @@ export default {
       const singleTableDataData = arithmetic.tableData
       const tableData = state.tableData
       const template = state.template
-      const unit = 100
+      const unit = state.unit
       const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id !== id) return item
@@ -225,6 +225,10 @@ export default {
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
           const data = singleTableDataData.find(item => value.sku_id === item.sku_id)
+          value.sku_price = data.sku_price
+          if (data.custom_price) {
+            value.custom_price = data.custom_price
+          }
           value.sku_price = data.sku_price
           nextSkuMap[key] = value
         })
@@ -239,8 +243,6 @@ export default {
         item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
         item.minSkuPrices = Math.min(...prices)
         item.maxSkuPrices = Math.max(...prices)
-        console.log(item.minSkuPrices, 'singleSkuPriceChange-item.minSkuPrices ')
-        console.log(item.maxSkuPrices, 'singleSkuPriceChange-item.maxSkuPrices ')
         // item.market_price = marketPrice
         // if (item['tp_id'] === common.TpType.dy) {
         //   item.market_price = evalMarketPrice(minSkuPrices)
@@ -268,7 +270,7 @@ export default {
       const tableData = state.tableData
       const key = payload.key
       const template = payload.template
-      const unit = 100
+      const unit = state.unit
       const nextTableData = tableData.map(item => {
         if (item.selectPriceInfo && ['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) return item
         let evalGroupPriceRange = x => (x - template.model.origin_price_diff) * template.model.group_price_rate / 100 - template.model.group_price_diff

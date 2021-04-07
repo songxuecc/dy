@@ -3,26 +3,22 @@
   <div class="TableSkuPriceList">
     <div class="left mb-10">
       <el-radio-group v-model="float" size="small" @change="toFixFloat">
-          <el-tooltip placement="top"  content="价格保留到整数">
-            <el-radio-button :label="1" >抹角</el-radio-button>
-          </el-tooltip>
-          <el-tooltip placement="top"  content="价格保留一位小数">
-            <el-radio-button :label="10" >抹分</el-radio-button>
-          </el-tooltip>
-          <el-tooltip placement="top"  content="价格还原到初始化">
-            <el-radio-button :label="100" >还原</el-radio-button>
-          </el-tooltip>
+        <el-radio :label="1" >保留整数</el-radio>
+        <el-radio :label="10" >保留一位小数</el-radio>
+        <el-radio :label="100" >保持原价格</el-radio>
       </el-radio-group>
     </div>
     <el-table :data="tableData" style="width: 100%;min-height:270px">
       <el-table-empty slot="empty" />
-      <el-table-column label="图片" width="60" align="center">
+      <el-table-column label="图片" width="78" align="center">
         <template slot-scope="scope">
           <img
             style="height: 50px"
             :src="scope.row.thumbnail"
             class="border-2"
+            v-if="scope.row.thumbnail"
           />
+          <hh-icon v-else type="iconwuzhaopian" style="font-size:50px" />
         </template>
       </el-table-column>
       <el-table-column label="标题" align="center">
@@ -98,7 +94,7 @@
           <p class="fail" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</p>
         </template>
       </el-table-column>
-      <el-table-column align="center"  width="270">
+      <el-table-column align="center"  width="180">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">售卖价</p>
           <el-radio-group
@@ -125,7 +121,7 @@
             <p class="fail" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
       </el-table-column>
-      <el-table-column align="center"  width="250">
+      <el-table-column align="center"  width="230">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">
             划线价=
@@ -181,9 +177,10 @@
       width="900px"
       :close-on-click-modal="false"
       :show-close="false"
+      ref="dialog"
     >
     <ModalSingleSkuList
-      ref="ModalSingleSkuList"
+      ref="modalSingleSkuList"
       v-if="dialogSkuPriceVisible"
       :skuData="selectTpProductSkuJson"
       :unit="unit"
@@ -342,7 +339,8 @@ export default {
       this.selectTpProductSkuJson = selectTpProduct.sku_json
       this.selectTpProductSkuId = selectTpProduct.tp_product_id
       this.marketPrice = selectTpProduct.market_price
-
+      console.log(this.$refs, 'this.$refs')
+      this.$refs.modalSingleSkuList && this.$refs.modalSingleSkuList.toggleHasRender()
       if (selectTpProduct.selectPriceType) {
         this.selectTpProductSkuPriceStting = selectTpProduct.selectPriceArithmetic
       } else {
