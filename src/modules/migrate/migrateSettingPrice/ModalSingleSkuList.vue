@@ -89,7 +89,7 @@
             </el-table-column>
             <el-table-column key="3" width="250" align="center">
                 <template slot="header" slot-scope="scope">
-                    <span>原划线价</span>
+                    <span>原SKU价</span>
                 </template>
                 <template slot-scope="scope">
                     <div class="great" style="width: 100%; padding-left: 18px; font-size: 16px;">
@@ -211,6 +211,7 @@ export default {
         function isInteger (obj) {
           return Math.floor(obj * 100) === obj * 100
         }
+        console.log(newVal, 'newVal')
         this.errorMsg = newVal.map(item => {
           const price = item.sku_price
           let errorMsg = ''

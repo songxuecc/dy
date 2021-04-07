@@ -40,7 +40,7 @@
         </div>
       </el-table-column>
 
-      <el-table-column align="center" width="270">
+      <el-table-column align="center" width="280">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">sku价格=
             <el-tooltip content="SKU价格公式输入必须为数字" v-if="templateError.origin_price_diff || templateError.group_price_rate || templateError.group_price_diff" placement="top">
@@ -48,7 +48,7 @@
             </el-tooltip>
           </p>
           <div>
-            <span> 原价 - </span>
+            <span> (&nbsp;原价 - </span>
             <el-tooltip content="一般填0，若源商品含运费则可以加上运费后再设置百分比。比如源商品运费是10元，则填-10" placement="top">
               <el-input
                 :debounce="500"
@@ -67,7 +67,7 @@
                 size="mini"
                 class="price-sku-input"
               />
-            </el-tooltip>
+            </el-tooltip>)
             <span class="th-title-text"> % - </span>
             <el-tooltip content="可以为负数，若要加价50元，则填-50" placement="top">
               <el-input
