@@ -1,4 +1,3 @@
-<!--  -->
 <template>
     <div class="ModalSingleSkuList">
       <div class="priceChange">
@@ -22,23 +21,26 @@
             v-model="subtraction3"
             @focus="radio='1'"/>
         </el-radio>
-        <el-radio v-model="radio" label="2" >
-          <span>统一价格为</span>
-          <el-input
-            size="mini"
-            style="width:150px;"
-            v-model="textPrice"
-            @focus="radio='2'" />
-        </el-radio>
+        <span>
+          <el-radio v-model="radio" label="2" style="margin-right:5px">
+            <span>统一价格为</span>
+            <el-input
+              size="mini"
+              style="width:150px;"
+              :value="textPrice"
+              @input="handleTextPrice"
+              @change="handleTextPriceChange"
+              @focus="radio='2'" />
+          </el-radio>
+          <span class="primary" v-if="unit === 1" >保留整数</span>
+          <span class="primary" v-if="unit === 10" >保留一位小数</span>
+          <span class="primary" v-if="unit === 100" >保持原价格</span>
+        </span>
       </div>
       <span v-if="errorMsgModel" class="fail">{{errorMsgModel}}</span>
 
       <div class="left mb-10 mt-10">
-        <el-radio-group v-model="unit" size="small" @change="toFixFloat">
-          <el-radio :label="1" >保留整数</el-radio>
-          <el-radio :label="10" >保留一位小数</el-radio>
-          <el-radio :label="100" >保持原价格</el-radio>
-        </el-radio-group>
+
       </div>
 
       <!-- sku价格表 -->
@@ -117,15 +119,22 @@ export default {
     marketPrice: Number | String
   },
   data () {
+    const unit = this.skuPriceStting.unit
+    const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
     return {
       radio: this.skuPriceStting.radio,
       subtraction1: this.skuPriceStting.subtraction1,
       subtraction2: this.skuPriceStting.subtraction2,
       subtraction3: this.skuPriceStting.subtraction3,
-      textPrice: this.skuPriceStting.textPrice || '',
+      textPrice: evalPrice(this.skuPriceStting.textPrice) || '',
       unit: this.skuPriceStting.unit || 100,
       errorMsg: [],
       hasRender: false
+    }
+  },
+  watch: {
+    skuPriceStting (newVal) {
+      this.unit = newVal.unit
     }
   },
   computed: {
@@ -173,8 +182,9 @@ export default {
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           const currentColumnData = cloneDeep(skuMap[key])
+          const unit = this.skuPriceStting.unit
           // 抹角 抹分
-          const evalPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+          const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
           // 根据 定制公式重设价格
           if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
             const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
@@ -241,17 +251,21 @@ export default {
       return row[property] === value
     },
     handleSkuChange (price, index, columnData) {
+      const unit = this.skuPriceStting.unit
+      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
       const tableData = this.tableData.map((item, idx) => {
         if (idx !== index) return item
         this.$set(this.tableData, index, {
           ...columnData,
-          sku_price: price,
+          sku_price: evalPrice(price),
           // 自定义价格
-          custom_price: price
+          custom_price: evalPrice(price)
         })
         return {
           ...columnData,
-          sku_price: price
+          sku_price: evalPrice(price),
+          // 自定义价格
+          custom_price: evalPrice(price)
         }
       })
       this.tableData = tableData
@@ -260,7 +274,8 @@ export default {
       const column = cloneDeep(this.tableData[index])
       let price = column.promo_price / 100
       // 抹角 抹分
-      const evalPrice = x => (Math.floor(x * this.unit) / this.unit).toFixed(2)
+      const unit = this.skuPriceStting.unit
+      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
       // 根据 自定义设置重设价格
       if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
         const evalGroupPriceRange = x => (x - this.subtraction1) * this.subtraction2 / 100 - this.subtraction3
@@ -280,9 +295,6 @@ export default {
       })
       this.tableData = tableData
     },
-    toFixFloat (unit) {
-      this.unit = unit
-    },
     // 点击确定
     handleSureBatchEdut () {
       this.$emit('handleSureBatchEdut', {
@@ -291,9 +303,19 @@ export default {
         subtraction2: this.subtraction2,
         subtraction3: this.subtraction3,
         textPrice: this.textPrice,
-        tableData: this.tableData,
-        unit: this.unit
+        tableData: this.tableData
       })
+    },
+    handleTextPrice (value) {
+      if (!utils.isNumber(value)) {
+        return value
+      }
+      this.textPrice = value
+    },
+    handleTextPriceChange (value) {
+      const unit = this.skuPriceStting.unit
+      const evalPrice = x => (Math.floor(x * unit) / unit).toFixed(2)
+      this.textPrice = evalPrice(value)
     }
   }
 }
@@ -315,6 +337,9 @@ export default {
     span {
       font-size: 12px;
       color: #4E4E4E;
+    }
+    .primary {
+      color: #1D8FFF;
     }
     /deep/ .el-input__inner{
       font-size:18px;

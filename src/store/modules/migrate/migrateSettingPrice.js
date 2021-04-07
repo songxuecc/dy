@@ -227,7 +227,7 @@ export default {
           const data = singleTableDataData.find(item => value.sku_id === item.sku_id)
           value.sku_price = data.sku_price
           if (data.custom_price) {
-            value.custom_price = data.custom_price
+            value.custom_price = evalPrice(data.custom_price)
           }
           value.sku_price = data.sku_price
           nextSkuMap[key] = value
@@ -248,7 +248,7 @@ export default {
         //   item.market_price = evalMarketPrice(minSkuPrices)
         // }
         if (Number(arithmetic.radio) === 2) {
-          item.selectPriceInfo = `统一价格为 ${arithmetic.textPrice}`
+          // item.selectPriceInfo = `统一价格为 ${evalPrice(arithmetic.textPrice)}`
         } else if (
           Number(arithmetic.radio) === 1 &&
           (

@@ -54,7 +54,7 @@
                 size="mini"
                 class="price-sku-input"
               />
-            </el-tooltip>
+            </el-tooltip>)
             <span> x </span>
             <el-tooltip content="乘以百分比，比如填120，则是原价*120%，赚取20%的利润。保持不变请填100" placement="top">
               <el-input
@@ -65,7 +65,7 @@
                 size="mini"
                 class="price-sku-input"
               />
-            </el-tooltip>)
+            </el-tooltip>
             <span class="th-title-text"> % - </span>
             <el-tooltip content="可以为负数，若要加价50元，则填-50" placement="top">
               <el-input
@@ -342,7 +342,7 @@ export default {
       console.log(this.$refs, 'this.$refs')
       this.$refs.modalSingleSkuList && this.$refs.modalSingleSkuList.toggleHasRender()
       if (selectTpProduct.selectPriceType) {
-        this.selectTpProductSkuPriceStting = selectTpProduct.selectPriceArithmetic
+        this.selectTpProductSkuPriceStting = {...selectTpProduct.selectPriceArithmetic, unit: this.unit}
       } else {
         this.selectTpProductSkuPriceStting = {
           subtraction1: this.template.model.origin_price_diff,
@@ -353,6 +353,8 @@ export default {
           unit: this.unit
         }
       }
+
+      console.log(selectTpProduct.selectPriceType, this.selectTpProductSkuPriceStting, 'this.selectTpProductSkuPriceStting')
       this.dialogSkuPriceVisible = true
     },
     handleSureBatchEdut (arithmetic) {
