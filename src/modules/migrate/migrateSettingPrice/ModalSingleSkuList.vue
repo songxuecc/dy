@@ -323,10 +323,13 @@ export default {
         price = evalPrice(this.textPrice)
       }
       column.sku_price = price
+      // 自定义价格设置删除
+      delete column.custom_price
 
       const tableData = this.tableData.map((item, idx) => {
         if (idx !== index) return item
         this.$set(this.tableData, index, column)
+        delete item.custom_price
         return {
           ...item,
           sku_price: price

@@ -10,7 +10,7 @@ export default {
   state: () => ({
     tableData: [],
     originTableData: [],
-    unit: 100,
+    unit: undefined,
     template: undefined,
     dicCustomPrices: {}
   }),
@@ -23,8 +23,8 @@ export default {
     async getTPProductByIds ({commit, state, rootGetters}, payload) {
       try {
         commit('save', {tableData: []})
-        const unit = state.unit
         const {template, dicCustomPrices} = await this.dispatch('migrate/migrateSettingTemplate/requestTemplate')
+        commit('save', {unit: template.model.unit})
         const params = {
           tp_product_ids: rootGetters.getSelectTPProductIdList,
           need_sku: true
@@ -34,7 +34,7 @@ export default {
         this.dispatch('migrate/migrateSettingPrice/formatTableData', {
           template,
           tableData,
-          unit,
+          unit: template.model.unit || 100,
           origin: true,
           dicCustomPrices
         })
@@ -52,7 +52,7 @@ export default {
       const {
         template,
         tableData,
-        unit = 100,
+        unit,
         origin = false,
         dicCustomPrices
       } = payload
@@ -77,6 +77,12 @@ export default {
           item.group_price_range = minSkuPrices !== maxSkuPrices ? minSkuPrices + '~' + maxSkuPrices : maxSkuPrices
           item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
           item.market_price = evalPrice(item.market_price)
+          if (item.custome_discount_price) {
+            item.discount_price = evalPrice(item.custome_discount_price)
+          }
+          if (item.custome_market_price) {
+            item.discount_price = evalPrice(item.custome_market_price)
+          }
           return item
         }
 
@@ -142,9 +148,17 @@ export default {
         if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].price) {
           item.market_price = evalPrice(dicCustomPrices[id].price / 100)
         }
+        // 自定义价格设置
+        if (item.custome_discount_price && oldUnit !== unit) {
+          item.discount_price = evalPrice(item.custome_discount_price)
+        }
+        if (item.custome_market_price && oldUnit !== unit) {
+          item.market_price = evalPrice(item.custome_market_price)
+        }
         return cloneDeep(item)
       })
-
+      // 更新模版的unit 后期比较tempkate可以更新用户模版
+      template.model.unit = unit
       commit('save', {tableData: cloneDeep(nextTableData), unit, template})
       // 保存初始化价格结果设置
       if (origin) {
@@ -158,6 +172,7 @@ export default {
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           item.market_price = price
+          item.custome_market_price = price
         }
         return item
       })
@@ -170,6 +185,7 @@ export default {
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           item.discount_price = price
+          item.custome_discount_price = price
         }
         return item
       })
@@ -187,6 +203,7 @@ export default {
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           item.market_price = evalPrice(evalMarketPrice(item.maxMarketPrices))
+          delete item.custome_market_price
         }
         return item
       })
@@ -205,6 +222,7 @@ export default {
           const minSkuPrices = evalPrice(evalGroupPriceRange(item.minSkuPrices))
           const maxSkuPrices = evalPrice(evalGroupPriceRange(item.maxSkuPrices))
           item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
+          delete item.custome_discount_price
         }
         return item
       })
@@ -226,8 +244,11 @@ export default {
           const value = skuMap[key]
           const data = singleTableDataData.find(item => value.sku_id === item.sku_id)
           value.sku_price = data.sku_price
+          // 自定义价格设置
           if (data.custom_price) {
             value.custom_price = evalPrice(data.custom_price)
+          } else {
+            delete value.custom_price
           }
           value.sku_price = data.sku_price
           nextSkuMap[key] = value
@@ -255,17 +276,29 @@ export default {
         }
         item.selectPriceType = arithmetic.radio
         item.selectPriceArithmetic = arithmetic
+
+        // 自定义价格设置 修改单个sku 价格设置不变
+        if (item.custome_discount_price) {
+          item.discount_price = evalPrice(item.custome_discount_price)
+        }
+        if (item.custome_market_price) {
+          item.market_price = evalPrice(item.custome_market_price)
+        }
         return item
       })
       commit('save', {tableData: nextTableData})
     },
+    // 修改模版
     updateTemplate ({commit, state}, payload) {
       const tableData = state.tableData
       const key = payload.key
       const template = payload.template
       const unit = state.unit
       const nextTableData = tableData.map(item => {
-        if (item.selectPriceInfo && ['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) return item
+        // 修改模版的时候 删除自定义价格设置
+        delete item.custome_market_price
+        delete item.custome_discount_price
+        if (item.selectPriceType && ['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) return item
         let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
         const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
         const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)

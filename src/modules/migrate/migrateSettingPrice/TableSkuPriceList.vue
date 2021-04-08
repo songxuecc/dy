@@ -240,7 +240,7 @@ export default {
       selectTpProductSkuId: undefined,
       selectTpProductSkuPriceStting: undefined,
       marketPrice: undefined,
-      float: 100
+      float: ''
     }
   },
   async activated () {
@@ -270,15 +270,12 @@ export default {
     }
   },
   watch: {
-    // template: {
-    //   handler: function (template, oldTemplate) {
-    //     if (Object.values(this.templateError).some(item => item)) {
-    //       return false
-    //     }
-
-    //   },
-    //   deep: true
-    // }
+    unit: {
+      handler: function (newVal) {
+        this.float = newVal
+      },
+      deep: true
+    }
   },
   methods: {
     ...mapActions('migrate/migrateSettingPrice', [
