@@ -66,7 +66,7 @@
                     {{ scope.row[item.name]}}
                 </template>
             </el-table-column>
-            <el-table-column key="3" width="150" align="center" type="index">
+            <el-table-column key="3" width="150" align="center" type="index"   class-name="custom-column">
                 <template slot="header" slot-scope="scope">
                     <span>sku价格</span>
                 </template>
@@ -82,7 +82,7 @@
                         size="mini"
                       >
                       </el-input>
-                      <p class="fail left" v-if="errorMsg[scope.$index]">{{errorMsg[scope.$index]}}</p>
+                      <p class="fail absolute" v-if="errorMsg[scope.$index]">{{errorMsg[scope.$index]}}</p>
                     </div>
                 </template>
             </el-table-column>
@@ -403,6 +403,19 @@ export default {
       border: 1px solid #E02020;
       background-color: @background-color-danger;
     }
+  }
+
+  /deep/ .custom-column{
+    padding:0;
+    margin:12px 0;
+    position:relative;
+  }
+
+  .absolute {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
   }
 
 }

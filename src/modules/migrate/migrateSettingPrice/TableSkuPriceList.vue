@@ -36,7 +36,7 @@
         </div>
       </el-table-column>
 
-      <el-table-column align="center" width="280">
+      <el-table-column align="center" width="280" class-name="custom-column">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">sku价格=
             <el-tooltip content="SKU价格公式输入必须为数字" v-if="templateError.origin_price_diff || templateError.group_price_rate || templateError.group_price_diff" placement="top">
@@ -94,10 +94,10 @@
             />
           </div>
           <p class="info" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</p>
-          <p class="fail" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</p>
+          <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</p>
         </template>
       </el-table-column>
-      <el-table-column align="center"  width="180">
+      <el-table-column align="center"  width="180"  class-name="custom-column">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">售卖价</p>
           <el-radio-group
@@ -121,10 +121,10 @@
               :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
               clearable
             />
-            <p class="fail" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
+            <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
       </el-table-column>
-      <el-table-column align="center"  width="230">
+      <el-table-column align="center"  width="230"  class-name="custom-column">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">
             划线价=
@@ -169,7 +169,7 @@
             :class="[tableDataErrorMsg[scope.$index].market_price_error ? 'warn':'']"
             clearable
           />
-          <p class="fail" v-if="tableDataErrorMsg[scope.$index].market_price_error">{{tableDataErrorMsg[scope.$index].market_price_error}}</p>
+          <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].market_price_error">{{tableDataErrorMsg[scope.$index].market_price_error}}</p>
         </template>
       </el-table-column>
     </el-table>
@@ -425,7 +425,18 @@ export default {
       background-color: @background-color-danger;
     }
   }
+  /deep/ .custom-column{
+    padding:0;
+    margin:12px 0;
+    position:relative;
+  }
 
+  .absolute {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
 }
 
 </style>

@@ -240,6 +240,7 @@ export default {
         if (item.tp_product_id !== id) return item
         const skuMap = cloneDeep(item.sku_json.sku_map)
         let nextSkuMap = {}
+        let hasCustomPrice = false
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
           const data = singleTableDataData.find(item => value.sku_id === item.sku_id)
@@ -247,12 +248,24 @@ export default {
           // 自定义价格设置
           if (data.custom_price) {
             value.custom_price = evalPrice(data.custom_price)
+            hasCustomPrice = true
           } else {
             delete value.custom_price
           }
           value.sku_price = data.sku_price
           nextSkuMap[key] = value
         })
+
+        // 公式和全局的相同 && 没有设置自定义价格 则直接返回数据
+        if (Number(arithmetic.radio) === 1 && !hasCustomPrice &&
+          arithmetic.subtraction1 === template.model.origin_price_diff &&
+            arithmetic.subtraction2 === template.model.group_price_rate &&
+            arithmetic.subtraction3 === template.model.group_price_diff
+        ) {
+          delete item.selectPriceType
+          return item
+        }
+
         item.sku_json.sku_map = nextSkuMap
         const prices = Object.values(skuMap).map(sku => sku.sku_price)
         const minSkuPrices = evalPrice(Math.min(...prices))
@@ -262,7 +275,8 @@ export default {
         item.minSkuPrices = Math.min(...prices)
         item.maxSkuPrices = Math.max(...prices)
         if (Number(arithmetic.radio) === 2) {
-          item.selectPriceInfo = ``
+          item.selectPriceInfo = `设置为统一SKU价格`
+          item.selectPriceType = arithmetic.radio
         } else if (
           Number(arithmetic.radio) === 1 &&
           (
@@ -273,10 +287,13 @@ export default {
         ) {
           // 只有设置的公式和统一设置的公式不一致时 需要重设并显示提示文案
           item.selectPriceInfo = `(原价-${arithmetic.subtraction1})x${arithmetic.subtraction2}%-${arithmetic.subtraction3}`
+          item.selectPriceType = arithmetic.radio
+          // 公式和全局的相同 && 有设置自定义价格
+        } else if (Number(arithmetic.radio) === 1 && hasCustomPrice) {
+          item.selectPriceInfo = '设置有自定义SKU价格'
+          item.selectPriceType = 3
         }
-        item.selectPriceType = arithmetic.radio
         item.selectPriceArithmetic = arithmetic
-
         // 自定义价格设置 修改单个sku 价格设置不变
         if (item.custome_discount_price) {
           item.discount_price = evalPrice(item.custome_discount_price)
@@ -347,19 +364,19 @@ export default {
         if (
           !utils.isNumber(item.discount_price)
         ) {
-          discountPriceError = '售卖价请输入数字，最多保留两位小数点'
+          discountPriceError = '请输入数字'
         } else if (item.discount_price < 0.01 || item.discount_price > 9999999.99) {
-          discountPriceError = '售卖价设置范围为：0.01-9999999.99'
+          discountPriceError = '价格范围：0.01-9999999.99'
         }
 
         if (
           !utils.isNumber(item.market_price)
         ) {
-          marketPriceError = '划线价请输入数字，最多保留两位小数点'
+          marketPriceError = '请输入数字'
         } else if (Number(item.market_price) < 0.01 || Number(item.market_price) > 9999999.99) {
-          marketPriceError = '划线价设置范围为：0.01-9999999.99'
+          marketPriceError = '价格范围：0.01-9999999.99'
         } else if (maxPrice > Number(item.market_price) || Number(item.market_price) > 9999999.99) {
-          marketPriceError = `划线价需大于等于sku最高价`
+          marketPriceError = `划线价需>=sku最高价`
         }
 
         if (Number(item.discount_price) > maxPrice || Number(item.discount_price) < minPrice) {
@@ -367,7 +384,7 @@ export default {
         }
 
         if (minPrice < 0.01 || maxPrice > 9999999.99) {
-          groupPriceRangeError = 'SKU价设置范围为：0.01-9999999.99'
+          groupPriceRangeError = '价格范围：0.01-9999999.99'
         }
 
         if (discountPriceError) error.discount_price_error = discountPriceError
