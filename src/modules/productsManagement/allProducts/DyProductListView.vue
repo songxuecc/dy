@@ -86,7 +86,8 @@
             </el-table-column>
             <el-table-column label="销售状态" width="80">
                 <template slot-scope="scope">
-                    <el-link type="primary" :underline="false" :href="dyGoodsLink(scope.row.goods_id_str)" target="view_window">{{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}</el-link>
+                  <el-link type="primary" :underline="false" :href="dyGoodsLink(scope.row.goods_id_str)" target="view_window">{{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}</el-link>
+                  <i v-if="scope.row.check_status === 2 && scope.row.status === 0" class="el-icon-loading"></i>
                 </template>
             </el-table-column>
             <!-- <el-table-column label="发货模式" width="80">

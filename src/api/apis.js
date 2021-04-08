@@ -111,6 +111,9 @@ const hhgjAPIs = {
   getProductList: (params) => {
     return api.actionCreatorPost('/api/getProductList', params)
   },
+  getOnShelfStatus: (params) => {
+    return api.actionCreateGet('/api/product/shelf/query', params)
+  },
   setGoodsSaleStatus: (params) => {
     return api.actionCreatorPost('/api/setGoodsSaleStatus', params)
   },

@@ -235,6 +235,32 @@ export default {
       'updateSyncStatus',
       'setExportFields'
     ]),
+    reviewProductQuery (reviewProductIdList) {
+      let self = this
+      this.request('getOnShelfStatus', {goods_id_list: JSON.stringify(reviewProductIdList)}, data => {
+        let resultProductDict = {}
+        let reviewProductIdList = []
+        for (let product of data) {
+          if (product.check_status === 2 && product.status === 0) {
+            reviewProductIdList.push(product.goods_id)
+          } else {
+            resultProductDict[product.goods_id] = product
+          }
+        }
+        for (let product of this.dyProductList) {
+          if (resultProductDict[product.goods_id]) {
+            product.status = resultProductDict[product.goods_id].status
+            product.check_status = resultProductDict[product.goods_id].check_status
+          }
+        }
+        if (reviewProductIdList.length > 0) {
+          // 如果存在审核中的商品，则两秒钟刷新一次
+          setTimeout(function () {
+            self.reviewProductQuery(reviewProductIdList)
+          }, 2000)
+        }
+      })
+    },
     getProductList (isResetIndex = true, isSilent = false) {
       if (this.$refs.dyProductListView) {
         this.$refs.dyProductListView.changeSelectAllData()
@@ -255,6 +281,16 @@ export default {
 
         if (this.$refs.dyProductListView) {
           this.$refs.dyProductListView.setSelectRow()
+        }
+        // 检查商品中是否有审核中的状态，如果有则开启定时任务查询
+        let reviewProductIdList = []
+        for (let dyProduct of this.dyProductList) {
+          if (dyProduct.status === 0 && dyProduct.check_status === 2) {
+            reviewProductIdList.push(dyProduct.goods_id)
+          }
+        }
+        if (reviewProductIdList.length > 0) {
+          this.reviewProductQuery(reviewProductIdList)
         }
       }, undefined, isSilent)
     },
