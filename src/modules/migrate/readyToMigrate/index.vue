@@ -974,7 +974,7 @@ export default {
         this.closeNewComer()
         this.setSelectTPProductIdList(this.selectIdList)
         this.$router.push({
-          path: '/migrateSettingPrice'
+          name: 'MigrateSettingPrice'
         })
       }
     },

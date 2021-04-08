@@ -1,9 +1,9 @@
 <template>
     <div class="ModalSingleSkuList relative mt-20">
       <div class="center font-12" style="position:absolute;top:-25px;left:0;right:0;margin-auto">
-        <span class="color-4e" v-if="unit === 1" >已选择保留整数</span>
-        <span class="color-4e" v-if="unit === 10" >已选择保留一位小数</span>
-        <span class="color-4e" v-if="unit === 100" >已选择保留两位小数</span>
+        <span class="color-4e" v-if="unit === 1" >已选择&nbsp;-&nbsp;保留整数(四舍五入)</span>
+        <span class="color-4e" v-if="unit === 10" >已选择&nbsp;-&nbsp;保留一位小数(四舍五入)</span>
+        <span class="color-4e" v-if="unit === 100" >已选择&nbsp;-&nbsp;保留两位小数(四舍五入)</span>
       </div>
       <div class="priceChange">
         <el-radio v-model="radio" label="1">
@@ -96,7 +96,27 @@
             </el-table-column>
             <el-table-column key="5" label="预览图" width="100" align="center" class-name="cell-tight">
                 <template slot-scope="scope">
-                    <img style="height:50px" :src="scope.row.img" class="border-2">
+                  <el-popover
+                    placement="left"
+                    title=""
+                    :value="scope.row.maskShow">
+                    <img :src="scope.row.img" style="width: 250px;"/>
+                    <el-upload
+                        slot="reference"
+                        class="el-upload el-upload--picture-card"
+                        :show-file-list="false"
+                        :on-success="(response, file, fileList) => handleUploadSuccess(response, file, fileList, scope.row)"
+                        :on-error="handleUploadError"
+                        :before-upload="handleBeforeUpload"
+                        action="/api/image/create"
+                        :headers="getTokenHeaders"
+                        :data="{'belong_type': belongType}"
+                        :multiple="false"
+                        style="width:50px; height: 50px; line-height: 80px;overflow:hidden"
+                    >
+                        <img style="height:50px" :src="scope.row.img" class="border-2" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
+                    </el-upload>
+                  </el-popover>
                 </template>
             </el-table-column>
         </el-table>
@@ -133,7 +153,7 @@ export default {
       subtraction1: this.skuPriceStting.subtraction1,
       subtraction2: this.skuPriceStting.subtraction2,
       subtraction3: this.skuPriceStting.subtraction3,
-      textPrice: evalPrice(this.skuPriceStting.textPrice) || '',
+      textPrice: this.skuPriceStting.textPrice ? evalPrice(this.skuPriceStting.textPrice) : '',
       unit: this.skuPriceStting.unit || 100,
       hasRender: false,
       tableData: []
@@ -379,6 +399,12 @@ export default {
       const unit = this.skuPriceStting.unit
       const evalPrice = financial(unit)
       this.textPrice = evalPrice(value)
+    },
+    handlemouseover (item) {
+      this.$set(item, 'maskShow', true)
+    },
+    handlemouseleave (item) {
+      this.$set(item, 'maskShow', false)
     }
   }
 }

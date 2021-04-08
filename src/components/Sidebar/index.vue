@@ -11,7 +11,7 @@
             <el-menu-item index="/migrate" :disabled="!isAuth()">
               <span slot="title">开始复制</span>
             </el-menu-item>
-            <el-menu-item index="/productList" :disabled="!isAuth()">
+            <el-menu-item index="/productList" :disabled="!isAuth()" >
               <span slot="title">搬家列表</span>
             </el-menu-item>
             <el-menu-item index="/migrateSetting" :disabled="!isAuth()">
@@ -41,7 +41,7 @@
               <hh-icon type="icongengduogongneng" style="font-size:14px; padding-left: 28px;margin-right:4px" />
               <span>更多功能</span>
             </template>
-            <el-menu-item @click="openPdd">
+            <el-menu-item index="" @click="openPdd" >
               <span slot="title">虎虎搬家（拼多多）</span>
             </el-menu-item>
             <el-menu-item index="/meizhe">

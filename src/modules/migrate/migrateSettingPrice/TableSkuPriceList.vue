@@ -5,7 +5,7 @@
       <el-radio-group v-model="float" size="small" @change="toFixFloat">
         <el-radio :label="1" >保留整数(四舍五入)</el-radio>
         <el-radio :label="10" >保留一位小数(四舍五入)</el-radio>
-        <el-radio :label="100" >保留两位小数</el-radio>
+        <el-radio :label="100" >保留两位小数(四舍五入)</el-radio>
       </el-radio-group>
     </div>
     <el-table :data="tableData" style="width: 100%;min-height:270px">
@@ -378,7 +378,7 @@ export default {
 
 .TableSkuPriceList {
   /deep/ .el-input {
-    width: 120px;
+    width: 110px;
   }
 
   .price-sku-input {
@@ -394,7 +394,7 @@ export default {
   .price-sale-input {
     /deep/ .el-input__inner {
       padding: 5px;
-      width: 120px;
+      width: 110px;
       height: 38px;
       border-radius: 4px;
       border: 1px solid #ebebeb;
