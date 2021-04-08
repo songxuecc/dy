@@ -124,7 +124,7 @@ export default {
   },
   data () {
     const unit = this.skuPriceStting.unit
-    const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit)
+    const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit)
     return {
       radio: this.skuPriceStting.radio,
       subtraction1: this.skuPriceStting.subtraction1,
@@ -146,7 +146,7 @@ export default {
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           let currentColumnData = cloneDeep(skuMap[key])
-          const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
+          const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
           // 根据 定制公式重设价格
           if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
             const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
@@ -186,7 +186,7 @@ export default {
       immediate: true
     },
     template (n) {
-      const evalPrice = x => accDiv(Math.floor(accMul(x, this.unit)), this.unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.round(accMul(x, this.unit)), this.unit).toFixed(2)
       if (Number(n.radio) === 1 && utils.isNumber(n.subtraction1) && utils.isNumber(n.subtraction2) && utils.isNumber(n.subtraction3)) {
         const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, n.subtraction1), n.subtraction2), 100), n.subtraction3)
         const tableData = this.tableData.map((item, idx) => {
@@ -262,7 +262,7 @@ export default {
     },
     errorMsg () {
       function isInteger (obj) {
-        return Math.floor(accMul(obj, 100)) === accMul(obj, 100)
+        return Math.round(accMul(obj, 100)) === accMul(obj, 100)
       }
       return this.tableData.map(item => {
         const price = item.sku_price
@@ -280,7 +280,7 @@ export default {
   },
   methods: {
     handleYY (value, n) {
-      const evalPrice = x => accDiv(Math.floor(accMul(x, this.unit)), this.unit)
+      const evalPrice = x => accDiv(Math.round(accMul(x, this.unit)), this.unit)
       if (utils.isNumber(value)) {
         this.subtraction3 = evalPrice(value)
       }
@@ -314,7 +314,7 @@ export default {
       let price = column.promo_price / 100
       // 抹角 抹分
       const unit = this.skuPriceStting.unit
-      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
       // 根据 自定义设置重设价格
       if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
         const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
@@ -356,7 +356,7 @@ export default {
     },
     handleTextPriceChange (value) {
       const unit = this.skuPriceStting.unit
-      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
       this.textPrice = evalPrice(value)
     }
   }

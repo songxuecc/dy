@@ -67,7 +67,7 @@ export default {
       // 划线价计算公式
       const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
       // 抹角 抹分
-      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
 
       const nextTableData = (tableData || []).map(item => {
         // 修改unit 自定义设置数据只改变单位
@@ -199,7 +199,7 @@ export default {
       const unit = state.unit
       const {id} = payload
       const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
-      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           item.market_price = evalPrice(evalMarketPrice(item.maxMarketPrices))
@@ -216,7 +216,7 @@ export default {
       const template = state.template
       const unit = state.unit
       let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
-      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           const minSkuPrices = evalPrice(evalGroupPriceRange(item.minSkuPrices))
@@ -235,7 +235,7 @@ export default {
       const tableData = state.tableData
       const template = state.template
       const unit = state.unit
-      const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id !== id) return item
         const skuMap = cloneDeep(item.sku_json.sku_map)
@@ -301,7 +301,7 @@ export default {
         if (item.selectPriceType && ['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) return item
         let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
         const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
-        const evalPrice = x => accDiv(Math.floor(accMul(x, unit)), unit).toFixed(2)
+        const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
 
         const minSkuPrices = evalPrice(evalGroupPriceRange(item.minSkuPrices))
         const maxSkuPrices = evalPrice(evalGroupPriceRange(item.maxSkuPrices))
