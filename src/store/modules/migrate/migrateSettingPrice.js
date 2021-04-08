@@ -5,6 +5,10 @@ import cloneDeep from 'lodash/cloneDeep'
 import isEmpty from 'lodash/isEmpty'
 
 import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
+function financial (x, unit) {
+  const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
+  return Number.parseFloat(x).toFixed(fix)
+}
 export default {
   namespaced: true,
   state: () => ({
@@ -75,7 +79,7 @@ export default {
       // 划线价计算公式
       const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
       // 抹角 抹分
-      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
 
       const nextTableData = (tableData || []).map(item => {
         // 修改unit 自定义设置数据只改变单位
@@ -207,7 +211,7 @@ export default {
       const unit = state.unit
       const {id} = payload
       const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
-      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           item.market_price = evalPrice(evalMarketPrice(item.maxMarketPrices))
@@ -236,7 +240,7 @@ export default {
       }
 
       let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
-      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           const minSkuPrices = evalPrice(evalGroupPriceRange(item.minSkuPrices))
@@ -267,7 +271,7 @@ export default {
         template.model.price_diff = 0
       }
 
-      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id !== id) return item
         const skuMap = cloneDeep(item.sku_json.sku_map)
@@ -296,10 +300,10 @@ export default {
         const maxSkuPrices = evalPrice(Math.max(...prices))
         item.group_price_range = minSkuPrices !== maxSkuPrices ? minSkuPrices + '~' + maxSkuPrices : maxSkuPrices
         item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
-        item.minSkuPrices = Math.min(...prices)
-        item.maxSkuPrices = Math.max(...prices)
+        // item.minSkuPrices = Math.min(...prices)
+        // item.maxSkuPrices = Math.max(...prices)
         if (Number(arithmetic.radio) === 2) {
-          item.selectPriceInfo = `已单独修改`
+          item.selectPriceInfo = `已编辑`
           item.selectPriceType = arithmetic.radio
         } else if (
           Number(arithmetic.radio) === 1 &&
@@ -310,11 +314,11 @@ export default {
           )
         ) {
           // 只有设置的公式和统一设置的公式不一致时 需要重设并显示提示文案
-          item.selectPriceInfo = `已单独修改`
+          item.selectPriceInfo = `已编辑`
           item.selectPriceType = arithmetic.radio
           // 公式和全局的相同 && 有设置自定义价格
         } else if (Number(arithmetic.radio) === 1 && hasCustomPrice) {
-          item.selectPriceInfo = '已单独修改'
+          item.selectPriceInfo = '已编辑'
           item.selectPriceType = 3
         }
 
@@ -362,10 +366,13 @@ export default {
         // 修改模版的时候 删除自定义价格设置
         delete item.custome_market_price
         delete item.custome_discount_price
-        if (item.selectPriceType && ['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) return item
+        delete item.selectPriceType
+        delete item.selectPriceInfo
+
+        // if (item.selectPriceType && ['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) return item
         let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
         const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
-        const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
+        const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
 
         const minSkuPrices = evalPrice(evalGroupPriceRange(item.minSkuPrices))
         const maxSkuPrices = evalPrice(evalGroupPriceRange(item.maxSkuPrices))
@@ -385,6 +392,15 @@ export default {
             item.market_price = evalPrice(evalMarketPrice(item.min_price / 100))
           }
         }
+
+        // 自定义价格设置
+        if (item.custome_discount_price) {
+          item.discount_price = evalPrice(item.custome_discount_price)
+        }
+        if (item.custome_market_price) {
+          item.market_price = evalPrice(item.custome_market_price)
+        }
+
         return item
       })
       commit('save', {tableData: nextTableData})

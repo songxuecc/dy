@@ -24,7 +24,6 @@
             size="mini"
             style="width:100px;"
             v-model="subtraction3"
-            @change="handleYY"
             @focus="radio='1'"/>
         </el-radio>
         <span>
@@ -114,6 +113,11 @@ import cloneDeep from 'lodash/cloneDeep'
 import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
 import utils from '@/common/utils'
 
+function financial (x, unit) {
+  const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
+  return Number.parseFloat(x).toFixed(fix)
+}
+
 export default {
   name: 'ModalSingleSkuList',
   props: {
@@ -123,7 +127,7 @@ export default {
   },
   data () {
     const unit = this.skuPriceStting.unit
-    const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit)
+    const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
     return {
       radio: this.skuPriceStting.radio,
       subtraction1: this.skuPriceStting.subtraction1,
@@ -145,7 +149,7 @@ export default {
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           let currentColumnData = cloneDeep(skuMap[key])
-          const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
+          const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
           // 根据 定制公式重设价格
           if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
             const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
@@ -185,7 +189,8 @@ export default {
       immediate: true
     },
     template (n) {
-      const evalPrice = x => accDiv(Math.round(accMul(x, this.unit)), this.unit).toFixed(2)
+      const unit = this.unit
+      const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
       // 添加默认 sku公式值
       if (!utils.isNumber(n.subtraction1)) {
         n.subtraction1 = 0
@@ -285,12 +290,6 @@ export default {
     }
   },
   methods: {
-    handleYY (value, n) {
-      const evalPrice = x => accDiv(Math.round(accMul(x, this.unit)), this.unit)
-      if (utils.isNumber(value)) {
-        this.subtraction3 = evalPrice(value)
-      }
-    },
     handleCancelBatchEdit () {
       this.$emit('handleCancelBatchEdit')
     },
@@ -328,7 +327,7 @@ export default {
       let price = column.promo_price / 100
       // 抹角 抹分
       const unit = this.skuPriceStting.unit
-      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
       // 根据 自定义设置重设价格
       if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
         const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
@@ -378,7 +377,7 @@ export default {
     },
     handleTextPriceChange (value) {
       const unit = this.skuPriceStting.unit
-      const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
+      const evalPrice = x => financial(accDiv(Math.round(accMul(x, unit)), unit), unit)
       this.textPrice = evalPrice(value)
     }
   }

@@ -5,7 +5,7 @@
       <el-radio-group v-model="float" size="small" @change="toFixFloat">
         <el-radio :label="1" >保留整数(四舍五入)</el-radio>
         <el-radio :label="10" >保留一位小数(四舍五入)</el-radio>
-        <el-radio :label="100" >保持原价格</el-radio>
+        <el-radio :label="100" >保留两位小数</el-radio>
       </el-radio-group>
     </div>
     <el-table :data="tableData" style="width: 100%;min-height:270px">
@@ -83,18 +83,16 @@
           </div>
         </template>
         <template slot-scope="scope">
-          <div>
-            <span class="price">{{ scope.row.group_price_range }}</span>
-            <hh-icon
-              type="iconbianji"
-              style="font-size: 12px"
-              class="pointer"
-              @click="showSkuPrice(scope.row)"
-              :class="[tableDataErrorMsg[scope.$index].group_price_range_error ? 'warn':'']"
-            />
-          </div>
-          <p class="info tutorials" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</p>
-          <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</p>
+          <span class="price">{{ scope.row.group_price_range }}</span>
+          <hh-icon
+            type="iconbianji"
+            style="font-size: 12px"
+            class="pointer"
+            @click="showSkuPrice(scope.row)"
+            :class="[tableDataErrorMsg[scope.$index].group_price_range_error ? 'warn':'']"
+          />
+          <span class="info tutorials" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</span>
+          <span class="fail absolute" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center"  width="180"  class-name="custom-column">
@@ -111,15 +109,18 @@
           </el-radio-group>
         </template>
         <template slot-scope="scope">
-            <el-input
-              :debounce="500"
-              size="mini"
-              class="price-sale-input"
-              :value="scope.row.discount_price"
-              @input="handleDiscountPrice($event,scope.row.tp_product_id)"
-              @clear="handleClearDiscountPrice(scope.row.tp_product_id)"
-              :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
-            />
+            <div class="flex align-c justify-c">
+              <el-input
+                :debounce="500"
+                size="mini"
+                class="price-sale-input"
+                :value="scope.row.discount_price"
+                @input="handleDiscountPrice($event,scope.row.tp_product_id)"
+                @clear="handleClearDiscountPrice(scope.row.tp_product_id)"
+                :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
+              />
+              <span class="tutorials" v-if="scope.row.custome_discount_price">已编辑</span>
+            </div>
             <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
       </el-table-column>
@@ -158,15 +159,18 @@
           </div>
         </template>
         <template slot-scope="scope">
-          <el-input
-            :debounce="500"
-            size="mini"
-            class="price-sale-input"
-            :value="scope.row.market_price"
-            @input="handleMarketPrice($event,scope.row.tp_product_id)"
-            @clear="handleClearMarketPrice(scope.row.tp_product_id)"
-            :class="[tableDataErrorMsg[scope.$index].market_price_error ? 'warn':'']"
-          />
+          <div class="flex align-c justify-c">
+            <el-input
+              :debounce="500"
+              size="mini"
+              class="price-sale-input"
+              :value="scope.row.market_price"
+              @input="handleMarketPrice($event,scope.row.tp_product_id)"
+              @clear="handleClearMarketPrice(scope.row.tp_product_id)"
+              :class="[tableDataErrorMsg[scope.$index].market_price_error ? 'warn':'']"
+            />
+            <span class="tutorials"  v-if="scope.row.custome_market_price">已编辑</span>
+          </div>
           <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].market_price_error">{{tableDataErrorMsg[scope.$index].market_price_error}}</p>
         </template>
       </el-table-column>
@@ -374,7 +378,7 @@ export default {
 
 .TableSkuPriceList {
   /deep/ .el-input {
-    width: 150px;
+    width: 120px;
   }
 
   .price-sku-input {
@@ -390,7 +394,7 @@ export default {
   .price-sale-input {
     /deep/ .el-input__inner {
       padding: 5px;
-      width: 150px;
+      width: 120px;
       height: 38px;
       border-radius: 4px;
       border: 1px solid #ebebeb;
@@ -431,6 +435,7 @@ export default {
     left: 0;
     right: 0;
     margin: auto;
+    bottom: 0;
   }
 
   .tutorials {
