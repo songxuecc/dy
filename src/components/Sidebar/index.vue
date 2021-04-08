@@ -33,7 +33,7 @@
               <span slot="title">sku导入修改<NewFeatureTips type="sku导入修改图片" /></span>
             </el-menu-item>
            <el-menu-item index="/poster/dg/list" :disabled="!isAuth()">
-             <span slot="title">详情海报</span>
+             <span slot="title">批量新增详情</span>
            </el-menu-item>
           </el-submenu>
           <el-submenu index="3">

@@ -1,8 +1,15 @@
 <!-- PayRecord -->
 <template>
     <div v-loading="loading">
-        <div class="mb-10 color-333 font-12 bold flex align-c">抓取拼多多剩余额度数：{{availablePddCaptureNums}}条 <el-link class="font-12 bold ml-5" :underline="false" type="primary" @click="toggleVisible">额度计算规则</el-link></div>
-        <div class="mb-10 color-333 font-12 bold">拼多多抓取充值：<span v-for="(tag,idx) in versionList" :key="idx" :class="['tag','pointer',idx === active?'active' :'']" @click="handleChange(idx)">{{tag.nums}}条</span></div>
+        <div class="mb-10 color-333 font-12 bold flex align-c">
+          抓取拼多多剩余额度数：{{availablePddCaptureNums}}条
+          <el-link class="font-12 bold ml-5" :underline="false" type="primary" @click="toggleVisible">额度计算规则</el-link>
+        </div>
+        <div class="mb-10 color-333 font-12 bold">
+          拼多多抓取充值：
+          <span v-for="(tag,idx) in versionList" :key="idx" :class="['tag','pointer',idx === active?'active' :'']" @click="handleChange(idx)">{{tag.nums}}条</span>
+          <img src="@/assets/images/pdd.png" alt="" style="width:30px;height:30px" class="ml-5">
+        </div>
         <div class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" v-if="versionList && versionList.length">{{versionList[active].amount / 100 || 0}}</span><span class="price">元</span>
         <span class="tutorials">支持开发票</span>
         </div>
