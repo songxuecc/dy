@@ -288,15 +288,7 @@ export default {
           nextSkuMap[key] = value
         })
 
-        // 公式和全局的相同 && 没有设置自定义价格 则直接返回数据
-        if (Number(arithmetic.radio) === 1 && !hasCustomPrice &&
-          arithmetic.subtraction1 === template.model.origin_price_diff &&
-            arithmetic.subtraction2 === template.model.group_price_rate &&
-            arithmetic.subtraction3 === template.model.group_price_diff
-        ) {
-          delete item.selectPriceType
-          return item
-        }
+        console.log(arithmetic, 'arithmetic')
 
         item.sku_json.sku_map = nextSkuMap
         const prices = Object.values(skuMap).map(sku => sku.sku_price)
@@ -307,7 +299,7 @@ export default {
         item.minSkuPrices = Math.min(...prices)
         item.maxSkuPrices = Math.max(...prices)
         if (Number(arithmetic.radio) === 2) {
-          item.selectPriceInfo = `设置为统一SKU价格`
+          item.selectPriceInfo = `已单独修改`
           item.selectPriceType = arithmetic.radio
         } else if (
           Number(arithmetic.radio) === 1 &&
@@ -318,13 +310,24 @@ export default {
           )
         ) {
           // 只有设置的公式和统一设置的公式不一致时 需要重设并显示提示文案
-          item.selectPriceInfo = `(原价-${arithmetic.subtraction1})x${arithmetic.subtraction2}%-${arithmetic.subtraction3}`
+          item.selectPriceInfo = `已单独修改`
           item.selectPriceType = arithmetic.radio
           // 公式和全局的相同 && 有设置自定义价格
         } else if (Number(arithmetic.radio) === 1 && hasCustomPrice) {
-          item.selectPriceInfo = '设置有自定义SKU价格'
+          item.selectPriceInfo = '已单独修改'
           item.selectPriceType = 3
         }
+
+        // 公式和全局的相同 && 没有设置自定义价格 则只修改数据 删除自定义标签
+        if (Number(arithmetic.radio) === 1 && !hasCustomPrice &&
+          arithmetic.subtraction1 === template.model.origin_price_diff &&
+            arithmetic.subtraction2 === template.model.group_price_rate &&
+            arithmetic.subtraction3 === template.model.group_price_diff
+        ) {
+          delete item.selectPriceType
+          delete item.selectPriceInfo
+        }
+
         item.selectPriceArithmetic = arithmetic
         // 自定义价格设置 修改单个sku 价格设置不变
         if (item.custome_discount_price) {

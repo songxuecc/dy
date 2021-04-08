@@ -93,7 +93,7 @@
               :class="[tableDataErrorMsg[scope.$index].group_price_range_error ? 'warn':'']"
             />
           </div>
-          <p class="info" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</p>
+          <p class="info tutorials" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</p>
           <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</p>
         </template>
       </el-table-column>
@@ -119,7 +119,6 @@
               @input="handleDiscountPrice($event,scope.row.tp_product_id)"
               @clear="handleClearDiscountPrice(scope.row.tp_product_id)"
               :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
-              clearable
             />
             <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
@@ -167,7 +166,6 @@
             @input="handleMarketPrice($event,scope.row.tp_product_id)"
             @clear="handleClearMarketPrice(scope.row.tp_product_id)"
             :class="[tableDataErrorMsg[scope.$index].market_price_error ? 'warn':'']"
-            clearable
           />
           <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].market_price_error">{{tableDataErrorMsg[scope.$index].market_price_error}}</p>
         </template>
@@ -433,6 +431,10 @@ export default {
     left: 0;
     right: 0;
     margin: auto;
+  }
+
+  .tutorials {
+    transform: scale(0.7);
   }
 }
 

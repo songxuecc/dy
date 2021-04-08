@@ -75,7 +75,6 @@
                       <el-input
                         :debounce="500"
                         :class="[errorMsg[scope.$index] ? 'warn':'']"
-                        clearable
                         :value="scope.row.sku_price"
                         @input="handleSkuChange($event,scope.$index,scope.row)"
                         @clear="handleClearSkuPrice(scope.$index,scope.row)"
