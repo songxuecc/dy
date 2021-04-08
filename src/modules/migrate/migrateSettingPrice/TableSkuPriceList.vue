@@ -3,8 +3,8 @@
   <div class="TableSkuPriceList">
     <div class="left mb-10">
       <el-radio-group v-model="float" size="small" @change="toFixFloat">
-        <el-radio :label="1" >保留整数</el-radio>
-        <el-radio :label="10" >保留一位小数</el-radio>
+        <el-radio :label="1" >保留整数(四舍五入)</el-radio>
+        <el-radio :label="10" >保留一位小数(四舍五入)</el-radio>
         <el-radio :label="100" >保持原价格</el-radio>
       </el-radio-group>
     </div>
