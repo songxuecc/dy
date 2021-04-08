@@ -39,7 +39,7 @@
       <el-table-column align="center" width="280" class-name="custom-column">
         <template slot="header" slot-scope="scope">
           <p class="font-14 mb-10">sku价格=
-            <el-tooltip content="SKU价格公式输入必须为数字" v-if="templateError.origin_price_diff || templateError.group_price_rate || templateError.group_price_diff" placement="top">
+            <el-tooltip content="SKU价格公式输入必须为数字" v-if="templateError.group_price_rate" placement="top">
               <hh-icon type="iconjinggao1" style="font-size:14px"></hh-icon>
             </el-tooltip>
           </p>
@@ -131,7 +131,7 @@
             <span class="color-primary pointer" @click="toggleIsShowSample"
               >查看示例</span
             >
-            <el-tooltip content="划线价公式输入必须为数字" v-if="templateError.price_rate || templateError.price_diff" placement="top">
+            <el-tooltip content="划线价公式输入必须为数字" v-if="templateError.price_rate" placement="top">
               <hh-icon type="iconjinggao1" style="font-size:14px"></hh-icon>
             </el-tooltip>
           </p>
@@ -255,11 +255,8 @@ export default {
     }),
     templateError () {
       const keys = [
-        {property: 'origin_price_diff'},
         {property: 'group_price_rate'},
-        {property: 'group_price_diff'},
-        {property: 'price_rate'},
-        {property: 'price_diff'}
+        {property: 'price_rate'}
       ]
       let obj = {}
       keys.map(key => {
@@ -345,9 +342,9 @@ export default {
         this.selectTpProductSkuPriceStting = {...selectTpProduct.selectPriceArithmetic, unit: this.unit}
       } else {
         this.selectTpProductSkuPriceStting = {
-          subtraction1: this.template.model.origin_price_diff,
+          subtraction1: this.template.model.origin_price_diff || 0,
           subtraction2: this.template.model.group_price_rate,
-          subtraction3: this.template.model.group_price_diff,
+          subtraction3: this.template.model.group_price_diff || 0,
           textPrice: '',
           radio: '1',
           unit: this.unit

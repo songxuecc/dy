@@ -187,6 +187,13 @@ export default {
     },
     template (n) {
       const evalPrice = x => accDiv(Math.round(accMul(x, this.unit)), this.unit).toFixed(2)
+      // 添加默认 sku公式值
+      if (!utils.isNumber(n.subtraction1)) {
+        n.subtraction1 = 0
+      }
+      if (!utils.isNumber(n.subtraction3)) {
+        n.subtraction3 = 0
+      }
       if (Number(n.radio) === 1 && utils.isNumber(n.subtraction1) && utils.isNumber(n.subtraction2) && utils.isNumber(n.subtraction3)) {
         const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, n.subtraction1), n.subtraction2), 100), n.subtraction3)
         const tableData = this.tableData.map((item, idx) => {
@@ -248,7 +255,7 @@ export default {
       return skuPropertyList
     },
     errorMsgModel () {
-      if (Number(this.radio) === 1 && (!utils.isNumber(this.subtraction1) || !utils.isNumber(this.subtraction2) || !utils.isNumber(this.subtraction3))) {
+      if (Number(this.radio) === 1 && !utils.isNumber(this.subtraction2)) {
         return 'sku价格公式设置 请输入数字，最多保留两位小数点'
       } else if (Number(this.radio) === 2 && !utils.isNumber(this.textPrice)) {
         return 'sku价格公式设置 请输入数字，最多保留两位小数点'
@@ -258,7 +265,7 @@ export default {
       return ''
     },
     disabledBtn () {
-      return this.errorMsg.some(item => !isEmpty(item)) && this.errorMsgModel
+      return this.errorMsg.some(item => !isEmpty(item)) || Boolean(this.errorMsgModel)
     },
     errorMsg () {
       function isInteger (obj) {
@@ -310,6 +317,14 @@ export default {
       this.tableData = tableData
     },
     handleClearSkuPrice (index) {
+      // 添加默认 sku公式值
+      if (!utils.isNumber(this.subtraction1)) {
+        this.subtraction1 = 0
+      }
+      if (!utils.isNumber(this.subtraction3)) {
+        this.subtraction3 = 0
+      }
+
       const column = cloneDeep(this.tableData[index])
       let price = column.promo_price / 100
       // 抹角 抹分
@@ -339,6 +354,14 @@ export default {
     },
     // 点击确定
     handleSureBatchEdut () {
+      // 添加默认 sku公式值
+      if (!utils.isNumber(this.subtraction1)) {
+        this.subtraction1 = 0
+      }
+      if (!utils.isNumber(this.subtraction3)) {
+        this.subtraction3 = 0
+      }
+
       this.$emit('handleSureBatchEdut', {
         radio: this.radio,
         subtraction1: this.subtraction1,

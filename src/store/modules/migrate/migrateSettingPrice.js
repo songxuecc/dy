@@ -58,10 +58,18 @@ export default {
       } = payload
 
       const oldUnit = state.unit
+      console.log(dicCustomPrices, '历史价格dicCustomPrices')
+      // 添加默认模版值
+      if (!utils.isNumber(template.model.origin_price_diff)) {
+        template.model.origin_price_diff = 0
+      }
+      if (!utils.isNumber(template.model.group_price_diff)) {
+        template.model.group_price_diff = 0
+      }
+      if (!utils.isNumber(template.model.price_diff)) {
+        template.model.price_diff = 0
+      }
 
-      console.log(dicCustomPrices, 'dicCustomPrices')
-
-      // todo 如果有dicCustomPrices 就使用历史价格dicCustomPrices
       // sku价格计算公式
       let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
       // 划线价计算公式
@@ -215,6 +223,18 @@ export default {
       const tableData = state.tableData
       const template = state.template
       const unit = state.unit
+
+      // 添加默认模版值
+      if (!utils.isNumber(template.model.origin_price_diff)) {
+        template.model.origin_price_diff = 0
+      }
+      if (!utils.isNumber(template.model.group_price_diff)) {
+        template.model.group_price_diff = 0
+      }
+      if (!utils.isNumber(template.model.price_diff)) {
+        template.model.price_diff = 0
+      }
+
       let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
       const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
       const nextTableData = tableData.map(item => {
@@ -235,6 +255,18 @@ export default {
       const tableData = state.tableData
       const template = state.template
       const unit = state.unit
+
+      // 添加默认模版值
+      if (!utils.isNumber(template.model.origin_price_diff)) {
+        template.model.origin_price_diff = 0
+      }
+      if (!utils.isNumber(template.model.group_price_diff)) {
+        template.model.group_price_diff = 0
+      }
+      if (!utils.isNumber(template.model.price_diff)) {
+        template.model.price_diff = 0
+      }
+
       const evalPrice = x => accDiv(Math.round(accMul(x, unit)), unit).toFixed(2)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id !== id) return item
@@ -311,6 +343,18 @@ export default {
       const key = payload.key
       const template = payload.template
       const unit = state.unit
+
+      // 添加默认模版值
+      if (!utils.isNumber(template.model.origin_price_diff)) {
+        template.model.origin_price_diff = 0
+      }
+      if (!utils.isNumber(template.model.group_price_diff)) {
+        template.model.group_price_diff = 0
+      }
+      if (!utils.isNumber(template.model.price_diff)) {
+        template.model.price_diff = 0
+      }
+
       const nextTableData = tableData.map(item => {
         // 修改模版的时候 删除自定义价格设置
         delete item.custome_market_price
