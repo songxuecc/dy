@@ -47,9 +47,9 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="价格" width="80" align="center">
+            <el-table-column label="价格" width="130" align="center">
                 <template slot-scope="scope">
-                    <span>{{ scope.row.max_price / 100 }}</span>
+                    <span>{{ scope.row.price_range}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="类目" width="100" align="center">
