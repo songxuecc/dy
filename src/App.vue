@@ -18,9 +18,14 @@
         <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
             <div class="aside">
               <vue-custom-scrollbar class="scroll-area"  :settings="settings" @ps-scroll-y="scrollHanle">
-              <side-bar></side-bar>
+                <side-bar></side-bar>
               </vue-custom-scrollbar>
             </div>
+            <!-- <NewFeatureOnlineTip
+            style="position:absolute;z-index:10;top: 279px;left: 58px;transform: scale(0.8);"
+            /> -->
+            <!-- <img src="@/assets/images/settingTip.png"   style="position:absolute;z-index:10;top: 279px;left: 58px;transform: scale(0.8);"
+            /> -->
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
             <div class="main-layout">
               <keep-alive>
@@ -83,6 +88,8 @@ import NotificationListView from '@/components/NotificationListView.vue'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
+import NewFeatureOnlineTip from '@/components/NewFeatureOnlineTip'
+
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import common from '@/common/common.js'
@@ -130,7 +137,8 @@ export default {
     GoodAssessDialog,
     ExpireNotifyDialog,
     vueCustomScrollbar,
-    NotificationListView
+    NotificationListView,
+    NewFeatureOnlineTip
   },
   computed: {
     ...mapGetters({
