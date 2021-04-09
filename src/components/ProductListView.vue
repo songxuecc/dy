@@ -47,7 +47,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="价格" width="130" align="center">
+            <el-table-column label="源sku售价" width="130" align="center">
                 <template slot-scope="scope">
                     <span>{{ scope.row.price_range}}</span>
                 </template>

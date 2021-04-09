@@ -89,7 +89,7 @@
                     <span>原SKU价</span>
                 </template>
                 <template slot-scope="scope">
-                    <div class="great" style="width: 100%; padding-left: 18px; font-size: 16px;">
+                    <div class="color-4e bold" style="width: 100%; padding-left: 18px; font-size: 16px;font-family: MicrosoftYaHei">
                       {{scope.row.origin_price}}
                     </div>
                 </template>
@@ -286,9 +286,9 @@ export default {
     },
     errorMsgModel () {
       if (Number(this.radio) === 1 && !utils.isNumber(this.subtraction2)) {
-        return 'sku价格 公式设置 请输入数字，最多保留两位小数点'
+        return `sku价格 公式设置 请输入数字，最多${this.parseFloatText}`
       } else if (Number(this.radio) === 2 && !utils.isNumber(this.textPrice)) {
-        return 'sku价格 统一设置 请输入数字，最多保留两位小数点'
+        return `sku价格 统一设置 请输入数字，最多${this.parseFloatText}`
       } else if (Number(this.radio) === 2 && (this.textPrice < 0.01 || this.textPrice > 9999999.99)) {
         return '价格范围：0.01-9999999.99'
       }
@@ -309,10 +309,21 @@ export default {
         } else if (price < 0.01 || price > 9999999.99) {
           errorMsg = '价格范围：0.01-9999999.99'
         } else if (!isInteger(price)) {
-          errorMsg = '价格最多最多保留两位小数点'
+          errorMsg = `价格最多最多${this.parseFloatText}`
         }
         return errorMsg
       })
+    },
+    parseFloatText () {
+      if (this.unit === 1) {
+        return '保留整数(四舍五入)'
+      }
+      if (this.unit === 10) {
+        return '保留一位小数(四舍五入)'
+      }
+      if (this.unit === 100) {
+        return '保留两位小数(四舍五入)'
+      }
     }
   },
   methods: {
