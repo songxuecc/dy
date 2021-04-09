@@ -220,8 +220,19 @@ export default {
       const {id, price} = payload
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
+          // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
+          if (item.origin_market_price) {
+            if (item.origin_market_price === price) {
+              delete item.custome_market_price
+              delete item.origin_market_price
+            } else {
+              item.custome_market_price = price
+            }
+          } else {
+            item.origin_market_price = item.market_price
+            item.custome_market_price = price
+          }
           item.market_price = price
-          item.custome_market_price = price
         }
         return item
       })
@@ -233,8 +244,19 @@ export default {
       const tableData = state.tableData
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
+          // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
+          if (item.origin_discount_price) {
+            if (item.origin_discount_price === price) {
+              delete item.custome_discount_price
+              delete item.origin_discount_price
+            } else {
+              item.custome_discount_price = price
+            }
+          } else {
+            item.origin_discount_price = item.discount_price
+            item.custome_discount_price = price
+          }
           item.discount_price = price
-          item.custome_discount_price = price
         }
         return item
       })
@@ -439,6 +461,8 @@ export default {
             nextSkuMap[key] = value
           })
           item.sku_json.sku_map = nextSkuMap
+          item.minSkuPrices = minSkuPrices
+          item.maxSkuPrices = maxSkuPrices
 
         // 售卖价
         } else if (['is_sale_price_show_max'].includes(key)) {
@@ -524,8 +548,8 @@ export default {
       state.tableData.forEach((item, index) => {
         const id = item.tp_product_id
         if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
-        dicCustomPrices[id].last_discount_price = utils.yuanToFen(item.discount_price)
-        if (item.custome_discount_price) {
+        if (item.discount_price) dicCustomPrices[id].last_discount_price = utils.yuanToFen(item.discount_price)
+        if (item.custome_discount_price && item.discount_price) {
           dicCustomPrices[id].discount_price = utils.yuanToFen(item.discount_price)
         }
         if (item.selectPriceType) {
@@ -539,10 +563,36 @@ export default {
           })
           dicCustomPrices[id].sku = skuDiffObj
         }
-        if (item.custome_market_price) {
+        if (item.custome_market_price && item.market_price) {
           if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
           dicCustomPrices[id].price = utils.yuanToFen(item.market_price)
         }
+      })
+      return dicCustomPrices
+    },
+    customPrices: state => {
+      let dicCustomPrices = {}
+      state.tableData.forEach((item) => {
+        const id = item.tp_product_id
+        // 售卖价设置
+        if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
+        if (item.discount_price) dicCustomPrices[id].last_discount_price = utils.yuanToFen(item.discount_price)
+        if (item.discount_price) dicCustomPrices[id].discount_price = utils.yuanToFen(item.discount_price)
+
+        // sku价格设置
+        if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
+        const skuMap = item.sku_json.sku_map
+        const skuDiffObj = {}
+        Object.keys(skuMap).forEach(key => {
+          const skuValue = skuMap[key]
+          if (!skuDiffObj[key]) skuDiffObj[key] = {}
+          skuDiffObj[key].promo_price = utils.yuanToFen(skuValue.sku_price)
+        })
+        dicCustomPrices[id].sku = skuDiffObj
+
+        // 划线价设置
+        if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
+        if (item.market_price) dicCustomPrices[id].price = utils.yuanToFen(item.market_price)
       })
       return dicCustomPrices
     }

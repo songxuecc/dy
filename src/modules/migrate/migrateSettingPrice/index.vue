@@ -62,7 +62,7 @@ export default {
     ...mapActions('migrate/migrateSettingTemplate', [
       'saveTempTemplate'
     ]),
-    ...mapMutations('migrate/migrateSettingTemplate', ['saveMigrateSettingTemplate']),
+    ...mapMutations('migrate/migrateSettingTemplate', ['save']),
     beforeunloadFn (e) {
       if (this.msgError) return false
       if (!this.template.isDiff() && Object.entries(this.dicCustomPrices).length === 0) {
@@ -86,7 +86,7 @@ export default {
     },
     toSetTemplate () {
       if (this.msgError) return false
-      this.saveMigrateSettingTemplate({
+      this.save({
         dicCustomPrices: this.dicCustomPrices
       })
       this.saveTempTemplate()
