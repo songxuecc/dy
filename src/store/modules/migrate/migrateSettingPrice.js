@@ -441,8 +441,25 @@ export default {
         const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
         const evalPrice = financial(unit)
 
-        const minSkuPrices = evalPrice(evalGroupPriceRange(item.minSkuPrices))
-        const maxSkuPrices = evalPrice(evalGroupPriceRange(item.maxSkuPrices))
+        let skuMap = cloneDeep(item.sku_json.sku_map)
+        let nextSkuMap = {}
+        Object.keys(skuMap).forEach(key => {
+          const value = skuMap[key]
+          if (!value.sku_price) {
+            let promoPrice = value.promo_price
+            let marketPrice = value.price
+            value.sku_price = evalPrice(promoPrice / 100)
+            value.origin_price = evalPrice(value.promo_price / 100)
+            value.market_price = evalPrice(marketPrice / 100)
+            value.origin_market_price = evalPrice(value.price / 100)
+            value.custome_key = key
+          }
+          nextSkuMap[key] = value
+        })
+        item.sku_json.sku_map = nextSkuMap
+        let skuPrices = Object.values(nextSkuMap).map(sku => sku.origin_price)
+        const minSkuPrices = evalPrice(evalGroupPriceRange(Math.min(...skuPrices)))
+        const maxSkuPrices = evalPrice(evalGroupPriceRange(Math.max(...skuPrices)))
         const maxMarketPrices = evalPrice(evalMarketPrice(item.maxMarketPrices))
 
         // sku价格
