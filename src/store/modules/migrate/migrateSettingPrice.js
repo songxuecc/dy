@@ -97,7 +97,7 @@ export default {
             item.discount_price = evalPrice(item.custome_discount_price)
           }
           if (item.custome_market_price) {
-            item.discount_price = evalPrice(item.custome_market_price)
+            item.market_price = evalPrice(item.custome_market_price)
           }
           return item
         }
@@ -114,17 +114,14 @@ export default {
           const value = skuMap[key]
           if (!value.sku_price) {
             let promoPrice = value.promo_price
-            let marketPrice = value.price
             // 恢复历史sku价格
             if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].sku && dicCustomPrices[id].sku[key] && dicCustomPrices[id].sku[key].promo_price) {
-            //   promoPrice = dicCustomPrices[id].sku[key].promo_price
               hasRemarkedPromptPrice = true
-            //   value.custom_price = evalPrice(promoPrice / 100)
             }
-            value.sku_price = evalPrice(promoPrice / 100)
+            value.sku_price = evalPrice(evalGroupPriceRange(promoPrice / 100))
             value.origin_price = evalPrice(value.promo_price / 100)
-            value.market_price = evalPrice(marketPrice / 100)
-            value.origin_market_price = evalPrice(value.price / 100)
+            value.market_price = evalPrice(value.price / 100)
+            value.initial_market_price = evalPrice(value.price / 100)
             value.custome_key = key
           }
           nextSkuMap[key] = value
@@ -138,20 +135,27 @@ export default {
         let maxSkuPrices = evalPrice(evalGroupPriceRange(Math.max(...skuPrices)))
 
         // 划线价 价格范围
-        const marketPrices = Object.values(nextSkuMap).map(sku => sku.market_price)
+        const marketPrices = Object.values(nextSkuMap).map(sku => sku.initial_market_price)
         // const minMarketPrices = evalPrice(evalGroupPriceRange(Math.min(...marketPrices)))
-        const maxMarketPrices = evalGroupPriceRange(Math.max(...marketPrices))
-        const marketPrice = evalPrice(evalMarketPrice(maxMarketPrices))
+        const marketPrice = evalPrice(evalMarketPrice(Math.max(...marketPrices)))
         // 设置价格公式
         item.group_price_range = minSkuPrices !== maxSkuPrices ? minSkuPrices + '~' + maxSkuPrices : maxSkuPrices
         item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
 
         item.minSkuPrices = Math.min(...skuPrices)
         item.maxSkuPrices = Math.max(...skuPrices)
-        item.maxMarketPrices = Math.max(...marketPrices)
+        item.maxMarketPrices = marketPrice
+        item.origin_market_price = marketPrice
+        item.origin_discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
 
+        // 有历史记录
         if (origin && hasRemarkedPromptPrice) {
           let nextSkuMaphasRemark = {}
+          // 自定义价格设置回显
+          if (!isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].selectPriceArithmetic) {
+            item.selectPriceArithmetic = dicCustomPrices[id].selectPriceArithmetic
+            item.selectPriceType = item.selectPriceArithmetic.radio
+          }
           Object.keys(skuMap).forEach(key => {
             const value = skuMap[key]
             let promoPrice = value.promo_price
@@ -165,7 +169,6 @@ export default {
             value.sku_price = evalPrice(promoPrice / 100)
             value.origin_price = evalPrice(value.promo_price / 100)
             value.market_price = evalPrice(marketPrice / 100)
-            value.origin_market_price = evalPrice(value.price / 100)
             value.custome_key = key
             nextSkuMaphasRemark[key] = value
           })
@@ -179,15 +182,17 @@ export default {
           item.customMaxSkuPrices = maxSkuPrices
           item.group_price_range = minSkuPrices !== maxSkuPrices ? minSkuPrices + '~' + maxSkuPrices : maxSkuPrices
           item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
+          item.origin_discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
         }
 
         // 恢复历史售卖价
-        if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].last_discount_price) {
-          item.discount_price = evalPrice(dicCustomPrices[id].last_discount_price / 100)
-        }
+        // if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].last_discount_price) {
+        //   item.discount_price = evalPrice(dicCustomPrices[id].last_discount_price / 100)
+        // }
+
         if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].discount_price) {
           item.discount_price = evalPrice(dicCustomPrices[id].discount_price / 100)
-          item.custome_discount_price = evalPrice(dicCustomPrices[id].last_discount_price / 100)
+          item.custome_discount_price = evalPrice(dicCustomPrices[id].discount_price / 100)
         }
 
         // 设置划线价
@@ -196,11 +201,12 @@ export default {
         if (item['tp_id'] === common.TpType.dy) {
           item.market_price = evalPrice(evalMarketPrice(item.min_price / 100))
         }
-        // 恢复历史划线价格
+        // 恢复历史划线价
         if (origin && !isEmpty(dicCustomPrices) && dicCustomPrices[id] && dicCustomPrices[id].price) {
           item.market_price = evalPrice(dicCustomPrices[id].price / 100)
           item.custome_market_price = evalPrice(dicCustomPrices[id].price / 100)
         }
+
         // 自定义价格设置
         if (item.custome_discount_price && oldUnit !== unit) {
           item.discount_price = evalPrice(item.custome_discount_price)
@@ -211,6 +217,7 @@ export default {
         return cloneDeep(item)
       })
       // 更新模版的unit 后期比较tempkate可以更新用户模版
+
       template.model.unit = unit
       commit('save', {tableData: cloneDeep(nextTableData), unit, template})
     },
@@ -418,49 +425,60 @@ export default {
       const template = payload.template
       const unit = state.unit
 
-      if (!Number(template.model.group_price_rate)) {
-        return false
-      }
+      let groupPriceRate = template.model.group_price_rate
+      let priceRate = template.model.price_rate
+
+      let originPriceDiff = template.model.origin_price_diff
+      let groupPriceDiff = template.model.group_price_diff
+      let priceDiff = template.model.price_diff
 
       // 添加默认模版值
+      if (!utils.isNumber(template.model.group_price_rate)) {
+        groupPriceRate = 0
+      }
+      if (!utils.isNumber(template.model.price_rate)) {
+        priceRate = 0
+      }
       if (!utils.isNumber(template.model.origin_price_diff)) {
-        template.model.origin_price_diff = 0
+        originPriceDiff = 0
       }
       if (!utils.isNumber(template.model.group_price_diff)) {
-        template.model.group_price_diff = 0
+        groupPriceDiff = 0
       }
       if (!utils.isNumber(template.model.price_diff)) {
-        template.model.price_diff = 0
+        priceDiff = 0
       }
 
       const nextTableData = tableData.map(item => {
         // 修改模版的时候 删除自定义价格设置
-
+        let oldItem = cloneDeep(item)
         // if (item.selectPriceType && ['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) return item
-        let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, template.model.origin_price_diff), template.model.group_price_rate), 100), template.model.group_price_diff)
-        const evalMarketPrice = x => accSub(accDiv(accMul(x, template.model.price_rate), 100), template.model.price_diff)
+        let evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, originPriceDiff), groupPriceRate), 100), groupPriceDiff)
+        const evalMarketPrice = x => accSub(accDiv(accMul(x, priceRate), 100), priceDiff)
         const evalPrice = financial(unit)
 
         let skuMap = cloneDeep(item.sku_json.sku_map)
         let nextSkuMap = {}
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
-          if (!value.sku_price) {
-            let promoPrice = value.promo_price
-            let marketPrice = value.price
-            value.sku_price = evalPrice(promoPrice / 100)
-            value.origin_price = evalPrice(value.promo_price / 100)
-            value.market_price = evalPrice(marketPrice / 100)
-            value.origin_market_price = evalPrice(value.price / 100)
-            value.custome_key = key
+          let promoPrice = value.promo_price
+          let marketPrice = value.price
+          value.sku_price = evalPrice(evalGroupPriceRange(promoPrice / 100))
+          value.origin_price = evalPrice(value.promo_price / 100)
+          value.market_price = evalPrice(marketPrice / 100)
+          // value.origin_market_price = evalPrice(value.price / 100)
+          value.custome_key = key
+          if (['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) {
+            delete value.custom_price
           }
           nextSkuMap[key] = value
         })
-        item.sku_json.sku_map = nextSkuMap
+
         let skuPrices = Object.values(nextSkuMap).map(sku => sku.origin_price)
         const minSkuPrices = evalPrice(evalGroupPriceRange(Math.min(...skuPrices)))
         const maxSkuPrices = evalPrice(evalGroupPriceRange(Math.max(...skuPrices)))
-        const maxMarketPrices = evalPrice(evalMarketPrice(item.maxMarketPrices))
+        const marketPrices = Object.values(nextSkuMap).map(sku => sku.initial_market_price)
+        const maxMarketPrices = evalPrice(evalMarketPrice(Math.max(...marketPrices)))
 
         // sku价格
         if (['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) {
@@ -470,20 +488,18 @@ export default {
           delete item.selectPriceInfo
           delete item.customMinSkuPrices
           delete item.customMaxSkuPrices
-          const skuMap = cloneDeep(item.sku_json.sku_map)
-          const nextSkuMap = {}
-          Object.keys(skuMap).forEach(key => {
-            const value = skuMap[key]
-            delete value.custom_price
-            nextSkuMap[key] = value
-          })
+
           item.sku_json.sku_map = nextSkuMap
           item.minSkuPrices = minSkuPrices
           item.maxSkuPrices = maxSkuPrices
-
         // 售卖价
         } else if (['is_sale_price_show_max'].includes(key)) {
-          item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
+          // 自定义价格
+          if (oldItem.selectPriceType) {
+            item.discount_price = !Number(template.model.is_sale_price_show_max) ? evalPrice(oldItem.customMinSkuPrices) : evalPrice(oldItem.customMaxSkuPrices)
+          } else {
+            item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
+          }
           delete item.custome_discount_price
         // 划线价
         } else if (['price_rate', 'price_diff'].includes(key)) {
@@ -511,6 +527,7 @@ export default {
   getters: {
     tableDataErrorMsg: state => {
       const tableData = state.tableData
+      const template = state.template
       /**
        * Sku价格：0.01-9999999.99，最多保留两位小数
         售卖价：在sku价格范围内
@@ -526,17 +543,16 @@ export default {
         const minPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[0] : item.group_price_range)
         const maxPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[1] : item.group_price_range)
 
-        if (
-          !utils.isNumber(item.discount_price)
-        ) {
+        if (!utils.isNumber(item.discount_price)) {
           discountPriceError = '请输入数字'
         } else if (item.discount_price < 0.01 || item.discount_price > 9999999.99) {
           discountPriceError = '价格范围：0.01-9999999.99'
         }
+        if (Number(item.discount_price) > maxPrice || Number(item.discount_price) < minPrice) {
+          discountPriceError = `售卖价必须在sku价格范围内`
+        }
 
-        if (
-          !utils.isNumber(item.market_price)
-        ) {
+        if (!utils.isNumber(item.market_price)) {
           marketPriceError = '请输入数字'
         } else if (Number(item.market_price) < 0.01 || Number(item.market_price) > 9999999.99) {
           marketPriceError = '价格范围：0.01-9999999.99'
@@ -544,22 +560,27 @@ export default {
           marketPriceError = `划线价需>=sku最高价`
         }
 
-        if (Number(item.discount_price) > maxPrice || Number(item.discount_price) < minPrice) {
-          discountPriceError = `售卖价必须在sku价格范围内`
+        if (!utils.isNumber(template.model.price_rate)) {
+          marketPriceError = '划线价格公式输入错误'
         }
 
         if (minPrice < 0.01 || maxPrice > 9999999.99) {
           groupPriceRangeError = '价格范围：0.01-9999999.99'
         }
+        if (!utils.isNumber(template.model.group_price_rate)) {
+          groupPriceRangeError = 'SKU价格公式输入错误'
+          discountPriceError = 'SKU价格公式输入错误'
+        }
 
         if (discountPriceError) error.discount_price_error = discountPriceError
         if (marketPriceError) error.market_price_error = marketPriceError
         if (groupPriceRangeError) error.group_price_range_error = groupPriceRangeError
+
         return error
       })
       return nextTableDataErrorMsg
     },
-    // 自定义价格设置获取
+    // 历史价格设置配置
     dicCustomPrices: state => {
       let dicCustomPrices = {}
       state.tableData.forEach((item, index) => {
@@ -579,6 +600,8 @@ export default {
             skuDiffObj[key].promo_price = utils.yuanToFen(skuValue.sku_price)
           })
           dicCustomPrices[id].sku = skuDiffObj
+          // 保存用户的自定义价格设置
+          dicCustomPrices[id].selectPriceArithmetic = item.selectPriceArithmetic
         }
         if (item.custome_market_price && item.market_price) {
           if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
@@ -587,6 +610,7 @@ export default {
       })
       return dicCustomPrices
     },
+    // 传给后端的价格设置
     customPrices: state => {
       let dicCustomPrices = {}
       state.tableData.forEach((item) => {

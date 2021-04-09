@@ -344,9 +344,9 @@ export default {
         this.selectTpProductSkuPriceStting = {...selectTpProduct.selectPriceArithmetic, unit: this.unit}
       } else {
         this.selectTpProductSkuPriceStting = {
-          subtraction1: this.template.model.origin_price_diff || 0,
+          subtraction1: this.template.model.origin_price_diff,
           subtraction2: this.template.model.group_price_rate,
-          subtraction3: this.template.model.group_price_diff || 0,
+          subtraction3: this.template.model.group_price_diff,
           textPrice: '',
           radio: '1',
           unit: this.unit
@@ -364,12 +364,10 @@ export default {
     },
     handleSetTemplate (value, key) {
       this.template.model[key] = value
-      if (utils.isNumber(value)) {
-        this.updateTemplate({
-          template: this.template,
-          key
-        })
-      }
+      this.updateTemplate({
+        template: this.template,
+        key
+      })
     }
   }
 }

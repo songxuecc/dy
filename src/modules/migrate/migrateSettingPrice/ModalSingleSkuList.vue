@@ -150,9 +150,9 @@ export default {
     const evalPrice = financial(unit)
     return {
       radio: this.skuPriceStting.radio,
-      subtraction1: this.skuPriceStting.subtraction1,
-      subtraction2: this.skuPriceStting.subtraction2,
-      subtraction3: this.skuPriceStting.subtraction3,
+      subtraction1: this.skuPriceStting.subtraction1 || 0,
+      subtraction2: this.skuPriceStting.subtraction2 || 100,
+      subtraction3: this.skuPriceStting.subtraction3 || 0,
       textPrice: this.skuPriceStting.textPrice ? evalPrice(this.skuPriceStting.textPrice) : '',
       unit: this.skuPriceStting.unit || 100,
       hasRender: false,
@@ -211,15 +211,21 @@ export default {
     template (n) {
       const unit = this.unit
       const evalPrice = financial(unit)
+      let number1 = n.subtraction1
+      let number2 = n.subtraction2
+      let number3 = n.subtraction3
       // 添加默认 sku公式值
       if (!utils.isNumber(n.subtraction1)) {
-        n.subtraction1 = 0
+        number1 = 0
+      }
+      if (!utils.isNumber(n.subtraction2)) {
+        number2 = 0
       }
       if (!utils.isNumber(n.subtraction3)) {
-        n.subtraction3 = 0
+        number3 = 0
       }
-      if (Number(n.radio) === 1 && utils.isNumber(n.subtraction1) && utils.isNumber(n.subtraction2) && utils.isNumber(n.subtraction3)) {
-        const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, n.subtraction1), n.subtraction2), 100), n.subtraction3)
+      if (Number(n.radio) === 1 && utils.isNumber(number1) && utils.isNumber(number2) && utils.isNumber(number3)) {
+        const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, number1), number2), 100), number3)
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
           delete nextItem.custom_price
@@ -280,11 +286,11 @@ export default {
     },
     errorMsgModel () {
       if (Number(this.radio) === 1 && !utils.isNumber(this.subtraction2)) {
-        return 'sku价格公式设置 请输入数字，最多保留两位小数点'
+        return 'sku价格 公式设置 请输入数字，最多保留两位小数点'
       } else if (Number(this.radio) === 2 && !utils.isNumber(this.textPrice)) {
-        return 'sku价格公式设置 请输入数字，最多保留两位小数点'
+        return 'sku价格 统一设置 请输入数字，最多保留两位小数点'
       } else if (Number(this.radio) === 2 && (this.textPrice < 0.01 || this.textPrice > 9999999.99)) {
-        return '价格统一设置范围为：0.01-9999999.99'
+        return '价格范围：0.01-9999999.99'
       }
       return ''
     },
@@ -301,7 +307,7 @@ export default {
         if (!utils.isNumber(price)) {
           errorMsg = 'SKU价格请输入数字'
         } else if (price < 0.01 || price > 9999999.99) {
-          errorMsg = 'SKU价格设置范围为：0.01-9999999.99'
+          errorMsg = '价格范围：0.01-9999999.99'
         } else if (!isInteger(price)) {
           errorMsg = '价格最多最多保留两位小数点'
         }

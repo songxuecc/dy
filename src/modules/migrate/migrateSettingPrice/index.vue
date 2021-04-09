@@ -44,7 +44,7 @@ export default {
     ...mapGetters('migrate/migrateSettingTemplate', {
       template: 'getTemplate'
     }),
-    ...mapGetters('migrate/migrateSettingPrice', ['tableDataErrorMsg', 'dicCustomPrices']),
+    ...mapGetters('migrate/migrateSettingPrice', ['tableDataErrorMsg', 'dicCustomPrices', 'customPrices']),
     ...mapState({
       loadingGetTPProductByIds: state => state['@@loading'].effects['migrate/migrateSettingPrice/getTPProductByIds']
     }),
@@ -89,6 +89,8 @@ export default {
       this.save({
         dicCustomPrices: this.dicCustomPrices
       })
+      console.log(this.customPrices, 'customPrices')
+      console.log(this.dicCustomPrices, 'dicCustomPrices')
       this.saveTempTemplate()
       this.$router.push({
         path: '/migrateSettingTemplate'
