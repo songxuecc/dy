@@ -421,7 +421,7 @@ export default {
     // 修改模版
     updateTemplate ({commit, state}, payload) {
       const tableData = state.tableData
-      const key = payload.key
+      const updateTemplateKey = payload.key
       const template = payload.template
       const unit = state.unit
 
@@ -448,7 +448,7 @@ export default {
       if (!utils.isNumber(template.model.price_diff)) {
         priceDiff = 0
       }
-
+      console.log('00000')
       const nextTableData = tableData.map(item => {
         // 修改模版的时候 删除自定义价格设置
         let oldItem = cloneDeep(item)
@@ -468,7 +468,7 @@ export default {
           value.market_price = evalPrice(marketPrice / 100)
           // value.origin_market_price = evalPrice(value.price / 100)
           value.custome_key = key
-          if (['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) {
+          if (['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(updateTemplateKey)) {
             delete value.custom_price
           }
           nextSkuMap[key] = value
@@ -481,7 +481,7 @@ export default {
         const maxMarketPrices = evalPrice(evalMarketPrice(Math.max(...marketPrices)))
 
         // sku价格
-        if (['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(key)) {
+        if (['origin_price_diff', 'group_price_rate', 'group_price_diff'].includes(updateTemplateKey)) {
           item.group_price_range = minSkuPrices !== maxSkuPrices ? minSkuPrices + '~' + maxSkuPrices : maxSkuPrices
           item.discount_price = !Number(template.model.is_sale_price_show_max) ? minSkuPrices : maxSkuPrices
           delete item.selectPriceType
@@ -493,7 +493,7 @@ export default {
           item.minSkuPrices = minSkuPrices
           item.maxSkuPrices = maxSkuPrices
         // 售卖价
-        } else if (['is_sale_price_show_max'].includes(key)) {
+        } else if (['is_sale_price_show_max'].includes(updateTemplateKey)) {
           // 自定义价格
           if (oldItem.selectPriceType) {
             item.discount_price = !Number(template.model.is_sale_price_show_max) ? evalPrice(oldItem.customMinSkuPrices) : evalPrice(oldItem.customMaxSkuPrices)
@@ -502,7 +502,7 @@ export default {
           }
           delete item.custome_discount_price
         // 划线价
-        } else if (['price_rate', 'price_diff'].includes(key)) {
+        } else if (['price_rate', 'price_diff'].includes(updateTemplateKey)) {
           item.market_price = maxMarketPrices
           // 如果是抖音商品，则取商品最小价格作为划线价
           delete item.custome_market_price
