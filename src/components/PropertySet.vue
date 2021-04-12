@@ -1,6 +1,6 @@
 <!-- PropertySet 商品属性设置 -->
 <template>
-    <el-form :model="model" ref="propertySet" v-if="productModel && productModel.length">
+    <el-form :model="model" ref="propertySet" v-if="productModel && productModel.length" :rules="rules">
         <el-form-item
             v-for="(item,index) in productModel"
             :key="index"
@@ -13,7 +13,7 @@
              <span slot="label" style="width:120px;display:inline-block;text-align:right;padding-right:4px">
                {{item.name}}
                <i v-if="item.required && item.name === '品牌'" class="el-icon-warning-outline" style="color:#f56c6c"></i>
-               <i v-if="item.required && item.name !== '品牌'" class="el-icon-warning-outline" style="color:#e6a23c"></i>
+               <i v-if="item.required && item.name !== '品牌'" class="el-icon-warning-outline" style="color:#f56c6c"></i>
               </span>
              <el-select
                 clearable
@@ -85,8 +85,7 @@
 
         </el-form-item>
         <div class="tip">
-          <p >1、带<span style="color:#f56c6c">红色感叹号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
-          <p >2、带<span style="color:#e6a23c">黄色感叹号</span> 为抖音官方后台必填属性，在本软件内<span style="color:#e6a23c">可不填写</span></p>
+          <p >带<span style="color:#f56c6c">红色感叹号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
             <!-- 二期会实现本功能 -->
             <!-- <span v-if="catId!==0">，勾选应用到本页相同分类商品，蓝色高亮</span> -->
         </div>
@@ -248,6 +247,14 @@ export default {
 /deep/ .el-form-item__content{
   display:flex;
   align-items:center;
+  margin-bottom: 10px;
+}
+/deep/ .el-form-item__error--inline {
+
+    position: absolute;
+    left: 130px;
+    bottom: -10px;
+
 }
 .batch {
   margin-left: 4px;
