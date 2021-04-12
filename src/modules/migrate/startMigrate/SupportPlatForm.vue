@@ -5,7 +5,7 @@
         <div class="flex color-666 PlatformIcon wrap">
             <div @mouseenter="setActive(item.key)" @mouseleave="moveActive" v-for="item in list" :key="item.key" class="mb-5">
                 <img :class="[platformIconActive==item.key ? 'active' :'', 'pointer']" :src="item.src"   @click="open(item.key)">
-                <p :class="platformIconActive == item.key ? 'color-4e4e4e font-12 bold':'font-12'">{{item.tip}}</p>
+                <p :class="platformIconActive == item.key ? 'color-4e font-12 bold':'font-12'">{{item.tip}}</p>
             </div>
             <div class="newcomer " v-if="visibleNewcomerBtn">
               <img class="newcomer-btn pointer" src="@/assets/images/newguy_banner.gif" @click="goTutorials"/>

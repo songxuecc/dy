@@ -1,6 +1,7 @@
 import migrateSettingTemplate from './migrateSettingTemplate'
 import skuImport from './skuImport'
 import readyToMigrate from './readyToMigrate'
+import migrateSettingPrice from './migrateSettingPrice'
 
 const modules = {
   migrate: {
@@ -8,7 +9,8 @@ const modules = {
     modules: {
       migrateSettingTemplate,
       skuImport,
-      readyToMigrate
+      readyToMigrate,
+      migrateSettingPrice
     }
   }
 }

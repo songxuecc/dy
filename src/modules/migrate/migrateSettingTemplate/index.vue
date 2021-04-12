@@ -76,8 +76,9 @@ export default {
   computed: {
     ...mapState(['userId']),
     ...mapStateMigrate(['template', 'dicCustomPrices', 'userBindList']),
-    ...mapGetters(['getUserId', 'getSelectTPProductIdList'])
-
+    ...mapGetters(['getUserId', 'getSelectTPProductIdList']),
+    ...mapState('migrate/migrateSettingPrice', ['unit']),
+    ...mapGetters('migrate/migrateSettingPrice', ['customPrices'])
   },
   methods: {
     ...mapActionsMigrate([
@@ -134,7 +135,7 @@ export default {
         'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
         'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max',
-        'presell_type', 'commit_type', 'reduce_type', 'product_type'
+        'presell_type', 'commit_type', 'reduce_type', 'product_type', 'unit'
       ]
       const model = this.template.model
       const params = pick(model, keyList)
@@ -267,19 +268,13 @@ export default {
         if (!migrateShop) {
           return false
         }
-        const dicCustomPrices = {};
-        (Object.keys(this.dicCustomPrices) || []).map(key => {
-          const value = this.dicCustomPrices[key]
-          if (value && value.last_discount_price) {
-            dicCustomPrices[key] = value
-          }
-        })
+
         let params = {
           template: JSON.stringify(formatParmas),
           migration_type: this.migrate_type,
           pre_sale_date: formatParmas.presell_end_time,
           tp_product_ids: this.getSelectTPProductIdList,
-          custom_prices: JSON.stringify(dicCustomPrices),
+          custom_prices: JSON.stringify(this.customPrices),
           migrate_shop: JSON.stringify(migrateShop)
         }
 

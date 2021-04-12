@@ -11,11 +11,11 @@
             <el-menu-item index="/migrate" :disabled="!isAuth()">
               <span slot="title">开始复制</span>
             </el-menu-item>
-            <el-menu-item index="/productList" :disabled="!isAuth()">
+            <el-menu-item index="/productList" :disabled="!isAuth()" >
               <span slot="title">搬家列表</span>
             </el-menu-item>
             <el-menu-item index="/migrateSetting" :disabled="!isAuth()">
-              <span slot="title" style="display: flex;align-items: center;">搬家设置<NewFeatureTips type="搬家设置图片" /></span>
+              <span slot="title" style="display: flex;align-items: center;">搬家设置</span>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="2">
@@ -30,7 +30,7 @@
               <span slot="title" style="display: flex;align-items: center;">批量处理</span>
             </el-menu-item>
             <el-menu-item index="/SkuImport" :disabled="!isAuth()">
-              <span slot="title">sku导入修改<NewFeatureTips type="sku导入修改图片" /></span>
+              <span slot="title">sku导入修改</span>
             </el-menu-item>
            <el-menu-item index="/poster/dg/list" :disabled="!isAuth()">
              <span slot="title">批量新增详情</span>
@@ -41,7 +41,7 @@
               <hh-icon type="icongengduogongneng" style="font-size:14px; padding-left: 28px;margin-right:4px" />
               <span>更多功能</span>
             </template>
-            <el-menu-item @click="openPdd">
+            <el-menu-item index="" @click="openPdd" >
               <span slot="title">虎虎搬家（拼多多）</span>
             </el-menu-item>
             <el-menu-item index="/meizhe">

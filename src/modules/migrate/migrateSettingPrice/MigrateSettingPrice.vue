@@ -1,11 +1,12 @@
 <template lang="html">
   <div v-loading="loadingCnt">
     <div style="text-align: left; margin-bottom: 10px">
-      <el-steps :active="1" finish-status="success">
+      <Title />
+      <!-- <el-steps :active="1" finish-status="success">
         <el-step title="选择商品"></el-step>
         <el-step title="编辑价格"></el-step>
         <el-step title="修改模板"></el-step>
-      </el-steps>
+      </el-steps> -->
     </div>
     <el-table ref="productListTable" :data="tpProductList" border style="width: 100%"
               :row-style="{height:'68px'}"
@@ -219,7 +220,6 @@
             </NewComer>
         </div>
       </el-tooltip>
-
     </div>
     <el-dialog
       center
@@ -848,6 +848,9 @@ export default {
         path: '/migrateSettingTemplate'
       })
     },
+    // 抹角 抹分 last_discount_price 手工修改划线价触发price
+    // 手工修改售卖价触发 discount_price
+    // sku
     addCustomPrices (tpProductId, field, value) {
       if (!this.dicCustomPrices[tpProductId]) {
         this.dicCustomPrices[tpProductId] = {}

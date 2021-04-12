@@ -52,7 +52,7 @@
           </el-form-item>
         </el-form>
         <div>
-          <el-alert v-if="getMigrateInfo.length>0" :title=getMigrateInfo type="success" :closable="false" center>
+          <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center>
           </el-alert>
         </div>
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
@@ -428,7 +428,7 @@ export default {
       this.statusStatistics.forEach(function (item) {
         let status = parseInt(item['status'])
         if ([1, 2].includes(status)) {
-          running += item['count']
+          running += item.count
         }
         // if (status === 9) {
         //   check += item['count']
@@ -440,6 +440,7 @@ export default {
       // if (check) {
       //   info += check + '个商品在后台审核'
       // }
+      console.log(info, 'info')
       return info
     }
   },
@@ -973,7 +974,7 @@ export default {
         this.closeNewComer()
         this.setSelectTPProductIdList(this.selectIdList)
         this.$router.push({
-          path: '/migrateSettingPrice'
+          name: 'MigrateSettingPrice'
         })
       }
     },
@@ -986,14 +987,14 @@ export default {
       }
       let params = {
         tp_product_ids: this.migrateProductList,
-        child_shop_user_id: this.search.child_shop_user_id
+        child_shop_user_id: Number(this.search.child_shop_user_id)
       }
       this.request(
         'getTPProductByIds',
         params,
         (data) => {
           // 筛选子店铺，请求延后返回导致状态不对，因此将这种请求丢掉
-          if (params['child_shop_user_id'] !== this.search.child_shop_user_id) {
+          if (params['child_shop_user_id'] !== Number(this.search.child_shop_user_id)) {
             return
           }
           let productList = data['items']
@@ -1041,7 +1042,7 @@ export default {
         'getMigrateStatusStatistics',
         {},
         (data) => {
-          this.statusStatistics = data['status_statistics']
+          this.statusStatistics = data.status_statistics
           let isFinish = true
           this.statusStatistics.forEach(function (value) {
             if ([1, 2].includes(parseInt(value.status))) {

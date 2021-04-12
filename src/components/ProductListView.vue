@@ -26,9 +26,9 @@
             </el-table-column>
             <el-table-column type="selection" :selectable="isSelectionEnable">
             </el-table-column>
-            <el-table-column label="图片" width="60" align="center">
+            <el-table-column label="图片" width="78" align="center">
                 <template slot-scope="scope">
-                    <img v-if="scope.row.thumbnail" style="height:50px;border-radius:4px" :src="scope.row.thumbnail">
+                    <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail">
                     <hh-icon v-else type="iconwuzhaopian" style="font-size:50px" />
                 </template>
             </el-table-column>
@@ -47,9 +47,9 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="价格" width="80" align="center">
+            <el-table-column label="源sku售价" width="130" align="center">
                 <template slot-scope="scope">
-                    <span>{{ scope.row.max_price / 100 }}</span>
+                    <span>{{ scope.row.price_range}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="类目" width="100" align="center">
@@ -73,7 +73,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="状态" width="110" style="overflow:auto"  align="center" class-name="cell-class">
+             <el-table-column v-if="!isSyncSource" label="状态" width="130" style="overflow:auto"  align="center" class-name="cell-class">
                 <template slot-scope="scope">
                     <el-link :underline="false" style="text-decoration:none;" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
                     <el-link :underline="false" style="text-decoration:none;"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
@@ -84,7 +84,10 @@
                       {{ productStatusMap[scope.row.status] }}
                       <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
                     </el-link>
-
+                    <!-- 驳回失败 -->
+                    <span class="tutorials" v-if="[5,8].includes(scope.row.status)">根据原因再试一次</span>
+                    <!-- 待修改 -->
+                    <span class="tutorials" v-if="[6].includes(scope.row.status)">根据原因进行修改</span>
                     <NewComer type="失败" ref="newComerFail" :direction="[0,1].includes(scope.row.index) ? 'bottom' : 'top'" v-if="getFirstShow(5,scope.row.index,scope.row.status)">
                       <div>
                         <div style="width:172px" class="color-666 font-12 left">
@@ -96,7 +99,7 @@
 
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="理由" align="center">
+             <el-table-column v-if="!isSyncSource" label="原因" align="center">
                 <template slot-scope="scope">
                     <div style="text-decoration:none;" >
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
