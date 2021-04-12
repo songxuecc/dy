@@ -293,7 +293,7 @@
                   <div class="common-bottom">
                   </div>
               </el-tab-pane>
-              <el-tab-pane v-if="Object.keys(origionAttr).length > 0" label="来源数据">
+              <el-tab-pane v-if="Object.keys(origionAttr).length > 0" label="源商品属性">
                   <el-form class="setting-content" style="height: 460px">
                       <el-row>
                           <el-col :span="12">
