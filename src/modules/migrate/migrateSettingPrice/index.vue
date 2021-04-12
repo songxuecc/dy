@@ -93,8 +93,6 @@ export default {
       this.save({
         dicCustomPrices: this.dicCustomPrices
       })
-      console.log(this.customPrices, 'customPrices')
-      console.log(this.dicCustomPrices, 'dicCustomPrices')
       this.saveTempTemplate()
       this.$router.push({
         path: '/migrateSettingTemplate'

@@ -64,7 +64,6 @@ export default {
       } = payload
 
       const oldUnit = state.unit
-      console.log(dicCustomPrices, '历史价格dicCustomPrices')
       // 添加默认模版值
       if (!utils.isNumber(template.model.origin_price_diff)) {
         template.model.origin_price_diff = 0
@@ -363,8 +362,6 @@ export default {
           nextSkuMap[key] = value
         })
 
-        console.log(arithmetic, 'arithmetic')
-
         item.sku_json.sku_map = nextSkuMap
         const prices = Object.values(skuMap).map(sku => sku.sku_price)
         const minSkuPrices = evalPrice(Math.min(...prices))
@@ -448,7 +445,6 @@ export default {
       if (!utils.isNumber(template.model.price_diff)) {
         priceDiff = 0
       }
-      console.log('00000')
       const nextTableData = tableData.map(item => {
         // 修改模版的时候 删除自定义价格设置
         let oldItem = cloneDeep(item)
