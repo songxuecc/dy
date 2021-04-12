@@ -141,9 +141,9 @@
                               {{getSkuDuplicateFormatText(scope.row.migration_msg[0])}}
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('创建商品失败30-2,transImgToLocal failed') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败30-2, transImgToLocal failed 图片转链失败') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              轮播图+详情图+sku图不能超过50张
+                              抖音官方下载图片失败，请稍后重新尝试搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,非叶子节点不允许，创建或编辑商品') > -1 && scope.row.status === 5"  >
