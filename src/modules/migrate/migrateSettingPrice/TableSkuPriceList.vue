@@ -356,7 +356,6 @@ export default {
     },
     handleSureBatchEdut (arithmetic) {
       this.closeSkuPriceListView()
-      console.log(arithmetic, 'arithmetic')
       this.singleSkuPriceChange({
         id: this.selectTpProductSkuId,
         arithmetic

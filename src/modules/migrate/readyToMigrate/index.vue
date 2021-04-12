@@ -440,7 +440,6 @@ export default {
       // if (check) {
       //   info += check + '个商品在后台审核'
       // }
-      console.log(info, 'info')
       return info
     }
   },
