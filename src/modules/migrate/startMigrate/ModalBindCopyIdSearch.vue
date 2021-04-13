@@ -6,17 +6,15 @@
         <hh-icon type="iconjinggao1" style="font-size:40px" class="mb-5"></hh-icon>
         以下商品id未查询到
         <span @click="copy(ids)" :diabled="postCodeLoading" class="pointer primary absolute">
-          复制全部id<hh-icon type="iconfuzhi"></hh-icon>
+          <hh-icon type="iconfuzhi" class="mr-5"></hh-icon>复制全部id
         </span>
       </p>
     </div>
-    <div style="height:220px;overflow-y:scroll">
-      <p v-for="id in ids" :key="id" class="bold pointer font-12 left pl-40" @click="copy(id)" @mouseover.stop="handleMousedown(id)"
+    <div style="max-height:380px;overflow-y:scroll" class=" mt-10 pb-10">
+      <p v-for="id in ids" :key="id" class="bold pointer font-12 left pl-40 relative" :class="[activeId === id ? 'primary' : '']" @click="copy(id)" @mouseover.stop="handleMousedown(id)"
         @mouseout.stop="handleMouseout">
-        <span class="relative">
           {{id}}
-          <hh-icon type="iconfuzhishangpin" v-show="activeId === parseInt(id)" class="absoluteCopy"></hh-icon>
-        </span>
+          <hh-icon :type="activeId === id ? 'iconfuzhi' : 'iconfuzhishangpin'" v-show="activeId === id" class="absoluteCopy"></hh-icon>
       </p>
     </div>
     <div slot="footer" class="center">
@@ -68,7 +66,7 @@ export default {
       this.activeId = undefined
     },
     handleMousedown (index) {
-      this.activeId = parseInt(index)
+      this.activeId = index
     }
   }
 }
@@ -81,10 +79,11 @@ export default {
 }
 .absoluteCopy {
     position:absolute;
-    right:-20px;
+    right:-0px;
     top: 0;
     bottom: 0;
     margin:auto;
+    margin-top: 3px;
 }
 /deep/ .el-dialog .el-dialog__body {
   padding: 0;
@@ -105,7 +104,8 @@ export default {
 }
 
 .pl-40 {
-  padding-left: 40px;
-  width: 220px;
+  padding-left: 80px;
+  width: 150px;
+  line-height: 18px;
 }
 </style>
