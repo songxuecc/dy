@@ -39,7 +39,7 @@
 <!--          <el-tab-pane label="改模板" name="template"></el-tab-pane>-->
         </el-tabs>
       </el-col>
-      <el-col :span="10" style="padding-right: 4px; text-align: right; line-height: 54px">
+      <el-col :span="10" style="padding-right: 4px; text-align: right; margin-top: 8px">
         <el-button v-if="Object.keys(selectProductDict).length !== 0 || isShowSelect" size="small" @click="toggleShowProductList">
           {{ isShowSelect ? '继续选择' : '查看已选'}}
         </el-button>
