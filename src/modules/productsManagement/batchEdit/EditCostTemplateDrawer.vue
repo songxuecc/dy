@@ -31,6 +31,8 @@
           :value="item.value">
         </el-option>
       </el-select>
+      <el-button type="text" @click="getCostTemplateList"><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
+      <el-button type="text" @click="open()">添加运费模版</el-button>
     </div>
   </div>
 </template>
@@ -57,6 +59,9 @@ export default {
     this.getCostTemplateList()
   },
   methods: {
+    open () {
+      window.open('https://fxg.jinritemai.com/index.html#/ffa/morder/logistics/freight-list')
+    },
     getCostTemplateList () {
       this.request('getCostTemplateList', {}, data => {
         this.costTemplateList = []
