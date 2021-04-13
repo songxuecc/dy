@@ -8,7 +8,7 @@
 <!--      <help-tips :helpLink="activeTabName" positionT="10" positionR="400"></help-tips>-->
       <el-col :span="14" style="text-align: left; padding-left: 10px;">
         <el-tabs v-model="activeTabName" @tab-click="handleTabClick" :before-leave="beforeLeaveTab">
-         <!-- <el-tab-pane label="上下架" name="saleStatus"></el-tab-pane> -->
+          <el-tab-pane label="上下架" name="saleStatus"></el-tab-pane>
           <el-tab-pane label="改标题" name="title"></el-tab-pane>
 <!--          <el-tab-pane label="改描述" name="description"></el-tab-pane>-->
 <!--          <el-tab-pane label="改类目" name="category"></el-tab-pane>-->
@@ -30,13 +30,16 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="改价格" name="price"></el-tab-pane>
+          <el-tab-pane label="改运费模板" name="costTemplate"></el-tab-pane>
+          <el-tab-pane label="改客服电话" name="mobile"></el-tab-pane>
+          <el-tab-pane label="改订单计数方式" name="reduceType"></el-tab-pane>
           <el-tab-pane v-if="!isBlackUser" label="改发货模式" name="presellType"></el-tab-pane>
 <!--         <el-tab-pane label="轮播图" name="banner"></el-tab-pane>-->
 <!--         <el-tab-pane label="改编码" name="outerSn"></el-tab-pane>-->
 <!--          <el-tab-pane label="改模板" name="template"></el-tab-pane>-->
         </el-tabs>
       </el-col>
-      <el-col :span="10" style="padding: 4px; text-align: right">
+      <el-col :span="10" style="padding-right: 4px; text-align: right; line-height: 54px">
         <el-button v-if="Object.keys(selectProductDict).length !== 0 || isShowSelect" size="small" @click="toggleShowProductList">
           {{ isShowSelect ? '继续选择' : '查看已选'}}
         </el-button>
@@ -105,6 +108,18 @@
                                :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
                                @rollback="rollbackChange" @confirm="confirmChange"
       ></edit-price-drawer>
+      <edit-cost-template-drawer v-else-if="activeTabName==='costTemplate'"  ref="editCostTemplateDrawer"
+                               :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
+                               @rollback="rollbackChange" @confirm="confirmChange"
+      ></edit-cost-template-drawer>
+      <edit-mobile-drawer v-else-if="activeTabName==='mobile'"  ref="editMobile"
+                               :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
+                               @rollback="rollbackChange" @confirm="confirmChange"
+      ></edit-mobile-drawer>
+      <edit-reduce-type-drawer v-else-if="activeTabName==='reduceType'"  ref="editMobile"
+                               :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
+                               @rollback="rollbackChange" @confirm="confirmChange"
+      ></edit-reduce-type-drawer>
       <edit-outer-sn-drawer v-else-if="activeTabName==='outerSn'"  ref="editOuterSnDrawer"
                                :dyProductModelList="dyProductModelList" :selectProductDict="selectProductDict"
                                @rollback="rollbackChange" @confirm="confirmChange"
@@ -170,6 +185,9 @@ import editStockDrawer from '@productsManagement/batchEdit/EditStockDrawer.vue'
 import editPriceDrawer from '@productsManagement/batchEdit/EditPriceDrawer.vue'
 import editOuterSnDrawer from '@productsManagement/batchEdit/EditOuterSnDrawer.vue'
 import editPresellDrawer from '@productsManagement/batchEdit/EditPresellDrawer.vue'
+import editCostTemplateDrawer from '@productsManagement/batchEdit/EditCostTemplateDrawer.vue'
+import editMobileDrawer from '@productsManagement/batchEdit/EditMobileDrawer.vue'
+import editReduceTypeDrawer from '@productsManagement/batchEdit/editReduceTypeDrawer.vue'
 
 import {dyProductCanShelfMap} from '@/common/common.js'
 import request from '@/mixins/request.js'
@@ -189,6 +207,9 @@ export default {
     editPriceDrawer,
     editOuterSnDrawer,
     editPresellDrawer,
+    editCostTemplateDrawer,
+    editMobileDrawer,
+    editReduceTypeDrawer,
     helpTips
   },
   data () {
@@ -487,6 +508,12 @@ export default {
         if (product.model.presell_type === 1) {
           productNew['pre_sale_date'] = product.model.presell_end_time
         }
+      } else if (this.activeTabName === 'costTemplate') {
+        productNew['freight_id'] = product.model.cost_template_id
+      } else if (this.activeTabName === 'mobile') {
+        productNew['mobile'] = product.model.mobile
+      } else if (this.activeTabName === 'reduceType') {
+        productNew['reduce_type'] = product.model.reduce_type
       }
       if (product.model.status === 1 && product.model.check_status === 1 && product.model.commit) {
         // 下架商品设置commit字段的情况
@@ -595,6 +622,8 @@ export default {
             }
             productModel.originModel.sku_list = JSON.parse(JSON.stringify(productModel.model.sku_list))
             productModel.originModel.outer_goods_id = productModel.model.outer_goods_id
+            productModel.originModel.cost_template_id = productModel.model.cost_template_id
+            productModel.originModel.mobile = productModel.model.mobile
           }
           delete this.updatingProductDict[key]
         }

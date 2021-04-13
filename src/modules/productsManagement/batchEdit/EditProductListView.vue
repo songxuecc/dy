@@ -78,23 +78,14 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column v-else-if="activeTabName == 'saleStatus'" label="上下架" :key="Math.random()" align="center">
+      <el-table-column v-else-if="activeTabName == 'saleStatus'" label="状态" :key="Math.random()" align="center">
         <template slot-scope="scope">
-          <el-row>
-            <el-col :offset="8" :span="8">
-              <div @click.stop>
-                <el-switch :value="scope.row.model.is_onsale" @change="editCellOnSale($event, scope.row, index)"
-                           :active-value="0" active-text="上架"
-                           :inactive-value="1" inactive-text="下架"
-                           :disabled="scope.row.model.is_onsale === 'disabled'"
-                ></el-switch>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <el-button @click.stop type="text" style="padding: 0" @click="saveCell(scope.row)" :disabled="isSaveDisabled(scope.row)"
-              >保存</el-button>
-            </el-col>
-          </el-row>
+          <span>{{ dyProductStatusMap[scope.row.originModel.status + '-' + scope.row.originModel.check_status] }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column v-else-if="activeTabName === 'mobile'" label="客服电话" :key="Math.random()" align="center">
+        <template slot-scope="scope">
+          <span>{{scope.row.originModel.mobile}}</span>
         </template>
       </el-table-column>
       <el-table-column v-else-if="activeTabName == 'banner'" label="轮播图" :key="Math.random()" align="left">
@@ -181,6 +172,7 @@ export default {
   },
   data () {
     return {
+      costTemplateList: []
     }
   },
   computed: {
@@ -191,6 +183,17 @@ export default {
   mounted () {
   },
   methods: {
+    getCostTemplateList () {
+      this.request('getCostTemplateList', {}, data => {
+        this.costTemplateList = []
+        data.List.forEach(item => {
+          this.costTemplateList.push({
+            value: item.template.id,
+            name: item.template.template_name
+          })
+        })
+      })
+    },
     selectable (row, index) {
       if (!this.canOperate(row)) {
         return false
