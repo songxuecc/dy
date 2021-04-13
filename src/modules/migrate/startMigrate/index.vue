@@ -67,7 +67,7 @@
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
-        <el-radio-group v-model="binCopyActiveName" size="small" class="mb-10" v-if="userBindList.length">
+        <el-radio-group v-model="binCopyActiveName" size="small" class="mb-10 bindCopyRadio" v-if="userBindList.length" >
           <el-radio-button label="status">按状态
           </el-radio-button>
           <el-radio-button label="id" >按ID
@@ -100,7 +100,7 @@
                   :value="modelBindCopy.goods_ids"
                   @input="formatGoods_ids($event)"
                   type="textarea"
-                  :autosize="{ minRows: 2}"
+                  :autosize="{ minRows: 2,maxRows: 15}"
                   resize="none"
                   size="small"
                   placeholder="商品ID查询,多个查询请换行或空格依次输入"
@@ -634,4 +634,10 @@ export default {
 .categorySelect {
   margin-right:0 !important;
 }
+.bindCopyRadio {
+  /deep/ .el-radio-button__inner {
+  width: 80px;
+}
+}
+
 </style>
