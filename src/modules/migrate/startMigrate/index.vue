@@ -67,41 +67,6 @@
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
-        <!-- <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
-          v-if="userBindList.length ">
-          <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
-            <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
-              <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
-              </el-option>
-            </el-select>
-            <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
-            <div class="info" v-if="target_user_id" style="position:absolute;left:0;bottom:-12px;width:500px;transform: translateY(100%);">
-              <div  class="font-12">
-                  <p class="font-12" style="width:350px;word-break:break-all">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}，复制的是更新时间当下的商品详情，登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
-              </div>
-            </div>
-          </el-form-item>
-          <el-form-item label="状态选择">
-            <el-select v-model="modelBindCopy.status" placeholder="商品状态选择" style="width:230px;" >
-              <el-option label="全部商品" :value="0"></el-option>
-              <el-option label="在售中商品" :value="1"></el-option>
-              <el-option label="仓库中商品" :value="2"></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item class="form-textarea">
-              <el-input
-                :value="modelBindCopy.goods_ids"
-                @input="formatGoods_ids($event)"
-                type="textarea"
-                :autosize="{ minRows: 2}"
-                resize="none"
-                size="small"
-                placeholder="商品ID查询,多个查询请换行或空格依次输入"
-                style="width: 257px;" />
-          </el-form-item>
-        </el-form> -->
-
         <el-radio-group v-model="binCopyActiveName" size="small" class="mb-10" v-if="userBindList.length">
           <el-radio-button label="status">按状态
           </el-radio-button>
@@ -111,7 +76,7 @@
 
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
               v-if="userBindList.length">
-              <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
+              <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '45px','margin-right':'83px'}">
                 <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
                   <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
                   </el-option>
@@ -145,12 +110,12 @@
       </el-tab-pane>
     </el-tabs>
 
-    <Setting v-show="['single','shop','file'].includes(activeName)" ref="setting" />
+    <Setting v-show="['single','shop','file'].includes(activeName)" ref="setting" @loading="settingLoading"/>
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <p class="left font-12 mt-20 bold"  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="common-bottom" v-if="activeName === 'single'">
-      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture">
+      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading">
         <span style="width:120px">开始复制</span>
         <el-badge :value="captureUrlNums"></el-badge>
       </el-button>
@@ -158,11 +123,11 @@
     <!-- 整店复制 -->
     <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
     <div class="common-bottom" v-if="activeName === 'shop'">
-      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture"  style="width:120px">开始复制</el-button>
+      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:120px">开始复制</el-button>
     </div>
     <!-- 绑定复制 -->
     <div class="common-bottom" v-if="activeName === 'bindCopy' && userBindList.length ">
-      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture" style="width:120px">开始复制
+      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading" style="width:120px">开始复制
       </el-button>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy'"/>
@@ -283,6 +248,9 @@ export default {
     ...mapActionsPaidRecharge(['getUserAccountQuery']),
     clearTargetUserId () {
       this.target_user_id = undefined
+    },
+    settingLoading (value) {
+      this.settingDataLoading = value
     },
     getSelfShopId (data) {
       let selfShopId = ''
@@ -449,6 +417,7 @@ export default {
             category_root_id_list: JSON.stringify([]),
             ...status,
             capture_type: 2,
+            target_user_id: targetUserId,
             goods_id_list: JSON.stringify(goodsIdsSet)
           }
           this.capture(parmas, false)
