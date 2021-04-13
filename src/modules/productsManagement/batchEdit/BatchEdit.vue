@@ -187,7 +187,7 @@ import editOuterSnDrawer from '@productsManagement/batchEdit/EditOuterSnDrawer.v
 import editPresellDrawer from '@productsManagement/batchEdit/EditPresellDrawer.vue'
 import editCostTemplateDrawer from '@productsManagement/batchEdit/EditCostTemplateDrawer.vue'
 import editMobileDrawer from '@productsManagement/batchEdit/EditMobileDrawer.vue'
-import editReduceTypeDrawer from '@productsManagement/batchEdit/editReduceTypeDrawer.vue'
+import editReduceTypeDrawer from '@productsManagement/batchEdit/EditReduceTypeDrawer.vue'
 
 import {dyProductCanShelfMap} from '@/common/common.js'
 import request from '@/mixins/request.js'
