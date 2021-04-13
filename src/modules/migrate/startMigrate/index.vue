@@ -67,7 +67,7 @@
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
-        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
+        <!-- <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
           v-if="userBindList.length ">
           <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
             <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
@@ -88,12 +88,60 @@
               <el-option label="仓库中商品" :value="2"></el-option>
             </el-select>
           </el-form-item>
-<!--          <el-form-item label="类目选择" class="categorySelect">-->
-<!--            <el-cascader v-model="modelBindCopy.category_root_id_list" placeholder="请选择复制店铺后再选择类目" style="width:230px;"-->
-<!--              :options="cascaderOptions" :props="props" clearable :show-all-levels="false"  >-->
-<!--            </el-cascader>-->
-<!--          </el-form-item>-->
-        </el-form>
+
+          <el-form-item class="form-textarea">
+              <el-input
+                :value="modelBindCopy.goods_ids"
+                @input="formatGoods_ids($event)"
+                type="textarea"
+                :autosize="{ minRows: 2}"
+                resize="none"
+                size="small"
+                placeholder="商品ID查询,多个查询请换行或空格依次输入"
+                style="width: 257px;" />
+          </el-form-item>
+        </el-form> -->
+
+        <el-radio-group v-model="binCopyActiveName" size="small" class="mb-10">
+          <el-radio-button label="status">按状态
+          </el-radio-button>
+          <el-radio-button label="id" >按ID
+          </el-radio-button>
+        </el-radio-group>
+
+        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
+              v-if="userBindList.length ">
+              <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
+                <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
+                  <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
+                  </el-option>
+                </el-select>
+                <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
+                <div class="info" v-if="target_user_id" style="position:absolute;left:0;bottom:-12px;width:500px;transform: translateY(100%);">
+                  <div  class="font-12">
+                      <p class="font-12" style="width:350px;word-break:break-all">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}，复制的是更新时间当下的商品详情，登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
+                  </div>
+                </div>
+              </el-form-item>
+              <el-form-item label="状态选择" v-if="binCopyActiveName === 'status'">
+                <el-select v-model="modelBindCopy.status" placeholder="商品状态选择" style="width:257px;" >
+                  <el-option label="全部商品" :value="0"></el-option>
+                  <el-option label="在售中商品" :value="1"></el-option>
+                  <el-option label="仓库中商品" :value="2"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item class="form-textarea" label="商品id" v-if="binCopyActiveName === 'id'" >
+                <el-input
+                  :value="modelBindCopy.goods_ids"
+                  @input="formatGoods_ids($event)"
+                  type="textarea"
+                  :autosize="{ minRows: 2}"
+                  resize="none"
+                  size="small"
+                  placeholder="商品ID查询,多个查询请换行或空格依次输入"
+                  style="width: 357px;" />
+              </el-form-item>
+            </el-form>
       </el-tab-pane>
     </el-tabs>
 
@@ -123,6 +171,7 @@
         v-bind:src="'https://view.officeapps.live.com/op/embed.aspx?wdAccPdf=1&ui=zh-cn&rs=zh-cn&src=https://hhgj-manual.oss-cn-shanghai.aliyuncs.com/怎么安装及使用虎虎复制助手插件？.docx'"
         width='100%' height='800px;' frameborder='0'></iframe>
     </el-dialog>
+    <ModalBindCopyIdSearch :ids="lostGoodsIds" ref="ModalBindCopyIdSearch" @continueCopy="continueCopy"/>
   </div>
 </template>
 <script>
@@ -133,6 +182,8 @@ import helpTips from '@/components/HelpTips.vue'
 import Setting from '@migrate/startMigrate/Setting'
 import SupportPlatForm from '@migrate/startMigrate/SupportPlatForm'
 import BindCopyTip from '@migrate/startMigrate/BindCopyTip'
+import ModalBindCopyIdSearch from '@migrate/startMigrate/ModalBindCopyIdSearch'
+
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
 
@@ -148,7 +199,7 @@ export default {
       limit: 100,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
-      activeName: 'single',
+      activeName: 'bindCopy',
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
       importFilePromptVisibe: false,
@@ -159,18 +210,23 @@ export default {
       props: { multiple: true, expandTrigger: 'hover' },
       modelBindCopy: {
         status: 0,
-        category_root_id_list: []
+        category_root_id_list: [],
+        goods_ids: []
       },
       userBindList: [],
       target_user_id: '',
-      bandShopTip: {}
+      bandShopTip: {},
+      binCopyActiveName: 'id',
+      ModalBindCopyIdSearchShow: false,
+      lostGoodsIds: []
     }
   },
   components: {
     helpTips,
     Setting,
     SupportPlatForm,
-    BindCopyTip
+    BindCopyTip,
+    ModalBindCopyIdSearch
   },
   activated () {
     this.getUserBindList()
@@ -350,22 +406,81 @@ export default {
           type: 'warning'
         })
       }
-      // if (!this.modelBindCopy.category_root_id_list.length) {
-      //   return this.$message({
-      //     message: '请选择类目',
-      //     type: 'warning'
-      //   })
-      // }
-      // const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
+      // id 查询 先告诉他要查询的id
+      const goodsIds = this.modelBindCopy.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const goodsIdsSet = [...new Set(goodsIds)]
+
+      if (this.binCopyActiveName === 'id' && !goodsIds.length) {
+        return this.$message({
+          message: '请输入商品id',
+          type: 'warning'
+        })
+      }
       const obj = {
         0: { check_status: -1, status: -1 },
         1: { check_status: 3, status: 0 },
         2: { check_status: 1, status: 1 }
       }
       const status = obj[this.modelBindCopy.status]
-      const targetUserId = this.target_user_id
+
+      if (this.binCopyActiveName === 'id') {
+        const idsCheck = await Api.hhgjAPIs.productListCheck({
+          goods_id_list: JSON.stringify(goodsIdsSet)
+        })
+        if (idsCheck && idsCheck.lost_goods_id_list.length) {
+          const lostGoodsIds = idsCheck.lost_goods_id_list
+          this.lostGoodsIds = lostGoodsIds
+          const lostGoodsIdsSet = new Set(lostGoodsIds)
+          const unionSets = goodsIdsSet.filter(item => !lostGoodsIdsSet.has(item))
+          if (unionSets.length) {
+            this.$refs.ModalBindCopyIdSearch.visible = true
+          } else {
+            return this.$message({
+              message: '您输入的所有商品id都不能存在，请仔细核对重新输入～',
+              type: 'warning'
+            })
+          }
+          // 所有id都不能用
+          // 有id可以用
+        } else if (idsCheck && !idsCheck.lost_goods_id_list.length) {
+          const parmas = {
+            category_root_id_list: JSON.stringify([]),
+            ...status,
+            capture_type: 2,
+            goods_id_list: JSON.stringify(goodsIdsSet)
+          }
+          this.capture(parmas, false)
+          // 直接复制
+        }
+        return false
+      } else {
+        if (!this.modelBindCopy.category_root_id_list.length) {
+          return this.$message({
+            message: '请选择类目',
+            type: 'warning'
+          })
+        }
+        // const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
+        const targetUserId = this.target_user_id
+        const parmas = {
+          category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
+        }
+        this.capture(parmas, false)
+      }
+    },
+    // 绑定复制 选择id筛选 再次复制
+    continueCopy (ids) {
+      const obj = {
+        0: { check_status: -1, status: -1 },
+        1: { check_status: 3, status: 0 },
+        2: { check_status: 1, status: 1 }
+      }
+      const status = obj[this.modelBindCopy.status]
       const parmas = {
-        category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
+        category_root_id_list: JSON.stringify([]),
+        ...status,
+        capture_type: 2,
+        goods_id_list: JSON.stringify(ids)
       }
       this.capture(parmas, false)
     },
@@ -525,6 +640,11 @@ export default {
           active: 'PayRecord'
         }
       })
+    },
+    formatGoods_ids: function (target) {
+      const reg = /[^\d\n\s]/g
+      const value = target.replace(reg, '')
+      this.modelBindCopy.goods_ids = value
     }
 
   }
