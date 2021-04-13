@@ -422,10 +422,12 @@ export default {
         2: { check_status: 1, status: 1 }
       }
       const status = obj[this.modelBindCopy.status]
+      const targetUserId = this.target_user_id
 
       if (this.binCopyActiveName === 'id') {
         const idsCheck = await Api.hhgjAPIs.productListCheck({
-          goods_id_list: JSON.stringify(goodsIdsSet)
+          goods_id_list: JSON.stringify(goodsIdsSet),
+          target_user_id: targetUserId
         })
         if (idsCheck && idsCheck.lost_goods_id_list.length) {
           const lostGoodsIds = idsCheck.lost_goods_id_list
@@ -461,7 +463,7 @@ export default {
           })
         }
         // const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
-        const targetUserId = this.target_user_id
+
         const parmas = {
           category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
         }
