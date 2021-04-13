@@ -622,6 +622,8 @@ export default {
             }
             productModel.originModel.sku_list = JSON.parse(JSON.stringify(productModel.model.sku_list))
             productModel.originModel.outer_goods_id = productModel.model.outer_goods_id
+            productModel.originModel.cost_template_id = productModel.model.cost_template_id
+            productModel.originModel.mobile = productModel.model.model
           }
           delete this.updatingProductDict[key]
         }
