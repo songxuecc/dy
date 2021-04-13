@@ -102,7 +102,7 @@
           </el-form-item>
         </el-form> -->
 
-        <el-radio-group v-model="binCopyActiveName" size="small" class="mb-10">
+        <el-radio-group v-model="binCopyActiveName" size="small" class="mb-10" v-if="userBindList.length">
           <el-radio-button label="status">按状态
           </el-radio-button>
           <el-radio-button label="id" >按ID
@@ -110,7 +110,7 @@
         </el-radio-group>
 
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
-              v-if="userBindList.length ">
+              v-if="userBindList.length">
               <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '15px','margin-right':'83px'}">
                 <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
                   <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
@@ -477,12 +477,18 @@ export default {
         1: { check_status: 3, status: 0 },
         2: { check_status: 1, status: 1 }
       }
+      const lostGoodsIdsSet = new Set(this.lostGoodsIds)
+      const goodsIds = this.modelBindCopy.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const goodsIdsSet = [...new Set(goodsIds)]
+      const unionSets = goodsIdsSet.filter(item => !lostGoodsIdsSet.has(item))
       const status = obj[this.modelBindCopy.status]
+      const targetUserId = this.target_user_id
       const parmas = {
         category_root_id_list: JSON.stringify([]),
         ...status,
         capture_type: 2,
-        goods_id_list: JSON.stringify(ids)
+        target_user_id: targetUserId,
+        goods_id_list: JSON.stringify(unionSets)
       }
       this.capture(parmas, false)
     },
