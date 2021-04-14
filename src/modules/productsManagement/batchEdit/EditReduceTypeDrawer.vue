@@ -22,7 +22,7 @@
       </el-col>
     </el-row>
     <div class="drawer-content">
-      <span class="drawer-immediate">客服电话：</span>
+      <span class="drawer-immediate">订单计数方式：</span>
         <el-radio-group v-model="reduceType">
           <el-radio :label="1">下单减库存</el-radio>
           <el-radio :label="2">付款减库存</el-radio>
