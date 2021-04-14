@@ -18,14 +18,21 @@
         <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
             <div class="aside">
               <vue-custom-scrollbar class="scroll-area"  :settings="settings" @ps-scroll-y="scrollHanle">
-                <side-bar></side-bar>
+                <side-bar @open="subMenuOpen" ></side-bar>
               </vue-custom-scrollbar>
             </div>
             <NewFeatureOnlineTip
-            style="position:absolute;z-index:10;top: 279px;left: 58px;transform: scale(0.8);"
+              type="搬家设置"
+              style="position:absolute;z-index:9999;top: 279px;left: 58px;transform: scale(0.8);"
+              v-if="newFeatureOnlineTipVisible"
+              msg="已上线商品再次搬家功能已迁移到此处啦～"
             />
-            <!-- <img src="@/assets/images/settingTip.png"   style="position:absolute;z-index:10;top: 279px;left: 58px;transform: scale(0.8);"
-            /> -->
+            <NewFeatureOnlineTip
+              type="批量处理"
+              style="position:absolute;z-index:9999;top: 379px;left: 58px;transform: scale(0.8);"
+              v-if="newFeatureOnlineTipVisible"
+              msg="新增批量上下架、改客服电话、改运费模版等"
+            />
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
             <div class="main-layout">
               <keep-alive>
@@ -127,7 +134,8 @@ export default {
         wheelPropagation: false
       },
       huhutitleHover: false,
-      dialogNotificationVisible: false
+      dialogNotificationVisible: false,
+      subActiveArray: []
     }
   },
   components: {
@@ -163,6 +171,10 @@ export default {
         }
       }
       return num
+    },
+    newFeatureOnlineTipVisible () {
+      if (!this.subActiveArray) return false
+      return this.subActiveArray.length === 3
     }
   },
   watch: {
@@ -369,6 +381,9 @@ export default {
           window.location.href = notification.btn_link
         }
       })
+    },
+    subMenuOpen (subActiveArray) {
+      this.subActiveArray = subActiveArray
     }
   }
 }
