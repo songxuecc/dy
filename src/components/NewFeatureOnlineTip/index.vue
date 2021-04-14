@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'NewFeatureOnlineTip',
   props: {
@@ -20,6 +22,10 @@ export default {
     }
   },
   beforeMount () {
+    if (!this.getCurrentSubsc) {
+      return false
+    }
+    if (!this.getCurrentSubsc.is_newcomer) return false
     const newFeatureOnlineTip = localStorage.getItem('newFeatureOnlineTip')
     const Obj = JSON.parse(newFeatureOnlineTip)
     if (Obj) {
@@ -30,6 +36,9 @@ export default {
       this.newFeatureOnlineTipData = {}
       this.display = 'block'
     }
+  },
+  computed: {
+    ...mapGetters(['getCurrentSubsc'])
   },
   methods: {
     setLocalStorage () {
