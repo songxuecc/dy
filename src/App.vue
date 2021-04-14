@@ -21,9 +21,9 @@
                 <side-bar></side-bar>
               </vue-custom-scrollbar>
             </div>
-            <!-- <NewFeatureOnlineTip
+            <NewFeatureOnlineTip
             style="position:absolute;z-index:10;top: 279px;left: 58px;transform: scale(0.8);"
-            /> -->
+            />
             <!-- <img src="@/assets/images/settingTip.png"   style="position:absolute;z-index:10;top: 279px;left: 58px;transform: scale(0.8);"
             /> -->
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
