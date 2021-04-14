@@ -73,10 +73,13 @@
           <el-radio-button label="id" >按ID
           </el-radio-button>
         </el-radio-group>
+        <div style="padding-top:4px;display:inline-block">
+            <NewFeatureTips type="绑定复制ID"/>
+          </div>
 
-        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium"
+        <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex " size="medium" ref="modelCopyForm" :rules="modelBindCopyRules"
               v-if="userBindList.length">
-              <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '45px','margin-right':'83px'}">
+              <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '45px','margin-right':'83px'}" required >
                 <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
                   <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
                   </el-option>
@@ -95,7 +98,7 @@
                   <el-option label="仓库中商品" :value="2"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item class="form-textarea" label="商品id" v-if="binCopyActiveName === 'id'" >
+              <el-form-item class="form-textarea" label="商品ID" v-if="binCopyActiveName === 'id'"  prop="goods_ids">
                 <el-input
                   :value="modelBindCopy.goods_ids"
                   @input="formatGoods_ids($event)"
@@ -104,7 +107,7 @@
                   resize="none"
                   size="small"
                   placeholder="商品ID查询,多个查询请换行或空格依次输入"
-                  style="width: 357px;" />
+                  style="width: 357px;"/>
               </el-form-item>
             </el-form>
       </el-tab-pane>
@@ -208,6 +211,31 @@ export default {
     ...mapGetters(['getTokenHeaders', 'getCaptureIdList', 'getUserId']),
     subscItemLevelMap () {
       return common.subscItemLevelMap
+    },
+    modelBindCopyRules () {
+      if (this.binCopyActiveName !== 'id') return {}
+      const checkLength = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入商品ID,且商品ID只可以是数字'))
+        } else {
+          const reg = /[^\d\n\s]/g
+          const regValue = value.replace(reg, '')
+          const goodsIds = regValue.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+          const goodsIdsSet = [...new Set(goodsIds)]
+          const limit = 1000
+          if (goodsIdsSet.length > limit) {
+            callback(new Error(`最多支持${limit}个商品ID`))
+          } else {
+            callback()
+          }
+        }
+      }
+      return {
+        goods_ids: [
+          {required: true, message: '请输入ID', trigger: 'blur'},
+          {validator: checkLength, trigger: ['blur', 'change']}
+        ]
+      }
     }
   },
   watch: {
@@ -374,69 +402,81 @@ export default {
           type: 'warning'
         })
       }
+      try {
       // id 查询 先告诉他要查询的id
-      const goodsIds = this.modelBindCopy.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
-      const goodsIdsSet = [...new Set(goodsIds)]
+        const goodsIds = this.modelBindCopy.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+        const goodsIdsSet = [...new Set(goodsIds)]
+        if (this.binCopyActiveName === 'id' && !goodsIds.length) {
+          return this.$message({
+            message: '请输入商品id',
+            type: 'error'
+          })
+        }
+        const obj = {
+          0: { check_status: -1, status: -1 },
+          1: { check_status: 3, status: 0 },
+          2: { check_status: 1, status: 1 }
+        }
+        const status = obj[this.modelBindCopy.status]
+        const targetUserId = this.target_user_id
 
-      if (this.binCopyActiveName === 'id' && !goodsIds.length) {
-        return this.$message({
-          message: '请输入商品id',
-          type: 'warning'
-        })
-      }
-      const obj = {
-        0: { check_status: -1, status: -1 },
-        1: { check_status: 3, status: 0 },
-        2: { check_status: 1, status: 1 }
-      }
-      const status = obj[this.modelBindCopy.status]
-      const targetUserId = this.target_user_id
-
-      if (this.binCopyActiveName === 'id') {
-        const idsCheck = await Api.hhgjAPIs.productListCheck({
-          goods_id_list: JSON.stringify(goodsIdsSet),
-          target_user_id: targetUserId
-        })
-        if (idsCheck && idsCheck.lost_goods_id_list.length) {
-          const lostGoodsIds = idsCheck.lost_goods_id_list
-          this.lostGoodsIds = lostGoodsIds
-          const lostGoodsIdsSet = new Set(lostGoodsIds)
-          const unionSets = goodsIdsSet.filter(item => !lostGoodsIdsSet.has(item))
-          if (unionSets.length) {
-            this.$refs.ModalBindCopyIdSearch.visible = true
-          } else {
+        if (this.binCopyActiveName === 'id') {
+          const valid = await this.$refs.modelCopyForm.validate()
+          if (!valid) {
             return this.$message({
-              message: '您输入的所有商品id都不能存在，请仔细核对重新输入～',
+              message: '请根据提示仔细填写～',
+              type: 'error'
+            })
+          }
+          const idsCheck = await Api.hhgjAPIs.productListCheck({
+            goods_id_list: JSON.stringify(goodsIdsSet),
+            target_user_id: targetUserId
+          })
+          if (idsCheck && idsCheck.lost_goods_id_list.length) {
+            const lostGoodsIds = idsCheck.lost_goods_id_list
+            this.lostGoodsIds = lostGoodsIds
+            const lostGoodsIdsSet = new Set(lostGoodsIds)
+            const unionSets = goodsIdsSet.filter(item => !lostGoodsIdsSet.has(item))
+            if (unionSets.length) {
+              // 弹出弹窗
+              this.$refs.ModalBindCopyIdSearch.visible = true
+              return false
+            } else {
+              return this.$message({
+                message: '您输入的所有商品id都不能存在，请仔细核对重新输入～',
+                type: 'error'
+              })
+            }
+          // 所有id都不能用
+          // 有id可以用
+          } else if (idsCheck && !idsCheck.lost_goods_id_list.length) {
+            const parmas = {
+              category_root_id_list: JSON.stringify([]),
+              ...status,
+              capture_type: 2,
+              target_user_id: targetUserId,
+              goods_id_list: JSON.stringify(goodsIdsSet)
+            }
+            this.capture(parmas, false)
+          }
+        } else {
+          // 直接复制
+          if (!this.modelBindCopy.category_root_id_list.length) {
+            return this.$message({
+              message: '请选择类目',
               type: 'warning'
             })
           }
-          // 所有id都不能用
-          // 有id可以用
-        } else if (idsCheck && !idsCheck.lost_goods_id_list.length) {
           const parmas = {
-            category_root_id_list: JSON.stringify([]),
-            ...status,
-            capture_type: 2,
-            target_user_id: targetUserId,
-            goods_id_list: JSON.stringify(goodsIdsSet)
+            category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
           }
           this.capture(parmas, false)
-          // 直接复制
         }
-        return false
-      } else {
-        if (!this.modelBindCopy.category_root_id_list.length) {
-          return this.$message({
-            message: '请选择类目',
-            type: 'warning'
-          })
-        }
-        // const categoryRootIDList = (this.modelBindCopy.category_root_id_list[0] || []).filter(item => item !== 'all')
-
-        const parmas = {
-          category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
-        }
-        this.capture(parmas, false)
+      } catch (err) {
+        return this.$message({
+          message: '请根据提示仔细填写～',
+          type: 'error'
+        })
       }
     },
     // 绑定复制 选择id筛选 再次复制
@@ -622,6 +662,13 @@ export default {
       const reg = /[^\d\n\s]/g
       const value = target.replace(reg, '')
       this.modelBindCopy.goods_ids = value
+
+      // const goodsIds = value.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      // const goodsIdsSet = [...new Set(goodsIds)]
+
+      // if (goodsIdsSet.length > 1000) {
+      //   this.modelBindCopyError = '最多支持1000个商品ID'
+      // }
     }
 
   }

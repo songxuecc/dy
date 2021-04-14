@@ -3,18 +3,21 @@
   <el-dialog :visible.sync="visible" :show-close="false" width="520px">
     <div slot="title">
       <p class="bold center relative flex column align-c font-12">
-        <hh-icon type="iconjinggao1" style="font-size:40px" class="mb-5"></hh-icon>
+        <hh-icon type="iconjinggao1" style="font-size:50px" class="mb-5"></hh-icon>
         以下商品id未查询到
         <span @click="copy(ids)" :diabled="postCodeLoading" class="pointer primary absolute">
-          <hh-icon type="iconfuzhi" class="mr-5"></hh-icon>复制全部id
+          <hh-icon type="iconfuzhi" class="mr-5"></hh-icon>复制
         </span>
       </p>
     </div>
-    <div style="max-height:380px;overflow-y:scroll" class=" mt-10 pb-10">
-      <p v-for="id in ids" :key="id" class="bold pointer font-12 left pl-40 relative" :class="[activeId === id ? 'primary' : '']" @click="copy(id)" @mouseover.stop="handleMousedown(id)"
+    <div style="min-height:200px;max-height:380px;overflow-y:scroll" class=" mt-10 pb-10">
+      <p v-for="id in ids" :key="id" :class="['text', activeId === id ? 'primary' : 'color-4e']" @click="copy(id)" @mouseover.stop="handleMousedown(id)"
         @mouseout.stop="handleMouseout">
-          {{id}}
-          <hh-icon :type="activeId === id ? 'iconfuzhi' : 'iconfuzhishangpin'" v-show="activeId === id" class="absoluteCopy"></hh-icon>
+          <span class="relative">
+            {{id}}
+            <hh-icon :type="activeId === id ? 'iconfuzhi' : 'iconfuzhishangpin'" v-show="activeId === id" class="absoluteCopy"></hh-icon>
+          </span>
+          <br />
       </p>
     </div>
     <div slot="footer" class="center">
@@ -79,11 +82,11 @@ export default {
 }
 .absoluteCopy {
     position:absolute;
-    right:-0px;
+    right:-16px;
     top: 0;
     bottom: 0;
     margin:auto;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 /deep/ .el-dialog .el-dialog__body {
   padding: 0;
@@ -105,7 +108,16 @@ export default {
 
 .pl-40 {
   padding-left: 80px;
-  width: 150px;
   line-height: 18px;
+}
+
+.text {
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  padding-left: 60px;
 }
 </style>
