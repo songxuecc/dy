@@ -106,7 +106,7 @@
                   :autosize="{ minRows: 2,maxRows: 15}"
                   resize="none"
                   size="small"
-                  placeholder="商品ID查询,多个查询请换行或空格依次输入"
+                  :placeholder="placeholder"
                   style="width: 357px;"/>
               </el-form-item>
             </el-form>
@@ -167,6 +167,7 @@ export default {
       textCaptureUrls: '',
       textCaptureShopUrls: '',
       activeName: 'bindCopy',
+      placeholder: `商品ID查询,多个查询请换行或空格依次输入\n最多支持1000个id查询`,
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
       importFilePromptVisibe: false,
