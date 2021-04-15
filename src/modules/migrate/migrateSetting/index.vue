@@ -8,7 +8,7 @@
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
     </el-dialog>
 
-    <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': `${mBottom}px`,'padding-top': '30px'}" class="migrateSettingForm">
+    <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': '30px'}" class="migrateSettingForm">
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini">
         <!-- 类目 -->
         <el-form-item label="类目统一为:" style="max-width:379px;margin-bottom: 20px;" class="migrateSetting-category">
@@ -168,6 +168,27 @@ import common from '@/common/common.js'
 import categorySelectView from '@/components/CategorySelectView'
 import debounce from 'lodash/debounce'
 
+function client () {
+  if (window.innerWidth != null) // ie9 +  最新浏览器
+  {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight
+    }
+  } else if (document.compatMode === 'CSS1Compat') // 标准浏览器
+  {
+    return {
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight
+    }
+  }
+  return { // 怪异浏览器
+    width: document.body.clientWidth,
+    height: document.body.clientHeight
+
+  }
+}
+
 export default {
   mixins: [request],
   components: {
@@ -264,34 +285,31 @@ export default {
   },
   mounted () {
     const tab = this.tabs
-    let topDist = 0
+    // let topDist = 0
     const nextTab = tab.map((item, index) => {
       const className = item.className
       const el = document.querySelector(className)
       const rect = el.getBoundingClientRect()
+      // const elHeight = rect.height
+      const height = client().height
+      console.log(height, 'height')
+      // calc(100vh - 224px - ${elHeight}px - 30px) calc(100vh - 100 - 50 - elHeight) paddingBottom: `calc(100vh - ${100 + 50 + elHeight}px)`
+      // 移动的距离 是滚动距离
+      // pt的距离是 整个盒子可见部分
       const top = rect.top
       const dist = 130
-      if (index === 0) {
-        topDist = top
-      }
-      return {...item, distance: top - dist, marginBottom: top - dist + 150, top: top - topDist}
+      return {...item, scrollTop: top - dist, top, paddingBottom: `${top - dist + 100}px`}
     })
+
+    console.log(nextTab, 'nextTab')
     this.tabs = nextTab
     const scrollEl = document.querySelector('.page-component__scroll')
-    scrollEl.addEventListener('scroll', debounce((e) => {
-      const scrollTop = e.target.scrollTop
-      let active = 0
 
-      console.log(scrollTop, 'scrollTop')
-      nextTab.forEach((item, index) => {
-        if (scrollTop >= item.top) {
-          active = index
-        }
-      })
-      if (!this.startScroll) {
-        this.activeTab = active.toString()
-      }
-    }, 500))
+    scrollEl.addEventListener('scroll', this.scroll)
+  },
+  beforeMount () {
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl && scrollEl.removeEventListener('scroll', this.scroll)
   },
   watch: {
     activeTab (n, o) {
@@ -328,6 +346,26 @@ export default {
     }
   },
   methods: {
+    scroll: debounce(function (e) {
+      console.log(this.startScroll, 'this.startScroll')
+      if (!this.startScroll) {
+        const scrollTop = e.target.scrollTop
+        let active = 0
+        this.tabs.forEach((item, index) => {
+          if (scrollTop >= item.scrollTop) {
+            active = index
+          }
+        })
+        this.activeTab = active.toString()
+        setTimeout(() => {
+          this.$nextTick(() => {
+            const paddingBottom = this.tabs[active].paddingBottom
+            this.mBottom = paddingBottom
+            console.log('setTimeout')
+          })
+        }, 300)
+      }
+    }, 500),
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'is_cut_black_word',
@@ -540,22 +578,31 @@ export default {
       this.startScroll = true
       const o = this.oldActive
       const n = this.activeTab
-      const distance = this.tabs[n].top
-      const marginBottom = this.tabs[n].marginBottom
+
+      console.log(n)
+      console.log(this.tabs[n])
+      const scrollTop = this.tabs[n].scrollTop
+      const paddingBottom = this.tabs[n].paddingBottom
+      console.log(this.tabs[n])
       if (n > o) {
-        this.mBottom = marginBottom
+        this.mBottom = paddingBottom
       }
       this.$nextTick(() => {
         const elScroll = document.querySelector('.page-component__scroll')
+
         elScroll.scrollTo({
-          top: distance,
+          top: scrollTop,
           left: 0,
           behavior: 'smooth'
         })
         setTimeout(() => {
-          this.startScroll = false
+          // this.startScroll = false
           if (n < o) {
-            this.mBottom = marginBottom
+            this.$nextTick(() => {
+              this.mBottom = paddingBottom
+              // this.startScroll = false
+              console.log('00000')
+            })
           }
         }, 300)
       })
