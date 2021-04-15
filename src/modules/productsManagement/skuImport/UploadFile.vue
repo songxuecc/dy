@@ -68,10 +68,10 @@ export default {
     }),
     ...mapStateSkuImport(['tableDataRecord', 'paginationRecord', 'filtersRecord']),
     isBlackUser () {
-      // let userId = localStorage.getItem('user_id')
-      // if (userId === '5009091') {
-      //   return true
-      // }
+      let userId = localStorage.getItem('user_id')
+      if (userId === '5009091') {
+        return true
+      }
       return false
     },
     getFileUploadData () {
