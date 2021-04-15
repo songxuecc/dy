@@ -153,10 +153,10 @@
       </el-form>
     </div>
 
-    <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
+    <!-- <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10"
         :disabled="shouldUpdate">保存设置</el-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -209,7 +209,7 @@ export default {
         {label: '标题', className: '.migrateSetting-title'},
         {label: '规则信息', className: '.migrateSetting-rule'},
         {label: '搬家商品选择', className: '.migrateSetting-choose'}],
-      mBottom: 150,
+      mBottom: `150px`,
       activeTab: 0,
       scrollWidth: 0,
       brandList: [],
@@ -290,26 +290,31 @@ export default {
       const className = item.className
       const el = document.querySelector(className)
       const rect = el.getBoundingClientRect()
-      // const elHeight = rect.height
       const height = client().height
-      console.log(height, 'height')
       // calc(100vh - 224px - ${elHeight}px - 30px) calc(100vh - 100 - 50 - elHeight) paddingBottom: `calc(100vh - ${100 + 50 + elHeight}px)`
       // 移动的距离 是滚动距离
       // pt的距离是 整个盒子可见部分
       const top = rect.top
+
+      console.log(top, 'top')
+
       const dist = 130
-      return {...item, scrollTop: top - dist, top, paddingBottom: `${top - dist + 100}px`}
+      return {...item,
+        scrollTop: top - dist,
+        top,
+        paddingBottom: `${top - dist + 80}`
+      }
     })
-
-    console.log(nextTab, 'nextTab')
     this.tabs = nextTab
-    const scrollEl = document.querySelector('.page-component__scroll')
+    this.bindScroll()
 
-    scrollEl.addEventListener('scroll', this.scroll)
+    this.$nextTick(() => {
+      const maxPaddingBottom = this.tabs[this.tabs.length - 1].paddingBottom
+      this.mBottom = `${maxPaddingBottom}px`
+    })
   },
   beforeMount () {
-    const scrollEl = document.querySelector('.page-component__scroll')
-    scrollEl && scrollEl.removeEventListener('scroll', this.scroll)
+    this.unBindScroll()
   },
   watch: {
     activeTab (n, o) {
@@ -346,26 +351,27 @@ export default {
     }
   },
   methods: {
-    scroll: debounce(function (e) {
-      console.log(this.startScroll, 'this.startScroll')
-      if (!this.startScroll) {
-        const scrollTop = e.target.scrollTop
-        let active = 0
-        this.tabs.forEach((item, index) => {
-          if (scrollTop >= item.scrollTop) {
-            active = index
-          }
-        })
-        this.activeTab = active.toString()
-        setTimeout(() => {
-          this.$nextTick(() => {
-            const paddingBottom = this.tabs[active].paddingBottom
-            this.mBottom = paddingBottom
-            console.log('setTimeout')
-          })
-        }, 300)
-      }
-    }, 500),
+    bindScroll () {
+      const scrollEl = document.querySelector('.page-component__scroll')
+      scrollEl.addEventListener('scroll', this.scroll)
+    },
+    unBindScroll () {
+      const scrollEl = document.querySelector('.page-component__scroll')
+      scrollEl && scrollEl.removeEventListener('scroll', this.scroll)
+    },
+    scroll: function (e) {
+      const scrollTop = e.target.scrollTop
+      let active = 0
+      this.tabs.forEach((item, index) => {
+        if (scrollTop >= item.scrollTop) {
+          active = index
+        }
+      })
+      this.changeActive(active)
+    },
+    changeActive: debounce(function (active) {
+      this.activeTab = active.toString()
+    }, 300),
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'is_cut_black_word',
@@ -550,7 +556,6 @@ export default {
       this.default_category = {}
     },
     async loadData () {
-      console.log('loadData')
       this.loadingBrandList = true
       try {
         const data = await Api.hhgjAPIs.getShopBrandList()
@@ -575,36 +580,17 @@ export default {
       this.default_brand_id = 0
     },
     tabClick (index) {
-      this.startScroll = true
-      const o = this.oldActive
+      this.unBindScroll()
       const n = this.activeTab
-
-      console.log(n)
-      console.log(this.tabs[n])
       const scrollTop = this.tabs[n].scrollTop
-      const paddingBottom = this.tabs[n].paddingBottom
-      console.log(this.tabs[n])
-      if (n > o) {
-        this.mBottom = paddingBottom
-      }
       this.$nextTick(() => {
         const elScroll = document.querySelector('.page-component__scroll')
-
         elScroll.scrollTo({
           top: scrollTop,
           left: 0,
           behavior: 'smooth'
         })
-        setTimeout(() => {
-          // this.startScroll = false
-          if (n < o) {
-            this.$nextTick(() => {
-              this.mBottom = paddingBottom
-              // this.startScroll = false
-              console.log('00000')
-            })
-          }
-        }, 300)
+        this.bindScroll()
       })
     }
   }
