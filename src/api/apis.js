@@ -361,7 +361,7 @@ const hhgjAPIs = {
     return api.actionCreateGet('/api/user/version/query', params)
   },
   productListCheck: (params) => {
-    return api.actionCreateGet('/api/product/list/check', params)
+    return api.actionCreatorPost('/api/product/list/check', params)
   }
 
 }

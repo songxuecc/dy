@@ -3,7 +3,7 @@
     <div class="NewFeatureOnlineTip" v-bind="$attrs" :style="{display:display}">
         <span @click="handleClose" class="close"></span>
         <p class="bold font-16 color-fff left">{{msg}}</p>
-        <span class="btn" @click="handleClick">立即设置</span>
+        <span class="btn" @click="handleClick">{{btnText}}</span>
     </div>
 </template>
 
@@ -14,7 +14,8 @@ export default {
   name: 'NewFeatureOnlineTip',
   props: {
     msg: String,
-    type: String
+    type: String,
+    btnText: String
   },
   data () {
     return {

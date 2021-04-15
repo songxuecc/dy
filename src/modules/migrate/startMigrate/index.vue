@@ -474,7 +474,7 @@ export default {
         }
       } catch (err) {
         return this.$message({
-          message: '请根据提示仔细填写～',
+          message: `${err}`,
           type: 'error'
         })
       }
