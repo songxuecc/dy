@@ -129,8 +129,9 @@
       <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:120px">开始复制</el-button>
     </div>
     <!-- 绑定复制 -->
-    <div class="common-bottom" v-if="activeName === 'bindCopy' && userBindList.length ">
-      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading" style="width:120px">开始复制
+    <div class="common-bottom " v-if="activeName === 'bindCopy' && userBindList.length ">
+      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:120px" class="ralative">开始复制
+        <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
       </el-button>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy'"/>
@@ -186,7 +187,8 @@ export default {
       bandShopTip: {},
       binCopyActiveName: 'status',
       ModalBindCopyIdSearchShow: false,
-      lostGoodsIds: []
+      lostGoodsIds: [],
+      productListCheckLoading: false
     }
   },
   components: {
@@ -427,10 +429,12 @@ export default {
               type: 'error'
             })
           }
+          this.productListCheckLoading = true
           const idsCheck = await Api.hhgjAPIs.productListCheck({
             goods_id_list: JSON.stringify(goodsIdsSet),
             target_user_id: targetUserId
           })
+          this.productListCheckLoading = false
           if (idsCheck && idsCheck.lost_goods_id_list.length) {
             const lostGoodsIds = idsCheck.lost_goods_id_list
             this.lostGoodsIds = lostGoodsIds
