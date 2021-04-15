@@ -1,9 +1,9 @@
 <!-- 新功能上线提醒 -->
 <template>
     <div class="NewFeatureOnlineTip" v-bind="$attrs" :style="{display:display}">
-        <span @click="handleClose" class="close"></span>
+        <span @click="handleClose" class="close pointer"></span>
         <p class="bold font-16 color-fff left">{{msg}}</p>
-        <span class="btn" @click="handleClick">{{btnText}}</span>
+        <span class="btn pointer" @click="handleClick">{{btnText}}</span>
     </div>
 </template>
 
@@ -26,8 +26,8 @@ export default {
     if (!this.getCurrentSubsc) {
       return false
     }
-    if (!this.getCurrentSubsc.is_newcomer) return false
-    const newFeatureOnlineTip = localStorage.getItem('newFeatureOnlineTip')
+    if (this.getCurrentSubsc.is_newcomer) return false
+    const newFeatureOnlineTip = localStorage.getItem('newFeatureOnlineTip') || '{}'
     const Obj = JSON.parse(newFeatureOnlineTip)
     if (Obj) {
       const display = Obj[this.type]

@@ -67,7 +67,7 @@
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
             style="margin-top:10px;">去绑定店铺</el-link>
         </div>
-        <el-radio-group v-model="binCopyActiveName" size="small" class="mb-10 bindCopyRadio" v-if="userBindList.length" >
+        <el-radio-group v-model="binCopyActiveName" size="small" class="mb-10 bindCopyRadio" v-if="userBindList.length" @change="handleBinCopyActiveNameChange">
           <el-radio-button label="status">按状态
           </el-radio-button>
           <el-radio-button label="id" >按ID
@@ -91,14 +91,14 @@
                   </div>
                 </div>
               </el-form-item>
-              <el-form-item label="状态选择" v-if="binCopyActiveName === 'status'">
+              <el-form-item label="状态选择" v-show="binCopyActiveName === 'status'">
                 <el-select v-model="modelBindCopy.status" placeholder="商品状态选择" style="width:257px;" >
                   <el-option label="全部商品" :value="0"></el-option>
                   <el-option label="在售中商品" :value="1"></el-option>
                   <el-option label="仓库中商品" :value="2"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item class="form-textarea" label="商品ID" v-if="binCopyActiveName === 'id'"  prop="goods_ids">
+              <el-form-item class="form-textarea" label="商品ID" v-show="binCopyActiveName === 'id'"  prop="goods_ids">
                 <el-input
                   :value="modelBindCopy.goods_ids"
                   @input="formatGoods_ids($event)"
@@ -151,7 +151,6 @@ import Setting from '@migrate/startMigrate/Setting'
 import SupportPlatForm from '@migrate/startMigrate/SupportPlatForm'
 import BindCopyTip from '@migrate/startMigrate/BindCopyTip'
 import ModalBindCopyIdSearch from '@migrate/startMigrate/ModalBindCopyIdSearch'
-
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
 
@@ -213,9 +212,9 @@ export default {
       return common.subscItemLevelMap
     },
     modelBindCopyRules () {
-      if (this.binCopyActiveName !== 'id') return {}
+      if (this.binCopyActiveName !== 'id') return null
       const checkLength = (rule, value, callback) => {
-        if (value === '') {
+        if (!value) {
           callback(new Error('请输入商品ID,且商品ID只可以是数字'))
         } else {
           const reg = /[^\d\n\s]/g
@@ -663,13 +662,11 @@ export default {
       const reg = /[^\d\n\s]/g
       const value = target.replace(reg, '')
       this.modelBindCopy.goods_ids = value
-
-      // const goodsIds = value.split(/[\s\n]/).filter(item => item).map(item => item.trim())
-      // const goodsIdsSet = [...new Set(goodsIds)]
-
-      // if (goodsIdsSet.length > 1000) {
-      //   this.modelBindCopyError = '最多支持1000个商品ID'
-      // }
+    },
+    handleBinCopyActiveNameChange (value) {
+      if (value === 'status') {
+        this.$refs.modelCopyForm.clearValidate()
+      }
     }
 
   }
