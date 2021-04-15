@@ -51,6 +51,9 @@ export default {
     copy: async function (text) {
       try {
         this.postCodeLoading = true
+        if (typeof text === 'object') {
+          text = text.join('\n')
+        }
         await this.$copyText(text)
         this.postCodeLoading = false
         this.$message({
