@@ -166,7 +166,7 @@ export default {
       limit: 100,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
-      activeName: 'bindCopy',
+      activeName: 'single',
       placeholder: `商品ID查询,多个查询请换行或空格依次输入\n最多支持1000个id查询`,
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
@@ -184,7 +184,7 @@ export default {
       userBindList: [],
       target_user_id: '',
       bandShopTip: {},
-      binCopyActiveName: 'id',
+      binCopyActiveName: 'status',
       ModalBindCopyIdSearchShow: false,
       lostGoodsIds: []
     }
