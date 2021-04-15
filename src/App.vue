@@ -160,7 +160,8 @@ export default {
       syncStatus: 'getSyncStatus',
       ignoreNotiList: 'getIgnoreNotiList',
       notificationList: 'getNotificationList',
-      isShowFloatView: 'isShowFloatView'
+      isShowFloatView: 'isShowFloatView',
+      currentSubsc: 'getCurrentSubsc'
     }),
     unreadNotiNum () {
       let dicIgnore = {}
@@ -178,6 +179,11 @@ export default {
     },
     newFeatureOnlineTipVisible () {
       if (!this.subActiveArray) return false
+      if (!this.isAuth) return false
+      if (!this.currentSubsc) {
+        return false
+      }
+      if (this.currentSubsc.is_newcomer) return false
       return this.subActiveArray.length === 3
     }
   },
