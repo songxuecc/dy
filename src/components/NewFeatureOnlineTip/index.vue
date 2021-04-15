@@ -23,6 +23,9 @@ export default {
     }
   },
   beforeMount () {
+    if (!this.getIsAuth) {
+      return
+    }
     if (!this.getCurrentSubsc) {
       return false
     }
@@ -39,7 +42,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCurrentSubsc'])
+    ...mapGetters(['getCurrentSubsc', 'getIsAuth'])
   },
   methods: {
     setLocalStorage () {
