@@ -117,6 +117,7 @@ import dyProductListView from '@productsManagement/allProducts/DyProductListView
 import request from '@/mixins/request.js'
 import {mapGetters, mapActions} from 'vuex'
 import utils from '@/common/utils.js'
+import apis from '@/api/apis.js'
 
 export default {
   mixins: [request],
@@ -237,7 +238,7 @@ export default {
     ]),
     reviewProductQuery (reviewProductIdList) {
       let self = this
-      this.request('getOnShelfStatus', {goods_id_list: JSON.stringify(reviewProductIdList)}, data => {
+      apis.hhgjAPIs.getOnShelfStatus({goods_id_list: JSON.stringify(reviewProductIdList)}).then(data => {
         let resultProductDict = {}
         let reviewProductIdList = []
         for (let product of data) {
