@@ -23,7 +23,7 @@
             </div>
             <NewFeatureOnlineTip
               type="搬家设置"
-              style="position:absolute;z-index:9999;top: 282px;left: 90px;"
+              style="position:absolute;z-index:1000;top: 282px;left: 90px;"
               v-if="newFeatureOnlineTipVisible"
               msg="已上线商品再次搬家功能已迁移到此处啦～"
               btnText="立即设置"
@@ -31,7 +31,7 @@
             />
             <NewFeatureOnlineTip
               type="批量处理"
-              style="position:absolute;z-index:9999;top: 434px;left: 90px;"
+              style="position:absolute;z-index:1000;top: 434px;left: 90px;"
               v-if="newFeatureOnlineTipVisible"
               msg="新增批量上下架、改客服电话、改运费模版等"
               btnText="立即查看"
