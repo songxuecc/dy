@@ -281,6 +281,8 @@ export default {
     scrollEl.addEventListener('scroll', debounce((e) => {
       const scrollTop = e.target.scrollTop
       let active = 0
+
+      console.log(scrollTop, 'scrollTop')
       nextTab.forEach((item, index) => {
         if (scrollTop > item.top) {
           active = index
@@ -289,7 +291,7 @@ export default {
       if (!this.startScroll) {
         this.activeTab = active.toString()
       }
-    }, 300))
+    }, 500))
   },
   watch: {
     activeTab (n, o) {
@@ -538,7 +540,7 @@ export default {
       this.startScroll = true
       const o = this.oldActive
       const n = this.activeTab
-      const distance = this.tabs[n].distance
+      const distance = this.tabs[n].top
       const marginBottom = this.tabs[n].marginBottom
       if (n > o) {
         this.mBottom = marginBottom
