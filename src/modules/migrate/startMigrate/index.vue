@@ -180,7 +180,7 @@ export default {
       modelBindCopy: {
         status: 0,
         category_root_id_list: [],
-        goods_ids: []
+        goods_ids: ''
       },
       userBindList: [],
       target_user_id: '',
@@ -414,14 +414,16 @@ export default {
         const targetUserId = this.target_user_id
 
         if (this.binCopyActiveName === 'id') {
-          const goodsIds = this.modelBindCopy.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
-          const goodsIdsSet = [...new Set(goodsIds)]
-          if (this.binCopyActiveName === 'id' && !goodsIds.length) {
+          if (!this.modelBindCopy.goods_ids) {
             return this.$message({
               message: '请输入商品id',
               type: 'error'
             })
           }
+
+          const goodsIds = this.modelBindCopy.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+          const goodsIdsSet = [...new Set(goodsIds)]
+
           const valid = await this.$refs.modelCopyForm.validate()
           if (!valid) {
             return this.$message({
