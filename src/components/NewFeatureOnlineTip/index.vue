@@ -22,29 +22,35 @@ export default {
       display: 'none'
     }
   },
-  beforeMount () {
-    if (!this.getIsAuth) {
-      return
-    }
-    if (!this.getCurrentSubsc) {
-      return false
-    }
-    if (this.getCurrentSubsc.is_newcomer) return false
-    const newFeatureOnlineTip = localStorage.getItem('newFeatureOnlineTip') || '{}'
-    const Obj = JSON.parse(newFeatureOnlineTip)
-    if (Obj) {
-      const display = Obj[this.type]
-      this.display = !display ? 'block' : 'none'
-      this.newFeatureOnlineTipData = Obj
-    } else {
-      this.newFeatureOnlineTipData = {}
-      this.display = 'block'
-    }
+  mounted () {
+    this.init()
+  },
+  activated () {
+    this.init()
   },
   computed: {
     ...mapGetters(['getCurrentSubsc', 'getIsAuth'])
   },
   methods: {
+    init () {
+      if (!this.getIsAuth) {
+        return
+      }
+      if (!this.getCurrentSubsc) {
+        return false
+      }
+      if (this.getCurrentSubsc.is_newcomer) return false
+      const newFeatureOnlineTip = localStorage.getItem('newFeatureOnlineTip') || '{}'
+      const Obj = JSON.parse(newFeatureOnlineTip)
+      if (Obj) {
+        const display = Obj[this.type]
+        this.display = !display ? 'block' : 'none'
+        this.newFeatureOnlineTipData = Obj
+      } else {
+        this.newFeatureOnlineTipData = {}
+        this.display = 'block'
+      }
+    },
     setLocalStorage () {
       const newFeatureOnlineTip = localStorage.getItem('newFeatureOnlineTip')
       const newFeatureOnlineTipData = JSON.parse(newFeatureOnlineTip) || {}
