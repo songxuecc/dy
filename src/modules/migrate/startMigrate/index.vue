@@ -73,7 +73,7 @@
           <el-radio-button label="id" >按ID
           </el-radio-button>
         </el-radio-group>
-        <div style="padding-top:4px;display:inline-block">
+        <div style="padding-top:4px;display:inline-block"  v-if="userBindList.length ">
             <NewFeatureTips type="绑定复制ID"/>
           </div>
 
@@ -520,6 +520,7 @@ export default {
               captureId: captureId
             }
           })
+          this.$refs.modelCopyForm.resetFields()
         }, err => {
           let el = ''
           if (this.activeName === 'bindCopy') {
