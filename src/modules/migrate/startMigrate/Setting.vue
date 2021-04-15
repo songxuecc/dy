@@ -74,7 +74,9 @@ export default {
   methods: {
     async getMigrateSetting () {
       try {
+        this.$emit('loading', true)
         const setting = await Api.hhgjAPIs.getMigrateSetting()
+        this.$emit('loading', false)
         if (typeof setting.is_banner_auto_5 !== 'undefined') {
           this.model.is_banner_auto_5 = setting.is_banner_auto_5
         }

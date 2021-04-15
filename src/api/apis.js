@@ -359,6 +359,9 @@ const hhgjAPIs = {
   },
   userVersionQuery: (params) => {
     return api.actionCreateGet('/api/user/version/query', params)
+  },
+  productListCheck: (params) => {
+    return api.actionCreatorPost('/api/product/list/check', params)
   }
 
 }

@@ -2,7 +2,9 @@
   <div style="background:#ffffff; padding: 20px 0;min-height:100%;box-sizing:border-box">
     <el-row class="tac">
       <div class="sideBar">
-        <el-menu :default-active='$route.path' router @select="handleSelect" :default-openeds="['1', '2', '3']" >
+        <el-menu :default-active='$route.path' router @select="handleSelect" :default-openeds="['1', '2', '3']"
+        @close="handleClose"
+        @open="handleOpen">
           <el-submenu index="1">
             <template slot="title">
               <hh-icon type="iconfuzhishangpin" style="font-size:14px; padding-left: 28px;margin-right:4px" />
@@ -15,7 +17,9 @@
               <span slot="title">搬家列表</span>
             </el-menu-item>
             <el-menu-item index="/migrateSetting" :disabled="!isAuth()">
-              <span slot="title" style="display: flex;align-items: center;">搬家设置</span>
+              <span slot="title" style="display: flex;align-items: center;">
+                  搬家设置
+                </span>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="2">
@@ -59,12 +63,23 @@
 <script>
 import {mapGetters} from 'vuex'
 import common from '@/common/common.js'
+import NewFeatureOnlineTip from '@/components/NewFeatureOnlineTip'
 
 export default {
   data () {
-    return {}
+    return {
+      currentActiveSubMenu: ['1', '2', '3']
+    }
   },
   inject: ['reload'],
+  components: {
+    NewFeatureOnlineTip
+  },
+  created () {
+    setTimeout(() => {
+      this.$emit('open', this.currentActiveSubMenu)
+    }, 300)
+  },
   methods: {
     ...mapGetters({
       isAuth: 'getIsAuth',
@@ -80,6 +95,21 @@ export default {
     },
     openPdd () {
       window.open('https://pdd.huhuguanjia.com/?from=douyin')
+    },
+    handleOpen (index) {
+      setTimeout(() => {
+        if (!this.currentActiveSubMenu.includes(index)) {
+          this.currentActiveSubMenu.push(index)
+        }
+        this.$emit('open', this.currentActiveSubMenu)
+      }, 300)
+    },
+    handleClose (index) {
+      if (this.currentActiveSubMenu.includes(index)) {
+        this.currentActiveSubMenu = this.currentActiveSubMenu.filter(item => item !== index)
+      }
+      console.log(this.currentActiveSubMenu, 'this.currentActiveSubMenu')
+      this.$emit('open', this.currentActiveSubMenu)
     }
   },
   computed: {
@@ -92,5 +122,4 @@ export default {
 
 <style lang="less" scoped>
   @import '~./index.less';
-
 </style>
