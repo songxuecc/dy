@@ -403,15 +403,6 @@ export default {
         })
       }
       try {
-      // id 查询 先告诉他要查询的id
-        const goodsIds = this.modelBindCopy.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
-        const goodsIdsSet = [...new Set(goodsIds)]
-        if (this.binCopyActiveName === 'id' && !goodsIds.length) {
-          return this.$message({
-            message: '请输入商品id',
-            type: 'error'
-          })
-        }
         const obj = {
           0: { check_status: -1, status: -1 },
           1: { check_status: 3, status: 0 },
@@ -421,6 +412,14 @@ export default {
         const targetUserId = this.target_user_id
 
         if (this.binCopyActiveName === 'id') {
+          const goodsIds = this.modelBindCopy.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+          const goodsIdsSet = [...new Set(goodsIds)]
+          if (this.binCopyActiveName === 'id' && !goodsIds.length) {
+            return this.$message({
+              message: '请输入商品id',
+              type: 'error'
+            })
+          }
           const valid = await this.$refs.modelCopyForm.validate()
           if (!valid) {
             return this.$message({

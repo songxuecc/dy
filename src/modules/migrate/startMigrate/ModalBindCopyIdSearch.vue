@@ -2,11 +2,11 @@
 <template>
   <el-dialog :visible.sync="visible" :show-close="false" width="520px">
     <div slot="title">
-      <p class="bold center relative flex column align-c font-12">
+      <p class=" center relative flex column align-c font-14">
         <hh-icon type="iconjinggao1" style="font-size:50px" class="mb-5"></hh-icon>
         以下商品id未查询到
         <span @click="copy(ids)" :diabled="postCodeLoading" class="pointer primary absolute">
-          <hh-icon type="iconfuzhi" class="mr-5"></hh-icon>复制
+          <hh-icon type="iconfuzhi" class="mr-5"></hh-icon>复制ID
         </span>
       </p>
     </div>
@@ -117,7 +117,6 @@ export default {
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   line-height: 20px;
-  text-align: left;
-  padding-left: 60px;
+  text-align: center;
 }
 </style>
