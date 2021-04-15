@@ -284,7 +284,7 @@ export default {
 
       console.log(scrollTop, 'scrollTop')
       nextTab.forEach((item, index) => {
-        if (scrollTop > item.top) {
+        if (scrollTop >= item.top) {
           active = index
         }
       })
