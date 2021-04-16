@@ -27,7 +27,7 @@
         </el-form-item>
         <!-- 品牌 -->
         <el-form-item label="品牌统一为:" style="margin-bottom: 20px;" class="migrateSetting-brand">
-          <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:230px;margin-right:12px"
+          <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:280px;margin-right:12px"
             clearable @clear="clear">
             <el-option label="默认无品牌" :value="0"></el-option>
             <el-option v-for="item in brandList" :key="item.id" :label="getBrandName(item)" :value="item.id" />
@@ -41,18 +41,19 @@
         <el-form-item label="SKU库存:"  style="margin-bottom: 20px;" class="flex migrateSetting-stock" >
             <p class="mb-10">
               <span class="font-12">SKU库存最高值为</span>
-              <el-input v-model="back_words" placeholder="请输入自定义违规词，换行或空格，分隔多个违规词" style="width: 300px;" />
+              <el-input v-model="back_words" placeholder="请输入数字" style="width: 100px;" type="number"/>
+              <span>（若超过该值，系统会自动调为最高值）</span>
               <el-switch v-model="value" />
             </p>
             <p>
-              <span class="font-12">SKU库存最高值为</span>
-              <el-input v-model="back_words" placeholder="请输入自定义违规词，换行或空格，分隔多个违规词" style="width: 300px;" />
-              <el-switch v-model="value" />
+              <span class="font-12">所有SKU库存均为</span>
+              <el-input v-model="back_words" placeholder="请输入数字" style="width: 100px;" type="number"/>
+              <el-switch v-model="value" class="ml-5"/>
             </p>
         </el-form-item>
 
         <el-form-item  label="sku编码:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-code">
-            <el-select v-model="goods_code_type" placeholder="请选择生成方式" style="width: 350px;">
+            <el-select v-model="goods_code_type" placeholder="请选择生成方式" style="width: 280px;">
                 <el-option v-for="item in goods_code_type_options" :key="item.value" :label="item.label"
                     :value="item.value">
                 </el-option>
@@ -81,20 +82,20 @@
           </p>
           <div style="display:flex;margin-bottom:5px">
             <p style="margin-right:10px">
-              <el-input v-model="textPrefix" placeholder="前缀" style="width: 290px;margin-right:10px"></el-input>
-              <span style="font-size:12px">原标题</span>
+              <el-input v-model="textPrefix" placeholder="前缀" style="width: 280px;margin-right:10px"></el-input>
+              <span style="font-size:12px;margin-right:24px">原标题</span>
             </p>
             <p>
-              <el-input v-model="textSuffix" placeholder="后缀" style="width: 290px;"></el-input>
+              <el-input v-model="textSuffix" placeholder="后缀" style="width: 280px;"></el-input>
             </p>
           </div>
           <div style="display:flex;margin-bottom:5px">
             <p style="margin-right:10px">
-              <el-input v-model="textReplaceOrigin" style="width: 278px;margin-right:10px"></el-input>
+              <el-input v-model="textReplaceOrigin" style="width: 280px;margin-right:10px"></el-input>
               <span style="font-size:12px">全部替换为</span>
             </p>
             <p>
-              <el-input v-model="textReplaceNew" style="width: 278px;"></el-input>
+              <el-input v-model="textReplaceNew" style="width: 280px;"></el-input>
             </p>
           </div>
         </el-form-item>
