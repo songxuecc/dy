@@ -4,10 +4,10 @@
     <p class="font-14 ">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a :class="[isSyncing?'color-info':'color-primary','pointer font-14']"
         @click="handleSyncProducts">{{syncButtonText}}</a> <span class="color-767989">&nbsp;最近同步时间
         {{ syncStatus.last_sync_time }} </span></p>
-    <p class="font-14 ">2、每次支持3000个sku修改，可修改维度有：sku编码、库存、价格&nbsp;<a class="pramiry pointer" style="font-size:14px" @click="downloadExcel">新版示例文件下载</a> </p>
-    <p class="font-14 ">3、保证导入的商品标题、规格名与抖店后台一致 </p>
-    <p class="font-14 ">4、仅支持售卖中、已下架的商品修改 </p>
-    <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
+    <p class="font-14 ">2、每次支持3000个sku修改，可修改维度有：sku编码、库存、价格&nbsp;<a class="pramiry pointer" style="font-size:14px" @click="downloadExcel">{{getFileName}}</a> </p>
+    <p class="font-14 ">3、仅支持售卖中、已下架的商品修改 </p>
+    <p v-if="isByTitle" class="font-14 ">4、保证导入的商品标题、规格名与抖店后台一致 </p>
+    <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false" :data="getFileUploadData"
       :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders" :on-success="skuExcelImportSuccess"
       :before-upload="beforeUpload" :on-progress="skuExcelImporting" :on-error="skuExcelImportError">
       <el-button v-if="!isBlackUser" size="medium" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick">
@@ -40,7 +40,8 @@ const {
 export default {
   name: 'UploadFile',
   props: {
-    msg: String
+    msg: String,
+    activeName: String
   },
   data () {
     return {
@@ -72,6 +73,17 @@ export default {
         return true
       }
       return false
+    },
+    getFileUploadData () {
+      return {
+        file_type: this.filtersRecord.file_type
+      }
+    },
+    getFileName () {
+      return this.activeName === 'byTitle' ? '示例文件下载1' : '示例文件下载2'
+    },
+    isByTitle () {
+      return this.activeName === 'byTitle'
     }
   },
   mounted () {
@@ -203,7 +215,11 @@ export default {
         window._hmt.push(['_trackEvent', '全部商品', '下载', '下载sku编码模板'])
       }
       this.$message.success('下载示例文件成功，请到浏览器下载内容查看')
-      window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code.xlsx'
+      if (this.filtersRecord.file_type === 0) {
+        window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-title.xlsx'
+      } else if (this.filtersRecord.file_type === 1) {
+        window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-id.xlsx'
+      }
     }
   }
 }
