@@ -2,9 +2,18 @@
   .el-tag {
     margin: 5px;
   }
+  .tag {
+    max-width: 500px;
+    overflow: hidden;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-flex;
+    align-items: center;
+  }
 
-  .info {
-    margin-top: 10px;
+  .el-tag .el-tag__close:hover {
+    color: #fff;
   }
 
   .title {
@@ -54,7 +63,7 @@
 }
 
 /deep/ .el-form-item__label {
-  width: 110px;
+  width: 128px;
   text-align: left;
   font-weight: bold;
   font-size: 14px;

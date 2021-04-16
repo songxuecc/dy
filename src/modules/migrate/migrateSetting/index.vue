@@ -11,11 +11,11 @@
     <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': '30px'}" class="migrateSettingForm">
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini">
         <!-- 类目 -->
-        <el-form-item label="类目统一为:" style="max-width:379px;margin-bottom: 20px;" class="migrateSetting-category">
+        <el-form-item required label="类目统一为:" style="max-width:379px;margin-bottom: 20px;" class="migrateSetting-category">
           <div>
             <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
               type="text">点击选择类目</el-button>
-            <div class="flex align-c" style="height:36px" v-if="default_category && default_category.name">
+            <div class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
               <el-tooltip :content="default_category && default_category.name"
                 :disabled="default_category.name && default_category.name.length < 18">
                 <el-button size="mini" type="text" @click="chooseCategory" class="brand">
@@ -26,8 +26,8 @@
           </div>
         </el-form-item>
         <!-- 品牌 -->
-        <el-form-item label="品牌统一为:" style="margin-bottom: 20px;" class="migrateSetting-brand">
-          <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:280px;margin-right:12px"
+        <el-form-item required label="品牌统一为:" style="margin-bottom: 20px;" class="migrateSetting-brand">
+          <el-select v-model="default_brand_id" placeholder="默认无品牌设置" style="width:280px;margin-right:12px"
             clearable @clear="clear">
             <el-option label="默认无品牌" :value="0"></el-option>
             <el-option v-for="item in brandList" :key="item.id" :label="getBrandName(item)" :value="item.id" />
@@ -38,21 +38,30 @@
           </el-button>
         </el-form-item>
         <!-- 库存 -->
-        <el-form-item label="SKU库存:"  style="margin-bottom: 20px;" class="flex migrateSetting-stock" >
-            <p class="mb-10">
-              <span class="font-12">SKU库存最高值为</span>
-              <el-input v-model="back_words" placeholder="请输入数字" style="width: 100px;" type="number"/>
-              <span>（若超过该值，系统会自动调为最高值）</span>
-              <el-switch v-model="value" />
+        <el-form-item required label="SKU库存:"  style="margin-bottom: 20px;" class="flex migrateSetting-stock" >
+            <p class="mb-10 flex align-c mb-10">
+              <span class="font-12 mr-5">SKU库存最高值为</span>
+              <span class="font-12">（若超过该值，系统会自动调为最高值）</span>
+              <el-form-item style="display:inline;margin-bottom:0" prop="max_sku_stock"  class="mr-5">
+                  <el-input-number v-model="max_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
+              </el-form-item>
+              <el-form-item style="display:inline;margin-bottom:0" prop="is_use_max_sku_stock">
+                  <el-switch v-model="is_use_max_sku_stock" />
+              </el-form-item>
             </p>
-            <p>
-              <span class="font-12">所有SKU库存均为</span>
-              <el-input v-model="back_words" placeholder="请输入数字" style="width: 100px;" type="number"/>
-              <el-switch v-model="value" class="ml-5"/>
+
+            <p class="mb-10 flex align-c mb-10">
+              <span class="font-12 mr-5">所有SKU库存均为</span>
+              <el-form-item style="display:inline;margin-bottom:0" prop="default_sku_stock"  class="mr-5">
+                  <el-input-number v-model="default_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
+              </el-form-item>
+              <el-form-item style="display:inline;margin-bottom:0" prop="is_use_default_sku_stock">
+                  <el-switch v-model="is_use_default_sku_stock" />
+              </el-form-item>
             </p>
         </el-form-item>
 
-        <el-form-item  label="sku编码:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-code">
+        <el-form-item required  label="sku编码:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-code">
             <el-select v-model="goods_code_type" placeholder="请选择生成方式" style="width: 280px;">
                 <el-option v-for="item in goods_code_type_options" :key="item.value" :label="item.label"
                     :value="item.value">
@@ -60,47 +69,57 @@
             </el-select>
         </el-form-item>
 
-        <el-form-item label="sku规格:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-spec">
+        <el-form-item required label="sku规格:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-spec">
             <p class="font-12">sku规格值超过20个自动截断<el-switch class="ml-5" v-model="is_cut_sku_spec" /></p>
         </el-form-item>
 
-        <el-form-item label="轮播图、详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
-            <p class="font-12 mb-10">轮播图+详情图超过50张自动截断详情图<el-switch class="ml-5" v-model="detail_img_cut" /></p>
+        <el-form-item required label="轮播图、详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
+            <p class="font-12 mb-10 mt-5">轮播图+详情图超过50张自动截断详情图<el-switch class="ml-5" v-model="detail_img_cut" /></p>
             <p class="font-12 mb-10">仅保留前5张轮播图<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
-            <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
-            <p class="font-12">删除轮播尾图<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
+            <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
+            <p class="font-12">删除轮播尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
         </el-form-item>
 
-        <el-form-item label="标题:"  style="margin-bottom: 20px;" class="flex migrateSetting-title" >
+        <el-form-item required label="标题:"  style="margin-bottom: 20px;" class="flex migrateSetting-title" >
           <p class="flex align-c mb-5">
             <span style="font-size: 12px;margin-right:4px">超过30个字</span>
-            <el-radio-group v-model="radio">
-              <el-radio :label="3">自动去开头</el-radio>
-              <el-radio :label="6">自动去末尾</el-radio>
-              <el-radio :label="9">手动处理</el-radio>
+            <el-radio-group v-model="title_cut_type">
+              <el-radio :label="1">自动去开头</el-radio>
+              <el-radio :label="2">自动去末尾</el-radio>
+              <el-radio :label="3">手动处理</el-radio>
             </el-radio-group>
           </p>
           <div style="display:flex;margin-bottom:5px">
             <p style="margin-right:10px">
-              <el-input v-model="textPrefix" placeholder="前缀" style="width: 280px;margin-right:10px"></el-input>
+              <el-input v-model="title_prefix" placeholder="前缀" style="width: 280px;margin-right:10px"></el-input>
               <span style="font-size:12px;margin-right:24px">原标题</span>
             </p>
             <p>
-              <el-input v-model="textSuffix" placeholder="后缀" style="width: 280px;"></el-input>
+              <el-input v-model="title_suffix" placeholder="后缀" style="width: 280px;"></el-input>
             </p>
           </div>
           <div style="display:flex;margin-bottom:5px">
             <p style="margin-right:10px">
-              <el-input v-model="textReplaceOrigin" style="width: 280px;margin-right:10px"></el-input>
+              <el-input v-model="source_title_str" style="width: 280px;margin-right:10px"></el-input>
               <span style="font-size:12px">全部替换为</span>
             </p>
             <p>
-              <el-input v-model="textReplaceNew" style="width: 280px;"></el-input>
+              <el-input v-model="target_title_str" style="width: 280px;"></el-input>
             </p>
           </div>
         </el-form-item>
 
-        <el-form-item label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
+        <el-form-item required label="搬家仅针对"  class="flex migrateProductsFilter migrateSetting-choose" style="height:25px;margin-bottom: 20px;">
+          <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
+            <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
+            <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
+            <el-checkbox :label="common.productStatus.REJECT">驳回</el-checkbox>
+            <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
+            <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
+          </el-checkbox-group>；其余状态商品会自动过滤
+        </el-form-item>
+
+        <el-form-item required label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
             <div style="display:flex;flex:1" >
                 <p style="width: 280px;text-align:right;position:relative" >
                     <el-input v-model="back_words" @input="formatBlackWords" type="textarea"
@@ -114,8 +133,8 @@
                     <el-tag v-for="(tag,index) in defaultBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
                         {{tag}}
                     </el-tag>
-                    <el-tag v-for="(tag,index) in blackWords" :disable-transitions="true" :key="tag" closable :type="typeList[index%5]" @close="handleCloseWords(tag)">
-                        {{tag}}
+                    <el-tag  v-for="(tag,index) in blackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" @close="handleCloseWords(tag)">
+                        <span class="tag">{{tag}}</span> <span @click="handleCloseWords(tag)" :class="`pointer el-tag__close el-icon-close ${typeList[index%5]}`" ></span>
                     </el-tag>
                 </div>
             </div>
@@ -142,15 +161,7 @@
                 </div>
             </div>
         </el-form-item>
-        <el-form-item label="搬家仅针对" required class="flex migrateProductsFilter migrateSetting-choose" style="height:25px">
-          <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
-            <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
-            <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
-            <el-checkbox :label="common.productStatus.REJECT">驳回</el-checkbox>
-            <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
-            <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
-          </el-checkbox-group>；其余状态商品会自动过滤
-        </el-form-item>
+
       </el-form>
     </div>
 
@@ -180,15 +191,16 @@ export default {
   data () {
     return {
       tabs: [
-        {label: '类目', className: '.migrateSetting-category'},
-        {label: '品牌', className: '.migrateSetting-brand'},
-        {label: 'SKU库存', className: '.migrateSetting-stock'},
-        {label: 'SKU编码', className: '.migrateSetting-code'},
-        {label: 'SKU规格值', className: '.migrateSetting-spec'},
-        {label: '轮播图、详情图', className: '.migrateSetting-banner'},
-        {label: '标题', className: '.migrateSetting-title'},
-        {label: '规则信息', className: '.migrateSetting-rule'},
-        {label: '搬家商品选择', className: '.migrateSetting-choose'}],
+        { label: '类目', className: '.migrateSetting-category' },
+        { label: '品牌', className: '.migrateSetting-brand' },
+        { label: 'SKU库存', className: '.migrateSetting-stock' },
+        { label: 'SKU编码', className: '.migrateSetting-code' },
+        { label: 'SKU规格值', className: '.migrateSetting-spec' },
+        { label: '轮播图、详情图', className: '.migrateSetting-banner' },
+        { label: '标题', className: '.migrateSetting-title' },
+        { label: '搬家商品选择', className: '.migrateSetting-choose' },
+        { label: '规则信息', className: '.migrateSetting-rule' }
+      ],
       mBottom: `150px`,
       activeTab: 0,
       scrollWidth: 0,
@@ -206,6 +218,19 @@ export default {
       is_cut_black_word: true,
       is_cut_image_black_word: true,
       is_banner_auto_5: true,
+
+      default_sku_stock: '',
+      is_use_default_sku_stock: false,
+      max_sku_stock: '',
+      is_use_max_sku_stock: false,
+      is_cut_banner_first: false,
+      is_cut_detail_last: false,
+      title_cut_type: 3,
+      title_prefix: '',
+      title_suffix: '',
+      source_title_str: '',
+      target_title_str: '',
+
       property_radio: '1',
       goods_property_selected: '',
       goods_code_type: 0,
@@ -215,14 +240,15 @@ export default {
       goods_property_list: [],
       goods_code_prefix: '',
       goods_code_suffix: '',
-      goods_code_type_options: [{
-        value: 0,
-        label: '留空'
-      },
-      {
-        value: 1,
-        label: '使用{商品ID}'
-      }
+      goods_code_type_options: [
+        {
+          value: 0,
+          label: '留空'
+        },
+        {
+          value: 1,
+          label: '使用{商品ID}'
+        }
       ],
       blackWords: [],
       back_words: '',
@@ -253,7 +279,7 @@ export default {
       el = el || document.body
       var scrollDiv = document.createElement('div')
       scrollDiv.style.cssText =
-          'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;'
+        'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;'
       el.appendChild(scrollDiv)
       var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
       el.removeChild(scrollDiv)
@@ -266,8 +292,8 @@ export default {
   mounted () {
     const tab = this.tabs
     let maxPaddingBottom = 0
-    const height = document.documentElement.offsetHeight || document.body.offSetHeight
-    console.log(height, 'height')
+    const height =
+      document.documentElement.offsetHeight || document.body.offSetHeight
     const nextTab = tab.map((item, index) => {
       const className = item.className
       const el = document.querySelector(className)
@@ -296,33 +322,78 @@ export default {
   beforeMount () {
     this.unBindScroll()
   },
+
   computed: {
-    shouldUpdate () {
-      const product = {
-        ...this.originMigrateSetting,
-        title_cut_off: Number(this.title_cut_off),
-        title_ban_words: Number(this.title_ban_words),
-        detail_img_cut: Number(this.detail_img_cut),
-        is_cut_sku_spec: Number(this.is_cut_sku_spec),
-        is_cut_black_word: Number(this.is_cut_black_word),
-        is_cut_image_black_word: Number(this.is_cut_image_black_word),
-        is_banner_auto_5: Number(this.is_banner_auto_5),
-        banner_completion: Number(this.banner_completion),
-        property_radio: this.property_radio,
-        goods_code_prefix: this.goods_code_prefix,
-        goods_code_suffix: this.goods_code_suffix,
-        goods_code_type: Number(this.goods_code_type),
-        goods_property: this.goods_property_options,
-        able_migrate_status_list: this.able_migrate_status_list
+    rules () {
+      const checkMaxSkuStock = (rule, value, callback) => {
+        if (this.is_use_max_sku_stock) {
+          if (this.max_sku_stock < 0 || this.max_sku_stock > 1000000) {
+            return callback(new Error('范围设置:0~1000000'))
+          }
+        }
+        callback()
       }
+
+      const checkUseMaxSkuStock = (rule, value, callback) => {
+        if (this.is_use_max_sku_stock) {
+          this.$refs.template.validateField('max_sku_stock')
+        }
+        callback()
+      }
+
+      const checkDefaultSkuStock = (rule, value, callback) => {
+        if (this.is_use_default_sku_stock) {
+          if (this.default_sku_stock < 0 || this.default_sku_stock > 1000000) {
+            return callback(new Error('范围设置:0~1000000'))
+          }
+        }
+        callback()
+      }
+
+      const checkUseDefaultSkuStock = (rule, value, callback) => {
+        if (this.is_use_default_sku_stock) {
+          this.$refs.template.validateField('default_sku_stock')
+        }
+        callback()
+      }
+
+      return {
+        max_sku_stock: [
+          { validator: checkMaxSkuStock, trigger: 'change' }
+        ],
+        is_use_max_sku_stock: [
+          { validator: checkUseMaxSkuStock, trigger: 'change' }
+        ],
+        default_sku_stock: [
+          { validator: checkDefaultSkuStock, trigger: 'change' }
+        ],
+        is_use_default_sku_stock: [
+          { validator: checkUseDefaultSkuStock, trigger: 'change' }
+        ]
+      }
+    },
+    shouldUpdate () {
+      const product = this.getFormatSettings()
       const isEqualSetting = isEqual(this.originMigrateSetting, product)
       const blackWords = new Set(this.blackWords)
-      const originBlackWords = new Set([...this.customerBlackWords, ...this.defaultBlackWords])
-      const newBlackWords = [...blackWords].filter(item => !originBlackWords.has(item))
+      const originBlackWords = new Set([
+        ...this.customerBlackWords,
+        ...this.defaultBlackWords
+      ])
+      const newBlackWords = [...blackWords].filter(
+        (item) => !originBlackWords.has(item)
+      )
       const imageBlackWords = new Set(this.imageBlackWords)
-      const originImageBlackWords = new Set([...this.customerImageBlackWords, ...this.defaultImageBlackWords])
-      const newImageBlackWords = [...imageBlackWords].filter(item => !originImageBlackWords.has(item))
-      return isEqualSetting && !newBlackWords.length && !newImageBlackWords.length
+      const originImageBlackWords = new Set([
+        ...this.customerImageBlackWords,
+        ...this.defaultImageBlackWords
+      ])
+      const newImageBlackWords = [...imageBlackWords].filter(
+        (item) => !originImageBlackWords.has(item)
+      )
+      return (
+        isEqualSetting && !newBlackWords.length && !newImageBlackWords.length
+      )
     }
   },
   methods: {
@@ -353,9 +424,13 @@ export default {
         'is_cut_image_black_word',
         'is_banner_auto_5',
         'is_cut_sku_spec',
-        'detail_img_cut'
+        'detail_img_cut',
+        'is_use_default_sku_stock',
+        'is_use_max_sku_stock',
+        'is_cut_banner_first',
+        'is_cut_detail_last'
       ]
-      Object.keys(data).forEach(key => {
+      Object.keys(data).forEach((key) => {
         this[key] = boolPropertys.includes(key) ? Boolean(data[key]) : data[key]
       })
     },
@@ -371,8 +446,9 @@ export default {
           self.loadData()
         ])
         this.originMigrateSetting = setting
+
         this.updateMigrateSettingData(setting)
-          // 默认设置
+        // 默认设置
         if (setting.default_category) {
           this.default_category = setting.default_category
         }
@@ -380,15 +456,18 @@ export default {
           this.default_brand_id = setting.default_brand_id
         }
         if (setting.default_category_id && setting.default_category) {
-          setting.default_category.name = setting.default_category.levels.map(item => item.name).join(' > ')
+          setting.default_category.name = setting.default_category.levels
+            .map((item) => item.name)
+            .join(' > ')
           setting.default_category.id = setting.default_category_id
           this.default_category_id = setting.default_category.id
         }
-          // 违规词
+
+        // 违规词
         this.blackWords = blackWords.customer
         this.customerBlackWords = blackWords.customer
         this.defaultBlackWords = blackWords.default
-          // 违规图片
+        // 违规图片
         this.imageBlackWords = imgBlackWords.customer
         this.customerImageBlackWords = imgBlackWords.customer
         this.defaultImageBlackWords = imgBlackWords.default
@@ -396,9 +475,12 @@ export default {
         this.$message.error(`${error}`)
       }
     },
-    async saveSetting () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
+    getFormatSettings () {
+      if (this.is_use_default_sku_stock) {
+
+      }
+      if (this.is_use_max_sku_stock) {
+
       }
       const product = {
         ...this.originMigrateSetting,
@@ -415,17 +497,47 @@ export default {
         goods_code_suffix: this.goods_code_suffix,
         goods_code_type: Number(this.goods_code_type),
         goods_property: this.goods_property_options,
-        able_migrate_status_list: this.able_migrate_status_list
+        able_migrate_status_list: this.able_migrate_status_list,
+        default_sku_stock: this.default_sku_stock,
+        is_use_default_sku_stock: Number(this.is_use_default_sku_stock),
+        is_use_max_sku_stock: Number(this.is_use_max_sku_stock),
+        max_sku_stock: this.max_sku_stock,
+        is_cut_banner_first: Number(this.is_cut_banner_first),
+        is_cut_detail_last: Number(this.is_cut_detail_last),
+        title_cut_type: this.title_cut_type,
+        title_prefix: this.title_prefix,
+        title_suffix: this.title_suffix,
+        source_title_str: this.source_title_str,
+        target_title_str: this.target_title_str
       }
+      return product
+    },
+    async saveSetting () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
+      }
+      const product = this.getFormatSettings()
+
+      console.log(product, 'product')
       let productParams = {
         json: JSON.stringify(product)
       }
       const blackWords = new Set(this.blackWords)
-      const originBlackWords = new Set([...this.customerBlackWords, ...this.defaultBlackWords])
-      const params = [...blackWords].filter(item => !originBlackWords.has(item))
+      const originBlackWords = new Set([
+        ...this.customerBlackWords,
+        ...this.defaultBlackWords
+      ])
+      const params = [...blackWords].filter(
+        (item) => !originBlackWords.has(item)
+      )
       const imageBlackWords = new Set(this.imageBlackWords)
-      const originImageBlackWords = new Set([...this.customerImageBlackWords, ...this.defaultImageBlackWords])
-      const imageParams = [...imageBlackWords].filter(item => !originImageBlackWords.has(item))
+      const originImageBlackWords = new Set([
+        ...this.customerImageBlackWords,
+        ...this.defaultImageBlackWords
+      ])
+      const imageParams = [...imageBlackWords].filter(
+        (item) => !originImageBlackWords.has(item)
+      )
       this.createBlackWordsLoading = true
       try {
         const updateBlackWords = params.length
@@ -443,7 +555,11 @@ export default {
         const updateSetting = !isEqualSetting
           ? Api.hhgjAPIs.updateMigrateSetting(productParams)
           : Promise.resolve(this.originMigrateSetting)
-        await Promise.all([updateBlackWords, updateImageBlackWords, updateSetting])
+        await Promise.all([
+          updateBlackWords,
+          updateImageBlackWords,
+          updateSetting
+        ])
         this.$message.success('保存成功')
         this.createBlackWordsLoading = false
         this.back_words = ''
@@ -459,20 +575,24 @@ export default {
     },
     formatBlackWords () {
       let value = this.back_words.split(/[\s\n]/)
-      value = value.map(s => s.trim()).filter(s => s !== '')
+      value = value.map((s) => s.trim()).filter((s) => s !== '')
       this.black_word_list = [...new Set(value)]
     },
     formatImageBlackWords () {
       let value = this.image_back_words.split(/[\s\n]/)
-      value = value.map(s => s.trim()).filter(s => s !== '')
+      value = value.map((s) => s.trim()).filter((s) => s !== '')
       this.image_black_word_list = [...new Set(value)]
     },
     async createBlackWords () {
-      this.blackWords = [...new Set(this.blackWords.concat(this.black_word_list))]
+      this.blackWords = [
+        ...new Set(this.blackWords.concat(this.black_word_list))
+      ]
       this.back_words = ''
     },
     async createImageBlackWords () {
-      this.imageBlackWords = [...new Set(this.imageBlackWords.concat(this.image_black_word_list))]
+      this.imageBlackWords = [
+        ...new Set(this.imageBlackWords.concat(this.image_black_word_list))
+      ]
       this.image_back_words = ''
     },
     async handleCloseWords (word) {
@@ -482,7 +602,7 @@ export default {
           word: word,
           use_type: 0
         })
-        Api.hhgjAPIs.getBlackWordList({}).then(data => {
+        Api.hhgjAPIs.getBlackWordList({}).then((data) => {
           this.blackWords = data.customer
           this.customerBlackWords = data.customer
           this.defaultBlackWords = data.default
@@ -502,13 +622,15 @@ export default {
           word: word,
           use_type: 1
         })
-        Api.hhgjAPIs.getBlackWordList({
-          use_type: 1
-        }).then(data => {
-          this.imageBlackWords = data.customer
-          this.customerImageBlackWords = data.customer
-          this.defaultImageBlackWords = data.default
-        })
+        Api.hhgjAPIs
+          .getBlackWordList({
+            use_type: 1
+          })
+          .then((data) => {
+            this.imageBlackWords = data.customer
+            this.customerImageBlackWords = data.customer
+            this.defaultImageBlackWords = data.default
+          })
       } catch (error) {
         if (error) {
           console.error(error)
@@ -545,7 +667,10 @@ export default {
     getBrandName (item) {
       if (item.brand_english_name.trim() && item.brand_chinese_name.trim()) {
         return `${item.brand_english_name.trim()}/${item.brand_chinese_name}`
-      } else if (item.brand_english_name.trim() && !item.brand_chinese_name.trim()) {
+      } else if (
+        item.brand_english_name.trim() &&
+        !item.brand_chinese_name.trim()
+      ) {
         return item.brand_english_name.trim()
       } else {
         return item.brand_chinese_name.trim()
@@ -572,5 +697,5 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-  @import '~./index.less';
+@import '~./index.less';
 </style>
