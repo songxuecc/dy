@@ -15,7 +15,7 @@
           <div class="flex align-c " style="height:28px">
             <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
               type="text">点击选择类目</el-button>
-            <a class="skeleton skeleton-item" v-else style="width:100px;height:18px"/>
+            <a class="skeleton skeleton-item" v-if="!default_category" style="width:100px;height:18px"/>
 
             <div class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
               <el-tooltip :content="default_category && default_category.name"
