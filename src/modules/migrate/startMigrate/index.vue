@@ -525,7 +525,9 @@ export default {
               captureId: captureId
             }
           })
-          this.$refs.modelCopyForm && this.$refs.modelCopyForm.resetFields()
+          if (this.userBindList.length) {
+            this.$refs.modelCopyForm && this.$refs.modelCopyForm.resetFields && this.$refs.modelCopyForm.resetFields()
+          }
         }, err => {
           let el = ''
           if (this.activeName === 'bindCopy') {
