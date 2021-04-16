@@ -162,12 +162,11 @@
                 </div>
             </div>
         </el-form-item>
-
       </el-form>
     </div>
 
     <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
-      <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10"
+      <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px"
         :disabled="shouldUpdate">保存设置</el-button>
     </div>
   </div>
@@ -186,8 +185,22 @@ export default {
   components: {
     categorySelectView
   },
-  activated () {
-    this.getSetting()
+  beforeRouteLeave (to, from, next) {
+    // 导航离开该组件的对应路由时调用
+    // 可以访问组件实例 `this`
+    if (this.shouldUpdate) {
+      next()
+    } else {
+      this.$confirm('您为保存，是否先保存再关闭？')
+        .then(_ => {
+          this.saveSetting().then(() => {
+            next()
+          })
+        })
+        .catch(_ => {
+          next()
+        })
+    }
   },
   data () {
     return {
@@ -277,6 +290,7 @@ export default {
     }
   },
   created () {
+    this.getSetting()
     function getScrollbarWidth (el) {
       el = el || document.body
       var scrollDiv = document.createElement('div')
@@ -324,7 +338,15 @@ export default {
   beforeMount () {
     this.unBindScroll()
   },
-
+  activated () {
+    if (this.shouldUpdate) {
+      this.getSetting()
+    }
+    window.addEventListener('beforeunload', this.beforeunloadFn)
+  },
+  deactivated () {
+    window.removeEventListener('beforeunload', this.beforeunloadFn)
+  },
   computed: {
     rules () {
       const checkMaxSkuStock = (rule, value, callback) => {
@@ -376,8 +398,6 @@ export default {
     },
     shouldUpdate () {
       const product = this.getFormatSettings()
-
-      console.log(product, 'product')
       const isEqualSetting = isEqual(this.originMigrateSetting, product)
       const blackWords = new Set(this.blackWords)
       const originBlackWords = new Set([
@@ -401,6 +421,14 @@ export default {
     }
   },
   methods: {
+    beforeunloadFn (e) {
+      if (this.shouldUpdate) return false
+      let msg = '离开后本页面更改不会被保存'
+      if (e) {
+        e.returnValue = msg
+      }
+      return msg
+    },
     bindScroll () {
       const scrollEl = document.querySelector('.page-component__scroll')
       scrollEl.addEventListener('scroll', this.scroll)
@@ -567,6 +595,7 @@ export default {
         this.back_words = ''
         this.image_back_words = ''
         this.getSetting()
+        return true
       } catch (error) {
         if (error) {
           console.error(error)
