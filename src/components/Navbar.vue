@@ -202,21 +202,21 @@ export default {
         [
           '3',
           {
-            handle: () => this.$router.push({ path: '/meizhe' }),
+            handle: () => this.$router.push({ path: '/customerSetting/meizhe' }),
             comment: '短信水印'
           }
         ],
         [
           '4',
           {
-            handle: () => this.$router.push({ path: '/woda' }),
+            handle: () => this.$router.push({ path: '/customerSetting/woda' }),
             comment: '打单发货'
           }
         ],
         [
           '1-0',
           {
-            handle: () => this.$router.push({ path: '/woda' }),
+            handle: () => this.$router.push({ path: '/customerSetting/woda' }),
             comment: '返回主账号'
           }
         ],

@@ -8,13 +8,13 @@
               <hh-icon type="iconfuzhishangpin" style="font-size:14px; padding-left: 28px;margin-right:4px" />
               <span>搬家上货</span>
             </template>
-            <el-menu-item index="/migrate" :disabled="!isAuth()">
+            <el-menu-item index="/migrate/startMigrate" :disabled="!isAuth()">
               <span slot="title">开始复制</span>
             </el-menu-item>
-            <el-menu-item index="/productList" :disabled="!isAuth()" >
+            <el-menu-item index="/migrate/productList" :disabled="!isAuth()" >
               <span slot="title">搬家列表</span>
             </el-menu-item>
-            <el-menu-item index="/migrateSetting" :disabled="!isAuth()">
+            <el-menu-item index="/migrate/migrateSetting" :disabled="!isAuth()">
               <span slot="title" style="display: flex;align-items: center;">基础设置</span>
             </el-menu-item>
           </el-submenu>
@@ -23,16 +23,16 @@
               <hh-icon type="iconshangpinguanli" style="font-size:14px; padding-left: 28px;margin-right:4px" />
               <span>商品管理</span>
             </template>
-            <el-menu-item index="/dyProductList" :disabled="!isAuth()">
+            <el-menu-item index="/productsManagement/allProducts" :disabled="!isAuth()">
               <span slot="title">全部商品</span>
             </el-menu-item>
-            <el-menu-item index="/batchEdit/title" :disabled="!isAuth()">
+            <el-menu-item index="/productsManagement/batchEdit/title" :disabled="!isAuth()">
               <span slot="title" style="display: flex;align-items: center;">批量处理</span>
             </el-menu-item>
-            <el-menu-item index="/SkuImport" :disabled="!isAuth()">
+            <el-menu-item index="/productsManagement/skuImport" :disabled="!isAuth()">
               <span slot="title">sku导入修改</span>
             </el-menu-item>
-           <el-menu-item index="/poster/dg/list" :disabled="!isAuth()">
+           <el-menu-item index="/shopDecorate/poster/dg/list" :disabled="!isAuth()">
              <span slot="title">批量新增详情</span>
            </el-menu-item>
           </el-submenu>
@@ -44,10 +44,10 @@
             <el-menu-item index="" @click="openPdd" >
               <span slot="title">虎虎搬家（拼多多）</span>
             </el-menu-item>
-            <el-menu-item index="/meizhe">
+            <el-menu-item index="/customerSetting/meizhe">
               <span slot="title">短信水印</span>
             </el-menu-item>
-            <el-menu-item index="/woda">
+            <el-menu-item index="/customerSetting/woda">
               <span slot="title">打单发货</span>
             </el-menu-item>
           </el-submenu>
@@ -71,7 +71,7 @@ export default {
       subsc: 'getCurrentSubsc'
     }),
     handleSelect (key, keyPath) {
-      if (key === '/productList') {
+      if (key === '/migrate/productList') {
         this.reload()
       }
     },

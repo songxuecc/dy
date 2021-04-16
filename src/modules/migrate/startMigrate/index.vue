@@ -384,7 +384,7 @@ export default {
           this.isStartCapture = false
           let captureId = data.capture_id
           this.$router.push({
-            path: '/productList',
+            path: '/migrate/productList',
             query: {
               captureId: captureId
             }
@@ -454,7 +454,7 @@ export default {
       } else {
         let captureId = response.data.capture_id
         this.$router.push({
-          path: '/productList',
+          path: '/migrate/productList',
           query: {
             captureId: captureId
           }

@@ -21,7 +21,7 @@ export default {
       this.fakeUser(params).then(data => {
         this.message = '切换成功'
         this.$router.push({
-          path: '/productList'
+          path: '/migrate/productList'
         })
       }, e => {
         this.message = '切换失败，请重新尝试'
