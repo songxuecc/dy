@@ -15,7 +15,7 @@
               <span slot="title">搬家列表</span>
             </el-menu-item>
             <el-menu-item index="/migrateSetting" :disabled="!isAuth()">
-              <span slot="title" style="display: flex;align-items: center;">搬家设置</span>
+              <span slot="title" style="display: flex;align-items: center;">基础设置</span>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="2">

@@ -12,10 +12,11 @@
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini">
         <!-- 类目 -->
         <el-form-item required label="类目统一为:" style="max-width:379px;margin-bottom: 20px;" class="migrateSetting-category">
-          <div>
+          <div class="flex align-c " style="height:28px">
             <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
               type="text">点击选择类目</el-button>
-            <a class="skeleton skeleton-item" v-else style="width:100px"/>
+            <a class="skeleton skeleton-item" v-else style="width:100px;height:18px"/>
+
             <div class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
               <el-tooltip :content="default_category && default_category.name"
                 :disabled="default_category.name && default_category.name.length < 18">
@@ -223,21 +224,21 @@ export default {
       loadingBrandList: false,
       visvileCategory: false,
       common,
-      title_cut_off: true,
-      title_ban_words: true,
-      banner_completion: true,
-      detail_img_cut: true,
-      is_cut_sku_spec: true,
-      is_cut_black_word: true,
-      is_cut_image_black_word: true,
-      is_banner_auto_5: true,
+      title_cut_off: undefined,
+      title_ban_words: undefined,
+      banner_completion: undefined,
+      detail_img_cut: undefined,
+      is_cut_sku_spec: undefined,
+      is_cut_black_word: undefined,
+      is_cut_image_black_word: undefined,
+      is_banner_auto_5: undefined,
 
       default_sku_stock: '',
-      is_use_default_sku_stock: false,
+      is_use_default_sku_stock: undefined,
       max_sku_stock: '',
-      is_use_max_sku_stock: false,
-      is_cut_banner_first: false,
-      is_cut_detail_last: false,
+      is_use_max_sku_stock: undefined,
+      is_cut_banner_first: undefined,
+      is_cut_detail_last: undefined,
       title_cut_type: 3,
       title_prefix: '',
       title_suffix: '',
