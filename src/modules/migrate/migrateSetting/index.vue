@@ -102,15 +102,15 @@
 
         <el-form-item label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
             <div style="display:flex;flex:1" >
-                <p style="width: 35%;text-align:right;position:relative" >
+                <p style="width: 280px;text-align:right;position:relative" >
                     <el-input v-model="back_words" @input="formatBlackWords" type="textarea"
                     size="small" placeholder="请输入自定义违规词，换行或空格，分隔多个违规词"
-                    :autosize="{ minRows: 4,maxRows: 10}"
+                    :autosize="{ minRows: 10,maxRows: 15}"
                     style="width: 100%;" >
                     </el-input>
                     <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" :disabled="!this.black_word_list.length" @click="createBlackWords" :loading="createBlackWordsLoading">添加</el-button>
                 </p>
-                <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px" v-loading="wordsTagLoading">
+                <div style="flex:1;max-width:550px;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:15px" v-loading="wordsTagLoading">
                     <el-tag v-for="(tag,index) in defaultBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
                         {{tag}}
                     </el-tag>
@@ -124,15 +124,15 @@
               <el-checkbox v-model="is_cut_image_black_word"></el-checkbox>
             </div>
             <div style="display:flex;margin-top: 10px;" >
-                <p style="width: 35%;text-align:right;position:relative" >
+                <p style="width: 280px;text-align:right;position:relative" >
                     <el-input v-model="image_back_words" @input="formatImageBlackWords" type="textarea"
                     size="small" :placeholder="placeholder"
-                    :autosize="{ minRows: 4,maxRows: 10}"
+                    :autosize="{ minRows: 10,maxRows: 15}"
                     style="width: 100%;" >
                     </el-input>
                     <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" :disabled="!this.image_black_word_list.length" @click="createImageBlackWords" :loading="createBlackWordsLoading">添加</el-button>
                 </p>
-                <div style="width:55%;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:10px" v-loading="imgTagLoading">
+                <div style="flex:1;max-width:550px;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:15px" v-loading="imgTagLoading">
                     <el-tag v-for="(tag,index) in defaultImageBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
                         {{tag}}
                     </el-tag>
@@ -240,7 +240,7 @@ export default {
       customerImageBlackWords: [],
       defaultBlackWords: [],
       defaultImageBlackWords: [],
-      placeholder: `请输入自定义违规词，换行或空格分隔多个违规词\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n检测图片会影响抓取速度，若抓取抖音商品则不检测`,
+      placeholder: `请输入自定义违规词，换行或空格分隔多个违规词\n\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n\n检测图片会影响抓取速度，若抓取抖音商品则不检测`,
       able_migrate_status_list: [
         common.productStatus.WAIT_ONLINE,
         common.productStatus.FAILED,
@@ -266,6 +266,8 @@ export default {
   mounted () {
     const tab = this.tabs
     let maxPaddingBottom = 0
+    const height = document.documentElement.offsetHeight || document.body.offSetHeight
+    console.log(height, 'height')
     const nextTab = tab.map((item, index) => {
       const className = item.className
       const el = document.querySelector(className)
@@ -273,9 +275,10 @@ export default {
       // 移动的距离 是滚动距离
       // pt的距离是 整个盒子可见部分
       const top = rect.top
+      const elHeight = rect.height
       const dist = 130
       if (tab.length - 1 === index) {
-        maxPaddingBottom = top - dist
+        maxPaddingBottom = height - elHeight - 130 - 80
       }
       return {
         ...item,
