@@ -106,6 +106,14 @@ export default {
         }
       })
     },
+    filterHandlerRecord (value) {
+      this.getProductSkuExcelPage({
+        filtersRecord: {
+          ...this.filtersRecord,
+          ...value
+        }
+      })
+    },
     filterHandler (value, row, column) {
       const status = value.status
       this.getProductSkuExcelPage({

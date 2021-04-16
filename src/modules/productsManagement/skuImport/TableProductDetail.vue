@@ -8,8 +8,10 @@
           <img :src="scope.row.sku_img_url" alt="sku图片" class="product-img">
         </template>
       </el-table-column>
-      <el-table-column prop="goods_name" label="商品信息" width="200"></el-table-column>
-      <el-table-column prop="sku_spec_names" label="SKU名称"></el-table-column>
+      <el-table-column v-if="filtersRecord.file_type === 0" prop="goods_name" label="商品信息" width="200"></el-table-column>
+      <el-table-column v-if="filtersRecord.file_type === 0" prop="sku_spec_names" label="SKU名称"></el-table-column>
+      <el-table-column v-if="filtersRecord.file_type === 1" prop="goods_name" label="商品id" width="200"></el-table-column>
+      <el-table-column v-if="filtersRecord.file_type === 1" prop="sku_spec_names" label="sku id"></el-table-column>
       <el-table-column prop="sku_code" label="SKU编码"></el-table-column>
       <el-table-column prop="sku_stock" label="SKU库存"></el-table-column>
       <el-table-column prop="sku_step_stock" label="SKU阶梯库存"></el-table-column>
@@ -61,7 +63,7 @@ export default {
     })
   },
   computed: {
-    ...mapState(['tableDataProductDetail', 'sizes', 'totalProductDetail', 'paginationProductDetail', 'parentRowData']),
+    ...mapState(['tableDataProductDetail', 'sizes', 'totalProductDetail', 'paginationProductDetail', 'parentRowData', 'filtersRecord']),
     filters: function () {
       if (!this.currentName || !this.parentRowData) return false
       const data = {status: this.currentName, parentRowData: this.parentRowData.id}

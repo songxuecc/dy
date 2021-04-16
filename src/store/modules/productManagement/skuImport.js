@@ -9,7 +9,9 @@ export default {
       page_size: 10,
       page_index: 1
     },
-    filtersRecord: {},
+    filtersRecord: {
+      file_type: 0
+    },
     tableDataRecord: [],
     paginationProductDetail: {
       page_size: 10,
