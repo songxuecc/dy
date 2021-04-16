@@ -153,10 +153,10 @@
       </el-form>
     </div>
 
-    <!-- <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
+    <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10"
         :disabled="shouldUpdate">保存设置</el-button>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -167,27 +167,6 @@ import isEqual from 'lodash/isEqual'
 import common from '@/common/common.js'
 import categorySelectView from '@/components/CategorySelectView'
 import debounce from 'lodash/debounce'
-
-function client () {
-  if (window.innerWidth != null) // ie9 +  最新浏览器
-  {
-    return {
-      width: window.innerWidth,
-      height: window.innerHeight
-    }
-  } else if (document.compatMode === 'CSS1Compat') // 标准浏览器
-  {
-    return {
-      width: document.documentElement.clientWidth,
-      height: document.documentElement.clientHeight
-    }
-  }
-  return { // 怪异浏览器
-    width: document.body.clientWidth,
-    height: document.body.clientHeight
-
-  }
-}
 
 export default {
   mixins: [request],
@@ -285,41 +264,33 @@ export default {
   },
   mounted () {
     const tab = this.tabs
-    // let topDist = 0
+    let maxPaddingBottom = 0
     const nextTab = tab.map((item, index) => {
       const className = item.className
       const el = document.querySelector(className)
       const rect = el.getBoundingClientRect()
-      const height = client().height
-      // calc(100vh - 224px - ${elHeight}px - 30px) calc(100vh - 100 - 50 - elHeight) paddingBottom: `calc(100vh - ${100 + 50 + elHeight}px)`
       // 移动的距离 是滚动距离
       // pt的距离是 整个盒子可见部分
       const top = rect.top
-
-      console.log(top, 'top')
-
       const dist = 130
-      return {...item,
+      if (tab.length - 1 === index) {
+        maxPaddingBottom = top - dist
+      }
+      return {
+        ...item,
         scrollTop: top - dist,
-        top,
-        paddingBottom: `${top - dist + 80}`
+        top
       }
     })
     this.tabs = nextTab
     this.bindScroll()
 
     this.$nextTick(() => {
-      const maxPaddingBottom = this.tabs[this.tabs.length - 1].paddingBottom
       this.mBottom = `${maxPaddingBottom}px`
     })
   },
   beforeMount () {
     this.unBindScroll()
-  },
-  watch: {
-    activeTab (n, o) {
-      this.oldActive = o
-    }
   },
   computed: {
     shouldUpdate () {
