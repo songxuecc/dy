@@ -61,7 +61,7 @@
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
-        <span slot="label">绑定复制</span>
+        <span slot="label" class="relative">绑定复制 <span class="tutorials" style="position:absolute;right:-60px;top:-10px;transform:scale(0.7)">多店铺必备</span></span>
         <div class="flex column align-c" v-if="!userBindList.length ">
           <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
@@ -158,8 +158,8 @@ export default {
       platformIconsStore,
       props: { multiple: true, expandTrigger: 'hover' },
       modelBindCopy: {
-        status: 0,
-        category_root_id_list: []
+        status: 0
+        // category_root_id_list: []
       },
       userBindList: [],
       target_user_id: '',
@@ -212,10 +212,10 @@ export default {
           label: '全选',
           children
         }]
-        const ids = (children || []).map(item => item.value)
-        this.modelBindCopy.category_root_id_list = [['all', ...ids]]
+        // const ids = (children || []).map(item => item.value)
+        // this.modelBindCopy.category_root_id_list = [['all', ...ids]]
       } else {
-        this.modelBindCopy.category_root_id_list = []
+        // this.modelBindCopy.category_root_id_list = []
         this.bandShopTip = {}
       }
     }
@@ -365,7 +365,8 @@ export default {
       const status = obj[this.modelBindCopy.status]
       const targetUserId = this.target_user_id
       const parmas = {
-        category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
+        // category_root_id_list: JSON.stringify([]),
+        ...status, target_user_id: targetUserId, capture_type: 2
       }
       this.capture(parmas, false)
     },
