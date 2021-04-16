@@ -6,7 +6,7 @@
         {{ syncStatus.last_sync_time }} </span></p>
     <p class="font-14 ">2、每次支持3000个sku修改，可修改维度有：sku编码、库存、价格&nbsp;<a class="pramiry pointer" style="font-size:14px" @click="downloadExcel">{{getFileName}}</a> </p>
     <p class="font-14 ">3、仅支持售卖中、已下架的商品修改 </p>
-    <p v-if="isByTitle" class="font-14 ">4、保证导入的商品标题、规格名与抖店后台一致 </p>
+    <p v-if="isByTitle" class="font-14 ">4、保证导入的商品标题、规格名与抖店后台一致。多个SKU规格请用英文逗号分隔，如：红色,36码 </p>
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false" :data="getFileUploadData"
       :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders" :on-success="skuExcelImportSuccess"
       :before-upload="beforeUpload" :on-progress="skuExcelImporting" :on-error="skuExcelImportError">

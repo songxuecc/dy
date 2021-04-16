@@ -5,7 +5,8 @@
     <el-tab-pane label="按商品名、规格名匹配" name="byTitle">
       <UploadFile :activeName="activeName"/>
     </el-tab-pane>
-    <el-tab-pane label="按商品ID、规格ID匹配" name="byId">
+    <el-tab-pane name="byId">
+      <span slot="label">按商品ID、规格ID匹配<NewFeatureTips type="根据id导入匹配" /></span>
       <UploadFile :activeName="activeName"/>
     </el-tab-pane>
   </el-tabs>
