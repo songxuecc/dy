@@ -102,19 +102,19 @@
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <p class="left font-12 mt-20 bold"  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="common-bottom" v-if="activeName === 'single'">
-      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture">
-        <span style="width:120px">开始复制</span>
+      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture" style="width:160px;height:50px;font-size:16px">
+        <span >开始复制</span>
         <el-badge :value="captureUrlNums"></el-badge>
       </el-button>
     </div>
     <!-- 整店复制 -->
     <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
     <div class="common-bottom" v-if="activeName === 'shop'">
-      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture"  style="width:120px">开始复制</el-button>
+      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
     </div>
     <!-- 绑定复制 -->
     <div class="common-bottom" v-if="activeName === 'bindCopy' && userBindList.length ">
-      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture" style="width:120px">开始复制
+      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture" style="width:160px;height:50px;font-size:16px">开始复制
       </el-button>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy'"/>
