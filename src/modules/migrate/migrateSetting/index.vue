@@ -15,6 +15,7 @@
           <div>
             <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
               type="text">点击选择类目</el-button>
+            <a class="skeleton skeleton-item" v-else style="width:100px"/>
             <div class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
               <el-tooltip :content="default_category && default_category.name"
                 :disabled="default_category.name && default_category.name.length < 18">
@@ -646,8 +647,6 @@ export default {
       }
       this.visvileCategory = false
       this.default_category = category
-
-      console.log(category, 'category')
       this.default_category_id = category.id
     },
     chooseCategory () {
@@ -655,6 +654,7 @@ export default {
     },
     removeCategory () {
       this.default_category = {}
+      this.default_category_id = 0
     },
     async loadData () {
       this.loadingBrandList = true
