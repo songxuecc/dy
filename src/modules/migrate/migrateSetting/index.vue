@@ -123,7 +123,7 @@
             <div style="display:flex;flex:1" >
                 <p style="width: 280px;text-align:right;position:relative" >
                     <el-input v-model="back_words" @input="formatBlackWords" type="textarea"
-                    size="small" placeholder="请输入自定义违规词，换行或空格，分隔多个违规词"
+                    size="small" placeholder="请输入自定义违规词，换行或空格或逗号，分隔多个违规词"
                     :autosize="{ minRows: 10,maxRows: 15}"
                     style="width: 100%;" >
                     </el-input>
@@ -208,7 +208,6 @@ export default {
       model: {},
       loadingBrandList: false,
       visvileCategory: false,
-      default_brand_id: '',
       common,
       title_cut_off: true,
       title_ban_words: true,
@@ -230,6 +229,8 @@ export default {
       title_suffix: '',
       source_title_str: '',
       target_title_str: '',
+      default_category_id: undefined,
+      default_brand_id: 0,
 
       property_radio: '1',
       goods_property_selected: '',
@@ -266,7 +267,7 @@ export default {
       customerImageBlackWords: [],
       defaultBlackWords: [],
       defaultImageBlackWords: [],
-      placeholder: `请输入自定义违规词，换行或空格分隔多个违规词\n\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n\n检测图片会影响抓取速度，若抓取抖音商品则不检测`,
+      placeholder: `请输入自定义违规词，换行或空格或逗号分隔多个违规词\n\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n\n检测图片会影响抓取速度，若抓取抖音商品则不检测`,
       able_migrate_status_list: [
         common.productStatus.WAIT_ONLINE,
         common.productStatus.FAILED,
@@ -374,6 +375,8 @@ export default {
     },
     shouldUpdate () {
       const product = this.getFormatSettings()
+
+      console.log(product, 'product')
       const isEqualSetting = isEqual(this.originMigrateSetting, product)
       const blackWords = new Set(this.blackWords)
       const originBlackWords = new Set([
@@ -476,12 +479,6 @@ export default {
       }
     },
     getFormatSettings () {
-      if (this.is_use_default_sku_stock) {
-
-      }
-      if (this.is_use_max_sku_stock) {
-
-      }
       const product = {
         ...this.originMigrateSetting,
         title_cut_off: Number(this.title_cut_off),
@@ -508,8 +505,12 @@ export default {
         title_prefix: this.title_prefix,
         title_suffix: this.title_suffix,
         source_title_str: this.source_title_str,
-        target_title_str: this.target_title_str
+        target_title_str: this.target_title_str,
+        default_category_id: Number(this.default_category_id),
+        default_brand_id: Number(this.default_brand_id)
       }
+
+      console.log(product, 'product')
       return product
     },
     async saveSetting () {
@@ -574,12 +575,12 @@ export default {
       }
     },
     formatBlackWords () {
-      let value = this.back_words.split(/[\s\n]/)
+      let value = this.back_words.split(/[\s\n,，]/)
       value = value.map((s) => s.trim()).filter((s) => s !== '')
       this.black_word_list = [...new Set(value)]
     },
     formatImageBlackWords () {
-      let value = this.image_back_words.split(/[\s\n]/)
+      let value = this.image_back_words.split(/[\s\n,，]/)
       value = value.map((s) => s.trim()).filter((s) => s !== '')
       this.image_black_word_list = [...new Set(value)]
     },
@@ -645,6 +646,9 @@ export default {
       }
       this.visvileCategory = false
       this.default_category = category
+
+      console.log(category, 'category')
+      this.default_category_id = category.id
     },
     chooseCategory () {
       this.visvileCategory = true
