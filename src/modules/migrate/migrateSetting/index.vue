@@ -64,7 +64,7 @@
         </el-form-item>
 
         <el-form-item required  label="sku编码:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-code">
-            <p class="font-12">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
+            <p class="font-12">用商品ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
         </el-form-item>
 
         <el-form-item required label="sku规格:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-spec">
