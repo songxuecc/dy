@@ -17,6 +17,8 @@ import ProductList from '@migrate/readyToMigrate'
 import StartMigrate from '@migrate/startMigrate'
 import MigrateList from '@migrate/migrateList'
 import CaptureList from '@migrate/captureList'
+import ProductionCollection from '@migrate/productionCollection'
+
 // 商品管理
 import SkuImport from '@productsManagement/skuImport'
 import BatchEdit from '@productsManagement/batchEdit/BatchEdit'
@@ -135,6 +137,15 @@ const router = new Router({
       path: '/migrate/productList',
       name: 'ProductList',
       component: ProductList,
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/migrate/productionCollection',
+      name: 'ProductList',
+      component: ProductionCollection,
       meta: {
         keepAlive: true,
         requiresAuth: true
