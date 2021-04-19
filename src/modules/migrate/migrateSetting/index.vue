@@ -82,8 +82,8 @@
           <p class="flex align-c mb-5">
             <span style="font-size: 12px;margin-right:4px">超过30个字</span>
             <el-radio-group v-model="title_cut_type">
-              <el-radio :label="2">自动去开头</el-radio>
               <el-radio :label="1">自动去末尾</el-radio>
+              <el-radio :label="2">自动去开头</el-radio>
               <el-radio :label="3">手动处理</el-radio>
             </el-radio-group>
           </p>
