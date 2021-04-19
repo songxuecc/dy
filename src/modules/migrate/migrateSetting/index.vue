@@ -468,7 +468,8 @@ export default {
         'is_cut_banner_first',
         'is_cut_detail_last',
         'is_open_title_prefix_suffix',
-        'is_open_title_replace'
+        'is_open_title_replace',
+        'goods_code_type'
       ]
       Object.keys(data).forEach((key) => {
         this[key] = boolPropertys.includes(key) ? Boolean(data[key]) : data[key]
@@ -526,10 +527,10 @@ export default {
         is_cut_black_word: Number(this.is_cut_black_word),
         is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
+        goods_code_type: Number(this.goods_code_type),
         property_radio: this.property_radio,
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
-        goods_code_type: Number(this.goods_code_type),
         goods_property: this.goods_property_options,
         able_migrate_status_list: this.able_migrate_status_list,
         default_sku_stock: this.default_sku_stock,
