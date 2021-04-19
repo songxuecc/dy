@@ -845,7 +845,7 @@ export default {
       this.closeNewComer()
       this.saveTempTemplate()
       this.$router.push({
-        path: '/migrateSettingTemplate'
+        name: 'MigrateSettingTemplate'
       })
     },
     // 抹角 抹分 last_discount_price 手工修改划线价触发price
