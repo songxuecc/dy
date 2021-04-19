@@ -110,6 +110,10 @@
                   style="width: 357px;"/>
               </el-form-item>
             </el-form>
+            <el-button type="text" @click="moreSetting" size="small"  style="margin-right:45px">
+              <i class="el-icon-s-tools" style="margin-right:3px;"></i>更多设置
+              <hh-icon type="iconjingshi" style="font-size:8px;margin-right:3px;"></hh-icon><span class="info">请在复制前进行设置！！！！</span>
+            </el-button>
       </el-tab-pane>
     </el-tabs>
 
