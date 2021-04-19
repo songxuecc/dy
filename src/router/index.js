@@ -14,13 +14,13 @@ import MigrateSettingTemplate from '@migrate/migrateSettingTemplate'
 import MigrateSetting from '@migrate/migrateSetting'
 import MigrateSettingPrice from '@migrate/migrateSettingPrice'
 import ProductList from '@migrate/readyToMigrate'
-import Migrate from '@migrate/startMigrate'
+import StartMigrate from '@migrate/startMigrate'
 import MigrateList from '@migrate/migrateList'
 import CaptureList from '@migrate/captureList'
 // 商品管理
 import SkuImport from '@productsManagement/skuImport'
 import BatchEdit from '@productsManagement/batchEdit/BatchEdit'
-import DyProductList from '@productsManagement/allProducts/DyProductList'
+import AllProducts from '@productsManagement/allProducts/DyProductList'
 // 更多更能
 import MeizheInfo from '@moreFeatures/meizheInfo'
 import WodaInfo from '@moreFeatures/wodaInfo'
@@ -40,21 +40,21 @@ const router = new Router({
       }
     },
     {
-      path: '/meizhe',
+      path: '/customerSetting/meizhe',
       component: MeizheInfo,
       meta: {
         keepAlive: true
       }
     },
     {
-      path: '/woda',
+      path: '/customerSetting/woda',
       component: WodaInfo,
       meta: {
         keepAlive: true
       }
     },
     {
-      path: '/info',
+      path: '/customerSetting/info',
       name: 'AppInfo',
       component: AppInfo,
       meta: {
@@ -78,16 +78,16 @@ const router = new Router({
       }
     },
     {
-      path: '/migrate',
-      name: 'Migrate',
-      component: Migrate,
+      path: '/migrate/startMigrate',
+      name: 'StartMigrate',
+      component: StartMigrate,
       meta: {
         keepAlive: true,
         requiresAuth: true
       }
     },
     {
-      path: '/migrateList',
+      path: '/migrate/migrateList',
       name: 'MigrateList',
       component: MigrateList,
       meta: {
@@ -95,7 +95,7 @@ const router = new Router({
       }
     },
     {
-      path: '/captureList',
+      path: '/migrate/captureList',
       name: 'CaptureList',
       component: CaptureList,
       meta: {
@@ -104,34 +104,7 @@ const router = new Router({
       }
     },
     {
-      path: '/productList',
-      name: 'ProductList',
-      component: ProductList,
-      meta: {
-        keepAlive: true,
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/dyProductList',
-      name: 'DyProductList',
-      component: DyProductList,
-      meta: {
-        keepAlive: true,
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/batchEdit/:tab',
-      name: 'BatchEdit',
-      component: BatchEdit,
-      meta: {
-        keepAlive: true,
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/migrateSetting',
+      path: '/migrate/migrateSetting',
       name: 'MigrateSetting',
       component: MigrateSetting,
       meta: {
@@ -140,7 +113,7 @@ const router = new Router({
       }
     },
     {
-      path: '/migrateSettingPrice',
+      path: '/migrate/migrateSettingPrice',
       name: 'MigrateSettingPrice',
       component: MigrateSettingPrice,
       meta: {
@@ -149,7 +122,7 @@ const router = new Router({
       }
     },
     {
-      path: '/migrateSettingTemplate',
+      path: '/migrate/migrateSettingTemplate',
       name: 'MigrateSettingTemplate',
       component: MigrateSettingTemplate,
       meta: {
@@ -157,8 +130,37 @@ const router = new Router({
         requiresAuth: true
       }
     },
+
     {
-      path: '/skuImport',
+      path: '/migrate/productList',
+      name: 'ProductList',
+      component: ProductList,
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/productsManagement/allProducts',
+      name: 'AllProducts',
+      component: AllProducts,
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/productsManagement/batchEdit/:tab',
+      name: 'BatchEdit',
+      component: BatchEdit,
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/productsManagement/skuImport',
       name: 'SkuImport',
       component: SkuImport,
       meta: {
@@ -167,7 +169,7 @@ const router = new Router({
       }
     },
     {
-      path: '/service',
+      path: '/customerSetting/service',
       name: 'CustomerService',
       component: CustomerService,
       meta: {
@@ -175,12 +177,12 @@ const router = new Router({
       }
     },
     {
-      path: '/authorize',
+      path: '/customerSetting/authorize',
       name: 'Login',
       component: Login
     },
     {
-      path: '/fake',
+      path: '/customerSetting/fake',
       name: 'Fake',
       component: Fake,
       meta: {
@@ -188,7 +190,7 @@ const router = new Router({
       }
     },
     {
-      path: '/my',
+      path: '/customerSetting/my',
       name: 'SubscribeList',
       component: SubscribeList,
       meta: {
@@ -197,7 +199,7 @@ const router = new Router({
       }
     },
     {
-      path: '/payOrder/:orderId/',
+      path: '/customerSetting/payOrder/:orderId/',
       name: 'PayOrder',
       component: PayOrder,
       meta: {
@@ -205,51 +207,8 @@ const router = new Router({
         requiresAuth: true
       }
     },
-    // {
-    //   path: '/wm',
-    //   name: 'watermark',
-    //   component: resolve => require(['@productsManagement/WaterMark'], resolve),
-    //   meta: {
-    //     requiresAuth: true
-    //     // keepAlive: true,
-    //   },
-    //   children: [
-    //     {
-    //       path: 'activity',
-    //       name: 'WaterMarkActivityList',
-    //       component: resolve => require(['@/components/WaterMarkActivityListView.vue'], resolve),
-    //       meta: {
-    //         keepAlive: true
-    //       }
-    //     },
-    //     {
-    //       path: 'activity/detail/:id',
-    //       name: 'WaterMarkActivity',
-    //       component: resolve => require(['@/components/WaterMarkActivityView.vue'], resolve),
-    //       meta: {
-    //         keepAlive: true
-    //       }
-    //     },
-    //     {
-    //       path: 'activity/create',
-    //       name: 'WaterMarkActivityCreate',
-    //       component: resolve => require(['@/components/WaterMarkActivityCreateView.vue'], resolve),
-    //       meta: {
-    //         keepAlive: true
-    //       }
-    //     },
-    //     {
-    //       path: 'list',
-    //       name: 'WaterMarkList',
-    //       component: resolve => require(['@/components/WaterMarkListView.vue'], resolve),
-    //       meta: {
-    //         keepAlive: true
-    //       }
-    //     }
-    //   ]
-    // },
     {
-      path: '/wm/create/:water_mark_type/:water_mark_id',
+      path: '/shopDecorate/wm/create/:water_mark_type/:water_mark_id',
       name: 'WaterMaskCreate',
       component: resolve => require(['@shopDecorate/waterMaskCreate'], resolve),
       meta: {
@@ -259,7 +218,7 @@ const router = new Router({
       }
     },
     {
-      path: '/poster/dg',
+      path: '/shopDecorate/poster/dg',
       name: 'PosterDg',
       component: resolve => require(['@shopDecorate/posterDg'], resolve),
       meta: {

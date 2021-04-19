@@ -95,7 +95,7 @@ export default {
       })
       this.saveTempTemplate()
       this.$router.push({
-        path: '/migrateSettingTemplate'
+        name: 'MigrateSettingTemplate'
       })
     },
     goback () {

@@ -188,25 +188,5 @@ export default {
     }
   }
 }
-.skeleton-item {
-  height:24px;
-  width:290px;
-  display:inline-block;
-  margin-right: 5px;
-  border-radius: 2px;
-}
-.skeleton {
-  background: linear-gradient(90deg,#f2f2f2 25%,#e6e6e6 37%,#f2f2f2 63%);
-  background-size: 400% 100%;
-  -webkit-animation: hh-skeleton-loading 1.4s ease infinite;
-  animation: hh-skeleton-loading 1.4s ease infinite;
-}
-@keyframes hh-skeleton-loading {
-  0% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
-}
+
 </style>

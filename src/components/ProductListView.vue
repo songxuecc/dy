@@ -517,7 +517,7 @@ export default {
             params['captureId'] = data.capture_id
           }
           self.$router.push({
-            path: '/productList',
+            path: '/migrate/productList',
             query: params
           })
           self.reload()
@@ -570,7 +570,7 @@ export default {
           params['captureId'] = data.capture_id
         }
         self.$router.push({
-          path: '/productList',
+          path: '/migrate/productList',
           query: params
         })
         self.reload()

@@ -62,7 +62,7 @@ export default {
         this.message = '授权成功'
         if (from === '') {
           this.$router.push({
-            path: '/migrate'
+            path: '/migrate/startMigrate'
           })
         } else {
           this.$router.push({

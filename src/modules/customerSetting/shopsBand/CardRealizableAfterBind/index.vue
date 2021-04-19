@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     open () {
-      this.$router.push({ name: 'Migrate',
+      this.$router.push({ name: 'StartMigrate',
         params: {
           activeName: 'bindCopy'
         }

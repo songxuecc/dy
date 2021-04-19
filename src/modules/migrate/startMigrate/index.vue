@@ -61,7 +61,7 @@
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
-        <span slot="label">绑定复制</span>
+        <span slot="label" class="relative">绑定复制 <span class="tutorials" style="position:absolute;right:-60px;top:-10px;transform:scale(0.7)">多店铺必备</span></span>
         <div class="flex column align-c" v-if="!userBindList.length ">
           <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
@@ -118,7 +118,7 @@
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <p class="left font-12 mt-20 bold"  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="common-bottom" v-if="activeName === 'single'">
-      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading">
+      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px">
         <span style="width:120px">开始复制</span>
         <el-badge :value="captureUrlNums"></el-badge>
       </el-button>
@@ -126,11 +126,11 @@
     <!-- 整店复制 -->
     <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
     <div class="common-bottom" v-if="activeName === 'shop'">
-      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:120px">开始复制</el-button>
+      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
     </div>
     <!-- 绑定复制 -->
     <div class="common-bottom " v-if="activeName === 'bindCopy' && userBindList.length ">
-      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:120px" class="ralative">开始复制
+      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:160px;height:50px;font-size:16px" class="ralative">开始复制
         <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
       </el-button>
     </div>
@@ -179,7 +179,7 @@ export default {
       props: { multiple: true, expandTrigger: 'hover' },
       modelBindCopy: {
         status: 0,
-        category_root_id_list: [],
+        // category_root_id_list: [],
         goods_ids: ''
       },
       userBindList: [],
@@ -263,10 +263,10 @@ export default {
           label: '全选',
           children
         }]
-        const ids = (children || []).map(item => item.value)
-        this.modelBindCopy.category_root_id_list = [['all', ...ids]]
+        // const ids = (children || []).map(item => item.value)
+        // this.modelBindCopy.category_root_id_list = [['all', ...ids]]
       } else {
-        this.modelBindCopy.category_root_id_list = []
+        // this.modelBindCopy.category_root_id_list = []
         this.bandShopTip = {}
       }
     }
@@ -498,7 +498,7 @@ export default {
       const status = obj[this.modelBindCopy.status]
       const targetUserId = this.target_user_id
       const parmas = {
-        category_root_id_list: JSON.stringify([]),
+        // category_root_id_list: JSON.stringify([]),
         ...status,
         capture_type: 2,
         target_user_id: targetUserId,
@@ -520,7 +520,7 @@ export default {
           this.isStartCapture = false
           let captureId = data.capture_id
           this.$router.push({
-            path: '/productList',
+            path: '/migrate/productList',
             query: {
               captureId: captureId
             }
@@ -593,7 +593,7 @@ export default {
       } else {
         let captureId = response.data.capture_id
         this.$router.push({
-          path: '/productList',
+          path: '/migrate/productList',
           query: {
             captureId: captureId
           }

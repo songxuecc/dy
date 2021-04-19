@@ -696,7 +696,7 @@ export default {
         params['captureId'] = this.capture.capture_id
         params['pageId'] = this.pagination.index
         this.$router.push({
-          path: '/productList',
+          path: '/migrate/productList',
           query: params
         })
         this.reload()
@@ -709,7 +709,7 @@ export default {
             let params = {}
             params['captureId'] = data.capture_id
             self.$router.push({
-              path: '/productList',
+              path: '/migrate/productList',
               query: params
             })
             self.reload()

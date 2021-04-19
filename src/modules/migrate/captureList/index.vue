@@ -161,7 +161,7 @@ export default {
     captureWatch (capture) {
       this.setCaptureIdList(capture.detail_list.map(item => item.capture_id))
       this.$router.push({
-        path: '/migrateList'
+        path: '/migrate/migrateList'
       })
     }
   }
