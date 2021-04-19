@@ -179,7 +179,6 @@ export default {
       props: { multiple: true, expandTrigger: 'hover' },
       modelBindCopy: {
         status: 0,
-        // category_root_id_list: [],
         goods_ids: ''
       },
       userBindList: [],
@@ -264,10 +263,7 @@ export default {
           label: '全选',
           children
         }]
-        // const ids = (children || []).map(item => item.value)
-        // this.modelBindCopy.category_root_id_list = [['all', ...ids]]
       } else {
-        // this.modelBindCopy.category_root_id_list = []
         this.bandShopTip = {}
       }
     }
@@ -457,7 +453,6 @@ export default {
           // 有id可以用
           } else if (idsCheck && !idsCheck.lost_goods_id_list.length) {
             const parmas = {
-              category_root_id_list: JSON.stringify([]),
               ...status,
               capture_type: 2,
               target_user_id: targetUserId,
@@ -467,14 +462,8 @@ export default {
           }
         } else {
           // 直接复制
-          if (!this.modelBindCopy.category_root_id_list.length) {
-            return this.$message({
-              message: '请选择类目',
-              type: 'warning'
-            })
-          }
           const parmas = {
-            category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
+            ...status, target_user_id: targetUserId, capture_type: 2
           }
           this.capture(parmas, false)
         }
@@ -499,7 +488,6 @@ export default {
       const status = obj[this.modelBindCopy.status]
       const targetUserId = this.target_user_id
       const parmas = {
-        // category_root_id_list: JSON.stringify([]),
         ...status,
         capture_type: 2,
         target_user_id: targetUserId,
