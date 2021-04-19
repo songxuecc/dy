@@ -48,7 +48,7 @@
                   <el-input-number v-model="max_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
               </el-form-item>
               <el-form-item style="display:inline;margin-bottom:0" prop="is_use_max_sku_stock">
-                  <el-switch v-model="is_use_max_sku_stock" />
+                  <el-switch v-model="is_use_max_sku_stock" @change="handleIsUseMaxSkuStock"/>
               </el-form-item>
             </p>
 
@@ -58,7 +58,7 @@
                   <el-input-number v-model="default_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
               </el-form-item>
               <el-form-item style="display:inline;margin-bottom:0" prop="is_use_default_sku_stock">
-                  <el-switch v-model="is_use_default_sku_stock" />
+                  <el-switch v-model="is_use_default_sku_stock" @change="handleIsUseDefaultSkuStock"/>
               </el-form-item>
             </p>
         </el-form-item>
@@ -122,6 +122,10 @@
         </el-form-item>
 
         <el-form-item required label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
+            <div>
+              <span style="font-size: 12px;"><span style="color: red;">*</span>违禁词自动过滤</span>
+              <el-switch v-model="is_cut_black_word" />
+            </div>
             <div style="display:flex;flex:1" >
                 <p style="width: 280px;text-align:right;position:relative" >
                     <el-input v-model="back_words" @input="formatBlackWords" type="textarea"
@@ -142,9 +146,9 @@
             </div>
             <div style="margin-top: 10px;">
               <span style="font-size: 12px;"><span style="color: red;">*</span>轮播首图、详情尾图违规词自动删除</span>
-              <el-checkbox v-model="is_cut_image_black_word"></el-checkbox>
+              <el-switch v-model="is_cut_image_black_word" />
             </div>
-            <div style="display:flex;margin-top: 10px;" >
+            <div style="display:flex;" >
                 <p style="width: 280px;text-align:right;position:relative" >
                     <el-input v-model="image_back_words" @input="formatImageBlackWords" type="textarea"
                     size="small" :placeholder="placeholder"
@@ -726,6 +730,12 @@ export default {
         })
         this.bindScroll()
       })
+    },
+    handleIsUseMaxSkuStock (value) {
+      this.is_use_default_sku_stock = !value
+    },
+    handleIsUseDefaultSkuStock (value) {
+      this.is_use_max_sku_stock = !value
     }
   }
 }

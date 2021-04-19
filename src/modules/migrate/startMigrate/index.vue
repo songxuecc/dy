@@ -61,7 +61,7 @@
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
-        <span slot="label" class="relative">绑定复制 <span class="tutorials" style="position:absolute;right:-60px;top:-10px;transform:scale(0.7)">多店铺必备</span></span>
+        <span slot="label" class="relative">绑定复制 <span class="tutorials" style="position:absolute;right:-65px;top:-10px;transform:scale(0.8)">多店铺必备</span></span>
         <div class="flex column align-c" v-if="!userBindList.length ">
           <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"

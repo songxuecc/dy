@@ -28,7 +28,11 @@
                     <el-radio :label="0">否</el-radio>
                 </el-radio-group>
             </el-form-item> -->
-            <el-button type="text" @click="moreSetting" size="small"  style="margin-right:4px"><i class="el-icon-s-tools" style="margin-right:3px"></i>更多设置 <span class="fail">请在复制前进行设置！！！！</span></el-button>
+            <el-button type="text" @click="moreSetting" size="small"  style="margin-right:45px"><i class="el-icon-s-tools" style="margin-right:3px"></i>更多设置
+            </el-button>
+
+              <span  style="color:rgb(250, 100, 0);line-height:36px"><hh-icon type="icontixing"></hh-icon> 请在复制前进行设置！！！！</span>
+
         </el-form>
         <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
             <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
