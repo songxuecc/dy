@@ -217,7 +217,7 @@ export default {
         { label: '轮播图、详情图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
-        { label: '规则信息', className: '.migrateSetting-rule' }
+        { label: '违规信息', className: '.migrateSetting-rule' }
       ],
       mBottom: `150px`,
       activeTab: 0,
