@@ -201,6 +201,7 @@ export default {
           })
         })
         .catch(_ => {
+          this.revertData()
           next()
         })
     }
@@ -427,6 +428,11 @@ export default {
     }
   },
   methods: {
+    revertData () {
+      Object.keys(this.originMigrateSetting).forEach(key => {
+        this[key] = this.originMigrateSetting[key]
+      })
+    },
     beforeunloadFn (e) {
       if (this.shouldUpdate) return false
       let msg = '离开后本页面更改不会被保存'
