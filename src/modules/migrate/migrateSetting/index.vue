@@ -170,7 +170,7 @@
 
     <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px"
-        :disabled="shouldUpdate">保存设置</el-button>
+        :disabled="shouldUpdate || loadingSettings">保存设置</el-button>
     </div>
   </div>
 </template>
@@ -277,6 +277,7 @@ export default {
       auto_delete: '',
       wordsTagLoading: false,
       imgTagLoading: false,
+      loadingSettings: true,
       typeList: ['default', 'success', 'info', 'warning', 'danger'],
       black_word_list: [],
       image_black_word_list: [],
@@ -475,6 +476,7 @@ export default {
     },
     async getSetting () {
       try {
+        this.loadingSettings = true
         const self = this
         const [setting, blackWords, imgBlackWords] = await Promise.all([
           Api.hhgjAPIs.getMigrateSetting({}),
@@ -508,6 +510,8 @@ export default {
         this.imageBlackWords = imgBlackWords.customer
         this.customerImageBlackWords = imgBlackWords.customer
         this.defaultImageBlackWords = imgBlackWords.default
+
+        this.loadingSettings = false
       } catch (error) {
         this.$message.error(`${error}`)
       }
