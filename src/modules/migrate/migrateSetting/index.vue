@@ -91,7 +91,7 @@
               <el-radio :label="3">手动处理</el-radio>
             </el-radio-group>
           </p>
-          <div style="display:flex;margin-bottom:5px">
+          <div style="display:flex;margin-bottom:5px" class="align-c">
             <p style="margin-right:10px">
               <el-input v-model="title_prefix" placeholder="前缀" style="width: 280px;margin-right:10px"></el-input>
               <span style="font-size:12px;margin-right:24px">原标题</span>
@@ -99,8 +99,9 @@
             <p>
               <el-input v-model="title_suffix" placeholder="后缀" style="width: 280px;"></el-input>
             </p>
+            <el-switch v-model="is_open_title_prefix_suffix"  class="ml-5"/>
           </div>
-          <div style="display:flex;margin-bottom:5px">
+          <div style="display:flex;margin-bottom:5px" class="align-c">
             <p style="margin-right:10px">
               <el-input v-model="source_title_str" style="width: 280px;margin-right:10px"></el-input>
               <span style="font-size:12px">全部替换为</span>
@@ -108,6 +109,7 @@
             <p>
               <el-input v-model="target_title_str" style="width: 280px;"></el-input>
             </p>
+            <el-switch v-model="is_open_title_replace" class="ml-5"/>
           </div>
         </el-form-item>
 
@@ -237,6 +239,8 @@ export default {
       is_cut_image_black_word: undefined,
       is_banner_auto_5: undefined,
 
+      is_open_title_prefix_suffix: undefined,
+      is_open_title_replace: undefined,
       default_sku_stock: '',
       is_use_default_sku_stock: undefined,
       max_sku_stock: '',
@@ -465,7 +469,9 @@ export default {
         'is_use_default_sku_stock',
         'is_use_max_sku_stock',
         'is_cut_banner_first',
-        'is_cut_detail_last'
+        'is_cut_detail_last',
+        'is_open_title_prefix_suffix',
+        'is_open_title_replace'
       ]
       Object.keys(data).forEach((key) => {
         this[key] = boolPropertys.includes(key) ? Boolean(data[key]) : data[key]
@@ -532,6 +538,8 @@ export default {
         max_sku_stock: this.max_sku_stock,
         is_cut_banner_first: Number(this.is_cut_banner_first),
         is_cut_detail_last: Number(this.is_cut_detail_last),
+        is_open_title_prefix_suffix: Number(this.is_open_title_prefix_suffix),
+        is_open_title_replace: Number(this.is_open_title_replace),
         title_cut_type: this.title_cut_type,
         title_prefix: this.title_prefix,
         title_suffix: this.title_suffix,
