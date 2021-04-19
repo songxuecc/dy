@@ -550,7 +550,6 @@ export default {
         default_brand_id: Number(this.default_brand_id)
       }
 
-      console.log(product, 'product')
       return product
     },
     async saveSetting () {
@@ -559,7 +558,6 @@ export default {
       }
       const product = this.getFormatSettings()
 
-      console.log(product, 'product')
       let productParams = {
         json: JSON.stringify(product)
       }
