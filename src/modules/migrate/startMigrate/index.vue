@@ -201,6 +201,7 @@ export default {
   activated () {
     this.getUserBindList()
     this.getUserAccountQuery()
+    // this.$refs.setting.getMigrateSetting()
     if (this.$route.params.activeName) {
       this.activeName = this.$route.params.activeName || 'single'
     }

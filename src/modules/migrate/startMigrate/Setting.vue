@@ -84,7 +84,7 @@ export default {
         if (typeof setting.is_banner_auto_5 !== 'undefined') {
           this.model.is_banner_auto_5 = setting.is_banner_auto_5
         }
-        if (setting.default_brand_id) {
+        if (typeof setting.default_brand_id !== 'undefined') {
           this.model.default_brand_id = setting.default_brand_id
         }
         if (setting.default_category_id && setting.default_category) {

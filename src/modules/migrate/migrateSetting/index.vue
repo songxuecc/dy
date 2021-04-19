@@ -230,7 +230,7 @@ export default {
       common,
       title_cut_off: undefined,
       title_ban_words: undefined,
-      banner_completion: undefined,
+      // banner_completion: undefined,
       detail_img_cut: undefined,
       is_cut_sku_spec: undefined,
       is_cut_black_word: undefined,
@@ -483,7 +483,6 @@ export default {
           self.loadData()
         ])
         this.originMigrateSetting = setting
-
         this.updateMigrateSettingData(setting)
         // 默认设置
         if (setting.default_category) {
@@ -522,7 +521,6 @@ export default {
         is_cut_black_word: Number(this.is_cut_black_word),
         is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
-        banner_completion: Number(this.banner_completion),
         property_radio: this.property_radio,
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
