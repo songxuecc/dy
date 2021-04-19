@@ -1,11 +1,11 @@
 <template lang="html">
     <div>
       <el-menu :default-active='$route.path'  mode="horizontal" router active-text-color="#409EFF">
-        <el-menu-item index="/poster/dg/list">
+        <el-menu-item index="/shopDecorate/poster/dg/list">
           <template slot="title">
             <span>详情海报模版</span></template>
         </el-menu-item>
-        <el-menu-item index="/poster/dg/activity">
+        <el-menu-item index="/shopDecorate/poster/dg/activity">
           <template slot="title">
             <span>详情海报活动</span></template>
         </el-menu-item>
