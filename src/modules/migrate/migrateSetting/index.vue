@@ -194,7 +194,7 @@ export default {
     if (this.shouldUpdate) {
       next()
     } else {
-      this.$confirm('您为保存，是否先保存再关闭？')
+      this.$confirm('您未保存，是否先保存再关闭？')
         .then(_ => {
           this.saveSetting().then(() => {
             next()
