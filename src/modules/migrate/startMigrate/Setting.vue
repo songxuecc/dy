@@ -85,7 +85,7 @@ export default {
           this.model.is_banner_auto_5 = setting.is_banner_auto_5
         }
         if (typeof setting.default_brand_id !== 'undefined') {
-          this.model.default_brand_id = setting.default_brand_id
+          this.model.default_brand_id = setting.default_brand_id || 0
         }
         if (setting.default_category_id && setting.default_category) {
           setting.default_category.name = setting.default_category.levels.map(item => item.name).join(' > ')

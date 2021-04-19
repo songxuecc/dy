@@ -488,15 +488,14 @@ export default {
         if (setting.default_category) {
           this.default_category = setting.default_category
         }
-        if (setting.default_brand_id) {
-          this.default_brand_id = setting.default_brand_id
+        if (typeof setting.default_brand_id !== 'undefined') {
+          this.default_brand_id = setting.default_brand_id || 0
         }
         if (setting.default_category_id && setting.default_category) {
           setting.default_category.name = setting.default_category.levels
             .map((item) => item.name)
             .join(' > ')
           setting.default_category.id = setting.default_category_id
-          this.default_category_id = setting.default_category.id
         }
 
         // 违规词
