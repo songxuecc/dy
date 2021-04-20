@@ -1,4 +1,4 @@
-<!-- sku导入详情 -->
+<!-- SKU导入详情 -->
 <template>
 <div>
   <el-alert type="warning" :closable="false" @tab-click="handleClick">

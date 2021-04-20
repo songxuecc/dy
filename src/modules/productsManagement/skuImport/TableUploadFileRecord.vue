@@ -1,4 +1,4 @@
-<!-- sku导入列表 -->
+<!-- SKU导入列表 -->
 <template>
   <div class="TableUploadFileRecord mt-10">
     <el-table :data="tableDataRecord" @filter-change="filterHandler"  :row-style="{height:'53px'}" :header-cell-style="{padding: 0}" stripe style="width: 100%;" header-row-class-name="label"   row-key="id">

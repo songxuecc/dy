@@ -99,7 +99,7 @@ export default {
     },
     open (id) {
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', 'sku导入', '详情', '前往抖音后台查看提交的商品'])
+        window._hmt.push(['_trackEvent', 'SKU导入', '详情', '前往抖音后台查看提交的商品'])
       }
       if (id) {
         window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + id)
