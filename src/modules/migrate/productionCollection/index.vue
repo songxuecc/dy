@@ -11,13 +11,13 @@
     </div>
 
     <div>
-        <p class="color-4e mb-10">如何操作</p>
-        <div class="card">
-            <img src="@/assets/images/tm.png" alt="" style="width:40px" >
+        <p class="color-4e mb-10">如何操作？</p>
+        <div class="card flex">
+            <img src="./images/chrome.png" alt="" class="size mr-15" >
             <div>
-                <span>若您是谷歌浏览器用户</span>
+                <p class="color-4e">若您是谷歌浏览器用户</p>
                 <span>
-                    <img src="@/assets/images/tm.png" alt="" style="width:40px" >
+                    <img src="./images/download.png" alt="" class="size" >
                     <span>下载插件</span>
                 </span>
             </div>
@@ -65,5 +65,14 @@ export default {
     box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
     border: 1px solid #F2F2F2;
+    padding: 26px 25px 29px 28px;
+}
+
+.mr-15 {
+  margin-right: 15px;
+}
+.size {
+  width:40px;
+  height: 40px;
 }
 </style>
