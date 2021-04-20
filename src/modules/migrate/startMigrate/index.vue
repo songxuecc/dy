@@ -13,7 +13,7 @@
         </el-input>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
-        <div style="width: 435px; margin: auto;">
+        <div style="width: 435px; margin: auto;margin-bottom:20px">
           <el-upload class="capture-file-upload" drag :action="uploadAction" :headers="getTokenHeaders"
             :data="{'upload_type': 'local'}" :before-upload="uploadBeforeUpload" :on-progress="uploadOnProgress"
             :on-success="uploadOnSuccess" :on-change="uploadChange" :limit=1 ref="upload" :show-file-list="false"
@@ -27,7 +27,7 @@
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
         </div>
-        <div style="text-align: left; margin-top: 50px;margin-bottom:20px">
+        <!-- <div style="text-align: left; margin-top: 50px;margin-bottom:20px">
           <span class="prompt">使用方式:</span>
           <div class="prompt-content">方式1：下载导入模板，自行添加商品链接
             <el-link type="primary" size="mini" @click="downloadCSV()" :underline="false" class="prompt-link">
@@ -58,7 +58,7 @@
               <img class="icon" src="@/assets/platformImg/tmall-tiny.png" style="width: 14px; height: 14px;">
             </div>
           </span>
-        </div>
+        </div> -->
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
         <span slot="label" class="relative">绑定复制 <span class="tutorials" style="position:absolute;right:-65px;top:-10px;transform:scale(0.8)">多店铺必备</span></span>
@@ -599,47 +599,47 @@ export default {
         this.showProcess = true
       }
     },
-    downloadCSV () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '开始复制', '下载', '下载模板'])
-      }
-      let str = `商品链接\n`
-      str += `${'https://detail.tmall.com/item.htm?id=602661002260\t'},`
-      str += `\n`
-      str += `${'https://item.jd.com/100008348542.html\t'},`
-      let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str)
-      let link = document.createElement('a')
-      link.href = uri
-      link.download = 'product.csv'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    },
-    downloadZip () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '开始复制', '下载', '下载Chrome浏览器安装包'])
-      }
-      let link = document.createElement('a')
-      link.href = 'https://plugin-file.oss-cn-shanghai.aliyuncs.com/huhuPlug.zip'
-      link.download = 'huhuPlug.zip'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    },
-    downloadCrx () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '开始复制', '下载', '下载360浏览器安装包'])
-      }
-      let link = document.createElement('a')
-      link.href = 'https://plugin-file.oss-cn-shanghai.aliyuncs.com/huhuPlug.crx'
-      link.download = 'huhuPlug.crx'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    },
-    navToHelp () {
-      this.importFilePromptVisibe = true
-    },
+    // downloadCSV () {
+    //   if (window._hmt) {
+    //     window._hmt.push(['_trackEvent', '开始复制', '下载', '下载模板'])
+    //   }
+    //   let str = `商品链接\n`
+    //   str += `${'https://detail.tmall.com/item.htm?id=602661002260\t'},`
+    //   str += `\n`
+    //   str += `${'https://item.jd.com/100008348542.html\t'},`
+    //   let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str)
+    //   let link = document.createElement('a')
+    //   link.href = uri
+    //   link.download = 'product.csv'
+    //   document.body.appendChild(link)
+    //   link.click()
+    //   document.body.removeChild(link)
+    // },
+    // downloadZip () {
+    //   if (window._hmt) {
+    //     window._hmt.push(['_trackEvent', '开始复制', '下载', '下载Chrome浏览器安装包'])
+    //   }
+    //   let link = document.createElement('a')
+    //   link.href = 'https://plugin-file.oss-cn-shanghai.aliyuncs.com/huhuPlug.zip'
+    //   link.download = 'huhuPlug.zip'
+    //   document.body.appendChild(link)
+    //   link.click()
+    //   document.body.removeChild(link)
+    // },
+    // downloadCrx () {
+    //   if (window._hmt) {
+    //     window._hmt.push(['_trackEvent', '开始复制', '下载', '下载360浏览器安装包'])
+    //   }
+    //   let link = document.createElement('a')
+    //   link.href = 'https://plugin-file.oss-cn-shanghai.aliyuncs.com/huhuPlug.crx'
+    //   link.download = 'huhuPlug.crx'
+    //   document.body.appendChild(link)
+    //   link.click()
+    //   document.body.removeChild(link)
+    // },
+    // navToHelp () {
+    //   this.importFilePromptVisibe = true
+    // },
     setActive (val) {
       this.platformIconActive = val
     },
