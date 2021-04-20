@@ -668,6 +668,11 @@ export default {
       if (value === 'status') {
         this.$refs.modelCopyForm.clearValidate()
       }
+    },
+    moreSetting () {
+      this.$router.push({
+        name: 'MigrateSetting'
+      })
     }
 
   }
