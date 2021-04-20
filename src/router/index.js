@@ -182,7 +182,7 @@ const router = new Router({
       component: Login
     },
     {
-      path: '/customerSetting/fake',
+      path: '/fake',
       name: 'Fake',
       component: Fake,
       meta: {

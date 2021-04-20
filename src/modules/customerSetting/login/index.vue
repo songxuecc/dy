@@ -37,7 +37,7 @@ export default {
       if (state) {
         let data = {}
         try {
-          data = JSON.parse(state)
+          data = JSON.parse(state || '{}')
         } catch (error) {
           console.error(error)
         }
