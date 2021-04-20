@@ -33,6 +33,7 @@ export default {
         code: code
       }
       let state = decodeURI(this.$route.query.state)
+      console.log(state, 'state重新登录前先退出')
       let from = ''
       if (state) {
         let data = {}
