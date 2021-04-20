@@ -9,19 +9,87 @@
             <img src="@/assets/images/tm.png" alt="" style="width:16px" />
         </p>
     </div>
+    <p class="color-4e mb-10">如何操作？</p>
+    <div class="flex justify-a">
+        <div class="card">
+            <div class="flex" style="margin-bottom:30px">
+                <img src="./images/chrome.png" alt="" class="size mr-15" >
+                  <div>
+                      <p class="color-4e font-14" style="margin-bottom:28px">若您是谷歌浏览器用户</p>
+                      <div class="flex">
+                        <div class="flex column align-c mr-5">
+                            <img src="./images/download.png" alt="" class="size mb-5" >
+                            <span class="color-767989 font-12">下载插件</span>
+                        </div>
+                        <hh-icon type="iconjindujiantou" class="font-12 mt-15" ></hh-icon>
+                        <div class="flex column align-c mr-5 ml-5">
+                            <img src="./images/unzip.png" alt="" class="size mb-5" >
+                            <span class="color-767989 font-12">解压安装包</span>
+                        </div>
+                        <hh-icon type="iconjindujiantou" class="font-12 mt-15" ></hh-icon>
+                        <div class="flex column align-c mr-5 ml-5">
+                            <img src="./images/install.png" alt="" class="size mb-5" >
+                            <span class="color-767989 font-12">添加安装包</span>
+                        </div>
+                        <hh-icon type="iconjindujiantou" class="font-12 mt-15" ></hh-icon>
+                        <div class="flex column align-c mr-5 ml-5">
+                            <img src="./images/plugin.png" alt="" class="size mb-5" >
+                            <span class="color-767989 font-12">开启插件</span>
+                        </div>
+                        <hh-icon type="iconjindujiantou" class="font-12 mt-15" ></hh-icon>
+                        <div class="flex column align-c mr-5 ml-5">
+                            <img src="./images/collection.png" alt="" class="size mb-5" >
+                            <span class="color-767989 font-12">开始采集</span>
+                        </div>
+                      </div>
+                  </div>
+              </div>
 
-    <div>
-        <p class="color-4e mb-10">如何操作？</p>
+              <p>
+                <span class="pr-10">第一步：</span>
+                <span class="click">点击下载插件</span>
+              </p>
+
+              <p>
+                <span class="pr-10">第一步：</span>
+                <span class="click">点击下载插件</span>
+              </p>
+
+        </div>
+
         <div class="card flex">
             <img src="./images/chrome.png" alt="" class="size mr-15" >
             <div>
-                <p class="color-4e">若您是谷歌浏览器用户</p>
-                <span>
-                    <img src="./images/download.png" alt="" class="size" >
-                    <span>下载插件</span>
-                </span>
+                <p class="color-4e font-14" style="margin-bottom:28px">若您是谷歌浏览器用户</p>
+                <div class="flex">
+                  <div class="flex column align-c mr-5">
+                      <img src="./images/download.png" alt="" class="size mb-5" >
+                      <span class="color-767989 font-12">下载插件</span>
+                  </div>
+                  <hh-icon type="iconjindujiantou" class="font-12 mt-15" ></hh-icon>
+                  <div class="flex column align-c mr-5 ml-5">
+                      <img src="./images/unzip.png" alt="" class="size mb-5" >
+                      <span class="color-767989 font-12">解压安装包</span>
+                  </div>
+                  <hh-icon type="iconjindujiantou" class="font-12 mt-15" ></hh-icon>
+                  <div class="flex column align-c mr-5 ml-5">
+                      <img src="./images/install.png" alt="" class="size mb-5" >
+                      <span class="color-767989 font-12">添加安装包</span>
+                  </div>
+                  <hh-icon type="iconjindujiantou" class="font-12 mt-15" ></hh-icon>
+                  <div class="flex column align-c mr-5 ml-5">
+                      <img src="./images/plugin.png" alt="" class="size mb-5" >
+                      <span class="color-767989 font-12">开启插件</span>
+                  </div>
+                  <hh-icon type="iconjindujiantou" class="font-12 mt-15" ></hh-icon>
+                  <div class="flex column align-c mr-5 ml-5">
+                      <img src="./images/collection.png" alt="" class="size mb-5" >
+                      <span class="color-767989 font-12">开始采集</span>
+                  </div>
+                </div>
             </div>
         </div>
+
     </div>
     <el-container>
       <el-header>Header</el-header>
@@ -60,7 +128,6 @@ export default {
   margin-bottom: 30px;
 }
 .card {
-    width: 452px;
     background: #FFFFFF;
     box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
@@ -71,7 +138,14 @@ export default {
 .mr-15 {
   margin-right: 15px;
 }
-.size {
+
+.ml-2 {
+  margin-left: 2px;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}.size {
   width:40px;
   height: 40px;
 }
