@@ -73,6 +73,7 @@
               class="tip mb-12 pointer"
               @mouseenter="handleMouseenter(1)"
               @mouseleave="handleMouseleaver(1)"
+              @click="toggleVisible(1)"
             />
           </div>
         </div>
@@ -87,6 +88,7 @@
               class="tip mb-12 pointer"
               @mouseenter="handleMouseenter(2)"
               @mouseleave="handleMouseleaver(2)"
+              @click="toggleVisible(2)"
             />
           </div>
         </div>
@@ -101,6 +103,7 @@
               class="tip mb-12 pointer"
               @mouseenter="handleMouseenter(4)"
               @mouseleave="handleMouseleaver(4)"
+              @click="toggleVisible(4)"
             />
           </div>
         </div>
@@ -148,6 +151,7 @@
               class="tip mb-12 pointer"
               @mouseenter="handleMouseenter(3)"
               @mouseleave="handleMouseleaver(3)"
+              @click="toggleVisible(3)"
             />
           </div>
         </div>
@@ -162,11 +166,17 @@
               class="tip mb-12 pointer"
               @mouseenter="handleMouseenter(4)"
               @mouseleave="handleMouseleaver(4)"
+              @click="toggleVisible(4)"
             />
           </div>
         </div>
       </div>
     </div>
+
+    <el-dialog  :visible.sync="visible">
+      <img :src="activeImg" alt="" style="width:70%">
+    </el-dialog>
+
   </div>
 </template>
 
@@ -184,6 +194,7 @@ import img4PNG from './images/4.png'
 export default {
   data () {
     return {
+      visible: false,
       imagesData: {
         1: {
           gif: img1JPG,
@@ -209,6 +220,10 @@ export default {
     }
   },
   methods: {
+    toggleVisible (name) {
+      this.activeImg = this.imagesData[name].gif
+      this.visible = true
+    },
     open () {
       this.$router.push({
         name: 'StartMigrate',
