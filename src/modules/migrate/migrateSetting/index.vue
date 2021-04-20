@@ -63,12 +63,12 @@
             </p>
         </el-form-item>
 
-        <el-form-item required  label="sku编码:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-code">
+        <el-form-item required  label="SKU编码:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-code">
             <p class="font-12">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
         </el-form-item>
 
-        <el-form-item required label="sku规格:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-spec">
-            <p class="font-12">sku规格值超过20个自动截断<el-switch class="ml-5" v-model="is_cut_sku_spec" /></p>
+        <el-form-item required label="SKU规格:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-spec">
+            <p class="font-12">SKU规格值超过20个自动截断<el-switch class="ml-5" v-model="is_cut_sku_spec" /></p>
         </el-form-item>
 
         <el-form-item required label="轮播图、详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >

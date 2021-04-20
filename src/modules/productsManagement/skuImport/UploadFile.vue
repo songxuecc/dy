@@ -199,7 +199,7 @@ export default {
       this.$message.error('sku编码导入失败')
     },
     /**
-     * 统计商品sku导入按钮的点击次数
+     * 统计商品SKU导入按钮的点击次数
      */
     recordSkuExcelImportBtnClick () {
       // 百度统计打点
