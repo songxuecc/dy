@@ -66,6 +66,7 @@
               在浏览器中打开
               <span class="click">chrome://extensions/</span>
               网址，并将解压好的文件拖拽到页面中
+              <span class="info">(下图点击可放大)</span>
             </p>
             <div style="width:336px;height:190px"  :class="['mb-12',name === 1?'border':'noborder']">
               <el-image
@@ -84,7 +85,7 @@
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第四步：</p>
           <div class="color-666">
-            <p class="mb-8">打开淘宝平台，让插件开始运行</p>
+            <p class="mb-8">打开淘宝平台，让插件开始运行<span class="info">(下图点击可放大)</span></p>
             <div style="width:336px;height:407px;" :class="['mb-12',name === 2?'border':'noborder']">
               <el-image
                   :src="img2"
@@ -103,7 +104,7 @@
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第五步：</p>
 
           <div class="color-666">
-            <p class="mb-8">利用虎虎采集助手开始采集</p>
+            <p class="mb-8">利用虎虎采集助手开始采集<span class="info">(下图点击可放大)</span></p>
             <div style="width:336px;height:135px;" :class="['mb-12',name === 3?'border':'noborder']">
               <el-image
                   :src="img3"
@@ -154,7 +155,7 @@
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第二步：</p>
           <div class="color-666">
             <p class="mb-8">
-              将下载完成的文件拖拽到360/搜狗浏览器的地址栏，并点击【添加】
+              将下载完成的文件拖拽到360/搜狗浏览器的地址栏，并点击【添加】<span class="info">(下图点击可放大)</span>
             </p>
 
             <div style="width:336px;height:219px;" :class="['mb-12',name === 4?'border':'noborder']">
@@ -174,7 +175,7 @@
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第三步：</p>
           <div class="color-666">
-            <p class="mb-8">利用虎虎采集助手开始采集</p>
+            <p class="mb-8">利用虎虎采集助手开始采集<span class="info">(下图点击可放大)</span></p>
 
             <div style="width:336px;height:135px;" :class="['mb-12',name === 5?'border':'noborder']">
               <el-image
