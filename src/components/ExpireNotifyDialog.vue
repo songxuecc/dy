@@ -125,7 +125,7 @@ export default {
 </script>
 <style lang="less">
 .expire-notify-dialog .expire-notify-box{
-  background-image: url('~@/assets/images/components/expire_notify_dialog/bg.png');
+  background-image: url('https://img.pddpic.com/mms-material-img/2021-04-20/ce0b0070-d5a8-45d1-9611-3931afcb1650.png.a.jpeg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   border-radius: 12px;
