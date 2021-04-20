@@ -29,8 +29,8 @@
         <p style="width:300px;display:flex;flex:1">
           <span style="font-size: 12px;margin-right:4px">超过30个字:</span>
           <el-radio-group v-model="model.radio">
-            <el-radio :label="3">自动去开头</el-radio>
             <el-radio :label="6">自动去末尾</el-radio>
+            <el-radio :label="3">自动去开头</el-radio>
             <el-radio :label="9">手动处理</el-radio>
           </el-radio-group>
         </p>

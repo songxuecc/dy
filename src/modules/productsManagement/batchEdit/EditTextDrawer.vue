@@ -50,8 +50,8 @@
       <div v-if="field==='goods_name'" style="display: inline-block; margin: 0 10px;">
         <span style="font-size: 14px; line-height:32px;">超过{{ PRODUCT_TITLE_LIMIT }}个字:</span>
         <el-radio-group v-model="beyondWordsOptType" @change="handleBeyondTypeChange">
-          <el-radio :label="1">自动去开头</el-radio>
           <el-radio :label="2">自动去末尾</el-radio>
+          <el-radio :label="1">自动去开头</el-radio>
           <el-radio :label="0">手动处理</el-radio>
         </el-radio-group>
       </div>

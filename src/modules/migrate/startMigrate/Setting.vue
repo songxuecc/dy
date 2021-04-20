@@ -1,8 +1,8 @@
 <!-- 搬家前的设置 -->
 <template>
     <div>
-        <el-form :inline="true" :model="model" class="start-migrate-setting  flex justify-b" size="medium">
-          <el-form-item label="复制后的品牌">
+        <el-form :inline="true" :model="model" class="start-migrate-setting  flex " size="medium">
+          <el-form-item label="复制后的品牌" style="margin-right:45px">
                 <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:230px;margin-right:12px" clearable @clear="clear">
                     <el-option label="默认无品牌" :value="0"></el-option>
                     <el-option v-for="item in brandList" :key="item.id" :label="getBrandName(item)" :value="item.id" />
@@ -11,7 +11,7 @@
                     <hh-icon type="iconjiazai" style="font-size:10px;margin-right:3px" v-if="!loadingBrandList"/><span>{{!loadingBrandList ? '刷新':'加载中'}}</span>
                 </el-button>
             </el-form-item>
-            <el-form-item label="复制后的类目" style="max-width:379px">
+            <el-form-item label="复制后的类目" style="max-width:379px;margin-right:45px">
                 <div>
                   <el-button size="mini" v-if="model.default_category &&  !model.default_category.name" @click="chooseCategory" type="text">点击选择类目</el-button>
                 <div class="flex align-c" style="height:36px" v-if="model.default_category && model.default_category.name">
@@ -22,13 +22,17 @@
                 </div>
                 </div>
             </el-form-item>
-            <el-form-item label="仅保留5张轮播图">
+            <!-- <el-form-item label="仅保留5张轮播图">
                 <el-radio-group v-model="model.is_banner_auto_5">
                     <el-radio :label="1">是</el-radio>
                     <el-radio :label="0">否</el-radio>
                 </el-radio-group>
-            </el-form-item>
-            <el-button type="text" @click="moreSetting" size="small"  style="margin-right:4px"><i class="el-icon-s-tools" style="margin-right:3px"></i>更多设置</el-button>
+            </el-form-item> -->
+            <el-button type="text" @click="moreSetting" size="small"  style="margin-right:45px">
+              <i class="el-icon-s-tools" style="margin-right:3px;margin-left:16px"></i>更多设置
+              <hh-icon type="iconjingshi" style="font-size:8px;margin-right:3px;"></hh-icon><span class="info">请在复制前进行设置！！！！</span>
+            </el-button>
+
         </el-form>
         <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
             <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
@@ -80,8 +84,8 @@ export default {
         if (typeof setting.is_banner_auto_5 !== 'undefined') {
           this.model.is_banner_auto_5 = setting.is_banner_auto_5
         }
-        if (setting.default_brand_id) {
-          this.model.default_brand_id = setting.default_brand_id
+        if (typeof setting.default_brand_id !== 'undefined') {
+          this.model.default_brand_id = setting.default_brand_id || 0
         }
         if (setting.default_category_id && setting.default_category) {
           setting.default_category.name = setting.default_category.levels.map(item => item.name).join(' > ')

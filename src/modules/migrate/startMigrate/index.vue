@@ -61,7 +61,7 @@
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
-        <span slot="label">绑定复制</span>
+        <span slot="label" class="relative">绑定复制 <span class="tutorials" style="position:absolute;right:-65px;top:-10px;transform:scale(0.8)">多店铺必备</span></span>
         <div class="flex column align-c" v-if="!userBindList.length ">
           <ElTableEmpty msg="您还未进行店铺绑定，无法操作哦～" />
           <el-link type="primary" size="mini" @click="gotoBindShop" :underline="false" class="prompt-link underline"
@@ -110,6 +110,10 @@
                   style="width: 357px;"/>
               </el-form-item>
             </el-form>
+            <el-button type="text" @click="moreSetting" size="small"  style="margin-right:45px">
+              <i class="el-icon-s-tools" style="margin-right:3px;"></i>更多设置
+              <hh-icon type="iconjingshi" style="font-size:8px;margin-right:3px;"></hh-icon><span class="info">请在复制前进行设置！！！！</span>
+            </el-button>
       </el-tab-pane>
     </el-tabs>
 
@@ -118,7 +122,7 @@
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <p class="left font-12 mt-20 bold"  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="common-bottom" v-if="activeName === 'single'">
-      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading">
+      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px">
         <span style="width:120px">开始复制</span>
         <el-badge :value="captureUrlNums"></el-badge>
       </el-button>
@@ -126,11 +130,11 @@
     <!-- 整店复制 -->
     <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
     <div class="common-bottom" v-if="activeName === 'shop'">
-      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:120px">开始复制</el-button>
+      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
     </div>
     <!-- 绑定复制 -->
     <div class="common-bottom " v-if="activeName === 'bindCopy' && userBindList.length ">
-      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:120px" class="ralative">开始复制
+      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:160px;height:50px;font-size:16px" class="ralative">开始复制
         <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
       </el-button>
     </div>
@@ -179,7 +183,6 @@ export default {
       props: { multiple: true, expandTrigger: 'hover' },
       modelBindCopy: {
         status: 0,
-        category_root_id_list: [],
         goods_ids: ''
       },
       userBindList: [],
@@ -201,6 +204,7 @@ export default {
   activated () {
     this.getUserBindList()
     this.getUserAccountQuery()
+    // this.$refs.setting.getMigrateSetting()
     if (this.$route.params.activeName) {
       this.activeName = this.$route.params.activeName || 'single'
     }
@@ -263,10 +267,7 @@ export default {
           label: '全选',
           children
         }]
-        const ids = (children || []).map(item => item.value)
-        this.modelBindCopy.category_root_id_list = [['all', ...ids]]
       } else {
-        this.modelBindCopy.category_root_id_list = []
         this.bandShopTip = {}
       }
     }
@@ -456,7 +457,6 @@ export default {
           // 有id可以用
           } else if (idsCheck && !idsCheck.lost_goods_id_list.length) {
             const parmas = {
-              category_root_id_list: JSON.stringify([]),
               ...status,
               capture_type: 2,
               target_user_id: targetUserId,
@@ -466,14 +466,8 @@ export default {
           }
         } else {
           // 直接复制
-          if (!this.modelBindCopy.category_root_id_list.length) {
-            return this.$message({
-              message: '请选择类目',
-              type: 'warning'
-            })
-          }
           const parmas = {
-            category_root_id_list: JSON.stringify([]), ...status, target_user_id: targetUserId, capture_type: 2
+            ...status, target_user_id: targetUserId, capture_type: 2
           }
           this.capture(parmas, false)
         }
@@ -498,7 +492,6 @@ export default {
       const status = obj[this.modelBindCopy.status]
       const targetUserId = this.target_user_id
       const parmas = {
-        category_root_id_list: JSON.stringify([]),
         ...status,
         capture_type: 2,
         target_user_id: targetUserId,
@@ -520,7 +513,7 @@ export default {
           this.isStartCapture = false
           let captureId = data.capture_id
           this.$router.push({
-            path: '/productList',
+            path: '/migrate/productList',
             query: {
               captureId: captureId
             }
@@ -593,7 +586,7 @@ export default {
       } else {
         let captureId = response.data.capture_id
         this.$router.push({
-          path: '/productList',
+          path: '/migrate/productList',
           query: {
             captureId: captureId
           }

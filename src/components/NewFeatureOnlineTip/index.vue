@@ -8,13 +8,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'NewFeatureOnlineTip',
   props: {
     msg: String,
     type: String,
-    btnText: String
+    btnText: String,
+    v: Boolean
   },
   data () {
     return {
@@ -24,8 +26,19 @@ export default {
   mounted () {
     this.init()
   },
+  computed: {
+    ...mapGetters({
+      isAuth: 'getIsAuth',
+      currentSubsc: 'getCurrentSubsc'
+    })
+  },
   methods: {
     init () {
+      if (!this.isAuth) return false
+      if (!this.currentSubsc) {
+        return false
+      }
+      if (this.currentSubsc.is_newcomer) return false
       const newFeatureOnlineTip = localStorage.getItem('newFeatureOnlineTip') || '{}'
       const Obj = JSON.parse(newFeatureOnlineTip)
       if (Obj) {

@@ -24,18 +24,18 @@
             <NewFeatureOnlineTip
               type="搬家设置"
               style="position:absolute;z-index:2001;top: 282px;left: 90px;"
-              v-if="newFeatureOnlineTipVisible"
               msg="已上线商品再次搬家功能已迁移到此处啦～"
               btnText="立即设置"
-              @click="handleClickNewFeatureOnlineTip('MigrateSetting')"
+              @click="handleClickNewFeatureOnlineTip({name:'MigrateSetting'})"
             />
             <NewFeatureOnlineTip
               type="批量处理"
               style="position:absolute;z-index:2001;top: 434px;left: 90px;"
-              v-if="newFeatureOnlineTipVisible"
               msg="新增批量上下架、改客服电话、改运费模版等"
               btnText="立即查看"
-              @click="handleClickNewFeatureOnlineTip('BatchEdit')"
+              @click="handleClickNewFeatureOnlineTip({
+                path: `/productsManagement/batchEdit/title`
+              })"
             />
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
             <div class="main-layout">
@@ -184,6 +184,7 @@ export default {
         return false
       }
       if (this.currentSubsc.is_newcomer) return false
+
       return this.subActiveArray.length === 3
     }
   },
@@ -395,10 +396,8 @@ export default {
     subMenuOpen (subActiveArray) {
       this.subActiveArray = subActiveArray
     },
-    handleClickNewFeatureOnlineTip (name) {
-      this.$router.push({
-        name
-      })
+    handleClickNewFeatureOnlineTip (options) {
+      this.$router.push(options)
     }
   }
 }
