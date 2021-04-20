@@ -177,7 +177,7 @@ const router = new Router({
       }
     },
     {
-      path: '/customerSetting/authorize',
+      path: '/authorize',
       name: 'Login',
       component: Login
     },
