@@ -67,14 +67,17 @@
               <span class="click">chrome://extensions/</span>
               网址，并将解压好的文件拖拽到页面中
             </p>
-            <img
-              :src="img1"
-              alt=""
-              class="tip mb-12 pointer"
-              @mouseenter="handleMouseenter(1)"
-              @mouseleave="handleMouseleaver(1)"
-              @click="toggleVisible(1)"
-            />
+            <div style="width:336px;height:190px"  :class="['mb-12',name === 1?'border':'noborder']">
+              <el-image
+                :src="img1"
+                alt=""
+                class="tip mb-12 pointer"
+                ref="img1"
+                @mouseenter="handleMouseenter(1)"
+                @mouseleave="handleMouseleaver(1)"
+                :preview-src-list="[img1JPG]">
+              </el-image>
+            </div>
           </div>
         </div>
 
@@ -82,29 +85,37 @@
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第四步：</p>
           <div class="color-666">
             <p class="mb-8">打开淘宝平台，让插件开始运行</p>
-            <img
-              :src="img2"
-              alt=""
-              class="tip mb-12 pointer"
-              @mouseenter="handleMouseenter(2)"
-              @mouseleave="handleMouseleaver(2)"
-              @click="toggleVisible(2)"
-            />
+            <div style="width:336px;height:407px;" :class="['mb-12',name === 2?'border':'noborder']">
+              <el-image
+                  :src="img2"
+                  alt=""
+                  :class="['tip pointer']"
+                  :preview-src-list="[img2JPG]"
+                  ref="img2"
+                  @mouseenter="handleMouseenter(2)"
+                  @mouseleave="handleMouseleaver(2)"
+                />
+            </div>
           </div>
         </div>
 
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第五步：</p>
+
           <div class="color-666">
             <p class="mb-8">利用虎虎采集助手开始采集</p>
-            <img
-              :src="img4"
-              alt=""
-              class="tip mb-12 pointer"
-              @mouseenter="handleMouseenter(4)"
-              @mouseleave="handleMouseleaver(4)"
-              @click="toggleVisible(4)"
-            />
+            <div style="width:336px;height:135px;" :class="['mb-12',name === 3?'border':'noborder']">
+              <el-image
+                  :src="img3"
+                  alt=""
+                  class="tip mb-12 pointer"
+                  :preview-src-list="[img3JPG]"
+                  ref="img3"
+                  @mouseenter="handleMouseenter(3)"
+                  @mouseleave="handleMouseleaver(3)"
+                />
+            </div>
+
           </div>
         </div>
       </div>
@@ -145,14 +156,18 @@
             <p class="mb-8">
               将下载完成的文件拖拽到360/搜狗浏览器的地址栏，并点击【添加】
             </p>
-            <img
-              :src="img3"
-              alt=""
-              class="tip mb-12 pointer"
-              @mouseenter="handleMouseenter(3)"
-              @mouseleave="handleMouseleaver(3)"
-              @click="toggleVisible(3)"
-            />
+
+            <div style="width:336px;height:219px;" :class="['mb-12',name === 4?'border':'noborder']">
+              <el-image
+                  :src="img4"
+                  alt=""
+                  class="tip mb-12 pointer"
+                  :preview-src-list="[img4JPG]"
+                  ref="img4"
+                  @mouseenter="handleMouseenter(4)"
+                  @mouseleave="handleMouseleaver(4)"
+                />
+            </div>
           </div>
         </div>
 
@@ -160,14 +175,18 @@
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第三步：</p>
           <div class="color-666">
             <p class="mb-8">利用虎虎采集助手开始采集</p>
-            <img
-              :src="img4"
-              alt=""
-              class="tip mb-12 pointer"
-              @mouseenter="handleMouseenter(4)"
-              @mouseleave="handleMouseleaver(4)"
-              @click="toggleVisible(4)"
-            />
+
+            <div style="width:336px;height:135px;" :class="['mb-12',name === 5?'border':'noborder']">
+              <el-image
+                  :src="img5"
+                  alt=""
+                  class="tip mb-12 pointer"
+                  :preview-src-list="[img5JPG]"
+                  ref="img5"
+                  @mouseenter="handleMouseenter(5)"
+                  @mouseleave="handleMouseleaver(5)"
+                />
+            </div>
           </div>
         </div>
       </div>
@@ -205,18 +224,29 @@ export default {
           png: img2PNG
         },
         3: {
+          gif: img4JPG,
+          png: img4PNG
+        },
+        4: {
           gif: img3JPG,
           png: img3PNG
         },
-        4: {
+        5: {
           gif: img4JPG,
           png: img4PNG
         }
       },
+      img1JPG,
+      img2JPG,
+      img3JPG: img4JPG,
+      img4JPG: img3JPG,
+      img5JPG: img4JPG,
       img1: img1PNG,
       img2: img2PNG,
-      img3: img3PNG,
-      img4: img4PNG
+      img3: img4PNG,
+      img4: img3PNG,
+      img5: img4PNG,
+      name: 0
     }
   },
   methods: {
@@ -234,9 +264,11 @@ export default {
     },
     handleMouseenter (name) {
       this[`img${name}`] = this.imagesData[name].gif
+      this.name = name
     },
     handleMouseleaver (name) {
       this[`img${name}`] = this.imagesData[name].png
+      this.name = 0
     },
     downloadCrx () {
       if (window._hmt) {
@@ -322,5 +354,20 @@ export default {
 .tip {
   width: 336px;
   border-radius: 4px;
+
+}
+
+.border {
+  border:1px solid @color-primary;
+  border-radius: 4px;
+}
+
+.noborder {
+  border:1px solid transparent;
+  border-radius: 4px;
+}
+
+/deep/ .el-image-viewer__img {
+  height: 60%;
 }
 </style>
