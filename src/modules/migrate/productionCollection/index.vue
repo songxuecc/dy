@@ -70,7 +70,7 @@
             <img
               :src="img1"
               alt=""
-              class="tip mb-12"
+              class="tip mb-12 pointer"
               @mouseenter="handleMouseenter(1)"
               @mouseleave="handleMouseleaver(1)"
             />
@@ -84,7 +84,7 @@
             <img
               :src="img2"
               alt=""
-              class="tip mb-12"
+              class="tip mb-12 pointer"
               @mouseenter="handleMouseenter(2)"
               @mouseleave="handleMouseleaver(2)"
             />
@@ -96,11 +96,11 @@
           <div class="color-666">
             <p class="mb-8">利用虎虎采集助手开始采集</p>
             <img
-              :src="img3"
+              :src="img4"
               alt=""
-              class="tip mb-12"
-              @mouseenter="handleMouseenter(3)"
-              @mouseleave="handleMouseleaver(3)"
+              class="tip mb-12 pointer"
+              @mouseenter="handleMouseenter(4)"
+              @mouseleave="handleMouseleaver(4)"
             />
           </div>
         </div>
@@ -143,11 +143,11 @@
               将下载完成的文件拖拽到360/搜狗浏览器的地址栏，并点击【添加】
             </p>
             <img
-              :src="img1"
+              :src="img3"
               alt=""
-              class="tip mb-12"
-              @mouseenter="handleMouseenter('1')"
-              @mouseleave="handleMouseleaver('1')"
+              class="tip mb-12 pointer"
+              @mouseenter="handleMouseenter(3)"
+              @mouseleave="handleMouseleaver(3)"
             />
           </div>
         </div>
@@ -157,11 +157,11 @@
           <div class="color-666">
             <p class="mb-8">利用虎虎采集助手开始采集</p>
             <img
-              :src="img1"
+              :src="img4"
               alt=""
-              class="tip mb-12"
-              @mouseenter="handleMouseenter('1')"
-              @mouseleave="handleMouseleaver('1')"
+              class="tip mb-12 pointer"
+              @mouseenter="handleMouseenter(4)"
+              @mouseleave="handleMouseleaver(4)"
             />
           </div>
         </div>
@@ -202,10 +202,10 @@ export default {
           png: img4PNG
         }
       },
-      img1: img1JPG,
-      img2: img2JPG,
-      img3: img3JPG,
-      img4: img4JPG
+      img1: img1PNG,
+      img2: img2PNG,
+      img3: img3PNG,
+      img4: img4PNG
     }
   },
   methods: {
