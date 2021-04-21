@@ -2,15 +2,29 @@
 <template>
   <div class="productionCollection left">
     <div class="title">
-      <p style="color:#FA6400;font-family: MicrosoftYaHei;"><hh-icon type="icontixing"></hh-icon> 什么是商品采集？</p>
+      <p style="color: #fa6400; font-family: MicrosoftYaHei">
+        <hh-icon type="icontixing"></hh-icon> 什么是商品采集？
+      </p>
       <p class="info ml-20 mt-5">
         安装虎虎采集助手，将想要采集的商品链接一键导出生成excel表格。采集完成后，前往
         <span class="click" @click="open">导入复制 </span>进行铺货。
       </p>
       <p class="info ml-20 mt-5">
         支持采集平台：
-        <img src="@/assets/images/taobao.png" alt="" style="width: 16px" class="pointer" v-hh-open="'https://www.taobao.com/'"/>
-        <img src="@/assets/images/tm.png" alt="" style="width: 16px" class="pointer"  v-hh-open="'https://www.tmall.com/'"/>
+        <img
+          src="@/assets/images/taobao.png"
+          alt=""
+          style="width: 16px"
+          class="pointer"
+          v-hh-open="'https://www.taobao.com/'"
+        />
+        <img
+          src="@/assets/images/tm.png"
+          alt=""
+          style="width: 16px"
+          class="pointer"
+          v-hh-open="'https://www.tmall.com/'"
+        />
       </p>
     </div>
     <p class="color-4e mb-10">如何操作？</p>
@@ -68,7 +82,10 @@
               网址，并将解压好的文件拖拽到页面中
               <span class="info">(下图点击可放大)</span>
             </p>
-            <div style="width:336px;height:190px"  :class="['mb-12',name === 1?'border':'noborder']">
+            <div
+              style="width: 336px; height: 190px"
+              :class="['mb-12', name === 1 ? 'border' : 'noborder']"
+            >
               <el-image
                 :src="img1"
                 alt=""
@@ -76,7 +93,8 @@
                 ref="img1"
                 @mouseenter="handleMouseenter(1)"
                 @mouseleave="handleMouseleaver(1)"
-                :preview-src-list="[img1JPG]">
+                :preview-src-list="[img1JPG]"
+              >
               </el-image>
             </div>
           </div>
@@ -85,44 +103,84 @@
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第四步：</p>
           <div class="color-666">
-            <p class="mb-8">打开淘宝平台，让插件开始运行<span class="info">(下图点击可放大)</span></p>
-            <div style="width:336px;height:407px;" :class="['mb-12',name === 2?'border':'noborder']">
+            <p class="mb-8">
+              打开
+              <span class="click" v-hh-open="'https://www.taobao.com/'"
+                >淘宝</span
+              >
+              平台，让插件开始运行<span class="info">(下图点击可放大)</span>
+            </p>
+            <div
+              style="width: 336px; height: 407px"
+              :class="['mb-12', name === 2 ? 'border' : 'noborder']"
+            >
               <el-image
-                  :src="img2"
-                  alt=""
-                  :class="['tip pointer']"
-                  :preview-src-list="[img2JPG]"
-                  ref="img2"
-                  @mouseenter="handleMouseenter(2)"
-                  @mouseleave="handleMouseleaver(2)"
-                />
+                :src="img2"
+                alt=""
+                :class="['tip pointer']"
+                :preview-src-list="[img2JPG]"
+                ref="img2"
+                @mouseenter="handleMouseenter(2)"
+                @mouseleave="handleMouseleaver(2)"
+              />
             </div>
           </div>
         </div>
 
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第五步：</p>
-
           <div class="color-666">
-            <p class="mb-8">利用虎虎采集助手开始采集<span class="info">(下图点击可放大)</span></p>
-            <div style="width:336px;height:135px;" :class="['mb-12',name === 3?'border':'noborder']">
+            <p class="mb-8">
+              利用
+              <span class="click" @click="downloadZip">虎虎采集助手 </span
+              >开始采集 <span class="info">(下图点击可放大)</span>
+            </p>
+            <div
+              style="width: 336px; height: 150px"
+              :class="['mb-12', name === 3 ? 'border' : 'noborder']"
+            >
               <el-image
-                  :src="img3"
-                  alt=""
-                  class="tip mb-12 pointer"
-                  :preview-src-list="[img3JPG]"
-                  ref="img3"
-                  @mouseenter="handleMouseenter(3)"
-                  @mouseleave="handleMouseleaver(3)"
-                />
+                :src="img3"
+                alt=""
+                class="tip mb-12 pointer"
+                :preview-src-list="[img3JPG]"
+                ref="img3"
+                @mouseenter="handleMouseenter(3)"
+                @mouseleave="handleMouseleaver(3)"
+              />
             </div>
+          </div>
+        </div>
 
+        <div class="flex">
+          <p class="mb-12" style="width: 56px; flex-shrink: 0">第六步：</p>
+          <div class="color-666">
+            <p class="mb-8">
+              查看已采集的商品，并下载形成excel，前往导入复制进行复制（点击导入复制跳转相应页面）<span
+                class="info"
+                >(下图点击可放大)</span
+              >
+            </p>
+            <div
+              style="width: 336px; height: 356px"
+              :class="['mb-12', name === 6 ? 'border' : 'noborder']"
+            >
+              <el-image
+                :src="img6"
+                alt=""
+                :class="['tip pointer']"
+                :preview-src-list="[img6JPG]"
+                ref="img6"
+                @mouseenter="handleMouseenter(6)"
+                @mouseleave="handleMouseleaver(6)"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       <div class="card">
-         <div style="margin-bottom: 30px">
+        <div style="margin-bottom: 30px">
           <div class="flex align-c" style="margin-bottom: 28px">
             <img src="./images/360.png" alt="" class="size mr-15" />
             <img src="./images/sogo.png" alt="" class="size mr-15" />
@@ -155,19 +213,25 @@
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第二步：</p>
           <div class="color-666">
             <p class="mb-8">
-              将下载完成的文件拖拽到360/搜狗浏览器的地址栏，并点击【添加】<span class="info">(下图点击可放大)</span>
+              将下载完成的文件拖拽到360/搜狗浏览器的地址栏，并点击【添加】<span
+                class="info"
+                >(下图点击可放大)</span
+              >
             </p>
 
-            <div style="width:336px;height:219px;" :class="['mb-12',name === 4?'border':'noborder']">
+            <div
+              style="width: 336px; height: 219px"
+              :class="['mb-12', name === 4 ? 'border' : 'noborder']"
+            >
               <el-image
-                  :src="img4"
-                  alt=""
-                  class="tip mb-12 pointer"
-                  :preview-src-list="[img4JPG]"
-                  ref="img4"
-                  @mouseenter="handleMouseenter(4)"
-                  @mouseleave="handleMouseleaver(4)"
-                />
+                :src="img4"
+                alt=""
+                class="tip mb-12 pointer"
+                :preview-src-list="[img4JPG]"
+                ref="img4"
+                @mouseenter="handleMouseenter(4)"
+                @mouseleave="handleMouseleaver(4)"
+              />
             </div>
           </div>
         </div>
@@ -175,28 +239,60 @@
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第三步：</p>
           <div class="color-666">
-            <p class="mb-8">利用虎虎采集助手开始采集<span class="info">(下图点击可放大)</span></p>
-
-            <div style="width:336px;height:135px;" :class="['mb-12',name === 5?'border':'noborder']">
+            <p class="mb-8">
+              利用
+              <span class="click" @click="downloadCrx">虎虎采集助手 </span
+              >开始采集 <span class="info">(下图点击可放大)</span>
+            </p>
+            <div
+              style="width: 336px; height: 150px"
+              :class="['mb-12', name === 5 ? 'border' : 'noborder']"
+            >
               <el-image
-                  :src="img5"
-                  alt=""
-                  class="tip mb-12 pointer"
-                  :preview-src-list="[img5JPG]"
-                  ref="img5"
-                  @mouseenter="handleMouseenter(5)"
-                  @mouseleave="handleMouseleaver(5)"
-                />
+                :src="img5"
+                alt=""
+                class="tip mb-12 pointer"
+                :preview-src-list="[img5JPG]"
+                ref="img5"
+                @mouseenter="handleMouseenter(5)"
+                @mouseleave="handleMouseleaver(5)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex">
+          <p class="mb-12" style="width: 56px; flex-shrink: 0">第四步：</p>
+          <div class="color-666">
+            <p class="mb-8">
+              查看已采集的商品，并下载形成excel，前往导入复制进行复制（点击导入复制跳转相应页面）<span
+                class="info"
+                >(下图点击可放大)</span
+              >
+            </p>
+
+            <div
+              style="width: 336px; height: 310px"
+              :class="['mb-12', name === 7 ? 'border' : 'noborder']"
+            >
+              <el-image
+                :src="img7"
+                alt=""
+                class="tip mb-12 pointer"
+                :preview-src-list="[img7JPG]"
+                ref="img7"
+                @mouseenter="handleMouseenter(7)"
+                @mouseleave="handleMouseleaver(7)"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <el-dialog  :visible.sync="visible">
-      <img :src="activeImg" alt="" style="width:70%">
+    <el-dialog :visible.sync="visible">
+      <img :src="activeImg" alt="" style="width: 70%" />
     </el-dialog>
-
   </div>
 </template>
 
@@ -205,11 +301,15 @@ import img1JPG from './images/1.gif'
 import img2JPG from './images/2.gif'
 import img3JPG from './images/3.gif'
 import img4JPG from './images/4.gif'
+import img6JPG from './images/6.gif'
+import img7JPG from './images/7.gif'
 
 import img1PNG from './images/1.png'
 import img2PNG from './images/2.png'
 import img3PNG from './images/3.png'
 import img4PNG from './images/4.png'
+import img6PNG from './images/6.png'
+import img7PNG from './images/7.png'
 
 export default {
   data () {
@@ -235,6 +335,14 @@ export default {
         5: {
           gif: img4JPG,
           png: img4PNG
+        },
+        6: {
+          gif: img6JPG,
+          png: img6PNG
+        },
+        7: {
+          gif: img7JPG,
+          png: img7PNG
         }
       },
       img1JPG,
@@ -242,11 +350,15 @@ export default {
       img3JPG: img4JPG,
       img4JPG: img3JPG,
       img5JPG: img4JPG,
+      img6JPG,
+      img7JPG,
       img1: img1PNG,
       img2: img2PNG,
       img3: img4PNG,
       img4: img3PNG,
       img5: img4PNG,
+      img6: img6PNG,
+      img7: img7PNG,
       name: 0
     }
   },
@@ -325,6 +437,7 @@ export default {
   padding: 26px 25px 29px 28px;
   margin-bottom: 50px;
   width: calc(50% - 15px);
+  min-width: 490px;
   box-sizing: border-box;
 }
 
@@ -359,12 +472,12 @@ export default {
 }
 
 .border {
-  border:1px solid @color-primary;
+  border: 1px solid @color-primary;
   border-radius: 4px;
 }
 
 .noborder {
-  border:1px solid transparent;
+  border: 1px solid transparent;
   border-radius: 4px;
 }
 
