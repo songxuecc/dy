@@ -75,7 +75,7 @@
             <p class="font-12 mb-10 mt-5">轮播图+详情图超过50张自动截断详情图<el-switch class="ml-5" v-model="detail_img_cut" /></p>
             <p class="font-12 mb-10">仅保留前5张轮播图<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
             <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
-            <p class="font-12">删除轮播尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
+            <p class="font-12">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
         </el-form-item>
 
         <el-form-item required label="标题:"  style="margin-bottom: 20px;" class="flex migrateSetting-title" >
