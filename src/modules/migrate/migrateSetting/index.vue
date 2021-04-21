@@ -41,15 +41,15 @@
         </el-form-item>
         <!-- 属性设置 -->
         <el-form-item required label="属性设置:"  style="margin-bottom: 20px;" class="flex migrateSetting-attribute" >
-          <div style="display:flex;margin-bottom:5px" class="align-c font-12">
-            是否选中属性下拉框第一个值
-            <el-switch v-model="is_select_first_options_attr"  class="ml-5"/>
-          </div>
           <div style="display:flex;margin-bottom:5px" class="align-c">
-            <p>
-              <el-input v-model="default_attr_value" style="width: 280px;" placeholder="类目属性默认值设置"></el-input>
+            <p class="font-12">
+              必填属性未填写时，若需输入属性值，则默认填写值为<el-input v-model="default_attr_value" style="width: 280px;" class="ml-5" placeholder="类目属性默认值设置"></el-input>
             </p>
             <el-switch v-model="is_use_default_attr_value" class="ml-5"/>
+          </div>
+          <div style="display:flex;margin-bottom:5px" class="align-c font-12">
+            必填属性未填写时，若需选择属性值，则默认选择第一个属性选项
+            <el-switch v-model="is_select_first_options_attr"  class="ml-5"/>
           </div>
         </el-form-item>
         <!-- 库存 -->
