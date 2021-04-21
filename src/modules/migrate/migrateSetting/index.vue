@@ -39,6 +39,19 @@
             <span>{{!loadingBrandList ? '刷新':'加载中'}}</span>
           </el-button>
         </el-form-item>
+        <!-- 属性设置 -->
+        <el-form-item required label="属性设置:"  style="margin-bottom: 20px;" class="flex migrateSetting-attribute" >
+          <div style="display:flex;margin-bottom:5px" class="align-c font-12">
+            是否选中属性下拉框第一个值
+            <el-switch v-model="is_select_first_options_attr"  class="ml-5"/>
+          </div>
+          <div style="display:flex;margin-bottom:5px" class="align-c">
+            <p>
+              <el-input v-model="default_attr_value" style="width: 280px;" placeholder="类目属性默认值设置"></el-input>
+            </p>
+            <el-switch v-model="is_use_default_attr_value" class="ml-5"/>
+          </div>
+        </el-form-item>
         <!-- 库存 -->
         <el-form-item required label="SKU库存:"  style="margin-bottom: 20px;" class="flex migrateSetting-stock" >
             <p class="mb-10 flex align-c mb-10">
@@ -117,19 +130,6 @@
             <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
             <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
           </el-checkbox-group>；其余状态商品会自动过滤
-        </el-form-item>
-
-        <el-form-item required label="属性设置:"  style="margin-bottom: 20px;" class="flex migrateSetting-attribute" >
-          <div style="display:flex;margin-bottom:5px" class="align-c font-12">
-            是否选中属性下拉框第一个值
-            <el-switch v-model="is_select_first_options_attr"  class="ml-5"/>
-          </div>
-          <div style="display:flex;margin-bottom:5px" class="align-c">
-            <p>
-              <el-input v-model="default_attr_value" style="width: 280px;" placeholder="类目属性默认值设置"></el-input>
-            </p>
-            <el-switch v-model="is_use_default_attr_value" class="ml-5"/>
-          </div>
         </el-form-item>
 
         <el-form-item required label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
@@ -224,13 +224,13 @@ export default {
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
         { label: '品牌', className: '.migrateSetting-brand' },
+        { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: 'SKU库存', className: '.migrateSetting-stock' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
         { label: 'SKU规格值', className: '.migrateSetting-spec' },
         { label: '轮播图、详情图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
-        { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: '违规信息', className: '.migrateSetting-rule' }
       ],
       mBottom: `150px`,
