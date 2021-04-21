@@ -13,7 +13,7 @@ module.exports = {
     // proxyTable: {},
     proxyTable: {
       '/api': {
-        target: 'http://0.0.0.0:10080/',
+        target: 'http://dy.nix.huhuguanjia.com/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api',

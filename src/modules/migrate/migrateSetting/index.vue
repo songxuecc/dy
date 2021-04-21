@@ -119,6 +119,19 @@
           </el-checkbox-group>；其余状态商品会自动过滤
         </el-form-item>
 
+        <el-form-item required label="属性设置:"  style="margin-bottom: 20px;" class="flex migrateSetting-attribute" >
+          <div style="display:flex;margin-bottom:5px" class="align-c font-12">
+            是否选中属性下拉框第一个值
+            <el-switch v-model="is_select_first_options_attr"  class="ml-5"/>
+          </div>
+          <div style="display:flex;margin-bottom:5px" class="align-c">
+            <p>
+              <el-input v-model="default_attr_value" style="width: 280px;" placeholder="类目属性默认值设置"></el-input>
+            </p>
+            <el-switch v-model="is_use_default_attr_value" class="ml-5"/>
+          </div>
+        </el-form-item>
+
         <el-form-item required label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
             <div>
               <span style="font-size: 12px;"><span style="color: red;">*</span>违禁词自动过滤</span>
@@ -217,6 +230,7 @@ export default {
         { label: '轮播图、详情图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
+        { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: '违规信息', className: '.migrateSetting-rule' }
       ],
       mBottom: `150px`,
@@ -236,6 +250,9 @@ export default {
       is_cut_image_black_word: undefined,
       is_banner_auto_5: undefined,
 
+      is_select_first_options_attr: undefined,
+      is_use_default_attr_value: undefined,
+      default_attr_value: '',
       is_open_title_prefix_suffix: undefined,
       is_open_title_replace: undefined,
       default_sku_stock: '',
@@ -475,7 +492,9 @@ export default {
         'is_cut_detail_last',
         'is_open_title_prefix_suffix',
         'is_open_title_replace',
-        'goods_code_type'
+        'goods_code_type',
+        'is_select_first_options_attr',
+        'is_use_default_attr_value'
       ]
       Object.keys(data).forEach((key) => {
         this[key] = boolPropertys.includes(key) ? Boolean(data[key]) : data[key]
@@ -553,7 +572,10 @@ export default {
         source_title_str: this.source_title_str,
         target_title_str: this.target_title_str,
         default_category_id: Number(this.default_category_id),
-        default_brand_id: Number(this.default_brand_id)
+        default_brand_id: Number(this.default_brand_id),
+        default_attr_value: this.default_attr_value,
+        is_select_first_options_attr: Number(this.is_select_first_options_attr),
+        is_use_default_attr_value: Number(this.is_use_default_attr_value)
       }
 
       return product

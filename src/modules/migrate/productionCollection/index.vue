@@ -355,7 +355,7 @@ export default {
 .tip {
   width: 336px;
   border-radius: 4px;
-
+  transition: all 0.3s;
 }
 
 .border {
