@@ -32,12 +32,13 @@ export default {
       let params = {
         code: code
       }
-      let state = decodeURI(this.$route.query.state)
+      let state = this.$route.query.state
       let from = ''
       if (state) {
+        state = decodeURI(state)
         let data = {}
         try {
-          data = JSON.parse(state)
+          data = JSON.parse(state || '{}')
         } catch (error) {
           console.error(error)
         }

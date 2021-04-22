@@ -144,7 +144,7 @@ const router = new Router({
     },
     {
       path: '/migrate/productionCollection',
-      name: 'ProductList',
+      name: 'ProductionCollection',
       component: ProductionCollection,
       meta: {
         keepAlive: true,
@@ -193,7 +193,7 @@ const router = new Router({
       component: Login
     },
     {
-      path: '/customerSetting/fake',
+      path: '/fake',
       name: 'Fake',
       component: Fake,
       meta: {
