@@ -121,6 +121,15 @@
             <el-switch v-model="is_open_title_replace" class="ml-5"/>
           </div>
         </el-form-item>
+        <!-- 商家推荐语 -->
+        <el-form-item required label="商家推荐语:"  style="margin-bottom: 20px;" class="flex migrateSetting-recommend" >
+          <div style="display:flex;margin-bottom:5px" class="align-c">
+            <p class="font-12">
+              商家推荐语<el-input v-model="default_recommend_remark" style="width: 280px;" class="ml-5" placeholder="请填写商家推荐语设置"></el-input>
+            </p>
+            <el-switch v-model="is_open_recommend_remark" class="ml-5"/>
+          </div>
+        </el-form-item>
 
         <el-form-item required label="搬家仅针对"  class="flex migrateProductsFilter migrateSetting-choose" style="height:25px;margin-bottom: 20px;">
           <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
@@ -230,6 +239,7 @@ export default {
         { label: 'SKU规格值', className: '.migrateSetting-spec' },
         { label: '轮播图、详情图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
+        { label: '商家推荐语', className: '.migrateSetting-recommend' },
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
         { label: '违规信息', className: '.migrateSetting-rule' }
       ],
@@ -253,6 +263,8 @@ export default {
       is_select_first_options_attr: undefined,
       is_use_default_attr_value: undefined,
       default_attr_value: '',
+      default_recommend_remark: '',
+      is_open_recommend_remark: undefined,
       is_open_title_prefix_suffix: undefined,
       is_open_title_replace: undefined,
       default_sku_stock: '',
@@ -337,6 +349,7 @@ export default {
     const nextTab = tab.map((item, index) => {
       const className = item.className
       const el = document.querySelector(className)
+      // if (el) {
       const rect = el.getBoundingClientRect()
       // 移动的距离 是滚动距离
       // pt的距离是 整个盒子可见部分
@@ -351,6 +364,7 @@ export default {
         scrollTop: top - dist,
         top
       }
+      // }
     })
     this.tabs = nextTab
     this.bindScroll()
@@ -494,7 +508,8 @@ export default {
         'is_open_title_replace',
         'goods_code_type',
         'is_select_first_options_attr',
-        'is_use_default_attr_value'
+        'is_use_default_attr_value',
+        'is_open_recommend_remark'
       ]
       Object.keys(data).forEach((key) => {
         this[key] = boolPropertys.includes(key) ? Boolean(data[key]) : data[key]
@@ -575,7 +590,9 @@ export default {
         default_brand_id: Number(this.default_brand_id),
         default_attr_value: this.default_attr_value,
         is_select_first_options_attr: Number(this.is_select_first_options_attr),
-        is_use_default_attr_value: Number(this.is_use_default_attr_value)
+        is_use_default_attr_value: Number(this.is_use_default_attr_value),
+        is_open_recommend_remark: Number(this.is_open_recommend_remark),
+        default_recommend_remark: this.default_recommend_remark
       }
 
       return product
