@@ -43,6 +43,24 @@
                     <div><el-radio :label="2">付款减库存 <span class="info">买家支付订单时，扣件库存，存在超卖风险</span></el-radio></div>
                 </el-radio-group>
             </el-form-item>
+            <el-form-item label="售后服务:"  prop="supply_7day_return">
+                <el-radio-group v-model="template.model.supply_7day_return">
+                    <el-radio :label="1">支持7天无理由退换货</el-radio>
+                    <el-radio :label="0">不支持7天无理由退换货</el-radio>
+<!--                    <el-radio :label="2">支持（拆封后不支持）</el-radio>-->
+                </el-radio-group>
+                <div style="position: absolute;top: 15px;left: 192px;color: red; font-size: 1px;">仅少数商品可选，一般商品不要选择此项</div>
+                <el-popover
+                  placement="top"
+                  width="600"
+                  trigger="click">
+                  <el-image
+                    :src="dySupplyImg"
+                    fit="fit">
+                  </el-image>
+                  <el-link slot="reference" :underline="false" style="margin-left: 100px; color: #1D8FFF; font-size: 1px;">注:什么商品可以不支持7天无理由退换货?</el-link>
+                </el-popover>
+            </el-form-item>
         </el-form>
     </div>
 </template>
@@ -57,6 +75,7 @@ const {
 export default {
   data () {
     return {
+      dySupplyImg: 'https://img.pddpic.com/mms-material-img/2021-04-21/091fb3a4-fa82-49eb-9821-229aaa330567.png.a.jpeg',
       rules: {
         pay_type: [
           { required: true, message: '请选择付款方式', trigger: 'change' }
