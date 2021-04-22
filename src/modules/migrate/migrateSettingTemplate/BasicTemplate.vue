@@ -49,7 +49,7 @@
                     <el-radio :label="0">不支持7天无理由退换货</el-radio>
 <!--                    <el-radio :label="2">支持（拆封后不支持）</el-radio>-->
                 </el-radio-group>
-                <div style="position: absolute;top: 15px;left: 192px;color: red;font-size: 4px;">仅少数商品可选，一般商品不要选择此项</div>
+                <div style="position: absolute;top: 15px;left: 192px;color: red; font-size: 1px;">仅少数商品可选，一般商品不要选择此项</div>
                 <el-popover
                   placement="top"
                   width="600"
@@ -58,7 +58,7 @@
                     :src="dySupplyImg"
                     fit="fit">
                   </el-image>
-                  <el-link slot="reference" :underline="false" style="margin-left: 100px; color: #1D8FFF">什么商品可以不支持7天无理由退换货?</el-link>
+                  <el-link slot="reference" :underline="false" style="margin-left: 100px; color: #1D8FFF; font-size: 1px;">注:什么商品可以不支持7天无理由退换货?</el-link>
                 </el-popover>
             </el-form-item>
         </el-form>
