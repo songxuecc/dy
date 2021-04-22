@@ -11,9 +11,9 @@
             label-style="font-size:12px">
             <div style="diplay:flex">
              <span slot="label" style="width:120px;display:inline-block;text-align:right;padding-right:4px">
+               <i v-if="item.required && item.name === '品牌'"  style="color:#E02020">*</i>
+               <i v-if="item.required && item.name !== '品牌'"  style="color:#E02020">*</i>
                {{item.name}}
-               <i v-if="item.required && item.name === '品牌'" class="el-icon-warning-outline" style="color:#f56c6c"></i>
-               <i v-if="item.required && item.name !== '品牌'" class="el-icon-warning-outline" style="color:#f56c6c"></i>
               </span>
              <el-select
                 clearable
@@ -85,7 +85,7 @@
 
         </el-form-item>
         <div class="tip">
-          <p >带<span style="color:#f56c6c">红色感叹号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
+          <p >带<span style="color:#f56c6c">红色 &nbsp;*&nbsp;符号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
             <!-- 二期会实现本功能 -->
             <!-- <span v-if="catId!==0">，勾选应用到本页相同分类商品，蓝色高亮</span> -->
         </div>
