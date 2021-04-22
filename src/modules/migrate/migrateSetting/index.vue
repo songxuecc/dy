@@ -51,7 +51,7 @@
               width="400"
               trigger="hover">
               <img style="width:400px"
-              src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/397681ce02154a2b9ad2541ef83b62a9~tplv-k3u1fbpfcp-watermark.image" />
+              src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/717803240fbd43868db89dddd4f2a540~tplv-k3u1fbpfcp-watermark.image" />
               <span class="pointer flex align-c" slot="reference">
                 <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                 <span class="info">填写帮助</span>
@@ -67,7 +67,7 @@
               width="400"
               trigger="hover">
               <img style="width:400px"
-              src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/717803240fbd43868db89dddd4f2a540~tplv-k3u1fbpfcp-watermark.image" />
+              src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/397681ce02154a2b9ad2541ef83b62a9~tplv-k3u1fbpfcp-watermark.image" />
               <span class="pointer flex align-c" slot="reference">
                 <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                 <span class="info">填写帮助</span>
