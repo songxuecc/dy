@@ -19,6 +19,9 @@
             <el-menu-item index="/migrate/migrateSetting" :disabled="!isAuth()">
               <span slot="title" style="display: flex;align-items: center;">基本设置<NewFeatureTips type="基本设置"/></span>
             </el-menu-item>
+            <el-menu-item index="/migrate/productionCollection" :disabled="!isAuth()">
+              <span slot="title" style="display: flex;align-items: center;">商品采集<NewFeatureTips type="商品采集"/></span>
+            </el-menu-item>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
@@ -32,7 +35,7 @@
               <span slot="title" style="display: flex;align-items: center;">批量处理</span>
             </el-menu-item>
             <el-menu-item index="/productsManagement/skuImport" :disabled="!isAuth()">
-              <span slot="title">SKU导入修改</span>
+              <span slot="title">导入表格修改</span>
             </el-menu-item>
            <el-menu-item index="/shopDecorate/poster/dg/list" :disabled="!isAuth()">
              <span slot="title">批量新增详情</span>

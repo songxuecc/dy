@@ -39,6 +39,19 @@
             <span>{{!loadingBrandList ? '刷新':'加载中'}}</span>
           </el-button>
         </el-form-item>
+        <!-- 属性设置 -->
+        <el-form-item required label="属性设置:"  style="margin-bottom: 20px;" class="flex migrateSetting-attribute" >
+          <div style="display:flex;margin-bottom:5px" class="align-c">
+            <p class="font-12">
+              必填属性未填写时，若需输入属性值，则默认填写值为<el-input v-model="default_attr_value" style="width: 280px;" class="ml-5" placeholder="类目属性默认值设置"></el-input>
+            </p>
+            <el-switch v-model="is_use_default_attr_value" class="ml-5"/>
+          </div>
+          <div style="display:flex;margin-bottom:5px" class="align-c font-12">
+            必填属性未填写时，若需选择属性值，则默认选择第一个属性选项
+            <el-switch v-model="is_select_first_options_attr"  class="ml-5"/>
+          </div>
+        </el-form-item>
         <!-- 库存 -->
         <el-form-item required label="SKU库存:"  style="margin-bottom: 20px;" class="flex migrateSetting-stock" >
             <p class="mb-10 flex align-c mb-10">
@@ -211,6 +224,7 @@ export default {
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
         { label: '品牌', className: '.migrateSetting-brand' },
+        { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: 'SKU库存', className: '.migrateSetting-stock' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
         { label: 'SKU规格值', className: '.migrateSetting-spec' },
@@ -236,6 +250,9 @@ export default {
       is_cut_image_black_word: undefined,
       is_banner_auto_5: undefined,
 
+      is_select_first_options_attr: undefined,
+      is_use_default_attr_value: undefined,
+      default_attr_value: '',
       is_open_title_prefix_suffix: undefined,
       is_open_title_replace: undefined,
       default_sku_stock: '',
@@ -475,7 +492,9 @@ export default {
         'is_cut_detail_last',
         'is_open_title_prefix_suffix',
         'is_open_title_replace',
-        'goods_code_type'
+        'goods_code_type',
+        'is_select_first_options_attr',
+        'is_use_default_attr_value'
       ]
       Object.keys(data).forEach((key) => {
         this[key] = boolPropertys.includes(key) ? Boolean(data[key]) : data[key]
@@ -553,7 +572,10 @@ export default {
         source_title_str: this.source_title_str,
         target_title_str: this.target_title_str,
         default_category_id: Number(this.default_category_id),
-        default_brand_id: Number(this.default_brand_id)
+        default_brand_id: Number(this.default_brand_id),
+        default_attr_value: this.default_attr_value,
+        is_select_first_options_attr: Number(this.is_select_first_options_attr),
+        is_use_default_attr_value: Number(this.is_use_default_attr_value)
       }
 
       return product
