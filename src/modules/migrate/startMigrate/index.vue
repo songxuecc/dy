@@ -26,6 +26,10 @@
               条，一天最多支持 1200 条</div>
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
+
+          <div class="info">导入复制前可以通过
+            <span class="click" @click="openProductCollection">商品采集功能</span>
+            采集商品链接</div>
         </div>
         <!-- <div style="text-align: left; margin-top: 50px;margin-bottom:20px">
           <span class="prompt">使用方式:</span>
@@ -668,6 +672,11 @@ export default {
       if (value === 'status') {
         this.$refs.modelCopyForm.clearValidate()
       }
+    },
+    openProductCollection () {
+      this.$router.push({
+        name: 'ProductionCollection'
+      })
     }
 
   }

@@ -144,7 +144,7 @@ const router = new Router({
     },
     {
       path: '/migrate/productionCollection',
-      name: 'ProductList',
+      name: 'ProductionCollection',
       component: ProductionCollection,
       meta: {
         keepAlive: true,
