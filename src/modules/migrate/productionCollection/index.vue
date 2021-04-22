@@ -487,7 +487,6 @@ export default {
   },
   watch: {
     count (n) {
-      console.log(n)
       if (n === originImgaeURl.length) {
         this.loading = false
       } else {
@@ -520,12 +519,9 @@ export default {
       })
     },
     handleMouseenter (name) {
-      // this[`img${name}`] = this.imagesData[name].gif
-      // console.log(this.imagesData[name].gif, 'this.imagesData[name].gif')
       this.name = name
     },
     handleMouseleaver (name) {
-      // this[`img${name}`] = this.imagesData[name].png
       this.name = 0
     },
     downloadCrx () {
