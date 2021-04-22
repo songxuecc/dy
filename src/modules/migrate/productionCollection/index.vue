@@ -236,7 +236,9 @@
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第三步：</p>
           <div class="color-666">
-            <p class="mb-8">利用虎虎采集助手开始采集</p>
+            <p class="mb-8">
+              打开<span class="click" v-hh-open="'https://www.taobao.com/'">淘宝</span>平台，
+              利用虎虎采集助手开始采集</p>
             <div
               style="width: 336px; height: 150px"
               :class="['mb-12', name === 5 ? 'border' : 'noborder']"
