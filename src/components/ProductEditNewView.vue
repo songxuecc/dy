@@ -57,13 +57,13 @@
                       <el-badge :value="product.model.check_error_msg_static['0'].num" ></el-badge>
                   </el-tooltip>
                   </span>
-                  <el-form class="setting-content" ref="form" :model="product.model" label-width="90px">
-                      <el-form-item label="商品分类:">
+                  <el-form class="setting-content" ref="form" :model="product.model" label-width="90px" >
+                      <el-form-item label="商品分类:" required>
                           <span>{{ product.model.category_show }}</span>
                           <el-button size="mini" @click="showSelectCateView">修改分类</el-button>
                           <el-button size="mini"  @click="onApplySelectCateToSelection()" :disabled="product.model.cat_id === 0">批量修改选中商品</el-button>
                       </el-form-item>
-                      <el-form-item label="商品标题:" style="margin-right: 20px;">
+                      <el-form-item label="商品标题:" style="margin-right: 20px;" required>
                           <div style="display:flex">
                             <el-input
                               v-model="product.model.title"

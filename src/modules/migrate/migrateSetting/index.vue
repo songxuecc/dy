@@ -45,11 +45,35 @@
             <p class="font-12">
               必填属性未填写时，若需输入属性值，则默认填写值为<el-input v-model="default_attr_value" style="width: 280px;" class="ml-5" placeholder="类目属性默认值设置"></el-input>
             </p>
-            <el-switch v-model="is_use_default_attr_value" class="ml-5"/>
+            <el-switch v-model="is_use_default_attr_value" class="ml-5 mr-5"/>
+
+            <el-popover
+              width="400"
+              trigger="hover">
+              <img style="width:400px"
+              src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/397681ce02154a2b9ad2541ef83b62a9~tplv-k3u1fbpfcp-watermark.image" />
+              <span class="pointer flex align-c" slot="reference">
+                <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
+                <span class="info">填写帮助</span>
+              </span>
+            </el-popover>
+
           </div>
           <div style="display:flex;margin-bottom:5px" class="align-c font-12">
             必填属性未填写时，若需选择属性值，则默认选择第一个属性选项
-            <el-switch v-model="is_select_first_options_attr"  class="ml-5"/>
+            <el-switch v-model="is_select_first_options_attr"  class="ml-5 mr-5"/>
+
+            <el-popover
+              width="400"
+              trigger="hover">
+              <img style="width:400px"
+              src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/717803240fbd43868db89dddd4f2a540~tplv-k3u1fbpfcp-watermark.image" />
+              <span class="pointer flex align-c" slot="reference">
+                <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
+                <span class="info">填写帮助</span>
+              </span>
+            </el-popover>
+
           </div>
         </el-form-item>
         <!-- 库存 -->
@@ -185,6 +209,7 @@
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px"
         :disabled="shouldUpdate || loadingSettings">保存设置</el-button>
     </div>
+
   </div>
 </template>
 
