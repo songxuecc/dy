@@ -87,15 +87,32 @@
               :class="['mb-12', name === 1 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="img1"
+                :src="imagesData[1].png"
+                v-show="name !== 1"
                 alt=""
                 class="tip mb-12 pointer"
-                ref="img1"
+                ref="img1JPG"
                 @mouseenter="handleMouseenter(1)"
                 @mouseleave="handleMouseleaver(1)"
-                :preview-src-list="[img1JPG]"
+                :preview-src-list="[imagesData[1].gif]"
               >
               </el-image>
+              <el-image
+                :src="imagesData[1].gif"
+                v-show="name === 1 && loading"
+                alt=""
+                class="tip mb-12 pointer"
+                ref="img1GIF"
+                @mouseenter="handleMouseenter(1)"
+                @mouseleave="handleMouseleaver(1)"
+                :preview-src-list="[imagesData[1].gif]"
+              >
+              <div slot="placeholder" class="image-slot">
+                <hh-icon type="iconwuzhaopian" style="font-size:190px"></hh-icon>
+                <div class="info mt-20">加载GIF图中...请稍后</div>
+              </div>
+              </el-image>
+
             </div>
           </div>
         </div>
@@ -115,14 +132,31 @@
               :class="['mb-12', name === 2 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="img2"
+                :src="imagesData[2].png"
+                v-show="name !== 2"
                 alt=""
-                :class="['tip pointer']"
-                :preview-src-list="[img2JPG]"
-                ref="img2"
+                class="tip mb-12 pointer"
+                ref="img2JPG"
                 @mouseenter="handleMouseenter(2)"
                 @mouseleave="handleMouseleaver(2)"
-              />
+                :preview-src-list="[imagesData[2].gif]"
+              >
+              </el-image>
+              <el-image
+                :src="imagesData[2].gif"
+                v-show="name === 2 && loading"
+                alt=""
+                class="tip mb-12 pointer"
+                ref="img2GIF"
+                @mouseenter="handleMouseenter(2)"
+                @mouseleave="handleMouseleaver(2)"
+                :preview-src-list="[imagesData[2].gif]"
+              >
+              <div slot="placeholder" class="image-slot">
+                <hh-icon type="iconwuzhaopian" style="font-size:407px"></hh-icon>
+                <div class="info mt-20">加载GIF图中...请稍后</div>
+              </div>
+              </el-image>
             </div>
           </div>
         </div>
@@ -140,14 +174,31 @@
               :class="['mb-12', name === 3 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="img3"
+                :src="imagesData[3].png"
+                v-show="name !== 3"
                 alt=""
                 class="tip mb-12 pointer"
-                :preview-src-list="[img3JPG]"
-                ref="img3"
+                ref="img3JPG"
                 @mouseenter="handleMouseenter(3)"
                 @mouseleave="handleMouseleaver(3)"
-              />
+                :preview-src-list="[imagesData[3].gif]"
+              >
+              </el-image>
+              <el-image
+                :src="imagesData[3].gif"
+                v-show="name === 3 && loading"
+                alt=""
+                class="tip mb-12 pointer"
+                ref="img3GIF"
+                @mouseenter="handleMouseenter(3)"
+                @mouseleave="handleMouseleaver(3)"
+                :preview-src-list="[imagesData[3].gif]"
+              >
+              <div slot="placeholder" class="image-slot">
+                <hh-icon type="iconwuzhaopian" style="font-size:150px"></hh-icon>
+                <div class="info mt-20">加载GIF图中...请稍后</div>
+              </div>
+              </el-image>
             </div>
           </div>
         </div>
@@ -166,14 +217,32 @@
               :class="['mb-12', name === 6 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="img6"
+                :src="imagesData[6].png"
+                v-show="name !== 6"
                 alt=""
-                :class="['tip pointer']"
-                :preview-src-list="[img6JPG]"
-                ref="img6"
+                class="tip mb-12 pointer"
+                ref="img6JPG"
                 @mouseenter="handleMouseenter(6)"
                 @mouseleave="handleMouseleaver(6)"
-              />
+                :preview-src-list="[imagesData[6].gif]"
+              >
+              </el-image>
+              <el-image
+                :src="imagesData[6].gif"
+                v-show="name === 6 && loading"
+                alt=""
+                class="tip mb-12 pointer"
+                ref="img6GIF"
+                @mouseenter="handleMouseenter(6)"
+                @mouseleave="handleMouseleaver(6)"
+                :preview-src-list="[imagesData[6].gif]"
+              >
+              <div slot="placeholder" class="image-slot">
+                <hh-icon type="iconwuzhaopian" style="font-size:356px"></hh-icon>
+                <div class="info mt-20">加载GIF图中...请稍后</div>
+              </div>
+              </el-image>
+
             </div>
           </div>
         </div>
@@ -224,14 +293,32 @@
               :class="['mb-12', name === 4 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="img4"
+                :src="imagesData[4].png"
+                v-show="name !== 4"
                 alt=""
                 class="tip mb-12 pointer"
-                :preview-src-list="[img4JPG]"
-                ref="img4"
+                ref="img4JPG"
                 @mouseenter="handleMouseenter(4)"
                 @mouseleave="handleMouseleaver(4)"
-              />
+                :preview-src-list="[imagesData[4].gif]"
+              >
+              </el-image>
+              <el-image
+                :src="imagesData[4].gif"
+                v-show="name === 4 && loading"
+                alt=""
+                class="tip mb-12 pointer"
+                ref="img4GIF"
+                @mouseenter="handleMouseenter(4)"
+                @mouseleave="handleMouseleaver(4)"
+                :preview-src-list="[imagesData[4].gif]"
+              >
+              <div slot="placeholder" class="image-slot">
+                <hh-icon type="iconwuzhaopian" style="font-size:219px"></hh-icon>
+                <div class="info mt-20">加载GIF图中...请稍后</div>
+              </div>
+              </el-image>
+
             </div>
           </div>
         </div>
@@ -249,14 +336,32 @@
               :class="['mb-12', name === 5 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="img5"
+                :src="imagesData[5].png"
+                v-show="name !== 5"
                 alt=""
                 class="tip mb-12 pointer"
-                :preview-src-list="[img5JPG]"
-                ref="img5"
+                ref="img5JPG"
                 @mouseenter="handleMouseenter(5)"
                 @mouseleave="handleMouseleaver(5)"
-              />
+                :preview-src-list="[imagesData[5].gif]"
+              >
+              </el-image>
+              <el-image
+                :src="imagesData[5].gif"
+                v-show="name === 5 && loading"
+                alt=""
+                class="tip mb-12 pointer"
+                ref="img5GIF"
+                @mouseenter="handleMouseenter(5)"
+                @mouseleave="handleMouseleaver(5)"
+                :preview-src-list="[imagesData[5].gif]"
+              >
+              <div slot="placeholder" class="image-slot">
+                <hh-icon type="iconwuzhaopian" style="font-size:150px"></hh-icon>
+                <div class="info mt-20">加载GIF图中...请稍后</div>
+              </div>
+              </el-image>
+
             </div>
           </div>
         </div>
@@ -276,14 +381,32 @@
               :class="['mb-12', name === 7 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="img7"
+                :src="imagesData[7].png"
+                v-show="name !== 7"
                 alt=""
                 class="tip mb-12 pointer"
-                :preview-src-list="[img7JPG]"
-                ref="img7"
+                ref="img7JPG"
                 @mouseenter="handleMouseenter(7)"
                 @mouseleave="handleMouseleaver(7)"
-              />
+                :preview-src-list="[imagesData[7].gif]"
+              >
+              </el-image>
+              <el-image
+                :src="imagesData[7].gif"
+                v-show="name === 7 && loading"
+                alt=""
+                class="tip mb-12 pointer"
+                ref="img7GIF"
+                @mouseenter="handleMouseenter(7)"
+                @mouseleave="handleMouseleaver(7)"
+                :preview-src-list="[imagesData[7].gif]"
+              >
+              <div slot="placeholder" class="image-slot">
+                <hh-icon type="iconwuzhaopian" style="font-size:310px"></hh-icon>
+                <div class="info mt-20">加载GIF图中...请稍后</div>
+              </div>
+              </el-image>
+
             </div>
           </div>
         </div>
@@ -297,72 +420,93 @@
 </template>
 
 <script>
-import img1JPG from './images/1.gif'
-import img2JPG from './images/2.gif'
-import img3JPG from './images/3.gif'
-import img4JPG from './images/4.gif'
-import img6JPG from './images/6.gif'
-import img7JPG from './images/7.gif'
 
-import img1PNG from './images/1.png'
-import img2PNG from './images/2.png'
-import img3PNG from './images/3.png'
-import img4PNG from './images/4.png'
-import img6PNG from './images/6.png'
-import img7PNG from './images/7.png'
+const originImgaeURl = [
+  'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00d1de642335473da7eb5bb42d728297~tplv-k3u1fbpfcp-watermark.image',
+  'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f86131fb519e4ef1b7c6b6031447b890~tplv-k3u1fbpfcp-watermark.image',
+  'https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a7aa3a13c62a4fe0942770b6ee203c59~tplv-k3u1fbpfcp-watermark.image',
+  'https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/01b999065d4d44bfbac0b8c9ec10109c~tplv-k3u1fbpfcp-watermark.image',
+  'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/57ffe3f7171847ad9e63046d809a9e8d~tplv-k3u1fbpfcp-watermark.image',
+  'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b25a0c1866e540d59ca49b6a20586c98~tplv-k3u1fbpfcp-watermark.image',
+  'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8da039ae3f41466d985299fccb07b9f2~tplv-k3u1fbpfcp-watermark.image',
+  'https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7882ac3d514a4298bb51c0ec0352086d~tplv-k3u1fbpfcp-watermark.image',
+  'https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7d47a9b0a2fe4fe08a2947ad3f4785aa~tplv-k3u1fbpfcp-watermark.image',
+  'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/432f0809d383439fb476ad0ee0c4b6e4~tplv-k3u1fbpfcp-watermark.image',
+  'https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0c031cc2497543629ff82aaa83064395~tplv-k3u1fbpfcp-watermark.image',
+  'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/124248bd1fa84568bd165faac519f007~tplv-k3u1fbpfcp-watermark.image'
+]
 
+const imagesData = {
+  1: {
+    gif: originImgaeURl[0],
+    png: originImgaeURl[1]
+  },
+  2: {
+    gif: originImgaeURl[2],
+    png: originImgaeURl[3]
+  },
+  3: {
+    gif: originImgaeURl[6],
+    png: originImgaeURl[7]
+  },
+  4: {
+    gif: originImgaeURl[4],
+    png: originImgaeURl[5]
+  },
+  5: {
+    gif: originImgaeURl[6],
+    png: originImgaeURl[7]
+  },
+  6: {
+    gif: originImgaeURl[8],
+    png: originImgaeURl[9]
+  },
+  7: {
+    gif: originImgaeURl[10],
+    png: originImgaeURl[11]
+  }
+}
 export default {
   data () {
     return {
       visible: false,
-      imagesData: {
-        1: {
-          gif: img1JPG,
-          png: img1PNG
-        },
-        2: {
-          gif: img2JPG,
-          png: img2PNG
-        },
-        3: {
-          gif: img4JPG,
-          png: img4PNG
-        },
-        4: {
-          gif: img3JPG,
-          png: img3PNG
-        },
-        5: {
-          gif: img4JPG,
-          png: img4PNG
-        },
-        6: {
-          gif: img6JPG,
-          png: img6PNG
-        },
-        7: {
-          gif: img7JPG,
-          png: img7PNG
-        }
-      },
-      img1JPG,
-      img2JPG,
-      img3JPG: img4JPG,
-      img4JPG: img3JPG,
-      img5JPG: img4JPG,
-      img6JPG,
-      img7JPG,
-      img1: img1PNG,
-      img2: img2PNG,
-      img3: img4PNG,
-      img4: img3PNG,
-      img5: img4PNG,
-      img6: img6PNG,
-      img7: img7PNG,
-      name: 0
+      imagesData,
+      name: 0,
+      img1: imagesData[1].png,
+      img2: imagesData[2].png,
+      img3: imagesData[3].png,
+      img4: imagesData[4].png,
+      img5: imagesData[5].png,
+      img6: imagesData[6].png,
+      img7: imagesData[7].png,
+      count: 1
+    }
+  },
+  created () {
+    this.preload()
+  },
+  watch: {
+    count (n) {
+      console.log(n)
+      if (n === originImgaeURl.length) {
+        this.loading = false
+      } else {
+        this.loading = true
+      }
     }
   },
   methods: {
+    preload: function () {
+      let imgs = originImgaeURl
+
+      for (let img of imgs) {
+        let image = new Image()
+        image.src = img
+        image.onload = () => {
+          this.count++
+        }
+      }
+    },
     toggleVisible (name) {
       this.activeImg = this.imagesData[name].gif
       this.visible = true
@@ -376,11 +520,12 @@ export default {
       })
     },
     handleMouseenter (name) {
-      this[`img${name}`] = this.imagesData[name].gif
+      // this[`img${name}`] = this.imagesData[name].gif
+      // console.log(this.imagesData[name].gif, 'this.imagesData[name].gif')
       this.name = name
     },
     handleMouseleaver (name) {
-      this[`img${name}`] = this.imagesData[name].png
+      // this[`img${name}`] = this.imagesData[name].png
       this.name = 0
     },
     downloadCrx () {
