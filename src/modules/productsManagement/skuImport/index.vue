@@ -10,6 +10,7 @@
       <UploadFile :activeName="activeName"/>
     </el-tab-pane>
   </el-tabs>
+  <goods-export></goods-export>
   <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
   <el-drawer
     title="sku编码修改详情"
@@ -29,6 +30,7 @@ import {createNamespacedHelpers, mapActions} from 'vuex'
 import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'
+import GoodsExport from './GoodsExport'
 const {
   mapMutations
 } = createNamespacedHelpers('productManagement/skuImport')
@@ -46,7 +48,8 @@ export default {
   components: {
     UploadFile,
     TableUploadFileRecord,
-    DetailSkuEdit
+    DetailSkuEdit,
+    GoodsExport
   },
   computed: {
   },

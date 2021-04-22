@@ -8,30 +8,6 @@
     <div v-if="activeTabName == 'normal'">
       <dy-product-list-view ref="dyProductListView" :dyProductList="dyProductList" @selectProductList="onSelectChange">
         <template slot="upperRight">
-          <!-- <el-button size="small" style="right: 0px;" @click="downloadExcel">sku模板下载</el-button> -->
-          <!-- 商品sku编码导入 upload组件 start -->
-          <!-- <el-upload
-            class="sku-excel-import-btn"
-            action="/api/product/sku/excel/create"
-            :multiple="false"
-            :show-file-list="false"
-            ref="upload"
-            :limit=1
-            :headers="getTokenHeaders"
-            :on-success="skuExcelImportSuccess"
-            :on-progress="skuExcelImporting"
-            :on-error="skuExcelImportError"
-          >
-            <el-tooltip class="item" effect="dark" content="每次最多修改500条，预计一个sku需要1秒，请耐心等待"
-                        placement="top">
-              <el-button size="small" class="nodim" style="right: 0px;" :diabled="isSkuImporting"
-                         @click="recordSkuExcelImportBtnClick">
-                <span>商品sku编码导入</span>
-                <i v-if="isSkuImporting" class="el-icon-loading"></i>
-              </el-button>
-            </el-tooltip>
-          </el-upload> -->
-          <!-- 商品sku编码导入 upload组件 end -->
           <el-button size="medium" @click="openDialogExport" class="nodim" style="right: 0px;">商品导出</el-button>
         </template>
       </dy-product-list-view>
@@ -413,8 +389,6 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '全部商品', '点击', '商品导出'])
       }
-      // 查询导出状态
-      // this.getProductExcelInfo()
     },
     onGenProductsExcel () {
       let fieldList = []
