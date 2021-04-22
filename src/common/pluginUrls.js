@@ -1,0 +1,2 @@
+export const ZIP_PLUGIN_URL = 'https://plugin-file.oss-cn-shanghai.aliyuncs.com/%E8%99%8E%E8%99%8E%E9%87%87%E9%9B%86%EF%BC%88%E8%AF%B7%E8%A7%A3%E5%8E%8B%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%E5%A4%B9%EF%BC%89.zip'
+export const CRX_PLUGIN_URL = 'https://plugin-file.oss-cn-shanghai.aliyuncs.com/%E8%99%8E%E8%99%8E%E9%87%87%E9%9B%86%EF%BC%88%E8%AF%B7%E8%A7%A3%E5%8E%8B%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%E5%A4%B9%EF%BC%89.crx'

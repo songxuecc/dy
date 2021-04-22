@@ -80,15 +80,14 @@
               在浏览器中打开
               <span class="click">chrome://extensions/</span>
               网址，并将解压好的文件拖拽到页面中
-              <span class="info">(下图点击可放大)</span>
+              <span class="info">(以下所有图片可点击放大)</span>
             </p>
             <div
               style="width: 336px; height: 190px"
               :class="['mb-12', name === 1 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="imagesData[1].png"
-                v-show="name !== 1"
+                :src="img1"
                 alt=""
                 class="tip mb-12 pointer"
                 ref="img1JPG"
@@ -97,22 +96,6 @@
                 :preview-src-list="[imagesData[1].gif]"
               >
               </el-image>
-              <el-image
-                :src="imagesData[1].gif"
-                v-show="name === 1 && loading"
-                alt=""
-                class="tip mb-12 pointer"
-                ref="img1GIF"
-                @mouseenter="handleMouseenter(1)"
-                @mouseleave="handleMouseleaver(1)"
-                :preview-src-list="[imagesData[1].gif]"
-              >
-              <div slot="placeholder" class="image-slot">
-                <hh-icon type="iconwuzhaopian" style="font-size:190px"></hh-icon>
-                <div class="info mt-20">加载GIF图中...请稍后</div>
-              </div>
-              </el-image>
-
             </div>
           </div>
         </div>
@@ -125,15 +108,14 @@
               <span class="click" v-hh-open="'https://www.taobao.com/'"
                 >淘宝</span
               >
-              平台，让插件开始运行<span class="info">(下图点击可放大)</span>
+              平台，让插件开始运行
             </p>
             <div
               style="width: 336px; height: 407px"
               :class="['mb-12', name === 2 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="imagesData[2].png"
-                v-show="name !== 2"
+                :src="img2"
                 alt=""
                 class="tip mb-12 pointer"
                 ref="img2JPG"
@@ -142,21 +124,6 @@
                 :preview-src-list="[imagesData[2].gif]"
               >
               </el-image>
-              <el-image
-                :src="imagesData[2].gif"
-                v-show="name === 2 && loading"
-                alt=""
-                class="tip mb-12 pointer"
-                ref="img2GIF"
-                @mouseenter="handleMouseenter(2)"
-                @mouseleave="handleMouseleaver(2)"
-                :preview-src-list="[imagesData[2].gif]"
-              >
-              <div slot="placeholder" class="image-slot">
-                <hh-icon type="iconwuzhaopian" style="font-size:407px"></hh-icon>
-                <div class="info mt-20">加载GIF图中...请稍后</div>
-              </div>
-              </el-image>
             </div>
           </div>
         </div>
@@ -164,18 +131,13 @@
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第五步：</p>
           <div class="color-666">
-            <p class="mb-8">
-              利用
-              <span class="click" @click="downloadZip">虎虎采集助手 </span
-              >开始采集 <span class="info">(下图点击可放大)</span>
-            </p>
+            <p class="mb-8">利用虎虎采集助手开始采集</p>
             <div
               style="width: 336px; height: 150px"
               :class="['mb-12', name === 3 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="imagesData[3].png"
-                v-show="name !== 3"
+                :src="img3"
                 alt=""
                 class="tip mb-12 pointer"
                 ref="img3JPG"
@@ -183,21 +145,6 @@
                 @mouseleave="handleMouseleaver(3)"
                 :preview-src-list="[imagesData[3].gif]"
               >
-              </el-image>
-              <el-image
-                :src="imagesData[3].gif"
-                v-show="name === 3 && loading"
-                alt=""
-                class="tip mb-12 pointer"
-                ref="img3GIF"
-                @mouseenter="handleMouseenter(3)"
-                @mouseleave="handleMouseleaver(3)"
-                :preview-src-list="[imagesData[3].gif]"
-              >
-              <div slot="placeholder" class="image-slot">
-                <hh-icon type="iconwuzhaopian" style="font-size:150px"></hh-icon>
-                <div class="info mt-20">加载GIF图中...请稍后</div>
-              </div>
               </el-image>
             </div>
           </div>
@@ -207,18 +154,16 @@
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第六步：</p>
           <div class="color-666">
             <p class="mb-8">
-              查看已采集的商品，并下载形成excel，前往导入复制进行复制（点击导入复制跳转相应页面）<span
-                class="info"
-                >(下图点击可放大)</span
-              >
+              查看已采集的商品，并下载形成excel，前往
+              <span class="click" @click="open">导入复制</span>
+              进行复制
             </p>
             <div
               style="width: 336px; height: 356px"
               :class="['mb-12', name === 6 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="imagesData[6].png"
-                v-show="name !== 6"
+                :src="img6"
                 alt=""
                 class="tip mb-12 pointer"
                 ref="img6JPG"
@@ -227,22 +172,6 @@
                 :preview-src-list="[imagesData[6].gif]"
               >
               </el-image>
-              <el-image
-                :src="imagesData[6].gif"
-                v-show="name === 6 && loading"
-                alt=""
-                class="tip mb-12 pointer"
-                ref="img6GIF"
-                @mouseenter="handleMouseenter(6)"
-                @mouseleave="handleMouseleaver(6)"
-                :preview-src-list="[imagesData[6].gif]"
-              >
-              <div slot="placeholder" class="image-slot">
-                <hh-icon type="iconwuzhaopian" style="font-size:356px"></hh-icon>
-                <div class="info mt-20">加载GIF图中...请稍后</div>
-              </div>
-              </el-image>
-
             </div>
           </div>
         </div>
@@ -282,10 +211,8 @@
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第二步：</p>
           <div class="color-666">
             <p class="mb-8">
-              将下载完成的文件拖拽到360/搜狗浏览器的地址栏，并点击【添加】<span
-                class="info"
-                >(下图点击可放大)</span
-              >
+              将下载完成的文件拖拽到360/搜狗浏览器的地址栏，并点击【添加】
+
             </p>
 
             <div
@@ -293,8 +220,7 @@
               :class="['mb-12', name === 4 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="imagesData[4].png"
-                v-show="name !== 4"
+                :src="img4"
                 alt=""
                 class="tip mb-12 pointer"
                 ref="img4JPG"
@@ -303,22 +229,6 @@
                 :preview-src-list="[imagesData[4].gif]"
               >
               </el-image>
-              <el-image
-                :src="imagesData[4].gif"
-                v-show="name === 4 && loading"
-                alt=""
-                class="tip mb-12 pointer"
-                ref="img4GIF"
-                @mouseenter="handleMouseenter(4)"
-                @mouseleave="handleMouseleaver(4)"
-                :preview-src-list="[imagesData[4].gif]"
-              >
-              <div slot="placeholder" class="image-slot">
-                <hh-icon type="iconwuzhaopian" style="font-size:219px"></hh-icon>
-                <div class="info mt-20">加载GIF图中...请稍后</div>
-              </div>
-              </el-image>
-
             </div>
           </div>
         </div>
@@ -326,18 +236,13 @@
         <div class="flex">
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第三步：</p>
           <div class="color-666">
-            <p class="mb-8">
-              利用
-              <span class="click" @click="downloadCrx">虎虎采集助手 </span
-              >开始采集 <span class="info">(下图点击可放大)</span>
-            </p>
+            <p class="mb-8">利用虎虎采集助手开始采集</p>
             <div
               style="width: 336px; height: 150px"
               :class="['mb-12', name === 5 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="imagesData[5].png"
-                v-show="name !== 5"
+                :src="img5"
                 alt=""
                 class="tip mb-12 pointer"
                 ref="img5JPG"
@@ -346,22 +251,6 @@
                 :preview-src-list="[imagesData[5].gif]"
               >
               </el-image>
-              <el-image
-                :src="imagesData[5].gif"
-                v-show="name === 5 && loading"
-                alt=""
-                class="tip mb-12 pointer"
-                ref="img5GIF"
-                @mouseenter="handleMouseenter(5)"
-                @mouseleave="handleMouseleaver(5)"
-                :preview-src-list="[imagesData[5].gif]"
-              >
-              <div slot="placeholder" class="image-slot">
-                <hh-icon type="iconwuzhaopian" style="font-size:150px"></hh-icon>
-                <div class="info mt-20">加载GIF图中...请稍后</div>
-              </div>
-              </el-image>
-
             </div>
           </div>
         </div>
@@ -370,10 +259,9 @@
           <p class="mb-12" style="width: 56px; flex-shrink: 0">第四步：</p>
           <div class="color-666">
             <p class="mb-8">
-              查看已采集的商品，并下载形成excel，前往导入复制进行复制（点击导入复制跳转相应页面）<span
-                class="info"
-                >(下图点击可放大)</span
-              >
+              查看已采集的商品，并下载形成excel，前往
+              <span class="click" @click="open">导入复制</span>
+              进行复制
             </p>
 
             <div
@@ -381,8 +269,7 @@
               :class="['mb-12', name === 7 ? 'border' : 'noborder']"
             >
               <el-image
-                :src="imagesData[7].png"
-                v-show="name !== 7"
+                :src="img7"
                 alt=""
                 class="tip mb-12 pointer"
                 ref="img7JPG"
@@ -391,35 +278,16 @@
                 :preview-src-list="[imagesData[7].gif]"
               >
               </el-image>
-              <el-image
-                :src="imagesData[7].gif"
-                v-show="name === 7 && loading"
-                alt=""
-                class="tip mb-12 pointer"
-                ref="img7GIF"
-                @mouseenter="handleMouseenter(7)"
-                @mouseleave="handleMouseleaver(7)"
-                :preview-src-list="[imagesData[7].gif]"
-              >
-              <div slot="placeholder" class="image-slot">
-                <hh-icon type="iconwuzhaopian" style="font-size:310px"></hh-icon>
-                <div class="info mt-20">加载GIF图中...请稍后</div>
-              </div>
-              </el-image>
-
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <el-dialog :visible.sync="visible">
-      <img :src="activeImg" alt="" style="width: 70%" />
-    </el-dialog>
   </div>
 </template>
 
 <script>
+import { ZIP_PLUGIN_URL, CRX_PLUGIN_URL } from '@/common/pluginUrls'
 
 const originImgaeURl = [
   'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/00d1de642335473da7eb5bb42d728297~tplv-k3u1fbpfcp-watermark.image',
@@ -506,10 +374,6 @@ export default {
         }
       }
     },
-    toggleVisible (name) {
-      this.activeImg = this.imagesData[name].gif
-      this.visible = true
-    },
     open () {
       this.$router.push({
         name: 'StartMigrate',
@@ -519,9 +383,11 @@ export default {
       })
     },
     handleMouseenter (name) {
+      this[`img${name}`] = this.imagesData[name].gif
       this.name = name
     },
     handleMouseleaver (name) {
+      this[`img${name}`] = this.imagesData[name].png
       this.name = 0
     },
     downloadCrx () {
@@ -534,8 +400,7 @@ export default {
         ])
       }
       let link = document.createElement('a')
-      link.href =
-        'https://plugin-file.oss-cn-shanghai.aliyuncs.com/huhuPlug.crx'
+      link.href = CRX_PLUGIN_URL
       link.download = 'huhuPlug.crx'
       document.body.appendChild(link)
       link.click()
@@ -551,8 +416,7 @@ export default {
         ])
       }
       let link = document.createElement('a')
-      link.href =
-        'https://plugin-file.oss-cn-shanghai.aliyuncs.com/huhuPlug.zip'
+      link.href = ZIP_PLUGIN_URL
       link.download = 'huhuPlug.zip'
       document.body.appendChild(link)
       link.click()
