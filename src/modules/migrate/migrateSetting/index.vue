@@ -1,8 +1,8 @@
 <template lang="html">
   <div class="migrateSetting">
 
-    <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}" class="tab" @tab-click="tabClick">
-      <el-tab-pane :label="tab.label" v-for="tab in tabs" :key="tab.label" ></el-tab-pane>
+    <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}" class="tab" @tab-click="tabClick" ref="tab">
+      <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
     </el-tabs>
     <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
@@ -260,7 +260,7 @@ export default {
         { label: '违规信息', className: '.migrateSetting-rule' }
       ],
       mBottom: `150px`,
-      activeTab: 0,
+      activeTab: '0',
       scrollWidth: 0,
       brandList: [],
       model: {},
@@ -343,6 +343,7 @@ export default {
   },
   created () {
     this.getSetting()
+
     function getScrollbarWidth (el) {
       el = el || document.body
       var scrollDiv = document.createElement('div')
@@ -394,9 +395,12 @@ export default {
     if (this.shouldUpdate) {
       this.getSetting()
     }
+    this.bindScroll()
+    this.activeTab = '0'
     window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   deactivated () {
+    this.unBindScroll()
     window.removeEventListener('beforeunload', this.beforeunloadFn)
   },
   computed: {
@@ -501,7 +505,7 @@ export default {
       const scrollEl = document.querySelector('.page-component__scroll')
       scrollEl && scrollEl.removeEventListener('scroll', this.scroll)
     },
-    scroll: function (e) {
+    scroll: debounce(function (e) {
       const scrollTop = e.target.scrollTop
       let active = 0
       this.tabs.forEach((item, index) => {
@@ -509,11 +513,12 @@ export default {
           active = index
         }
       })
+      console.log(active, 'active')
       this.changeActive(active)
-    },
-    changeActive: debounce(function (active) {
-      this.activeTab = active.toString()
     }, 300),
+    changeActive: function (active) {
+      this.activeTab = active.toString()
+    },
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'is_cut_black_word',
