@@ -1,8 +1,8 @@
 <template lang="html">
   <div class="migrateSetting">
 
-    <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}" class="tab" @tab-click="tabClick">
-      <el-tab-pane :label="tab.label" v-for="tab in tabs" :key="tab.label" ></el-tab-pane>
+    <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}" class="tab" @tab-click="tabClick" ref="tab">
+      <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
     </el-tabs>
     <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
@@ -120,8 +120,8 @@
         </el-form-item>
 
         <el-form-item required label="轮播图、详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
-            <p class="font-12 mb-10 mt-5">轮播图+详情图超过50张自动截断详情图<el-switch class="ml-5" v-model="detail_img_cut" /></p>
-            <p class="font-12 mb-10">仅保留前5张轮播图<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
+            <p class="font-12 mb-10 mt-5">轮播图+详情图超过50张自动截断详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
+            <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
             <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
             <p class="font-12">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
         </el-form-item>
@@ -231,6 +231,7 @@ import isEqual from 'lodash/isEqual'
 import common from '@/common/common.js'
 import categorySelectView from '@/components/CategorySelectView'
 import debounce from 'lodash/debounce'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   mixins: [request],
@@ -271,7 +272,7 @@ export default {
         { label: '违规信息', className: '.migrateSetting-rule' }
       ],
       mBottom: `150px`,
-      activeTab: 0,
+      activeTab: '0',
       scrollWidth: 0,
       brandList: [],
       model: {},
@@ -305,6 +306,7 @@ export default {
       title_suffix: '',
       source_title_str: '',
       target_title_str: '',
+      default_category: {},
       default_category_id: undefined,
       default_brand_id: 0,
 
@@ -349,11 +351,13 @@ export default {
         common.productStatus.WAIT_ONLINE,
         common.productStatus.FAILED,
         common.productStatus.REJECT
-      ]
+      ],
+      settingKeys: []
     }
   },
   created () {
     this.getSetting()
+
     function getScrollbarWidth (el) {
       el = el || document.body
       var scrollDiv = document.createElement('div')
@@ -407,9 +411,12 @@ export default {
     if (this.shouldUpdate) {
       this.getSetting()
     }
+    this.bindScroll()
+    this.activeTab = '0'
     window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   deactivated () {
+    this.unBindScroll()
     window.removeEventListener('beforeunload', this.beforeunloadFn)
   },
   computed: {
@@ -485,8 +492,15 @@ export default {
       }
     },
     shouldUpdate () {
-      const product = this.getFormatSettings()
-      const isEqualSetting = isEqual(this.originMigrateSetting, product)
+      const product = cloneDeep(this.getFormatSettings()) || {}
+      const originMigrateSetting = cloneDeep(this.originMigrateSetting) || {}
+      const migrateStatus = originMigrateSetting.able_migrate_status_list || []
+      const currentMigrateStatus = this.able_migrate_status_list || []
+      delete product.able_migrate_status_list
+      delete originMigrateSetting.able_migrate_status_list
+      const isEqualSetting = isEqual(originMigrateSetting, product)
+      var isEqualStatusList = migrateStatus.length === currentMigrateStatus.length &&
+      migrateStatus.sort().toString() === currentMigrateStatus.sort().toString()
       const blackWords = new Set(this.blackWords)
       const originBlackWords = new Set([
         ...this.customerBlackWords,
@@ -509,7 +523,7 @@ export default {
         return true
       }
       return (
-        isEqualSetting && !newBlackWords.length && !newImageBlackWords.length
+        isEqualSetting && !newBlackWords.length && !newImageBlackWords.length && isEqualStatusList
       )
     }
   },
@@ -535,7 +549,7 @@ export default {
       const scrollEl = document.querySelector('.page-component__scroll')
       scrollEl && scrollEl.removeEventListener('scroll', this.scroll)
     },
-    scroll: function (e) {
+    scroll: debounce(function (e) {
       const scrollTop = e.target.scrollTop
       let active = 0
       this.tabs.forEach((item, index) => {
@@ -543,11 +557,12 @@ export default {
           active = index
         }
       })
+      console.log(active, 'active')
       this.changeActive(active)
-    },
-    changeActive: debounce(function (active) {
-      this.activeTab = active.toString()
     }, 300),
+    changeActive: function (active) {
+      this.activeTab = active.toString()
+    },
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'is_cut_black_word',
@@ -582,8 +597,18 @@ export default {
           }),
           self.loadData()
         ])
-        this.originMigrateSetting = setting
-        this.updateMigrateSettingData(setting)
+        let originMigrateSetting = {}
+        let settingKeys = []
+        // 记录本页需要的setting 过滤不需要的数据
+        Object.keys(setting).map(key => {
+          if (this.$data.hasOwnProperty(key)) {
+            originMigrateSetting[key] = setting[key]
+            settingKeys.push(key)
+          }
+        })
+        this.originMigrateSetting = originMigrateSetting
+        this.updateMigrateSettingData(originMigrateSetting)
+        this.settingKeys = settingKeys
         // 默认设置
         if (setting.default_category) {
           this.default_category = setting.default_category
@@ -649,6 +674,13 @@ export default {
         is_open_recommend_remark: Number(this.is_open_recommend_remark),
         default_recommend_remark: this.default_recommend_remark
       }
+
+      // 只比较本页需要的数据配置
+      Object.keys(product).map(key => {
+        if (!this.settingKeys.includes(key)) {
+          delete product[key]
+        }
+      })
 
       return product
     },
