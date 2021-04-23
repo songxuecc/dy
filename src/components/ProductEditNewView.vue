@@ -57,7 +57,7 @@
                       <el-badge :value="product.model.check_error_msg_static['0'].num" ></el-badge>
                   </el-tooltip>
                   </span>
-                  <el-form class="setting-content" ref="form" :model="product.model" label-width="90px" >
+                  <el-form class="setting-content" ref="form" :model="product.model" label-width="90px" :rules="rules">
                       <el-form-item label="商品分类:" required>
                           <span>{{ product.model.category_show }}</span>
                           <el-button size="mini" @click="showSelectCateView">修改分类</el-button>
@@ -76,53 +76,49 @@
                           <el-button size="mini"  @click="onApplyTitleEditToSelection()">批量修改选中商品</el-button>
                           </div>
                           <!-- <span style="font-size: 10px;">（已自动删除平台违禁词）</span> -->
-                      </el-form-item>
-                      <el-form-item label="市场价:">
-                        <span>{{product.model.price}} 元
-                          <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
-                              <div slot="content">
-                                <ul style="padding: 0; margin: 0;">其他平台市场价，请在上传抖音时设置价格</ul>
-                              </div>
-                              <i class="el-icon-question"></i>
-                          </el-tooltip>
-                        </span>
-                      </el-form-item>
-                      <!-- <el-form-item label="商品描述:" style="margin-right: 20px;" >
-                          <el-input type="textarea" v-model="product.model.description" size="mini"
-                                    :autosize="{ minRows: 1, maxRows: 10}" maxlength="500" show-word-limit>
-                          </el-input>
-                      </el-form-item> -->
-                      <el-form-item label="品牌:" :required="product.model.brand_id_require" style="display:none">
-                        <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable :disabled="true">
-                          <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
-                                    :label="getBrandName(item)"
-                          ></el-option>
-                        </el-select>
-                        <el-button type="text" @click="reloadBrandList" :loading="loadingBrandList">
-                            <hh-icon type="iconjiazai" style="font-size:12px;" v-if="!loadingBrandList"/>
-                        </el-button>
-                        <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
-                                :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
-                        >添加品牌</el-link>
-                        <el-button size="mini" type="primary" @click="applySelectBrandToSelection()">应用到选中的商品</el-button>
-                      </el-form-item>
+                        </el-form-item>
+                        <el-form-item label="推荐语:" prop="recommend_remark" :inline-message="true" class="mr-20 mt-5">
+                            <el-input
+                              type="textarea"
+                              size="mini"
+                              maxlength="50"
+                              minlength="8"
+                              show-word-limit
+                              v-model="product.model.recommend_remark"
+                              :class="['input-text-left']"
+                              placeholder="请填写商家推荐语设置"></el-input>
+                        </el-form-item>
+                        <el-form-item label="品牌:" :required="product.model.brand_id_require" style="display:none">
+                          <el-select v-model="product.model.brand_id" placeholder="请选择" size="small" @change="changeBrand" clearable :disabled="true">
+                            <el-option v-for="item in shopBrandList" :key="item.id" :value="item.id"
+                                      :label="getBrandName(item)"
+                            ></el-option>
+                          </el-select>
+                          <el-button type="text" @click="reloadBrandList" :loading="loadingBrandList">
+                              <hh-icon type="iconjiazai" style="font-size:12px;" v-if="!loadingBrandList"/>
+                          </el-button>
+                          <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
+                                  :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
+                          >添加品牌</el-link>
+                          <el-button size="mini" type="primary" @click="applySelectBrandToSelection()">应用到选中的商品</el-button>
+                        </el-form-item>
 
-                    <el-form-item  label="抖音属性:">
-                        <property-set
-                          @change="handlePropertyset"
-                          :catId="product.model.cat_id"
-                          :productModel="product.model.attrList"
-                          ref="propertySet"
-                          :propertyBatchMapSelect="propertyBatchMap.get(product.model.tp_product_id)"
-                          @applySelectBrandToSelection="applySelectBrandToSelection()"
-                          @applyPropertiesToSelection="applyPropertiesToSelection"
-                          @reloadBrandList="reloadBrandList"
-                          ></property-set>
-                    </el-form-item>
-                  </el-form>
-                  <div class="common-bottom">
-                  </div>
-              </el-tab-pane>
+                        <el-form-item  label="抖音属性:">
+                            <property-set
+                              @change="handlePropertyset"
+                              :catId="product.model.cat_id"
+                              :productModel="product.model.attrList"
+                              ref="propertySet"
+                              :propertyBatchMapSelect="propertyBatchMap.get(product.model.tp_product_id)"
+                              @applySelectBrandToSelection="applySelectBrandToSelection()"
+                              @applyPropertiesToSelection="applyPropertiesToSelection"
+                              @reloadBrandList="reloadBrandList"
+                              ></property-set>
+                        </el-form-item>
+                      </el-form>
+                      <div class="common-bottom">
+                      </div>
+                  </el-tab-pane>
 
               <el-tab-pane label="SKU信息" name="sku">
                  <span slot="label" v-if=" product.model.check_error_msg_static  && '1' in product.model.check_error_msg_static">SKU信息
@@ -536,6 +532,25 @@ export default {
     },
     showTooltip (idx) {
       return idx === this.mouseOverIndex
+    },
+    rules () {
+      const checkDefaultRecommendRremark = (rule, value, callback) => {
+        if (value) {
+          if (
+            value.split('').length < 8 || value.split('').length > 50
+          ) {
+            return callback(new Error('商家推荐语只可以填写8-50个字符！'))
+          }
+        }
+
+        callback()
+      }
+
+      return {
+        recommend_remark: [
+          { validator: checkDefaultRecommendRremark, trigger: 'change' }
+        ]
+      }
     }
   },
   mounted () {
@@ -606,7 +621,7 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id'
+          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -695,6 +710,7 @@ export default {
         this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
         this.product.assign({bannerPicUrlList: data.banner_json})
         this.product.assign({descPicUrlList: data.desc_json})
+        this.product.assign({recommend_remark: data.recommend_remark})
         this.product.assign({skuPropertyList: [...this.skuPropertyList]})
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
         this.product.assign({skuShowList: [...this.skuShowList]})
@@ -890,7 +906,8 @@ export default {
                 sku_json: this.getSkuUploadObjByShowList(product.model.skuShowList),
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
-                brand_id: brandId
+                brand_id: brandId,
+                recommend_remark: product.model.recommend_remark
               }
             }
             tpProductList.push(productParams)

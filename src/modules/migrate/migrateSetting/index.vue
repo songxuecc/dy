@@ -9,7 +9,7 @@
     </el-dialog>
 
     <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': '30px'}" class="migrateSettingForm">
-      <el-form ref="template" :rules="rules" style="width: 100%;" size="mini">
+      <el-form ref="template" :rules="rules" style="width: 100%;" size="mini" :model="$data">
         <!-- 类目 -->
         <el-form-item required label="类目统一为:" style="max-width:379px;margin-bottom: 20px;" class="migrateSetting-category">
           <div class="flex align-c " style="height:28px">
@@ -39,11 +39,22 @@
             <span>{{!loadingBrandList ? '刷新':'加载中'}}</span>
           </el-button>
         </el-form-item>
+        <!-- 商家推荐语 -->
+        <el-form-item required label="推荐语统一为:"  style="margin-bottom: 20px;" class="flex migrateSetting-recommend" >
+          <div style="display:flex;margin-bottom:5px" class="align-c">
+            <el-form-item style="display:inline;margin-bottom:0" prop="default_recommend_remark"  class="mr-5">
+                <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="default_recommend_remark" style="width: 650px;" class="ml-5" placeholder="请填写商家推荐语设置" clearable @clear="handleClear('default_recommend_remark')"></el-input>
+            </el-form-item>
+            <el-form-item style="display:inline;margin-bottom:0" prop="is_open_recommend_remark">
+                <el-switch v-model="is_open_recommend_remark"/>
+            </el-form-item>
+          </div>
+        </el-form-item>
         <!-- 属性设置 -->
         <el-form-item required label="属性设置:"  style="margin-bottom: 20px;" class="flex migrateSetting-attribute" >
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p class="font-12">
-              必填属性未填写时，若需输入属性值，则默认填写值为<el-input v-model="default_attr_value" style="width: 280px;" class="ml-5" placeholder="类目属性默认值设置"></el-input>
+              必填属性未填写时，若需输入属性值，则默认填写值为<el-input v-model="default_attr_value" style="width: 280px;" class="ml-5" placeholder="类目属性默认值设置"  clearable @clear="handleClear('default_attr_value')"></el-input>
             </p>
             <el-switch v-model="is_use_default_attr_value" class="ml-5 mr-5"/>
 
@@ -121,37 +132,28 @@
             <el-radio-group v-model="title_cut_type">
               <el-radio :label="1">自动去末尾</el-radio>
               <el-radio :label="2">自动去开头</el-radio>
-              <el-radio :label="3">手动处理</el-radio>
+              <el-radio :label="3">不处理</el-radio>
             </el-radio-group>
           </p>
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p style="margin-right:10px">
-              <el-input v-model="title_prefix" placeholder="前缀" style="width: 280px;margin-right:10px"></el-input>
+              <el-input clearable @clear="handleClear('title_prefix')" v-model="title_prefix" placeholder="前缀" style="width: 280px;margin-right:10px"></el-input>
               <span style="font-size:12px;margin-right:24px">原标题</span>
             </p>
             <p>
-              <el-input v-model="title_suffix" placeholder="后缀" style="width: 280px;"></el-input>
+              <el-input clearable @clear="handleClear('title_suffix')" v-model="title_suffix" placeholder="后缀" style="width: 280px;"></el-input>
             </p>
             <el-switch v-model="is_open_title_prefix_suffix"  class="ml-5"/>
           </div>
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p style="margin-right:10px">
-              <el-input v-model="source_title_str" style="width: 280px;margin-right:10px"></el-input>
+              <el-input clearable @clear="handleClear('source_title_str')" v-model="source_title_str" style="width: 280px;margin-right:10px"></el-input>
               <span style="font-size:12px">全部替换为</span>
             </p>
             <p>
-              <el-input v-model="target_title_str" style="width: 280px;"></el-input>
+              <el-input clearable @clear="handleClear('target_title_str')" v-model="target_title_str" style="width: 280px;"></el-input>
             </p>
             <el-switch v-model="is_open_title_replace" class="ml-5"/>
-          </div>
-        </el-form-item>
-        <!-- 商家推荐语 -->
-        <el-form-item required label="商家推荐语:"  style="margin-bottom: 20px;" class="flex migrateSetting-recommend" >
-          <div style="display:flex;margin-bottom:5px" class="align-c">
-            <p class="font-12">
-              商家推荐语<el-input v-model="default_recommend_remark" style="width: 280px;" class="ml-5" placeholder="请填写商家推荐语设置"></el-input>
-            </p>
-            <el-switch v-model="is_open_recommend_remark" class="ml-5"/>
           </div>
         </el-form-item>
 
@@ -258,13 +260,13 @@ export default {
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
         { label: '品牌', className: '.migrateSetting-brand' },
+        { label: '商家推荐语', className: '.migrateSetting-recommend' },
         { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: 'SKU库存', className: '.migrateSetting-stock' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
         { label: 'SKU规格值', className: '.migrateSetting-spec' },
         { label: '轮播图、详情图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
-        { label: '商家推荐语', className: '.migrateSetting-recommend' },
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
         { label: '违规信息', className: '.migrateSetting-rule' }
       ],
@@ -444,6 +446,23 @@ export default {
         callback()
       }
 
+      const checkIsOpenDefaultRecommendRremark = (rule, value, callback) => {
+        if (this.is_open_recommend_remark) {
+          this.$refs.template.validateField('default_recommend_remark')
+        }
+        callback()
+      }
+
+      const checkDefaultRecommendRremark = (rule, value, callback) => {
+        if (
+          value.split('').length < 8 ||
+            value.split('').length > 50
+        ) {
+          return callback(new Error('商家推荐语只可以填写8-50个字符！'))
+        }
+        callback()
+      }
+
       return {
         max_sku_stock: [
           { validator: checkMaxSkuStock, trigger: 'change' }
@@ -456,6 +475,12 @@ export default {
         ],
         is_use_default_sku_stock: [
           { validator: checkUseDefaultSkuStock, trigger: 'change' }
+        ],
+        default_recommend_remark: [
+          { validator: checkDefaultRecommendRremark, trigger: 'change' }
+        ],
+        is_open_recommend_remark: [
+          { validator: checkIsOpenDefaultRecommendRremark, trigger: 'change' }
         ]
       }
     },
@@ -478,6 +503,11 @@ export default {
       const newImageBlackWords = [...imageBlackWords].filter(
         (item) => !originImageBlackWords.has(item)
       )
+
+      if (this.default_recommend_remark.split('').length < 8 ||
+            this.default_recommend_remark.split('').length > 50) {
+        return true
+      }
       return (
         isEqualSetting && !newBlackWords.length && !newImageBlackWords.length
       )
@@ -810,6 +840,9 @@ export default {
     },
     handleIsUseDefaultSkuStock (value) {
       this.is_use_max_sku_stock = !value
+    },
+    handleClear (property) {
+      this[property] = ''
     }
   }
 }

@@ -31,7 +31,7 @@
           <el-radio-group v-model="model.radio">
             <el-radio :label="6">自动去末尾</el-radio>
             <el-radio :label="3">自动去开头</el-radio>
-            <el-radio :label="9">手动处理</el-radio>
+            <el-radio :label="9">不处理</el-radio>
           </el-radio-group>
         </p>
       </div>
