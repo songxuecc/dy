@@ -52,7 +52,7 @@
         <el-radio-group v-model="beyondWordsOptType" @change="handleBeyondTypeChange">
           <el-radio :label="2">自动去末尾</el-radio>
           <el-radio :label="1">自动去开头</el-radio>
-          <el-radio :label="0">手动处理</el-radio>
+          <el-radio :label="0">不处理</el-radio>
         </el-radio-group>
       </div>
     </div>
