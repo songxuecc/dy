@@ -518,10 +518,13 @@ export default {
         (item) => !originImageBlackWords.has(item)
       )
 
-      if (this.default_recommend_remark.split('').length < 8 ||
-            this.default_recommend_remark.split('').length > 50) {
-        return true
-      }
+      // if (this.default_recommend_remark) {
+      //   if (this.default_recommend_remark.split('').length < 8 ||
+      //       this.default_recommend_remark.split('').length > 50) {
+      //     return true
+      //   }
+      // }
+
       return (
         isEqualSetting && !newBlackWords.length && !newImageBlackWords.length && isEqualStatusList
       )
@@ -588,7 +591,7 @@ export default {
       try {
         this.loadingSettings = true
         const self = this
-        const [setting, blackWords, imgBlackWords] = await Promise.all([
+        let [setting, blackWords, imgBlackWords] = await Promise.all([
           Api.hhgjAPIs.getMigrateSetting({}),
           Api.hhgjAPIs.getBlackWordList({}),
           Api.hhgjAPIs.getBlackWordList({
