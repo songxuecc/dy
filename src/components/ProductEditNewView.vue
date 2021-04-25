@@ -75,7 +75,7 @@
                           </el-input>
                           <el-button size="mini"  @click="onApplyTitleEditToSelection()">批量修改选中商品</el-button>
                           </div>
-                          <!-- <span style="font-size: 10px;">（已自动删除平台违禁词）</span> -->
+                          <!-- <span style="font-size: 10px;">（已自动删除平台违禁词） </span> -->
                         </el-form-item>
                         <el-form-item label="推荐语:" prop="recommend_remark" :inline-message="true" class="mr-20 mt-5">
                             <el-input
@@ -869,8 +869,24 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
+      // 检验推荐语
+      let error = ''
+      this.productList.forEach(item => {
+        let tpProductId = item.tp_product_id
+        if (tpProductId in this.products) {
+          const product = this.products[tpProductId]
+          const recommendRemark = product.model.recommend_remark
+          if (recommendRemark) {
+            if (recommendRemark.split('').length > 50 || recommendRemark.split('').length < 8) {
+              error = '商家推荐语只可以填写8-50个字符！'
+            }
+          }
+        }
+      })
+      if (error) {
+        return this.$message.error(error)
+      }
       const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
-      console.log(propertySetValid, 'propertySetValid')
       if (propertySetValid) {
         // 没有修改分类时不用传参数
         this.productEditSavingPercent = 0
