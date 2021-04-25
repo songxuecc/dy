@@ -461,12 +461,15 @@ export default {
       }
 
       const checkDefaultRecommendRremark = (rule, value, callback) => {
-        if (
-          value.split('').length < 8 ||
+        if (value) {
+          if (
+            value.split('').length < 8 ||
             value.split('').length > 50
-        ) {
-          return callback(new Error('商家推荐语只可以填写8-50个字符！'))
+          ) {
+            return callback(new Error('商家推荐语只可以填写8-50个字符！'))
+          }
         }
+        this.$refs.template.clearValidate('default_recommend_remark')
         callback()
       }
 
@@ -517,14 +520,6 @@ export default {
       const newImageBlackWords = [...imageBlackWords].filter(
         (item) => !originImageBlackWords.has(item)
       )
-
-      // if (this.default_recommend_remark) {
-      //   if (this.default_recommend_remark.split('').length < 8 ||
-      //       this.default_recommend_remark.split('').length > 50) {
-      //     return true
-      //   }
-      // }
-
       return (
         isEqualSetting && !newBlackWords.length && !newImageBlackWords.length && isEqualStatusList
       )
@@ -686,66 +681,71 @@ export default {
 
       return product
     },
-    async saveSetting () {
+    saveSetting () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
       }
       const product = this.getFormatSettings()
-
-      let productParams = {
-        json: JSON.stringify(product)
-      }
-      const blackWords = new Set(this.blackWords)
-      const originBlackWords = new Set([
-        ...this.customerBlackWords,
-        ...this.defaultBlackWords
-      ])
-      const params = [...blackWords].filter(
-        (item) => !originBlackWords.has(item)
-      )
-      const imageBlackWords = new Set(this.imageBlackWords)
-      const originImageBlackWords = new Set([
-        ...this.customerImageBlackWords,
-        ...this.defaultImageBlackWords
-      ])
-      const imageParams = [...imageBlackWords].filter(
-        (item) => !originImageBlackWords.has(item)
-      )
-      this.createBlackWordsLoading = true
-      try {
-        const updateBlackWords = params.length
-          ? Api.hhgjAPIs.createBlackWords({
-            black_word_list: JSON.stringify(params)
-          })
-          : Promise.resolve([])
-        const updateImageBlackWords = imageParams.length
-          ? Api.hhgjAPIs.createBlackWords({
-            black_word_list: JSON.stringify(imageParams),
-            use_type: 1
-          })
-          : Promise.resolve([])
-        const isEqualSetting = isEqual(this.originMigrateSetting, product)
-        const updateSetting = !isEqualSetting
-          ? Api.hhgjAPIs.updateMigrateSetting(productParams)
-          : Promise.resolve(this.originMigrateSetting)
-        await Promise.all([
-          updateBlackWords,
-          updateImageBlackWords,
-          updateSetting
-        ])
-        this.$message.success('保存成功')
-        this.createBlackWordsLoading = false
-        this.back_words = ''
-        this.image_back_words = ''
-        this.getSetting()
-        return true
-      } catch (error) {
-        if (error) {
-          console.error(error)
+      this.$refs.template.validate(async (valid) => {
+        if (valid) {
+          let productParams = {
+            json: JSON.stringify(product)
+          }
+          const blackWords = new Set(this.blackWords)
+          const originBlackWords = new Set([
+            ...this.customerBlackWords,
+            ...this.defaultBlackWords
+          ])
+          const params = [...blackWords].filter(
+            (item) => !originBlackWords.has(item)
+          )
+          const imageBlackWords = new Set(this.imageBlackWords)
+          const originImageBlackWords = new Set([
+            ...this.customerImageBlackWords,
+            ...this.defaultImageBlackWords
+          ])
+          const imageParams = [...imageBlackWords].filter(
+            (item) => !originImageBlackWords.has(item)
+          )
+          this.createBlackWordsLoading = true
+          try {
+            const updateBlackWords = params.length
+              ? Api.hhgjAPIs.createBlackWords({
+                black_word_list: JSON.stringify(params)
+              })
+              : Promise.resolve([])
+            const updateImageBlackWords = imageParams.length
+              ? Api.hhgjAPIs.createBlackWords({
+                black_word_list: JSON.stringify(imageParams),
+                use_type: 1
+              })
+              : Promise.resolve([])
+            const isEqualSetting = isEqual(this.originMigrateSetting, product)
+            const updateSetting = !isEqualSetting
+              ? Api.hhgjAPIs.updateMigrateSetting(productParams)
+              : Promise.resolve(this.originMigrateSetting)
+            await Promise.all([
+              updateBlackWords,
+              updateImageBlackWords,
+              updateSetting
+            ])
+            this.$message.success('保存成功')
+            this.createBlackWordsLoading = false
+            this.back_words = ''
+            this.image_back_words = ''
+            this.getSetting()
+            return true
+          } catch (error) {
+            if (error) {
+              console.error(error)
+            }
+            this.createBlackWordsLoading = false
+            this.$message.error(`${error}`)
+          }
+        } else {
+          return this.$message.error('请提示要求填写基础设置')
         }
-        this.createBlackWordsLoading = false
-        this.$message.error(`${error}`)
-      }
+      })
     },
     formatBlackWords () {
       let value = this.back_words.split(/[\s\n,，]/)
