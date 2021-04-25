@@ -557,7 +557,6 @@ export default {
           active = index
         }
       })
-      console.log(active, 'active')
       this.changeActive(active)
     }, 300),
     changeActive: function (active) {
