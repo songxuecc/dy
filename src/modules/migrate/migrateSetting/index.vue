@@ -120,7 +120,7 @@
         </el-form-item> -->
 
         <el-form-item required label="轮播图、详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
-            <p class="font-12 mb-10 mt-5">轮播图+详情图超过50张自动截断详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
+            <p class="font-12 mb-10 mt-5">轮播图+详情图超过50张自动删除详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
             <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
             <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
             <p class="font-12">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
@@ -169,7 +169,7 @@
 
         <el-form-item required label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
             <div>
-              <span style="font-size: 12px;"><span style="color: red;">*</span>违禁词自动过滤</span>
+              <span style="font-size: 12px;"><span style="color: red;">*</span>商品标题、SKU规格名违规词自动删除</span>
               <el-switch v-model="is_cut_black_word" />
             </div>
             <div style="display:flex;flex:1" >
