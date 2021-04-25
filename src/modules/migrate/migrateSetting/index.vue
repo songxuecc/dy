@@ -115,9 +115,9 @@
             <p class="font-12">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
         </el-form-item>
 
-        <el-form-item required label="SKU规格:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-spec">
+        <!-- <el-form-item required label="SKU规格:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-spec">
             <p class="font-12">SKU规格值超过20个自动截断<el-switch class="ml-5" v-model="is_cut_sku_spec" /></p>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item required label="轮播图、详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
             <p class="font-12 mb-10 mt-5">轮播图+详情图超过50张自动截断详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
@@ -265,7 +265,7 @@ export default {
         { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: 'SKU库存', className: '.migrateSetting-stock' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
-        { label: 'SKU规格值', className: '.migrateSetting-spec' },
+        // { label: 'SKU规格值', className: '.migrateSetting-spec' },
         { label: '轮播图、详情图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
@@ -283,7 +283,7 @@ export default {
       title_ban_words: undefined,
       // banner_completion: undefined,
       detail_img_cut: undefined,
-      is_cut_sku_spec: undefined,
+      // is_cut_sku_spec: undefined,
       is_cut_black_word: undefined,
       is_cut_image_black_word: undefined,
       is_banner_auto_5: undefined,
@@ -567,7 +567,7 @@ export default {
         'is_cut_black_word',
         'is_cut_image_black_word',
         'is_banner_auto_5',
-        'is_cut_sku_spec',
+        // 'is_cut_sku_spec',
         'detail_img_cut',
         'is_use_default_sku_stock',
         'is_use_max_sku_stock',
@@ -642,7 +642,7 @@ export default {
         title_cut_off: Number(this.title_cut_off),
         title_ban_words: Number(this.title_ban_words),
         detail_img_cut: Number(this.detail_img_cut),
-        is_cut_sku_spec: Number(this.is_cut_sku_spec),
+        // is_cut_sku_spec: Number(this.is_cut_sku_spec),
         is_cut_black_word: Number(this.is_cut_black_word),
         is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
