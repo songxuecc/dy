@@ -3,17 +3,20 @@
     <el-row type="flex" justify="start" style="margin-bottom: 4px">
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
-          <el-button type="primary" size="mini" style="padding:5px 20px;" class="bold">
-            批量操作
-            <!-- <el-badge v-if="selecEdittList && selecEdittList.length" :value="selecEdittList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i> -->
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px"
+          <el-tooltip   placement="top">
+            <div slot="content" style="width:200px" class="left">批量修改本页勾选产品。自动过滤抓取失败、搬迁中、等待搬迁、审核中，4种状态的商品。</div>
+            <el-button type="primary" size="mini" style="padding:5px 20px;" class="bold">
+              批量操作
+              <!-- <el-badge v-if="selecEdittList && selecEdittList.length" :value="selecEdittList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i> -->
+            </el-button>
+          </el-tooltip>
+          <el-dropdown-menu slot="dropdown" >
+            <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px" class="left"
               :command="item.value" :style="{color: activeIndex === item.value ? 'black' : 'gray'}">
               {{item.label}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="primary" plain size="mini" style="padding:5px 20px;" class="ml-5 bold" @click="handleDelete(5)">批量删除</el-button>
+        <el-button type="primary" plain size="mini" style="padding:5px 20px;" class="ml-5 bold" @click="handleDelete(5)">批量删除记录</el-button>
       </el-col>
     </el-row>
     <!-- <div class="info left">注：批量修改本页勾选产品。自动过滤抓取失败、搬迁中、等待搬迁、审核中，4种状态的商品。</div> -->

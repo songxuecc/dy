@@ -10,9 +10,12 @@ export default {
     versionType: undefined,
     versionTipType: undefined,
     migrateSetting: {},
-    shopCaptureOptions: [],
-    captureOptions: [],
-    bindShopList: []
+    shopCaptureOptions: [{ value: '-1', label: '全部' }],
+    captureOptions: [{ value: '-1', label: '全部' }],
+    bindShopList: [{
+      shop_name: `本店铺`,
+      user_id: '0'
+    }]
   }),
   mutations: {
     save (state, payload) {
@@ -46,22 +49,45 @@ export default {
     },
     async getBindShopList ({commit}, payload) {
       // 查询绑定店铺列表
-      let bindShopList = [{ shop_name: '本店铺', user_id: 0 }]
-      const data = await Api.hhgjAPIs.getUserBindList()
-      let userDict = {}
-      data.forEach((item) => {
-        item.user_list.forEach((user) => {
-          if (!user.is_self) {
-            userDict[user.user_id] = user
+      const getSelfShopId = (data) => {
+        let selfShopId = ''
+        data.map(item => {
+          if (item.is_self) {
+            selfShopId = item.user_id
+            item.name = ''
+          } else {
+            item.user_list.forEach(child => {
+              if (child.is_self) {
+                selfShopId = child.user_id
+              }
+            })
           }
-          userDict[user.shop_name] = `${user.shop_name}`
         })
-      })
-      for (let userId in userDict) {
-        bindShopList.push(userDict[userId])
+        return selfShopId
       }
+      const data = await Api.hhgjAPIs.getUserBindList({need_first_category: 1})
+      let arr = []
+      let selfUserId = getSelfShopId(data)
+      let bandShopsMap = new Map()
+      data.forEach(item => {
+        if (item.user_list) {
+          arr = [...arr, ...item.user_list]
+        }
+      })
+      // 去重
+      arr.forEach(item => {
+        if (!bandShopsMap.get(item.user_id)) {
+          if (item.user_id === selfUserId) {
+            item.shop_name = `本店铺`
+            item.user_id = '0'
+          }
+          item.disabled = item.auth_status === 'expire'
+          item.shop_name = item.auth_status === 'expire' ? `${item.shop_name}(过期)` : item.shop_name
+          bandShopsMap.set(item.user_id, item)
+        }
+      })
 
-      commit('save', {bindShopList})
+      commit('save', {bindShopList: [...bandShopsMap.values()]})
     },
     async userVersionQuery ({commit}, payload) {
       try {

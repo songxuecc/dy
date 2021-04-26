@@ -2,7 +2,8 @@
   <div v-loading="loadingCnt" class="readyToMigrate">
     <div>
       <div class="test" ref="test">
-        <Search />
+        <Search
+          @change="onSearchChange"/>
         <!-- <el-form ref="form" :model="search" :inline="true" style="text-align: left;" class="flex align-c wrap">
           <el-form-item>
             <el-select v-model="search.child_shop_user_id" placeholder="请选择" size="small"
@@ -238,12 +239,13 @@ export default {
       captureOptionList: [],
       captureId: '-1',
       shopCaptureOptionList: [],
-      shopCaptureId: '-1',
+
       search: {
         key: '',
         status: '-1',
         captureId: '-1',
-        child_shop_user_id: 0
+        child_shop_user_id: 0,
+        shopCaptureId: '-1'
       },
       pagination: {
         index: 1,
@@ -591,7 +593,6 @@ export default {
     // },
     resetInfo () {
       this.captureId = '-1'
-      this.shopCaptureId = '-1'
       this.pagination.index = 1
       this.pagination.size = 100
       this.pagination.total = 0
@@ -599,6 +600,8 @@ export default {
       this.search.status = '-1'
       this.search.captureId = '-1'
       this.search.child_shop_user_id = 0
+      this.search.shopCaptureId = '-1'
+
       this.capture = {}
       this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
       clearTimeout(this.timer)
@@ -629,7 +632,10 @@ export default {
     },
     updateInfo () {
       let captureId = this.search.captureId
-      if (captureId.toString() === '-1') {
+      const shopCaptureId = this.search.shopCaptureId
+
+      console.log(captureId, shopCaptureId, captureId.toString() === '-1' && shopCaptureId.toString() === '-1', 'shopCaptureId')
+      if (captureId.toString() === '-1' && shopCaptureId.toString() === '-1') {
         this.capture = {}
         this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
         this.getProductList(false)
@@ -639,12 +645,16 @@ export default {
     },
     getProductList (isSilent = false) {
       this.isLoadProduct = true
+      let captureId = this.search.captureId
+      if (this.search.shopCaptureId.toString() !== '-1') {
+        captureId = this.search.shopCaptureId
+      }
       let params = {
         page_index: this.pagination.index,
         page_size: this.pagination.size,
         keyword: this.search.key,
         status: this.search.status,
-        capture_id: this.search.captureId,
+        capture_id: captureId,
         child_shop_user_id: parseInt(this.search.child_shop_user_id)
       }
       if (params['page_size'] === 0) {
@@ -723,15 +733,21 @@ export default {
       clearTimeout(this.timer)
       this.timer = null
       let captureId = this.search.captureId
+
+      if (this.search.shopCaptureId.toString() !== '-1') {
+        captureId = this.search.shopCaptureId
+      }
+
       if (captureId.toString() === '-1') {
         this.capture = {}
         this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
         return
       }
+
       let params = {
         keyword: this.search.key,
         status: this.search.status,
-        capture_id: this.search.captureId,
+        capture_id: captureId,
         page_index: this.pagination.index,
         page_size: this.pagination.size,
         force: this.isForceGetCapture
@@ -846,45 +862,12 @@ export default {
         isSilent
       )
     },
-    handleShopFilterChange () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '复制商品', '点击', '店铺选择'])
-      }
-      this.$refs.productListView.clearSelect()
-      if (!this.isShopCapture) {
-        // 店铺抓取，上面的筛选都针对本页抓取
-        this.resetPaginationIndex()
-      }
-      this.updateInfo()
-    },
-    handleStatusFilterChange () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '复制商品', '点击', '状态选择'])
-      }
-      this.$refs.productListView.clearSelect()
-      if (!this.isShopCapture) {
-        // 店铺抓取，上面的筛选都针对本页抓取
-        this.resetPaginationIndex()
-      }
-      this.updateInfo()
-    },
-    handleFilterChange () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '复制商品', '点击', '标题搜索'])
-      }
-      this.$refs.productListView.clearSelect()
-      if (!this.isShopCapture) {
-        // 店铺抓取，上面的筛选都针对本页抓取
-        this.resetPaginationIndex()
-      }
-      this.updateInfo()
-    },
     handleFilterMigrateShop () {
       this.$refs.productListView.clearSelect()
       this.search.key = ''
       this.search.status = '-1'
       this.search.captureId = '-1'
-      this.shopCaptureId = '-1'
+      this.search.shopCaptureId = '-1'
       this.captureId = '-1'
       this.resetPaginationIndex()
       this.updateInfo()
@@ -904,51 +887,13 @@ export default {
       }
       this.updateInfo()
     },
-    // handleCommonCaptureChange () {
-    //   this.pageData = {}
-    //   this.triggerShopCaptureRunOnce = {}
-    //   this.resetPagination()
-    //   this.resetProductList()
-    //   this.handleFilterChange()
-    //   this.updateQuery()
-    // },
-    // handleCaptureOptionChange (captureId) {
-    //   if (this.captureOptions.map((a) => a.value).indexOf(captureId) !== -1) {
-    //     this.captureId = captureId
-    //   } else {
-    //     this.captureId = '-1'
-    //   }
-    //   if (
-    //     this.shopCaptureOptions.map((a) => a.value).indexOf(captureId) !== -1
-    //   ) {
-    //     this.shopCaptureId = captureId
-    //   } else {
-    //     this.shopCaptureId = '-1'
-    //   }
-    //   this.search.captureId = captureId
-    // },
-    handleCaptureChange (captureId) {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '复制商品', '点击', '选择复制历史'])
-      }
-      // 如果进行抓取选择，将店铺选择改为本店铺
-      this.search.child_shop_user_id = 0
-      // this.handleCaptureOptionChange(captureId)
-      this.handleCommonCaptureChange()
-    },
-    handleShopCaptureChange (captureId) {
-      if (window._hmt) {
-        window._hmt.push([
-          '_trackEvent',
-          '复制商品',
-          '点击',
-          '选择店铺复制历史'
-        ])
-      }
-      // 如果进行抓取选择，将店铺选择改为本店铺
-      this.search.child_shop_user_id = 0
-      this.handleCaptureOptionChange(captureId)
-      this.handleCommonCaptureChange()
+    handleCommonCaptureChange () {
+      this.pageData = {}
+      this.triggerShopCaptureRunOnce = {}
+      this.resetPagination()
+      this.resetProductList()
+      // this.handleFilterChange()
+      this.updateQuery()
     },
     updateQuery () {
       let query = {
@@ -1201,6 +1146,26 @@ export default {
         }
       })
       window.open(routeData.href, '_blank')
+    },
+    onSearchChange (data) {
+      // 店铺选择 状态选择 标题搜索 clearSelect resetPaginationIndex updateInfo
+      // 复制时间 整店复制-复制名 child_shop_user_id = 0 handleCommonCaptureChange
+      console.log(data, 'data')
+
+      this.search = {...this.search, ...data.search, ...data.filter}
+      console.log(this.search, 'this.search')
+
+      this.pageData = {}
+      this.triggerShopCaptureRunOnce = {}
+      this.resetPagination()
+      this.resetProductList()
+      this.$refs.productListView.clearSelect()
+      if (!this.isShopCapture) {
+        // 店铺抓取，上面的筛选都针对本页抓取
+        this.resetPaginationIndex()
+      }
+      this.updateInfo()
+      this.updateQuery()
     }
   }
 }
