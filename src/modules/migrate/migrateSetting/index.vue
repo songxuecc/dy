@@ -870,10 +870,14 @@ export default {
       })
     },
     handleIsUseMaxSkuStock (value) {
-      this.is_use_default_sku_stock = !value
+      if (value && this.is_use_default_sku_stock) {
+        this.is_use_default_sku_stock = !value
+      }
     },
     handleIsUseDefaultSkuStock (value) {
-      this.is_use_max_sku_stock = !value
+      if (value && this.is_use_default_sku_stock) {
+        this.is_use_max_sku_stock = !value
+      }
     },
     handleClear (property) {
       this[property] = ''
