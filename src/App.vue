@@ -353,9 +353,9 @@ export default {
       this.$nextTick(function () {
         let elem = this.$el.querySelector('span.el-alert__title')
         if (notification.title === '-') {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;fonts-zie:12px;height:16px" class="notification-text">' + notification.data + '</div>'
         } else {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;fonts-zie:12px;height:16px"  class="notification-text">' + notification.data + '</div>'
         }
       })
     },
@@ -480,9 +480,19 @@ export default {
 
   .header-notice {
     background: #fff6ed;
+    /deep/ .notification-text {
+      p{
+        height: 16px;
+        line-height: 16px;
+      }
+    }
     .main-inner {
       width: 1000px;
       margin: auto;
+    }
+    /deep/ .el-alert__title {
+      display: flex;
+      align-items: center;
     }
     .el-alert.is-light {
       background: #fff6ed;
@@ -492,6 +502,10 @@ export default {
     }
     /deep/ .el-alert.is-light .el-alert__closebtn {
       padding-right: 6px;
+    }
+    /deep/ .el-alert__content {
+      padding:0 4px;
+      height: 16px;
     }
     /deep/ .el-alert__closebtn.is-customed {
       font-size: 12px;
@@ -522,6 +536,8 @@ export default {
     background:#FFFFFF;
     min-height: 100%;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
   }
   .full-screen {
     min-width: @full-screen-width;
