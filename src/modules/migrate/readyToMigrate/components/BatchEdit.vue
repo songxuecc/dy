@@ -1,11 +1,11 @@
 <template>
-  <div style="margin: 10px 0">
+  <div style="margin: 8px 0">
     <el-row type="flex" justify="start" style="margin-bottom: 4px">
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
-          <el-button type="primary" size="small" style="padding:5px 20px;height:32px">
+          <el-button type="primary" size="mini" style="padding:5px 20px;" class="bold">
             批量操作
-            <el-badge v-if="selecEdittList && selecEdittList.length" :value="selecEdittList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i>
+            <!-- <el-badge v-if="selecEdittList && selecEdittList.length" :value="selecEdittList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i> -->
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px"
@@ -13,15 +13,10 @@
               {{item.label}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <span style="margin-left: 10px; font-size: 12px" v-if="!isShopCapture">每页商品数
-          <el-select v-model="value" placeholder="请选择" size="small" style="width: 100px" @change="onChange">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </span>
+        <el-button type="primary" plain size="mini" style="padding:5px 20px;" class="ml-5 bold" @click="handleDelete(5)">批量删除</el-button>
       </el-col>
     </el-row>
-    <div class="info left">注：批量修改本页勾选产品。自动过滤抓取失败、搬迁中、等待搬迁、审核中，4种状态的商品。</div>
+    <!-- <div class="info left">注：批量修改本页勾选产品。自动过滤抓取失败、搬迁中、等待搬迁、审核中，4种状态的商品。</div> -->
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
       :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @updateBrands="updateBrands"
@@ -136,11 +131,6 @@ export default {
           value: 4,
           label: '删除详情尾图',
           key: 'visibleEditDelteDetailImage'
-        },
-        {
-          value: 5,
-          label: '删除记录',
-          key: 'visibleEditDelteRecord'
         }
       ],
       percentage: 0,
@@ -192,7 +182,12 @@ export default {
     onChange (value) {
       this.$emit('onSizeChange', value)
     },
+    handleDelete () {
+      this.activeIndex = 5
+      this.visibleEditDelteRecord = !this.visibleEditDelteRecord
+    },
     handleCommand (command) {
+      console.log(command, 'command')
       this.activeIndex = command
       const key = this.dropdownOptions[command || 0].key
       this[key] = !this[key]

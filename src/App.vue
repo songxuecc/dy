@@ -6,14 +6,14 @@
         <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
           <nav-bar></nav-bar>
           <div class="full-screen">
-          <div class="header-notice">
-            <div class="main-inner clearfix">
-              <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
-                        :closable="notificationClosable" close-text="不再显示" title="-"
-              ></el-alert>
+            <div class="header-notice">
+              <div class="main-inner clearfix">
+                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
+                          :closable="notificationClosable" close-text="不再显示" title="-"
+                ></el-alert>
+              </div>
             </div>
           </div>
-        </div>
         </el-header>
         <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
             <div class="aside">
@@ -487,7 +487,7 @@ export default {
       }
     }
     .main-inner {
-      width: 1000px;
+      width: 100%;
       margin: auto;
     }
     /deep/ .el-alert__title {
@@ -529,18 +529,16 @@ export default {
     right: 15px;
   }
   .main-layout{
-    padding-left:30px;
-    padding-top:20px;
-    padding-right:30px;
+    padding-left:20px;
+    padding-top:10px;
+    padding-right:20px;
     margin-right:40px;
     background:#FFFFFF;
     min-height: 100%;
     box-sizing: border-box;
-    position: relative;
-    z-index: 1;
   }
   .full-screen {
-    min-width: @full-screen-width;
+    // min-width: @full-screen-width;
     position: absolute;
     width: 100%;
     z-index: 1;

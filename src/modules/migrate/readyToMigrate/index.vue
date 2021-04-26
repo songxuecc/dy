@@ -2,7 +2,8 @@
   <div v-loading="loadingCnt" class="readyToMigrate">
     <div>
       <div class="test" ref="test">
-        <el-form ref="form" :model="search" :inline="true" style="text-align: left;" class="flex align-c wrap">
+        <Search />
+        <!-- <el-form ref="form" :model="search" :inline="true" style="text-align: left;" class="flex align-c wrap">
           <el-form-item>
             <el-select v-model="search.child_shop_user_id" placeholder="请选择" size="small"
               @change="handleShopFilterChange" popper-class="select-long" style="width: 195px">
@@ -50,11 +51,9 @@
               <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
             </el-button>
           </el-form-item>
-        </el-form>
-        <div>
-          <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center>
-          </el-alert>
-        </div>
+        </el-form> -->
+        <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center>
+        </el-alert>
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
           <template slot='title'>
             <div>
@@ -211,6 +210,8 @@
 import productListView from '@/components/ProductListView'
 import BatchEdit from '@migrate/readyToMigrate/components/BatchEdit'
 import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
+import Search from '@migrate/readyToMigrate/components/Search'
+
 import NewComer from '@/components/NewComer.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
@@ -226,7 +227,8 @@ export default {
     productListView,
     BatchEdit,
     NewComer,
-    ModalVersionUp
+    ModalVersionUp,
+    Search
   },
   data () {
     return {
@@ -481,8 +483,8 @@ export default {
       }
     }
     this.$refs.productListView.clearSelect()
-    this.getCaptureOptionList()
-    this.getBindShopList()
+    // this.getCaptureOptionList()
+    // this.getBindShopList()
     this.updateInfo()
     this.updateQuery()
     this.getMigrateStatusStatistics()
@@ -574,19 +576,19 @@ export default {
         }
       })
     },
-    getCaptureOptionList () {
-      this.request(
-        'getCaptureOptionList',
-        {},
-        (data) => {
-          this.captureOptionList = data.items
-          this.shopCaptureOptionList = data.shop_capture_items
-          this.handleCaptureOptionChange(this.search.captureId)
-        },
-        undefined,
-        true
-      )
-    },
+    // getCaptureOptionList () {
+    //   this.request(
+    //     'getCaptureOptionList',
+    //     {},
+    //     (data) => {
+    //       this.captureOptionList = data.items
+    //       this.shopCaptureOptionList = data.shop_capture_items
+    //       this.handleCaptureOptionChange(this.search.captureId)
+    //     },
+    //     undefined,
+    //     true
+    //   )
+    // },
     resetInfo () {
       this.captureId = '-1'
       this.shopCaptureId = '-1'
@@ -902,36 +904,36 @@ export default {
       }
       this.updateInfo()
     },
-    handleCommonCaptureChange () {
-      this.pageData = {}
-      this.triggerShopCaptureRunOnce = {}
-      this.resetPagination()
-      this.resetProductList()
-      this.handleFilterChange()
-      this.updateQuery()
-    },
-    handleCaptureOptionChange (captureId) {
-      if (this.captureOptions.map((a) => a.value).indexOf(captureId) !== -1) {
-        this.captureId = captureId
-      } else {
-        this.captureId = '-1'
-      }
-      if (
-        this.shopCaptureOptions.map((a) => a.value).indexOf(captureId) !== -1
-      ) {
-        this.shopCaptureId = captureId
-      } else {
-        this.shopCaptureId = '-1'
-      }
-      this.search.captureId = captureId
-    },
+    // handleCommonCaptureChange () {
+    //   this.pageData = {}
+    //   this.triggerShopCaptureRunOnce = {}
+    //   this.resetPagination()
+    //   this.resetProductList()
+    //   this.handleFilterChange()
+    //   this.updateQuery()
+    // },
+    // handleCaptureOptionChange (captureId) {
+    //   if (this.captureOptions.map((a) => a.value).indexOf(captureId) !== -1) {
+    //     this.captureId = captureId
+    //   } else {
+    //     this.captureId = '-1'
+    //   }
+    //   if (
+    //     this.shopCaptureOptions.map((a) => a.value).indexOf(captureId) !== -1
+    //   ) {
+    //     this.shopCaptureId = captureId
+    //   } else {
+    //     this.shopCaptureId = '-1'
+    //   }
+    //   this.search.captureId = captureId
+    // },
     handleCaptureChange (captureId) {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '选择复制历史'])
       }
       // 如果进行抓取选择，将店铺选择改为本店铺
       this.search.child_shop_user_id = 0
-      this.handleCaptureOptionChange(captureId)
+      // this.handleCaptureOptionChange(captureId)
       this.handleCommonCaptureChange()
     },
     handleShopCaptureChange (captureId) {
