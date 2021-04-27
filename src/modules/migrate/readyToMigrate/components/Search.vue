@@ -1,6 +1,6 @@
 <template>
   <div class="left">
-    <el-tabs v-model="activeTab">
+    <el-tabs v-model="activeTab" @tab-click="handelTabClick">
       <el-tab-pane
         :label="tab.text"
         :name="tab.text"
@@ -24,7 +24,8 @@
           popper-class="select-long"
           style="width: 195px"
           :disabled="activeTab !== '全部'"
-          clearable @clear="handleClear('filter.status')"
+          clearable
+          @clear="handleClear('filter.status')"
         >
           <el-option
             v-for="item in statusOptions"
@@ -130,7 +131,7 @@
         <el-button
           type="primary"
           @click="handleFilterChange"
-          style="width: 60px"
+          style="width: 60px;margin-left:30px"
         >
           <span class="font-12">查询</span>
         </el-button>
@@ -150,7 +151,7 @@ import set from 'lodash/set'
 export default {
   name: 'component_name',
   props: {
-    msg: String
+    capture: Object
   },
   data () {
     return {
@@ -194,17 +195,28 @@ export default {
           text: '保存至草稿箱',
           options: [ 3 ]
         }
-      ],
-      isShowCaptureExtendOpt: false
+      ]
     }
   },
-  activated () {
-    this.getCaptureOptionList()
+  async activated () {
+    let captureId = this.filter.captureId
+    if (this.$route.query.captureId) {
+      captureId = this.$route.query.captureId.toString()
+    }
+    await this.getCaptureOptionList()
+    this.handleCaptureOptionChange(captureId)
     this.getBindShopList()
   },
   watch: {
     statusOptions (options) {
       this.filter.status = options[0].label
+    },
+    activeTab (val) {
+      if (val !== '全部') {
+        this.filter.status = this.tabs.find(tab => tab.text === val).options[0]
+      } else {
+        this.filter.status = '-1'
+      }
     },
     search: {
       handler: debounce(function (newVal, oldVal) {
@@ -256,6 +268,23 @@ export default {
         })
       })
       return options.sort((a, b) => a.value - b.value)
+    },
+    isShowCaptureExtendOpt () {
+      if (
+        this.filter.captureId.toString() === '-1' ||
+        !this.capture.capture_id
+      ) {
+        return false
+      }
+      for (let i in this.captureOptionList) {
+        let capture = this.captureOptionList[i]
+        if (
+          capture.capture_id.toString() === this.filter.captureId.toString()
+        ) {
+          return false
+        }
+      }
+      return true
     }
   },
   methods: {
@@ -266,18 +295,18 @@ export default {
     calendarTime (strTime) {
       return moment(strTime).calendar()
     },
+    handelTabClick () {
+
+    },
     handleClear (path) {
       set(this, path, get(this.defaultValue, path))
     },
     // 复制时间
     handleCaptureChange (captureId) {
-      console.log(captureId, '复制时间captureId')
-
       this.handleCaptureOptionChange(captureId)
     },
     // 整店复制-复制名
     handleShopCaptureChange (captureId) {
-      console.log(captureId, '整店复制captureId')
       this.handleCaptureOptionChange(captureId)
     },
     // 查询
@@ -287,21 +316,23 @@ export default {
         search: this.search
       })
     },
-    handleCaptureOptionChange (captureId) {
-      if (this.captureOptions.map((a) => a.value).indexOf(captureId) !== -1) {
-        this.filter.captureId = captureId
-      } else {
-        this.filter.captureId = '-1'
+    handleCaptureOptionChange (value) {
+      let captureId = value.toString()
+      let shopCaptureId = value.toString()
+      if (this.captureOptions.length && this.captureOptions.map((a) => a.value).indexOf(value) === -1) {
+        captureId = '-1'
       }
       if (
-        this.shopCaptureOptions.map((a) => a.value).indexOf(captureId) !== -1
+        this.shopCaptureOptions.length && this.shopCaptureOptions.map((a) => a.value).indexOf(value) === -1
       ) {
-        this.filter.shopCaptureId = captureId
-      } else {
-        this.filter.shopCaptureId = '-1'
+        shopCaptureId = '-1'
       }
+      this.$nextTick(() => {
+        this.filter.captureId = captureId
+        this.filter.shopCaptureId = shopCaptureId
       // 如果进行抓取选择，将店铺选择改为本店铺
-      this.filter.child_shop_user_id = '0'
+        this.filter.child_shop_user_id = '0'
+      })
     }
   }
 

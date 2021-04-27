@@ -536,6 +536,9 @@ export default {
     background:#FFFFFF;
     min-height: 100%;
     box-sizing: border-box;
+    min-width: 1036px;
+    width: calc(100% -40px);
+
   }
   .full-screen {
     // min-width: @full-screen-width;

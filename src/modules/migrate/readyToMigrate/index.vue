@@ -3,59 +3,10 @@
     <div>
       <div class="test" ref="test">
         <Search
+          :capture="capture"
           @change="onSearchChange"/>
-        <!-- <el-form ref="form" :model="search" :inline="true" style="text-align: left;" class="flex align-c wrap">
-          <el-form-item>
-            <el-select v-model="search.child_shop_user_id" placeholder="请选择" size="small"
-              @change="handleShopFilterChange" popper-class="select-long" style="width: 195px">
-              <el-option v-for="item in bindShopList" :key="item.user_id" :label="item.shop_name" :value="item.user_id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-input v-model="search.key" size="small" placeholder="商品标题" @keyup.enter.native="handleFilterChange"
-              style="width: 195px">
-            </el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-select v-model="search.status" placeholder="商品状态" size="small" @change="handleStatusFilterChange"
-              popper-class="select-long" style="width: 195px">
-              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-select v-model="captureId" placeholder="复制时间" size="small" @change="handleCaptureChange"
-              popper-class="select-long" style="width: 195px">
-              <el-option-group>
-                <el-option v-for="item in captureOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-option-group>
-              <el-option-group v-if="isShowCaptureExtendOpt">
-                <el-option :key="capture.capture_id" :label="calendarTime(capture.create_time)"
-                  :value="capture.capture_id.toString()" disabled>
-                </el-option>
-              </el-option-group>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-select v-model="shopCaptureId" placeholder="请选择" size="small" @change="handleShopCaptureChange"
-              popper-class="select-long" style="width: 195px">
-              <el-option-group>
-                <el-option v-for="item in shopCaptureOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-option-group>
-            </el-select>
-          </el-form-item>
-          <el-form-item style="margin-right:0;margin-bottom:5px">
-            <el-button type="primary" size="medium" @click="handleFilterChange">
-              <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
-            </el-button>
-          </el-form-item>
-        </el-form> -->
-        <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center>
-        </el-alert>
-        <el-alert v-if="capture.capture_id" type="success" :closable="false" center>
+        <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center class="mt-5"/>
+        <el-alert v-if="capture.capture_id" type="success" :closable="false" center class="mt-5">
           <template slot='title'>
             <div>
               <span v-if="isShopCapture">店铺<span v-if="capture.shop_name!=''">【{{capture.shop_name}}】</span>
@@ -632,10 +583,10 @@ export default {
     },
     updateInfo () {
       let captureId = this.search.captureId
-      const shopCaptureId = this.search.shopCaptureId
-
-      console.log(captureId, shopCaptureId, captureId.toString() === '-1' && shopCaptureId.toString() === '-1', 'shopCaptureId')
-      if (captureId.toString() === '-1' && shopCaptureId.toString() === '-1') {
+      // const shopCaptureId = this.search.shopCaptureId
+      // console.log(captureId, shopCaptureId, captureId.toString() === '-1' && shopCaptureId.toString() === '-1', 'shopCaptureId')
+      // if (captureId.toString() === '-1' && shopCaptureId.toString() === '-1') {
+      if (captureId.toString() === '-1') {
         this.capture = {}
         this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
         this.getProductList(false)
@@ -646,9 +597,9 @@ export default {
     getProductList (isSilent = false) {
       this.isLoadProduct = true
       let captureId = this.search.captureId
-      if (this.search.shopCaptureId.toString() !== '-1') {
-        captureId = this.search.shopCaptureId
-      }
+      // if (this.search.shopCaptureId.toString() !== '-1') {
+      //   captureId = this.search.shopCaptureId
+      // }
       let params = {
         page_index: this.pagination.index,
         page_size: this.pagination.size,
@@ -764,6 +715,7 @@ export default {
             this.pagination.size = data.page_size
             this.pagination.total = data.total_num
           }
+
           if (
             data.shop_capture_type === common.SHOP_CAPTURE_TYPE['client'] &&
             ![2, 1].includes(data.page_status)
@@ -1150,11 +1102,13 @@ export default {
     onSearchChange (data) {
       // 店铺选择 状态选择 标题搜索 clearSelect resetPaginationIndex updateInfo
       // 复制时间 整店复制-复制名 child_shop_user_id = 0 handleCommonCaptureChange
-      console.log(data, 'data')
 
       this.search = {...this.search, ...data.search, ...data.filter}
-      console.log(this.search, 'this.search')
 
+      if (data.filter.shopCaptureId.toString() !== '-1') {
+        this.search.captureId = data.filter.shopCaptureId
+      }
+      console.log(this.search, 'this.search')
       this.pageData = {}
       this.triggerShopCaptureRunOnce = {}
       this.resetPagination()

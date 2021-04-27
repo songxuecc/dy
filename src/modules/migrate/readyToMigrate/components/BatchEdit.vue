@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 8px 0">
+  <div style="margin: 5px 0">
     <el-row type="flex" justify="start" style="margin-bottom: 4px">
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
