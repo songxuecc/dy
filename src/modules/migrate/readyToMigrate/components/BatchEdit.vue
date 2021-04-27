@@ -19,7 +19,6 @@
         <el-button type="primary" plain size="mini" style="padding:5px 20px;" class="ml-5 bold" @click="handleDelete(5)">批量删除记录</el-button>
       </el-col>
     </el-row>
-    <!-- <div class="info left">注：批量修改本页勾选产品。自动过滤抓取失败、搬迁中、等待搬迁、审核中，4种状态的商品。</div> -->
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
       :percentage="percentage" @onShutdown="onShutdown" :shutdown="shutdown" />
     <EditBrandId :visible.sync="visvileEditBrandId" v-if="visvileEditBrandId" @updateBrands="updateBrands"
@@ -155,12 +154,16 @@ export default {
       ],
       canDeleteStatus: [
         productStatus.WAIT_ONLINE,
-        productStatus.REJECT,
-        productStatus.FAILED,
-        productStatus.WAIT_MODIFY,
+        productStatus.WAIT_MIGRATE,
+        productStatus.MIGRATING,
         productStatus.SAVE_DRAFT,
         productStatus.ONLINE,
-        productStatus.CAPTURE_FAILED
+        productStatus.FAILED,
+        productStatus.WAIT_MODIFY,
+        productStatus.CAPTURE_FAILED,
+        productStatus.REJECT,
+        productStatus.DY_APPROVING,
+        productStatus.DELETED
       ]
     }
   },
