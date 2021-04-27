@@ -157,14 +157,15 @@
           </div>
         </el-form-item>
 
-        <el-form-item required label="搬家仅针对"  class="flex migrateProductsFilter migrateSetting-choose" style="height:25px;margin-bottom: 20px;">
-          <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
+        <el-form-item required label="重复搬家设置"  class="flex migrateProductsFilter migrateSetting-choose" style="height:25px;margin-bottom: 20px;">
+          <!-- <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
             <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
             <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
             <el-checkbox :label="common.productStatus.REJECT">驳回</el-checkbox>
             <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
             <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
-          </el-checkbox-group>；其余状态商品会自动过滤
+          </el-checkbox-group>；其余状态商品会自动过滤 -->
+          <p class="font-12" style="line-height:30px">已上线、草稿箱商品支持再次搬家<el-switch class="ml-5" v-model="is_able_migrate_status_list" @change="handleIsAbleMigrateStatusList" /></p>
         </el-form-item>
 
         <el-form-item required label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
@@ -604,6 +605,9 @@ export default {
           }
         })
         this.originMigrateSetting = originMigrateSetting
+        if (setting.able_migrate_status_list) {
+          this.is_able_migrate_status_list = !!(setting.able_migrate_status_list.length === 6)
+        }
         this.updateMigrateSettingData(originMigrateSetting)
         this.settingKeys = settingKeys
         // 默认设置
@@ -881,6 +885,25 @@ export default {
     },
     handleClear (property) {
       this[property] = ''
+    },
+    handleIsAbleMigrateStatusList (value) {
+      if (value) {
+        this.able_migrate_status_list = [
+          common.productStatus.WAIT_ONLINE,
+          common.productStatus.FAILED,
+          common.productStatus.WAIT_ONLINE,
+          common.productStatus.REJECT,
+          common.productStatus.ONLINE,
+          common.productStatus.SAVE_DRAFT
+        ]
+      } else {
+        this.able_migrate_status_list = [
+          common.productStatus.WAIT_ONLINE,
+          common.productStatus.FAILED,
+          common.productStatus.WAIT_ONLINE,
+          common.productStatus.REJECT
+        ]
+      }
     }
   }
 }

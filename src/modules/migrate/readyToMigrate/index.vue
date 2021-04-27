@@ -9,20 +9,28 @@
         <el-alert v-if="capture.capture_id" type="success" :closable="false" center class="mt-5">
           <template slot='title'>
             <div>
-              <span v-if="isShopCapture">店铺<span v-if="capture.shop_name!=''">【{{capture.shop_name}}】</span>
-                {{captureShopStatusMap[capture.status]}}, 商品数量({{captureNum}}个) </span>
-              <span v-if="isShopCapture">—— 第{{pagination.index}}页【</span>
-              <span v-if="capture.status_statistics.length == 0">
-                {{ captureStatusMap[capture.page_status] }}
+              <span v-if="ShopsCaptureStatus === 1">【{{capture.shop_name}}】等待复制中...</span>
+              <span v-if="ShopsCaptureStatus === 2">
+                正在复制【{{capture.shop_name}}】第{{pagination.index}}页:&nbsp;&nbsp;
+                <span v-if="capture.status_statistics.length > 0">
+                  共 {{ capture.capture_num }}条&nbsp;&nbsp;{{ captureStatusMap[capture.page_status] }}
+                  <span v-for="(item, index) in capture.status_statistics" :key="index">
+                    {{ captureStatusMap[item.status] }} {{ item.count }}条&nbsp;&nbsp;
+                  </span>
+                </span>
               </span>
-              <span v-if="capture.status_statistics.length > 0" v-for="(item, index) in capture.status_statistics"
-                :key="index">
-                {{ captureStatusMap[item.status] }} {{ item.count }} 条 &nbsp;&nbsp;
+              <span v-if="ShopsCaptureStatus === 3" >
+                已复制【{{capture.shop_name}}】第{{pagination.index}}页:
+                <span v-if="capture.status_statistics.length > 0">
+                  共 {{ capture.capture_num }}条&nbsp;&nbsp;
+                  <span v-for="(item, index) in capture.status_statistics" :key="index">
+                    {{ captureStatusMap[item.status] }} {{ item.count }}条&nbsp;&nbsp;
+                  </span>
+                </span>
+                (需手动点击页面底部的页码触发下一页的复制)
               </span>
-              <span v-if="capture.status_statistics.length > 0">
-                总共 {{ capture.capture_num }} 条
-              </span>
-              <span v-if="isShopCapture">】</span>
+              <span v-if="ShopsCaptureStatus === 4">【{{capture.shop_name}}】所有商品均复制完成！</span>
+              <span v-if="ShopsCaptureStatus === 5">【{{capture.shop_name}}】无法继续复制，小虎猜测原因是：当前店铺所有商品已复制完成</span>
             </div>
           </template>
           <el-tooltip v-show="getCaptureStatus ==='capture-item' && [0, 1].includes(this.capture.page_status)"
@@ -239,6 +247,35 @@ export default {
       'versionTipType',
       'versionType'
     ]),
+    ShopsCaptureStatus () {
+      if (!this.isShopCapture) return 0
+      if (this.capture.status === 2 && this.capture.page_status === 2) {
+        return 3
+        // 本页抓取成功
+      }
+
+      if (this.capture.status === 2 && this.capture.page_status === 4) {
+        return 1
+        // 抓取中
+      }
+
+      if (this.capture.status === 2 && this.capture.page_status === 1) {
+        return 2
+        // 等待
+      }
+
+      if (this.capture.status === 2 && this.capture.page_status === 2) {
+        if (this.capture.total_num && (this.capture.page_size * this.capture.page_id > this.capture.total_num)) {
+          return 4
+        }
+        // 完成
+      }
+
+      if (this.capture.status === 2 && this.capture.page_status === 3) {
+        return 5
+        // 失败
+      }
+    },
     productStatusMap () {
       return common.productStatusMap
     },
