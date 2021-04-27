@@ -579,7 +579,7 @@ export default {
     top:-10px;
     font-size:12px;
     transform:scale(0.7);
-    background:red;
+    background:#dc4041;
     border-radius:10px;
     height:20px;
     min-width:20px;
