@@ -17,13 +17,13 @@
       style="text-align: left"
       class="flex align-c wrap search"
     >
-      <el-form-item  label-width="100px" style="width: 325px" label="商品状态">
+      <el-form-item  label-width="90px" style="width: 325px" label="商品状态">
         <el-select
           v-model="filter.status"
           placeholder="商品状态"
           popper-class="select-long"
           style="width: 195px"
-          :disabled="activeTab !== '全部'"
+          :disabled="['完成上线','保存至草稿箱'].includes(activeTab)"
           clearable
           @clear="handleClear('filter.status')"
         >
@@ -38,7 +38,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item  label-width="100px" style="width: 325px" label="复制时间">
+      <el-form-item  label-width="90px" style="width: 325px" label="复制时间">
         <el-select
           v-model="filter.captureId"
           placeholder="复制时间"
@@ -71,9 +71,9 @@
       </el-form-item>
 
       <el-form-item
-        label-width="100px"
+        label-width="90px"
         style="width: 325px"
-        label="整店复制-复制名"
+        label="整店复制"
       >
         <el-select
           v-model="filter.shopCaptureId"
@@ -95,7 +95,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item  label-width="100px" style="width: 325px" label="商品标题">
+      <el-form-item  label-width="90px" style="width: 325px" label="商品标题">
         <el-input
           v-model="search.key"
           placeholder="商品标题"
@@ -107,7 +107,7 @@
         >
         </el-input>
       </el-form-item>
-      <el-form-item  label-width="100px" style="width: 325px" label="多店铺切换">
+      <el-form-item  label-width="90px" style="width: 325px" label="多店铺切换">
         <el-select
           v-model="filter.child_shop_user_id"
           placeholder="请选择"
@@ -181,11 +181,11 @@ export default {
       tabs: [
         {
           text: '全部',
-          options: [ '-1', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+          options: ['-1', 0, 6, 7, 1, 2, 5, 9, 8, 3, 4]
         },
         {
           text: '未完成上线',
-          options: [ 0 ]
+          options: [ 0, 6, 7, 1, 2, 5, 9, 8 ]
         },
         {
           text: '完成上线',
@@ -217,6 +217,10 @@ export default {
       } else {
         this.filter.status = '-1'
       }
+      this.$emit('change', {
+        filter: this.filter,
+        search: this.search
+      })
     },
     search: {
       handler: debounce(function (newVal, oldVal) {

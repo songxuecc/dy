@@ -3,20 +3,23 @@
     <el-row type="flex" justify="start" style="margin-bottom: 4px">
       <el-col style="text-align: left">
         <el-dropdown @command="handleCommand">
-          <el-tooltip   placement="top">
+          <div class="relative">
+            <el-tooltip   placement="top">
             <div slot="content" style="width:200px" class="left">批量修改本页勾选产品。自动过滤抓取失败、搬迁中、等待搬迁、审核中，4种状态的商品。</div>
-            <el-button type="primary" size="mini" style="padding:5px 20px;" class="bold">
-              批量操作
-              <!-- <el-badge v-if="selecEdittList && selecEdittList.length" :value="selecEdittList.length"></el-badge><i class="el-icon-arrow-down el-icon--right"></i> -->
+            <el-button type="primary" size="mini" style="padding:5px 20px;" >
+              批量修改商品
+              <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
           </el-tooltip>
+          <span v-if="selecEdittList && selecEdittList.length" class="badge bold">{{selecEdittList.length}}</span>
+          </div>
           <el-dropdown-menu slot="dropdown" >
             <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px" class="left"
               :command="item.value" :style="{color: activeIndex === item.value ? 'black' : 'gray'}">
               {{item.label}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="primary" plain size="mini" style="padding:5px 20px;" class="ml-5 bold" @click="handleDelete(5)">批量删除记录</el-button>
+        <el-button type="primary" plain size="mini" style="padding:5px 20px;" class="ml-5" @click="handleDelete(5)">批量删除记录</el-button>
       </el-col>
     </el-row>
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
@@ -568,5 +571,21 @@ export default {
     justify-content: center;
     margin-top:20px;
     align-items: center;
+  }
+
+  .badge{
+    position:absolute;
+    right:-10px;
+    top:-10px;
+    font-size:12px;
+    transform:scale(0.7);
+    background:red;
+    border-radius:10px;
+    height:20px;
+    min-width:20px;
+    box-sizing:border-box;
+    line-height:16px;
+    padding:2px 4px;
+    color:#fff
   }
 </style>
