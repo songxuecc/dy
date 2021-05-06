@@ -239,6 +239,9 @@
         >
           <product-edit-new-view ref="productEditNewView" @changeProducts="onChangeProducts" @triggerDialogClose="triggerDialogClose"></product-edit-new-view>
         </el-drawer>
+        <div class="close pointer" v-show="dialogEditVisible" @click="triggerDialogClose">
+          <hh-icon type="iconguanbi1" class="iconguanbi"></hh-icon>
+        </div>
         <el-dialog
           title="删除复制记录"
           :show-close="false"
@@ -837,6 +840,31 @@ export default {
       min-height: 200px;
       .el-table__body-wrapper {
         overflow: inherit !important;
+      }
+    }
+
+    .close {
+      position: fixed;
+      left:12%;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      width: 28px;
+      height: 28px;
+      z-index: 9999;
+      transition: all 0.8s;
+      border-radius: 50%;
+      background:#c7c7c7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      &:active {
+        background: @color-text-placeholder;
+      }
+      .iconguanbi {
+        font-size: 14px;
+        color:#ffffff;
       }
     }
 </style>

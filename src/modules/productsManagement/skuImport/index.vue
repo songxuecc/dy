@@ -6,7 +6,7 @@
       <UploadFile :activeName="activeName"/>
     </el-tab-pane>
     <el-tab-pane name="byId">
-      <span slot="label">按商品ID、规格ID匹配<NewFeatureTips type="根据id导入匹配" /></span>
+      <span slot="label">按商品ID、规格ID匹配</span>
       <UploadFile :activeName="activeName"/>
     </el-tab-pane>
   </el-tabs>
@@ -22,6 +22,9 @@
     :before-close="toggleEdit">
     <DetailSkuEdit v-if="visibleSkuEdit" />
   </el-drawer>
+  <div class="close pointer" v-show="visibleSkuEdit" @click="toggleEdit">
+    <hh-icon type="iconguanbi1" class="iconguanbi"></hh-icon>
+  </div>
 </div>
 </template>
 
@@ -98,5 +101,28 @@ export default {
 
 <style lang='less' scoped>
 //@import url(); 引入公共css类
-
+.close {
+  position: fixed;
+  left:12%;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 28px;
+  height: 28px;
+  z-index: 9999;
+  transition: all 0.8s;
+  border-radius: 50%;
+  background:#c7c7c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  &:active {
+    background: @color-text-placeholder;
+  }
+  .iconguanbi {
+    font-size: 14px;
+    color:#ffffff;
+  }
+}
 </style>
