@@ -21,22 +21,6 @@
                 <side-bar @open="subMenuOpen" ></side-bar>
               </vue-custom-scrollbar>
             </div>
-            <NewFeatureOnlineTip
-              type="搬家设置"
-              style="position:absolute;z-index:2001;top: 282px;left: 90px;"
-              msg="已上线商品再次搬家功能已迁移到此处啦～"
-              btnText="立即设置"
-              @click="handleClickNewFeatureOnlineTip({name:'MigrateSetting'})"
-            />
-            <NewFeatureOnlineTip
-              type="批量处理"
-              style="position:absolute;z-index:2001;top: 434px;left: 90px;"
-              msg="新增批量上下架、改客服电话、改运费模版等"
-              btnText="立即查看"
-              @click="handleClickNewFeatureOnlineTip({
-                path: `/productsManagement/batchEdit/title`
-              })"
-            />
           <el-main style="background:#f9f9f9;height:100%;overflow:auto;padding:0" class="page-component__scroll">
             <div class="main-layout">
               <keep-alive>
@@ -99,7 +83,6 @@ import NotificationListView from '@/components/NotificationListView.vue'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
-import NewFeatureOnlineTip from '@/components/NewFeatureOnlineTip'
 
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
@@ -149,8 +132,7 @@ export default {
     GoodAssessDialog,
     ExpireNotifyDialog,
     vueCustomScrollbar,
-    NotificationListView,
-    NewFeatureOnlineTip
+    NotificationListView
   },
   computed: {
     ...mapGetters({
