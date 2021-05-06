@@ -57,12 +57,12 @@
             v-model="presell.presellDelay"
             size="small"
             controls-position="right"
-            :min="3"
-            :max="presell.presellType === 1 ? 30 : 15"
+            :min="presell.presellType === 1 ? 2 : 3"
+            :max="15"
             class="input-number margin-bottom-4"></el-input-number>
           <span>天发货</span>
           <p class="info">{{ presell.presellType === 1 ?
-            '预售商品发货时间以此限制为主，仅可设置3-30天' :
+            '预售商品发货时间以此限制为主，仅可设置2-15天' :
             '阶梯发货期间商品发货时间以此限制为主，仅可设置3-15天'}}
           </p>
         </el-form-item>
