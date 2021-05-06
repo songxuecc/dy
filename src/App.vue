@@ -335,9 +335,9 @@ export default {
       this.$nextTick(function () {
         let elem = this.$el.querySelector('span.el-alert__title')
         if (notification.title === '-') {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;font-size:12px " class="app-notification">' + notification.data + '</div>'
         } else {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;fonts-zie:12px">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;font-size:12px" class="app-notification">' + notification.data + '</div>'
         }
       })
     },
@@ -435,6 +435,12 @@ export default {
 </style>
 
 <style lang="less" scoped>
+
+  /deep/ .app-notification {
+    p {
+      font-size: 12px;
+    }
+  }
   /deep/ .notice-foot {
     margin-top: -1px;
     margin-bottom: -6px;
