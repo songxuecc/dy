@@ -1,6 +1,6 @@
 <!-- StartCopyTips -->
 <template>
-    <NewComer type="开始复制按钮" ref="newComer" direction="right">
+    <NewComer type="开始复制按钮" ref="newComer" direction="right" :noAuth="true">
         <div style="width:172px">
         <div  class="color-666 font-12 left mb-5">
             <hh-icon type="icontishi" ></hh-icon>&nbsp;小提醒：复制前请确保

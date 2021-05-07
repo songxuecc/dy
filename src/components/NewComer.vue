@@ -23,7 +23,9 @@ export default {
       default: 'top'
     },
     className: String,
-    style: Object
+    style: Object,
+    // 不需要身份验证
+    noAuth: Boolean
   },
   data () {
     return {
@@ -37,6 +39,9 @@ export default {
   computed: {
     ...mapGetters(['getCurrentSubsc']),
     show () {
+      if (this.noAuth) {
+        return true
+      }
       // 是否需要展示
       if (!this.getCurrentSubsc) {
         return false
