@@ -90,29 +90,29 @@
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <p class="left font-12 mt-20 "  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="startCopyBtn" v-if="activeName === 'single'">
-      <div style="width:160px;height:50px">
-        <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px">
+      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
+        <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px" >
           <span style="width:120px">开始复制</span>
           <el-badge :value="captureUrlNums"></el-badge>
         </el-button>
-        <StartCopyTips />
+        <StartCopyTips v-show="showStartCopyTips"/>
       </div>
     </div>
     <!-- 整店复制 -->
     <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
-    <div class="startCopyBtn" v-if="activeName === 'shop'">
-      <div style="width:160px;height:50px">
+    <div class="startCopyBtn" v-if="activeName === 'shop'" >
+      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
         <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
-        <StartCopyTips />
+        <StartCopyTips v-show="showStartCopyTips"/>
       </div>
     </div>
     <!-- 绑定复制 -->
     <div class="startCopyBtn " v-if="activeName === 'bindCopy' && userBindList.length ">
-      <div style="width:160px;height:50px">
+      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
         <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:160px;height:50px;font-size:16px" class="ralative">开始复制
           <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
         </el-button>
-        <StartCopyTips />
+        <StartCopyTips v-show="showStartCopyTips"/>
       </div>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy'"/>
@@ -169,7 +169,8 @@ export default {
       binCopyActiveName: 'status',
       ModalBindCopyIdSearchShow: false,
       lostGoodsIds: [],
-      productListCheckLoading: false
+      productListCheckLoading: false,
+      showStartCopyTips: false
     }
   },
   components: {
@@ -652,6 +653,9 @@ export default {
       this.$router.push({
         name: 'ProductionCollection'
       })
+    },
+    toggleStartCopyTips () {
+      this.showStartCopyTips = !this.showStartCopyTips
     }
 
   }
