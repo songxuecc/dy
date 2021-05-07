@@ -191,7 +191,7 @@ export default {
       display: block;
       width: 26px;
       height: 26px;
-      background: url('~@/assets/icon/service-white.png') no-repeat;
+      // background: url('~@/assets/icon/service-white.png') no-repeat;
       background-size: 100%;
     }
   }

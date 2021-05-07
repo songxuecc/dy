@@ -28,7 +28,6 @@ import MeizheInfo from '@moreFeatures/meizheInfo'
 import WodaInfo from '@moreFeatures/wodaInfo'
 
 // 店铺装修 shopDecorate
-
 Vue.use(Router)
 
 const router = new Router({
@@ -221,7 +220,10 @@ const router = new Router({
     {
       path: '/shopDecorate/wm/create/:water_mark_type/:water_mark_id',
       name: 'WaterMaskCreate',
-      component: resolve => require(['@shopDecorate/waterMaskCreate'], resolve),
+      component: () => import(
+        /* webpackChunkName: `waterMaskCreate` */
+        /* webpackMode: "lazy" */
+        '@shopDecorate/waterMaskCreate'),
       meta: {
         requiresAuth: true,
         keepAlive: true,
@@ -231,7 +233,10 @@ const router = new Router({
     {
       path: '/shopDecorate/poster/dg',
       name: 'PosterDg',
-      component: resolve => require(['@shopDecorate/posterDg'], resolve),
+      component: () => import(
+        /* webpackChunkName: `PosterDg` */
+        /* webpackMode: "lazy" */
+        '@shopDecorate/posterDg'),
       meta: {
         requiresAuth: true
       },
