@@ -29,11 +29,11 @@ export const platformIconsUrl = [
     src: require('@/assets/images/vph.png'),
     tip: '唯品会'
   },
-  {
-    key: '网易考拉',
-    src: require('@/assets/images/kaola.png'),
-    tip: '网易考拉'
-  },
+  // {
+  //   key: '网易考拉',
+  //   src: require('@/assets/images/kaola.png'),
+  //   tip: '网易考拉'
+  // },
   {
     key: '17网',
     src: require('@/assets/images/17.png'),
@@ -92,11 +92,11 @@ export const platformIconsStore = [
     src: require('@/assets/images/sn.png'),
     tip: '苏宁'
   },
-  {
-    key: '网易考拉',
-    src: require('@/assets/images/kaola.png'),
-    tip: '网易考拉'
-  },
+  // {
+  //   key: '网易考拉',
+  //   src: require('@/assets/images/kaola.png'),
+  //   tip: '网易考拉'
+  // },
   {
     key: '17网',
     src: require('@/assets/images/17.png'),

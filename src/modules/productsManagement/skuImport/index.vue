@@ -16,7 +16,7 @@
     title="sku编码修改详情"
     :visible.sync="visibleSkuEdit"
     :direction="drawerDirection"
-    size="1000px"
+    size="60%"
     custom-class="sku-import-drawer"
     style="padding: 10px"
     :before-close="toggleEdit">
@@ -103,12 +103,12 @@ export default {
 //@import url(); 引入公共css类
 .close {
   position: fixed;
-  left:12%;
+  left:30%;
   top: 0;
   bottom: 0;
   margin: auto;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   z-index: 9999;
   transition: all 0.8s;
   border-radius: 50%;
@@ -121,7 +121,7 @@ export default {
     background: @color-text-placeholder;
   }
   .iconguanbi {
-    font-size: 14px;
+    font-size: 18px;
     color:#ffffff;
   }
 }
