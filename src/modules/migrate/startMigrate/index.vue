@@ -480,12 +480,12 @@ export default {
     },
     async capture (parmas, needUpdateMigrateSetting = true) {
       try {
-        if (needUpdateMigrateSetting) {
-          const updateResult = await this.$refs.setting.updateMigrateSetting()
-          if (updateResult === 'error') {
-            return false
-          }
-        }
+        // if (needUpdateMigrateSetting) {
+        //   const updateResult = await this.$refs.setting.updateMigrateSetting()
+        //   if (updateResult === 'error') {
+        //     return false
+        //   }
+        // }
         let self = this
         this.isStartCapture = true
         this.request('capture', parmas, data => {
@@ -530,10 +530,10 @@ export default {
         return false
       }
       // 修改搬家配置
-      const updateResult = await this.$refs.setting.updateMigrateSetting()
-      if (updateResult === 'error') {
-        return false
-      }
+      // const updateResult = await this.$refs.setting.updateMigrateSetting()
+      // if (updateResult === 'error') {
+      //   return false
+      // }
       this.isStartCapture = true
     },
     uploadOnProgress (file, fileList) {
