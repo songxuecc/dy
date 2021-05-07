@@ -2,6 +2,7 @@
   <div style="position: relative;">
     <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
     </help-tips>
+    <SettingAlert/>
     <el-tabs v-model="activeName">
       <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
         <el-input type="textarea" :rows="10" :placeholder="`输入其他平台的商品链接地址，换行分隔多个链接，最多不超过${limit}个`" class="mb-20"
@@ -31,38 +32,6 @@
             <span class="click" @click="openProductCollection">商品采集功能</span>
             采集商品链接</div>
         </div>
-        <!-- <div style="text-align: left; margin-top: 50px;margin-bottom:20px">
-          <span class="prompt">使用方式:</span>
-          <div class="prompt-content">方式1：下载导入模板，自行添加商品链接
-            <el-link type="primary" size="mini" @click="downloadCSV()" :underline="false" class="prompt-link">
-              下载模板
-            </el-link>
-          </div>
-          <span class="prompt-content">方式2（推荐）：安装网页插件选取商品，然后下载并上传导入文件
-            <el-link type="primary" size="mini" @click="navToHelp" :underline="false" class="prompt-link">
-              安装及使用教程
-            </el-link>
-          </span>
-          <span class="prompt-content" style="margin-left: 40px;">插件下载（暂不支持 IE 浏览器）：360浏览器、搜狗浏览器安装包
-            <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false"
-              @click="downloadCrx()" style="margin-right: 16px;">
-              下载
-            </el-link>
-            Chrome 浏览器安装包
-            <el-link class="prompt-link" type="primary" href="" target="_blank" :underline="false"
-              @click="downloadZip()">
-              下载
-            </el-link>
-          </span>
-          <span class="prompt-content" style="margin-left: 40px;">插件支持平台：
-            <div style="display: inline-block;">
-              <img class="icon" src="@/assets/platformImg/taobao-tiny.png" style="width: 14px; height: 14px;">
-            </div>
-            <div style="display: inline-block;">
-              <img class="icon" src="@/assets/platformImg/tmall-tiny.png" style="width: 14px; height: 14px;">
-            </div>
-          </span>
-        </div> -->
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
         <span slot="label" class="relative">绑定复制 <span class="tutorials" style="position:absolute;right:-65px;top:-10px;transform:scale(0.8)">多店铺必备</span></span>
@@ -114,33 +83,37 @@
                   style="width: 357px;"/>
               </el-form-item>
             </el-form>
-            <el-button type="text" @click="moreSetting" size="small"  style="margin-right:45px">
-              <i class="el-icon-s-tools" style="margin-right:3px;"></i>更多设置
-              <hh-icon type="iconjingshi" style="font-size:8px;margin-right:3px;"></hh-icon><span class="info">请在复制前进行设置！！！！</span>
-            </el-button>
       </el-tab-pane>
     </el-tabs>
 
-    <Setting v-show="['single','shop','file'].includes(activeName)" ref="setting" @loading="settingLoading"/>
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
     <p class="left font-12 mt-20 bold"  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
-    <div class="common-bottom" v-if="activeName === 'single'">
-      <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px">
-        <span style="width:120px">开始复制</span>
-        <el-badge :value="captureUrlNums"></el-badge>
-      </el-button>
+    <div class="startCopyBtn" v-if="activeName === 'single'">
+      <div style="width:160px;height:50px">
+        <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px">
+          <span style="width:120px">开始复制</span>
+          <el-badge :value="captureUrlNums"></el-badge>
+        </el-button>
+        <StartCopyTips />
+      </div>
     </div>
     <!-- 整店复制 -->
     <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
-    <div class="common-bottom" v-if="activeName === 'shop'">
-      <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
+    <div class="startCopyBtn" v-if="activeName === 'shop'">
+      <div style="width:160px;height:50px">
+        <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
+        <StartCopyTips />
+      </div>
     </div>
     <!-- 绑定复制 -->
-    <div class="common-bottom " v-if="activeName === 'bindCopy' && userBindList.length ">
-      <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:160px;height:50px;font-size:16px" class="ralative">开始复制
-        <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
-      </el-button>
+    <div class="startCopyBtn " v-if="activeName === 'bindCopy' && userBindList.length ">
+      <div style="width:160px;height:50px">
+        <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:160px;height:50px;font-size:16px" class="ralative">开始复制
+          <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
+        </el-button>
+        <StartCopyTips />
+      </div>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy'"/>
     <el-dialog title="安装及使用教程" :show-close="true" :visible.sync="importFilePromptVisibe" width="60%">
@@ -156,10 +129,11 @@ import request from '@/mixins/request.js'
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import common from '@/common/common.js'
 import helpTips from '@/components/HelpTips.vue'
-import Setting from '@migrate/startMigrate/Setting'
 import SupportPlatForm from '@migrate/startMigrate/SupportPlatForm'
 import BindCopyTip from '@migrate/startMigrate/BindCopyTip'
 import ModalBindCopyIdSearch from '@migrate/startMigrate/ModalBindCopyIdSearch'
+import StartCopyTips from '@migrate/startMigrate/StartCopyTips'
+import SettingAlert from '@migrate/startMigrate/SettingAlert'
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
 
@@ -200,10 +174,11 @@ export default {
   },
   components: {
     helpTips,
-    Setting,
     SupportPlatForm,
     BindCopyTip,
-    ModalBindCopyIdSearch
+    ModalBindCopyIdSearch,
+    StartCopyTips,
+    SettingAlert
   },
   activated () {
     this.getUserBindList()
@@ -673,11 +648,6 @@ export default {
         this.$refs.modelCopyForm.clearValidate()
       }
     },
-    moreSetting () {
-      this.$router.push({
-        name: 'MigrateSetting'
-      })
-    },
     openProductCollection () {
       this.$router.push({
         name: 'ProductionCollection'
@@ -699,5 +669,10 @@ export default {
   width: 80px;
 }
 }
-
+.startCopyBtn {
+  margin:30px 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
 </style>

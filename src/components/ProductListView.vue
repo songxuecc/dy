@@ -849,8 +849,8 @@ export default {
       top: 0;
       bottom: 0;
       margin: auto;
-      width: 28px;
-      height: 28px;
+      width: 36px;
+      height: 36px;
       z-index: 9999;
       transition: all 0.8s;
       border-radius: 50%;
@@ -863,7 +863,7 @@ export default {
         background: @color-text-placeholder;
       }
       .iconguanbi {
-        font-size: 14px;
+        font-size: 18px;
         color:#ffffff;
       }
     }

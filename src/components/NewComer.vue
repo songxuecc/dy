@@ -19,7 +19,7 @@ export default {
     left: Number,
     // 方向
     direction: {
-      type: 'top' | 'bottom',
+      type: 'top' | 'bottom' | 'right',
       default: 'top'
     },
     className: String,
@@ -64,7 +64,6 @@ export default {
     position: absolute;
     background: #FFFFFF;
     box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
-    left: 50%;
     border-radius: 3px;
     padding: 10px 14px 8px;
     z-index: 2;
@@ -75,8 +74,6 @@ export default {
     content:"";
     width: 0;
     height: 0;
-    left: 50%;
-    transform: translateX(-50%);
     border: 9px solid transparent;
 }
 
@@ -85,37 +82,68 @@ export default {
     content:"";
     width: 0;
     height: 0;
-    left: 50%;
-    transform: translateX(-50%);
     border: 9px solid transparent;
 }
 
 .newComer-top {
   top: -8px;
+  left: 50%;
   transform: translate(-50%, -100%);
   border-bottom: 3px solid #1D8FFF;
 }
 .triangle-top {
+  left: 50%;
+  transform: translateX(-50%);
   bottom: -17px;
   border-top: 6px solid #1D8FFF;
 }
 .triangle-white-top {
+  left: 50%;
+  transform: translateX(-50%);
   bottom: -14px;
   border-top: 6px solid #ffffff;
 }
 
-  .newComer-bottom {
-      bottom: -8px;
-      transform: translate(-50%, 100%);
-      border-top: 3px solid #1D8FFF;
-  }
-  .triangle-bottom {
-      top: -17px;
-      border-bottom: 6px solid #1D8FFF;
-  }
+.newComer-bottom {
+    bottom: -8px;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    border-top: 3px solid #1D8FFF;
+}
+.triangle-bottom {
+    left: 50%;
+    transform: translateX(-50%);
+    top: -17px;
+    border-bottom: 6px solid #1D8FFF;
+}
 
-  .triangle-white-bottom {
-      top: -14px;
-      border-bottom: 6px solid #ffffff;
-  }
+.triangle-white-bottom {
+    left: 50%;
+    transform: translateX(-50%);
+    top: -14px;
+    border-bottom: 6px solid #ffffff;
+}
+
+.newComer-right {
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translate(0, -50%);
+    border-left: 3px solid #1D8FFF;
+}
+.triangle-right {
+    left: -17px;
+    top: 0;
+    bottom: 0;
+    margin:auto;
+    border-right: 6px solid #1D8FFF;
+}
+
+.triangle-white-right {
+    left: -14px;
+    top: 0;
+    bottom: 0;
+    margin:auto;
+    border-right: 6px solid #ffffff;
+}
+
 </style>
