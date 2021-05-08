@@ -244,7 +244,10 @@ const router = new Router({
         {
           path: 'list',
           name: 'PosterDgList',
-          component: resolve => require(['@shopDecorate/waterMarkListView'], resolve),
+          component: () => import(
+            /* webpackChunkName: `PosterDgList` */
+            /* webpackMode: "lazy" */
+            '@shopDecorate/waterMarkListView'),
           meta: {
             keepAlive: true
           }
@@ -252,7 +255,10 @@ const router = new Router({
         {
           path: 'activity/create',
           name: 'PosterDgActivityCreate',
-          component: resolve => require(['@shopDecorate/waterMarkActivityCreateView'], resolve),
+          component: () => import(
+            /* webpackChunkName: `PosterDgActivityCreate` */
+            /* webpackMode: "lazy" */
+            '@shopDecorate/waterMarkActivityCreateView'),
           meta: {
             keepAlive: true
           }
@@ -260,7 +266,10 @@ const router = new Router({
         {
           path: 'activity',
           name: 'PosterDgActivityList',
-          component: resolve => require(['@shopDecorate/waterMarkActivityListView'], resolve),
+          component: () => import(
+            /* webpackChunkName: `waterMarkActivityListView` */
+            /* webpackMode: "lazy" */
+            '@shopDecorate/waterMarkActivityListView'),
           meta: {
             keepAlive: true
           }
@@ -268,7 +277,10 @@ const router = new Router({
         {
           path: 'activity/detail/:id',
           name: 'PosterDgActivity',
-          component: resolve => require(['@shopDecorate/waterMarkActivityView'], resolve),
+          component: () => import(
+            /* webpackChunkName: `waterMarkActivityView` */
+            /* webpackMode: "lazy" */
+            '@shopDecorate/waterMarkActivityView'),
           meta: {
             keepAlive: true
           }

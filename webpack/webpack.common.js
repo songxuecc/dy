@@ -1,20 +1,28 @@
 const path = require('path')
-const webpack = require('webpack')
 const merge = require('webpack-merge')
+const os = require('os')
 const chalk = require('chalk')
-// const os = require('os');
 
 const WebpackBuildNotifierPlugin = require('webpack-build-notifier')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const WebpackBar = require('webpackbar')
+const HappyPack = require('happypack')
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length })
 const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const StyleLintPlugin = require('stylelint-webpack-plugin')
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 
 const argv = require('yargs-parser')(process.argv.slice(-3))
 const mode = argv.mode || 'development'
 const mergeConfig = require(`./webpack.${mode}.js`)
 const isDev = mode === 'development'
-// const log = console.log;
+const needAnalyzer = argv.analyzer
+const needStyleLint = argv.styleLint
+const isEslint = argv.eslint
+const log = console.log
 
 const commonConfig = {
   entry: {
@@ -56,29 +64,56 @@ const commonConfig = {
       suppressSuccess: true
     }),
     new FriendlyErrorsWebpackPlugin(),
-    new VueLoaderPlugin()
-
+    new LodashModuleReplacementPlugin(),
+    new VueLoaderPlugin(),
+    new HappyPack({
+      id: 'babel',
+      loaders: [
+        {
+          loader: 'babel-loader',
+          options: {
+            babelrc: true,
+            cacheDirectory: true // 启用缓存
+          }
+        }],
+      threadPool: happyThreadPool,
+      verbose: true
+    }),
+    new HardSourceWebpackPlugin({
+    }),
+    new HardSourceWebpackPlugin.ExcludeModulePlugin([
+      {
+        test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
+      }
+    ])
   ],
   module: {
     rules: [
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
-        exclude: /node_modules/,
-        options: {
-          transformAssetUrls: {
-            video: ['src', 'poster'],
-            source: 'src',
-            img: 'src',
-            image: 'xlink:href'
-          },
-          cacheBusting: true,
-          cssSourceMap: true
-        }
+        use: [
+          'cache-loader',
+          {
+            loader: 'vue-loader',
+            options: {
+              transformAssetUrls: {
+                video: ['src', 'poster'],
+                source: 'src',
+                img: 'src',
+                image: ['xlink:href', 'href'],
+                use: ['xlink:href', 'href']
+              },
+              cssSourceMap: true,
+              hotReload: isDev
+            }
+          }
+        ],
+        exclude: /node_modules/
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        loaders: 'happypack/loader?id=babel',
+        include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/
       },
       {
@@ -149,7 +184,6 @@ const commonConfig = {
       {
         test: /\.(png|jpe?g|gif)(\?.*)?$/,
         loader: 'url-loader',
-        // include:[resolve('src/assets/icon')],
         options: {
           limit: 10000,
           name: path.posix.join('static', 'img/[name].[hash:7].[ext]')
@@ -172,19 +206,55 @@ const commonConfig = {
         }
       }
     ]
+  },
+  optimization: {
+    runtimeChunk: true,
+    splitChunks: {
+      name: true, // 自动处理文件名
+      chunks: 'all',
+      automaticNameDelimiter: '-',
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: 10,
+          name: 'vendors',
+          chunks: 'initial'
+        },
+        commons: {
+          name: 'chunk-commons',
+          minChunks: 2,
+          priority: 5,
+          test: path.join(__dirname, '..', 'src/components'),
+          reuseExistingChunk: true
+        }
+      }
+    }
   }
 }
 
-// if (isEslint) {
-//     log(chalk.white('eslint: ' + isEslint));
-//     log(chalk.white('enviroment: ' + mode));
-//     log(chalk.white('threadPool: ' + os.cpus().length));
-//     commonConfig.module.rules.unshift({
-//         test: /\.(js|jsx)$/,
-//         exclude: /node_modules/,
-//         loader: "eslint-loader"
-//     })
-// }
+// js lint
+if (isEslint) {
+  log(chalk.white('eslint: ' + isEslint))
+  commonConfig.module.rules.push({
+    test: /\.(js|vue)$/,
+    exclude: /node_modules/,
+    loader: 'eslint-loader'
+  })
+}
+
+// style lint
+if (needStyleLint) {
+  log(chalk.white('styleLint: ' + needStyleLint))
+  commonConfig.plugins.push(new StyleLintPlugin({
+    files: ['**/*.{vue,htm,html,css,sss,less,scss,sass}']
+  }))
+}
+
+// 打包分析
+if (needAnalyzer) {
+  log(chalk.white('analyzer: ' + needAnalyzer))
+  commonConfig.plugins.push(new BundleAnalyzerPlugin())
+}
 
 const common = merge(commonConfig, mergeConfig)
 module.exports = common

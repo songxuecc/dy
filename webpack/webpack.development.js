@@ -1,6 +1,8 @@
 const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+// 将manifest内联到我们的 index.html
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 
 const webpackDev = {
   devtool: 'source-map',
@@ -12,10 +14,13 @@ const webpackDev = {
       template: 'index.html',
       inject: true
     }),
+    new ScriptExtHtmlWebpackPlugin({
+      inline: /runtime\..*\.js$/
+    }),
     //     new webpack.HotModuleReplacementPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',
-      chunkFilename: '[id].css'
+      chunkFilename: '[name].css'
     }),
     new webpack.HotModuleReplacementPlugin()
   ],
@@ -40,7 +45,10 @@ const webpackDev = {
       }
     },
     host: '0.0.0.0',
-    port: 8082
+    port: 8000
+  },
+  optimization: {
+    moduleIds: 'hashed'
   }
 }
 

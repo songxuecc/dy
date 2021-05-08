@@ -10,6 +10,7 @@
                         {{ captureTypeMap[scope.row.capture_type_id] }}
                     </template>
                 </el-table-column>
+
                 <el-table-column label="商品">
                     <template slot-scope="scope">
                         <el-tooltip v-for="(item, index) in scope.row.detail_list.slice(0, 8)" :key="index"

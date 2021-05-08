@@ -1,19 +1,20 @@
 const path = require('path')
 const os = require('os')
+
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 
 const webpackPro = {
   mode: 'production',
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: '[name].[hash].css',
-      chunkFilename: '[id].[hash].css'
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[name].[contenthash].css'
     }),
     new HtmlWebpackPlugin({
       favicon: 'src/assets/images/favicon.ico',
@@ -25,7 +26,9 @@ const webpackPro = {
         collapseWhitespace: true,
         removeAttributeQuotes: true
       }
-      // chunksSortMode: 'dependency'
+    }),
+    new ScriptExtHtmlWebpackPlugin({
+      inline: /runtime\..*\.js$/
     }),
     new OptimizeCssAssetsPlugin({
       assetNameRegExp: /\.css$/g,
@@ -36,9 +39,17 @@ const webpackPro = {
       canPrint: true
     })
   ],
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+    filename: '[name].[chunkhash].js',
+    chunkFilename: '[name].[chunkhash].js',
+    publicPath: '/'
+  },
   optimization: {
+    moduleIds: 'size',
     minimizer: [
       new UglifyJsPlugin({
+        exclude: /\.min\.js$/,
         parallel: os.cpus().length,
         cache: true,
         sourceMap: true,

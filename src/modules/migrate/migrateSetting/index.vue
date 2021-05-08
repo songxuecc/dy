@@ -4,7 +4,7 @@
     <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}" class="tab" @tab-click="tabClick" ref="tab">
       <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
     </el-tabs>
-    <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
+    <el-dialog class="dialog-tight" title="选择复制后的类目搜索时" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
     </el-dialog>
 
