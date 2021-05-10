@@ -14,7 +14,7 @@ const webpackPro = {
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name].[chunkhash].js',
-    chunkFilename: '[id].[chunkhash].js',
+    chunkFilename: '[name].[chunkhash].js',
     publicPath: '/'
   },
   plugins: [
