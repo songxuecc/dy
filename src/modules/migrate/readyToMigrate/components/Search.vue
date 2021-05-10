@@ -115,6 +115,7 @@
           style="width: 195px"
           clearable
           @clear="handleClear('filter.child_shop_user_id')"
+          v-if="bindShopList.length > 1"
         >
           <el-option
             v-for="item in bindShopList"
@@ -125,6 +126,7 @@
           >
           </el-option>
         </el-select>
+        <span class="click font-12"  v-else>点击绑定多店铺</span>
       </el-form-item>
 
       <el-form-item>
@@ -135,7 +137,16 @@
         >
           <span class="font-12">查询</span>
         </el-button>
+        <NewComer type="开始复制按钮2" ref="newComer" direction="bottom" :noAuth="true">
+          <div style="width:190px">
+          <div  class="color-666 font-12 left mb-5">
+              <hh-icon type="icontishi" ></hh-icon>&nbsp;小提醒：选择后请点击查询哦~
+              <div class="ml-10 right">&nbsp;&nbsp;<span  class="right pointer underline primary" @click="tipTrigger">好的</span></div>
+          </div>
+          </div>
+      </NewComer>
       </el-form-item>
+
     </el-form>
   </div>
 </template>
@@ -143,6 +154,8 @@
 <script>
 import moment from 'moment'
 import { productStatusMap } from '@/common/common.js'
+import NewComer from '@/components/NewComer.vue'
+
 import { mapActions, mapState } from 'vuex'
 import debounce from 'lodash/debounce'
 import get from 'lodash/get'
@@ -152,6 +165,9 @@ export default {
   name: 'component_name',
   props: {
     capture: Object
+  },
+  components: {
+    NewComer
   },
   data () {
     return {
@@ -164,17 +180,6 @@ export default {
         captureId: '-1',
         child_shop_user_id: '0',
         shopCaptureId: '-1'
-      },
-      defaultValue: {
-        search: {
-          key: ''
-        },
-        filter: {
-          status: '-1',
-          captureId: '-1',
-          child_shop_user_id: '0',
-          shopCaptureId: '-1'
-        }
       },
       captureOptionList: [],
       shopCaptureOptionList: [],
@@ -248,7 +253,6 @@ export default {
           if (oldVal[key] !== newVal[key]) {
             if (window._hmt) {
               window._hmt.push(['_trackEvent', '复制商品', '点击', pvObjectKeys[key]])
-              console.log(pvObjectKeys[key], 'pvObjectKeys[key]')
             }
           }
         })
@@ -299,11 +303,26 @@ export default {
     calendarTime (strTime) {
       return moment(strTime).calendar()
     },
-    handelTabClick () {
-
+    tipTrigger (e) {
+      event.stopPropagation()
+      const ref = this.$refs.newComer
+      ref && ref.close && ref.close()
     },
     handleClear (path) {
-      set(this, path, get(this.defaultValue, path))
+      const defaultValue = {
+        search: {
+          key: ''
+        },
+        filter: {
+          captureId: '-1',
+          child_shop_user_id: '0',
+          shopCaptureId: '-1'
+        }
+      }
+      const tab = this.tabs.find(item => item.text === this.activeTab)
+
+      defaultValue.filter.status = tab.options[0]
+      set(this, path, get(defaultValue, path))
     },
     // 复制时间
     handleCaptureChange (captureId) {
