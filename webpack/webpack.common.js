@@ -27,6 +27,7 @@ const log = console.log
 
 const commonConfig = {
   entry: {
+    polyfill: '@babel/polyfill',
     main: path.resolve(__dirname, '../src/main.js')
   },
   externals: {
@@ -279,7 +280,11 @@ if (needStyleLint) {
 // 打包分析
 if (needAnalyzer) {
   log(chalk.white('analyzer: ' + needAnalyzer))
-  commonConfig.plugins.push(new BundleAnalyzerPlugin())
+  commonConfig.plugins.push(new BundleAnalyzerPlugin({
+    analyzerMode: 'server',
+    defaultSizes: 'parsed',
+    generateStatsFile: false
+  }))
 }
 
 if (isDev) {

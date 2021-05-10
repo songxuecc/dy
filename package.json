@@ -14,9 +14,9 @@
     "build:stag": "webpack --config ./webpack/webpack.common.js  --mode='production'"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "axios": "^0.18.0",
     "babel-plugin-lodash": "^3.3.4",
-    "babel-polyfill": "^6.26.0",
     "lodash-webpack-plugin": "^0.11.6",
     "prerender-spa-plugin": "^3.4.0",
     "vue-axios": "^2.1.4",
