@@ -1,4 +1,5 @@
 const webpack = require('webpack')
+const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 // 将manifest内联到我们的 index.html
@@ -7,6 +8,12 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 const webpackDev = {
   devtool: 'source-map',
   mode: 'development',
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+    filename: '[name].[hash].js',
+    chunkFilename: '[name].[hash].js',
+    publicPath: '/'
+  },
   plugins: [
     new HtmlWebpackPlugin({
       favicon: 'src/assets/images/favicon.ico',
@@ -17,10 +24,9 @@ const webpackDev = {
     new ScriptExtHtmlWebpackPlugin({
       inline: /runtime\..*\.js$/
     }),
-    //     new webpack.HotModuleReplacementPlugin(),
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[name].css'
+      filename: '[name].[hash].css',
+      chunkFilename: '[id].[hash].css'
     }),
     new webpack.HotModuleReplacementPlugin()
   ],

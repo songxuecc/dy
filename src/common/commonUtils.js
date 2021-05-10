@@ -50,7 +50,7 @@ export default {
   getLoginUrl (shareId = null, from = null) {
     let host = encodeURI(window.location.protocol + '//' + window.location.host)
     let state = {}
-    if (process.env.BUILD_ENV !== 'prod') {
+    if (process.env !== 'production') {
       state['host'] = host
     }
     if (shareId) {
@@ -66,7 +66,7 @@ export default {
   getChannelegisterUrl (channel = null, shareId = null, from = null) {
     let host = encodeURI(window.location.protocol + '//' + window.location.host)
     let state = {}
-    if (process.env.BUILD_ENV !== 'prod') {
+    if (process.env !== 'production') {
       state['host'] = host
     }
     // 如果有渠道名称
@@ -88,7 +88,7 @@ export default {
   login (shareId = null) {
     let host = encodeURI(window.location.protocol + '//' + window.location.host)
     let state = {}
-    if (process.env.BUILD_ENV !== 'prod') {
+    if (process.env !== 'production') {
       state['host'] = host
     }
     if (shareId) {

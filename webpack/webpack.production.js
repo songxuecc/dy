@@ -7,14 +7,21 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
+// const CompressionPlugin = require('compression-webpack-plugin')
 
 const webpackPro = {
   mode: 'production',
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+    filename: '[name].[chunkhash].js',
+    chunkFilename: '[name].[chunkhash].js',
+    publicPath: '/'
+  },
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
-      chunkFilename: '[name].[contenthash].css'
+      chunkFilename: '[id].[contenthash].css'
     }),
     new HtmlWebpackPlugin({
       favicon: 'src/assets/images/favicon.ico',
@@ -39,12 +46,6 @@ const webpackPro = {
       canPrint: true
     })
   ],
-  output: {
-    path: path.resolve(__dirname, '../dist'),
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[name].[chunkhash].js',
-    publicPath: '/'
-  },
   optimization: {
     moduleIds: 'size',
     minimizer: [

@@ -2,6 +2,7 @@ const path = require('path')
 const merge = require('webpack-merge')
 const os = require('os')
 const chalk = require('chalk')
+const webpack = require('webpack')
 
 const WebpackBuildNotifierPlugin = require('webpack-build-notifier')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
@@ -28,12 +29,6 @@ const commonConfig = {
   entry: {
     main: path.resolve(__dirname, '../src/main.js')
   },
-  output: {
-    path: path.resolve(__dirname, '../dist'),
-    filename: '[name].[hash].js',
-    chunkFilename: '[name].[hash].js',
-    publicPath: '/'
-  },
   externals: {
     'vue': 'Vue',
     'vue-router': 'VueRouter',
@@ -55,6 +50,9 @@ const commonConfig = {
     }
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': argv.mode
+    }),
     new WebpackBar({
       name: isDev ? 'development' : 'production',
       color: isDev ? '#00953a' : '#f2a900'
@@ -79,13 +77,79 @@ const commonConfig = {
       threadPool: happyThreadPool,
       verbose: true
     }),
-    new HardSourceWebpackPlugin({
+    new HappyPack({
+      id: 'css',
+      loaders: [
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 1,
+            import: true
+          }
+        },
+        {
+          loader: 'postcss-loader',
+          options: {
+            indent: 'postcss',
+            plugins: (loader) => [
+              require('autoprefixer')()
+            ],
+            sourceMap: false
+          }
+        }
+      ],
+      threadPool: happyThreadPool,
+      verbose: true
     }),
-    new HardSourceWebpackPlugin.ExcludeModulePlugin([
-      {
-        test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
-      }
-    ])
+
+    new HappyPack({
+      id: 'less',
+      loaders: [
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 3
+          }
+        },
+        {
+          loader: 'postcss-loader',
+          options: {
+            indent: 'postcss',
+            plugins: (loader) => [
+              require('autoprefixer')()
+            ],
+            sourceMap: false
+          }
+        },
+        {
+          loader: 'less-loader',
+          options: {
+            javascriptEnabled: true,
+            sourceMap: true
+          }
+        },
+        {
+          loader: 'style-resources-loader',
+          options: {
+            patterns: [
+              path.resolve(__dirname, '../src/assets/css/variables/*.less'),
+              path.resolve(__dirname, '../src/assets/css/mixins/*.less')
+            ],
+            injector: (source, resources) => {
+              const combineAll = type => resources
+                .filter(({ file }) => file.includes(type))
+                .map(({ content }) => content)
+                .join('')
+
+              return combineAll('variables') + combineAll('mixins') + source
+            }
+          }
+        }
+      ],
+      threadPool: happyThreadPool,
+      verbose: true
+    }),
+    new HardSourceWebpackPlugin({})
   ],
   module: {
     rules: [
@@ -118,57 +182,16 @@ const commonConfig = {
       },
       {
         test: /\.css$/,
-        use: [
+        loaders: [
           isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              import: true
-            }
-          },
-          {
-            loader: 'postcss-loader'
-          }
+          'happypack/loader?id=css'
         ]
       },
       {
         test: /\.less$/,
-        use: [
+        loaders: [
           isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 3
-            }
-          },
-          {
-            loader: 'postcss-loader'
-          },
-          {
-            loader: 'less-loader',
-            options: {
-              javascriptEnabled: true,
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'style-resources-loader',
-            options: {
-              patterns: [
-                path.resolve(__dirname, '../src/assets/css/variables/*.less'),
-                path.resolve(__dirname, '../src/assets/css/mixins/*.less')
-              ],
-              injector: (source, resources) => {
-                const combineAll = type => resources
-                  .filter(({ file }) => file.includes(type))
-                  .map(({ content }) => content)
-                  .join('')
-
-                return combineAll('variables') + combineAll('mixins') + source
-              }
-            }
-          }
+          'happypack/loader?id=less'
         ],
         exclude: /node_modules/
       },
@@ -176,6 +199,7 @@ const commonConfig = {
         test: /\.svg$/,
         loader: 'svg-sprite-loader',
         include: [path.join(__dirname, '..', 'src/assets/icon')],
+        exclude: /node_modules/,
         options: {
           symbolId: '[name]',
           name: path.posix.join('static', 'img/[name].[hash:7].[ext]')
@@ -184,6 +208,7 @@ const commonConfig = {
       {
         test: /\.(png|jpe?g|gif)(\?.*)?$/,
         loader: 'url-loader',
+        exclude: /node_modules/,
         options: {
           limit: 10000,
           name: path.posix.join('static', 'img/[name].[hash:7].[ext]')
@@ -192,6 +217,7 @@ const commonConfig = {
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
         loader: 'url-loader',
+        exclude: /node_modules/,
         options: {
           limit: 10000,
           name: path.posix.join('static', 'media/[name].[hash:7].[ext]')
@@ -254,6 +280,16 @@ if (needStyleLint) {
 if (needAnalyzer) {
   log(chalk.white('analyzer: ' + needAnalyzer))
   commonConfig.plugins.push(new BundleAnalyzerPlugin())
+}
+
+if (isDev) {
+  commonConfig.plugins.push(
+    new HardSourceWebpackPlugin.ExcludeModulePlugin([
+      {
+        test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
+      }
+    ])
+  )
 }
 
 const common = merge(commonConfig, mergeConfig)
