@@ -129,7 +129,7 @@
         <span class="click font-12"  v-else @click="manageShops">点击绑定多店铺</span>
       </el-form-item>
 
-      <el-form-item style="padding-right:32px">
+      <el-form-item class="btn">
         <el-button
           type="primary"
           @click="handleFilterChange"
@@ -387,5 +387,10 @@ export default {
   height: 25px;
   line-height: 25px;
   font-size: 12px;
+}
+.btn {
+  /deep/ .el-form-item__content{
+    padding-right: 32px;
+  }
 }
 </style>
