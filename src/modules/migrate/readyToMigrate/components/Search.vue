@@ -137,7 +137,7 @@
         >
           <span class="font-12">查询</span>
         </el-button>
-        <NewComer type="开始复制按钮2" ref="newComer" direction="bottom" :noAuth="true">
+        <NewComer type="搬家列表查询提示" ref="newComer" direction="bottom" :noAuth="true">
           <div style="width:190px">
           <div  class="color-666 font-12 left mb-5">
               <hh-icon type="icontishi" ></hh-icon>&nbsp;小提醒：选择后请点击查询哦~
