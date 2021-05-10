@@ -126,7 +126,7 @@
           >
           </el-option>
         </el-select>
-        <span class="click font-12"  v-else>点击绑定多店铺</span>
+        <span class="click font-12"  v-else @click="manageShops">点击绑定多店铺</span>
       </el-form-item>
 
       <el-form-item style="padding-right:32px">
@@ -307,6 +307,10 @@ export default {
       event.stopPropagation()
       const ref = this.$refs.newComer
       ref && ref.close && ref.close()
+    },
+    manageShops () {
+      if (window._hmt) { window._hmt.push(['_trackEvent', '导航栏', '点击', '店铺绑定']) }
+      this.$router.push({ path: '/customerSetting/shopsBand' })
     },
     handleClear (path) {
       const defaultValue = {
