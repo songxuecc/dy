@@ -129,7 +129,7 @@
         <span class="click font-12"  v-else>点击绑定多店铺</span>
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item style="padding-right:32px">
         <el-button
           type="primary"
           @click="handleFilterChange"
@@ -137,7 +137,7 @@
         >
           <span class="font-12">查询</span>
         </el-button>
-        <NewComer type="搬家列表查询提示" ref="newComer" direction="bottom" :noAuth="true">
+        <NewComer type="搬家列表查询提示" ref="newComer" direction="bottom" :noAuth="true" class="nn">
           <div style="width:190px">
           <div  class="color-666 font-12 left mb-5">
               <hh-icon type="icontishi" ></hh-icon>&nbsp;小提醒：选择后请点击查询哦~
