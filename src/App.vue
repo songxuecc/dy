@@ -6,14 +6,14 @@
         <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
           <nav-bar></nav-bar>
           <div class="full-screen">
-          <div class="header-notice">
-            <div class="main-inner clearfix">
-              <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
-                        :closable="notificationClosable" close-text="不再显示" title="-"
-              ></el-alert>
+            <div class="header-notice">
+              <div class="main-inner clearfix">
+                <el-alert v-if="curNavNotification" class="notification-info" center @close="onCloseNotification"
+                          :closable="notificationClosable" close-text="不再显示" title="-"
+                ></el-alert>
+              </div>
             </div>
           </div>
-        </div>
         </el-header>
         <el-container class="main-wrapper flex" v-if="!$route.meta.specialShow">
             <div class="aside">
@@ -335,9 +335,9 @@ export default {
       this.$nextTick(function () {
         let elem = this.$el.querySelector('span.el-alert__title')
         if (notification.title === '-') {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;font-size:12px " class="app-notification">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;">' + '<div style="display: inline-block;fonts-zie:12px;height:16px" class="notification-text">' + notification.data + '</div>'
         } else {
-          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;font-size:12px" class="app-notification">' + notification.data + '</div>'
+          elem.innerHTML = '<img src="https://img.pddpic.com/mms-material-img/2020-10-09/9207c610-73fe-4613-bb3a-62a34676dcbd.png" style="width: 12px; position: relative; top: 0; padding-right: 4px;"><span>' + notification.title + '</span> : ' + '<div style="display: inline-block;fonts-zie:12px;height:16px"  class="notification-text">' + notification.data + '</div>'
         }
       })
     },
@@ -468,9 +468,19 @@ export default {
 
   .header-notice {
     background: #fff6ed;
+    /deep/ .notification-text {
+      p{
+        height: 16px;
+        line-height: 16px;
+      }
+    }
     .main-inner {
-      width: 1000px;
+      width: 100%;
       margin: auto;
+    }
+    /deep/ .el-alert__title {
+      display: flex;
+      align-items: center;
     }
     .el-alert.is-light {
       background: #fff6ed;
@@ -480,6 +490,10 @@ export default {
     }
     /deep/ .el-alert.is-light .el-alert__closebtn {
       padding-right: 6px;
+    }
+    /deep/ .el-alert__content {
+      padding:0 4px;
+      height: 16px;
     }
     /deep/ .el-alert__closebtn.is-customed {
       font-size: 12px;
@@ -503,16 +517,19 @@ export default {
     right: 15px;
   }
   .main-layout{
-    padding-left:30px;
-    padding-top:20px;
-    padding-right:30px;
+    padding-left:20px;
+    padding-top:10px;
+    padding-right:20px;
     margin-right:40px;
     background:#FFFFFF;
     min-height: 100%;
     box-sizing: border-box;
+    min-width: 1036px;
+    width: calc(100% -40px);
+
   }
   .full-screen {
-    min-width: @full-screen-width;
+    // min-width: @full-screen-width;
     position: absolute;
     width: 100%;
     z-index: 1;
