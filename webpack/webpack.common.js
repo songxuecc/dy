@@ -27,7 +27,6 @@ const log = console.log
 
 const commonConfig = {
   entry: {
-    polyfill: '@babel/polyfill',
     main: path.resolve(__dirname, '../src/main.js')
   },
   externals: {
