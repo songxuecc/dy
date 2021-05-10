@@ -338,6 +338,7 @@ export default {
         filter: this.filter,
         search: this.search
       })
+      this.tipTrigger()
     },
     handleCaptureOptionChange (value) {
       let captureId = value.toString()
