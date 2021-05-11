@@ -606,7 +606,7 @@ export default {
         })
         this.originMigrateSetting = originMigrateSetting
         if (setting.able_migrate_status_list) {
-          this.is_able_migrate_status_list = !!(setting.able_migrate_status_list.length === 6)
+          this.is_able_migrate_status_list = !!(setting.able_migrate_status_list.length === 5)
         }
         this.updateMigrateSettingData(originMigrateSetting)
         this.settingKeys = settingKeys
@@ -891,7 +891,6 @@ export default {
         this.able_migrate_status_list = [
           common.productStatus.WAIT_ONLINE,
           common.productStatus.FAILED,
-          common.productStatus.WAIT_ONLINE,
           common.productStatus.REJECT,
           common.productStatus.ONLINE,
           common.productStatus.SAVE_DRAFT
@@ -900,7 +899,6 @@ export default {
         this.able_migrate_status_list = [
           common.productStatus.WAIT_ONLINE,
           common.productStatus.FAILED,
-          common.productStatus.WAIT_ONLINE,
           common.productStatus.REJECT
         ]
       }

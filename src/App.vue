@@ -1,6 +1,5 @@
 <template>
     <div id="app">
-
         <good-assess-dialog></good-assess-dialog>
         <expire-notify-dialog></expire-notify-dialog>
         <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
