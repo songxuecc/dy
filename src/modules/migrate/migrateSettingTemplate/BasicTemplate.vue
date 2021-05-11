@@ -14,12 +14,12 @@
                     <el-radio :label="1">草稿箱</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item label="客服电话:" prop="mobile">
-                <el-input v-model="template.model.mobile" size="medium" class="input-num" @input="check"></el-input>
+            <el-form-item label="客服电话:" prop="mobile" >
+                <el-input v-model="template.model.mobile"  class="input-num" @input="check" style="width:150px"></el-input>
             </el-form-item>
             <!-- 新版运费模版 start-->
             <el-form-item label="运费模版:" prop="cost_template_id">
-                <el-select v-model="template.model.cost_template_id" placeholder="请选择" size="small" @change="check">
+                <el-select v-model="template.model.cost_template_id" placeholder="请选择" size="small" @change="check" style="width:150px">
                   <el-option
                     :label="costTemplate.template.template_name"
                     :value="costTemplate.template.id"
