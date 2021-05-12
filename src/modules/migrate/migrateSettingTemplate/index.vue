@@ -36,7 +36,6 @@ import Head from '@migrate/migrateSettingTemplate/Head'
 import BasicTemplate from '@migrate/migrateSettingTemplate/BasicTemplate'
 import StepDelivery from '@migrate/migrateSettingTemplate/StepDelivery'
 import ShopsMigrate from '@migrate/migrateSettingTemplate/ShopsMigrate'
-import NewComer from '@/components/NewComer.vue'
 
 const {
   mapState: mapStateMigrate,
@@ -54,8 +53,7 @@ export default {
     Head,
     BasicTemplate,
     StepDelivery,
-    ShopsMigrate,
-    NewComer
+    ShopsMigrate
   },
   async created () {
     if (isEmpty(this.template.model)) {

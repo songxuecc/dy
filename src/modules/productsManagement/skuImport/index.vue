@@ -1,7 +1,7 @@
 <!-- sku 导入 -->
 <template>
 <div class=''>
-  <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
+  <!-- <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
     <el-tab-pane label="按商品名、规格名匹配" name="byTitle">
       <UploadFile :activeName="activeName"/>
     </el-tab-pane>
@@ -9,8 +9,11 @@
       <span slot="label">按商品ID、规格ID匹配</span>
       <UploadFile :activeName="activeName"/>
     </el-tab-pane>
-  </el-tabs>
-  <goods-export></goods-export>
+  </el-tabs> -->
+
+  <Search />
+  <UploadFile :activeName="activeName"/>
+  <ModelGoodsExport ></ModelGoodsExport >
   <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
   <el-drawer
     title="sku编码修改详情"
@@ -29,11 +32,13 @@
 </template>
 
 <script>
-import {createNamespacedHelpers, mapActions} from 'vuex'
+import {createNamespacedHelpers, mapActions, mapState} from 'vuex'
 import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'
-import GoodsExport from './GoodsExport'
+import ModelGoodsExport from './ModelGoodsExport'
+import Search from './Search'
+
 const {
   mapMutations
 } = createNamespacedHelpers('productManagement/skuImport')
@@ -52,9 +57,11 @@ export default {
     UploadFile,
     TableUploadFileRecord,
     DetailSkuEdit,
-    GoodsExport
+    ModelGoodsExport,
+    Search
   },
   computed: {
+    ...mapState('productManagement/test', ['test1', 'test2', 'table1tableData'])
   },
   updated () { },
   methods: {
@@ -62,8 +69,33 @@ export default {
     ...mapActions([
       'setIsShowFloatView'
     ]),
+    ...mapActions('productManagement/test', ['fetch', 'table1fetch', 'table2fetch']),
     getFileType () {
       return this.activeName === 'byTitle' ? 0 : 1
+    },
+    change () {
+      this.fetch({
+        apiName: 'getProductSkuExcelPage'
+      })
+    },
+    change1 () {
+      this.table1fetch({
+        apiName: 'getProductSkuExcelPage',
+        pagination: {
+          page_size: 100,
+          page_index: 1
+        },
+        filters: {
+
+        }
+      }).then(() => {
+        console.log(this.table1tableData, 'table1tableData')
+      })
+    },
+    change2 () {
+      this.table2fetch({
+        apiName: 'getProductSkuExcelPage'
+      })
     },
     handleClick (tab, event) {
       let self = this

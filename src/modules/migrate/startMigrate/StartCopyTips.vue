@@ -12,12 +12,10 @@
 </template>
 
 <script>
-import NewComer from '@/components/NewComer.vue'
 
 export default {
   name: 'StartCopyTips',
   components: {
-    NewComer
   },
   data () {
     return {

@@ -25,7 +25,7 @@
 import { mapGetters, mapState, mapActions, mapMutations } from 'vuex'
 import Title from './Title'
 import TableSkuPriceList from './TableSkuPriceList'
-import NewComer from '@/components/NewComer.vue'
+
 import isEmpty from 'lodash/isEmpty'
 
 export default {
@@ -36,8 +36,7 @@ export default {
   },
   components: {
     Title,
-    TableSkuPriceList,
-    NewComer
+    TableSkuPriceList
   },
   computed: {
     ...mapState('migrate/migrateSettingPrice', ['tableData', 'originTableData', 'origin']),

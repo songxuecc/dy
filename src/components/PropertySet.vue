@@ -94,12 +94,10 @@
 </template>
 
 <script>
-import NewComer from '@/components/NewComer.vue'
 
 export default {
   name: 'property-set',
   components: {
-    NewComer
   },
   props: {
     catId: {
