@@ -18,7 +18,7 @@
         @click="copy">复制授权码</el-button>
       </div>
       <p>复制授权码后<b>&nbsp;登陆其他店铺&nbsp;</b>并粘贴该串授权码则完成绑定</p>
-      <h1><span>2、</span>当前店铺如果作为子店铺，请在此输入主店铺的授权码</h1>
+      <h3><span>2、</span>当前店铺如果作为子店铺，请在此输入主店铺的授权码</h3>
       <div class="input-code">
         <el-input placeholder="请输入主店铺授权码" size="medium" class="input" style="width:230px" v-model="parent_auth_code"/>
         <el-button
