@@ -39,14 +39,14 @@ export default {
   computed: {
     ...mapGetters(['getCurrentSubsc']),
     show () {
+      const isNewTips = JSON.parse(localStorage.getItem('is_new_tips') || '{}') || {}
       if (this.noAuth) {
-        return true
+        return !isNewTips[this.type]
       }
       // 是否需要展示
       if (!this.getCurrentSubsc) {
         return false
       }
-      const isNewTips = JSON.parse(localStorage.getItem('is_new_tips') || '{}') || {}
       return (this.getCurrentSubsc.is_newcomer && !isNewTips[this.type])
     },
     status () {
