@@ -40,13 +40,23 @@ export default {
     tabs () {
       const tabs = [{
         id: 0,
-        label: '修改失败',
+        label: '无法修改',
         name: 'fail'
       },
       {
         id: 1,
-        label: '修改成功',
+        label: '官方审核',
         name: 'success'
+      },
+      {
+        id: 2,
+        label: '审核驳回',
+        name: 'bohui'
+      },
+      {
+        id: 3,
+        label: '审核通过',
+        name: 'os'
       }
       ]
       if (this.parentRowData.status === 'running') {

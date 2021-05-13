@@ -1,7 +1,4 @@
 <template>
-  <div style="position: relative">
-    <!-- <el-link type="primary" @click="openDialogExport" :underline="false" style="position: absolute;top: -185px;left: 380px;">抖店商品导出</el-link> -->
-    <!--    <el-button size="medium" @click="openDialogExport" class="nodim" >商品导出</el-button>-->
     <el-dialog
       title="选择需要导出的字段"
       :visible.sync="dialogExportVisible"
@@ -49,7 +46,6 @@
         </el-button>
       </div>
     </el-dialog>
-  </div>
 </template>
 
 <script>
@@ -57,9 +53,11 @@ import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
 export default {
   mixins: [request],
+  props: {
+    dialogExportVisible: Boolean
+  },
   data () {
     return {
-      dialogExportVisible: false,
       isAllFieldSelected: false,
       exportFieldList: [
         { value: false, field: 'goods_id', label: '商品id' },
@@ -215,10 +213,5 @@ export default {
   a {
     margin-right: 25px;
   }
-}
-
-.sku-excel-import-btn {
-  display: inline-block;
-  text-align: left;
 }
 </style>

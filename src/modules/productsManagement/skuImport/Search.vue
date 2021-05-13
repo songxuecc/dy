@@ -40,18 +40,25 @@
 
     </div>
 
-    <span class="click mr-20" style="align-content:right">抖店商品导出</span>
+    <span class="click mr-20" style="align-content:right" @click="openDialogExport">抖店商品导出</span>
+    <ModelGoodsExport :dialogExportVisible.sync="dialogExportVisible"/>
   </el-form>
 </template>
 
 <script>
+
+import ModelGoodsExport from './ModelGoodsExport'
 export default {
   name: 'Search',
   props: {
     msg: String
   },
+  components: {
+    ModelGoodsExport
+  },
   data () {
     return {
+      dialogExportVisible: false,
       model: {}
     }
   },
@@ -61,6 +68,13 @@ export default {
       event.stopPropagation()
       const ref = this.$refs.newComer
       ref && ref.close && ref.close()
+    },
+    openDialogExport () {
+      this.dialogExportVisible = true
+      // 百度统计打点
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '全部商品', '点击', '商品导出'])
+      }
     }
   }
 }

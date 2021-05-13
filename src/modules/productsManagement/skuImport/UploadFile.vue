@@ -4,14 +4,17 @@
     <p class="font-13">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a :class="[isSyncing?'color-info':'click','pointer font-13']"
         @click="handleSyncProducts">{{syncButtonText}}</a> <span class="color-767989">&nbsp;最近同步时间
         {{ syncStatus.last_sync_time }} </span></p>
-    <p class="font-13 " v-if="[1,2].includes(filterType)" >2、每次支持3000个sku修改，可修改维度有：sku编码、库存、价格&nbsp;<a class="click" style="font-size:13px" @click="downloadExcel">价格设置</a></p>
+    <p class="font-13 " v-if="[1,2].includes(filterType)">2、每次支持3000个sku修改，可修改维度有：sku编码、库存、价格
+      &nbsp;<a class="click" style="font-size:13px" @click="togglePriceSetting">价格设置</a>
+    </p>
     <p class="font-13 " v-if="[3,4].includes(filterType)">2、每次支持1000个sku修改，可修改维度有：sku编码、库存、价格</p>
     <p class="font-13 ">3、仅支持售卖中、已下架的商品修改 </p>
-    <p class="font-13 " >4、保证导入的商品标题、规格名与抖店后台一致。多个SKU规格请用英文逗号分隔，如：红色,36码 </p>
-    <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false" :data="getFileUploadData"
-      :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders" :on-success="skuExcelImportSuccess"
-      :before-upload="beforeUpload" :on-progress="skuExcelImporting" :on-error="skuExcelImportError">
-      <el-button  size="small" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick">
+    <p class="font-13 ">4、保证导入的商品标题、规格名与抖店后台一致。多个SKU规格请用英文逗号分隔，如：红色,36码 </p>
+    <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
+      :data="getFileUploadData" :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders"
+      :on-success="skuExcelImportSuccess" :before-upload="beforeUpload" :on-progress="skuExcelImporting"
+      :on-error="skuExcelImportError">
+      <el-button size="small" type="primary" :disabled="isSkuImporting" @click="recordSkuExcelImportBtnClick">
         <i class="el-icon-upload" v-if="!isSkuImporting"></i>
         <i v-if="isSkuImporting" class="el-icon-loading"></i>
         &nbsp;&nbsp;点击上传
@@ -21,35 +24,49 @@
 
     <el-dialog title="sku编码更新结果" :visible.sync="skuExcelImportDialogVisible" width="80%">
       <div style="text-align: left">
-        <div style="text-align: center;font-size: 16px;">成功: <span style="color: #4ca916">{{skuExcelImportSuccessNums}}</span></div>
+        <div style="text-align: center;font-size: 16px;">成功:
+          <span style="color: #4ca916">{{skuExcelImportSuccessNums}}</span>
+        </div>
         <div v-for="(error, index) in errorList" :key="index">
           {{ error }}
         </div>
       </div>
     </el-dialog>
 
-     <el-dialog title="价格设置" :visible.sync="priceSetting" width="80%">
-      <div style="text-align: left">
-        <div style="text-align: center;font-size: 16px;">成功: <span style="color: #4ca916">{{skuExcelImportSuccessNums}}</span></div>
-        <div v-for="(error, index) in errorList" :key="index">
-          {{ error }}
-        </div>
-      </div>
+    <el-dialog title="价格设置" :visible.sync="priceSetting" width="600px" v-hh-modal center>
+      <el-form :model="model" :rules="rules" ref="model" label-width="170px" class="flex justify-c column align-c" >
+        <el-form-item label="售卖价(需在sku价格范围内):" prop="resource" size="small" style="width: 500px;">
+          <el-radio-group v-model="model.resource">
+            <el-radio label="线上品牌商赞助" style="width:108px"></el-radio>
+            <el-radio label="线下场地免费" style="width:108px"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="划线价(需>=sku最高价):" prop="resource" size="small"  style="width: 500px;">
+          <el-radio-group v-model="model.resource">
+            <el-radio label="不修改" style="width:108px"></el-radio>
+            <el-radio >
+              <span>调为现sku最高价<el-input type="number" style="width:50px"  size="mini" class="ml-5 mr-5"></el-input>%</span>
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <div class="flex justify-c"><el-button type="primary" class="mt-20" style="width:120px">保存设置</el-button></div>
+      </el-form>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
 import utils from '@/common/utils.js'
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import {
+  mapGetters,
+  mapActions,
+  createNamespacedHelpers
+} from 'vuex'
 import common from '@/common/common.js'
-
 const {
   mapState: mapStateSkuImport,
   mapActions: mapActionsSkuImport
 } = createNamespacedHelpers('productManagement/skuImport')
-
 export default {
   name: 'UploadFile',
   props: {
@@ -70,7 +87,8 @@ export default {
       dialogExportVisible: false,
       fileList: [],
       isSyncing: false,
-      syncButtonText: '同步后台商品'
+      syncButtonText: '同步后台商品',
+      model: {}
     }
   },
   computed: {
@@ -134,7 +152,7 @@ export default {
       }
     },
     ...mapActionsSkuImport(['getProductSkuExcelPage']),
-    // 同步商品
+      // 同步商品
     handleSyncProducts () {
       if (!this.isAuth || this.isSyncing) return false
       this.isSyncing = true
@@ -155,23 +173,23 @@ export default {
       }
     },
     beforeUpload (file) {
-      // let type = file.type
-      // let size = file.size / 1024 / 1024
-      // if (type !== 'xlsx') {
-      //   this.$message.error('只能上传xlsx文件')
-      //   return false
-      // }
-      // if (size > 3) {
-      //   this.$message.error('表格不超过3M')
-      //   return false
-      // }
+        // let type = file.type
+        // let size = file.size / 1024 / 1024
+        // if (type !== 'xlsx') {
+        //   this.$message.error('只能上传xlsx文件')
+        //   return false
+        // }
+        // if (size > 3) {
+        //   this.$message.error('表格不超过3M')
+        //   return false
+        // }
     },
-    /**
-     * sku编码导入成功后的回调
-     * @param response
-     * @param file
-     * @param fileList
-     */
+      /**
+       * sku编码导入成功后的回调
+       * @param response
+       * @param file
+       * @param fileList
+       */
     skuExcelImportSuccess (response, file, fileList) {
       this.$refs.upload.clearFiles()
       this.isSkuImporting = false
@@ -182,51 +200,51 @@ export default {
       this.errorList = response.data['error_list']
       console.log(response.data['error_list'])
       if (utils.isEmptyObj(this.errorList)) {
-        // 如果导入成功，则提示成功
+          // 如果导入成功，则提示成功
         this.$message.success('正在导入中...')
       } else {
-        // 如果有失败的，则返回具体失败的原因
+          // 如果有失败的，则返回具体失败的原因
         this.skuExcelImportSuccessNums = response.data['success_nums']
         this.skuExcelImportDialogVisible = true
       }
-      //  刷新列表
+        //  刷新列表
       this.getProductSkuExcelPage({
         filtersRecord: this.filtersRecord,
         paginationRecord: this.paginationRecord
       })
     },
-    /**
-     * sku编码导入中的回调
-     * @param event
-     * @param file
-     * @param fileList
-     */
+      /**
+       * sku编码导入中的回调
+       * @param event
+       * @param file
+       * @param fileList
+       */
     skuExcelImporting (event, file, fileList) {
       console.log(event, file, fileList)
       this.isSkuImporting = true
     },
-    /**
-     * sku编码导入失败的回调
-     * @param xerr
-     * @param file
-     * @param fileList
-     */
+      /**
+       * sku编码导入失败的回调
+       * @param xerr
+       * @param file
+       * @param fileList
+       */
     skuExcelImportError (xerr, file, fileList) {
       this.isSkuImporting = false
       this.$message.error('sku编码导入失败')
     },
-    /**
-     * 统计商品SKU导入按钮的点击次数
-     */
+      /**
+       * 统计商品SKU导入按钮的点击次数
+       */
     recordSkuExcelImportBtnClick () {
-      // 百度统计打点
+        // 百度统计打点
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '全部商品', '点击', '商品sku编码导入'])
       }
     },
-    /**
-     * 生成sku编码模板文件
-     */
+      /**
+       * 生成sku编码模板文件
+       */
     downloadExcel () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '全部商品', '下载', '下载sku编码模板'])
@@ -237,16 +255,25 @@ export default {
       } else if (this.filtersRecord.file_type === 1) {
         window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-id.xlsx'
       }
+    },
+    togglePriceSetting () {
+      this.priceSetting = !this.priceSetting
     }
   }
 }
 </script>
 <style lang="less" scoped>
-.uploadFile {
-  background: #FFF6ED;
-  border-radius: 3px;
-  border: 1px solid rgba(250, 100, 0, 0.2);
-  padding-top: 12px;
-  padding-left: 17px;
-}
+  .uploadFile {
+    background: #FFF6ED;
+    border-radius: 3px;
+    border: 1px solid rgba(250, 100, 0, 0.2);
+    padding-top: 12px;
+    padding-left: 17px;
+    /deep/ .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
+      margin-bottom: 0;
+    }
+    /deep/ .el-form-item--small .el-form-item__label{
+      text-align: left;
+    }
+  }
 </style>

@@ -2,7 +2,7 @@
 import Api from '@/api/apis'
 
 /** 使用
- * this[actionName]({
+ * this[fetchName]({
         apiName: [apiName],
         pagination: {
           page_size: 100,
@@ -17,12 +17,12 @@ import Api from '@/api/apis'
  */
 
 const listModel = (modelName = '') => {
-  const actionName = `${modelName}fetch`
-  const sizesName = `${modelName}sizes`
-  const totalName = `${modelName}total`
-  const paginationName = `${modelName}pagination`
-  const filtersName = `${modelName}filters`
-  const tableDataName = `${modelName}tableData`
+  const fetchName = modelName ? `${modelName}Fetch` : 'fetch'
+  const sizesName = modelName ? `${modelName}Sizes` : 'sizes'
+  const totalName = modelName ? `${modelName}Total` : 'total'
+  const paginationName = modelName ? `${modelName}Pagination` : 'pagination'
+  const filtersName = modelName ? `${modelName}Filters` : 'filters'
+  const tableDataName = modelName ? `${modelName}TableData` : 'tableData'
 
   return {
     namespaced: true,
@@ -38,13 +38,13 @@ const listModel = (modelName = '') => {
       [tableDataName]: []
     }),
     mutations: {
-      save (state, payload) {
-        console.log(payload, 'payload')
-        Object.assign(state, payload)
-      }
+      // save (state, payload) {
+      //   console.log(payload, 'payload')
+      //   Object.assign(state, payload)
+      // }
     },
     actions: {
-      async [actionName] ({commit, state}, payload) {
+      async [fetchName] ({commit, state}, payload) {
         const {pagination, filters} = payload || {}
         const apiName = payload.apiName
 
@@ -69,8 +69,7 @@ const listModel = (modelName = '') => {
             [paginationName]: nextPagination,
             [filtersName]: nextFilters,
             [tableDataName]: data.item_list,
-            [totalName]: data.total,
-            [sizesName]: nextPagination.page_size
+            [totalName]: data.total
           })
           loading && loading.close()
           return data
@@ -79,6 +78,7 @@ const listModel = (modelName = '') => {
           this._vm.$message.error(`${err}`)
         }
       }
+
     }
   }
 }

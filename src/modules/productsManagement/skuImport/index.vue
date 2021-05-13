@@ -12,8 +12,7 @@
   </el-tabs> -->
 
   <Search />
-  <UploadFile :activeName="activeName"/>
-  <ModelGoodsExport ></ModelGoodsExport >
+  <UploadFile />
   <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
   <el-drawer
     title="sku编码修改详情"
@@ -36,7 +35,6 @@ import {createNamespacedHelpers, mapActions, mapState} from 'vuex'
 import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'
-import ModelGoodsExport from './ModelGoodsExport'
 import Search from './Search'
 
 const {
@@ -57,7 +55,6 @@ export default {
     UploadFile,
     TableUploadFileRecord,
     DetailSkuEdit,
-    ModelGoodsExport,
     Search
   },
   computed: {
@@ -74,29 +71,29 @@ export default {
       return this.activeName === 'byTitle' ? 0 : 1
     },
     change () {
-      this.fetch({
-        apiName: 'getProductSkuExcelPage'
-      })
+      // this.fetch({
+      //   apiName: 'getProductSkuExcelPage'
+      // })
     },
-    change1 () {
-      this.table1fetch({
-        apiName: 'getProductSkuExcelPage',
-        pagination: {
-          page_size: 100,
-          page_index: 1
-        },
-        filters: {
+    // change1 () {
+    //   this.table1fetch({
+    //     apiName: 'getProductSkuExcelPage',
+    //     pagination: {
+    //       page_size: 100,
+    //       page_index: 1
+    //     },
+    //     filters: {
 
-        }
-      }).then(() => {
-        console.log(this.table1tableData, 'table1tableData')
-      })
-    },
-    change2 () {
-      this.table2fetch({
-        apiName: 'getProductSkuExcelPage'
-      })
-    },
+    //     }
+    //   }).then(() => {
+    //     console.log(this.table1tableData, 'table1tableData')
+    //   })
+    // },
+    // change2 () {
+    //   this.table2fetch({
+    //     apiName: 'getProductSkuExcelPage'
+    //   })
+    // },
     handleClick (tab, event) {
       let self = this
       this.$refs.tableUploadFileRecord.filterHandlerRecord({
