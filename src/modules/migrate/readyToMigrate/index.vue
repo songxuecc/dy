@@ -1167,7 +1167,6 @@ export default {
       if (data.filter.shopCaptureId.toString() !== '-1') {
         this.search.captureId = data.filter.shopCaptureId
       }
-      console.log(this.search, 'this.search')
       this.pageData = {}
       this.triggerShopCaptureRunOnce = {}
       this.resetPagination()
