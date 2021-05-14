@@ -1,20 +1,18 @@
 const path = require('path')
 const merge = require('webpack-merge')
-const os = require('os')
 const chalk = require('chalk')
 const webpack = require('webpack')
 
 const WebpackBuildNotifierPlugin = require('webpack-build-notifier')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const WebpackBar = require('webpackbar')
-const HappyPack = require('happypack')
-const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length })
 const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const StyleLintPlugin = require('stylelint-webpack-plugin')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+// const threadLoader = require('thread-loader')
 
 const argv = require('yargs-parser')(process.argv.slice(-3))
 const mode = argv.mode || 'development'
@@ -24,6 +22,21 @@ const needAnalyzer = argv.analyzer
 const needStyleLint = argv.styleLint
 const isEslint = argv.eslint
 const log = console.log
+
+const jsWorkerPool = {
+  poolTimeout: 2000
+}
+
+const cssWorkerPool = {
+  workerParallelJobs: 50,
+  poolTimeout: 2000
+}
+
+// 可以通过预热 worker 池(worker pool)来防止启动 worker 时的高延时。
+// threadLoader.warmup(jsWorkerPool, ['babel-loader'])
+// threadLoader.warmup(jsWorkerPool, ['vue-loader'])
+// threadLoader.warmup(cssWorkerPool, ['css-loader', 'postcss-loader'])
+// threadLoader.warmup(cssWorkerPool, ['css-loader', 'postcss-loader', 'less-loader', 'style-resources-loader'])
 
 const commonConfig = {
   entry: {
@@ -51,7 +64,8 @@ const commonConfig = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': argv.mode
+      'process.env': JSON.stringify(mode),
+      'process.env.BUILD_ENV': JSON.stringify(mode)
     }),
     new WebpackBar({
       name: isDev ? 'development' : 'production',
@@ -64,91 +78,6 @@ const commonConfig = {
     new FriendlyErrorsWebpackPlugin(),
     new LodashModuleReplacementPlugin(),
     new VueLoaderPlugin(),
-    new HappyPack({
-      id: 'babel',
-      loaders: [
-        {
-          loader: 'babel-loader',
-          options: {
-            babelrc: true,
-            cacheDirectory: true // 启用缓存
-          }
-        }],
-      threadPool: happyThreadPool,
-      verbose: true
-    }),
-    new HappyPack({
-      id: 'css',
-      loaders: [
-        {
-          loader: 'css-loader',
-          options: {
-            importLoaders: 1,
-            import: true
-          }
-        },
-        {
-          loader: 'postcss-loader',
-          options: {
-            indent: 'postcss',
-            plugins: (loader) => [
-              require('autoprefixer')()
-            ],
-            sourceMap: false
-          }
-        }
-      ],
-      threadPool: happyThreadPool,
-      verbose: true
-    }),
-
-    new HappyPack({
-      id: 'less',
-      loaders: [
-        {
-          loader: 'css-loader',
-          options: {
-            importLoaders: 3
-          }
-        },
-        {
-          loader: 'postcss-loader',
-          options: {
-            indent: 'postcss',
-            plugins: (loader) => [
-              require('autoprefixer')()
-            ],
-            sourceMap: false
-          }
-        },
-        {
-          loader: 'less-loader',
-          options: {
-            javascriptEnabled: true,
-            sourceMap: true
-          }
-        },
-        {
-          loader: 'style-resources-loader',
-          options: {
-            patterns: [
-              path.resolve(__dirname, '../src/assets/css/variables/*.less'),
-              path.resolve(__dirname, '../src/assets/css/mixins/*.less')
-            ],
-            injector: (source, resources) => {
-              const combineAll = type => resources
-                .filter(({ file }) => file.includes(type))
-                .map(({ content }) => content)
-                .join('')
-
-              return combineAll('variables') + combineAll('mixins') + source
-            }
-          }
-        }
-      ],
-      threadPool: happyThreadPool,
-      verbose: true
-    }),
     new HardSourceWebpackPlugin({})
   ],
   module: {
@@ -156,7 +85,13 @@ const commonConfig = {
       {
         test: /\.vue$/,
         use: [
-          'cache-loader',
+          {
+            loader: 'cache-loader'
+          },
+          {
+            loader: 'thread-loader',
+            options: jsWorkerPool
+          },
           {
             loader: 'vue-loader',
             options: {
@@ -168,7 +103,10 @@ const commonConfig = {
                 use: ['xlink:href', 'href']
               },
               cssSourceMap: true,
-              hotReload: isDev
+              hotReload: isDev,
+              compilerOptions: {
+                preserveWhitespace: false
+              }
             }
           }
         ],
@@ -176,22 +114,89 @@ const commonConfig = {
       },
       {
         test: /\.js$/,
-        loaders: 'happypack/loader?id=babel',
+        use: [
+          {
+            loader: 'thread-loader',
+            options: jsWorkerPool
+          },
+          {
+            loader: 'babel-loader',
+            options: {
+              babelrc: true,
+              cacheDirectory: true // 启用缓存
+            }
+          }],
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/
       },
       {
         test: /\.css$/,
-        loaders: [
+        use: [
           isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
-          'happypack/loader?id=css'
+          {
+            loader: 'thread-loader',
+            options: cssWorkerPool
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              import: true
+            }
+          },
+          {
+            loader: 'postcss-loader'
+          }
         ]
       },
       {
         test: /\.less$/,
-        loaders: [
+        use: [
           isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
-          'happypack/loader?id=less'
+          {
+            loader: 'thread-loader',
+            options: cssWorkerPool
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 3
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              indent: 'postcss',
+              plugins: (loader) => [
+                require('autoprefixer')()
+              ],
+              sourceMap: false
+            }
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              javascriptEnabled: true,
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'style-resources-loader',
+            options: {
+              patterns: [
+                path.resolve(__dirname, '../src/assets/css/variables/*.less'),
+                path.resolve(__dirname, '../src/assets/css/mixins/*.less')
+              ],
+              injector: (source, resources) => {
+                const combineAll = type => resources
+                  .filter(({ file }) => file.includes(type))
+                  .map(({ content }) => content)
+                  .join('')
+
+                return combineAll('variables') + combineAll('mixins') + source
+              }
+            }
+          }
         ],
         exclude: /node_modules/
       },
@@ -199,7 +204,6 @@ const commonConfig = {
         test: /\.svg$/,
         loader: 'svg-sprite-loader',
         include: [path.join(__dirname, '..', 'src/assets/icon')],
-        exclude: /node_modules/,
         options: {
           symbolId: '[name]',
           name: path.posix.join('static', 'img/[name].[hash:7].[ext]')

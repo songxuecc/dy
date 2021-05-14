@@ -26,7 +26,8 @@ const webpackDev = {
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[hash].css',
-      chunkFilename: '[id].[hash].css'
+      chunkFilename: '[id].[hash].css',
+      ignoreOrder: true
     }),
     new webpack.HotModuleReplacementPlugin()
   ],

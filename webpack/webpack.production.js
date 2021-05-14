@@ -8,20 +8,22 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 // const CompressionPlugin = require('compression-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const webpackPro = {
   mode: 'production',
   output: {
     path: path.resolve(__dirname, '../dist'),
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[name].[chunkhash].js',
+    filename: 'static/js/[id].[chunkhash].js',
+    chunkFilename: 'static/js/[id].[chunkhash].js',
     publicPath: '/'
   },
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
-      chunkFilename: '[id].[contenthash].css'
+      filename: 'static/css/[name].[contenthash].css',
+      chunkFilename: 'static/css/[id].[contenthash].css',
+      ignoreOrder: true // 忽略有关顺序冲突的警告
     }),
     new HtmlWebpackPlugin({
       favicon: 'src/assets/images/favicon.ico',
@@ -34,6 +36,18 @@ const webpackPro = {
         removeAttributeQuotes: true
       }
     }),
+    new HtmlWebpackPlugin({
+      filename: 'baidu_verify_2pyTRyh7tH.html',
+      template: 'baidu_verify_2pyTRyh7tH.html',
+      inject: false
+    }),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../static'),
+        to: 'static',
+        ignore: ['.*']
+      }
+    ]),
     new ScriptExtHtmlWebpackPlugin({
       inline: /runtime\..*\.js$/
     }),
