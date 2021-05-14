@@ -125,10 +125,10 @@
             <p class="font-12">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
         </el-form-item>
 
-        <!-- <el-form-item required label="轮播图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
+        <el-form-item required label="轮播图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
             <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
             <p class="font-12">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
-        </el-form-item> -->
+        </el-form-item>
 
         <el-form-item required label="标题:"  style="margin-bottom: 20px;" class="flex migrateSetting-title" >
           <p class="flex align-c mb-5">
@@ -271,7 +271,7 @@ export default {
         { label: 'SKU库存', className: '.migrateSetting-stock' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
         { label: '详情图', className: '.migrateSetting-detail' },
-        // { label: '轮播图', className: '.migrateSetting-banner' },
+        { label: '轮播图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
         { label: '违规信息', className: '.migrateSetting-rule' }
