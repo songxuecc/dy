@@ -35,8 +35,11 @@
                       fit="contain"
                       :preview-src-list="[scope.row.thumbnail]"
                       lazy>
-                      <div slot="error">
+                      <div slot="placeholder">
                         <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
+                      </div>
+                      <div slot="error" class="flex align-c" style="height:100%">
+                        <hh-icon  type="icontupianjiazaishibai03" style="font-size:30px" />
                       </div>
                     </el-image>
                     <!-- <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail"> -->
