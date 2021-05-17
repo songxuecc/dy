@@ -55,7 +55,7 @@ const router = new Router({
       component: () => import(
         /* webpackChunkName: `WodaInfo` */
         /* webpackMode: "lazy" */
-        '@moreFeatures/WodaInfo'),
+        '@moreFeatures/wodaInfo'),
       meta: {
         keepAlive: true
       }
