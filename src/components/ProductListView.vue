@@ -42,7 +42,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="类目" width="100" align="center">
+            <el-table-column label="类目" width="120" align="center">
                 <template slot-scope="scope">
                     <span> {{ getLastCategory(scope.row.category_show) }} </span>
                 </template>
@@ -61,7 +61,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="状态" width="120" style="overflow:auto"  align="center" class-name="cell-class">
+             <el-table-column v-if="!isSyncSource" label="状态" width="130" style="overflow:auto"  align="center" class-name="cell-class">
                 <template slot-scope="scope">
                     <el-link :underline="false" style="text-decoration:none;" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
                     <el-link :underline="false" style="text-decoration:none;"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
@@ -199,7 +199,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="" :width="140" align="center">
+            <el-table-column prop="" :width="160" align="center">
                <template slot="header" slot-scope="scope">
                    <el-dropdown trigger="click" @command="handleCommandSort">
                       <span class="font-12">
@@ -852,7 +852,6 @@ export default {
       return idx === index && status === dataStatus
     },
     handleCommandSort (command) {
-      console.log(command)
       const obj = {
         a: {
           text: '按复制时间降序',
