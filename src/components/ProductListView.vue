@@ -316,7 +316,8 @@ export default {
       isCheckboxSelect: false,
       isSelectAll: false,
       mouseOverIndex: -1,
-      commandSortText: '按复制时间降序'
+      commandSortText: '按复制时间降序',
+      order_by: 1
     }
   },
   computed: {
@@ -854,20 +855,26 @@ export default {
       console.log(command)
       const obj = {
         a: {
-          text: '按复制时间降序'
+          text: '按复制时间降序',
+          order_by: 1
         },
         b: {
-          text: '按复制时间升序'
+          text: '按复制时间升序',
+          order_by: 3
         },
         c: {
-          text: '按搬家时间降序'
+          text: '按搬家时间降序',
+          order_by: 2
         },
         d: {
-          text: '按搬家时间升序'
+          text: '按搬家时间升序',
+          order_by: 4
         }
       }
       const text = obj[command].text
       this.commandSortText = text
+      this.order_by = obj[command].order_by
+      this.$emit('sortByTime', obj[command].order_by)
     }
   }
 }
