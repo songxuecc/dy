@@ -196,7 +196,6 @@ export default {
       this.visibleEditDelteRecord = !this.visibleEditDelteRecord
     },
     handleCommand (command) {
-      console.log(command, 'command')
       this.activeIndex = command
       const key = this.dropdownOptions[command || 0].key
       this[key] = !this[key]
