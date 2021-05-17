@@ -185,7 +185,6 @@
 </template>
 <script>
 import productListView from '@/components/ProductListView'
-import BatchEdit from '@migrate/readyToMigrate/components/BatchEdit'
 import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
 import Search from '@migrate/readyToMigrate/components/Search'
 
@@ -202,7 +201,7 @@ export default {
   mixins: [request],
   components: {
     productListView,
-    BatchEdit,
+    BatchEdit: () => import('./components/BatchEdit'),
     NewComer,
     ModalVersionUp,
     Search
@@ -501,7 +500,7 @@ export default {
     this.updateQuery()
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
-    this.userVersionQuery()
+    // this.userVersionQuery()
   },
   deactivated () {
     this.$refs.productListView.dialogEditVisible = false

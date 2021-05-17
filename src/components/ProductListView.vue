@@ -28,8 +28,18 @@
             </el-table-column>
             <el-table-column label="图片" width="78" align="center">
                 <template slot-scope="scope">
-                    <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail">
-                    <hh-icon v-else type="iconwuzhaopian" style="font-size:50px" />
+
+                    <el-image
+                      style="height:50px;max-width:50px"
+                      :src="scope.row.thumbnail"
+                      fit="contain"
+                      :preview-src-list="[scope.row.thumbnail]"
+                      lazy>
+                      <div slot="error">
+                        <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
+                      </div>
+                    </el-image>
+                    <!-- <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail"> -->
                 </template>
             </el-table-column>
             <el-table-column label="标题"  width="300">
@@ -256,7 +266,6 @@
     </div>
 </template>
 <script>
-import productEditNewView from '@/components/ProductEditNewView.vue'
 import NewComer from '@/components/NewComer.vue'
 
 import common from '@/common/common.js'
@@ -266,7 +275,7 @@ export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditNewView,
+    productEditNewView: () => import('@/components/ProductEditNewView.vue'),
     NewComer
   },
   props: {
