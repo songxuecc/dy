@@ -1,29 +1,11 @@
 <template lang="html">
     <div>
-        <!-- <div class="text-left" style="padding: 10px 0">
-            <el-row>
-                <el-col :span="16">
-                    商品列表&nbsp;&nbsp;
-                    <el-checkbox v-if="validProductIdsList.length > 0"
-                                 :indeterminate="isSelectIndeterminate" v-model="isCheckboxSelect"
-                                 @change="toggleSelectAll"
-                    >
-                        全选可上传商品 ({{ validProductIdsList.length }})
-                    </el-checkbox>
-                </el-col>
-                <el-col :span="8" style="text-align: right;">
-                    <slot name="upperRight"></slot>
-                </el-col>
-            </el-row>
-        </div> -->
         <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" style="width: 100%" :class="tpProductList.length < 3 ? 'table-cal-2' : ''"
                   :row-style="{height:'68px'}"
                   @select-all="handleSelectAll" @select="handleSelect"
-                  @selection-change="handleSelectionChange" :cell-style="cellStyle" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut"
+                  @selection-change="handleSelectionChange"  @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut"
         >
         <el-table-empty slot="empty"/>
-            <el-table-column width="12">
-            </el-table-column>
             <el-table-column type="selection" :selectable="isSelectionEnable">
             </el-table-column>
             <el-table-column label="图片" width="78" align="center">
@@ -45,9 +27,9 @@
                     <!-- <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail"> -->
                 </template>
             </el-table-column>
-            <el-table-column label="标题"  width="300">
+            <el-table-column label="标题"  width="230">
                 <template slot-scope="scope">
-                    <el-link  :href="scope.row.url" target="_blank" :underline="false">
+                    <el-link  :href="scope.row.url" target="_blank" :underline="false"  class="font-13">
                         {{ scope.row.title }}
                     </el-link><br>
                     <div class="flex align-c wrap">
@@ -55,21 +37,14 @@
                         <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(scope.row)">
                         <label class="info">{{scope.row.source}}</label>
                       </span>
-                      <div class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</div>
-                      <div class="info">创建时间: {{scope.row.create_time}}</div>
+                      <span class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</span>
+                      <!-- <div class="info">创建时间: {{scope.row.create_time}}</div> -->
                     </div>
-                </template>
-            </el-table-column>
-            <el-table-column label="源sku售价" width="130" align="center">
-                <template slot-scope="scope">
-                    <span>{{ scope.row.price_range}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="类目" width="100" align="center">
                 <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" placement="top" :content="scope.row.category_show">
-                        <span> {{ getLastCategory(scope.row.category_show) }} </span>
-                    </el-tooltip>
+                    <span> {{ getLastCategory(scope.row.category_show) }} </span>
                 </template>
             </el-table-column>
             <el-table-column v-if="isSyncSource" label="最近同步" width="100">
@@ -86,7 +61,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="状态" width="130" style="overflow:auto"  align="center" class-name="cell-class">
+             <el-table-column v-if="!isSyncSource" label="状态" width="120" style="overflow:auto"  align="center" class-name="cell-class">
                 <template slot-scope="scope">
                     <el-link :underline="false" style="text-decoration:none;" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
                     <el-link :underline="false" style="text-decoration:none;"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">
@@ -114,99 +89,139 @@
             </el-table-column>
              <el-table-column v-if="!isSyncSource" label="原因" align="center">
                 <template slot-scope="scope">
-                    <div style="text-decoration:none;" >
+                    <div style="text-decoration:none;"  class="font-13">
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
                         <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              <hh-icon type="iconjinggao1"></hh-icon>
+                               搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <p style="">当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。</p>
+                              <p style="">
+                                <hh-icon type="iconjinggao1"></hh-icon>
+                                当前选择的发货模式或承诺发货时间不符合官方规定，请根据官方规则进行调整。</p>
                               <p><a style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101706">点击查询规则</a ></p>
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <p style="">根据官方规定，该类目需要填写品牌，请上传品牌</p>
+                              <p style="">
+                                <hh-icon type="iconjinggao1"></hh-icon>
+                                根据官方规定，该类目需要填写品牌，请上传品牌</p>
                               <p><a  style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,品牌不属于该类目') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               品牌未更新，建议亲亲点击品牌旁的刷新按钮后，再次进行搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('品牌为必填属性且上传的品牌该店铺未授权') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               虎虎建议点击“修改”按钮，刷新品牌后重新选择品牌，进行再次搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,该类目下无品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <p style="">商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
+                              <p style="">
+                                <hh-icon type="iconjinggao1"></hh-icon>
+                                商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
                               <p><a style="color: #409EFF;" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               商品详情图中有空白图，建议将空白图删除后再次搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               {{getSkuDuplicateFormatText(scope.row.migration_msg[0])}}
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败30-2, transImgToLocal failed 图片转链失败') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               抖音官方下载图片失败，请稍后重新尝试搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,非叶子节点不允许，创建或编辑商品') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               请刷新分类后重新搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,规格图片和规格值数量不匹配') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               规格图片和规格值数量不匹配,虎虎建议重新尝试搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传主图有缺失，请重新上传') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               上传主图有缺失，请重新上传,虎虎建议重新尝试搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失，请重新上传') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               上传产品详情有缺失，请重新上传,虎虎建议重新尝试搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('brand_id格式错误') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
                               请刷新品牌后重新搬家
                             </ul>
                         </div>
                         <div slot="content"  v-else>
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
-                              <span v-html="v">{{v}}</span>
-                            </ul>
+                            <hh-icon type="iconjinggao1"></hh-icon>
+                            <span style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
+                              <span v-html="v"  class="font-13">{{v}}</span> <br/>
+                            </span>
                         </div>
                       </span>
                       <span style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-else-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content">
-                            <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
-                            <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: #409EFF;">联系客服</a>。</ul>
+                            <hh-icon type="iconjinggao1"></hh-icon>
+                            <span v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i" class="font-13">{{v}}<br/></span>
+                            <span v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;" class="font-13">如需帮助请 <a href="/service" style="color: #409EFF;">联系客服</a>。</span>
                           </div>
                       </span>
-                      <span v-if="[0,1,2,3,4,9].includes(Number(scope.row.status))">无</span>
+
+                      <span v-if="[0,1,2,3,4,9].includes(Number(scope.row.status))" class="font-13">无</span>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="操作" :width="isSyncSource ? 140 : 120" align="center" v-if="hasShowOperate ? showOperate : true" class-name="cell-class">
+            <el-table-column prop="" :width="140" align="center">
+               <template slot="header" slot-scope="scope">
+                   <el-dropdown trigger="click" @command="handleCommandSort">
+                      <span class="font-12">
+                        {{commandSortText}}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="a" class="font-12">按复制时间降序</el-dropdown-item>
+                        <el-dropdown-item command="b" class="font-12">按复制时间升序</el-dropdown-item>
+                        <el-dropdown-item command="c" class="font-12">按搬家时间降序</el-dropdown-item>
+                        <el-dropdown-item command="d" class="font-12" >按搬家时间升序</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+              <template slot-scope="scope">
+                {{scope.row.create_time}}
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="" label="操作" :width="isSyncSource ? 90 : 90" align="center" v-if="hasShowOperate ? showOperate : true" class-name="cell-class">
                 <template slot-scope="scope">
-                    <div v-if="[0,1].includes(scope.row.capture_status)"></div>
-                    <div v-else-if="isSyncSource">
+                    <div v-if="[0,1].includes(scope.row.capture_status)" class="font-13"></div>
+                    <div v-else-if="isSyncSource"  class="font-13" style="line-height:20px">
                         <el-dropdown split-button type="primary" trigger="click" v-if="scope.row.sync_setting" size="small" @click="btnSyncClick(scope.row)" @command="handleCommand">
                           立即同步
                           <el-dropdown-menu slot="dropdown">
@@ -215,7 +230,7 @@
                         </el-dropdown>
                         <el-button type="primary" v-if="!scope.row.sync_setting" size="small" @click="btnSettingClick(scope.row)"> 设置同步 </el-button>
                     </div>
-                    <el-link  v-else v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style=";margin-right:4px">{{item.text}}
+                    <el-link  class="font-13" v-else v-for="(item,index) in getButtonNames(scope.row)" :key="index" @click="item.handle" :underline="false" type="primary" style="display:block;margin-right:4px;line-height:20px">{{item.text}}
                       <NewComer type="待修改" ref="newComerEdit"   :direction="[0,1].includes(scope.row.index) ? 'bottom' : 'top'"  :left="25" v-if="getFirstShow(6,scope.row.index,scope.row.status) && item.text== '修改'">
                         <div>
                           <div style="width:172px" class="color-666 font-12 left">
@@ -300,7 +315,9 @@ export default {
       validProductIdsList: [],
       isCheckboxSelect: false,
       isSelectAll: false,
-      mouseOverIndex: -1
+      mouseOverIndex: -1,
+      commandSortText: '按复制时间降序',
+      order_by: 1
     }
   },
   computed: {
@@ -833,6 +850,31 @@ export default {
         return product.status === status
       })
       return idx === index && status === dataStatus
+    },
+    handleCommandSort (command) {
+      console.log(command)
+      const obj = {
+        a: {
+          text: '按复制时间降序',
+          order_by: 1
+        },
+        b: {
+          text: '按复制时间升序',
+          order_by: 3
+        },
+        c: {
+          text: '按搬家时间降序',
+          order_by: 2
+        },
+        d: {
+          text: '按搬家时间升序',
+          order_by: 4
+        }
+      }
+      const text = obj[command].text
+      this.commandSortText = text
+      this.order_by = obj[command].order_by
+      this.$emit('sortByTime', obj[command].order_by)
     }
   }
 }

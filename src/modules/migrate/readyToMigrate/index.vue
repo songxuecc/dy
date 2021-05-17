@@ -62,6 +62,7 @@
           :tpProductList="tpProductList" @reload="getProductList" :isShopCapture="isShopCapture"
           v-if="search.child_shop_user_id == 0" />
         <product-list-view ref="productListView" :tpProductList="tpProductList"
+          @sortByTime="sortByTime"
           :showOperate="search.child_shop_user_id == 0" :hasShowOperate="true">
           <template slot="upperRight" v-if="isShopCapture && (capture.page_status===3 || capture.status===3)">
             <el-button
@@ -248,7 +249,8 @@ export default {
       common,
       startMigrateBtnFixed: false,
       scrollWidth: 0,
-      visibleModalVersionUp: false
+      visibleModalVersionUp: false,
+      order_by: 1
     }
   },
   watch: {
@@ -659,6 +661,7 @@ export default {
       //   captureId = this.search.shopCaptureId
       // }
       let params = {
+        order_by: this.order_by,
         page_index: this.pagination.index,
         page_size: this.pagination.size,
         keyword: this.search.key,
@@ -1160,9 +1163,7 @@ export default {
     onSearchChange (data) {
       // 店铺选择 状态选择 标题搜索 clearSelect resetPaginationIndex updateInfo
       // 复制时间 整店复制-复制名 child_shop_user_id = 0 handleCommonCaptureChange
-
       this.search = {...this.search, ...data.search, ...data.filter}
-
       if (data.filter.shopCaptureId.toString() !== '-1') {
         this.search.captureId = data.filter.shopCaptureId
       }
@@ -1177,6 +1178,10 @@ export default {
       }
       this.updateInfo()
       this.updateQuery()
+    },
+    sortByTime (orderBy) {
+      this.order_by = orderBy
+      this.updateInfo()
     }
   }
 }
