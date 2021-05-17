@@ -2,33 +2,32 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // 个人设置
 import CustomerService from '@customerSetting/customerService'
-import shopsBand from '@customerSetting/shopsBand'
-import PaidRecharge from '@customerSetting/paidRecharge'
+// import shopsBand from '@customerSetting/shopsBand'
+// import PaidRecharge from '@customerSetting/paidRecharge'
 import SubscribeList from '@customerSetting/subscribeList'
 import PayOrder from '@customerSetting/payOrder'
 import Login from '@customerSetting/login'
 import Fake from '@customerSetting/fake'
 import AppInfo from '@customerSetting/appInfo'
 // 搬家
-import MigrateSettingTemplate from '@migrate/migrateSettingTemplate'
-import MigrateSetting from '@migrate/migrateSetting'
-import MigrateSettingPrice from '@migrate/migrateSettingPrice'
-import ProductList from '@migrate/readyToMigrate'
-import StartMigrate from '@migrate/startMigrate'
-import MigrateList from '@migrate/migrateList'
-import CaptureList from '@migrate/captureList'
-import ProductionCollection from '@migrate/productionCollection'
+// import MigrateSettingTemplate from '@migrate/migrateSettingTemplate'
+// import MigrateSetting from '@migrate/migrateSetting'
+// import MigrateSettingPrice from '@migrate/migrateSettingPrice'
+// import ProductList from '@migrate/readyToMigrate'
+// import StartMigrate from '@migrate/startMigrate'
+// import MigrateList from '@migrate/migrateList'
+// import CaptureList from '@migrate/captureList'
+// import ProductionCollection from '@migrate/productionCollection'
 
 // 商品管理
-import SkuImport from '@productsManagement/skuImport'
-import BatchEdit from '@productsManagement/batchEdit/BatchEdit'
-import AllProducts from '@productsManagement/allProducts/DyProductList'
+// import SkuImport from '@productsManagement/skuImport'
+// import BatchEdit from '@productsManagement/batchEdit/BatchEdit'
+// import AllProducts from '@productsManagement/allProducts/DyProductList'
 // 更多更能
-import MeizheInfo from '@moreFeatures/meizheInfo'
-import WodaInfo from '@moreFeatures/wodaInfo'
+// import MeizheInfo from '@moreFeatures/meizheInfo'
+// import WodaInfo from '@moreFeatures/wodaInfo'
 
 // 店铺装修 shopDecorate
-
 Vue.use(Router)
 
 const router = new Router({
@@ -43,14 +42,20 @@ const router = new Router({
     },
     {
       path: '/customerSetting/meizhe',
-      component: MeizheInfo,
+      component: () => import(
+        /* webpackChunkName: `MeizheInfo` */
+        /* webpackMode: "lazy" */
+        '@moreFeatures/meizheInfo'),
       meta: {
         keepAlive: true
       }
     },
     {
       path: '/customerSetting/woda',
-      component: WodaInfo,
+      component: () => import(
+        /* webpackChunkName: `WodaInfo` */
+        /* webpackMode: "lazy" */
+        '@moreFeatures/WodaInfo'),
       meta: {
         keepAlive: true
       }
@@ -58,7 +63,10 @@ const router = new Router({
     {
       path: '/customerSetting/info',
       name: 'AppInfo',
-      component: AppInfo,
+      component: () => import(
+        /* webpackChunkName: `appInfo` */
+        /* webpackMode: "lazy" */
+        '@customerSetting/appInfo'),
       meta: {
         keepAlive: true
       }
@@ -66,7 +74,10 @@ const router = new Router({
     {
       path: '/customerSetting/shopsBand',
       name: 'ShopsBand',
-      component: shopsBand,
+      component: () => import(
+        /* webpackChunkName: `ShopsBand` */
+        /* webpackMode: "lazy" */
+        '@customerSetting/shopsBand'),
       meta: {
         keepAlive: true
       }
@@ -74,15 +85,22 @@ const router = new Router({
     {
       path: '/customerSetting/paidRecharge/:active',
       name: 'PaidRecharge',
-      component: PaidRecharge,
+      component: () => import(
+        /* webpackChunkName: `PaidRecharge` */
+        /* webpackMode: "lazy" */
+        '@customerSetting/paidRecharge'),
       meta: {
         keepAlive: true
       }
     },
+
     {
       path: '/migrate/startMigrate',
       name: 'StartMigrate',
-      component: StartMigrate,
+      component: () => import(
+        /* webpackChunkName: `StartMigrate` */
+        /* webpackMode: "lazy" */
+        '@migrate/startMigrate'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -91,7 +109,10 @@ const router = new Router({
     {
       path: '/migrate/migrateList',
       name: 'MigrateList',
-      component: MigrateList,
+      component: () => import(
+        /* webpackChunkName: `MigrateList` */
+        /* webpackMode: "lazy" */
+        '@migrate/migrateList'),
       meta: {
         requiresAuth: true
       }
@@ -99,7 +120,10 @@ const router = new Router({
     {
       path: '/migrate/captureList',
       name: 'CaptureList',
-      component: CaptureList,
+      component: () => import(
+        /* webpackChunkName: `CaptureList` */
+        /* webpackMode: "lazy" */
+        '@migrate/captureList'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -108,7 +132,10 @@ const router = new Router({
     {
       path: '/migrate/migrateSetting',
       name: 'MigrateSetting',
-      component: MigrateSetting,
+      component: () => import(
+        /* webpackChunkName: `MigrateSetting` */
+        /* webpackMode: "lazy" */
+        '@migrate/migrateSetting'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -117,7 +144,10 @@ const router = new Router({
     {
       path: '/migrate/migrateSettingPrice',
       name: 'MigrateSettingPrice',
-      component: MigrateSettingPrice,
+      component: () => import(
+        /* webpackChunkName: `MigrateSettingPrice` */
+        /* webpackMode: "lazy" */
+        '@migrate/migrateSettingPrice'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -126,7 +156,10 @@ const router = new Router({
     {
       path: '/migrate/migrateSettingTemplate',
       name: 'MigrateSettingTemplate',
-      component: MigrateSettingTemplate,
+      component: () => import(
+        /* webpackChunkName: `MigrateSettingTemplate` */
+        /* webpackMode: "lazy" */
+        '@migrate/migrateSettingTemplate'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -136,7 +169,11 @@ const router = new Router({
     {
       path: '/migrate/productList',
       name: 'ProductList',
-      component: ProductList,
+      // component: ProductList,
+      component: () => import(
+        /* webpackChunkName: `ProductList` */
+        /* webpackMode: "lazy" */
+        '@migrate/readyToMigrate'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -145,7 +182,10 @@ const router = new Router({
     {
       path: '/migrate/productionCollection',
       name: 'ProductionCollection',
-      component: ProductionCollection,
+      component: () => import(
+        /* webpackChunkName: `ProductionCollection` */
+        /* webpackMode: "lazy" */
+        '@migrate/productionCollection'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -154,7 +194,10 @@ const router = new Router({
     {
       path: '/productsManagement/allProducts',
       name: 'AllProducts',
-      component: AllProducts,
+      component: () => import(
+        /* webpackChunkName: `AllProducts` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/allProducts/DyProductList'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -163,7 +206,10 @@ const router = new Router({
     {
       path: '/productsManagement/batchEdit/:tab',
       name: 'BatchEdit',
-      component: BatchEdit,
+      component: () => import(
+        /* webpackChunkName: `BatchEdit` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/batchEdit/BatchEdit'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -173,7 +219,10 @@ const router = new Router({
     {
       path: '/productsManagement/skuImport',
       name: 'SkuImport',
-      component: SkuImport,
+      component: () => import(
+        /* webpackChunkName: `SkuImport` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/skuImport'),
       meta: {
         keepAlive: true,
         requiresAuth: true
@@ -221,7 +270,10 @@ const router = new Router({
     {
       path: '/shopDecorate/wm/create/:water_mark_type/:water_mark_id',
       name: 'WaterMaskCreate',
-      component: resolve => require(['@shopDecorate/waterMaskCreate'], resolve),
+      component: () => import(
+        /* webpackChunkName: `waterMaskCreate` */
+        /* webpackMode: "lazy" */
+        '@shopDecorate/waterMaskCreate'),
       meta: {
         requiresAuth: true,
         keepAlive: true,
@@ -231,7 +283,10 @@ const router = new Router({
     {
       path: '/shopDecorate/poster/dg',
       name: 'PosterDg',
-      component: resolve => require(['@shopDecorate/posterDg'], resolve),
+      component: () => import(
+        /* webpackChunkName: `PosterDg` */
+        /* webpackMode: "lazy" */
+        '@shopDecorate/posterDg'),
       meta: {
         requiresAuth: true
       },
@@ -239,7 +294,10 @@ const router = new Router({
         {
           path: 'list',
           name: 'PosterDgList',
-          component: resolve => require(['@shopDecorate/waterMarkListView'], resolve),
+          component: () => import(
+            /* webpackChunkName: `PosterDgList` */
+            /* webpackMode: "lazy" */
+            '@shopDecorate/waterMarkListView'),
           meta: {
             keepAlive: true
           }
@@ -247,7 +305,10 @@ const router = new Router({
         {
           path: 'activity/create',
           name: 'PosterDgActivityCreate',
-          component: resolve => require(['@shopDecorate/waterMarkActivityCreateView'], resolve),
+          component: () => import(
+            /* webpackChunkName: `PosterDgActivityCreate` */
+            /* webpackMode: "lazy" */
+            '@shopDecorate/waterMarkActivityCreateView'),
           meta: {
             keepAlive: true
           }
@@ -255,7 +316,10 @@ const router = new Router({
         {
           path: 'activity',
           name: 'PosterDgActivityList',
-          component: resolve => require(['@shopDecorate/waterMarkActivityListView'], resolve),
+          component: () => import(
+            /* webpackChunkName: `waterMarkActivityListView` */
+            /* webpackMode: "lazy" */
+            '@shopDecorate/waterMarkActivityListView'),
           meta: {
             keepAlive: true
           }
@@ -263,7 +327,10 @@ const router = new Router({
         {
           path: 'activity/detail/:id',
           name: 'PosterDgActivity',
-          component: resolve => require(['@shopDecorate/waterMarkActivityView'], resolve),
+          component: () => import(
+            /* webpackChunkName: `waterMarkActivityView` */
+            /* webpackMode: "lazy" */
+            '@shopDecorate/waterMarkActivityView'),
           meta: {
             keepAlive: true
           }
