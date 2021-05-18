@@ -64,15 +64,16 @@
                   </div>
                 </div>
               </el-form-item>
-              <el-form-item label="状态选择" v-show="binCopyActiveName === 'status'">
-                <el-select v-model="modelBindCopy.status" placeholder="商品状态选择" style="width:257px;" >
+              <el-form-item label="状态选择" v-show="binCopyActiveName === 'status'" >
+                <el-select v-model="modelBindCopy.status" placeholder="商品状态选择" style="width:257px;" class="mr-20">
                   <el-option label="全部商品" :value="0"></el-option>
                   <el-option label="在售中商品" :value="1"></el-option>
                   <el-option label="仓库中商品" :value="2"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item class="form-textarea" label="商品ID" v-show="binCopyActiveName === 'id'"  prop="goods_ids" >
+              <el-form-item class="form-textarea" label="商品ID" v-show="binCopyActiveName === 'id'"  prop="goods_ids">
                 <el-input
+                  class="mr-20"
                   :value="modelBindCopy.goods_ids"
                   @input="formatGoods_ids($event)"
                   type="textarea"

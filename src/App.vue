@@ -554,7 +554,7 @@ export default {
     width: 8px;
   }
   .huhutitle {
-    // background-image: url("~@/assets/images/huhutitle.gif");
+    background-image: url("~@/assets/images/huhutitle.gif");
     background-size: 100%;
     background-repeat: no-repeat;
     position: relative;
