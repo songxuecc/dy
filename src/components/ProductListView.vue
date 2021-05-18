@@ -214,7 +214,7 @@
                     </el-dropdown>
                 </template>
               <template slot-scope="scope">
-                {{scope.row.create_time}}
+                {{['按复制时间降序','按复制时间升序'].includes(commandSortText) ? scope.row.create_time:(scope.row.migrate_time || '无')}}
               </template>
             </el-table-column>
 
