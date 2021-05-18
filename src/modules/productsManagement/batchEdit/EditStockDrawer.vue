@@ -5,7 +5,7 @@
         <span>批量设置(不支持SKU维度的筛选)</span>
       </el-col>
       <el-col :span="16" style="text-align: right">
-        <el-button type="info" size="small" @click="rollbackChange">全部重置</el-button>
+        <el-button type="info" size="small" @click="rollbackChange" class="ml-5">全部重置</el-button>
         <div v-if="Object.keys(selectProductDict).length === 0" style="display: inline-block; margin-left: 10px;">
           <el-tooltip class="item" effect="dark" placement="top" content="请选择需要修改的商品">
             <span class="button-wrapper">

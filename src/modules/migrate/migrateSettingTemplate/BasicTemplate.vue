@@ -49,7 +49,7 @@
                     <el-radio :label="0">不支持7天无理由退换货</el-radio>
 <!--                    <el-radio :label="2">支持（拆封后不支持）</el-radio>-->
                 </el-radio-group>
-                <div style="position: absolute;top: 15px;left: 192px;color: red; font-size: 1px;">仅少数商品可选，一般商品不要选择此项</div>
+                <div style="position: absolute;top: 15px;left: 192px;color: #E02020; font-size: 1px;">仅少数商品可选，一般商品不要选择此项</div>
                 <el-popover
                   placement="top"
                   width="600"

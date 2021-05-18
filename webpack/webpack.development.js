@@ -19,7 +19,12 @@ const webpackDev = {
       favicon: 'src/assets/images/favicon.ico',
       filename: 'index.html',
       template: 'index.html',
-      inject: true
+      inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      }
     }),
     new ScriptExtHtmlWebpackPlugin({
       inline: /runtime\..*\.js$/

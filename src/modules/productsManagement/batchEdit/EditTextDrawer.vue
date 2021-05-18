@@ -10,7 +10,7 @@
           <el-radio :label="1">直接上架</el-radio>
           <el-radio :label="2">保存到草稿箱</el-radio>
         </el-radio-group>
-        <el-button type="info" size="small" @click="rollbackChange">全部重置</el-button>
+        <el-button type="info" size="small" @click="rollbackChange" class="ml-5">全部重置</el-button>
         <div v-if="Object.keys(selectProductDict).length === 0" style="display: inline-block; margin-left: 10px;">
           <el-tooltip class="item" effect="dark" placement="top" content="请选择需要修改的商品">
             <span class="button-wrapper">
@@ -29,7 +29,7 @@
           <el-input v-model="textHandler.textSuffix" size="small" placeholder="后缀" style="width: 160px;"></el-input>
           <el-button type="primary" size="small" @click="applyChange">应用</el-button>
         </div>
-        <el-button slot="reference" type="primary">添加关键字</el-button>
+        <el-button slot="reference" type="primary" class="mr-5">添加关键字</el-button>
       </el-popover>
       <el-popover placement="top">
         <div style="width: 435px;">
@@ -38,14 +38,14 @@
           <el-input v-model="textHandler.textReplace2" size="small" style="width: 160px;"></el-input>
           <el-button type="primary" size="small" @click="applyChange">应用</el-button>
         </div>
-        <el-button slot="reference" type="primary">替换关键字</el-button>
+        <el-button slot="reference" type="primary" class="mr-5">替换关键字</el-button>
       </el-popover>
       <el-popover placement="top">
         <div>
           <el-input v-model="textHandler.textDelete" size="small" style="width: 160px;" placeholder="输入删除关键字"></el-input>
           <el-button type="primary" size="small" @click="applyChange">应用</el-button>
         </div>
-        <el-button slot="reference" type="primary">删除关键字</el-button>
+        <el-button slot="reference" type="primary" class="mr-5">删除关键字</el-button>
       </el-popover>&nbsp;&nbsp;&nbsp;&nbsp;
       <div v-if="field==='goods_name'" style="display: inline-block; margin: 0 10px;">
         <span style="font-size: 14px; line-height:32px;">超过{{ PRODUCT_TITLE_LIMIT }}个字:</span>

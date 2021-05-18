@@ -10,7 +10,7 @@
           <el-radio :label="1">直接上架</el-radio>
           <el-radio :label="2">保存到草稿箱</el-radio>
         </el-radio-group>
-        <el-button type="info" size="small" @click="rollbackChange">全部重置</el-button>
+        <el-button type="info" size="small" @click="rollbackChange" class="ml-5">全部重置</el-button>
         <div v-if="Object.keys(selectProductDict).length === 0" style="display: inline-block; margin-left: 10px;">
           <el-tooltip class="item" effect="dark" placement="top" content="请选择需要修改的商品">
             <span class="button-wrapper">

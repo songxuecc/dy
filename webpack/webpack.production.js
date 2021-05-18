@@ -7,7 +7,6 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
-// const CompressionPlugin = require('compression-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const webpackPro = {
@@ -32,7 +31,7 @@ const webpackPro = {
       inject: true,
       minify: {
         removeComments: true,
-        collapseWhitespace: true,
+        collapseWhitespace: false,
         removeAttributeQuotes: true
       }
     }),
@@ -52,10 +51,14 @@ const webpackPro = {
       inline: /runtime\..*\.js$/
     }),
     new OptimizeCssAssetsPlugin({
-      assetNameRegExp: /\.css$/g,
+      assetNameRegExp: /\.less$/g,
       cssProcessor: require('cssnano'),
       cssProcessorPluginOptions: {
-        preset: ['default', { discardComments: { removeAll: true } }]
+        preset: ['default', {
+          discardComments: { removeAll: true },
+          normalizeUnicode: false, // 建议false,否则在使用unicode-range的时候会产生乱码
+          safe: true // 避免 cssnano 重新计算 z-index
+        }]
       },
       canPrint: true
     })
@@ -80,7 +83,10 @@ const webpackPro = {
             comments: false
           }
         }
-      })
+      }),
+      // 这样配置会存在只有css压缩的问题，这时webpack4原本自己配置好的js压缩会无效 ，需要重新配置UglifyJsPlugin（用于压缩js,webpack4内置了）一下
+      // https://www.jianshu.com/p/dd9afa5c4d0f
+      new OptimizeCssAssetsPlugin({})
     ]
   },
   stats: {

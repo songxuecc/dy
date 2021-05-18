@@ -49,7 +49,7 @@
                   <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
                   <el-checkbox
                     border
-                    :value="selected && selected[item.name]? selected[item.name]: false"
+                    :value="!!selected[item.name]"
                     @change="applyPropertiesToSelection($event,item.name)"
                     size="small"
                     class="batch" >
@@ -60,7 +60,7 @@
                 v-if="item.name !== '品牌'"
                 border
                 @change="applyPropertiesToSelection($event,item.name)"
-                :value="selected && selected[item.name]? selected[item.name] : false"
+                :value="!!selected[item.name]"
                 size="small"
                 class="batch">
                 批量修改同分类商品
@@ -114,12 +114,16 @@ export default {
     },
     propertyBatchMapSelect: {
       type: Object
+    },
+    forceUpdateKey: {
+      type: Number
     }
   },
   data () {
     return {
       model: {},
-      validation: {}
+      validation: {},
+      selected: {}
     }
   },
   computed: {
@@ -132,13 +136,15 @@ export default {
       }, {})
     },
     listenChange () {
-      const {productModel, propertyBatchMapSelect, catId} = this
-      return {productModel, propertyBatchMapSelect, catId}
+      const {productModel, propertyBatchMapSelect, catId, forceUpdateKey} = this
+      return {productModel, propertyBatchMapSelect, catId, forceUpdateKey}
     }
   },
   watch: {
     listenChange: {
       handler (newVal, o) {
+        console.log('9999912312312')
+
         const {productModel, propertyBatchMapSelect, catId} = newVal
         const model = (productModel || []).reduce((target, current) => {
           const key = current.name

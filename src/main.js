@@ -33,5 +33,3 @@ new Vue({
 
 const req = require.context('@/assets/icon', true, /\.svg$/)
 requireAll(req)
-
-console.log('9999')

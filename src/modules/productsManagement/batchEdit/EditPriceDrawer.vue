@@ -5,7 +5,7 @@
         <span >批量设置(不支持SKU维度的筛选) (价格小于 0 设为 0)</span>
       </el-col>
       <el-col :span="16" style="text-align: right">
-        <el-button type="info" size="small" @click="rollbackChange">全部重置</el-button>
+        <el-button type="info" size="small" @click="rollbackChange" class="ml-5">全部重置</el-button>
         <div v-if="Object.keys(selectProductDict).length === 0" style="display: inline-block; margin-left: 10px;">
           <el-tooltip class="item" effect="dark" placement="top" content="请选择需要修改的商品">
             <span class="button-wrapper">
@@ -22,35 +22,35 @@
           <el-input v-model="priceHandler.textPrice" size="mini" style="width:100px;"
                     @focus="priceHandler.radio='1'"
           ></el-input>
-          <span style="display:inline-block;">元</span>
+          <span style="display:inline-block;" class="ml-5">元</span>
       </el-radio>
       <el-radio v-model="priceHandler.radio" label="2">
           <span style="display:inline-block; width:100px">每个SKU价格加</span>
           <el-input v-model="priceHandler.textPriceAdd" size="mini" style="width:100px"
                     @focus="priceHandler.radio='2'"
           ></el-input>
-          <span style="display:inline-block;">元</span>
+          <span style="display:inline-block;" class="ml-5">元</span>
       </el-radio>
       <el-radio v-model="priceHandler.radio" label="3">
           <span style="display:inline-block; width:100px">每个SKU价格减</span>
           <el-input v-model="priceHandler.textPriceSub" size="mini" style="width:100px"
                     @focus="priceHandler.radio='3'"
           ></el-input>
-          <span style="display:inline-block;">元</span>
+          <span style="display:inline-block;" class="ml-5">元</span>
       </el-radio>
       <el-radio v-model="priceHandler.radio" label="4">
           <span style="display:inline-block; width:100px">每个SKU价格加</span>
           <el-input v-model="priceHandler.textPricePercentAdd" size="mini" style="width:100px"
                     @focus="priceHandler.radio='4'"
           ></el-input>
-          <span style="display:inline-block;">%</span>
+          <span style="display:inline-block;" class="ml-5">%</span>
       </el-radio>
       <el-radio v-model="priceHandler.radio" label="5">
           <span style="display:inline-block; width:100px">每个SKU价格减</span>
           <el-input v-model="priceHandler.textPricePercentSub" size="mini" style="width:100px"
                     @focus="priceHandler.radio='5'"
           ></el-input>
-          <span style="display:inline-block;">%</span>
+          <span style="display:inline-block;" class="ml-5">%</span>
       </el-radio>
       <el-button type="primary" size="small" @click="batchEditPrice">应用</el-button>
     </div>

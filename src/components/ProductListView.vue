@@ -267,7 +267,7 @@
         >
           <product-edit-new-view ref="productEditNewView" @changeProducts="onChangeProducts" @triggerDialogClose="triggerDialogClose"></product-edit-new-view>
         </el-drawer>
-        <div class="close pointer" v-show="dialogEditVisible" @click="triggerDialogClose">
+        <div class="closeBtn pointer" v-show="dialogEditVisible" @click="triggerDialogClose">
           <hh-icon type="iconguanbi1" class="iconguanbi"></hh-icon>
         </div>
         <el-dialog
@@ -896,7 +896,7 @@ export default {
       }
     }
 
-    .close {
+    .closeBtn {
       position: fixed;
       left:12%;
       top: 0;

@@ -11,7 +11,7 @@
         </el-checkbox-group>
       </el-col>
       <el-col :span="8" style="text-align: right">
-        <el-button type="info" size="small" @click="rollbackChange">全部重置</el-button>
+        <el-button type="info" size="small" @click="rollbackChange" class="ml-5">全部重置</el-button>
         <div v-if="Object.keys(selectProductDict).length === 0" style="display: inline-block; margin-left: 10px;">
           <el-tooltip class="item" effect="dark" placement="top" content="请选择需要修改的商品">
             <span class="button-wrapper">
@@ -30,7 +30,7 @@
           <el-input v-model="textHandler.textSuffix" size="small" placeholder="后缀" style="width: 160px;"></el-input>
           <el-button type="primary" size="small" @click="applyChange">应用</el-button>
         </div>
-        <el-button slot="reference" type="primary">添加关键字</el-button>
+        <el-button slot="reference" type="primary" class="mr-5">添加关键字</el-button>
       </el-popover>
       <el-popover placement="top">
         <div style="width: 435px;">
