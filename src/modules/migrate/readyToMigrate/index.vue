@@ -38,7 +38,10 @@
             </div>
             <!-- 链接复制的提示语 -->
             <div v-else>
-              <span v-if="capture.status_statistics.length == 0">
+              <span v-if="capture.status_statistics.length == 0 && capture.status === 2 && capture.total_num === 0">
+                本次抓取的总商品数为0
+              </span>
+              <span v-else-if="capture.status_statistics.length == 0">
                 {{ captureStatusMap[capture.page_status] }}
               </span>
               <span v-if="capture.status_statistics.length > 0" v-for="(item, index) in capture.status_statistics"

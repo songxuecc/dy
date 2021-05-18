@@ -22,7 +22,7 @@
     :before-close="toggleEdit">
     <DetailSkuEdit v-if="visibleSkuEdit" />
   </el-drawer>
-  <div class="close pointer" v-show="visibleSkuEdit" @click="toggleEdit">
+  <div class="closeBtn pointer" v-show="visibleSkuEdit" @click="toggleEdit">
     <hh-icon type="iconguanbi1" class="iconguanbi"></hh-icon>
   </div>
 </div>
@@ -101,7 +101,7 @@ export default {
 
 <style lang='less' scoped>
 //@import url(); 引入公共css类
-.close {
+.closeBtn {
   position: fixed;
   left:30%;
   top: 0;
@@ -110,7 +110,6 @@ export default {
   width: 36px;
   height: 36px;
   z-index: 9999;
-  transition: all 0.8s;
   border-radius: 50%;
   background:#c7c7c7;
   display: flex;

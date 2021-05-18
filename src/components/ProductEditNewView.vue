@@ -113,6 +113,7 @@
                               @applySelectBrandToSelection="applySelectBrandToSelection()"
                               @applyPropertiesToSelection="applyPropertiesToSelection"
                               @reloadBrandList="reloadBrandList"
+                              :forceUpdateKey="forceUpdatePropertySet"
                               ></property-set>
                         </el-form-item>
                       </el-form>
@@ -499,7 +500,8 @@ export default {
       closeAfterSave: false,
       // 属性商品应用到所有 的数据记录
       propertyBatchMap: new Map(),
-      visibleSkuImport: false
+      visibleSkuImport: false,
+      forceUpdatePropertySet: 0
     }
   },
   watch: {
@@ -1284,6 +1286,7 @@ export default {
         })
       }
       this.propertyBatchMap = cloneDeep(propertyBatchMap)
+      console.log(this.propertyBatchMap, 'this.propertyBatchMap')
       // 批量应用到全部 的值
       const propertyBatchCatIdMapValue = propertyBatchCatIdMap.get(catId) || {}
       if (checked) {
@@ -1291,9 +1294,12 @@ export default {
       } else {
         delete propertyBatchCatIdMapValue[originAttr.id]
       }
+
+      console.log('9999912312312')
       propertyBatchCatIdMap.set(catId, propertyBatchCatIdMapValue)
       this.propertyBatchCatIdMap = cloneDeep(propertyBatchCatIdMap)
       this.updateProductEditStatus()
+      this.forceUpdatePropertySet = ++this.forceUpdatePropertySet
     },
     updateRemoveFirstBanner () {
       for (let i in this.productList) {
