@@ -29,10 +29,10 @@
         <span slot-scope="scope" :class="['expire', 'un_login'].includes(scope.row.auth_status) ? 'expire':'auth'">
           <span v-if="scope.row.auth_status === 'auth'">授权中</span>
           <span v-if="scope.row.auth_status === 'un_login'">登录过期
-            <el-link
+            <a
             style="display:inline;font-size:12px;margin-left:5px"
             :underline="false"
-            >请用该店铺账号登录虎虎</el-link>
+            >请用该店铺账号登录虎虎</a>
           </span>
           <span v-if="scope.row.auth_status === 'expire'">订购过期
             <el-link
