@@ -11,8 +11,7 @@
     "dev": "webpack-dev-server --config ./webpack/webpack.common.js   --mode='development'",
     "build": "webpack --config ./webpack/webpack.common.js  --mode='production'",
     "build:analyzer": "webpack --config ./webpack/webpack.common.js --eslint --mode='production' --analyzer",
-    "build:stag": "webpack --config ./webpack/webpack.common.js  --mode='production'",
-    "build:old": "BUILD_ENV=prod node build/build.js"
+    "build:stag": "webpack --config ./webpack/webpack.common.js  --mode='production'"
   },
   "dependencies": {
     "axios": "^0.18.0",
