@@ -143,8 +143,6 @@ export default {
   watch: {
     listenChange: {
       handler (newVal, o) {
-        console.log('9999912312312')
-
         const {productModel, propertyBatchMapSelect, catId} = newVal
         const model = (productModel || []).reduce((target, current) => {
           const key = current.name

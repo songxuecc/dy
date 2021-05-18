@@ -13,9 +13,6 @@
               <span v-if="ShopsCaptureStatus == 6">
                 {{ captureStatusMap[capture.page_status] }}
               </span>
-              <span v-if="ShopsCaptureStatus == 7">
-                本次抓取的总商品数为0
-              </span>
               <span v-if="ShopsCaptureStatus === 1">【{{capture.shop_name}}】等待复制中...</span>
               <span v-if="ShopsCaptureStatus === 2">
                 正在复制【{{capture.shop_name}}】第{{pagination.index}}页:&nbsp;&nbsp;
@@ -41,7 +38,10 @@
             </div>
             <!-- 链接复制的提示语 -->
             <div v-else>
-              <span v-if="capture.status_statistics.length == 0">
+              <span v-if="capture.status_statistics.length == 0 && capture.status === 2 && capture.total_num === 0">
+                本次抓取的总商品数为0
+              </span>
+              <span v-else-if="capture.status_statistics.length == 0">
                 {{ captureStatusMap[capture.page_status] }}
               </span>
               <span v-if="capture.status_statistics.length > 0" v-for="(item, index) in capture.status_statistics"
@@ -270,11 +270,6 @@ export default {
     ]),
     ShopsCaptureStatus () {
       if (!this.isShopCapture) return 0
-
-      if (this.capture.status_statistics.length === 0 && this.capture.total_num === 0 && this.capture.status === 2) {
-        return 7
-        // 过滤抓取为0
-      }
 
       if (this.capture.status_statistics.length === 0) {
         return 6
