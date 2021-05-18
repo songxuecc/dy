@@ -203,7 +203,8 @@ export default {
         this.$message.error('请选择搬家店铺')
         return undefined
       }
-      const costTemplateMap = this.$refs.shopsMigrate.costTemplateMap
+      const costTemplateMap = this.$refs.shopsMigrate ? this.$refs.shopsMigrate.costTemplateMap : new Map()
+      const mobileMap = this.$refs.shopsMigrate ? this.$refs.shopsMigrate.mobileMap : new Map()
       const hascontTemplate = this.$refs.shopsMigrate.checkedBindShopList.every(id => {
         return typeof costTemplateMap.get(id) !== 'undefined'
       })
@@ -217,7 +218,8 @@ export default {
         if (id === selfShopId) {
           costTemplateId = selfCostTemplateId
         }
-        return {user_id: id, template: {cost_template_id: costTemplateId}}
+        const mobile = mobileMap.get(id)
+        return {user_id: id, template: {cost_template_id: costTemplateId, mobile}}
       })
       if (result) {
         localStorage.setItem('migrate_shop', JSON.stringify(result))

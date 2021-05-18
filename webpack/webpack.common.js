@@ -301,4 +301,5 @@ if (isDev) {
 }
 
 const common = merge(commonConfig, mergeConfig)
+
 module.exports = common

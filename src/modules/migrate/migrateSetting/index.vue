@@ -119,11 +119,15 @@
             <p class="font-12">SKU规格值超过20个自动截断<el-switch class="ml-5" v-model="is_cut_sku_spec" /></p>
         </el-form-item> -->
 
-        <el-form-item required label="轮播图、详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
-            <p class="font-12 mb-10 mt-5">轮播图+详情图超过50张自动删除详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
-            <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
-            <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
+        <el-form-item required label="详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-detail" >
+            <p class="font-12 mb-10 mt-5">轮播图+详情图+规格图片超过50张自动删除详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
+            <p class="font-12 mb-10">删除详情首图<el-switch class="ml-5" v-model="is_cut_detail_first" /></p>
             <p class="font-12">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
+        </el-form-item>
+
+        <el-form-item required label="轮播图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
+            <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
+            <p class="font-12">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
         </el-form-item>
 
         <el-form-item required label="标题:"  style="margin-bottom: 20px;" class="flex migrateSetting-title" >
@@ -157,14 +161,15 @@
           </div>
         </el-form-item>
 
-        <el-form-item required label="搬家仅针对"  class="flex migrateProductsFilter migrateSetting-choose" style="height:25px;margin-bottom: 20px;">
-          <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
+        <el-form-item required label="重复搬家设置"  class="flex migrateProductsFilter migrateSetting-choose" style="height:25px;margin-bottom: 20px;">
+          <!-- <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
             <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
             <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
             <el-checkbox :label="common.productStatus.REJECT">驳回</el-checkbox>
             <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
             <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
-          </el-checkbox-group>；其余状态商品会自动过滤
+          </el-checkbox-group>；其余状态商品会自动过滤 -->
+          <p class="font-12" style="line-height:30px">已上线、草稿箱商品支持再次搬家<el-switch class="ml-5" v-model="is_able_migrate_status_list" @change="handleIsAbleMigrateStatusList" /></p>
         </el-form-item>
 
         <el-form-item required label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
@@ -265,8 +270,8 @@ export default {
         { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: 'SKU库存', className: '.migrateSetting-stock' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
-        // { label: 'SKU规格值', className: '.migrateSetting-spec' },
-        { label: '轮播图、详情图', className: '.migrateSetting-banner' },
+        { label: '详情图', className: '.migrateSetting-detail' },
+        { label: '轮播图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
         { label: '违规信息', className: '.migrateSetting-rule' }
@@ -301,6 +306,7 @@ export default {
       is_use_max_sku_stock: undefined,
       is_cut_banner_first: undefined,
       is_cut_detail_last: undefined,
+      is_cut_detail_first: undefined,
       title_cut_type: 3,
       title_prefix: '',
       title_suffix: '',
@@ -571,6 +577,7 @@ export default {
         'is_use_max_sku_stock',
         'is_cut_banner_first',
         'is_cut_detail_last',
+        'is_cut_detail_first',
         'is_open_title_prefix_suffix',
         'is_open_title_replace',
         'goods_code_type',
@@ -604,6 +611,9 @@ export default {
           }
         })
         this.originMigrateSetting = originMigrateSetting
+        if (setting.able_migrate_status_list) {
+          this.is_able_migrate_status_list = !!(setting.able_migrate_status_list.length === 5)
+        }
         this.updateMigrateSettingData(originMigrateSetting)
         this.settingKeys = settingKeys
         // 默认设置
@@ -656,6 +666,7 @@ export default {
         max_sku_stock: this.max_sku_stock,
         is_cut_banner_first: Number(this.is_cut_banner_first),
         is_cut_detail_last: Number(this.is_cut_detail_last),
+        is_cut_detail_first: Number(this.is_cut_detail_first),
         is_open_title_prefix_suffix: Number(this.is_open_title_prefix_suffix),
         is_open_title_replace: Number(this.is_open_title_replace),
         title_cut_type: this.title_cut_type,
@@ -881,6 +892,23 @@ export default {
     },
     handleClear (property) {
       this[property] = ''
+    },
+    handleIsAbleMigrateStatusList (value) {
+      if (value) {
+        this.able_migrate_status_list = [
+          common.productStatus.WAIT_ONLINE,
+          common.productStatus.FAILED,
+          common.productStatus.REJECT,
+          common.productStatus.ONLINE,
+          common.productStatus.SAVE_DRAFT
+        ]
+      } else {
+        this.able_migrate_status_list = [
+          common.productStatus.WAIT_ONLINE,
+          common.productStatus.FAILED,
+          common.productStatus.REJECT
+        ]
+      }
     }
   }
 }

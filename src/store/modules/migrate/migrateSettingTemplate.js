@@ -105,6 +105,29 @@ export default {
       const data = await Api.hhgjAPIs.getCostTemplateList(params)
       commit('save', {costTemplateList: data.List})
       return data.List
+    },
+    async getCostTemplateListUserBandList ({commit, state}, payload) {
+      const targetUserId = payload && payload.targetUserId
+      const params = {name: '', page_index: 0, page_size: 100}
+      if (targetUserId) {
+        params.target_user_id = targetUserId
+      }
+      const data = await Api.hhgjAPIs.getCostTemplateList(params)
+
+      let userBindList = cloneDeep(state.userBindList)
+
+      userBindList.forEach(parent => {
+        if (parent.user_id === targetUserId) {
+          parent.cost_template_list = data.List
+        }
+        parent.user_list.forEach(child => {
+          if (child.user_id === targetUserId) {
+            parent.cost_template_list = data.List
+          }
+        })
+      })
+      commit('save', {userBindList})
+      return data.List
     }
   },
   getters: {

@@ -13,9 +13,10 @@
           </div>
           <el-checkbox-group v-model="checkedBindShopList"
             @change="handleCheckboxGroupChange($event,Number(parentShop.user_id),idx)">
-            <span v-for="childShop in parentShop.user_list" :key="Number(childShop.user_id)"  v-if="!childShop.is_self" style="width:calc(50% - 35px);display:inline-block">
+            <span v-for="childShop in parentShop.user_list" :key="Number(childShop.user_id)" v-if="!childShop.is_self"
+              style="width:calc(50% - 35px);display:inline-flex">
               <el-checkbox :label="Number(childShop.user_id)"
-                :disabled="['expire','un_login'].includes(childShop.auth_status)" class="checkbox" >
+                :disabled="['expire','un_login'].includes(childShop.auth_status)" class="checkbox">
                 <div class="label-name">
                   <span>{{childShop.shop_name}}</span>
                   <span v-if="['expire'].includes(childShop.auth_status)">(订购过期)</span>
@@ -24,15 +25,23 @@
               </el-checkbox>
               <span v-if="!['expire','un_login'].includes(childShop.auth_status)" class="ml-10">
                 <el-select :value="costTemplateMap.get(childShop.user_id)" placeholder="选择运费模版" size="mini"
+                  style="width:150px"
                   @change="handleSelect($event,childShop.user_id,idx)">
-                  <el-option v-for="item in (childShop.cost_template_list || [])" :key="item.template.id" :label="item.template.template_name"
-                    :value="item.template.id">
+                  <el-option v-for="item in (childShop.cost_template_list || [])" :key="item.template.id"
+                    :label="item.template.template_name" :value="item.template.id">
                   </el-option>
                 </el-select>
-                <el-button type="text" @click="getTargetCostTemplateList(childShop.user_id)" class="mr-5" >
-                  <hh-icon type="iconjiazai" style="font-size:12px;margin-right:3px"/>刷新
+                <el-button type="text" @click="getTargetCostTemplateList(childShop.user_id)" class="mr-5 ml-5">
+                  <hh-icon type="iconjiazai" style="font-size:12px;margin-right:3px" />刷新
                 </el-button>
                 <el-button type="text" @click="open()">添加运费模版</el-button>
+
+                <div class="flex">
+                  <el-input class="input-num" :value="mobileMap.get(childShop.user_id)" placeholder="请输入客服电话"
+                    style="width:150px;text-align:left"
+                    size="mini" @input="handleMobileChange($event,childShop.user_id,idx)"></el-input>客服电话
+                  <span class="info ml-5" v-if="mobileMap.get(childShop.user_id)">(客服电话)</span>
+                </div>
               </span>
             </span>
           </el-checkbox-group>
@@ -42,14 +51,15 @@
   </div>
 </template>
 <script>
-import { createNamespacedHelpers, mapGetters } from 'vuex'
+import {
+  createNamespacedHelpers,
+  mapGetters
+} from 'vuex'
 import cloneDeep from 'lodash/cloneDeep'
-
 const {
   mapActions,
   mapState
 } = createNamespacedHelpers('migrate/migrateSettingTemplate')
-
 export default {
   data () {
     return {
@@ -57,7 +67,8 @@ export default {
       checkedBindShopList: [],
       bindList: [],
       checkAllMap: new Map(),
-      costTemplateMap: new Map()
+      costTemplateMap: new Map(),
+      mobileMap: new Map()
     }
   },
   activated () {
@@ -67,32 +78,39 @@ export default {
     userBindList (newVal) {
       const migrateShop = JSON.parse(localStorage.getItem('migrate_shop')) || []
       const costTemplateMap = new Map()
-      // 运费模板默认选择包邮模板
+      const mobileMap = new Map()
+        // 运费模板默认选择包邮模板
       newVal.forEach(parent => {
+        mobileMap.set(parent.user_id, parent.mobile || this.template.model.mobile)
         parent.user_list.forEach(child => {
           const hasFreeTemplate = child.cost_template_list.find(c => c.template.id === 0)
           if (hasFreeTemplate) costTemplateMap.set(child.user_id, 0)
+          if (!mobileMap.get(child.user_id)) {
+            mobileMap.set(child.user_id, child.mobile || this.template.model.mobile)
+          }
         })
       })
-      // 运费模板选择上次搬家的模版
+        // 运费模板选择上次搬家的模版
       migrateShop.forEach(item => {
         costTemplateMap.set(item.user_id, item.template.cost_template_id)
+        mobileMap.set(item.user_id, item.template.mobile || this.template.model.mobile)
       })
       this.costTemplateMap = costTemplateMap
+      this.mobileMap = mobileMap
     }
   },
   computed: {
-    ...mapState(['userBindList']),
-    ...mapState(['shopName']),
+    ...mapState(['userBindList', 'template', 'shopName']),
     ...mapGetters(['getSelectTPProductIdList', 'getShopName'])
   },
   methods: {
     ...mapActions([
       'getUserBindList',
-      'getCostTemplateList'
+      'getCostTemplateListUserBandList'
     ]),
     getDisabled (shops) {
-      const disabled = shops.user_list.filter(item => !item.is_self && !['expire', 'un_login'].includes(item.auth_status))
+      const disabled = shops.user_list.filter(item => !item.is_self && !['expire', 'un_login'].includes(item
+        .auth_status))
       return !disabled.length
     },
     getCannotMigrateShops (num) {
@@ -109,7 +127,7 @@ export default {
       if (childShops.length) {
         const checkAllMap = new Map(this.checkAllMap)
         const checkAll = childShops.every(child => value.find(item => item === child))
-        // 全选
+          // 全选
         if (checkAll) {
           checkAllMap.set(userId, true)
           this.checkAllMap = checkAllMap
@@ -119,7 +137,7 @@ export default {
         }
       }
     },
-    //  全选 反选 需要剔除disabled的店铺
+      //  全选 反选 需要剔除disabled的店铺
     handleCheckAllChange (value, userId, idx) {
       const childShops = (cloneDeep(this.userBindList)[idx] || []).user_list
         .filter(item => !item.is_self && !['expire', 'un_login'].includes(item.auth_status))
@@ -135,7 +153,7 @@ export default {
         const differenceSet = new Set([...checkedValueSet].filter(checked => !childShopsSet.has(checked)))
         checkedBindShopList = [...differenceSet]
       }
-      // 是否全选根据子元素全选满足
+        // 是否全选根据子元素全选满足
       const checkAllMap = new Map(this.checkAllMap)
       cloneDeep(this.userBindList).forEach(child => {
         const childShopIds = child.user_list
@@ -148,7 +166,6 @@ export default {
           checkAllMap.set(child.user_id, false)
         }
       })
-
       this.checkAllMap = checkAllMap
       this.checkedBindShopList = checkedBindShopList
     },
@@ -157,8 +174,13 @@ export default {
       costTemplateMap.set(id, value)
       this.costTemplateMap = costTemplateMap
     },
+    handleMobileChange (value, id) {
+      const mobileMap = new Map(this.mobileMap)
+      mobileMap.set(id, value)
+      this.mobileMap = mobileMap
+    },
     getTargetCostTemplateList (targetUserId) {
-      this.getCostTemplateList({
+      this.getCostTemplateListUserBandList({
         targetUserId
       })
     },
@@ -170,11 +192,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
-    @import '~@/assets/css/migratesetting.less';
-   /deep/ .el-button+.el-button{
-     margin-left:0
-   }
-   /deep/ .el-form-item {
-        margin-bottom: 0;
-    }
+  @import '~@/assets/css/migratesetting.less';
+
+  /deep/ .el-button+.el-button {
+    margin-left: 0
+  }
+
+  /deep/ .el-form-item {
+    margin-bottom: 0;
+  }
 </style>
