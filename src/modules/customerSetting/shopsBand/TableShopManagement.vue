@@ -18,8 +18,8 @@
         width="250">
         <template slot-scope="scope" >
           <span class="shop_name">{{scope.row.shop_name}}</span>
-          <span :class="['tag', scope.row.is_main ? 'main-shop ':'child-shop']">{{scope.row.is_main ?'主店铺':'子店铺'}}</span>
-          <span class="current-shop tag" v-if="scope.row.is_self ">当前店铺</span>
+          <span :class="['tag','ml-5', scope.row.is_main ? 'main-shop ':'child-shop']">{{scope.row.is_main ?'主店铺':'子店铺'}}</span>
+          <span class="current-shop tag ml-5" v-if="scope.row.is_self ">当前店铺</span>
         </template>
       </el-table-column>
       <el-table-column
