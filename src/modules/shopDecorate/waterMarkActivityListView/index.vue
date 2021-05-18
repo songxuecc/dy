@@ -2,7 +2,7 @@
   <div v-loading="loadingCnt" style="margin-top: 20px;">
     <div v-if="isEmptyActivity" style="height:300px;margin-top:150px">
       <div style="font-size:16px;">您还没有创建活动，快来创建吧！</div><br>
-      <el-button @click="goWaterMarkList()" type="primary">asdasdas</el-button>
+      <el-button @click="goWaterMarkList()" type="primary">创建活动</el-button>
     </div>
     <div v-else>
       <el-form ref="form" :model="search" :inline="true" style="text-align: left">
