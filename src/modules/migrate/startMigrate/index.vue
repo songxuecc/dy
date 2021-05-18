@@ -82,12 +82,12 @@
                   :placeholder="placeholder"
                   style="width: 357px;"/>
               </el-form-item>
-              <!-- <el-form-item label="是否过滤已复制商品" >
+              <el-form-item label="是否过滤已复制商品" >
                 <el-select v-model="modelBindCopy.filter_copied_product" placeholder="商品状态选择" style="width:263px;" >
                   <el-option label="过滤" :value="1"></el-option>
                   <el-option label="不过滤" :value="0"></el-option>
                 </el-select>
-              </el-form-item> -->
+              </el-form-item>
             </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -167,8 +167,8 @@ export default {
       props: { multiple: true, expandTrigger: 'hover' },
       modelBindCopy: {
         status: 0,
-        goods_ids: ''
-        // filter_copied_product: 0
+        goods_ids: '',
+        filter_copied_product: 0
       },
       userBindList: [],
       target_user_id: '',
@@ -447,14 +447,18 @@ export default {
               ...status,
               capture_type: 2,
               target_user_id: targetUserId,
-              goods_id_list: JSON.stringify(goodsIdsSet)
+              goods_id_list: JSON.stringify(goodsIdsSet),
+              filter_copied_product: this.modelBindCopy.filter_copied_product
             }
             this.capture(parmas, false)
           }
         } else {
           // 直接复制
           const parmas = {
-            ...status, target_user_id: targetUserId, capture_type: 2
+            ...status,
+            target_user_id: targetUserId,
+            capture_type: 2,
+            filter_copied_product: this.modelBindCopy.filter_copied_product
           }
           this.capture(parmas, false)
         }
