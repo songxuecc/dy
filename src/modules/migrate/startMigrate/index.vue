@@ -52,7 +52,7 @@
 
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex wrap" size="medium" ref="modelCopyForm" :rules="modelBindCopyRules"
               v-if="userBindList.length">
-              <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '45px','margin-right':'83px'}" required >
+              <el-form-item label="被复制的店铺" :style="{position:'relative','padding-bottom': '45px','margin-right':'30px'}" required >
                 <el-select v-model="target_user_id" placeholder="请选择店铺" style="width:290px;margin-right:5px" clearable @clear="clearTargetUserId">
                   <el-option :label="item.shop_name" :value="item.user_id" v-for="item in userBindList" :key="item.user_id" :disabled="item.disabled">
                   </el-option>
@@ -64,14 +64,14 @@
                   </div>
                 </div>
               </el-form-item>
-              <el-form-item label="状态选择" v-show="binCopyActiveName === 'status'">
-                <el-select v-model="modelBindCopy.status" placeholder="商品状态选择" style="width:257px;" >
+              <el-form-item label="状态选择" v-show="binCopyActiveName === 'status'" >
+                <el-select v-model="modelBindCopy.status" placeholder="商品状态选择" style="width:257px;margin-right:30px">
                   <el-option label="全部商品" :value="0"></el-option>
                   <el-option label="在售中商品" :value="1"></el-option>
                   <el-option label="仓库中商品" :value="2"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item class="form-textarea" label="商品ID" v-show="binCopyActiveName === 'id'"  prop="goods_ids" >
+              <el-form-item class="form-textarea" label="商品ID" v-show="binCopyActiveName === 'id'"  prop="goods_ids">
                 <el-input
                   :value="modelBindCopy.goods_ids"
                   @input="formatGoods_ids($event)"
@@ -80,14 +80,14 @@
                   resize="none"
                   size="small"
                   :placeholder="placeholder"
-                  style="width: 357px;"/>
+                  style="width: 357px;margin-right:30px"/>
               </el-form-item>
-              <!-- <el-form-item label="是否过滤已复制商品" >
+              <el-form-item label="是否过滤已复制商品" >
                 <el-select v-model="modelBindCopy.filter_copied_product" placeholder="商品状态选择" style="width:263px;" >
                   <el-option label="过滤" :value="1"></el-option>
                   <el-option label="不过滤" :value="0"></el-option>
                 </el-select>
-              </el-form-item> -->
+              </el-form-item>
             </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -167,8 +167,8 @@ export default {
       props: { multiple: true, expandTrigger: 'hover' },
       modelBindCopy: {
         status: 0,
-        goods_ids: ''
-        // filter_copied_product: 0
+        goods_ids: '',
+        filter_copied_product: 0
       },
       userBindList: [],
       target_user_id: '',
@@ -447,14 +447,18 @@ export default {
               ...status,
               capture_type: 2,
               target_user_id: targetUserId,
-              goods_id_list: JSON.stringify(goodsIdsSet)
+              goods_id_list: JSON.stringify(goodsIdsSet),
+              filter_copied_product: this.modelBindCopy.filter_copied_product
             }
             this.capture(parmas, false)
           }
         } else {
           // 直接复制
           const parmas = {
-            ...status, target_user_id: targetUserId, capture_type: 2
+            ...status,
+            target_user_id: targetUserId,
+            capture_type: 2,
+            filter_copied_product: this.modelBindCopy.filter_copied_product
           }
           this.capture(parmas, false)
         }

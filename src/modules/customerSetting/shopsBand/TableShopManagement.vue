@@ -18,8 +18,8 @@
         width="250">
         <template slot-scope="scope" >
           <span class="shop_name">{{scope.row.shop_name}}</span>
-          <span :class="['tag', scope.row.is_main ? 'main-shop ':'child-shop']">{{scope.row.is_main ?'主店铺':'子店铺'}}</span>
-          <span class="current-shop tag" v-if="scope.row.is_self ">当前店铺</span>
+          <span :class="['tag','ml-5', scope.row.is_main ? 'main-shop ':'child-shop']">{{scope.row.is_main ?'主店铺':'子店铺'}}</span>
+          <span class="current-shop tag ml-5" v-if="scope.row.is_self ">当前店铺</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -29,10 +29,10 @@
         <span slot-scope="scope" :class="['expire', 'un_login'].includes(scope.row.auth_status) ? 'expire':'auth'">
           <span v-if="scope.row.auth_status === 'auth'">授权中</span>
           <span v-if="scope.row.auth_status === 'un_login'">登录过期
-            <el-link
+            <span
             style="display:inline;font-size:12px;margin-left:5px"
             :underline="false"
-            >请用该店铺账号登录虎虎</el-link>
+            >请用该店铺账号登录虎虎</span>
           </span>
           <span v-if="scope.row.auth_status === 'expire'">订购过期
             <el-link
