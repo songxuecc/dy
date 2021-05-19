@@ -209,7 +209,7 @@ const router = new Router({
       component: () => import(
         /* webpackChunkName: `BatchEdit` */
         /* webpackMode: "lazy" */
-        '@productsManagement/batchEdit/BatchEdit'),
+        '@productsManagement/batchEdit'),
       meta: {
         keepAlive: true,
         requiresAuth: true
