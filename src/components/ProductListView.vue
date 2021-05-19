@@ -190,8 +190,8 @@
                       <span style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-else-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="top">
                           <div slot="content">
                             <hh-icon type="iconjinggao1"></hh-icon>
-                            <span v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i" class="font-13">{{v}}<br/></span>
-                            <span v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;" class="font-13">如需帮助请 <a href="/service" style="color: #409EFF;">联系客服</a>。</span>
+                            <span v-if="scope.row.migration_msg.length !== 0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i" class="font-13">{{v}}</span>
+                            <span v-if="scope.row.migration_msg.length === 1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;" class="font-13">如需帮助请 <a href="/service" style="color: #409EFF;">联系客服</a>。</span>
                           </div>
                       </span>
 
