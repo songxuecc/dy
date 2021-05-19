@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 
 import Title from '@productsManagement/batchEdit/components/Title'
 import Shelves from '@productsManagement/batchEdit/components/Shelves'
@@ -138,12 +139,14 @@ export default {
   mounted () {},
   updated () {},
   methods: {
+    ...mapActions('productManagement/batchEdit', ['fetchProductList']),
     // 事件名称
     toggleEditType (index) {
       this.editType = index
     },
     toggleVisible (index) {
       this.visible = true
+      this.fetchProductList()
     }
   }
 }

@@ -13,6 +13,7 @@
             row-key="id"
             :expand-row-keys="expands"
             @expand-change="expandChange"
+            v-loading="loading"
             style="width: 100%">
             <el-table-column type="expand">
             <template slot-scope="props">
@@ -56,9 +57,13 @@
             </el-table-column>
         </el-table>
         <el-pagination
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="1000">
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          @current-change="handleCurrentChange"
+          :current-page="productListPagination.page_index"
+          :page-size="productListPagination.page_size"
+          @size-change="handleSizeChange"
+          :total="productListTotal">
         </el-pagination>
 
         <div>
@@ -69,6 +74,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'component_name',
   props: {
@@ -112,7 +118,19 @@ export default {
       }]
     }
   },
+  computed: {
+    ...mapState({
+      loading: state => state['@@loading'].effects['productManagement/batchEdit/productListFetch']
+    }),
+    ...mapState('productManagement/batchEdit', [
+      'productListPagination',
+      'productListSizes',
+      'productListTableData',
+      'productListTotal'
+    ])
+  },
   methods: {
+    ...mapActions('productManagement/batchEdit', ['fetchProductList']),
     toggleVisible (index) {
       this.$emit('update:visible', false)
     },
@@ -125,6 +143,21 @@ export default {
       console.log(row, expandedRows, expanded)
 
       this.expands = expandedRows.map(item => item.id)
+    },
+    handleCurrentChange (pageIndex) {
+      this.fetchProductList({
+        pagination: {
+          page_index: pageIndex
+        }
+      })
+    },
+    handleSizeChange (pageSize) {
+      console.log(pageSize)
+      this.fetchProductList({
+        pagination: {
+          page_size: pageSize
+        }
+      })
     }
   }
 }
