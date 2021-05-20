@@ -42,7 +42,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="源sku售价" width="80" align="center">
+            <el-table-column label="源sku售价" width="100" align="center">
                 <template slot-scope="scope">
                     <span>{{ scope.row.price_range}}</span>
                 </template>
@@ -204,7 +204,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="" :width="160" align="center">
+            <el-table-column prop="" :width="140" align="center">
                <template slot="header" slot-scope="scope">
                    <el-dropdown trigger="click" @command="handleCommandSort">
                       <span class="font-12">
