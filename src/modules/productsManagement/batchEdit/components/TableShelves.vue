@@ -5,9 +5,10 @@
         :with-header="false"
         direction="rtl"
         @closed="toggleVisible"
+        custom-class="pl-10 pt-10"
         size="80%">
         <el-table
-            :data="tableData"
+            :data="productListTableData"
             class="mt-10"
             ref="table"
             row-key="id"
@@ -15,24 +16,61 @@
             @expand-change="expandChange"
             style="width: 100%">
             <el-table-column
-            label="商品信息"
-            prop="id">
+                label="商品信息"
+                prop="id">
+            <template slot-scope="scope">
+              <div  class="flex">
+                  <el-image
+                    style="height:50px;max-width:50px"
+                    :src="scope.row.image_url"
+                    fit="contain"
+                    class="mr-10"
+                    :preview-src-list="[scope.row.image_url]"
+                    lazy>
+                    <div slot="placeholder">
+                        <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
+                    </div>
+                    <div slot="error" class="flex align-c" style="height:100%">
+                        <hh-icon  type="icontupianjiazaishibai03" style="font-size:30px" />
+                    </div>
+                </el-image>
+
+                <div>
+                    <el-link :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
+                    {{ scope.row.goods_name }}
+                    </el-link><br>
+                    <div class="font-12 flex align-c color-999 mt-5">
+                        <span >{{ scope.row.goods_id }}</span>
+                        <span class="ml-10 mr-10 presell_type jieti" v-if="scope.row.presell_type === 2">阶梯发货</span>
+                        <span class="ml-10 mr-10 presell_type xianhuo" v-if="scope.row.presell_type === 0">现货发货</span>
+                        <span class="ml-10 mr-10 presell_type yushou" v-if="scope.row.presell_type === 1">预售发货</span>
+                    </div>
+                </div>
+              </div>
+
+            </template>
             </el-table-column>
             <el-table-column
-            label="修改前"
-            prop="name">
+                align="center"
+                label="修改前"
+                prop="isOnSalePrevious">
             </el-table-column>
             <el-table-column
-            label="修改后"
-            prop="desc">
+                align="center"
+                label="修改后"
+                prop="isOnSaleCurrent">
             </el-table-column>
         </el-table>
-        <el-pagination
+         <el-pagination
           background
           layout="total, sizes, prev, pager, next, jumper"
-          :total="1000">
-          </el-pagination>
-        <div>
+          @current-change="handleCurrentChange"
+          :current-page="productListPagination.page_index"
+          :page-size="productListPagination.page_size"
+          @size-change="handleSizeChange"
+          :total="productListTotal">
+        </el-pagination>
+        <div class="flex justify-c align-c">
             <el-button type="primary" plain style="width:120px" @click="toggleVisible">暂不修改</el-button>
             <el-button type="primary" style="width:120px"  @click="toggleVisible">开始批量修改</el-button>
         </div>
@@ -40,6 +78,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'component_name',
   props: {
@@ -47,41 +87,16 @@ export default {
   },
   data () {
     return {
-      expands: ['12987122'],
-      tableData: [{
-        id: '12987122',
-        name: '好滋好味鸡蛋仔',
-        category: '江浙小吃、小吃零食',
-        desc: '荷兰优质淡奶，奶香浓而不腻',
-        address: '上海市普陀区真北路',
-        shop: '王小虎夫妻店',
-        shopId: '10333'
-      }, {
-        id: '12987123',
-        name: '好滋好味鸡蛋仔',
-        category: '江浙小吃、小吃零食',
-        desc: '荷兰优质淡奶，奶香浓而不腻',
-        address: '上海市普陀区真北路',
-        shop: '王小虎夫妻店',
-        shopId: '10333'
-      }, {
-        id: '12987125',
-        name: '好滋好味鸡蛋仔',
-        category: '江浙小吃、小吃零食',
-        desc: '荷兰优质淡奶，奶香浓而不腻',
-        address: '上海市普陀区真北路',
-        shop: '王小虎夫妻店',
-        shopId: '10333'
-      }, {
-        id: '12987126',
-        name: '好滋好味鸡蛋仔',
-        category: '江浙小吃、小吃零食',
-        desc: '荷兰优质淡奶，奶香浓而不腻',
-        address: '上海市普陀区真北路',
-        shop: '王小虎夫妻店',
-        shopId: '10333'
-      }]
+      expands: ['12987122']
     }
+  },
+  computed: {
+    ...mapState('productManagement/batchEdit', [
+      'productListPagination',
+      'productListSizes',
+      'productListTableData',
+      'productListTotal'
+    ])
   },
   methods: {
     toggleVisible (index) {
@@ -94,11 +109,32 @@ export default {
     },
     expandChange (row, expandedRows, expanded) {
       console.log(row, expandedRows, expanded)
-
       this.expands = expandedRows.map(item => item.id)
     }
   }
 }
 </script>
 <style lang="less" scoped>
+    .presell_type {
+        width: 58px;
+        height: 18px;
+        display: inline-block;
+        color:#fff;
+        text-align: center;
+        font-size: 12px;
+        font-family: MicrosoftYaHei;
+        border-radius: 8px 0px 8px 0px;
+    }
+
+  .jieti {
+    background: linear-gradient(205deg, #F2D1C2 0%, #DC9E85 100%);
+  }
+
+  .xianhuo {
+    background: linear-gradient(180deg, #757BC4 0%, #ADB7ED 100%);
+  }
+  .yushou {
+    background: linear-gradient(180deg, #F9D6AF 0%, #D9A779 100%);
+    border-radius: 8px 0px 8px 0px;
+  }
 </style>

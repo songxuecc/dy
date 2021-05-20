@@ -435,12 +435,12 @@ export default {
               this.$refs.ModalBindCopyIdSearch.visible = true
               return false
             } else {
+              // 所有id都不能用
               return this.$message({
                 message: '您输入的所有商品id都不能存在，请仔细核对重新输入～',
                 type: 'error'
               })
             }
-          // 所有id都不能用
           // 有id可以用
           } else if (idsCheck && !idsCheck.lost_goods_id_list.length) {
             const parmas = {

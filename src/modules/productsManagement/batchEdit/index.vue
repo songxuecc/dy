@@ -2,92 +2,99 @@
 <template>
     <div class="batchEdit">
         <div class="content left">
-        <title class="flex">
-            <div v-for="(icon,index) in iconList" :key="index" :class="[index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer']" @click="toggleEditType(index)">
-            <hh-icon :type="index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
-            <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
-            <!-- <span class="click" style="margin-top:104px">查看修改记录</span> -->
-        </title>
+            <title class="flex">
+                <div v-for="(icon,index) in iconList" :key="index" :class="[index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer']" @click="toggleEditType(index)">
+                <hh-icon :type="index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
+                <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
+                <!-- <span class="click" style="margin-top:104px">查看修改记录</span> -->
+            </title>
 
-        <div style="height:120px">
-            <h1>修改范围</h1>
-            <el-radio-group v-model="modifyMethods" class="mb-20">
-                <el-radio-button label="area">按范围</el-radio-button>
-                <el-radio-button label="product">按商品</el-radio-button>
-                <el-radio-button label="id">按ID</el-radio-button>
-            </el-radio-group>
-              <el-form
-                  :model="rangeForm"
-                  ref="rangeForm"
-                  label-width="60px"
-                  class="demo-ruleForm"
-                  inline
-                  size="medium"
-                  v-show="modifyMethods === 'area'"
-                  label-position="left"
-              >
-                <el-form-item label="商品状态" prop="region">
-                <el-select v-model="rangeForm.status" placeholder="请选择活动区域"  class="w-200 mr-20">
-                    <el-option
-                      class="left dropdown"
-                      v-for="item in statusOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"> </el-option>
-                </el-select>
-                </el-form-item>
-                <el-form-item label="发货模式" prop="region">
-                <el-select v-model="rangeForm.presell_type" placeholder="请选择活动区域"  class="w-200 mr-20">
-                    <el-option
-                      class="left dropdown"
-                      v-for="item in presellTypeOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"> </el-option>
-                </el-select>
-                </el-form-item>
-                <el-form-item label="是否抓取" prop="region">
-                <el-select v-model="rangeForm.captureStatus" placeholder="请选择活动区域"  class="w-200 mr-20">
-                    <el-option
-                      class="left dropdown"
-                      v-for="item in captureStatusOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"> </el-option>
-                </el-select>
-                </el-form-item>
-            </el-form>
-            <div v-show="modifyMethods === 'product'">
-            <el-button type="primary " class="w-120">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">0</span> 个商品</span>
+            <div style="height:120px">
+                <h1>修改范围</h1>
+                <el-radio-group v-model="modifyMethods" class="mb-20">
+                    <el-radio-button label="area">按范围</el-radio-button>
+                    <el-radio-button label="product">按商品</el-radio-button>
+                    <el-radio-button label="id">按ID</el-radio-button>
+                </el-radio-group>
+                <el-form
+                    :model="rangeForm"
+                    ref="rangeForm"
+                    label-width="60px"
+                    class="demo-ruleForm"
+                    inline
+                    size="medium"
+                    v-show="modifyMethods === 'area'"
+                    label-position="left"
+                >
+                    <el-form-item label="商品状态" prop="region">
+                    <el-select v-model="rangeForm.status" placeholder="请选择活动区域"  class="w-200 mr-20">
+                        <el-option
+                        class="left dropdown"
+                        v-for="item in statusOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"> </el-option>
+                    </el-select>
+                    </el-form-item>
+                    <el-form-item label="发货模式" prop="region">
+                    <el-select v-model="rangeForm.presell_type" placeholder="请选择活动区域"  class="w-200 mr-20">
+                        <el-option
+                        class="left dropdown"
+                        v-for="item in presellTypeOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"> </el-option>
+                    </el-select>
+                    </el-form-item>
+                    <el-form-item label="是否抓取" prop="region">
+                    <el-select v-model="rangeForm.captureStatus" placeholder="请选择活动区域"  class="w-200 mr-20">
+                        <el-option
+                        class="left dropdown"
+                        v-for="item in captureStatusOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"> </el-option>
+                    </el-select>
+                    </el-form-item>
+                </el-form>
+                <div v-show="modifyMethods === 'product'">
+                <el-button type="primary " class="w-120">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">0</span> 个商品</span>
+                </div>
+                <div class="flex align-c" v-show="modifyMethods === 'id'">
+                <span class="color-4e yaHei font-12 mr-10">输入商品ID</span>
+                <el-input
+                    type="textarea"
+                    autosize
+                    placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
+                    v-model="goods_ids"
+                    style="flex:1">
+                </el-input>
+                <span class="click ml-10">确认</span>
+                </div>
             </div>
-            <div class="flex align-c" v-show="modifyMethods === 'id'">
-            <span class="color-4e yaHei font-12 mr-10">输入商品ID</span>
-            <el-input
-                type="textarea"
-                autosize
-                placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
-                v-model="goods_ids"
-                style="flex:1">
-            </el-input>
-            <span class="click ml-10">确认</span>
-            </div>
+
+            <h1 class="mt-30">修改内容</h1>
+            <Shelves ref="Shelves" v-if="editType === 0"/>
+            <TableShelves ref="TableShelves" :visible.sync="visible" v-if="editType === 0"/>
+            <Title ref="Title" v-if="editType === 1"/>
+            <Stocks ref="Stocks" v-if="editType === 2"/>
+            <Price ref="Price" v-if="editType === 3"/>
+            <TablePrice ref="TablePrice" :visible.sync="visible" v-if="editType === 3"/>
+            <DeliverMode ref="DeliverMode" v-if="editType === 4"/>
+        </div>
+        <div class="flex justify-c mt-20">
+            <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
         </div>
 
-        <h1 class="mt-30">修改内容</h1>
-        <Shelves v-if="editType === 0"/>
-        <Title v-if="editType === 1"/>
-        <Stocks v-if="editType === 2"/>
-        <Price v-if="editType === 3"/>
-        <DeliverMode v-if="editType === 4"/>
-        </div>
-        <div class="flex justify-c mt-20"><el-button type="primary" class="w-120" @click="preview">效果修改预览</el-button></div>
-
-        <TablePrice :visible.sync="visible" />
+        <ModalIdSearch
+          :ids="lostGoodsIds"
+          ref="ModalIdSearch"
+          @continueIdProductList="continueIdProductList"/>
     </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions } from 'vuex'
 import common from '@/common/common.js'
 import Api from '@/api/apis'
 
@@ -97,6 +104,8 @@ import DeliverMode from '@productsManagement/batchEdit/components/DeliverMode'
 import Stocks from '@productsManagement/batchEdit/components/Stocks'
 import Price from '@productsManagement/batchEdit/components/Price'
 import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
+import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
+import ModalIdSearch from '@productsManagement/batchEdit/components/ModalIdSearch'
 
 export default {
   components: {
@@ -105,12 +114,16 @@ export default {
     DeliverMode,
     Stocks,
     Price,
-    TablePrice
+    TablePrice,
+    TableShelves,
+    lostGoodsIds: undefined,
+    ModalIdSearch
   },
   data () {
     return {
       editType: 0,
       modifyMethods: 'area',
+      loading: false,
       rangeForm: {
         status: '-',
         presell_type: -1,
@@ -184,6 +197,15 @@ export default {
     toggleEditType (index) {
       this.editType = index
     },
+    getEditData () {
+      const editType = this.editType
+      const isOnSale = this.$refs.Shelves.isOnSale
+
+      return {
+        editType,
+        isOnSale
+      }
+    },
     preview (index) {
       // this.visible = true
       if (this.modifyMethods === 'area') {
@@ -192,7 +214,8 @@ export default {
         this.idProductList()
       }
     },
-    areaProductList () {
+    async areaProductList () {
+      this.loading = true
       const statusArray = this.rangeForm.status.split('-')
       let status = -1
       let checkStatus = -1
@@ -207,11 +230,15 @@ export default {
         capture_status: this.rangeForm.captureStatus,
         presell_type: this.rangeForm.presell_type
       }
-      this.fetchProductList({
-        filters
+      await this.fetchProductList({
+        filters,
+        editData: this.getEditData()
       })
+      this.loading = false
+      this.visible = true
     },
     async idProductList () {
+      this.loading = true
       const goodsIds = this.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
       const goodsIdsSet = [...new Set(goodsIds)]
       const limit = 100
@@ -220,28 +247,53 @@ export default {
       } else if (goodsIdsSet.length > limit) {
         this.$message.error(`搜索id不可以超过${limit}条！`)
       }
-      this.productListCheckLoading = true
       const idsCheck = await Api.hhgjAPIs.productListCheck({
         goods_id_list: JSON.stringify(goodsIdsSet)
-        // target_user_id: targetUserId
       })
-      this.productListCheckLoading = false
+      this.loading = false
       // 查询有违规id
       if (idsCheck && idsCheck.lost_goods_id_list.length) {
-
-      } else if (idsCheck && !idsCheck.lost_goods_id_list.length) {
-
+        const lostGoodsIds = idsCheck.lost_goods_id_list
+        this.lostGoodsIds = lostGoodsIds
+        const lostGoodsIdsSet = new Set(lostGoodsIds)
+        const unionSets = goodsIdsSet.filter(item => !lostGoodsIdsSet.has(item))
+        if (unionSets.length) {
+          // 部分id可以用 弹出弹窗
+          this.$refs.ModalIdSearch.visible = true
+          return false
+        } else {
+          // 所有id都不能用
+          return this.$message({
+            message: '您输入的所有商品id都不能存在，请仔细核对重新输入～',
+            type: 'error'
+          })
+        }
+      // 所有id都能用
       } else {
-
+        await this.fetchProductList({
+          filters: {
+            goods_ids: goodsIdsSet.length ? goodsIdsSet : ''
+          },
+          editData: this.getEditData()
+        })
+        this.visible = true
       }
-      // let filters = {
-      //   goods_ids: setGoodsIds.length ? setGoodsIds : ''
-      // }
-      // this.fetchProductList({
-      //   filters
-      // })
+    },
+    async continueIdProductList () {
+      const lostGoodsIdsSet = new Set(this.lostGoodsIds)
+      const goodsIds = this.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const goodsIdsSet = [...new Set(goodsIds)]
+      const unionSets = goodsIdsSet.filter(item => !lostGoodsIdsSet.has(item))
+      await this.fetchProductList({
+        filters: {
+          goods_ids: unionSets.length ? unionSets : ''
+        },
+        editData: this.getEditData()
+      })
+      this.visible = true
     }
   }
+
 }
 </script>
 
