@@ -16,32 +16,44 @@
                 <el-radio-button label="product">按商品</el-radio-button>
                 <el-radio-button label="id">按ID</el-radio-button>
             </el-radio-group>
-            <el-form
-                :model="ruleForm"
-                ref="ruleForm"
-                label-width="60px"
-                class="demo-ruleForm"
-                inline
-                size="medium"
-                v-show="modifyMethods === 'area'"
-                label-position="left"
-            >
+              <el-form
+                  :model="rangeForm"
+                  ref="rangeForm"
+                  label-width="60px"
+                  class="demo-ruleForm"
+                  inline
+                  size="medium"
+                  v-show="modifyMethods === 'area'"
+                  label-position="left"
+              >
                 <el-form-item label="商品状态" prop="region">
-                <el-select v-model="ruleForm.region" placeholder="请选择活动区域"  class="w-200 mr-20">
-                    <el-option label="区域一" value="shanghai"></el-option>
-                    <el-option label="区域二" value="beijing"></el-option>
+                <el-select v-model="rangeForm.status" placeholder="请选择活动区域"  class="w-200 mr-20">
+                    <el-option
+                      class="left dropdown"
+                      v-for="item in statusOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"> </el-option>
                 </el-select>
                 </el-form-item>
                 <el-form-item label="发货模式" prop="region">
-                <el-select v-model="ruleForm.region" placeholder="请选择活动区域"  class="w-200 mr-20">
-                    <el-option label="区域一" value="shanghai"></el-option>
-                    <el-option label="区域二" value="beijing"></el-option>
+                <el-select v-model="rangeForm.presell_type" placeholder="请选择活动区域"  class="w-200 mr-20">
+                    <el-option
+                      class="left dropdown"
+                      v-for="item in presellTypeOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"> </el-option>
                 </el-select>
                 </el-form-item>
                 <el-form-item label="是否抓取" prop="region">
-                <el-select v-model="ruleForm.region" placeholder="请选择活动区域"  class="w-200 mr-20">
-                    <el-option label="是" value="shanghai"></el-option>
-                    <el-option label="否" value="beijing"></el-option>
+                <el-select v-model="rangeForm.captureStatus" placeholder="请选择活动区域"  class="w-200 mr-20">
+                    <el-option
+                      class="left dropdown"
+                      v-for="item in captureStatusOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"> </el-option>
                 </el-select>
                 </el-form-item>
             </el-form>
@@ -54,7 +66,7 @@
                 type="textarea"
                 autosize
                 placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
-                v-model="textarea1"
+                v-model="goods_ids"
                 style="flex:1">
             </el-input>
             <span class="click ml-10">确认</span>
@@ -68,7 +80,7 @@
         <Price v-if="editType === 3"/>
         <DeliverMode v-if="editType === 4"/>
         </div>
-        <div class="flex justify-c mt-20"><el-button type="primary" class="w-120" @click="toggleVisible">效果修改预览</el-button></div>
+        <div class="flex justify-c mt-20"><el-button type="primary" class="w-120" @click="preview">效果修改预览</el-button></div>
 
         <TablePrice :visible.sync="visible" />
     </div>
@@ -76,6 +88,8 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import common from '@/common/common.js'
+import Api from '@/api/apis'
 
 import Title from '@productsManagement/batchEdit/components/Title'
 import Shelves from '@productsManagement/batchEdit/components/Shelves'
@@ -97,8 +111,24 @@ export default {
     return {
       editType: 0,
       modifyMethods: 'area',
-      ruleForm: {},
+      rangeForm: {
+        status: '-',
+        presell_type: -1,
+        captureStatus: -1
+      },
+      goods_ids: '',
       visible: false,
+      captureStatusOptions: [
+        {value: -1, label: '全部'},
+        {value: 0, label: '非抓取'},
+        {value: 1, label: '抓取'}
+      ],
+      presellTypeOptions: [
+        {value: -1, label: '全部发货模式'},
+        {value: 0, label: '现货发货'},
+        {value: 1, label: '预售发货'},
+        {value: 2, label: '阶梯发货'}
+      ],
       iconList: [
         {
           primary: 'iconshangxiajiaxuanzhong',
@@ -133,7 +163,17 @@ export default {
       ]
     }
   },
-  computed: {},
+  computed: {
+    statusOptions () {
+      const options = []
+      Object.entries(common.dyProductStatusMap).forEach(([value, label]) => {
+        if (!['草稿箱', '封禁中'].includes(label)) {
+          options.push({ value, label })
+        }
+      })
+      return options
+    }
+  },
   watch: {},
   created () {},
   mounted () {},
@@ -144,9 +184,62 @@ export default {
     toggleEditType (index) {
       this.editType = index
     },
-    toggleVisible (index) {
-      this.visible = true
-      this.fetchProductList()
+    preview (index) {
+      // this.visible = true
+      if (this.modifyMethods === 'area') {
+        this.areaProductList()
+      } else if (this.modifyMethods === 'id') {
+        this.idProductList()
+      }
+    },
+    areaProductList () {
+      const statusArray = this.rangeForm.status.split('-')
+      let status = -1
+      let checkStatus = -1
+      if (statusArray.length > 1 && statusArray[0]) {
+        status = parseInt(statusArray[0])
+        checkStatus = parseInt(statusArray[1])
+      }
+
+      let filters = {
+        status: status,
+        check_status: checkStatus,
+        capture_status: this.rangeForm.captureStatus,
+        presell_type: this.rangeForm.presell_type
+      }
+      this.fetchProductList({
+        filters
+      })
+    },
+    async idProductList () {
+      const goodsIds = this.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const goodsIdsSet = [...new Set(goodsIds)]
+      const limit = 100
+      if (!goodsIdsSet.length) {
+        this.$message.error(`请输入商品id`)
+      } else if (goodsIdsSet.length > limit) {
+        this.$message.error(`搜索id不可以超过${limit}条！`)
+      }
+      this.productListCheckLoading = true
+      const idsCheck = await Api.hhgjAPIs.productListCheck({
+        goods_id_list: JSON.stringify(goodsIdsSet)
+        // target_user_id: targetUserId
+      })
+      this.productListCheckLoading = false
+      // 查询有违规id
+      if (idsCheck && idsCheck.lost_goods_id_list.length) {
+
+      } else if (idsCheck && !idsCheck.lost_goods_id_list.length) {
+
+      } else {
+
+      }
+      // let filters = {
+      //   goods_ids: setGoodsIds.length ? setGoodsIds : ''
+      // }
+      // this.fetchProductList({
+      //   filters
+      // })
     }
   }
 }
@@ -155,4 +248,9 @@ export default {
 <style lang='less' scoped>
 //@import url(); 引入公共css类
 @import '~./index.less';
+.dropdown {
+  height: 32px;
+  line-height: 32px;
+  font-size: 12px;
+}
 </style>

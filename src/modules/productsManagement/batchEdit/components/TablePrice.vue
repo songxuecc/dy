@@ -65,7 +65,6 @@
           @size-change="handleSizeChange"
           :total="productListTotal">
         </el-pagination>
-
         <div>
             <el-button type="primary" plain style="width:120px" @click="toggleVisible">暂不修改</el-button>
             <el-button type="primary" style="width:120px"  @click="toggleVisible">开始批量修改</el-button>
