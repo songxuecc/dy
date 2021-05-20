@@ -42,7 +42,12 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="类目" width="120" align="center">
+            <el-table-column label="源sku售价" width="80" align="center">
+                <template slot-scope="scope">
+                    <span>{{ scope.row.price_range}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="类目" width="100" align="center">
                 <template slot-scope="scope">
                     <span> {{ getLastCategory(scope.row.category_show) }} </span>
                 </template>
@@ -218,7 +223,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="" label="操作" :width="isSyncSource ? 110 : 110" align="center" v-if="hasShowOperate ? showOperate : true" class-name="cell-class">
+            <el-table-column prop="" label="操作" :width="isSyncSource ? 90 : 90" align="center" v-if="hasShowOperate ? showOperate : true" class-name="cell-class">
                 <template slot-scope="scope">
                     <div v-if="[0,1].includes(scope.row.capture_status)" class="font-13"></div>
                     <div v-else-if="isSyncSource"  class="font-13" style="line-height:20px">
