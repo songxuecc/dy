@@ -16,10 +16,13 @@
                 </el-popover>
             </p>
             <p class="color-333 font-12 bold mb-10" >当前试用版还剩{{userVersion.left_days}}天，升级费用共计{{userVersion.left_days}}*{{userVersion.unit_price / 100 || 0.3}}={{userVersion.free_upgrate_amount / 100 || 0}}元</p>
-
-            <p class="mb-20 color-333 font-12 bold">价格：<span class="price font-24 bold" >{{userVersion.free_upgrate_amount / 100 || 0}}</span><span class="price">元</span><span class="tutorials">支持开发票</span></p>
+            <p class="mb-20 color-333 font-12 bold">价格：
+              <span class="price font-24 bold" >{{userVersion.free_upgrate_amount / 100 || 0}}</span>
+              <span class="price">元</span>
+              <span v-if="getToolTip" class="tooltiptext">{{ getToolTip }}</span>
+              <span class="tutorials">支持开发票</span>
+            </p>
             <el-button type="primary" class="mb-10" style="width:120px" @click="onVipUp" :loading="loading" :diabled="loading">立即升级版本</el-button>  <span @click="reload" class="primary pointer"><hh-icon type="iconjiazai" style="font-size:12px;" class="ml-5"/> <a >已升级，刷新一下</a></span>
-            <div class="info">注：版本升级不会增加拼多多抓取额度</div>
         </div>
         <div class="isVip flex column align-c jutify-c" v-if="userVersion && userVersion.is_free_upgrate">
             <img src="@/assets/images/vip-tip.png" alt="" class="mb-20 ">
@@ -54,7 +57,16 @@ export default {
     ...mapState({
       loadingVersion: state => state['@@loading'].effects['customerSetting/paidRecharge/userVersionQuery']
     }),
-    ...mapState('customerSetting/paidRecharge', ['userVersion'])
+    ...mapState('customerSetting/paidRecharge', ['userVersion']),
+    getToolTip () {
+      let freeUpgradeAmount = this.userVersion.free_upgrate_amount
+      if (freeUpgradeAmount > 1000 && freeUpgradeAmount <= 1500) {
+        return '赠送拼多多抓取额度100条'
+      } else if (freeUpgradeAmount > 1500) {
+        return '赠送拼多多抓取额度150条'
+      }
+      return false
+    }
   },
   methods: {
     ...mapActions('customerSetting/paidRecharge', ['userVersionQuery']),
@@ -118,7 +130,7 @@ export default {
     }
 }
  .tutorials{
-      background-image: linear-gradient(164deg, #FF9527 0%, #EB2202 100%);
+      background-image: linear-gradient(164deg, #F7D1A4 0%, #BB8345 100%);
       border-radius: 8px 0 8px 0;
       font-size: 10px;
       color: #FFFFFF;
@@ -131,5 +143,24 @@ export default {
       margin-left: 5px;
       font-weight: normal;
     }
-
+  .tooltiptext {
+      position: relative;
+      width: 160px;
+      background-color: #303133;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      margin-left: 10px;
+  }
+  .tooltiptext::after {
+    content: "";
+    border-top: solid 5px #00800000;
+    border-left: solid 10px #00800000;
+    border-right: solid 5px #303133;
+    border-bottom: solid 5px #00800000;
+    position: absolute;
+    left: -15px;
+    top: 6px;
+  }
 </style>
