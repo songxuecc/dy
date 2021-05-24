@@ -20,21 +20,21 @@
                 prop="id">
             <template slot-scope="scope">
               <div  class="flex">
+                <!-- {{scope.row.image_url}} -->
                   <el-image
-                    style="height:50px;max-width:50px"
-                    :src="scope.row.image_url"
-                    fit="contain"
-                    class="mr-10"
-                    :preview-src-list="[scope.row.image_url]"
-                    lazy>
-                    <div slot="placeholder">
-                        <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
-                    </div>
-                    <div slot="error" class="flex align-c" style="height:100%">
-                        <hh-icon  type="icontupianjiazaishibai03" style="font-size:30px" />
-                    </div>
-                </el-image>
-
+                      style="height:50px;max-width:50px"
+                      :src="scope.row.image_url"
+                      fit="contain"
+                      class="mr-10"
+                      :preview-src-list="[scope.row.image_url]"
+                      lazy>
+                      <div slot="placeholder">
+                          <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
+                      </div>
+                      <div slot="error" class="flex align-c" style="height:100%">
+                          <hh-icon  type="icontupianjiazaishibai03" style="font-size:30px" />
+                      </div>
+                  </el-image>
                 <div>
                     <el-link :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
                     {{ scope.row.goods_name }}
@@ -47,7 +47,6 @@
                     </div>
                 </div>
               </div>
-
             </template>
             </el-table-column>
             <el-table-column
@@ -72,16 +71,16 @@
         </el-pagination>
         <div class="flex justify-c align-c">
             <el-button type="primary" plain style="width:120px" @click="toggleVisible">暂不修改</el-button>
-            <el-button type="primary" style="width:120px"  @click="toggleVisible">开始批量修改</el-button>
+            <el-button type="primary" style="width:120px"  @click="edit">开始批量修改</el-button>
         </div>
     </el-drawer>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
-  name: 'component_name',
+  name: 'TableShelves',
   props: {
     visible: Boolean
   },
@@ -99,7 +98,23 @@ export default {
     ])
   },
   methods: {
-    toggleVisible (index) {
+    ...mapActions('productManagement/batchEdit', ['updateProduct']),
+    edit () {
+      console.log(this.productListTableData, 'this.productListTableData')
+      const goods = this.productListTableData.map(item => {
+        return JSON.stringify({
+          is_onsale: item.isOnSale,
+          goods_id: item.goods_id
+        })
+      })
+      this.updateProduct({
+        jobName: '上下架批量修改',
+        goods,
+        type: 1
+      })
+      this.toggleVisible()
+    },
+    toggleVisible () {
       this.$emit('update:visible', false)
     },
     confirm () {

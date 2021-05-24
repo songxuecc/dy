@@ -13,7 +13,7 @@ export default {
   },
   data () {
     return {
-      isOnSale: 1
+      isOnSale: 0
     }
   }
 }

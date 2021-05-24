@@ -9,7 +9,9 @@
                 <!-- <span class="click" style="margin-top:104px">查看修改记录</span> -->
             </title>
 
-            <div style="height:120px">
+            <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
+
+            <div style="height:120px;margin-top: 30px;">
                 <h1>修改范围</h1>
                 <el-radio-group v-model="modifyMethods" class="mb-20">
                     <el-radio-button label="area">按范围</el-radio-button>
@@ -75,7 +77,7 @@
 
             <h1 class="mt-30">修改内容</h1>
             <Shelves ref="Shelves" v-if="editType === 0"/>
-            <TableShelves ref="TableShelves" :visible.sync="visible" v-if="editType === 0"/>
+            <TableShelves ref="TableShelves" :visible.sync="visible" v-if="editType === 0 && visible"/>
             <Title ref="Title" v-if="editType === 1"/>
             <Stocks ref="Stocks" v-if="editType === 2"/>
             <Price ref="Price" v-if="editType === 3"/>
@@ -90,11 +92,12 @@
           :ids="lostGoodsIds"
           ref="ModalIdSearch"
           @continueIdProductList="continueIdProductList"/>
+
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import common from '@/common/common.js'
 import Api from '@/api/apis'
 
@@ -177,6 +180,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('productManagement/batchEdit', ['jobs']),
     statusOptions () {
       const options = []
       Object.entries(common.dyProductStatusMap).forEach(([value, label]) => {
@@ -207,11 +211,12 @@ export default {
       }
     },
     preview (index) {
-      // this.visible = true
       if (this.modifyMethods === 'area') {
         this.areaProductList()
       } else if (this.modifyMethods === 'id') {
         this.idProductList()
+      } else {
+        this.chooseProductList()
       }
     },
     async areaProductList () {
@@ -228,7 +233,8 @@ export default {
         status: status,
         check_status: checkStatus,
         capture_status: this.rangeForm.captureStatus,
-        presell_type: this.rangeForm.presell_type
+        presell_type: this.rangeForm.presell_type,
+        goods_ids: []
       }
       await this.fetchProductList({
         filters,
@@ -291,6 +297,9 @@ export default {
         editData: this.getEditData()
       })
       this.visible = true
+    },
+    chooseProductList () {
+
     }
   }
 
@@ -305,4 +314,17 @@ export default {
   line-height: 32px;
   font-size: 12px;
 }
+</style>
+
+<style>
+  .batch-edit-custom-message {
+    width: 900px;
+  }
+
+  .batch-edit-custom-message-btn {
+    width: 120px;
+    height: 40px;
+    font-size: 14px;
+  }
+
 </style>
