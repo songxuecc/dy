@@ -132,6 +132,8 @@ export default {
       isAllFieldSelected: false,
       exportFieldList: [
         {value: false, field: 'goods_id', label: '商品id'},
+        {value: false, field: 'goods_url', label: '商品链接'},
+        {value: false, field: 'origin_goods_url', label: '来源商品链接'},
         {value: false, field: 'goods_name', label: '商品名'},
         {value: false, field: 'goods_desc', label: '来源数据'},
         {value: false, field: 'goods_quantity', label: '商品库存'},
