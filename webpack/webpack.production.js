@@ -89,6 +89,10 @@ const webpackPro = {
       new OptimizeCssAssetsPlugin({})
     ]
   },
+  performance: {
+    maxEntrypointSize: 5000000,
+    maxAssetSize: 3000000
+  },
   stats: {
     colors: true,
     modules: false,
