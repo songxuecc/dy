@@ -15,6 +15,7 @@
             :expand-row-keys="expands"
             @expand-change="expandChange"
             style="width: 100%">
+            <el-table-empty slot="empty"/>
             <el-table-column
                 label="商品信息"
                 prop="id">

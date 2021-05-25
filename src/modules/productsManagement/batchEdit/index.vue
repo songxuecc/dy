@@ -22,14 +22,13 @@
                     :model="rangeForm"
                     ref="rangeForm"
                     label-width="60px"
-                    class="demo-ruleForm"
                     inline
                     size="medium"
                     v-show="modifyMethods === 'area'"
                     label-position="left"
                 >
                     <el-form-item label="商品状态" prop="region">
-                    <el-select v-model="rangeForm.status" placeholder="请选择活动区域"  class="w-200 mr-20">
+                    <el-select v-model="rangeForm.status" placeholder="请选择商品状态"  class="w-200 mr-20">
                         <el-option
                         class="left dropdown"
                         v-for="item in statusOptions"
@@ -39,7 +38,7 @@
                     </el-select>
                     </el-form-item>
                     <el-form-item label="发货模式" prop="region">
-                    <el-select v-model="rangeForm.presell_type" placeholder="请选择活动区域"  class="w-200 mr-20">
+                    <el-select v-model="rangeForm.presell_type" placeholder="请选择发货模式"  class="w-200 mr-20">
                         <el-option
                         class="left dropdown"
                         v-for="item in presellTypeOptions"
@@ -49,7 +48,7 @@
                     </el-select>
                     </el-form-item>
                     <el-form-item label="是否抓取" prop="region">
-                    <el-select v-model="rangeForm.captureStatus" placeholder="请选择活动区域"  class="w-200 mr-20">
+                    <el-select v-model="rangeForm.captureStatus" placeholder="请选择是否抓取"  class="w-200 mr-20">
                         <el-option
                         class="left dropdown"
                         v-for="item in captureStatusOptions"
@@ -60,7 +59,7 @@
                     </el-form-item>
                 </el-form>
                 <div v-show="modifyMethods === 'product'">
-                <el-button type="primary " class="w-120">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">0</span> 个商品</span>
+                <el-button type="primary " class="w-120" @click="toggleVisibleSelectProduct">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">0</span> 个商品</span>
                 </div>
                 <div class="flex align-c" v-show="modifyMethods === 'id'">
                 <span class="color-4e yaHei font-12 mr-10">输入商品ID</span>
@@ -92,6 +91,7 @@
           :ids="lostGoodsIds"
           ref="ModalIdSearch"
           @continueIdProductList="continueIdProductList"/>
+        <TableSelectProduct :visible.sync="visibleSelectProduct" />
 
     </div>
 </template>
@@ -108,6 +108,7 @@ import Stocks from '@productsManagement/batchEdit/components/Stocks'
 import Price from '@productsManagement/batchEdit/components/Price'
 import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
 import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
+import TableSelectProduct from '@productsManagement/batchEdit/components/TableSelectProduct'
 import ModalIdSearch from '@productsManagement/batchEdit/components/ModalIdSearch'
 
 export default {
@@ -119,14 +120,15 @@ export default {
     Price,
     TablePrice,
     TableShelves,
-    lostGoodsIds: undefined,
-    ModalIdSearch
+    ModalIdSearch,
+    TableSelectProduct
   },
   data () {
     return {
       editType: 0,
       modifyMethods: 'area',
       loading: false,
+      lostGoodsIds: undefined,
       rangeForm: {
         status: '-',
         presell_type: -1,
@@ -176,7 +178,8 @@ export default {
           index: 4,
           text: '发货模式'
         }
-      ]
+      ],
+      visibleSelectProduct: false
     }
   },
   computed: {
@@ -216,6 +219,7 @@ export default {
       } else if (this.modifyMethods === 'id') {
         this.idProductList()
       } else {
+        // 如果没有选择商品 则打开商品选择
         this.chooseProductList()
       }
     },
@@ -298,8 +302,15 @@ export default {
       })
       this.visible = true
     },
-    chooseProductList () {
-
+    async chooseProductList () {
+      this.toggleVisibleSelectProduct()
+      await this.fetchProductList({
+        filters: {},
+        editData: this.getEditData()
+      })
+    },
+    toggleVisibleSelectProduct () {
+      this.visibleSelectProduct = !this.visibleSelectProduct
     }
   }
 
