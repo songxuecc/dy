@@ -62,14 +62,10 @@ import Api from '@/api/apis'
 import {
   mapGetters,
   mapActions,
-  mapState,
-  createNamespacedHelpers
+  mapState
 } from 'vuex'
 import common from '@/common/common.js'
-const {
-  mapState: mapStateSkuImport,
-  mapActions: mapActionsSkuImport
-} = createNamespacedHelpers('productManagement/skuImport')
+
 export default {
   name: 'UploadFile',
   props: {
@@ -101,8 +97,7 @@ export default {
       syncStatus: 'getSyncStatus',
       isAuth: 'getIsAuth'
     }),
-    ...mapState('productManagement/skuImport', ['productSkuExcelFilters']),
-    ...mapStateSkuImport(['tableDataRecord', 'paginationRecord', 'filtersRecord']),
+    ...mapState('productManagement/skuImport', ['productSkuExcelFilters', 'productSkuExcelPagination']),
     isBlackUser () {
       let userId = localStorage.getItem('user_id')
       if (userId === '5009091') {
@@ -112,7 +107,7 @@ export default {
     },
     getFileUploadData () {
       return {
-        file_type: this.filtersRecord.file_type
+        file_type: this.productSkuExcelFilters.file_type
       }
     },
     getFileName () {
@@ -156,7 +151,7 @@ export default {
         console.error(error)
       }
     },
-    ...mapActionsSkuImport(['getProductSkuExcelPage']),
+    ...mapActions('productManagement/skuImport', ['fetchRecord', 'deleteProductSkuExcelPage']),
       // 同步商品
     handleSyncProducts () {
       if (!this.isAuth || this.isSyncing) return false
@@ -213,9 +208,9 @@ export default {
         this.skuExcelImportDialogVisible = true
       }
         //  刷新列表
-      this.getProductSkuExcelPage({
-        filtersRecord: this.filtersRecord,
-        paginationRecord: this.paginationRecord
+      this.fetchRecord({
+        filters: this.productSkuExcelFilters,
+        pagination: this.productSkuExcelPagination
       })
     },
       /**
@@ -255,9 +250,9 @@ export default {
         window._hmt.push(['_trackEvent', '全部商品', '下载', '下载sku编码模板'])
       }
       this.$message.success('下载示例文件成功，请到浏览器下载内容查看')
-      if (this.filtersRecord.file_type === 0) {
+      if (this.productSkuExcelFilters.file_type === 0) {
         window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-title.xlsx'
-      } else if (this.filtersRecord.file_type === 1) {
+      } else if (this.productSkuExcelFilters.file_type === 1) {
         window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-id.xlsx'
       }
     },
