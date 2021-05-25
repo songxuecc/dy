@@ -289,7 +289,6 @@
     </div>
 </template>
 <script>
-import NewComer from '@/components/NewComer.vue'
 
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
@@ -298,8 +297,7 @@ export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditNewView: () => import('@/components/ProductEditNewView.vue'),
-    NewComer
+    productEditNewView: () => import('@/components/ProductEditNewView.vue')
   },
   props: {
     tpProductList: Array,

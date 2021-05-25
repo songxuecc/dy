@@ -360,10 +360,12 @@ const hhgjAPIs = {
   userVersionQuery: (params) => {
     return api.actionCreateGet('/api/user/version/query', params)
   },
-  productListCheck: (params) => {
-    return api.actionCreatorPost('/api/product/list/check', params)
+  userSettingQuery: (params) => {
+    return api.actionCreateGet('/api/user/setting/query', params)
+  },
+  userSettingUpdate: (params) => {
+    return api.actionCreatorPost('/api/user/setting/update', params)
   }
-
 }
 
 export default {

@@ -192,7 +192,6 @@ import productListView from '@/components/ProductListView'
 import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
 import Search from '@migrate/readyToMigrate/components/Search'
 
-import NewComer from '@/components/NewComer.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import { mapActions, mapState } from 'vuex'
@@ -206,7 +205,6 @@ export default {
   components: {
     productListView,
     BatchEdit: () => import('./components/BatchEdit'),
-    NewComer,
     ModalVersionUp,
     Search
   },

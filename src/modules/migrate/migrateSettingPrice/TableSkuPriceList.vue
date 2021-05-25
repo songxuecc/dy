@@ -222,7 +222,6 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex'
 import ModalSingleSkuList from './ModalSingleSkuList'
-import SkuPriceListView from './SkuPriceListView'
 import utils from '@/common/utils'
 
 export default {
@@ -231,8 +230,7 @@ export default {
     msg: String
   },
   components: {
-    ModalSingleSkuList,
-    SkuPriceListView
+    ModalSingleSkuList
   },
   data () {
     return {
