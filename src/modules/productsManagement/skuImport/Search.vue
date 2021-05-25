@@ -98,6 +98,7 @@ export default {
           file_type: type
         }
       })
+      this.tipTrigger()
     },
     tipTrigger (e) {
       event.stopPropagation()
