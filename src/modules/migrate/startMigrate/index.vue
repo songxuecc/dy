@@ -14,7 +14,7 @@
         </el-input>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
-        <div style="width: 515px; margin: auto;margin-bottom:20px">
+        <div style="width: 520px; margin: auto;margin-bottom:20px">
           <el-upload class="capture-file-upload" drag :action="uploadAction" :headers="getTokenHeaders"
             :data="{'upload_type': 'local'}" :before-upload="uploadBeforeUpload" :on-progress="uploadOnProgress"
             :on-success="uploadOnSuccess" :on-change="uploadChange" :limit=1 ref="upload" :show-file-list="false"
@@ -22,10 +22,8 @@
             <hh-icon type="iconshangchuanxiazai" class="el-icon-upload"
               style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
             <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
-            <div class="el-upload__tip flex" slot="tip">
-              <span style="color: #E02020;">*</span>
-              只能上传CSV文件，且不超过100KB，一次最多 200 条，一天最多支持 1200 条
-              <span class="click ml-5" @click="downloadCSV">下载示例文件</span>
+            <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span>
+              <span>只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持 1200 条<span class="click" style="margin-left: 10px" @click="downloadCSV">下载示例文件</span></span>
             </div>
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
@@ -597,9 +595,11 @@ export default {
         window._hmt.push(['_trackEvent', '开始复制', '下载', '下载模板'])
       }
       let str = `商品链接\n`
-      str += `${'https://detail.tmall.com/item.htm?id=602661002260\t'},`
+      str += `${'https://detail.tmall.com/item.htm?id=627467441239\t'},`
       str += `\n`
-      str += `${'https://item.jd.com/100008348542.html\t'},`
+      str += `${'https://detail.tmall.com/item.htm?id=613995850749\t'},`
+      str += `\n`
+      str += `${'https://detail.tmall.hk/hk/item.htm?id=608529032990\t'},`
       let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str)
       let link = document.createElement('a')
       link.href = uri
