@@ -124,7 +124,6 @@ export default {
       this.expands = []
     },
     expandChange (row, expandedRows, expanded) {
-      console.log(row, expandedRows, expanded)
       this.expands = expandedRows.map(item => item.id)
     }
   }

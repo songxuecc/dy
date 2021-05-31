@@ -8,7 +8,8 @@ const tableDataDetail = listModel('productList')
 const model = assign(tableDataDetail, {
   namespaced: true,
   state: () => ({
-    jobs: []
+    jobs: [],
+    poolingLoading: false
   }),
   mutations: {
     save (state, payload) {
@@ -23,7 +24,7 @@ const model = assign(tableDataDetail, {
         apiName: 'getProductList',
         ...rest
       })
-      if (editData.editType === 0) {
+      if (editData && editData.editType === 0) {
         const productListTableData = state.productListTableData.map(item => {
           const isOnSalePrevious = !item.status ? '已上架' : '已下架'
           const isOnSale = editData.isOnSale
@@ -46,7 +47,10 @@ const model = assign(tableDataDetail, {
       }
       const jobs = [...state.jobs, job]
       commit('save', { jobs })
-      console.log(jobs, 'jobs')
+      this._vm.$message({
+        message: `批量修改开始....`,
+        type: 'success'
+      })
       if (jobs.length === 1) dispatch('pooling')
     },
     async pooling ({commit, state, dispatch}, payload) {
@@ -98,7 +102,7 @@ const model = assign(tableDataDetail, {
                 props: {title: '下列商品修改失败，请调整后再试', 'show-icon': true, type: 'warning', center: true, closable: false}
               }),
               h('ElTable', {
-                props: {data: tableData, style: {width: '100%'}}
+                props: {data: tableData, style: {width: '100%'}, height: '50vh'}
               }, [
                 h(
                   'ElTableColumn', {
@@ -144,7 +148,6 @@ const model = assign(tableDataDetail, {
               ])
             ])
           })
-
         // 未完成任务
         } else {
           jobs.push(job)

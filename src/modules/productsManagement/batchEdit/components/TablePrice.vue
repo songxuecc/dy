@@ -151,7 +151,6 @@ export default {
       })
     },
     handleSizeChange (pageSize) {
-      console.log(pageSize)
       this.fetchProductList({
         pagination: {
           page_size: pageSize

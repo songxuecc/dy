@@ -19,8 +19,8 @@
                     <el-radio-button label="id">按ID</el-radio-button>
                 </el-radio-group>
                 <el-form
-                    :model="rangeForm"
-                    ref="rangeForm"
+                    :model="form"
+                    ref="form"
                     label-width="60px"
                     inline
                     size="medium"
@@ -28,7 +28,7 @@
                     label-position="left"
                 >
                     <el-form-item label="商品状态" prop="region">
-                    <el-select v-model="rangeForm.status" placeholder="请选择商品状态"  class="w-200 mr-20">
+                    <el-select v-model="form.status" placeholder="请选择商品状态"  class="w-200 mr-20">
                         <el-option
                         class="left dropdown"
                         v-for="item in statusOptions"
@@ -38,7 +38,7 @@
                     </el-select>
                     </el-form-item>
                     <el-form-item label="发货模式" prop="region">
-                    <el-select v-model="rangeForm.presell_type" placeholder="请选择发货模式"  class="w-200 mr-20">
+                    <el-select v-model="form.presell_type" placeholder="请选择发货模式"  class="w-200 mr-20">
                         <el-option
                         class="left dropdown"
                         v-for="item in presellTypeOptions"
@@ -48,7 +48,7 @@
                     </el-select>
                     </el-form-item>
                     <el-form-item label="是否抓取" prop="region">
-                    <el-select v-model="rangeForm.captureStatus" placeholder="请选择是否抓取"  class="w-200 mr-20">
+                    <el-select v-model="form.captureStatus" placeholder="请选择是否抓取"  class="w-200 mr-20">
                         <el-option
                         class="left dropdown"
                         v-for="item in captureStatusOptions"
@@ -59,7 +59,7 @@
                     </el-form-item>
                 </el-form>
                 <div v-show="modifyMethods === 'product'">
-                <el-button type="primary " class="w-120" @click="toggleVisibleSelectProduct">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">0</span> 个商品</span>
+                <el-button type="primary " class="w-120" @click="chooseProductList">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">{{hasSelectIds}}</span> 个商品</span>
                 </div>
                 <div class="flex align-c" v-show="modifyMethods === 'id'">
                 <span class="color-4e yaHei font-12 mr-10">输入商品ID</span>
@@ -91,13 +91,16 @@
           :ids="lostGoodsIds"
           ref="ModalIdSearch"
           @continueIdProductList="continueIdProductList"/>
-        <TableSelectProduct :visible.sync="visibleSelectProduct" />
+        <TableSelectProduct
+          ref="TableSelectProduct"
+          :visible.sync="visibleSelectProduct"
+          @preview="previewTableSelectProduct" />
 
     </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import common from '@/common/common.js'
 import Api from '@/api/apis'
 
@@ -129,7 +132,8 @@ export default {
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
-      rangeForm: {
+      hasSelectIds: 0,
+      form: {
         status: '-',
         presell_type: -1,
         captureStatus: -1
@@ -194,12 +198,17 @@ export default {
       return options
     }
   },
-  watch: {},
+  watch: {
+    jobs (n, old) {
+      if (old.length && !n.length) this.hasSelectIds = 0
+    }
+  },
   created () {},
   mounted () {},
   updated () {},
   methods: {
-    ...mapActions('productManagement/batchEdit', ['fetchProductList']),
+    ...mapActions('productManagement/batchEdit', ['fetchProductList', 'productListSetFilter']),
+    ...mapMutations('productManagement/batchEdit', ['save']),
     // 事件名称
     toggleEditType (index) {
       this.editType = index
@@ -225,7 +234,7 @@ export default {
     },
     async areaProductList () {
       this.loading = true
-      const statusArray = this.rangeForm.status.split('-')
+      const statusArray = this.form.status.split('-')
       let status = -1
       let checkStatus = -1
       if (statusArray.length > 1 && statusArray[0]) {
@@ -236,8 +245,8 @@ export default {
       let filters = {
         status: status,
         check_status: checkStatus,
-        capture_status: this.rangeForm.captureStatus,
-        presell_type: this.rangeForm.presell_type,
+        capture_status: this.form.captureStatus,
+        presell_type: this.form.presell_type,
         goods_ids: []
       }
       await this.fetchProductList({
@@ -302,15 +311,36 @@ export default {
       })
       this.visible = true
     },
+    // 当按商品选择时 预览
     async chooseProductList () {
-      this.toggleVisibleSelectProduct()
-      await this.fetchProductList({
-        filters: {},
-        editData: this.getEditData()
-      })
+      // 去选择商品
+      if (!this.hasSelectIds) {
+        this.toggleVisibleSelectProduct()
+        this.$refs.TableSelectProduct.getData()
+      } else {
+        // 预览商品
+        await this.fetchProductList({
+          filters: {
+            goods_ids: this.hasSelectIds
+          },
+          editData: this.getEditData()
+        })
+        this.visible = true
+      }
     },
     toggleVisibleSelectProduct () {
       this.visibleSelectProduct = !this.visibleSelectProduct
+    },
+    async previewTableSelectProduct (ids, needPreview) {
+      this.hasSelectIds = ids.length
+      if (!needPreview) return
+      await this.fetchProductList({
+        filters: {
+          goods_ids: ids
+        },
+        editData: this.getEditData()
+      })
+      this.visible = true
     }
   }
 
