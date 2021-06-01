@@ -809,6 +809,10 @@ export default {
                     this.pageData[data.page_id] = res
                   }
                   this.isFinishLogin = false
+                }).catch(() => {
+                  this.loginUrl = 'https://login.taobao.com/'
+                  this.loginDialogVisible = true
+                  this.isFinishLogin = false
                 })
               }
             }
