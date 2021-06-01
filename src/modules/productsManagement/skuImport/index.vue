@@ -1,19 +1,11 @@
 <!-- sku 导入 -->
 <template>
-<div class=''>
-  <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
-    <el-tab-pane label="按商品名、规格名匹配" name="byTitle">
-      <UploadFile :activeName="activeName"/>
-    </el-tab-pane>
-    <el-tab-pane name="byId">
-      <span slot="label">按商品ID、规格ID匹配</span>
-      <UploadFile :activeName="activeName"/>
-    </el-tab-pane>
-  </el-tabs>
-  <goods-export></goods-export>
+<div >
+  <Search />
+  <UploadFile />
   <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
   <el-drawer
-    title="sku编码修改详情"
+    :title="title"
     :visible.sync="visibleSkuEdit"
     :direction="drawerDirection"
     size="60%"
@@ -29,11 +21,12 @@
 </template>
 
 <script>
-import {createNamespacedHelpers, mapActions} from 'vuex'
+import {createNamespacedHelpers, mapActions, mapState} from 'vuex'
 import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'
-import GoodsExport from './GoodsExport'
+import Search from './Search'
+
 const {
   mapMutations
 } = createNamespacedHelpers('productManagement/skuImport')
@@ -52,9 +45,14 @@ export default {
     UploadFile,
     TableUploadFileRecord,
     DetailSkuEdit,
-    GoodsExport
+    Search
   },
   computed: {
+    ...mapState('productManagement/skuImport', ['productSkuExcelFilters']),
+    title () {
+      if (this.productSkuExcelFilters.file_type === 2 || this.productSkuExcelFilters.file_type === 3) return '商品修改详情'
+      return 'sku修改详情'
+    }
   },
   updated () { },
   methods: {
@@ -62,14 +60,9 @@ export default {
     ...mapActions([
       'setIsShowFloatView'
     ]),
+    ...mapActions('productManagement/test', ['fetch', 'table1fetch', 'table2fetch']),
     getFileType () {
       return this.activeName === 'byTitle' ? 0 : 1
-    },
-    handleClick (tab, event) {
-      let self = this
-      this.$refs.tableUploadFileRecord.filterHandlerRecord({
-        file_type: self.getFileType()
-      })
     },
     toggleEdit () {
       this.visibleSkuEdit = false

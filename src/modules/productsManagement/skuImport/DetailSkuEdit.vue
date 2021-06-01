@@ -36,25 +36,39 @@ export default {
     }
   },
   computed: {
+    ...mapState('productManagement/skuImport', ['productSkuExcelFilters']),
     ...mapState(['parentRowData']),
     tabs () {
       const tabs = [{
         id: 0,
-        label: '修改失败',
+        label: '无法修改',
         name: 'fail'
       },
       {
         id: 1,
-        label: '修改成功',
+        label: '已修改，提交官方审核',
         name: 'success'
       }
+      // {
+      //   id: 2,
+      //   label: '审核驳回',
+      //   name: 'bohui',
+      //   visible: (type) => [].includes(type)
+      // },
+      // {
+      //   id: 3,
+      //   label: '审核通过',
+      //   name: 'os',
+      //   visible: (type) => [].includes(type)
+      // }
       ]
       if (this.parentRowData.status === 'running') {
         tabs.push(
           {
             id: 2,
             label: '修改中',
-            name: 'running'
+            name: 'running',
+            visible: (type) => [].includes(type)
           })
       }
       return tabs

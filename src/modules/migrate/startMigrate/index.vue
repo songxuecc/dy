@@ -28,7 +28,7 @@
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
 
-          <div class="info">导入复制前可以通过
+          <div class="info mt-5">导入复制前可以通过
             <span class="click" @click="openProductCollection">商品采集功能</span>
             采集商品链接</div>
         </div>
