@@ -4,10 +4,10 @@
     <p class="font-13">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a :class="[isSyncing?'color-info':'click','pointer font-13']"
         @click="handleSyncProducts">{{syncButtonText}}</a> <span class="color-767989">&nbsp;最近同步时间
         {{ syncStatus.last_sync_time }} </span></p>
-    <p class="font-13 " v-if="[0,1].includes(filterType)">2、每次支持3000个sku修改，可修改维度有：sku编码、库存、价格;&nbsp;若需修改价格请在导入前完成
+    <p class="font-13 " v-if="[0,1].includes(filterType)">2、每次支持5000个sku修改，若需修改价格请在导入前完成
       &nbsp;<a class="click" style="font-size:13px" @click="settingPrice">价格设置</a>
     </p>
-    <p class="font-13 " v-if="[2,3].includes(filterType)">2、每次支持1000个sku修改</p>
+    <p class="font-13 " v-if="[2,3].includes(filterType)">2、每次支持5000个商品修改</p>
     <p class="font-13 ">3、仅支持售卖中、已下架的商品修改 </p>
     <p class="font-13 " v-if="filterType === 0">4、保证导入的商品标题、规格名与抖店后台一致。多个SKU规格请用英文逗号分隔，如：红色,36码 </p>
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
@@ -36,16 +36,16 @@
     <el-dialog title="价格设置" :visible.sync="priceSettingVisible" width="600px" v-hh-modal center>
       <el-form :model="model" :rules="rules" ref="model" label-width="170px" class="flex justify-c column align-c" >
         <el-form-item label="售卖价(需在sku价格范围内):" prop="resource" size="small" style="width: 530px;">
-          <el-radio-group v-model="model.set_market_price">
+          <el-radio-group v-model="model.set_discount_price_min">
             <el-radio :label="0" style="width:108px" :value="0">不修改</el-radio>
             <el-radio :label="1" style="width:108px" :value="1">调为现sku最低价</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="划线价(需>=sku最高价):" prop="resource" size="small"  style="width: 530px;">
-          <el-radio-group v-model="model.set_discount_price_min">
+          <el-radio-group v-model="model.set_market_price">
             <el-radio :label="0" style="width:108px" :value="0">不修改</el-radio>
             <el-radio :label="1"  :value="1">
-              <span>调为现sku最高价<el-input type="number" style="width:70px"  size="mini" class="ml-5 mr-5" v-model="model.sku_max_price_rate"></el-input>%</span>
+              <span>调为现sku最高价<span style="margin-left: 5px">X</span><el-input type="number" style="width:70px"  size="mini" class="ml-5 mr-5" v-model="model.sku_max_price_rate"></el-input>%</span>
             </el-radio>
           </el-radio-group>
         </el-form-item>
@@ -87,7 +87,25 @@ export default {
       fileList: [],
       isSyncing: false,
       syncButtonText: '同步后台商品',
-      model: {}
+      model: {},
+      fileTypeDemoFile: {
+        0: {
+          fileName: '示例文件1',
+          url: 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-title.xlsx'
+        },
+        1: {
+          fileName: '示例文件2',
+          url: 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-id.xlsx'
+        },
+        2: {
+          fileName: '示例文件3',
+          url: 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/goods-title.xlsx'
+        },
+        3: {
+          fileName: '示例文件4',
+          url: 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/goods-id.xlsx'
+        }
+      }
     }
   },
   computed: {
@@ -111,13 +129,17 @@ export default {
       }
     },
     getFileName () {
-      return this.activeName === 'byTitle' ? '示例文件下载1' : '示例文件下载2'
+      if (this.productSkuExcelFilters && this.productSkuExcelFilters.file_type) {
+        return this.fileTypeDemoFile[this.productSkuExcelFilters.file_type].fileName
+      } else {
+        return this.fileTypeDemoFile[0].fileName
+      }
     },
     isByTitle () {
       return this.activeName === 'byTitle'
     },
     filterType () {
-      if (!this.productSkuExcelFilters.file_type) return 0
+      if (!this.productSkuExcelFilters.file_type) return 1
       return this.productSkuExcelFilters.file_type
     }
   },
@@ -250,11 +272,7 @@ export default {
         window._hmt.push(['_trackEvent', '全部商品', '下载', '下载sku编码模板'])
       }
       this.$message.success('下载示例文件成功，请到浏览器下载内容查看')
-      if (this.productSkuExcelFilters.file_type === 0) {
-        window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-title.xlsx'
-      } else if (this.productSkuExcelFilters.file_type === 1) {
-        window.location.href = 'https://dy-meizhe-woda.oss-cn-shanghai.aliyuncs.com/sku-code-id.xlsx'
-      }
+      window.location.href = this.fileTypeDemoFile[this.productSkuExcelFilters.file_type].url
     },
     togglePriceSettingVisible () {
       this.priceSettingVisible = !this.priceSettingVisible

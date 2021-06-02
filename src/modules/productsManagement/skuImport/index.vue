@@ -1,9 +1,17 @@
 <!-- sku 导入 -->
 <template>
 <div >
-  <Search />
-  <UploadFile />
-  <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
+  <el-collapse v-model="activeNames">
+    <el-collapse-item title="选择修改信息" name="1">
+      <Search />
+    </el-collapse-item>
+    <el-collapse-item title="导入修改文件" name="2">
+      <UploadFile />
+    </el-collapse-item>
+    <el-collapse-item title="修改记录列表" name="3">
+      <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
+    </el-collapse-item>
+  </el-collapse>
   <el-drawer
     :title="title"
     :visible.sync="visibleSkuEdit"
@@ -38,7 +46,8 @@ export default {
       visibleSkuEdit: false,
       parenId: undefined,
       loading: false,
-      drawerDirection: 'rtl'
+      drawerDirection: 'rtl',
+      activeNames: ['1', '2', '3']
     }
   },
   components: {

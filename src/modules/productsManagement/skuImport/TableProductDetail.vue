@@ -8,7 +8,9 @@
           <img :src="scope.row.sku_img_url" alt="sku图片" class="product-img">
         </template>
       </el-table-column>
-      <el-table-column v-if="[0,2].includes(productSkuExcelFilters.file_type)" prop="goods_name" label="商品信息" width="200"></el-table-column>
+      <el-table-column v-if="[0].includes(productSkuExcelFilters.file_type)" prop="goods_name" label="商品信息" width="200"></el-table-column>
+      <el-table-column v-if="[2].includes(productSkuExcelFilters.file_type)" prop="old_goods_name" label="原商品标题" width="200"></el-table-column>
+      <el-table-column v-if="[3].includes(productSkuExcelFilters.file_type)" prop="goods_id" label="商品id" width="200"></el-table-column>
       <el-table-column v-if="productSkuExcelFilters.file_type === 0" prop="sku_spec_names" label="SKU名称"></el-table-column>
       <el-table-column v-if="productSkuExcelFilters.file_type === 1" prop="goods_name" label="商品id" width="200"></el-table-column>
       <el-table-column v-if="productSkuExcelFilters.file_type === 1" prop="sku_spec_names" label="sku id"></el-table-column>
@@ -16,7 +18,7 @@
       <el-table-column prop="sku_stock" v-if="[0,1].includes(productSkuExcelFilters.file_type)" label="SKU库存"></el-table-column>
       <el-table-column prop="sku_step_stock" v-if="[0,1].includes(productSkuExcelFilters.file_type)"  label="SKU阶梯库存"></el-table-column>
       <el-table-column prop="sku_price" v-if="[0,1].includes(productSkuExcelFilters.file_type)" label="SKU价格"></el-table-column>
-      <el-table-column prop="ext_json" v-if="[2,3].includes(productSkuExcelFilters.file_type)" label="新商品标题"></el-table-column>
+      <el-table-column prop="new_goods_name" v-if="[2,3].includes(productSkuExcelFilters.file_type)" label="新商品标题"></el-table-column>
       <el-table-column prop="fail_reason" label="理由" v-if="activeName === 'fail'"></el-table-column>
       <el-table-column prop="edit" label="操作" width="100" v-if="activeName === 'success'">
         <template slot-scope="scope">

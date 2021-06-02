@@ -3,6 +3,7 @@
       title="选择需要导出的字段"
       :visible.sync="dialogExportVisible"
       @opened="dialogExportOpened"
+      :before-close="closeDialog"
       v-hh-modal
     >
       <div v-loading="loadingCnt">
@@ -61,8 +62,10 @@ export default {
       isAllFieldSelected: false,
       exportFieldList: [
         { value: false, field: 'goods_id', label: '商品id' },
+        { value: false, field: 'goods_url', label: '商品链接' },
+        { value: false, field: 'origin_goods_url', label: '来源商品链接' },
         { value: false, field: 'goods_name', label: '商品名' },
-        { value: false, field: 'goods_desc', label: '来源数据' },
+        { value: false, field: 'goods_desc', label: '类目属性' },
         { value: false, field: 'goods_quantity', label: '商品库存' },
         { value: false, field: 'market_price', label: '划线价' },
         { value: false, field: 'discount_price', label: '售卖价' },
@@ -86,12 +89,15 @@ export default {
     }
   },
   methods: {
-    openDialogExport () {
-      this.dialogExportVisible = true
-      // 百度统计打点
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '全部商品', '点击', '商品导出'])
-      }
+    // openDialogExport () {
+    //   this.dialogExportVisible = true
+    //   // 百度统计打点
+    //   if (window._hmt) {
+    //     window._hmt.push(['_trackEvent', '全部商品', '点击', '商品导出'])
+    //   }
+    // },
+    closeDialog () {
+      this.$emit('update:dialogExportVisible', false)
     },
     dialogExportOpened () {
       // 查询最近一次商品导出的文件信息

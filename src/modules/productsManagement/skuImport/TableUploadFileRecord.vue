@@ -7,9 +7,9 @@
       </el-table-column>
       <el-table-column prop="total_nums" :label="labelName" width="180">
       </el-table-column>
-      <el-table-column prop="success_nums" label="成功数">
+      <el-table-column prop="success_nums" :label="getSuccessName">
       </el-table-column>
-      <el-table-column prop="fail_nums" label="失败数" class-name="fail" label-class-name="label">
+      <el-table-column prop="fail_nums" :label="getFailName" class-name="fail" label-class-name="label">
       </el-table-column>
       <el-table-column prop="status" label="状态" width="120"  :filters="filters" :filter-multiple="true"  column-key="status">
         <template slot-scope="scope">
@@ -26,7 +26,7 @@
           <!-- <a class="pramiry" @click="onShutdown(scope.row.id)">终止</a> -->
           <a class="pramiry pointer" @click="handleEdit('onDetail',scope.row)">查看详情</a>
           <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDelete(scope.row)" >删除记录</a>
-          <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDownloadFail(scope.row)" >下载失败详情</a>
+          <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDownloadFail(scope.row)" >下载详情</a>
         </template>
       </el-table-column>
     </el-table>
@@ -86,6 +86,20 @@ export default {
         return 'sku数'
       }
     },
+    getSuccessName () {
+      if ([0, 1].includes(this.productSkuExcelFilters.file_type)) {
+        return '成功数'
+      } else if ([2, 3].includes(this.productSkuExcelFilters.file_type)) {
+        return '已提交修改'
+      }
+    },
+    getFailName () {
+      if ([0, 1].includes(this.productSkuExcelFilters.file_type)) {
+        return '失败数'
+      } else if ([2, 3].includes(this.productSkuExcelFilters.file_type)) {
+        return '无法修改'
+      }
+    },
     ...mapState({
       loading: state => state['@@loading'].effects['productManagement/skuImport/fetchRecord']
     })
@@ -95,7 +109,7 @@ export default {
     init () {
       this.fetchRecord({
         filters: {
-          file_type: 0
+          file_type: 1
         }
       }).then(() => {
         console.log(this.productSkuExcelTableData)
