@@ -301,7 +301,7 @@ export default {
       let self = this
       this.syncTimer = setTimeout(function () {
         self.updateSyncStatus()
-      }, 2000)
+      }, 20000)
     },
     reload () {
       this.isRouterAlive = false
