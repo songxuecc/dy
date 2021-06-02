@@ -9,7 +9,7 @@ const model = modelExtend(tableDataRecord, tableDataDetail, {
   namespaced: true,
   state: () => ({
     filtersRecord: {
-      file_type: 0
+      file_type: 1
     },
     parentRowData: {}
   }),
@@ -35,6 +35,8 @@ const model = modelExtend(tableDataRecord, tableDataDetail, {
       const skuExcelDetailTableData = state.skuExcelDetailTableData.map(item => {
         if (item.ext_json && item.ext_json.new_goods_name) {
           item.new_goods_name = item.ext_json.new_goods_name
+          item.old_goods_name = item.ext_json.old_goods_name
+          item.goods_id = item.ext_json.goods_id
         }
         return item
       })

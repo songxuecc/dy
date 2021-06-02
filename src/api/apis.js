@@ -96,6 +96,9 @@ const hhgjAPIs = {
   migrate: (params) => {
     return api.actionCreatorPost('/api/migrate', params)
   },
+  is_new_migrate: (params) => {
+    return api.actionCreateGet('/api/migrate/is_new', params)
+  },
   getTPProductByIds: (params) => {
     return api.actionCreatorPost('/api/getTPProductByIds', params)
   },

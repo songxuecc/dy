@@ -41,13 +41,13 @@ export default {
     tabs () {
       const tabs = [{
         id: 0,
-        label: '无法修改',
-        name: 'fail'
+        label: '成功数',
+        name: 'success'
       },
       {
         id: 1,
-        label: '已修改，提交官方审核',
-        name: 'success'
+        label: '失败数',
+        name: 'fail'
       }
       // {
       //   id: 2,
@@ -71,6 +71,12 @@ export default {
             visible: (type) => [].includes(type)
           })
       }
+
+      if ([2, 3].includes(this.parentRowData.file_type)) {
+        tabs[0].label = '已提交修改'
+        tabs[1].label = '无法修改'
+      }
+
       return tabs
     }
   }

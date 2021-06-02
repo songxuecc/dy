@@ -114,6 +114,20 @@
               <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
             </div>
           </NewComer>
+          <span v-if="is_migrate_new">
+            <el-popover
+                width="200"
+                trigger="hover">
+                <h1>什么是极速搬家?</h1>
+                <p>&nbsp;</p>
+                <p>若点击此按钮，系统会自动跳过价格编辑页、模板编辑页</p>
+                <p>&nbsp;</p>
+                <p>价格和模板的填写设置与上一次搬家操作的设置保持一致</p>
+                <span class="pointer" slot="reference">
+                  <el-link type="primary" style="font-size: 10px; margin-top: 20px; margin-left: 10px;" :underline="false" @click="quickMigrate" :disabled="selectIdList.length == 0">跳过编辑，现在搬家</el-link>
+                </span>
+            </el-popover>
+          </span>
         </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
           <span v-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior" class="pt-10">
@@ -210,6 +224,7 @@ export default {
   },
   data () {
     return {
+      is_migrate_new: false,
       isMounted: false,
       bindShopList: [],
       tpProductList: [],
@@ -503,6 +518,7 @@ export default {
     this.updateQuery()
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
+    this.getNewMigrate()
     // this.userVersionQuery()
   },
   deactivated () {
@@ -530,6 +546,19 @@ export default {
       'userVersionQuery',
       'getMigrateSetting'
     ]),
+    getNewMigrate () {
+      this.request('is_new_migrate', {}, data => {
+        this.is_migrate_new = data
+      })
+    },
+    quickMigrate () {
+      this.request('migrate', {
+        tp_product_ids: this.selectIdList,
+        is_quick_migrate: 1
+      }, (data) => {
+        location.reload()
+      })
+    },
     calendarTime (strTime) {
       return moment(strTime).calendar()
     },
