@@ -1,13 +1,16 @@
 <!-- 选择商品 -->
 <template>
      <el-drawer
+        ref="drawer"
         :with-header="false"
         direction="rtl"
         :visible.sync="visible"
         @closed="handleClose(false)"
+        @opened="setTableHeight"
         size="80%">
         <!-- 搜索 -->
-        <el-form ref="form" :model="form" label-width="60px" :inline="true" size="small" label-position="left" class="left ml-20 mt-20">
+        <div ref="form">
+          <el-form  :model="form" label-width="60px" :inline="true" size="small" label-position="left" class="left ml-20 mt-20">
            <el-form-item label="状态">
             <el-select v-model="form.status" placeholder="请选择商品状态"  class="w-200 mr-10 ">
                 <el-option
@@ -43,13 +46,14 @@
           </el-form-item>
           <br/>
           <el-form-item label="商品ID">
-            <el-input class="w-486" type="textarea" :rows="1" :autosize="false" placeholder="输入多个商品ID,以换行分隔，最多可输入100个" v-model="goods_ids"></el-input>
+            <el-input class="w-486" type="textarea" :autosize="{ minRows: 1, maxRows: 1 }" placeholder="输入多个商品ID,以换行分隔，最多可输入100个" v-model="goods_ids"></el-input>
           </el-form-item>
 
           <el-form-item>
             <el-button type="primary" @click="onSubmit" size="medium" class="ml-10" :loading="loading" :disabled="loading">搜索</el-button>
           </el-form-item>
         </el-form>
+        </div>
         <!-- 列表 -->
         <div class="relative">
           <span class="absolute font-12 yaHei" style="left:40px;z-index:1;top:9px;position:absolute">全选/{{multipleSelection.length}}</span>
@@ -60,10 +64,9 @@
               :data="productListTableData"
               tooltip-effect="dark"
               style="width: 100%"
-              height="calc(100vh - 223px)"
+              :height="height"
               @selection-change="handleSelectionChange">
               <el-table-empty slot="empty"/>
-
               <el-table-column
                 type="selection"
                 :reserve-selection="true"
@@ -130,18 +133,20 @@
             </el-table>
           </div>
 
-        <el-pagination
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          @current-change="handleCurrentChange"
-          @size-change="handleSizeChange"
-          :current-page="productListPagination.page_index"
-          :page-size="productListPagination.page_size"
-          :page-sizes="productListSizes"
-          :total="productListTotal">
-        </el-pagination>
+        <div ref="paginationLayout">
+          <el-pagination
+            background
+            layout="total, sizes, prev, pager, next, jumper"
+            @current-change="handleCurrentChange"
+            @size-change="handleSizeChange"
+            :current-page="productListPagination.page_index"
+            :page-size="productListPagination.page_size"
+            :page-sizes="productListSizes"
+            :total="productListTotal">
+          </el-pagination>
+        </div>
 
-        <div class="flex justify-c align-c">
+        <div class="flex justify-c align-c" ref="btn">
             <el-button type="primary" style="width:120px"  @click="handleClose(true)">确认选择</el-button>
         </div>
     </el-drawer>
@@ -176,8 +181,12 @@ export default {
         {value: 1, label: '预售发货'},
         {value: 2, label: '阶梯发货'}
       ],
-      multipleSelection: []
+      multipleSelection: [],
+      height: undefined
     }
+  },
+  activated () {
+    this.setTableHeight()
   },
   computed: {
     ...mapState({
@@ -207,6 +216,15 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
+    },
+    setTableHeight () {
+      // 动态获取 table高度
+      if (!this.$refs.form) return
+      const formHeight = this.$refs.form.offsetHeight
+      const paginationHeight = this.$refs.paginationLayout.offsetHeight
+      const btnHeight = this.$refs.btn.offsetHeight
+      const height = formHeight + paginationHeight + btnHeight + 20 + 10 + 15
+      this.height = `calc(100vh - ${height}px)`
     },
     onSubmit () {
       this.getData()
@@ -256,7 +274,8 @@ export default {
       })
     },
     handleClose (needPreview) {
-      if (!this.multipleSelection.length) return this.$message.error('请选择商品')
+      if (!this.multipleSelection.length && !needPreview) return this.toggleVisible()
+      if (!this.multipleSelection.length && needPreview) return this.$message.error('请选择商品')
       this.toggleVisible()
       const ids = this.multipleSelection.map(item => item.goods_id)
       this.$emit('preview', ids, needPreview)

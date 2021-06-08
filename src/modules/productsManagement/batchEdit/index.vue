@@ -6,7 +6,7 @@
                 <div v-for="(icon,index) in iconList" :key="index" :class="[index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer']" @click="toggleEditType(index)">
                 <hh-icon :type="index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
                 <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
-                <!-- <span class="click" style="margin-top:104px">查看修改记录</span> -->
+                <span class="click" style="margin-top:104px">查看修改记录</span>
             </title>
 
             <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
@@ -224,12 +224,13 @@ export default {
     },
     preview (index) {
       if (this.modifyMethods === 'area') {
+        this.hasSelectIds = 0
         this.areaProductList()
       } else if (this.modifyMethods === 'id') {
+        this.hasSelectIds = 0
         this.idProductList()
       } else {
-        // 如果没有选择商品 则打开商品选择
-        this.chooseProductList()
+        this.previewProductList()
       }
     },
     async areaProductList () {
@@ -262,9 +263,11 @@ export default {
       const goodsIdsSet = [...new Set(goodsIds)]
       const limit = 100
       if (!goodsIdsSet.length) {
-        this.$message.error(`请输入商品id`)
+        this.loading = false
+        return this.$message.error(`请输入商品id`)
       } else if (goodsIdsSet.length > limit) {
-        this.$message.error(`搜索id不可以超过${limit}条！`)
+        this.loading = false
+        return this.$message.error(`搜索id不可以超过${limit}条！`)
       }
       const idsCheck = await Api.hhgjAPIs.productListCheck({
         goods_id_list: JSON.stringify(goodsIdsSet)
@@ -312,21 +315,17 @@ export default {
       this.visible = true
     },
     // 当按商品选择时 预览
-    async chooseProductList () {
-      // 去选择商品
+    async previewProductList () {
       if (!this.hasSelectIds) {
-        this.toggleVisibleSelectProduct()
-        this.$refs.TableSelectProduct.getData()
+        this.$message.error('请选择需要修改的商品')
       } else {
-        // 预览商品
-        await this.fetchProductList({
-          filters: {
-            goods_ids: this.hasSelectIds
-          },
-          editData: this.getEditData()
-        })
         this.visible = true
       }
+    },
+    // 选择修改的商品
+    chooseProductList () {
+      this.toggleVisibleSelectProduct()
+      this.$refs.TableSelectProduct && this.$refs.TableSelectProduct.getData()
     },
     toggleVisibleSelectProduct () {
       this.visibleSelectProduct = !this.visibleSelectProduct
@@ -340,7 +339,6 @@ export default {
         },
         editData: this.getEditData()
       })
-      this.visible = true
     }
   }
 

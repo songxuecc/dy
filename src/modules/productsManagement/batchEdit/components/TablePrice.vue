@@ -13,6 +13,7 @@
             row-key="id"
             :expand-row-keys="expands"
             @expand-change="expandChange"
+            height="calc(100vh - 223px)"
             v-loading="loading"
             style="width: 100%">
             <el-table-column type="expand">

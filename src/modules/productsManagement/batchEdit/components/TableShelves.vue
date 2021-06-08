@@ -14,6 +14,7 @@
             row-key="id"
             :expand-row-keys="expands"
             @expand-change="expandChange"
+            height="calc(100vh - 121px)"
             style="width: 100%">
             <el-table-empty slot="empty"/>
             <el-table-column
@@ -23,14 +24,14 @@
               <div  class="flex">
                 <!-- {{scope.row.image_url}} -->
                   <el-image
-                      style="height:50px;max-width:50px"
+                      style="height:50px;max-width:65px"
                       :src="scope.row.image_url"
                       fit="contain"
                       class="mr-10"
                       :preview-src-list="[scope.row.image_url]"
                       lazy>
                       <div slot="placeholder">
-                          <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
+                          <hh-icon  type="iconwuzhaopian" style="font-size:50px;display:inline-block" />
                       </div>
                       <div slot="error" class="flex align-c" style="height:100%">
                           <hh-icon  type="icontupianjiazaishibai03" style="font-size:30px" />
