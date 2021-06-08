@@ -96,6 +96,9 @@ const hhgjAPIs = {
   migrate: (params) => {
     return api.actionCreatorPost('/api/migrate', params)
   },
+  is_new_migrate: (params) => {
+    return api.actionCreateGet('/api/migrate/is_new', params)
+  },
   getTPProductByIds: (params) => {
     return api.actionCreatorPost('/api/getTPProductByIds', params)
   },
@@ -303,6 +306,9 @@ const hhgjAPIs = {
   getMigrateMultiShopProductList: (params) => {
     return api.actionCreateGet('/api/migrate/multiShop/product/list', params)
   },
+  productListCheck: (params) => {
+    return api.actionCreatorPost('/api/product/list/check', params)
+  },
   syncDyUserCategory: (params) => {
     return api.actionCreatorPost('/api/category/sync/create', params)
   },
@@ -360,10 +366,12 @@ const hhgjAPIs = {
   userVersionQuery: (params) => {
     return api.actionCreateGet('/api/user/version/query', params)
   },
-  productListCheck: (params) => {
-    return api.actionCreatorPost('/api/product/list/check', params)
+  userSettingQuery: (params) => {
+    return api.actionCreateGet('/api/user/setting/query', params)
+  },
+  userSettingUpdate: (params) => {
+    return api.actionCreatorPost('/api/user/setting/update', params)
   }
-
 }
 
 export default {

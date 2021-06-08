@@ -84,7 +84,6 @@
                 <span class="info">填写帮助</span>
               </span>
             </el-popover>
-
           </div>
         </el-form-item>
         <!-- 库存 -->
@@ -122,12 +121,44 @@
         <el-form-item required label="详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-detail" >
             <p class="font-12 mb-10 mt-5">轮播图+详情图+规格图片超过50张自动删除详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
             <p class="font-12 mb-10">删除详情首图<el-switch class="ml-5" v-model="is_cut_detail_first" /></p>
-            <p class="font-12">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
+            <p class="font-12 mb-10">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
+            <p class="font-12" style="display: flex;align-items: center;">批量增加详情首图
+            <el-upload
+              class="avatar-uploader"
+              action="/api/image/create"
+              :headers="getTokenHeaders"
+              :data="getImageFirstData"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccessFirst">
+              <img v-if="detail_first_image_url" :src="detail_first_image_url" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon">
+                上传详情首图
+              </i>
+            </el-upload>
+            <el-switch class="ml-5" v-model="is_batch_add_detail_first" />
+            </p>
+            <p class="font-12" style="display: flex;align-items: center;">批量增加详情尾图
+              <el-upload
+                class="avatar-uploader"
+                action="/api/image/create"
+                :headers="getTokenHeaders"
+                :data="getImageLastData"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccessLast">
+                <img v-if="detail_last_image_url" :src="detail_last_image_url" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon">
+                  上传详情尾图
+                </i>
+              </el-upload>
+              <el-switch class="ml-5" v-model="is_batch_add_detail_last" />
+            </p>
         </el-form-item>
 
         <el-form-item required label="轮播图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
             <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
-            <p class="font-12">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
+            <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
+            <p class="font-12 mb-10">删除轮播尾图<el-switch class="ml-5" v-model="is_cut_banner_last" /></p>
+            <p class="font-12"><span style="margin-right: 5px">随机打乱轮播图顺序 (首图不变位置</span><el-checkbox v-model="is_keep_main_banner"></el-checkbox>)<el-switch class="ml-5" v-model="is_mix_banner" /></p>
         </el-form-item>
 
         <el-form-item required label="标题:"  style="margin-bottom: 20px;" class="flex migrateSetting-title" >
@@ -237,6 +268,7 @@ import common from '@/common/common.js'
 import categorySelectView from '@/components/CategorySelectView'
 import debounce from 'lodash/debounce'
 import cloneDeep from 'lodash/cloneDeep'
+import {mapGetters} from "vuex";
 
 export default {
   mixins: [request],
@@ -276,6 +308,8 @@ export default {
         { label: '搬家商品选择', className: '.migrateSetting-choose' },
         { label: '违规信息', className: '.migrateSetting-rule' }
       ],
+      detail_first_image_url: '',
+      detail_last_image_url: '',
       mBottom: `150px`,
       activeTab: '0',
       scrollWidth: 0,
@@ -305,8 +339,13 @@ export default {
       max_sku_stock: '',
       is_use_max_sku_stock: undefined,
       is_cut_banner_first: undefined,
+      is_cut_banner_last: undefined,
       is_cut_detail_last: undefined,
       is_cut_detail_first: undefined,
+      is_batch_add_detail_first: undefined,
+      is_batch_add_detail_last: undefined,
+      is_keep_main_banner: undefined,
+      is_mix_banner: undefined,
       title_cut_type: 3,
       title_prefix: '',
       title_suffix: '',
@@ -426,6 +465,19 @@ export default {
     window.removeEventListener('beforeunload', this.beforeunloadFn)
   },
   computed: {
+    ...mapGetters({
+      getTokenHeaders: 'getTokenHeaders'
+    }),
+    getImageFirstData () {
+      return {
+        'file_name': 'detail_first'
+      }
+    },
+    getImageLastData () {
+      return {
+        'file_name': 'detail_last'
+      }
+    },
     rules () {
       const checkMaxSkuStock = (rule, value, callback) => {
         if (this.is_use_max_sku_stock) {
@@ -532,6 +584,12 @@ export default {
     }
   },
   methods: {
+    handleAvatarSuccessFirst (res, file) {
+      this.detail_first_image_url = res.data.url
+    },
+    handleAvatarSuccessLast (res, file) {
+      this.detail_last_image_url = res.data.url
+    },
     revertData () {
       Object.keys(this.originMigrateSetting).forEach(key => {
         this[key] = this.originMigrateSetting[key]
@@ -576,8 +634,13 @@ export default {
         'is_use_default_sku_stock',
         'is_use_max_sku_stock',
         'is_cut_banner_first',
+        'is_cut_banner_last',
         'is_cut_detail_last',
         'is_cut_detail_first',
+        'is_keep_main_banner',
+        'is_mix_banner',
+        'is_batch_add_detail_first',
+        'is_batch_add_detail_last',
         'is_open_title_prefix_suffix',
         'is_open_title_replace',
         'goods_code_type',
@@ -665,8 +728,15 @@ export default {
         is_use_max_sku_stock: Number(this.is_use_max_sku_stock),
         max_sku_stock: this.max_sku_stock,
         is_cut_banner_first: Number(this.is_cut_banner_first),
+        is_cut_banner_last: Number(this.is_cut_banner_last),
         is_cut_detail_last: Number(this.is_cut_detail_last),
         is_cut_detail_first: Number(this.is_cut_detail_first),
+        is_keep_main_banner: Number(this.is_keep_main_banner),
+        is_mix_banner: Number(this.is_mix_banner),
+        is_batch_add_detail_first: Number(this.is_batch_add_detail_first),
+        is_batch_add_detail_last: Number(this.is_batch_add_detail_last),
+        detail_first_image_url: this.detail_first_image_url,
+        detail_last_image_url: this.detail_last_image_url,
         is_open_title_prefix_suffix: Number(this.is_open_title_prefix_suffix),
         is_open_title_replace: Number(this.is_open_title_replace),
         title_cut_type: this.title_cut_type,
@@ -915,4 +985,35 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '~./index.less';
+</style>
+<style>
+  .avatar-uploader {
+    margin-left: 10px;
+  }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    /*font-size: 28px;*/
+    font-size: 10px;
+    color: #8c939d;
+    width: 90px;
+    height: 90px;
+    line-height: 90px;
+    text-align: center;
+  }
+  .avatar {
+    object-fit:contain;
+    object-position:center;
+    width: 90px;
+    height: 90px;
+    display: block;
+  }
 </style>

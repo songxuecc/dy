@@ -252,7 +252,7 @@ const commonConfig = {
           chunks: 'initial'
         },
         commons: {
-          name: 'chunk-commons',
+          name: 'commons',
           minChunks: 2,
           priority: 5,
           test: path.join(__dirname, '..', 'src/components'),

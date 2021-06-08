@@ -287,7 +287,7 @@ export default {
       this.userLeftDays = this.leftDays > 5 ? -1 : 1
     },
     syncProducts () {
-      let timeBefore12hour = moment().subtract(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
+      let timeBefore12hour = moment().subtract(12, 'months').format('YYYY-MM-DD HH:mm:ss')
       if (!this.haveSynced && this.syncStatus.last_sync_time < timeBefore12hour) {
         this.haveSynced = true
         this.requestSyncProducts({ sync_type: common.SyncType['all'], operation_type: 0 })
@@ -301,7 +301,7 @@ export default {
       let self = this
       this.syncTimer = setTimeout(function () {
         self.updateSyncStatus()
-      }, 2000)
+      }, 20000)
     },
     reload () {
       this.isRouterAlive = false

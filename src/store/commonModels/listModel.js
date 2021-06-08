@@ -18,7 +18,6 @@ import Api from '@/api/apis'
 
 const listModel = (modelName = '') => {
   const fetchName = modelName ? `${modelName}Fetch` : 'fetch'
-  const setFilterName = modelName ? `${modelName}SetFilter` : 'setFilter'
   const sizesName = modelName ? `${modelName}Sizes` : 'sizes'
   const totalName = modelName ? `${modelName}Total` : 'total'
   const paginationName = modelName ? `${modelName}Pagination` : 'pagination'
@@ -28,7 +27,7 @@ const listModel = (modelName = '') => {
   return {
     namespaced: true,
     state: () => ({
-      [sizesName]: [2, 10, 20, 50, 100],
+      [sizesName]: [10, 20, 50, 100],
       [totalName]: 0,
       [paginationName]: {
         page_size: 10,
@@ -48,8 +47,6 @@ const listModel = (modelName = '') => {
       async [fetchName] ({commit, state}, payload) {
         const {pagination, filters} = payload || {}
         const apiName = payload.apiName
-
-        console.log(pagination, 'pagination')
         try {
           const nextPagination = {
             ...state[paginationName],

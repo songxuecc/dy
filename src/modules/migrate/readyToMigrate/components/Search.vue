@@ -154,7 +154,6 @@
 <script>
 import moment from 'moment'
 import { productStatusMap } from '@/common/common.js'
-import NewComer from '@/components/NewComer.vue'
 
 import { mapActions, mapState } from 'vuex'
 import debounce from 'lodash/debounce'
@@ -167,7 +166,6 @@ export default {
     capture: Object
   },
   components: {
-    NewComer
   },
   data () {
     return {

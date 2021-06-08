@@ -1,15 +1,15 @@
 <!-- SKU导入列表 -->
 <template>
-  <div class="TableUploadFileRecord mt-10">
-    <el-table :data="tableDataRecord" @filter-change="filterHandler"  :row-style="{height:'53px'}" :header-cell-style="{padding: 0}" stripe style="width: 100%;" header-row-class-name="label"   row-key="id">
+  <div class="TableUploadFileRecord mt-10 getProductSkuExcelPage" >
+    <el-table :data="productSkuExcelTableData" @filter-change="filterHandler" v-loading="loading" :row-style="{height:'53px'}" :header-cell-style="{padding: 0}" stripe style="width: 100%;" header-row-class-name="label"   row-key="id">
       <el-table-empty slot="empty"/>
       <el-table-column prop="create_time" label="修改时间" width="180">
       </el-table-column>
-      <el-table-column prop="total_nums" label="sku数" width="180">
+      <el-table-column prop="total_nums" :label="labelName" width="180">
       </el-table-column>
-      <el-table-column prop="success_nums" label="成功数">
+      <el-table-column prop="success_nums" :label="getSuccessName">
       </el-table-column>
-      <el-table-column prop="fail_nums" label="失败数" class-name="fail" label-class-name="label">
+      <el-table-column prop="fail_nums" :label="getFailName" class-name="fail" label-class-name="label">
       </el-table-column>
       <el-table-column prop="status" label="状态" width="120"  :filters="filters" :filter-multiple="true"  column-key="status">
         <template slot-scope="scope">
@@ -26,13 +26,13 @@
           <!-- <a class="pramiry" @click="onShutdown(scope.row.id)">终止</a> -->
           <a class="pramiry pointer" @click="handleEdit('onDetail',scope.row)">查看详情</a>
           <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDelete(scope.row)" >删除记录</a>
-          <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDownloadFail(scope.row)" >下载失败详情</a>
+          <a :class="[ scope.row.status === 'running' ? 'info no-decoration' :'pramiry pointer' ]" @click="onDownloadFail(scope.row)" >下载详情</a>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="paginationRecord.page_index"
-      class=" pt-20 right mr-20" :page-sizes="sizes" :page-size="paginationRecord.page_size"
-      layout="total, sizes, prev, pager, next, jumper" :total="totalRecord">
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="productSkuExcelPagination.page_index"
+      class=" pt-20 right mr-20" :page-sizes="productSkuExcelSizes" :page-size="productSkuExcelPagination.page_size"
+      layout="total, sizes, prev, pager, next, jumper" :total="productSkuExcelTotal">
     </el-pagination>
 
      <el-dialog title="提示" :visible="visibleDelete || visibleShutDown" v-hh-modal width="30%" center @close="closeDelete">
@@ -54,12 +54,8 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import Api from '@/api/apis'
-const {
-  mapState,
-  mapActions
-} = createNamespacedHelpers('productManagement/skuImport')
 
 export default {
   name: 'TableUploadFileRecord',
@@ -82,42 +78,65 @@ export default {
     this.init()
   },
   computed: {
-    ...mapState(['tableDataRecord', 'sizes', 'totalRecord', 'paginationRecord', 'filtersRecord', 'progressIds'])
+    ...mapState('productManagement/skuImport', [ 'productSkuExcelTableData', 'productSkuExcelSizes', 'productSkuExcelTotal', 'productSkuExcelPagination', 'productSkuExcelFilters', 'Recordfilters', 'progressIds' ]),
+    labelName () {
+      if (this.productSkuExcelFilters.file_type === 2 || this.productSkuExcelFilters.file_type === 3) {
+        return '商品数'
+      } else {
+        return 'sku数'
+      }
+    },
+    getSuccessName () {
+      if ([0, 1].includes(this.productSkuExcelFilters.file_type)) {
+        return '成功数'
+      } else if ([2, 3].includes(this.productSkuExcelFilters.file_type)) {
+        return '已提交修改'
+      }
+    },
+    getFailName () {
+      if ([0, 1].includes(this.productSkuExcelFilters.file_type)) {
+        return '失败数'
+      } else if ([2, 3].includes(this.productSkuExcelFilters.file_type)) {
+        return '无法修改'
+      }
+    },
+    ...mapState({
+      loading: state => state['@@loading'].effects['productManagement/skuImport/fetchRecord']
+    })
   },
   methods: {
-    ...mapActions(['getProductSkuExcelPage', 'deleteProductSkuExcelPage']),
+    ...mapActions('productManagement/skuImport', ['fetchRecord', 'deleteProductSkuExcelPage']),
     init () {
-      this.getProductSkuExcelPage()
+      this.fetchRecord({
+        filters: {
+          file_type: 1
+        }
+      }).then(() => {
+        console.log(this.productSkuExcelTableData)
+      })
     },
     handleEdit (type, row) {
       this.$emit(type, row)
     },
     handleSizeChange (pageSize) {
-      this.getProductSkuExcelPage({
-        paginationRecord: {
+      this.fetchRecord({
+        pagination: {
           page_size: pageSize
         }
       })
     },
     handleCurrentChange (pageIndex) {
-      this.getProductSkuExcelPage({
-        paginationRecord: {
+      this.fetchRecord({
+        pagination: {
           page_index: pageIndex
-        }
-      })
-    },
-    filterHandlerRecord (value) {
-      this.getProductSkuExcelPage({
-        filtersRecord: {
-          ...this.filtersRecord,
-          ...value
         }
       })
     },
     filterHandler (value, row, column) {
       const status = value.status
-      this.getProductSkuExcelPage({
-        filtersRecord: {
+      this.fetchRecord({
+        filters: {
+          ...this.productSkuExcelFilters,
           status_list: JSON.stringify(status)
         }
       })
@@ -161,6 +180,17 @@ export default {
 
 /deep/ .label {
   color: #333333 !important;
+}
+
+/deep/ .el-table-filter__checkbox-group{
+  text-align: left;
+}
+
+</style>
+
+<style lang="less" >
+.el-table-filter__checkbox-group{
+  text-align: left;
 }
 
 </style>
