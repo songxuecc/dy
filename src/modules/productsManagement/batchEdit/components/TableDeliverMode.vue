@@ -19,48 +19,15 @@
       :data="productListTableData"
       class="mt-10"
       ref="table"
-      row-key="goods_id"
-      :expand-row-keys="expands"
-      @expand-change="expandChange"
+      row-key="id"
       height="calc(100vh - 181px)"
       style="width: 100%"
     >
       <el-table-empty slot="empty" />
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-table
-            style="width: 100%"
-            max-height="250"
-            :data="props.row.sku_list"
-            cell-class-name="expand-table-cell"
-          >
-            <el-table-column prop="spec_names" label="规格名称" />
-            <el-table-column
-              prop="old_price"
-              label="修改前价格"
-              align="center"
-              width="180"
-            >
-              <template slot-scope="scope">
-                {{ (scope.row.old_price / 100).toFixed(2) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="new_price"
-              label="修改后价格"
-              align="center"
-              width="180"
-            >
-              <template slot-scope="scope">
-                {{ (scope.row.new_price / 100).toFixed(2) }}
-              </template>
-            </el-table-column>
-          </el-table>
-        </template>
-      </el-table-column>
       <el-table-column label="商品信息" prop="id">
         <template slot-scope="scope">
           <div class="flex">
+            <!-- {{scope.row.image_url}} -->
             <el-image
               style="height: 50px; max-width: 65px"
               :src="scope.row.image_url"
@@ -149,11 +116,11 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  name: 'TablePrice',
-  props: {},
+  name: 'TableDeliverMode',
+  props: {
+  },
   data () {
     return {
-      expands: [],
       visible: false
     }
   },
@@ -168,6 +135,7 @@ export default {
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct']),
     edit () {
+      console.log(this.productListTableData, 'this.productListTableData')
       const goods = this.productListTableData.map((item) => {
         return JSON.stringify({
           is_onsale: item.isOnSale,
@@ -183,12 +151,6 @@ export default {
     },
     toggleVisible () {
       this.visible = !this.visible
-    },
-    confirm () {
-      this.expands = []
-    },
-    expandChange (row, expandedRows, expanded) {
-      this.expands = expandedRows.map((item) => item.goods_id)
     }
   }
 }
@@ -231,12 +193,5 @@ export default {
     bottom: 0;
     margin: auto;
   }
-}
-
-/deep/ .expand-table-cell {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  color: #4e4e4e;
-  font-size: 12px;
 }
 </style>

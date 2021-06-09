@@ -268,7 +268,7 @@ import common from '@/common/common.js'
 import categorySelectView from '@/components/CategorySelectView'
 import debounce from 'lodash/debounce'
 import cloneDeep from 'lodash/cloneDeep'
-import {mapGetters} from "vuex";
+import {mapGetters} from 'vuex'
 
 export default {
   mixins: [request],

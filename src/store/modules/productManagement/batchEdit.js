@@ -4,8 +4,10 @@ import assign from '../../commonModels/assign'
 import listModel from '../../commonModels/listModel'
 
 const tableDataDetail = listModel('productList')
+const tableHhTaskPage = listModel('hhTaskPage')
+const tableHhTaskProductPage = listModel('hhTaskProductPage')
 
-const model = assign(tableDataDetail, {
+const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, {
   namespaced: true,
   state: () => ({
     jobs: [],
@@ -19,39 +21,45 @@ const model = assign(tableDataDetail, {
   },
   actions: {
     async fetchProductList ({commit, state, dispatch}, payload) {
-      const {editData, ...rest} = payload
       await dispatch('productListFetch', {
-        apiName: 'getProductList',
-        ...rest
+        apiName: 'hhTaskProductOverview',
+        ...payload
       })
-      if (editData && editData.editType === 0) {
-        const productListTableData = state.productListTableData.map(item => {
-          const isOnSalePrevious = !item.status ? '已上架' : '已下架'
-          const isOnSale = editData.isOnSale
-          const isOnSaleCurrent = editData.isOnSale ? '已上架' : '已下架'
-          return {...item, isOnSalePrevious, isOnSaleCurrent, isOnSale}
+    },
+    async fetchHhTaskPage ({commit, state, dispatch}, payload) {
+      await dispatch('hhTaskPageFetch', {
+        apiName: 'hhTaskPage',
+        ...payload
+      })
+    },
+    async fetchHhTaskProductPage ({commit, state, dispatch}, payload) {
+      await dispatch('hhTaskProductPageFetch', {
+        apiName: 'hhTaskProductPage',
+        ...payload
+      })
+
+      const hhTaskProductPageTableData = state.hhTaskProductPageTableData.map(item => {
+        return ({
+          ...item,
+          ...item.ext_json
         })
-        console.log(productListTableData, 'productListTableData')
-        commit('save', {
-          productListTableData
-        })
-      }
+      })
+
+      commit('save', { hhTaskProductPageTableData })
     },
     async updateProduct ({commit, state, dispatch}, payload) {
-      const {jobName, ...rest} = payload
-      const data = await Api.hhgjAPIs.updateProduct(rest)
-      const job = {
-        jobId: data.job_id,
-        tableData: state.productListTableData,
-        jobName
+      try {
+        await Api.hhgjAPIs.hhTaskCreate(payload)
+        this._vm.$message({
+          message: `批量修改开始,请点击查看修改记录`,
+          type: 'success'
+        })
+      } catch (err) {
+        this._vm.$message({
+          message: `批量失败`,
+          type: 'error'
+        })
       }
-      const jobs = [...state.jobs, job]
-      commit('save', { jobs })
-      this._vm.$message({
-        message: `批量修改开始....`,
-        type: 'success'
-      })
-      if (jobs.length === 1) dispatch('pooling')
     },
     async pooling ({commit, state, dispatch}, payload) {
       const jobIds = state.jobs.map(item => item.jobId)

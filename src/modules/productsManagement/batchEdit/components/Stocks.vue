@@ -1,125 +1,82 @@
 <!-- 库存 -->
 <template>
-    <div class="flex">
-        <div >
-            <p class="font-12">若商品是现货或预售发货模式</p>
-            <el-form ref="form" :model="form" size="small" label-position="left" >
-                    <el-radio-group v-model="presell_type" class="mb-10 flex column" style="width:280px">
-                        <el-radio  :label="0">
-                            <el-form-item label-width="80px" class="block" label="库存统一增加">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                        <el-radio  :label="1">
-                            <el-form-item label-width="80px" class="block" label="库存统一减少">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                        <el-radio  :label="2">
-                            <el-form-item label-width="80px" class="block" label="库存统一为">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                    </el-radio-group>
-            </el-form>
-        </div>
+    <el-form ref="form" :model="form" size="small" label-position="left">
+        <el-radio-group v-model="form.presell_type" class="mb-10 flex column" style="width:320px">
+            <div class="flex">
+                <div>
+                    <p class="font-12 color-4e mb-10">若商品是现货或预售发货模式</p>
+                    <el-radio :label="1">
+                        <el-form-item label-width="80px" class="block" label="库存统一增加">
+                            <el-input-number controls-position="right" v-model="form.stock_value_1"
+                                :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                        </el-form-item>
+                    </el-radio>
+                    <el-radio :label="2">
+                        <el-form-item label-width="80px" class="block" label="库存统一减少">
+                            <el-input-number controls-position="right" v-model="form.stock_value_2"
+                                :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                        </el-form-item>
+                    </el-radio>
+                    <el-radio :label="3">
+                        <el-form-item label-width="80px" class="block" label="库存统一为">
+                            <el-input-number controls-position="right" v-model="form.stock_value_3"
+                                :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                        </el-form-item>
+                    </el-radio>
+                </div>
 
-        <div>
-            <p class="font-12">若商品是现货或预售发货模式</p>
-            <el-form ref="form" :model="form" size="small" label-position="left" class="flex" >
-                    <el-radio-group v-model="presell_type" class="mb-10  flex column" style="width:250px">
-                        <el-radio  :label="0">
-                            <el-form-item label-width="80px" class="block" label="库存统一增加">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                        <el-radio  :label="1">
-                            <el-form-item label-width="80px" class="block" label="库存统一减少">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                        <el-radio  :label="2">
-                            <el-form-item label-width="80px" class="block" label="库存统一为">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                    </el-radio-group>
+                <div>
+                    <p class="font-12 color-4e  mb-10">若商品是现货或预售发货模式</p>
+                    <div class="flex">
+                        <div>
+                            <el-radio :label="4">
+                                <el-form-item label-width="80px" class="block" label="库存统一增加">
+                                    <el-input-number controls-position="right" v-model="form.stock_value_4"
+                                        :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                                </el-form-item>
+                            </el-radio>
+                            <el-radio :label="5">
+                                <el-form-item label-width="80px" class="block" label="库存统一减少">
+                                    <el-input-number controls-position="right" v-model="form.stock_value_5"
+                                        :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                                </el-form-item>
+                            </el-radio>
+                            <el-radio :label="6">
+                                <el-form-item label-width="80px" class="block" label="库存统一为">
+                                    <el-input-number controls-position="right" v-model="form.stock_value_6"
+                                        :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                                </el-form-item>
+                            </el-radio>
+                        </div>
 
-                    <el-radio-group v-model="presell_type" class="mb-10 flex column" style="width:280px">
-                        <el-radio  :label="0">
-                            <el-form-item label-width="105px" class="block" label="阶梯库存统一增加">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                        <el-radio  :label="1">
-                            <el-form-item label-width="105px" class="block" label="阶梯库存统一减少">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                        <el-radio  :label="2">
-                            <el-form-item label-width="105px" class="block" label="阶梯库存统一为">
-                                <el-input-number
-                                    controls-position="right"
-                                    @change="handleChange"
-                                    :picker-options="pickerOptions"
-                                    :min="3"
-                                    :max="15"
-                                    class="input-number" />
-                            </el-form-item>
-                        </el-radio>
-                    </el-radio-group>
-            </el-form>
-        </div>
+                        <div>
+                            <el-radio :label="7">
+                                <el-form-item label-width="105px" class="block" label="阶梯库存统一增加">
+                                    <el-input-number controls-position="right" v-model="form.stock_value_7"
+                                        :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                                </el-form-item>
+                            </el-radio>
+                            <el-radio :label="8">
+                                <el-form-item label-width="105px" class="block" label="阶梯库存统一减少">
+                                    <el-input-number controls-position="right" v-model="form.stock_value_8"
+                                        :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                                </el-form-item>
+                            </el-radio>
+                            <el-radio :label="9">
+                                <el-form-item label-width="105px" class="block" label="阶梯库存统一为">
+                                    <el-input-number controls-position="right" v-model="form.stock_value_9"
+                                        :picker-options="pickerOptions"  :max="999999" class="input-number" />
+                                </el-form-item>
+                            </el-radio>
+                        </div>
+                    </div>
+                </div>
 
-    </div>
+            </div>
+        </el-radio-group>
+
+    </el-form>
+
 </template>
 
 <script>
@@ -130,14 +87,57 @@ export default {
   },
   data () {
     return {
-      form: {}
+      form: {
+        presell_type: 1,
+        stock_value_1: undefined,
+        stock_value_2: undefined,
+        stock_value_3: undefined,
+        stock_value_4: undefined,
+        stock_value_5: undefined,
+        stock_value_6: undefined,
+        stock_value_7: undefined,
+        stock_value_8: undefined,
+        stock_value_9: undefined
+      }
+    }
+  },
+  methods: {
+    getForm () {
+      return {
+        presell_type: this.form.presell_type,
+        stock_value: this.form[`stock_value_${this.form.presell_type}`]
+      }
     }
   }
 }
 </script>
 <style lang="less" scoped>
+    .block {
+        display: inline-block;
+    }
 
-.block {
-    display: inline-block;
-}
+    .input-number {
+        width: 160px;
+        text-align: left;
+
+    }
+    /deep/  .el-input .el-input__inner {
+        text-align: left;
+    }
+
+    /deep/ .el-input-number__increase {
+        display: none;
+    }
+
+    /deep/ .el-input-number__decrease {
+        display: none;
+    }
+
+    /deep/ .el-form-item__label {
+        color: #4e4e4e;
+    }
+    /deep/  .el-input-number .el-input__inner {
+        padding-left:10px;
+        padding-right:10px;
+    }
 </style>

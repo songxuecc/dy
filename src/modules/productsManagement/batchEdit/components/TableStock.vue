@@ -36,31 +36,36 @@
           >
             <el-table-column prop="spec_names" label="规格名称" />
             <el-table-column
-              prop="old_price"
-              label="修改前价格"
+              prop="new_step_stock_num"
+              label="new_step_stock_num"
               align="center"
               width="180"
-            >
-              <template slot-scope="scope">
-                {{ (scope.row.old_price / 100).toFixed(2) }}
-              </template>
-            </el-table-column>
+            />
             <el-table-column
-              prop="new_price"
-              label="修改后价格"
+              prop="new_stock_num"
+              label="new_stock_num"
               align="center"
               width="180"
-            >
-              <template slot-scope="scope">
-                {{ (scope.row.new_price / 100).toFixed(2) }}
-              </template>
-            </el-table-column>
+            />
+            <el-table-column
+              prop="old_step_stock_num"
+              label="old_step_stock_num"
+              align="center"
+              width="180"
+            />
+            <el-table-column
+              prop="old_stock_num"
+              label="old_stock_num"
+              align="center"
+              width="180"
+            />
           </el-table>
         </template>
       </el-table-column>
       <el-table-column label="商品信息" prop="id">
         <template slot-scope="scope">
           <div class="flex">
+            <!-- {{scope.row.image_url}} -->
             <el-image
               style="height: 50px; max-width: 65px"
               :src="scope.row.image_url"
@@ -149,7 +154,7 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  name: 'TablePrice',
+  name: 'TableStock',
   props: {},
   data () {
     return {
@@ -168,6 +173,7 @@ export default {
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct']),
     edit () {
+      console.log(this.productListTableData, 'this.productListTableData')
       const goods = this.productListTableData.map((item) => {
         return JSON.stringify({
           is_onsale: item.isOnSale,

@@ -1,91 +1,102 @@
 <!-- 批量修改 -->
 <template>
     <div class="batchEdit">
-        <div class="content left">
-            <title class="flex">
-                <div v-for="(icon,index) in iconList" :key="index" :class="[index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer']" @click="toggleEditType(index)">
-                <hh-icon :type="index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
-                <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
-                <span class="click" style="margin-top:104px">查看修改记录</span>
-            </title>
 
-            <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
-
-            <div style="height:120px;margin-top: 30px;">
-                <h1>修改范围</h1>
-                <el-radio-group v-model="modifyMethods" class="mb-20">
-                    <el-radio-button label="area">按范围</el-radio-button>
-                    <el-radio-button label="product">按商品</el-radio-button>
-                    <el-radio-button label="id">按ID</el-radio-button>
-                </el-radio-group>
-                <el-form
-                    :model="form"
-                    ref="form"
-                    label-width="60px"
-                    inline
-                    size="medium"
-                    v-show="modifyMethods === 'area'"
-                    label-position="left"
-                >
-                    <el-form-item label="商品状态" prop="region">
-                    <el-select v-model="form.status" placeholder="请选择商品状态"  class="w-200 mr-20">
-                        <el-option
-                        class="left dropdown"
-                        v-for="item in statusOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"> </el-option>
-                    </el-select>
-                    </el-form-item>
-                    <el-form-item label="发货模式" prop="region">
-                    <el-select v-model="form.presell_type" placeholder="请选择发货模式"  class="w-200 mr-20">
-                        <el-option
-                        class="left dropdown"
-                        v-for="item in presellTypeOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"> </el-option>
-                    </el-select>
-                    </el-form-item>
-                    <el-form-item label="是否抓取" prop="region">
-                    <el-select v-model="form.captureStatus" placeholder="请选择是否抓取"  class="w-200 mr-20">
-                        <el-option
-                        class="left dropdown"
-                        v-for="item in captureStatusOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"> </el-option>
-                    </el-select>
-                    </el-form-item>
-                </el-form>
-                <div v-show="modifyMethods === 'product'">
-                <el-button type="primary " class="w-120" @click="chooseProductList">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">{{hasSelectIds}}</span> 个商品</span>
-                </div>
-                <div class="flex align-c" v-show="modifyMethods === 'id'">
-                <span class="color-4e yaHei font-12 mr-10">输入商品ID</span>
-                <el-input
-                    type="textarea"
-                    autosize
-                    placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
-                    v-model="goods_ids"
-                    style="flex:1">
-                </el-input>
-                <span class="click ml-10">确认</span>
-                </div>
+        <title class="flex title">
+            <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer']" @click="toggleEditType(icon.index)">
+            <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
+            <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
+            <div class="click" style="margin-top:104px" @click="examineEditRecord">
+              查看修改记录
+              <EditRecordTip />
             </div>
+        </title>
+        <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
 
-            <h1 class="mt-30">修改内容</h1>
-            <Shelves ref="Shelves" v-if="editType === 0"/>
-            <TableShelves ref="TableShelves" :visible.sync="visible" v-if="editType === 0 && visible"/>
-            <Title ref="Title" v-if="editType === 1"/>
-            <Stocks ref="Stocks" v-if="editType === 2"/>
-            <Price ref="Price" v-if="editType === 3"/>
-            <TablePrice ref="TablePrice" :visible.sync="visible" v-if="editType === 3"/>
-            <DeliverMode ref="DeliverMode" v-if="editType === 4"/>
+        <div v-if="editType !== 6">
+            <div class="content left" >
+                <div style="height:120px;margin-top: 30px;">
+                    <h1>修改范围</h1>
+                    <el-radio-group v-model="modifyMethods" class="mb-20">
+                        <el-radio-button label="area">按范围</el-radio-button>
+                        <el-radio-button label="product">按商品</el-radio-button>
+                        <el-radio-button label="id">按ID</el-radio-button>
+                    </el-radio-group>
+                    <el-form
+                        :model="form"
+                        ref="form"
+                        label-width="60px"
+                        inline
+                        size="medium"
+                        v-show="modifyMethods === 'area'"
+                        label-position="left"
+                    >
+                        <el-form-item label="商品状态" prop="region">
+                        <el-select v-model="form.status" placeholder="请选择商品状态"  class="w-200 mr-20">
+                            <el-option
+                            class="left dropdown"
+                            v-for="item in statusOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"> </el-option>
+                        </el-select>
+                        </el-form-item>
+                        <el-form-item label="发货模式" prop="region">
+                        <el-select v-model="form.presell_type" placeholder="请选择发货模式"  class="w-200 mr-20">
+                            <el-option
+                            class="left dropdown"
+                            v-for="item in presellTypeOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"> </el-option>
+                        </el-select>
+                        </el-form-item>
+                        <el-form-item label="是否抓取" prop="region">
+                        <el-select v-model="form.captureStatus" placeholder="请选择是否抓取"  class="w-200 mr-20">
+                            <el-option
+                            class="left dropdown"
+                            v-for="item in captureStatusOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"> </el-option>
+                        </el-select>
+                        </el-form-item>
+                    </el-form>
+                    <div v-show="modifyMethods === 'product'">
+                    <el-button type="primary " class="w-120" @click="chooseProductList">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">{{hasSelectIds}}</span> 个商品</span>
+                    </div>
+                    <div class="flex align-c" v-show="modifyMethods === 'id'">
+                    <span class="color-4e yaHei font-12 mr-10">输入商品ID</span>
+                    <el-input
+                        type="textarea"
+                        autosize
+                        placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
+                        v-model="goods_ids"
+                        style="flex:1">
+                    </el-input>
+                    <span class="click ml-10">确认</span>
+                    </div>
+                </div>
+
+                <h1 class="mt-30" >修改内容</h1>
+                <Shelves ref="Shelves" v-if="editType === 1"/>
+                <TableShelves ref="TableShelves"  />
+                <Title ref="Title" v-if="editType === 2"/>
+                <TableTitle ref="TableTitle"  />
+                <Stocks ref="Stocks" v-if="editType === 3"/>
+                <TableStock ref="TableStock" />
+                <Price ref="Price" v-if="editType === 4"/>
+                <TablePrice ref="TablePrice" />
+                <DeliverMode ref="DeliverMode" v-if="editType === 5"/>
+                <TableDeliverMode ref="TableDeliverMode" />
+
+          </div>
+          <div class="flex justify-c mt-20">
+              <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
+          </div>
         </div>
-        <div class="flex justify-c mt-20">
-            <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
-        </div>
+
+        <TableRecord v-if="editType === 6" class="mt-10"/>
 
         <ModalIdSearch
           :ids="lostGoodsIds"
@@ -113,6 +124,11 @@ import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
 import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
 import TableSelectProduct from '@productsManagement/batchEdit/components/TableSelectProduct'
 import ModalIdSearch from '@productsManagement/batchEdit/components/ModalIdSearch'
+import EditRecordTip from '@productsManagement/batchEdit/components/EditRecordTip'
+import TableTitle from '@productsManagement/batchEdit/components/TableTitle'
+import TableRecord from '@productsManagement/batchEdit/components/TableRecord'
+import TableStock from '@productsManagement/batchEdit/components/TableStock'
+import TableDeliverMode from '@productsManagement/batchEdit/components/TableDeliverMode'
 
 export default {
   components: {
@@ -124,11 +140,16 @@ export default {
     TablePrice,
     TableShelves,
     ModalIdSearch,
-    TableSelectProduct
+    TableSelectProduct,
+    EditRecordTip,
+    TableTitle,
+    TableRecord,
+    TableStock,
+    TableDeliverMode
   },
   data () {
     return {
-      editType: 0,
+      editType: 3,
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
@@ -155,32 +176,42 @@ export default {
         {
           primary: 'iconshangxiajiaxuanzhong',
           info: 'iconshangxiajiaweixuanzhong',
-          index: 0,
-          text: '上下架'
+          index: 1,
+          text: '上下架',
+          ref: 'Shelves',
+          tableRef: 'TableShelves'
         },
         {
           primary: 'iconbiaotixuanzhong',
           info: 'iconbiaotiweixuanzhong',
-          index: 1,
-          text: '标题'
+          index: 2,
+          text: '标题',
+          ref: 'Title',
+          tableRef: 'TableTitle'
         },
         {
           primary: 'iconkucunxuanzhong',
           info: 'iconkucunweixuanzhong',
-          index: 2,
-          text: '库存'
+          index: 3,
+          text: '库存',
+          ref: 'Stocks',
+          tableRef: 'TableStock'
         },
         {
           primary: 'iconjiagexuanzhong',
           info: 'iconjiageweixuanzhong',
-          index: 3,
-          text: '价格'
+          index: 4,
+          text: '价格',
+          ref: 'Price',
+          tableRef: 'TablePrice'
         },
         {
           primary: 'iconfahuomoshixuanzhong',
           info: 'iconfahuomoshiweixuanzhong',
-          index: 4,
-          text: '发货模式'
+          index: 5,
+          text: '发货模式',
+          ref: 'DeliverMode',
+          tableRef: 'TableDeliverMode'
         }
       ],
       visibleSelectProduct: false
@@ -203,24 +234,28 @@ export default {
       if (old.length && !n.length) this.hasSelectIds = 0
     }
   },
-  created () {},
+  created () {
+    if (this.editType === 6) {
+      this.fetchHhTaskPage()
+    }
+  },
   mounted () {},
   updated () {},
   methods: {
-    ...mapActions('productManagement/batchEdit', ['fetchProductList', 'productListSetFilter']),
+    ...mapActions('productManagement/batchEdit', ['fetchProductList', 'productListSetFilter', 'fetchHhTaskPage']),
     ...mapMutations('productManagement/batchEdit', ['save']),
     // 事件名称
     toggleEditType (index) {
       this.editType = index
     },
-    getEditData () {
-      const editType = this.editType
-      const isOnSale = this.$refs.Shelves.isOnSale
-
-      return {
-        editType,
-        isOnSale
-      }
+    examineEditRecord () {
+      this.editType = 6
+      this.fetchHhTaskPage()
+    },
+    getEditJson () {
+      const refName = this.iconList[this.editType - 1].ref
+      const json = this.$refs[refName] && this.$refs[refName].getForm()
+      return json
     },
     preview (index) {
       if (this.modifyMethods === 'area') {
@@ -244,18 +279,24 @@ export default {
       }
 
       let filters = {
+        task_type: 1,
+        task_sub_type: this.editType,
         status: status,
         check_status: checkStatus,
-        capture_status: this.form.captureStatus,
+        is_capture: this.form.captureStatus,
         presell_type: this.form.presell_type,
-        goods_ids: []
+        goods_id_list: JSON.stringify([]),
+        ext_json: JSON.stringify(this.getEditJson())
       }
+
+      console.log(filters, 'filters')
+
       await this.fetchProductList({
-        filters,
-        editData: this.getEditData()
+        filters
       })
       this.loading = false
-      this.visible = true
+      const tableRefName = this.iconList[this.editType - 1].tableRef
+      this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
     },
     async idProductList () {
       this.loading = true
