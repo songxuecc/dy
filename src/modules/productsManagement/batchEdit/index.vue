@@ -63,7 +63,7 @@
                         </el-form-item>
                     </el-form>
                     <div v-show="modifyMethods === 'product'">
-                    <el-button type="primary " class="w-120" @click="chooseProductList">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">{{hasSelectIds}}</span> 个商品</span>
+                    <el-button type="primary " class="w-120" @click="chooseProductList">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">{{selectIds.length}}</span> 个商品</span>
                     </div>
                     <div class="flex align-c" v-show="modifyMethods === 'id'">
                     <span class="color-4e yaHei font-12 mr-10">输入商品ID</span>
@@ -95,16 +95,13 @@
               <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
           </div>
         </div>
-
         <TableRecord v-if="editType === 6" class="mt-10"/>
-
         <ModalIdSearch
           :ids="lostGoodsIds"
           ref="ModalIdSearch"
           @continueIdProductList="continueIdProductList"/>
         <TableSelectProduct
           ref="TableSelectProduct"
-          :visible.sync="visibleSelectProduct"
           @preview="previewTableSelectProduct" />
 
     </div>
@@ -153,7 +150,7 @@ export default {
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
-      hasSelectIds: 0,
+      selectIds: [],
       form: {
         status: '-',
         presell_type: -1,
@@ -231,7 +228,7 @@ export default {
   },
   watch: {
     jobs (n, old) {
-      if (old.length && !n.length) this.hasSelectIds = 0
+      if (old.length && !n.length) this.selectIds = []
     }
   },
   created () {
@@ -242,7 +239,7 @@ export default {
   mounted () {},
   updated () {},
   methods: {
-    ...mapActions('productManagement/batchEdit', ['fetchProductList', 'productListSetFilter', 'fetchHhTaskPage']),
+    ...mapActions('productManagement/batchEdit', ['fetchHhTaskProductOverview', 'hhTaskProductPageSetFilter', 'fetchHhTaskPage']),
     ...mapMutations('productManagement/batchEdit', ['save']),
     // 事件名称
     toggleEditType (index) {
@@ -259,10 +256,10 @@ export default {
     },
     preview (index) {
       if (this.modifyMethods === 'area') {
-        this.hasSelectIds = 0
+        this.selectIds = []
         this.areaProductList()
       } else if (this.modifyMethods === 'id') {
-        this.hasSelectIds = 0
+        this.selectIds = []
         this.idProductList()
       } else {
         this.previewProductList()
@@ -291,7 +288,7 @@ export default {
 
       console.log(filters, 'filters')
 
-      await this.fetchProductList({
+      await this.fetchHhTaskProductOverview({
         filters
       })
       this.loading = false
@@ -333,53 +330,66 @@ export default {
         }
       // 所有id都能用
       } else {
-        await this.fetchProductList({
+        this.loading = true
+        await this.fetchHhTaskProductOverview({
           filters: {
             goods_ids: goodsIdsSet.length ? goodsIdsSet : ''
-          },
-          editData: this.getEditData()
+          }
         })
-        this.visible = true
+        this.loading = false
+        const tableRefName = this.iconList[this.editType - 1].tableRef
+        this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
       }
     },
     async continueIdProductList () {
+      this.loading = true
       const lostGoodsIdsSet = new Set(this.lostGoodsIds)
       const goodsIds = this.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
       const goodsIdsSet = [...new Set(goodsIds)]
       const unionSets = goodsIdsSet.filter(item => !lostGoodsIdsSet.has(item))
-      await this.fetchProductList({
-        filters: {
-          goods_ids: unionSets.length ? unionSets : ''
-        },
-        editData: this.getEditData()
+      let filters = {
+        task_type: 1,
+        task_sub_type: this.editType,
+        goods_id_list: JSON.stringify(unionSets.length ? unionSets : ''),
+        ext_json: JSON.stringify(this.getEditJson())
+      }
+      await this.fetchHhTaskProductOverview({
+        filters
       })
-      this.visible = true
+      this.loading = false
+      const tableRefName = this.iconList[this.editType - 1].tableRef
+      this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
     },
     // 当按商品选择时 预览
     async previewProductList () {
-      if (!this.hasSelectIds) {
+      if (!this.selectIds) {
         this.$message.error('请选择需要修改的商品')
       } else {
         this.visible = true
+
+        let filters = {
+          task_type: 1,
+          task_sub_type: this.editType,
+          goods_id_list: JSON.stringify(this.selectIds),
+          ext_json: JSON.stringify(this.getEditJson())
+        }
+
+        await this.fetchHhTaskProductOverview({
+          filters
+        })
+        this.loading = false
+        const tableRefName = this.iconList[this.editType - 1].tableRef
+        this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
       }
     },
     // 选择修改的商品
     chooseProductList () {
-      this.toggleVisibleSelectProduct()
-      this.$refs.TableSelectProduct && this.$refs.TableSelectProduct.getData()
-    },
-    toggleVisibleSelectProduct () {
-      this.visibleSelectProduct = !this.visibleSelectProduct
+      this.$refs.TableSelectProduct && this.$refs.TableSelectProduct.open()
     },
     async previewTableSelectProduct (ids, needPreview) {
-      this.hasSelectIds = ids.length
-      if (!needPreview) return
-      await this.fetchProductList({
-        filters: {
-          goods_ids: ids
-        },
-        editData: this.getEditData()
-      })
+      this.selectIds = ids
+      console.log(ids, 'ids')
+      // if (!needPreview) return
     }
   }
 

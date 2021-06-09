@@ -159,10 +159,10 @@ import { mapState, mapActions, mapMutations } from 'vuex'
 export default {
   name: 'selectProduct',
   props: {
-    visible: Boolean
   },
   data () {
     return {
+      visible: false,
       form: {
         status: '-',
         presell_type: -1,
@@ -212,7 +212,7 @@ export default {
     ...mapActions('productManagement/batchEdit', ['fetchProductList', 'productListSetFilter']),
     ...mapMutations('productManagement/batchEdit', ['save']),
     toggleVisible (index) {
-      this.$emit('update:visible', false)
+      this.visible = false
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
@@ -272,6 +272,10 @@ export default {
           page_size: pageSize
         }
       })
+    },
+    open () {
+      this.visible = true
+      this.getData()
     },
     handleClose (needPreview) {
       if (!this.multipleSelection.length && !needPreview) return this.toggleVisible()

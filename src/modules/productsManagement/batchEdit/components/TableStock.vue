@@ -16,7 +16,7 @@
       ></hh-icon>
     </div>
     <el-table
-      :data="productListTableData"
+      :data="hhTaskProductOverviewTableData"
       class="mt-10"
       ref="table"
       row-key="goods_id"
@@ -129,10 +129,10 @@
       background
       layout="total, sizes, prev, pager, next, jumper"
       @current-change="handleCurrentChange"
-      :current-page="productListPagination.page_index"
-      :page-size="productListPagination.page_size"
+      :current-page="hhTaskProductOverviewPagination.page_index"
+      :page-size="hhTaskProductOverviewPagination.page_size"
       @size-change="handleSizeChange"
-      :total="productListTotal"
+      :total="hhTaskProductOverviewTotal"
     >
     </el-pagination>
     <div class="flex justify-c align-c">
@@ -164,17 +164,17 @@ export default {
   },
   computed: {
     ...mapState('productManagement/batchEdit', [
-      'productListPagination',
-      'productListSizes',
-      'productListTableData',
-      'productListTotal'
+      'hhTaskProductOverviewPagination',
+      'hhTaskProductOverviewSizes',
+      'hhTaskProductOverviewTableData',
+      'hhTaskProductOverviewTotal'
     ])
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct']),
     edit () {
-      console.log(this.productListTableData, 'this.productListTableData')
-      const goods = this.productListTableData.map((item) => {
+      console.log(this.hhTaskProductOverviewTableData, 'this.hhTaskProductOverviewTableData')
+      const goods = this.hhTaskProductOverviewTableData.map((item) => {
         return JSON.stringify({
           is_onsale: item.isOnSale,
           goods_id: item.goods_id

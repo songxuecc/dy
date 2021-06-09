@@ -15,7 +15,7 @@
           ></hh-icon>
         </div>
         <el-table
-            :data="productListTableData"
+            :data="hhTaskProductOverviewTableData"
             class="mt-10"
             ref="table"
             row-key="id"
@@ -77,10 +77,10 @@
           background
           layout="total, sizes, prev, pager, next, jumper"
           @current-change="handleCurrentChange"
-          :current-page="productListPagination.page_index"
-          :page-size="productListPagination.page_size"
+          :current-page="hhTaskProductOverviewPagination.page_index"
+          :page-size="hhTaskProductOverviewPagination.page_size"
           @size-change="handleSizeChange"
-          :total="productListTotal">
+          :total="hhTaskProductOverviewTotal">
         </el-pagination>
         <div class="flex justify-c align-c">
             <el-button type="primary" plain style="width:120px" @click="toggleVisible">暂不修改</el-button>
@@ -103,23 +103,23 @@ export default {
   },
   computed: {
     ...mapState('productManagement/batchEdit', [
-      'productListPagination',
-      'productListSizes',
-      'productListTableData',
-      'productListTotal',
-      'productListFilters'
+      'hhTaskProductOverviewPagination',
+      'hhTaskProductOverviewSizes',
+      'hhTaskProductOverviewTableData',
+      'hhTaskProductOverviewTotal',
+      'hhTaskProductOverviewFilters'
     ])
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct']),
     edit () {
       const goodsTitleDict = {}
-      this.productListTableData.forEach(item => {
+      this.hhTaskProductOverviewTableData.forEach(item => {
         goodsTitleDict[item.goods_id] = item.new_data
       })
-      console.log(goodsTitleDict, this.productListFilters, 'goodsTitleDict')
+      console.log(goodsTitleDict, this.hhTaskProductOverviewFilters, 'goodsTitleDict')
       this.updateProduct({
-        ...this.productListFilters,
+        ...this.hhTaskProductOverviewFilters,
         goods_title_dict: JSON.stringify(goodsTitleDict)
       })
       this.toggleVisible()

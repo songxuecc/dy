@@ -4,10 +4,11 @@ import assign from '../../commonModels/assign'
 import listModel from '../../commonModels/listModel'
 
 const tableDataDetail = listModel('productList')
+const tableHhTaskProductOverview = listModel('hhTaskProductOverview')
 const tableHhTaskPage = listModel('hhTaskPage')
 const tableHhTaskProductPage = listModel('hhTaskProductPage')
 
-const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, {
+const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, tableHhTaskProductOverview, {
   namespaced: true,
   state: () => ({
     jobs: [],
@@ -22,6 +23,12 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, {
   actions: {
     async fetchProductList ({commit, state, dispatch}, payload) {
       await dispatch('productListFetch', {
+        apiName: 'getProductList',
+        ...payload
+      })
+    },
+    async fetchHhTaskProductOverview ({commit, state, dispatch}, payload) {
+      await dispatch('hhTaskProductOverviewFetch', {
         apiName: 'hhTaskProductOverview',
         ...payload
       })

@@ -8,7 +8,7 @@
         size="80%">
         <div class="title center ">预览效果 <hh-icon type="iconquxiaoanniu" class="close pointer" @click="toggleVisible"></hh-icon></div>
         <el-table
-            :data="productListTableData"
+            :data="hhTaskProductOverviewTableData"
             class="mt-10"
             ref="table"
             row-key="id"
@@ -66,10 +66,10 @@
           background
           layout="total, sizes, prev, pager, next, jumper"
           @current-change="handleCurrentChange"
-          :current-page="productListPagination.page_index"
-          :page-size="productListPagination.page_size"
+          :current-page="hhTaskProductOverviewPagination.page_index"
+          :page-size="hhTaskProductOverviewPagination.page_size"
           @size-change="handleSizeChange"
-          :total="productListTotal">
+          :total="hhTaskProductOverviewTotal">
         </el-pagination>
         <div class="flex justify-c align-c">
             <el-button type="primary" plain style="width:120px" @click="toggleVisible">暂不修改</el-button>
@@ -92,16 +92,16 @@ export default {
   },
   computed: {
     ...mapState('productManagement/batchEdit', [
-      'productListPagination',
-      'productListSizes',
-      'productListTableData',
-      'productListTotal'
+      'hhTaskProductOverviewPagination',
+      'hhTaskProductOverviewSizes',
+      'hhTaskProductOverviewTableData',
+      'hhTaskProductOverviewTotal'
     ])
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct']),
     edit () {
-      const goods = this.productListTableData.map(item => {
+      const goods = this.hhTaskProductOverviewTableData.map(item => {
         return JSON.stringify({
           is_onsale: item.isOnSale,
           goods_id: item.goods_id
