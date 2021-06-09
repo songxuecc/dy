@@ -383,8 +383,10 @@ const hhgjAPIs = {
   },
   hhTaskProductPage: (params) => {
     return api.actionCreateGet('/api/hh_task/product/page', params)
+  },
+  hhTaskDelete: (params) => {
+    return api.actionCreatorPost('/api/hh_task/delete', params)
   }
-
 }
 
 export default {
