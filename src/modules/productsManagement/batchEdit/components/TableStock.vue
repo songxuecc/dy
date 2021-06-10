@@ -36,26 +36,26 @@
           >
             <el-table-column prop="spec_names" label="规格名称" />
             <el-table-column
-              prop="new_step_stock_num"
-              label="new_step_stock_num"
-              align="center"
-              width="180"
-            />
-            <el-table-column
-              prop="new_stock_num"
-              label="new_stock_num"
-              align="center"
-              width="180"
-            />
-            <el-table-column
               prop="old_step_stock_num"
-              label="old_step_stock_num"
+              label="修改前阶梯库存"
               align="center"
               width="180"
             />
             <el-table-column
               prop="old_stock_num"
-              label="old_stock_num"
+              label="修改前库存"
+              align="center"
+              width="180"
+            />
+            <el-table-column
+              prop="new_step_stock_num"
+              label="修改后阶梯库存"
+              align="center"
+              width="180"
+            />
+            <el-table-column
+              prop="new_stock_num"
+              label="修改后库存"
               align="center"
               width="180"
             />

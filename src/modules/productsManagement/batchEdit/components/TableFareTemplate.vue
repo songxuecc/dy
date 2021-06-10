@@ -20,48 +20,10 @@
       class="mt-10"
       ref="table"
       row-key="goods_id"
-      :expand-row-keys="expands"
-      @expand-change="expandChange"
       height="calc(100vh - 181px)"
       style="width: 100%"
     >
       <el-table-empty slot="empty" />
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-table
-            style="width: 100%"
-            max-height="250"
-            :data="props.row.sku_list"
-            cell-class-name="expand-table-cell"
-          >
-            <el-table-column prop="spec_names" label="规格名称" />
-            <el-table-column
-              prop="new_step_stock_num"
-              label="new_step_stock_num"
-              align="center"
-              width="180"
-            />
-            <el-table-column
-              prop="new_stock_num"
-              label="new_stock_num"
-              align="center"
-              width="180"
-            />
-            <el-table-column
-              prop="old_step_stock_num"
-              label="old_step_stock_num"
-              align="center"
-              width="180"
-            />
-            <el-table-column
-              prop="old_stock_num"
-              label="old_stock_num"
-              align="center"
-              width="180"
-            />
-          </el-table>
-        </template>
-      </el-table-column>
       <el-table-column label="商品信息" prop="id">
         <template slot-scope="scope">
           <div class="flex">
