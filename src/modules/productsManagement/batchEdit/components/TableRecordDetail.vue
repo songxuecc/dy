@@ -24,23 +24,33 @@
                   v-loading="loading"
                   style="width: 100%;box-sizing:border-box;padding-right:20px">
                   <el-table-empty slot="empty"/>
-                  <el-table-column
+                   <el-table-column
                     prop="image_url"
-                    label="图片"
+                    label="商品信息"
                     align="center">
                     <template slot-scope="scope">
-                      <HhImage :url="scope.row.image_url"/>
+                      <img :src="scope.row.image_url" style="height: 50px; max-width: 65px"/>
                     </template>
                   </el-table-column>
-                  <el-table-column
+                   <el-table-column
                     prop="goods_name"
-                    label="商品信息"
+                    label="商品信息">
+                  </el-table-column>
+                  <el-table-column
+                    prop="old_data"
+                    label="修改前"
+                    align="center">
+                  </el-table-column>
+                   <el-table-column
+                    prop="new_data"
+                    label="修改后"
                     align="center">
                   </el-table-column>
                   <el-table-column
                     prop="total_nums"
                     label="失败理由"
-                    align="center">
+                    align="center"
+                    v-if="activeName === 4">
                   </el-table-column>
                   <el-table-column
                     width="230"
@@ -99,7 +109,7 @@ export default {
   },
   watch: {
     activeName: debounce(function (newVal) {
-      console.log(newVal)
+      this.loading = true
       this.fetchHhTaskProductPage({
         filters: {
           status: newVal
