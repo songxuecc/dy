@@ -125,26 +125,37 @@ export default {
         }
       })
     },
-    async handleDelete (value, row) {
-      try {
-        await Api.hhgjAPIs.hhTaskDelete({
-          task_id: row.task_id
-        })
+    handleDelete (value, row) {
+      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        try {
+          await Api.hhgjAPIs.hhTaskDelete({
+            task_id: row.task_id
+          })
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.fetchHhTaskPage({
+            pagination: {
+              page_index: 1
+            }
+          })
+        } catch (e) {
+          this.$message({
+            message: e,
+            type: 'error'
+          })
+        }
+      }).catch(() => {
         this.$message({
-          message: '删除成功',
-          type: 'success'
+          type: 'info',
+          message: '已取消删除'
         })
-        this.fetchHhTaskPage({
-          pagination: {
-            page_index: 1
-          }
-        })
-      } catch (e) {
-        this.$message({
-          message: e,
-          type: 'error'
-        })
-      }
+      })
     },
     handleDownload (href) {
       if (window._hmt) {
