@@ -22,11 +22,74 @@
                   <el-table
                   :data="hhTaskProductPageTableData"
                   v-loading="loading"
+                  :expand-row-keys="expands"
+                  @expand-change="expandChange"
                   style="width: 100%;box-sizing:border-box;padding-right:20px">
+                  <el-table-column type="expand" v-if="rowData.task_sub_type === 3">
+                    <el-table-empty slot="empty"/>
+                    <template slot-scope="props">
+                      <el-table
+                        style="width: 100%"
+                        max-height="250"
+                        :data="props.row.sku_list"
+                        cell-class-name="expand-table-cell"
+                      >
+                        <el-table-column prop="spec_names" label="规格名称" />
+                        <el-table-column
+                          prop="old_step_stock_num"
+                          label="修改前阶梯库存"
+                          align="center"
+                          width="180"
+                        />
+                        <el-table-column
+                          prop="old_stock_num"
+                          label="修改前库存"
+                          align="center"
+                          width="180"
+                        />
+                        <el-table-column
+                          prop="new_step_stock_num"
+                          label="修改后阶梯库存"
+                          align="center"
+                          width="180"
+                        />
+                        <el-table-column
+                          prop="new_stock_num"
+                          label="修改后库存"
+                          align="center"
+                          width="180"
+                        />
+                      </el-table>
+                    </template>
+                  </el-table-column>
+                  <el-table-column type="expand" v-if="rowData.task_sub_type === 4">
+                    <el-table-empty slot="empty"/>
+                    <template slot-scope="props">
+                      <el-table
+                        style="width: 100%"
+                        max-height="250"
+                        :data="props.row.sku_list"
+                        cell-class-name="expand-table-cell"
+                      >
+                        <el-table-column prop="spec_names" label="规格名称" />
+                        <el-table-column
+                          prop="old_data"
+                          label="修改前"
+                          align="center">
+                        </el-table-column>
+                        <el-table-column
+                          prop="new_data"
+                          label="修改后"
+                          align="center">
+                        </el-table-column>
+                      </el-table>
+                    </template>
+                  </el-table-column>
                   <el-table-empty slot="empty"/>
                    <el-table-column
                     prop="image_url"
-                    label="商品信息"
+                    label="商品图片"
+                    width="120"
                     align="center">
                     <template slot-scope="scope">
                       <img :src="scope.row.image_url" style="height: 50px; max-width: 65px"/>
@@ -57,7 +120,7 @@
                     align="center"
                     label="操作">
                     <template slot-scope="scope">
-                      <a class="font-12 pointer primary mr-5" @click="handleEdit(scope.$index, scope.row)">查看详情</a>
+                      <a class="font-12 pointer primary mr-5" @click="handleView(scope.$index, scope.row)">前往后台</a>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -84,10 +147,14 @@
 import { mapState, mapActions } from 'vuex'
 import debounce from 'lodash/debounce'
 export default {
+  name: 'TableRecordDetail',
+  props: {
+  },
   data () {
     return {
       drawer: false,
       rowData: {},
+      expands: [],
       activeName: 3,
       tabs: [{
         id: 0,
@@ -150,6 +217,16 @@ export default {
     },
     close () {
       this.drawer = false
+    },
+    handleView (index, product) {
+      window.open('https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + product.goods_id)
+    },
+    confirm () {
+      this.expands = []
+    },
+    expandChange (row, expandedRows, expanded) {
+      // if (!this.needExpand) return
+      this.expands = expandedRows.map((item) => item.goods_id)
     }
   }
 }

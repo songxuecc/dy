@@ -78,24 +78,14 @@ import TableRecordDetail from './TableRecordDetail'
 import Api from '@/api/apis.js'
 
 export default {
-  name: '修改记录',
+  name: 'TableRecord',
+  props: {
+  },
   components: {
     TableRecordDetail
   },
   data () {
     return {
-      tableData: [
-        {
-          'total_nums': 1,
-          'success_nums': 1,
-          'task_title': '批量改价格',
-          'task_id': 1,
-          'status_str': '完成',
-          'fail_nums': 0,
-          'status': 2,
-          'create_time': '2021-06-08 14:16:28'
-        }
-      ]
     }
   },
   computed: {

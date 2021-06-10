@@ -101,7 +101,9 @@
               <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
           </div>
         </div>
-        <TableRecord v-if="editType === 999" class="mt-10"/>
+        <TableRecord
+          v-if="editType === 999"
+          class="mt-10"/>
         <ModalIdSearch
           :ids="lostGoodsIds"
           ref="ModalIdSearch"
@@ -195,7 +197,8 @@ export default {
           index: 1,
           text: '上下架',
           ref: 'Shelves',
-          tableRef: 'TableShelves'
+          tableRef: 'TableShelves',
+          needExpand: false
         },
         {
           primary: 'iconbiaotixuanzhong',
@@ -203,7 +206,8 @@ export default {
           index: 2,
           text: '标题',
           ref: 'Title',
-          tableRef: 'TableTitle'
+          tableRef: 'TableTitle',
+          needExpand: false
         },
         {
           primary: 'iconkucunxuanzhong',
@@ -211,7 +215,8 @@ export default {
           index: 3,
           text: '库存',
           ref: 'Stocks',
-          tableRef: 'TableStock'
+          tableRef: 'TableStock',
+          needExpand: true
         },
         {
           primary: 'iconjiagexuanzhong',
@@ -219,7 +224,8 @@ export default {
           index: 4,
           text: '价格',
           ref: 'Price',
-          tableRef: 'TablePrice'
+          tableRef: 'TablePrice',
+          needExpand: true
         },
         {
           primary: 'iconfahuomoshixuanzhong',
@@ -227,7 +233,8 @@ export default {
           index: 5,
           text: '发货模式',
           ref: 'DeliverMode',
-          tableRef: 'TableDeliverMode'
+          tableRef: 'TableDeliverMode',
+          needExpand: false
         },
         {
           primary: 'icongaiyunfeimoban',
@@ -235,7 +242,8 @@ export default {
           index: 6,
           text: '运费模版',
           ref: 'FareTemplate',
-          tableRef: 'TableFareTemplate'
+          tableRef: 'TableFareTemplate',
+          needExpand: false
         },
         {
           primary: 'icongaikefudianhua',
@@ -243,7 +251,8 @@ export default {
           index: 7,
           text: '客服电话',
           ref: 'ConsumerHotline',
-          tableRef: 'TableConsumerHotline'
+          tableRef: 'TableConsumerHotline',
+          needExpand: false
         },
         {
           primary: 'icongaidingdanjishufangshi',
@@ -251,7 +260,8 @@ export default {
           index: 8,
           text: '计数方式',
           ref: 'CountMethod',
-          tableRef: 'TableCountMethod'
+          tableRef: 'TableCountMethod',
+          needExpand: false
         }
       ],
       visibleSelectProduct: false

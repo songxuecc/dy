@@ -46,10 +46,11 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
       })
 
       const hhTaskProductPageTableData = state.hhTaskProductPageTableData.map(item => {
-        return ({
-          ...item,
-          ...item.ext_json
-        })
+        return Object.assign(
+          item,
+          item.ext_json,
+          item.ext_json && item.ext_json.sku_list ? item.ext_json.sku_list : {}
+        )
       })
 
       commit('save', { hhTaskProductPageTableData })
