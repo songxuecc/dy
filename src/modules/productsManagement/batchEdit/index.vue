@@ -146,7 +146,7 @@ export default {
   },
   data () {
     return {
-      editType: 3,
+      editType: 1,
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
