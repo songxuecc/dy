@@ -13,7 +13,7 @@
         </title>
         <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
 
-        <div v-if="editType !== 6">
+        <div v-if="editType !== 999">
             <div class="content left" >
                 <div style="height:120px;margin-top: 30px;">
                     <h1>修改范围</h1>
@@ -89,13 +89,19 @@
                 <TablePrice ref="TablePrice" />
                 <DeliverMode ref="DeliverMode" v-if="editType === 5"/>
                 <TableDeliverMode ref="TableDeliverMode" />
+                <FareTemplate ref="FareTemplate" v-if="editType === 6"/>
+                <TableFareTemplate ref="TableFareTemplate" />
+                <ConsumerHotline ref="ConsumerHotline" v-if="editType === 7"/>
+                <TableConsumerHotline ref="TableConsumerHotline" />
+                <CountMethod ref="CountMethod" v-if="editType === 8"/>
+                <TableCountMethod ref="TableCountMethod" />
 
           </div>
           <div class="flex justify-c mt-20">
               <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
           </div>
         </div>
-        <TableRecord v-if="editType === 6" class="mt-10"/>
+        <TableRecord v-if="editType === 999" class="mt-10"/>
         <ModalIdSearch
           :ids="lostGoodsIds"
           ref="ModalIdSearch"
@@ -117,6 +123,10 @@ import Shelves from '@productsManagement/batchEdit/components/Shelves'
 import DeliverMode from '@productsManagement/batchEdit/components/DeliverMode'
 import Stocks from '@productsManagement/batchEdit/components/Stocks'
 import Price from '@productsManagement/batchEdit/components/Price'
+import FareTemplate from '@productsManagement/batchEdit/components/FareTemplate'
+import ConsumerHotline from '@productsManagement/batchEdit/components/ConsumerHotline'
+import CountMethod from '@productsManagement/batchEdit/components/CountMethod'
+
 import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
 import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
 import TableSelectProduct from '@productsManagement/batchEdit/components/TableSelectProduct'
@@ -126,6 +136,9 @@ import TableTitle from '@productsManagement/batchEdit/components/TableTitle'
 import TableRecord from '@productsManagement/batchEdit/components/TableRecord'
 import TableStock from '@productsManagement/batchEdit/components/TableStock'
 import TableDeliverMode from '@productsManagement/batchEdit/components/TableDeliverMode'
+import TableFareTemplate from '@productsManagement/batchEdit/components/TableFareTemplate'
+import TableConsumerHotline from '@productsManagement/batchEdit/components/TableConsumerHotline'
+import TableCountMethod from '@productsManagement/batchEdit/components/TableCountMethod'
 
 export default {
   components: {
@@ -133,6 +146,9 @@ export default {
     Shelves,
     DeliverMode,
     Stocks,
+    ConsumerHotline,
+    FareTemplate,
+    CountMethod,
     Price,
     TablePrice,
     TableShelves,
@@ -142,7 +158,10 @@ export default {
     TableTitle,
     TableRecord,
     TableStock,
-    TableDeliverMode
+    TableDeliverMode,
+    TableFareTemplate,
+    TableConsumerHotline,
+    TableCountMethod
   },
   data () {
     return {
@@ -209,6 +228,30 @@ export default {
           text: '发货模式',
           ref: 'DeliverMode',
           tableRef: 'TableDeliverMode'
+        },
+        {
+          primary: 'icongaiyunfeimoban',
+          info: 'icongaiyunfeimobanweixuanzhong',
+          index: 6,
+          text: '运费模版',
+          ref: 'FareTemplate',
+          tableRef: 'TableFareTemplate'
+        },
+        {
+          primary: 'icongaikefudianhua',
+          info: 'icongaikefudianhuaweixuanzhong',
+          index: 7,
+          text: '客服电话',
+          ref: 'ConsumerHotline',
+          tableRef: 'TableConsumerHotline'
+        },
+        {
+          primary: 'icongaidingdanjishufangshi',
+          info: 'icongaidingdanjishufangshiweixuanzhong',
+          index: 8,
+          text: '计数方式',
+          ref: 'CountMethod',
+          tableRef: 'TableCountMethod'
         }
       ],
       visibleSelectProduct: false
@@ -232,7 +275,7 @@ export default {
     }
   },
   created () {
-    if (this.editType === 6) {
+    if (this.editType === 999) {
       this.fetchHhTaskPage()
     }
   },
@@ -246,7 +289,7 @@ export default {
       this.editType = index
     },
     examineEditRecord () {
-      this.editType = 6
+      this.editType = 999
       this.fetchHhTaskPage()
     },
     getEditJson () {
