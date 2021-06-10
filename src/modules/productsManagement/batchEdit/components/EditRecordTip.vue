@@ -3,9 +3,9 @@
     <NewComer type="批量处理查看修改记录" ref="newComer" direction="bottom" :noAuth="true">
         <div style="width:172px">
         <div  class="color-4e font-12 left mb-5 yaHei">
-            <hh-icon type="icondanxuanxuanzhong" ></hh-icon>&nbsp;任务提交完成
+            <hh-icon type="icondanxuanxuanzhong" ></hh-icon>&nbsp;提示
         </div>
-        <div class="color-666 font-12 left">任务列表正在执行...</div>
+        <div class="color-666 font-12 left">任务列表提交后...</div>
         <div class="color-666 font-12 left">您可以离开本页面进行其他操作，或在【查看修改记录】中查看进度</div>
         <div class="right"><span  class="right pointer underline primary" @click="gotoSetting">好的</span></div>
         </div>
@@ -27,9 +27,6 @@ export default {
       event.stopPropagation()
       const ref = this.$refs.newComer
       ref && ref.close && ref.close()
-      this.$router.push({
-        name: 'MigrateSetting'
-      })
     }
   }
 }
