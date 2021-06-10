@@ -167,24 +167,14 @@ export default {
       'hhTaskProductOverviewPagination',
       'hhTaskProductOverviewSizes',
       'hhTaskProductOverviewTableData',
-      'hhTaskProductOverviewTotal'
+      'hhTaskProductOverviewTotal',
+      'hhTaskProductOverviewFilters'
     ])
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct']),
     edit () {
-      console.log(this.hhTaskProductOverviewTableData, 'this.hhTaskProductOverviewTableData')
-      const goods = this.hhTaskProductOverviewTableData.map((item) => {
-        return JSON.stringify({
-          is_onsale: item.isOnSale,
-          goods_id: item.goods_id
-        })
-      })
-      this.updateProduct({
-        jobName: '上下架批量修改',
-        goods,
-        type: 1
-      })
+      this.updateProduct(this.hhTaskProductOverviewFilters)
       this.toggleVisible()
     },
     toggleVisible () {
