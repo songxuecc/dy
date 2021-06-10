@@ -82,8 +82,8 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="修改前" prop="old_data">
-      </el-table-column>
+      <!-- <el-table-column align="center" label="修改前" prop="old_data">
+      </el-table-column> -->
       <el-table-column align="center" label="修改后" prop="new_data">
       </el-table-column>
     </el-table>
