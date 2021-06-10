@@ -331,10 +331,14 @@ export default {
       // 所有id都能用
       } else {
         this.loading = true
+        let filters = {
+          task_type: 1,
+          task_sub_type: this.editType,
+          goods_id_list: JSON.stringify(goodsIdsSet.length ? goodsIdsSet : ''),
+          ext_json: JSON.stringify(this.getEditJson())
+        }
         await this.fetchHhTaskProductOverview({
-          filters: {
-            goods_ids: goodsIdsSet.length ? goodsIdsSet : ''
-          }
+          filters
         })
         this.loading = false
         const tableRefName = this.iconList[this.editType - 1].tableRef
