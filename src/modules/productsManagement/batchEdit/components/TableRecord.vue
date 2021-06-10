@@ -157,7 +157,7 @@ export default {
         })
       })
     },
-    handleDownload (href) {
+    handleDownload (index, row) {
       if (window._hmt) {
         window._hmt.push([
           '_trackEvent',
@@ -166,6 +166,8 @@ export default {
           '批量修改记录下载'
         ])
       }
+      const href = location.origin + '/api/hh_task/product/excel/query?task_id=' + row.task_id + '&token=' + localStorage.getItem('token')
+      console.log(href, row)
       let link = document.createElement('a')
       link.href = href
       link.download = '批量修改记录下载'
