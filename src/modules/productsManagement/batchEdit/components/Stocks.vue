@@ -219,6 +219,14 @@ export default {
       this.form[attribute] = parseInt(e.target.value) ? parseInt(e.target.value) : ''
     },
     getForm () {
+      if (!this.form.stock_type) {
+        this.$message.error('请选择库存修改方式')
+        return false
+      } else if (this.form.stock_type && !this.form[`stock_value_${this.form.stock_type}`]) {
+        this.$message.error('请填写库存')
+        return false
+      }
+
       return {
         stock_type: this.form.stock_type,
         stock_value: this.form[`stock_value_${this.form.stock_type}`]

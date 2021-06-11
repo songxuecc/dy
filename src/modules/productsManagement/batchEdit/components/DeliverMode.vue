@@ -95,6 +95,7 @@
 
 <script>
 import commonUtils from '@/common/commonUtils'
+import moment from 'moment'
 export default {
   name: 'deliverMode',
   props: {
@@ -118,7 +119,17 @@ export default {
   },
   methods: {
     getForm () {
-      console.log(this.form)
+      if (this.form.presell_type === 1 && !this.form.presell_end_time) {
+        this.$message.error('请选择预售结束时间')
+        return false
+      } else if (this.form.presell_type === 1 && this.form.presell_end_time) {
+        const startTime = new Date()
+        const days = moment(this.form.presell_end_time).diff(moment(startTime), 'days', true)
+        if (days > 30) {
+          this.$message.error('预售结束时间不可以超过30天')
+          return false
+        }
+      }
       return {
         ...this.form
       }

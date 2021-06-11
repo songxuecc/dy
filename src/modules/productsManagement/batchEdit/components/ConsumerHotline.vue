@@ -7,7 +7,7 @@
     label-position="left"
   >
     <el-form-item label="客服电话:">
-      <el-input clearable @clear="handleClear" v-model="form.mobile_no" style="width:300px"></el-input>
+      <el-input clearable @clear="handleClear" v-model="form.mobile_no" style="width:300px" placeholder="请输入客服电话"></el-input>
     </el-form-item>
     <el-form-item label="下架商品修改后:" class="mt-10">
       <el-radio-group v-model="form.commit_type">
@@ -35,6 +35,10 @@ export default {
       this.form.mobile_no = ''
     },
     getForm () {
+      if (!this.form.mobile_no) {
+        this.$message.error('请输入客服电话')
+        return false
+      }
       return this.form
     }
   }

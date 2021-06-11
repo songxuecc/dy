@@ -116,7 +116,7 @@ export default {
   data () {
     return {
       form: {
-        is_formula: 0,
+        is_formula: 1,
         origin_price_rate: undefined,
         incr_diff: undefined,
         desc_diff: undefined,
@@ -162,7 +162,17 @@ export default {
       this.form[attribute] = parseInt(e.target.value) ? parseInt(e.target.value) : ''
     },
     getForm () {
-      console.log(this.form, 'this.form')
+      if (!this.form.is_formula && !this.form.is_every_price) {
+        this.$message.error('请选择价格修改方式')
+        return false
+      } else if (this.form.is_formula && !this.form.origin_price_rate) {
+        this.$message.error('请填写价格公式')
+        return false
+      } else if (this.form.is_every_price && !this.form.every_price) {
+        this.$message.error('请填写统一价格')
+        return false
+      }
+
       return {
         ...this.form,
         is_formula: Number(this.form.is_formula),
@@ -172,8 +182,8 @@ export default {
         every_price: utils.yuanToFen(this.form.every_price),
         min_price: utils.yuanToFen(this.form.min_price),
         origin_price_rate: utils.yuanToFen(this.form.origin_price_rate),
-        incr_diff: utils.yuanToFen(this.form.incr_diff),
-        desc_diff: utils.yuanToFen(this.form.desc_diff),
+        incr_diff: utils.yuanToFen(this.form.incr_diff || 0),
+        desc_diff: utils.yuanToFen(this.form.desc_diff || 0),
         min_price_rate: utils.yuanToFen(this.form.min_price_rate)
       }
     }

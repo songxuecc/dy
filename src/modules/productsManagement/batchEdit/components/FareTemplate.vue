@@ -59,6 +59,10 @@ export default {
       })
     },
     getForm () {
+      if (typeof this.form.cost_template_id !== 'number') {
+        this.$message.error('请选择运费模板')
+        return false
+      }
       const template = this.costTemplateList.find(item => item.value === this.form.cost_template_id)
       return { ...this.form, template_name: template.name }
     }

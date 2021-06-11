@@ -60,12 +60,34 @@ export default {
   },
   methods: {
     handleCheck (attribute) {
-      this.form[attribute] = true
+      if (!this.form[attribute]) this.form[attribute] = true
     },
     handleClear (attribute) {
-      this.form[attribute] = ''
+      if (this.form[attribute]) this.form[attribute] = ''
     },
     getForm () {
+      if (!this.form.prefix && this.form.is_prefix) {
+        this.$message.error('请填写-名称前缀')
+        return false
+      } else if (!this.form.suffix && this.form.is_suffix) {
+        this.$message.error('请填写-名称后缀')
+        return false
+      } else if (!this.form.source_str && !this.form.target_str && this.form.is_replace) {
+        this.$message.error('请填写-替换关键词')
+        return false
+      } else if (this.form.is_delete && !this.form.delete_str) {
+        this.$message.error('请填写-删除关键词')
+        return false
+      } else if (
+        (!this.form.prefix && !this.form.is_prefix) ||
+        (!this.form.suffix && !this.form.is_suffix) ||
+        (!this.form.source_str && !this.form.target_str && !this.form.is_replace) ||
+        (!this.form.prefix && !this.form.is_prefix) ||
+        (!this.form.is_delete && !this.form.delete_str)
+      ) {
+        this.$message.error('请选择并填写修改内容')
+        return false
+      }
       return {
         ...this.form,
         is_replace: Number(this.form.is_replace),

@@ -328,6 +328,12 @@ export default {
         checkStatus = parseInt(statusArray[1])
       }
 
+      const extJson = this.getEditJson()
+      if (!extJson) {
+        this.loading = false
+        return false
+      }
+
       let filters = {
         task_type: 1,
         task_sub_type: this.editType,
@@ -338,8 +344,6 @@ export default {
         goods_id_list: JSON.stringify([]),
         ext_json: JSON.stringify(this.getEditJson())
       }
-
-      console.log(filters, 'filters')
 
       await this.setFilterHhTaskProductOverview({
         filters,
@@ -388,6 +392,13 @@ export default {
       // 所有id都能用
       } else {
         this.loading = true
+
+        const extJson = this.getEditJson()
+        if (!extJson) {
+          this.loading = false
+          return false
+        }
+
         let filters = {
           task_type: 1,
           task_sub_type: this.editType,
@@ -412,6 +423,13 @@ export default {
       const goodsIds = this.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
       const goodsIdsSet = [...new Set(goodsIds)]
       const unionSets = goodsIdsSet.filter(item => !lostGoodsIdsSet.has(item))
+
+      const extJson = this.getEditJson()
+      if (!extJson) {
+        this.loading = false
+        return false
+      }
+
       let filters = {
         task_type: 1,
         task_sub_type: this.editType,
@@ -431,10 +449,16 @@ export default {
     },
     // 当按商品选择时 预览
     async previewProductList () {
-      if (!this.selectIds) {
+      if (!this.selectIds.length) {
         this.$message.error('请选择需要修改的商品')
       } else {
         this.visible = true
+
+        const extJson = this.getEditJson()
+        if (!extJson) {
+          this.loading = false
+          return false
+        }
 
         let filters = {
           task_type: 1,
