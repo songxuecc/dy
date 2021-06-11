@@ -113,7 +113,7 @@
         @click="toggleVisible"
         >暂不修改</el-button
       >
-      <el-button type="primary" style="width: 120px" @click="edit"
+      <el-button type="primary" style="width: 120px" @click="edit" :disabled="!hhTaskProductOverviewTableData.length"
         >开始批量修改</el-button
       >
     </div>
