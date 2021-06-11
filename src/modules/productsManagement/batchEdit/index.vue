@@ -342,7 +342,10 @@ export default {
       console.log(filters, 'filters')
 
       await this.fetchHhTaskProductOverview({
-        filters
+        filters,
+        pagination: {
+          page_index: 1
+        }
       })
       this.loading = false
       const tableRefName = this.iconList[this.editType - 1].tableRef
@@ -391,7 +394,10 @@ export default {
           ext_json: JSON.stringify(this.getEditJson())
         }
         await this.fetchHhTaskProductOverview({
-          filters
+          filters,
+          pagination: {
+            page_index: 1
+          }
         })
         this.loading = false
         const tableRefName = this.iconList[this.editType - 1].tableRef
@@ -411,7 +417,10 @@ export default {
         ext_json: JSON.stringify(this.getEditJson())
       }
       await this.fetchHhTaskProductOverview({
-        filters
+        filters,
+        pagination: {
+          page_index: 1
+        }
       })
       this.loading = false
       const tableRefName = this.iconList[this.editType - 1].tableRef
@@ -432,7 +441,10 @@ export default {
         }
 
         await this.fetchHhTaskProductOverview({
-          filters
+          filters,
+          pagination: {
+            page_index: 1
+          }
         })
         this.loading = false
         const tableRefName = this.iconList[this.editType - 1].tableRef

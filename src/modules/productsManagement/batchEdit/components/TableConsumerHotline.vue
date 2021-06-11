@@ -22,6 +22,7 @@
       row-key="goods_id"
       height="calc(100vh - 181px)"
       style="width: 100%"
+      v-loading="loading"
     >
       <el-table-empty slot="empty" />
       <el-table-column label="商品信息" prop="id">
@@ -140,10 +141,13 @@ export default {
       'hhTaskProductOverviewTableData',
       'hhTaskProductOverviewTotal',
       'hhTaskProductOverviewFilters'
-    ])
+    ]),
+    ...mapState({
+      loading: state => state['@@loading'].effects['productManagement/batchEdit/fetchHhTaskProductOverview']
+    })
   },
   methods: {
-    ...mapActions('productManagement/batchEdit', ['updateProduct', 'saveDelete']),
+    ...mapActions('productManagement/batchEdit', ['updateProduct', 'fetchHhTaskProductOverview', 'saveDelete']),
     edit () {
       this.updateProduct(this.hhTaskProductOverviewFilters)
       this.toggleVisible()
@@ -153,6 +157,22 @@ export default {
     },
     handleDelete (index, row) {
       this.saveDelete(row.goods_id)
+    },
+    handleCurrentChange (pageIndex) {
+      if (this.loading) return
+      this.fetchHhTaskProductOverview({
+        pagination: {
+          page_index: pageIndex
+        }
+      })
+    },
+    handleSizeChange (pageSize) {
+      this.fetchHhTaskProductOverview({
+        pagination: {
+          page_index: 1,
+          page_size: pageSize
+        }
+      })
     }
   }
 }
