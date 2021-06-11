@@ -72,9 +72,9 @@
                         autosize
                         placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
                         v-model="goods_ids"
-                        style="flex:1">
+                        style="flex:1;margin-right:100px">
                     </el-input>
-                    <span class="click ml-10">确认</span>
+                    <!-- <span class="click ml-10">确认</span> -->
                     </div>
                 </div>
 
