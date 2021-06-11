@@ -72,6 +72,14 @@
                   <el-input size="small" v-model="scope.row.new_data" placeholder maxlength="30" show-word-limit></el-input>
                 </template>
             </el-table-column>
+            <el-table-column
+                align="center"
+                label="操作"
+                width="150">
+                <template slot-scope="scope">
+                  <span class="click" @click="handleDelete(scope.$index, scope.row)">删除</span>
+                </template>
+            </el-table-column>
         </el-table>
          <el-pagination
           background
@@ -111,7 +119,7 @@ export default {
     ])
   },
   methods: {
-    ...mapActions('productManagement/batchEdit', ['updateProduct']),
+    ...mapActions('productManagement/batchEdit', ['updateProduct', 'saveDelete']),
     edit () {
       const goodsTitleDict = {}
       this.hhTaskProductOverviewTableData.forEach(item => {
@@ -126,6 +134,9 @@ export default {
     },
     toggleVisible () {
       this.visible = !this.visible
+    },
+    handleDelete (index, row) {
+      this.saveDelete(row.goods_id)
     }
   }
 }

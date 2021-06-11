@@ -24,6 +24,7 @@
                   v-loading="loading"
                   :expand-row-keys="expands"
                   @expand-change="expandChange"
+                  row-key="goods_id"
                   style="width: 100%;box-sizing:border-box;padding-right:20px">
                   <el-table-column type="expand" v-if="rowData.task_sub_type === 3">
                     <el-table-empty slot="empty"/>
@@ -189,15 +190,16 @@ export default {
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['fetchHhTaskProductPage']),
-    open (rowData) {
-      this.drawer = true
+    async open (rowData) {
       this.rowData = rowData
-      this.fetchHhTaskProductPage({
+      this.activeName = 3
+      await this.fetchHhTaskProductPage({
         filters: {
           parent_id: rowData.task_id,
           status: 3
         }
       })
+      this.drawer = true
     },
     handleCurrentChange (pageIndex) {
       if (this.loading) return
@@ -225,7 +227,6 @@ export default {
       this.expands = []
     },
     expandChange (row, expandedRows, expanded) {
-      // if (!this.needExpand) return
       this.expands = expandedRows.map((item) => item.goods_id)
     }
   }

@@ -12,7 +12,8 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
   namespaced: true,
   state: () => ({
     jobs: [],
-    poolingLoading: false
+    poolingLoading: false,
+    previewDeleteGoodsIds: []
   }),
   mutations: {
     save (state, payload) {
@@ -39,25 +40,40 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         ...payload
       })
     },
+
     async fetchHhTaskProductPage ({commit, state, dispatch}, payload) {
       await dispatch('hhTaskProductPageFetch', {
         apiName: 'hhTaskProductPage',
         ...payload
       })
 
-      const hhTaskProductPageTableData = state.hhTaskProductPageTableData.map(item => {
+      const hhTaskProductPageTableData = state.hhTaskProductPageTableData.map((item, id) => {
+        if (item.ext_json && item.ext_json.sku_list) {
+          item.ext_json.sku_list = item.ext_json.sku_list.map((item, id) => ({
+            ...item,
+            id
+          }))
+        }
         return Object.assign(
           item,
-          item.ext_json,
-          item.ext_json && item.ext_json.sku_list ? item.ext_json.sku_list : {}
+          item.ext_json
         )
       })
 
       commit('save', { hhTaskProductPageTableData })
     },
+    saveDelete ({commit, state, dispatch}, payload) {
+      const previewDeleteGoodsIds = [...state.previewDeleteGoodsIds, payload]
+      const hhTaskProductOverviewTableData = state.hhTaskProductOverviewTableData.filter(item => !previewDeleteGoodsIds.includes(item.goods_id))
+      commit('save', {
+        previewDeleteGoodsIds,
+        hhTaskProductOverviewTableData
+      })
+    },
     async updateProduct ({commit, state, dispatch}, payload) {
       try {
-        await Api.hhgjAPIs.hhTaskCreate(payload)
+        const parmas = {...payload, delete_goods_id_list: JSON.stringify(state.previewDeleteGoodsIds)}
+        await Api.hhgjAPIs.hhTaskCreate(parmas)
         this._vm.$message({
           message: `批量修改开始,请点击查看修改记录`,
           type: 'success'

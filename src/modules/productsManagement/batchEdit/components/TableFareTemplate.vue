@@ -24,7 +24,7 @@
       style="width: 100%"
     >
       <el-table-empty slot="empty" />
-      <el-table-column label="商品信息" prop="id">
+      <el-table-column label="商品信息" prop="id" >
         <template slot-scope="scope">
           <div class="flex">
             <!-- {{scope.row.image_url}} -->
@@ -86,6 +86,14 @@
       </el-table-column> -->
       <el-table-column align="center" label="修改后" prop="new_data">
       </el-table-column>
+      <el-table-column
+          align="center"
+          label="操作"
+          width="150">
+          <template slot-scope="scope">
+            <span class="click" @click="handleDelete(scope.$index, scope.row)">删除</span>
+          </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       background
@@ -134,7 +142,7 @@ export default {
     ])
   },
   methods: {
-    ...mapActions('productManagement/batchEdit', ['updateProduct']),
+    ...mapActions('productManagement/batchEdit', ['updateProduct', 'saveDelete']),
     edit () {
       this.updateProduct(this.hhTaskProductOverviewFilters)
       this.toggleVisible()
@@ -147,6 +155,9 @@ export default {
     },
     expandChange (row, expandedRows, expanded) {
       this.expands = expandedRows.map((item) => item.goods_id)
+    },
+    handleDelete (index, row) {
+      this.saveDelete(row.goods_id)
     }
   }
 }
