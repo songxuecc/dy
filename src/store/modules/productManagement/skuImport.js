@@ -16,7 +16,6 @@ const model = assign(tableDataRecord, tableDataDetail, {
   mutations: {
     save (state, payload) {
       Object.assign(state, payload)
-      console.log(state, 'state')
     }
   },
   actions: {
@@ -25,7 +24,7 @@ const model = assign(tableDataRecord, tableDataDetail, {
         apiName: 'getProductSkuExcelPage',
         ...payload
       })
-      this.dispatch('productManagement/skuImport/getperprogress')
+      dispatch('getperprogress')
     },
     async fetchDetail ({commit, state, dispatch}, payload) {
       await dispatch('skuExcelDetailFetch', {
@@ -42,7 +41,7 @@ const model = assign(tableDataRecord, tableDataDetail, {
       })
       commit('save', {skuExcelDetailTableData})
     },
-    async getperprogress ({commit, state}) {
+    async getperprogress ({commit, state, dispatch}) {
       const runingsIds = state.productSkuExcelTableData.filter(item => item.status === 'running').map(item => item.id)
       if (!runingsIds.length) return false
       const progressData = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
@@ -60,7 +59,7 @@ const model = assign(tableDataRecord, tableDataDetail, {
         productSkuExcelTableData
       })
       setTimeout(() => {
-        this.dispatch('productManagement/skuImport/getperprogress')
+        dispatch('getperprogress')
       }, 1000)
     }
   },
