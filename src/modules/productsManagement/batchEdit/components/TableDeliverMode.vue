@@ -1,4 +1,4 @@
-<!-- 上下架 -->
+<!-- 批量修改发货模式 -->
 <template>
   <el-drawer
     :visible.sync="visible"
@@ -8,7 +8,7 @@
     size="80%"
   >
     <div class="title center">
-      预览效果
+      预览批量修改发货模式效果
       <hh-icon
         type="iconquxiaoanniu"
         class="close pointer"
@@ -28,28 +28,7 @@
       <el-table-column label="商品信息" prop="id">
         <template slot-scope="scope">
           <div class="flex">
-            <!-- {{scope.row.image_url}} -->
-            <el-image
-              style="height: 50px; max-width: 65px"
-              :src="scope.row.image_url"
-              fit="contain"
-              class="mr-10"
-              :preview-src-list="[scope.row.image_url]"
-              lazy
-            >
-              <div slot="placeholder">
-                <hh-icon
-                  type="iconwuzhaopian"
-                  style="font-size: 50px; display: inline-block"
-                />
-              </div>
-              <div slot="error" class="flex align-c" style="height: 100%">
-                <hh-icon
-                  type="icontupianjiazaishibai03"
-                  style="font-size: 30px"
-                />
-              </div>
-            </el-image>
+            <HhImage :src="scope.row.image_url" style="height:50px;max-width:65px" class="mr-10"/>
             <div>
               <el-link
                 :underline="false"

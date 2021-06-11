@@ -347,6 +347,7 @@ export default {
           page_index: 1
         }
       })
+      this.save({previewDeleteGoodsIds: []})
       this.loading = false
       const tableRefName = this.iconList[this.editType - 1].tableRef
       this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
@@ -399,6 +400,7 @@ export default {
             page_index: 1
           }
         })
+        this.save({previewDeleteGoodsIds: []})
         this.loading = false
         const tableRefName = this.iconList[this.editType - 1].tableRef
         this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
@@ -422,6 +424,7 @@ export default {
           page_index: 1
         }
       })
+      this.save({previewDeleteGoodsIds: []})
       this.loading = false
       const tableRefName = this.iconList[this.editType - 1].tableRef
       this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
@@ -446,6 +449,7 @@ export default {
             page_index: 1
           }
         })
+        this.save({previewDeleteGoodsIds: []})
         this.loading = false
         const tableRefName = this.iconList[this.editType - 1].tableRef
         this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
@@ -457,8 +461,6 @@ export default {
     },
     async previewTableSelectProduct (ids, needPreview) {
       this.selectIds = ids
-      console.log(ids, 'ids')
-      // if (!needPreview) return
     }
   }
 

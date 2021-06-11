@@ -38,10 +38,10 @@
           align="center">
           <template slot-scope="scope">
             <el-link :underline="false" class="font-12" type="primary" v-if="scope.row.status === 1">进行中</el-link>
-            <el-link :underline="false" class="font-12" type="success" v-if="scope.row.status === 2">成功</el-link>
-            <el-link :underline="false" class="font-12" type="info" v-if="scope.row.status === 3">完成</el-link>
+            <el-link :underline="false" class="font-12" type="warning" v-if="scope.row.status === 2">已完成</el-link>
+            <el-link :underline="false" class="font-12" type="success" v-if="scope.row.status === 3">成功</el-link>
             <el-link :underline="false" class="font-12" type="danger" v-if="scope.row.status === 4">失败</el-link>
-            <el-link :underline="false" class="font-12" type="warning" v-if="scope.row.status === 0">未开始</el-link>
+            <el-link :underline="false" class="font-12" type="info" v-if="scope.row.status === 0">未开始</el-link>
           </template>
         </el-table-column>
         <el-table-column

@@ -18,7 +18,6 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
   mutations: {
     save (state, payload) {
       Object.assign(state, payload)
-      console.log(state, 'state')
     }
   },
   actions: {
@@ -197,5 +196,4 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
   }
 })
 
-console.log(model)
 export default model

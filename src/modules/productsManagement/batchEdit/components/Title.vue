@@ -1,27 +1,27 @@
 <!-- 标题 -->
 <template>
     <el-form ref="form" :model="form" label-width="70px" size="small" label-position="left">
-        <el-checkbox style="display:block;margin-bottom:12px" v-model="form.is_replace">
-            <el-form-item  label="名称加前缀" style="width:300px">
-                <el-input clearable @clear="handleClear('prefix')"  v-model="form.prefix" @focus="handleCheck('is_replace')"></el-input>
-            </el-form-item>
-        </el-checkbox>
-        <el-checkbox style="display:block;margin-bottom:12px" v-model="form.is_delete">
-            <el-form-item  label="名称加后缀" style="width:300px">
-                <el-input clearable @clear="handleClear('suffix')"  v-model="form.suffix" @focus="handleCheck('is_delete')"></el-input>
-            </el-form-item>
-        </el-checkbox>
         <el-checkbox style="display:block;margin-bottom:12px" v-model="form.is_prefix">
-            <el-form-item  label="关键词替换" style="display:inline-block;width:300px">
-                <el-input clearable @clear="handleClear('source_str')"  v-model="form.source_str" @focus="handleCheck('is_prefix')"></el-input>
-            </el-form-item>
-            <el-form-item  label="替换为" style="display:inline-block;width:300px" label-width="45px" class="ml-10">
-                <el-input clearable @clear="handleClear('target_str')"  v-model="form.target_str" @focus="handleCheck('is_prefix')"></el-input>
+            <el-form-item  label="名称加前缀" style="width:300px">
+                <el-input clearable @clear="handleClear('prefix')"  v-model="form.prefix" @focus="handleCheck('is_prefix')"></el-input>
             </el-form-item>
         </el-checkbox>
         <el-checkbox style="display:block;margin-bottom:12px" v-model="form.is_suffix">
+            <el-form-item  label="名称加后缀" style="width:300px">
+                <el-input clearable @clear="handleClear('suffix')"  v-model="form.suffix" @focus="handleCheck('is_suffix')"></el-input>
+            </el-form-item>
+        </el-checkbox>
+        <el-checkbox style="display:block;margin-bottom:12px" v-model="form.is_replace">
+            <el-form-item  label="关键词替换" style="display:inline-block;width:300px">
+                <el-input clearable @clear="handleClear('source_str')"  v-model="form.source_str" @focus="handleCheck('is_replace')"></el-input>
+            </el-form-item>
+            <el-form-item  label="替换为" style="display:inline-block;width:300px" label-width="45px" class="ml-10">
+                <el-input clearable @clear="handleClear('target_str')"  v-model="form.target_str" @focus="handleCheck('is_replace')"></el-input>
+            </el-form-item>
+        </el-checkbox>
+        <el-checkbox style="display:block;margin-bottom:12px" v-model="form.is_delete">
             <el-form-item label="关键词删除" style="width:613px">
-                <el-input clearable @clear="handleClear('delete_str')"  v-model="form.delete_str" @focus="handleCheck('is_suffix')"></el-input>
+                <el-input clearable @clear="handleClear('delete_str')"  v-model="form.delete_str" @focus="handleCheck('is_delete')"></el-input>
             </el-form-item>
         </el-checkbox>
 

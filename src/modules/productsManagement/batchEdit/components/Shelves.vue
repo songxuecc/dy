@@ -13,7 +13,7 @@ export default {
   },
   data () {
     return {
-      onshelf: 0
+      onshelf: 1
     }
   },
   methods: {

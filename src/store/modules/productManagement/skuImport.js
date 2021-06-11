@@ -69,5 +69,4 @@ const model = assign(tableDataRecord, tableDataDetail, {
   }
 })
 
-console.log(model)
 export default model

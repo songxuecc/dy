@@ -1,4 +1,4 @@
-<!-- 上下架 -->
+<!-- 批量修改标题 -->
 <template>
     <el-drawer
         :visible.sync="visible"
@@ -7,7 +7,7 @@
         custom-class="pl-10 pt-10"
         size="80%">
          <div class="title center">
-          预览效果
+          预览批量修改标题效果
           <hh-icon
             type="iconquxiaoanniu"
             class="close pointer"
@@ -32,21 +32,7 @@
                 prop="id">
             <template slot-scope="scope">
               <div  class="flex">
-                <!-- {{scope.row.image_url}} -->
-                  <el-image
-                      style="height:50px;max-width:65px"
-                      :src="scope.row.image_url"
-                      fit="contain"
-                      class="mr-10"
-                      :preview-src-list="[scope.row.image_url]"
-                      lazy>
-                      <div slot="placeholder">
-                          <hh-icon  type="iconwuzhaopian" style="font-size:50px;display:inline-block" />
-                      </div>
-                      <div slot="error" class="flex align-c" style="height:100%">
-                          <hh-icon  type="icontupianjiazaishibai03" style="font-size:30px" />
-                      </div>
-                  </el-image>
+                  <HhImage :src="scope.row.image_url" style="height:50px;max-width:65px" class="mr-10"/>
                 <div>
                     <el-link style="font-size:12px" :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
                     {{ scope.row.goods_name }}

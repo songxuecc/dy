@@ -111,7 +111,7 @@
                     align="center">
                   </el-table-column>
                   <el-table-column
-                    prop="total_nums"
+                    prop="fail_reason"
                     label="失败理由"
                     align="center"
                     v-if="activeName === 4">
