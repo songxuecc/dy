@@ -98,7 +98,7 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         id_list: JSON.stringify(runingsIds)
       })
       const hhTaskPageTableData = state.hhTaskPageTableData.map(originItem => {
-        const progressItem = progressData.find(progressItem => progressItem.id === originItem.id)
+        const progressItem = progressData.find(progressItem => progressItem.id === originItem.task_id)
         if (progressItem) {
           return {...originItem, ...progressItem}
         } else {
