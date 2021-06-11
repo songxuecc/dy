@@ -292,7 +292,7 @@ export default {
   mounted () {},
   updated () {},
   methods: {
-    ...mapActions('productManagement/batchEdit', ['fetchHhTaskProductOverview', 'hhTaskProductPageSetFilter', 'fetchHhTaskPage']),
+    ...mapActions('productManagement/batchEdit', ['setFilterHhTaskProductOverview', 'hhTaskProductPageSetFilter', 'fetchHhTaskPage']),
     ...mapMutations('productManagement/batchEdit', ['save']),
     // 事件名称
     toggleEditType (index) {
@@ -341,7 +341,7 @@ export default {
 
       console.log(filters, 'filters')
 
-      await this.fetchHhTaskProductOverview({
+      await this.setFilterHhTaskProductOverview({
         filters,
         pagination: {
           page_index: 1
@@ -394,7 +394,7 @@ export default {
           goods_id_list: JSON.stringify(goodsIdsSet.length ? goodsIdsSet : ''),
           ext_json: JSON.stringify(this.getEditJson())
         }
-        await this.fetchHhTaskProductOverview({
+        await this.setFilterHhTaskProductOverview({
           filters,
           pagination: {
             page_index: 1
@@ -418,7 +418,7 @@ export default {
         goods_id_list: JSON.stringify(unionSets.length ? unionSets : ''),
         ext_json: JSON.stringify(this.getEditJson())
       }
-      await this.fetchHhTaskProductOverview({
+      await this.setFilterHhTaskProductOverview({
         filters,
         pagination: {
           page_index: 1
@@ -443,7 +443,7 @@ export default {
           ext_json: JSON.stringify(this.getEditJson())
         }
 
-        await this.fetchHhTaskProductOverview({
+        await this.setFilterHhTaskProductOverview({
           filters,
           pagination: {
             page_index: 1

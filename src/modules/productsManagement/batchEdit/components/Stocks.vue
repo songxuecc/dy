@@ -2,7 +2,7 @@
 <template>
   <el-form ref="form" :model="form" size="small" label-position="left">
     <el-radio-group
-      v-model="form.presell_type"
+      v-model="form.stock_type"
       class="mb-10 flex column"
       style="width: 320px"
     >
@@ -176,7 +176,7 @@ export default {
   data () {
     return {
       form: {
-        presell_type: 1,
+        stock_type: 1,
         stock_value_1: undefined,
         stock_value_2: undefined,
         stock_value_3: undefined,
@@ -192,15 +192,15 @@ export default {
   methods: {
     handleCheck (type) {
       console.log(type, 'type')
-      this.form.presell_type = type
+      this.form.stock_type = type
     },
     handleClear (attribute) {
       this.form[attribute] = ''
     },
     getForm () {
       return {
-        presell_type: this.form.presell_type,
-        stock_value: this.form[`stock_value_${this.form.presell_type}`]
+        stock_type: this.form.stock_type,
+        stock_value: this.form[`stock_value_${this.form.stock_type}`]
       }
     }
   }

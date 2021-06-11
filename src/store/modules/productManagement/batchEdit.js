@@ -33,6 +33,12 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         ...payload
       })
     },
+    async setFilterHhTaskProductOverview ({commit, state, dispatch}, payload) {
+      await dispatch('hhTaskProductOverviewSetFilter', {
+        apiName: 'hhTaskProductOverview',
+        ...payload
+      })
+    },
     async fetchHhTaskPage ({commit, state, dispatch}, payload) {
       await dispatch('hhTaskPageFetch', {
         apiName: 'hhTaskPage',

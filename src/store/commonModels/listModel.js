@@ -23,6 +23,7 @@ const listModel = (modelName = '') => {
   const paginationName = modelName ? `${modelName}Pagination` : 'pagination'
   const filtersName = modelName ? `${modelName}Filters` : 'filters'
   const tableDataName = modelName ? `${modelName}TableData` : 'tableData'
+  const setFilterName = modelName ? `${modelName}SetFilter` : 'setFilter'
 
   return {
     namespaced: true,
@@ -44,6 +45,40 @@ const listModel = (modelName = '') => {
       // }
     },
     actions: {
+      async [setFilterName] ({commit, state}, payload) {
+        const {pagination, filters} = payload || {}
+        const apiName = payload.apiName
+        try {
+          const nextPagination = {
+            ...state[paginationName],
+            ...pagination
+          }
+          const nextFilters = {
+            ...filters
+          }
+          const parmas = {
+            ...nextPagination,
+            ...nextFilters
+          }
+          const data = await Api.hhgjAPIs[apiName](parmas)
+
+          let items
+          if (data.hasOwnProperty('items')) {
+            items = data.items
+          } else {
+            items = data.item_list
+          }
+          commit('save', {
+            [paginationName]: nextPagination,
+            [filtersName]: nextFilters,
+            [tableDataName]: items,
+            [totalName]: data.total
+          })
+          return data
+        } catch (err) {
+          this._vm.$message.error(`${err}`)
+        }
+      },
       async [fetchName] ({commit, state}, payload) {
         const {pagination, filters} = payload || {}
         const apiName = payload.apiName
