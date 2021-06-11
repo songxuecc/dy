@@ -28,7 +28,7 @@
 
             <el-table-column
                 label="商品信息"
-                width="380"
+                width="300"
                 prop="id">
             <template slot-scope="scope">
               <div  class="flex">
@@ -48,7 +48,7 @@
             </template>
             </el-table-column>
             <el-table-column
-                width="200"
+                width="220"
                 label="修改前"
                 prop="old_data">
             </el-table-column>
@@ -59,8 +59,7 @@
                   <el-input
                       v-model="scope.row.new_data"
                       size="mini"
-                      :class="['input-text-left', {'warn': getTitleLengthWarning(scope.row.new_data)}]"
-                      style="margin-right:4px">
+                      :class="['input-text-left', {'warn': getTitleLengthWarning(scope.row.new_data)}]">
                       <span slot="append" class="hint">{{ getTitleLength(scope.row.new_data) }} / 30</span>
                   </el-input>
                 </template>
@@ -68,7 +67,7 @@
             <el-table-column
                 align="center"
                 label="操作"
-                width="150">
+                width="100">
                 <template slot-scope="scope">
                   <span class="click" @click="handleDelete(scope.$index, scope.row)">删除</span>
                 </template>
