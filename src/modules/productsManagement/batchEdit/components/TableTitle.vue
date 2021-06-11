@@ -56,7 +56,13 @@
                 label="修改后"
                 prop="new_data">
                 <template slot-scope="scope">
-                  <el-input size="small" v-model="scope.row.new_data" placeholder maxlength="30" show-word-limit></el-input>
+                  <el-input
+                      v-model="scope.row.new_data"
+                      size="mini"
+                      :class="['input-text-left', {'warn': getTitleLengthWarning(scope.row.new_data)}]"
+                      style="margin-right:4px">
+                      <span slot="append" class="hint">{{ getTitleLength(scope.row.new_data) }} / 30</span>
+                  </el-input>
                 </template>
             </el-table-column>
             <el-table-column
@@ -86,6 +92,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import utils from '@/common/utils'
 
 export default {
   name: 'TableTitle',
@@ -110,6 +117,12 @@ export default {
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct', 'fetchHhTaskProductOverview', 'saveDelete']),
+    getTitleLength (title) {
+      return utils.getDyStrRealLength(title)
+    },
+    getTitleLengthWarning (title) {
+      return utils.getDyStrRealLength(title) > 30
+    },
     edit () {
       const goodsTitleDict = {}
       this.hhTaskProductOverviewTableData.forEach(item => {
