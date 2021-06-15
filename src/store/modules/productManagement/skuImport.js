@@ -44,23 +44,30 @@ const model = assign(tableDataRecord, tableDataDetail, {
     async getperprogress ({commit, state, dispatch}) {
       const runingsIds = state.productSkuExcelTableData.filter(item => item.status === 'running').map(item => item.id)
       if (!runingsIds.length) return false
-      const progressData = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
-        id_list: JSON.stringify(runingsIds)
-      })
-      const productSkuExcelTableData = state.productSkuExcelTableData.map(originItem => {
-        const progressItem = progressData.find(progressItem => progressItem.id === originItem.id)
-        if (progressItem) {
-          return {...originItem, ...progressItem}
-        } else {
-          return originItem
-        }
-      })
-      commit('save', {
-        productSkuExcelTableData
-      })
-      setTimeout(() => {
-        dispatch('getperprogress')
-      }, 1000)
+      try {
+        const progressData = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
+          id_list: JSON.stringify(runingsIds)
+        })
+        const productSkuExcelTableData = state.productSkuExcelTableData.map(originItem => {
+          const progressItem = progressData.find(progressItem => progressItem.id === originItem.id)
+          if (progressItem) {
+            return {...originItem, ...progressItem}
+          } else {
+            return originItem
+          }
+        })
+        commit('save', {
+          productSkuExcelTableData
+        })
+        setTimeout(() => {
+          dispatch('getperprogress')
+        }, 1000)
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     }
   },
   getters: {

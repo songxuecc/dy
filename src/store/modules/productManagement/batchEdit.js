@@ -92,25 +92,32 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
       }
     },
     async getperprogress ({commit, state, dispatch}) {
-      const runingsIds = state.hhTaskPageTableData.filter(item => item.status === 1).map(item => item.id)
+      const runingsIds = state.hhTaskPageTableData.filter(item => item.status === 1).map(item => item.task_id)
       if (!runingsIds.length) return false
-      const progressData = await Api.hhgjAPIs.hhTaskProgressQuery({
-        id_list: JSON.stringify(runingsIds)
-      })
-      const hhTaskPageTableData = state.hhTaskPageTableData.map(originItem => {
-        const progressItem = progressData.find(progressItem => progressItem.id === originItem.task_id)
-        if (progressItem) {
-          return {...originItem, ...progressItem}
-        } else {
-          return originItem
-        }
-      })
-      commit('save', {
-        hhTaskPageTableData
-      })
-      setTimeout(() => {
-        dispatch('getperprogress')
-      }, 1000)
+      try {
+        const progressData = await Api.hhgjAPIs.hhTaskProgressQuery({
+          id_list: JSON.stringify(runingsIds)
+        })
+        const hhTaskPageTableData = state.hhTaskPageTableData.map(originItem => {
+          const progressItem = progressData.find(progressItem => progressItem.id === originItem.task_id)
+          if (progressItem) {
+            return {...originItem, ...progressItem}
+          } else {
+            return originItem
+          }
+        })
+        commit('save', {
+          hhTaskPageTableData
+        })
+        setTimeout(() => {
+          dispatch('getperprogress')
+        }, 1000)
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     }
   },
   getters: {

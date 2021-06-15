@@ -388,7 +388,7 @@ const hhgjAPIs = {
     return api.actionCreatorPost('/api/hh_task/delete', params)
   },
   hhTaskProgressQuery: (params) => {
-    return api.actionCreateGet('/api/hh_task/progress/query ', params)
+    return api.actionCreateGet('/api/hh_task/progress/query', params)
   }
 }
 
