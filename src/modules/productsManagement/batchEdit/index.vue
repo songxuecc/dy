@@ -366,10 +366,7 @@ export default {
       }
 
       await this.setFilterHhTaskProductOverview({
-        filters,
-        pagination: {
-          page_index: 1
-        }
+        filters
       })
       this.save({previewDeleteGoodsIds: []})
       this.loading = false
@@ -457,10 +454,7 @@ export default {
         ext_json: JSON.stringify(this.getEditJson())
       }
       await this.setFilterHhTaskProductOverview({
-        filters,
-        pagination: {
-          page_index: 1
-        }
+        filters
       })
       this.save({previewDeleteGoodsIds: []})
       this.loading = false

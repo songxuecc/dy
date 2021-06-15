@@ -131,7 +131,8 @@ export default {
         }
       }
       return {
-        ...this.form
+        ...this.form,
+        presell_end_time: moment(this.form.presell_end_time).format('YYYY-MM-DD HH:mm:ss')
       }
     },
     openSpacialCategory () {

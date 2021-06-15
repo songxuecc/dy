@@ -1,5 +1,6 @@
 // 列表的 分页 查询 搜索
 import Api from '@/api/apis'
+import isEqual from 'lodash/isEqual'
 
 /** 使用
  * this[fetchName]({
@@ -56,6 +57,12 @@ const listModel = (modelName = '') => {
           const nextFilters = {
             ...filters
           }
+
+          // 如果filter和之前的条件不等 则从第一页开始获取数据
+          if (!isEqual(nextFilters, state[filtersName])) {
+            nextPagination.page_index = 1
+          }
+
           const parmas = {
             ...nextPagination,
             ...nextFilters
@@ -90,6 +97,10 @@ const listModel = (modelName = '') => {
           const nextFilters = {
             ...state[filtersName],
             ...filters
+          }
+          // 如果filter和之前的条件不等 则从第一页开始获取数据
+          if (!isEqual(nextFilters, state[filtersName])) {
+            nextPagination.page_index = 1
           }
           const parmas = {
             ...nextPagination,

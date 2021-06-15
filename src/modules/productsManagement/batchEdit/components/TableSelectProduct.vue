@@ -5,7 +5,7 @@
         :with-header="false"
         direction="rtl"
         :visible.sync="visible"
-        @closed="handleClose(false)"
+        @closed="handleCancle()"
         @opened="setTableHeight"
         size="80%">
         <!-- 搜索 -->
@@ -60,7 +60,7 @@
           <el-table
               row-key="goods_id"
               v-loading="loading"
-              ref="multipleTable"
+              ref="TableSelectProduct"
               :data="productListTableData"
               tooltip-effect="dark"
               style="width: 100%"
@@ -147,6 +147,7 @@
         </div>
 
         <div class="flex justify-c align-c" ref="btn">
+            <el-button type="primary" plain style="width:120px"  @click="handleCancle(true)">取消选择</el-button>
             <el-button type="primary" style="width:120px"  @click="handleClose(true)">确认选择</el-button>
         </div>
     </el-drawer>
@@ -227,6 +228,9 @@ export default {
       this.height = `calc(100vh - ${height}px)`
     },
     onSubmit () {
+      this.$emit('preview', [])
+      this.multipleSelection = []
+      this.$refs.TableSelectProduct && this.$refs.TableSelectProduct.clearSelection && this.$refs.TableSelectProduct.clearSelection()
       this.getData()
     },
     async getData () {
@@ -277,9 +281,10 @@ export default {
       this.visible = true
       this.getData()
     },
+    handleCancle () {
+      this.toggleVisible()
+    },
     handleClose (needPreview) {
-      if (!this.multipleSelection.length && !needPreview) return this.toggleVisible()
-      if (!this.multipleSelection.length && needPreview) return this.$message.error('请选择商品')
       this.toggleVisible()
       const ids = this.multipleSelection.map(item => item.goods_id)
       this.$emit('preview', ids, needPreview)
