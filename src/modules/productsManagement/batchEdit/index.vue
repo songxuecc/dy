@@ -309,7 +309,11 @@ export default {
   mounted () {},
   updated () {},
   methods: {
-    ...mapActions('productManagement/batchEdit', ['setFilterHhTaskProductOverview', 'fetchHhTaskPage', 'getperprogress']),
+    ...mapActions('productManagement/batchEdit', [
+      'setFilterHhTaskProductOverview',
+      'fetchHhTaskPage',
+      'getperprogress'
+    ]),
     ...mapMutations('productManagement/batchEdit', ['save']),
     // 事件名称
     toggleEditType (index) {

@@ -15,7 +15,8 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
     poolingLoading: false,
     previewDeleteGoodsIds: [],
     stopGetperprogress: false,
-    getperprogressTimer: null
+    getperprogressTimer: null,
+    clearSelectId: 0
   }),
   mutations: {
     save (state, payload) {
@@ -109,8 +110,12 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         const parmas = {...payload, delete_goods_id_list: JSON.stringify(state.previewDeleteGoodsIds)}
         await Api.hhgjAPIs.hhTaskCreate(parmas)
         this._vm.$message({
-          message: `批量修改开始,请点击查看修改记录`,
-          type: 'success'
+          message: `批量修改开始,请点击 查看修改记录 按钮`,
+          type: 'success',
+          duration: 6000
+        })
+        commit('save', {
+          clearSelectId: state.clearSelectId + 1
         })
       } catch (err) {
         this._vm.$message({

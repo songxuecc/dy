@@ -46,7 +46,7 @@
           </el-form-item>
           <br/>
           <el-form-item label="商品ID">
-            <el-input class="w-486" type="textarea" :autosize="{ minRows: 1, maxRows: 1 }" placeholder="输入多个商品ID,以换行分隔，最多可输入100个" v-model="goods_ids"></el-input>
+            <el-input class="w-486 relative" style="height:32px" type="textarea" :autosize="{ minRows: 1, maxRows:4}" placeholder="输入多个商品ID,以换行分隔，最多可输入100个" v-model="goods_ids"></el-input>
           </el-form-item>
 
           <el-form-item>
@@ -189,6 +189,18 @@ export default {
   activated () {
     this.setTableHeight()
   },
+  watch: {
+    clearSelectId (n, o) {
+      if (n !== o) {
+        // 清除选择
+        // 清除筛选
+        this.initFilters()
+        this.$emit('preview', [])
+        this.multipleSelection = []
+        this.$refs.TableSelectProduct && this.$refs.TableSelectProduct.clearSelection && this.$refs.TableSelectProduct.clearSelection()
+      }
+    }
+  },
   computed: {
     ...mapState({
       loading: state => state['@@loading'].effects['productManagement/batchEdit/productListFetch']
@@ -197,7 +209,9 @@ export default {
       'productListPagination',
       'productListSizes',
       'productListTableData',
-      'productListTotal'
+      'productListTotal',
+      'clearSelectId',
+      'productListFilters'
     ]),
     statusOptions () {
       const options = []
@@ -228,7 +242,6 @@ export default {
       this.height = `calc(100vh - ${height}px)`
     },
     onSubmit () {
-      this.$emit('preview', [])
       this.multipleSelection = []
       this.$refs.TableSelectProduct && this.$refs.TableSelectProduct.clearSelection && this.$refs.TableSelectProduct.clearSelection()
       this.getData()
@@ -288,6 +301,15 @@ export default {
       this.toggleVisible()
       const ids = this.multipleSelection.map(item => item.goods_id)
       this.$emit('preview', ids, needPreview)
+    },
+    initFilters () {
+      this.goods_ids = ''
+      this.form = {
+        status: '-',
+        presell_type: -1,
+        captureStatus: -1,
+        keyword: ''
+      }
     }
   }
 }
@@ -333,5 +355,11 @@ export default {
 .selectProductTable{
   height: calc(100vh - 235px);
   overflow-y: auto;
+}
+
+/deep/ .el-textarea__inner {
+  position: absolute;
+  top: 2px;
+  z-index: 1;
 }
 </style>

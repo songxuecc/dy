@@ -117,15 +117,15 @@ export default {
     return {
       form: {
         is_formula: 1,
-        origin_price_rate: undefined,
-        incr_diff: undefined,
-        desc_diff: undefined,
+        origin_price_rate: '',
+        incr_diff: '',
+        desc_diff: '',
         is_every_price: 0,
-        every_price: undefined,
+        every_price: '',
         is_open_min_price: false,
-        min_price: undefined,
+        min_price: '',
         is_open_min_price_rate: false,
-        min_price_rate: undefined
+        min_price_rate: ''
       }
     }
   },
