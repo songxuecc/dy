@@ -6,9 +6,9 @@
             <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer']" @click="toggleEditType(icon.index)">
             <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
             <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
-            <div class="click" style="margin-top:104px" @click="examineEditRecord">
+            <div class="click" style="margin-top:104px" @click="examineEditRecord" @mouseenter="toggleEditRecordTip" @mouseleave="toggleEditRecordTip">
               查看修改记录
-              <EditRecordTip />
+              <EditRecordTip v-show="showEditRecordTip" />
             </div>
         </title>
         <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
@@ -119,6 +119,7 @@
 import { mapState, mapActions, mapMutations } from 'vuex'
 import common from '@/common/common.js'
 import Api from '@/api/apis'
+import debounce from 'lodash/debounce'
 
 import Title from '@productsManagement/batchEdit/components/Title'
 import Shelves from '@productsManagement/batchEdit/components/Shelves'
@@ -167,7 +168,8 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.save({
-      stopGetperprogress: true
+      stopGetperprogress: true,
+      getperprogressTimer: null
     })
     next()
   },
@@ -181,6 +183,7 @@ export default {
   },
   data () {
     return {
+      showEditRecordTip: false,
       editType: 1,
       modifyMethods: 'area',
       loading: false,
@@ -312,10 +315,13 @@ export default {
     toggleEditType (index) {
       this.editType = index
     },
-    examineEditRecord () {
+    examineEditRecord: debounce(function () {
       this.editType = 999
       this.fetchHhTaskPage()
-    },
+    }, 2000, {
+      leading: true,
+      trailing: false
+    }),
     getEditJson () {
       const refName = this.iconList[this.editType - 1].ref
       const json = this.$refs[refName] && this.$refs[refName].getForm()
@@ -499,6 +505,9 @@ export default {
     },
     async previewTableSelectProduct (ids, needPreview) {
       this.selectIds = ids
+    },
+    toggleEditRecordTip () {
+      this.showEditRecordTip = !this.showEditRecordTip
     }
   }
 

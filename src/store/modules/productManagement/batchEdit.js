@@ -14,7 +14,8 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
     jobs: [],
     poolingLoading: false,
     previewDeleteGoodsIds: [],
-    stopGetperprogress: false
+    stopGetperprogress: false,
+    getperprogressTimer: null
   }),
   mutations: {
     save (state, payload) {
@@ -23,34 +24,57 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
   },
   actions: {
     async fetchProductList ({commit, state, dispatch}, payload) {
-      await dispatch('productListFetch', {
-        apiName: 'getProductList',
-        ...payload
-      })
+      try {
+        await dispatch('productListFetch', {
+          apiName: 'getProductList',
+          ...payload
+        })
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     },
     async fetchHhTaskProductOverview ({commit, state, dispatch}, payload) {
-      await dispatch('hhTaskProductOverviewFetch', {
-        apiName: 'hhTaskProductOverview',
-        ...payload
-      })
+      try {
+        await dispatch('hhTaskProductOverviewFetch', {
+          apiName: 'hhTaskProductOverview',
+          ...payload
+        })
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     },
     async setFilterHhTaskProductOverview ({commit, state, dispatch}, payload) {
-      await dispatch('hhTaskProductOverviewSetFilter', {
-        apiName: 'hhTaskProductOverview',
-        ...payload
-      })
+      try {
+        await dispatch('hhTaskProductOverviewSetFilter', {
+          apiName: 'hhTaskProductOverview',
+          ...payload
+        })
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     },
     async fetchHhTaskPage ({commit, state, dispatch}, payload) {
       await dispatch('hhTaskPageFetch', {
         apiName: 'hhTaskPage',
         ...payload
       })
+      console.log('执行了111')
+      clearTimeout(state.getperprogressTimer)
       commit('save', {
-        stopGetperprogress: false
+        stopGetperprogress: false,
+        getperprogressTimer: null
       })
       dispatch('getperprogress')
     },
-
     async fetchHhTaskProductPage ({commit, state, dispatch}, payload) {
       await dispatch('hhTaskProductPageFetch', {
         apiName: 'hhTaskProductPage',
@@ -96,6 +120,10 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
       }
     },
     async getperprogress ({commit, state, dispatch}) {
+      clearTimeout(state.getperprogressTimer)
+      commit('save', {
+        getperprogressTimer: null
+      })
       const runingsIds = state.hhTaskPageTableData.filter(item => item.status === 1).map(item => item.task_id).filter(item => item)
       if (!runingsIds.length || state.stopGetperprogress) return false
       try {
@@ -113,10 +141,14 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         commit('save', {
           hhTaskPageTableData
         })
-        setTimeout(() => {
+        const getperprogressTimer = setTimeout(() => {
           dispatch('getperprogress')
-        }, 1000)
+        }, 2000)
+        commit('save', {
+          getperprogressTimer
+        })
       } catch (err) {
+        clearTimeout(state.getperprogressTimer)
         this._vm.$message({
           message: `${err}`,
           type: 'error'

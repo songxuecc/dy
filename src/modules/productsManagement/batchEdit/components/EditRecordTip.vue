@@ -1,6 +1,6 @@
 <!-- 查看修改记录 -->
 <template>
-    <NewComer type="批量处理查看修改记录" ref="newComer" direction="bottom" :noAuth="true">
+    <NewComer type="批量处理查看修改记录" ref="newComer" direction="bottom" :noAuth="true" :noNewTips="true">
         <div style="width:172px">
         <div  class="color-4e font-12 left mb-5 yaHei">
             <hh-icon type="icondanxuanxuanzhong" ></hh-icon>&nbsp;提示
