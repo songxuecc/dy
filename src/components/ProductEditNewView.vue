@@ -424,25 +424,25 @@
   </div>
 </template>
 <script>
-import picturesUploadView from '@/components/PicturesUploadView'
-import categorySelectView from '@/components/CategorySelectView'
-import PropertySet from '@/components/PropertySet.vue'
+import { mapActions, mapGetters } from 'vuex'
+import isEmpty from 'lodash/isEmpty'
+import cloneDeep from 'lodash/cloneDeep'
 import request from '@/mixins/request.js'
 import skuHandler from '@/mixins/skuHandler.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
-import { mapActions, mapGetters } from 'vuex'
 import { TextHandler } from '@/common/batchEditHandler'
-import isEmpty from 'lodash/isEmpty'
-import cloneDeep from 'lodash/cloneDeep'
 import skuImport from '@/assets/images/sku_import.png'
+import categorySelectView from '@/components/CategorySelectView'
+import picturesUploadView from '@/components/PicturesUploadView'
+import PropertySet from '@/components/PropertySet.vue'
 
 export default {
   inject: ['reload'],
   mixins: [request, skuHandler],
   components: {
-    picturesUploadView,
     categorySelectView,
+    picturesUploadView,
     PropertySet
   },
   props: {

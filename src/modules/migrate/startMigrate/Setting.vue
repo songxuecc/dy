@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import categorySelectView from '@/components/CategorySelectView'
-import Api from '@/api/apis'
 import isEqual from 'lodash/isEqual'
+import Api from '@/api/apis'
+import categorySelectView from '@/components/CategorySelectView'
 
 export default {
   name: 'setting',

@@ -145,8 +145,9 @@
 <script>
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
-import categorySelectView from '@/components/CategorySelectView'
 import { TextHandler, StockHandler, TemplateHandler } from '@/common/batchEditHandler'
+import categorySelectView from '@/components/CategorySelectView'
+
 export default {
   mixins: [request],
   components: {
