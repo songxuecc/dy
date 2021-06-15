@@ -13,7 +13,8 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
   state: () => ({
     jobs: [],
     poolingLoading: false,
-    previewDeleteGoodsIds: []
+    previewDeleteGoodsIds: [],
+    stopGetperprogress: false
   }),
   mutations: {
     save (state, payload) {
@@ -43,6 +44,9 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
       await dispatch('hhTaskPageFetch', {
         apiName: 'hhTaskPage',
         ...payload
+      })
+      commit('save', {
+        stopGetperprogress: false
       })
       dispatch('getperprogress')
     },
@@ -92,8 +96,8 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
       }
     },
     async getperprogress ({commit, state, dispatch}) {
-      const runingsIds = state.hhTaskPageTableData.filter(item => item.status === 1).map(item => item.task_id)
-      if (!runingsIds.length) return false
+      const runingsIds = state.hhTaskPageTableData.filter(item => item.status === 1).map(item => item.task_id).filter(item => item)
+      if (!runingsIds.length || state.stopGetperprogress) return false
       try {
         const progressData = await Api.hhgjAPIs.hhTaskProgressQuery({
           id_list: JSON.stringify(runingsIds)

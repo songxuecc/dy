@@ -165,6 +165,20 @@ export default {
     TableConsumerHotline,
     TableCountMethod
   },
+  beforeRouteLeave (to, from, next) {
+    this.save({
+      stopGetperprogress: true
+    })
+    next()
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.save({
+        stopGetperprogress: false
+      })
+      vm.getperprogress && vm.getperprogress()
+    })
+  },
   data () {
     return {
       editType: 1,
@@ -292,7 +306,7 @@ export default {
   mounted () {},
   updated () {},
   methods: {
-    ...mapActions('productManagement/batchEdit', ['setFilterHhTaskProductOverview', 'hhTaskProductPageSetFilter', 'fetchHhTaskPage']),
+    ...mapActions('productManagement/batchEdit', ['setFilterHhTaskProductOverview', 'fetchHhTaskPage', 'getperprogress']),
     ...mapMutations('productManagement/batchEdit', ['save']),
     // 事件名称
     toggleEditType (index) {

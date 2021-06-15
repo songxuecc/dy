@@ -26,7 +26,7 @@
                   @expand-change="expandChange"
                   row-key="goods_id"
                   height="calc(100vh - 225px)"
-                  style="width: 100%;box-sizing:border-box;padding-right:20px">
+                  style="width: 100%;box-sizing:border-box;">
                   <el-table-column type="expand" v-if="rowData.task_sub_type === 3">
                     <el-table-empty slot="empty"/>
                     <template slot-scope="props">
@@ -118,7 +118,7 @@
                     v-if="activeName === 4">
                   </el-table-column>
                   <el-table-column
-                    width="230"
+                    width="100"
                     align="center"
                     label="操作">
                     <template slot-scope="scope">
@@ -193,6 +193,7 @@ export default {
     ...mapActions('productManagement/batchEdit', ['fetchHhTaskProductPage']),
     async open (rowData) {
       this.rowData = rowData
+      console.log(rowData, 'rowData')
       this.activeName = 3
       await this.fetchHhTaskProductPage({
         filters: {
