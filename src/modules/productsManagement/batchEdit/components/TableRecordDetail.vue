@@ -25,6 +25,7 @@
                   :expand-row-keys="expands"
                   @expand-change="expandChange"
                   row-key="goods_id"
+                  height="calc(100vh - 225px)"
                   style="width: 100%;box-sizing:border-box;padding-right:20px">
                   <el-table-column type="expand" v-if="rowData.task_sub_type === 3">
                     <el-table-empty slot="empty"/>
