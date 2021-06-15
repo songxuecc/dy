@@ -349,7 +349,7 @@ export default {
         let hasCustomPrice = false
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
-          const data = singleTableDataData.find(item => value.sku_id === item.sku_id)
+          const data = singleTableDataData.find(item => value.custome_key === item.custome_key)
           value.sku_price = data.sku_price
           // 自定义价格设置
           if (data.custom_price) {
