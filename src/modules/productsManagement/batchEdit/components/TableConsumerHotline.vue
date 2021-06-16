@@ -77,13 +77,14 @@
     </el-table>
     <el-pagination
       background
-      layout="total, sizes, prev, pager, next, jumper"
+      layout="slot, total, sizes, prev, pager, next, jumper"
       @current-change="handleCurrentChange"
       :current-page="hhTaskProductOverviewPagination.page_index"
       :page-size="hhTaskProductOverviewPagination.page_size"
       @size-change="handleSizeChange"
       :total="hhTaskProductOverviewTotal"
     >
+      <span v-if="previewDeleteGoodsIds.length" class="mr-10 fail">已删除 {{previewDeleteGoodsIds.length}} 条</span>
     </el-pagination>
     <div class="flex justify-c align-c">
       <el-button
@@ -119,7 +120,8 @@ export default {
       'hhTaskProductOverviewSizes',
       'hhTaskProductOverviewTableData',
       'hhTaskProductOverviewTotal',
-      'hhTaskProductOverviewFilters'
+      'hhTaskProductOverviewFilters',
+      'previewDeleteGoodsIds'
     ]),
     ...mapState({
       loading: state => state['@@loading'].effects['productManagement/batchEdit/fetchHhTaskProductOverview']

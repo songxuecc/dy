@@ -46,8 +46,7 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         const previewDeleteGoodsIds = state.previewDeleteGoodsIds
         const hhTaskProductOverviewTableData = state.hhTaskProductOverviewTableData.filter(item => !previewDeleteGoodsIds.includes(item.goods_id))
         commit('save', {
-          hhTaskProductOverviewTableData,
-          hhTaskProductOverviewTotal: state.hhTaskProductOverviewTotal - previewDeleteGoodsIds.length
+          hhTaskProductOverviewTableData
         })
       } catch (err) {
         this._vm.$message({
@@ -65,8 +64,7 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         const previewDeleteGoodsIds = state.previewDeleteGoodsIds
         const hhTaskProductOverviewTableData = state.hhTaskProductOverviewTableData.filter(item => !previewDeleteGoodsIds.includes(item.goods_id))
         commit('save', {
-          hhTaskProductOverviewTableData,
-          hhTaskProductOverviewTotal: state.hhTaskProductOverviewTotal - previewDeleteGoodsIds.length
+          hhTaskProductOverviewTableData
         })
       } catch (err) {
         this._vm.$message({
@@ -113,8 +111,7 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
       const hhTaskProductOverviewTableData = state.hhTaskProductOverviewTableData.filter(item => !previewDeleteGoodsIds.includes(item.goods_id))
       commit('save', {
         previewDeleteGoodsIds: [...new Set(previewDeleteGoodsIds)],
-        hhTaskProductOverviewTableData,
-        hhTaskProductOverviewTotal: state.hhTaskProductOverviewTotal - 1
+        hhTaskProductOverviewTableData
       })
     },
     async updateProduct ({commit, state, dispatch}, payload) {
