@@ -38,7 +38,7 @@
         <!-- <el-footer class="footer">
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer> -->
-        <div  class="float-view"  @click="handleClick"  @mouseover.stop="handleHuhuTitletipActive" @mouseout.stop="handleHuhuTitletipActive">
+        <div  :class="['float-view',!flexFootVisible ? 'float-view-active' :' ']"  @click="handleClick"  @mouseover.stop="handleHuhuTitletipActive" @mouseout.stop="handleHuhuTitletipActive">
           <div style="width:50px;height:31px;" class="huhutitle" >
             <div :class="['huhutitle-tip',huhuTitletipActive ? 'huhutitle-tip-active' :' ']" ref="tip">{{flexFootVisible ? '点击缩小哦～' : '点击放大哦～'}} </div>
           </div>
@@ -516,21 +516,19 @@ export default {
   }
 
   .float-view {
-    position: absolute;
+    position: fixed;
     z-index: 9999;
     transform: translate(0,-50%);
-    top: 70%;
+    top: 78%;
     right: 15px;
-    .huhutitle-tip {
-      display: none;
-    }
-    &:hover {
-      .huhutitle-tip {
-        display: block;
-      }
-    }
-
+    transition: all 0.2s;
   }
+
+  .float-view-active {
+    top: 85%;
+    right: -15px;
+  }
+
   .main-layout{
     padding-left:20px;
     padding-top:10px;
