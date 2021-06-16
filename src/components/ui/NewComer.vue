@@ -24,8 +24,10 @@ export default {
     },
     className: String,
     style: Object,
-    // 不需要身份验证
-    noAuth: Boolean
+    // 不需要新手身份验证
+    noAuth: Boolean,
+    // 不需要记住本地关闭打开的选择
+    noNewTips: Boolean
   },
   data () {
     return {
@@ -39,6 +41,9 @@ export default {
   computed: {
     ...mapGetters(['getCurrentSubsc']),
     show () {
+      if (this.noNewTips) {
+        return this.visible
+      }
       const isNewTips = JSON.parse(localStorage.getItem('is_new_tips') || '{}') || {}
       if (this.noAuth) {
         return !isNewTips[this.type]

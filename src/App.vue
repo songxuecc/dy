@@ -38,11 +38,11 @@
         <!-- <el-footer class="footer">
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer> -->
-        <div v-if="isShowFloatView" class="float-view" v-hh-drag="">
+        <div  :class="['float-view pointer',!flexFootVisible ? 'float-view-active' :' ']"  @click="handleClick"  @mouseover.stop="handleHuhuTitletipActive" @mouseout.stop="handleHuhuTitletipActive">
           <div style="width:50px;height:31px;" class="huhutitle" >
-            <div :class="['huhutitle-tip']" ref="tip">点我拖动哦 ~ </div>
+            <div :class="['huhutitle-tip',huhuTitletipActive ? 'huhutitle-tip-active' :' ']" ref="tip">{{flexFootVisible ? '点击缩小哦～' : '点击放大哦～'}} </div>
           </div>
-          <flex-foot ref="flexFoot" @toggleDialogNotificationVisible="toggleDialogNotificationVisible"></flex-foot>
+          <flex-foot ref="flexFoot"  :flexFootVisible="flexFootVisible"></flex-foot>
         </div>
         <hh-dialog width="600" :visible.sync="dialogNotificationVisible" :isClose="false" :isHeadLine="false" :zIndex="3000" @closeDialog="closeDialogNotification">
           <template v-slot:content>
@@ -121,7 +121,9 @@ export default {
       },
       huhutitleHover: false,
       dialogNotificationVisible: false,
-      subActiveArray: []
+      subActiveArray: [],
+      flexFootVisible: true,
+      huhuTitletipActive: false
     }
   },
   components: {
@@ -379,6 +381,12 @@ export default {
     },
     handleClickNewFeatureOnlineTip (options) {
       this.$router.push(options)
+    },
+    handleClick () {
+      this.flexFootVisible = !this.flexFootVisible
+    },
+    handleHuhuTitletipActive () {
+      this.huhuTitletipActive = !this.huhuTitletipActive
     }
   }
 }
@@ -508,13 +516,19 @@ export default {
   }
 
   .float-view {
-    position: absolute;
-    // margin-left: 650px;
+    position: fixed;
     z-index: 9999;
     transform: translate(0,-50%);
-    top: 50%;
+    top: 78%;
     right: 15px;
+    transition: all 0.2s;
   }
+
+  .float-view-active {
+    top: 85%;
+    right: -15px;
+  }
+
   .main-layout{
     padding-left:20px;
     padding-top:10px;

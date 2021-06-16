@@ -486,21 +486,21 @@
     </div>
 </template>
 <script>
-import picturesUploadView from '@/components/PicturesUploadView'
-import categorySelectView from '@/components/CategorySelectView'
-import attributeView from '@/components/AttributeView.vue'
+import moment from 'moment'
 import request from '@/mixins/request.js'
 import skuHandler from '@/mixins/skuHandler.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
-import moment from 'moment'
+import categorySelectView from '@/components/CategorySelectView'
+import picturesUploadView from '@/components/PicturesUploadView'
+import attributeView from '@/components/AttributeView.vue'
 
 export default {
   inject: ['reload'],
   mixins: [request, skuHandler],
   components: {
-    picturesUploadView,
     categorySelectView,
+    picturesUploadView,
     attributeView
   },
   data () {

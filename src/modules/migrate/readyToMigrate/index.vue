@@ -1,7 +1,7 @@
 <template lang="html">
   <div v-loading="loadingCnt" class="readyToMigrate">
     <div>
-      <div class="test" ref="test">
+      <div class="readyToMigrateContent" ref="readyToMigrateContent">
         <Search
           :capture="capture"
           @change="onSearchChange"/>
@@ -586,9 +586,9 @@ export default {
       if (isScroll) {
         const scrollWidth = getScrollbarWidth(scrollEl)
         this.scrollWidth = scrollWidth
-        const test = this.$refs.test
+        const readyToMigrateContent = this.$refs.readyToMigrateContent
         const clientHeight = scrollEl.clientHeight
-        const rect = test.getBoundingClientRect()
+        const rect = readyToMigrateContent.getBoundingClientRect()
         const height = rect.height
         const dist = 5
         const disdance = height - clientHeight - dist

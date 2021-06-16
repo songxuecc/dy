@@ -261,14 +261,14 @@
 </template>
 
 <script>
-import request from '@/mixins/request.js'
-import Api from '@/api/apis.js'
-import isEqual from 'lodash/isEqual'
-import common from '@/common/common.js'
-import categorySelectView from '@/components/CategorySelectView'
+import {mapGetters} from 'vuex'
 import debounce from 'lodash/debounce'
 import cloneDeep from 'lodash/cloneDeep'
-import {mapGetters} from "vuex";
+import isEqual from 'lodash/isEqual'
+import request from '@/mixins/request.js'
+import common from '@/common/common.js'
+import Api from '@/api/apis.js'
+import categorySelectView from '@/components/CategorySelectView'
 
 export default {
   mixins: [request],
