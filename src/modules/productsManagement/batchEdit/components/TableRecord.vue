@@ -48,12 +48,12 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="230"
+          width="250"
           align="center"
           label="操作">
           <template slot-scope="scope">
             <el-link :underline="false" class="font-12 mr-5" type="primary" @click="handleDetail(scope.$index, scope.row)">查看详情</el-link>
-            <el-link :underline="false" class="font-12 mr-5" type="primary" @click="handleDelete(scope.$index, scope.row)">删除记录</el-link>
+            <el-link :underline="false" class="font-12 mr-5" type="primary" @click="handleDelete(scope.$index, scope.row)">删除并中止</el-link>
             <el-link :underline="false" :class="['font-12  mr-20']" type="primary" @click="handleDownload(scope.$index, scope.row)" :disabled="!scope.row.fail_nums">下载失败详情</el-link>
           </template>
         </el-table-column>
