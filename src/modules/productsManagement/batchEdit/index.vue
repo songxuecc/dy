@@ -504,6 +504,10 @@ export default {
     async previewTableSelectProduct (ids, needPreview) {
       this.selectIds = ids
     },
+    deleteSelectProduct (id) {
+      if (this.selectIds.length) return false
+      this.selectIds = this.selectIds.filter(item => item !== id)
+    },
     toggleEditRecordTip () {
       this.showEditRecordTip = !this.showEditRecordTip
     }

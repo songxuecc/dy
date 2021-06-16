@@ -37,14 +37,14 @@
           class="primary"
           align="center">
           <template slot-scope="scope">
-            <el-link :underline="false" class="font-12 flex column justify-c align-c" type="primary" v-if="scope.row.status === 1">
+            <el-link :underline="false" class="font-12 flex column justify-c align-c no-decoration" type="primary" v-if="scope.row.status === 1">
               <span>进行中 <span v-if="scope.row.percent !== 100"> - {{scope.row.percent || 0}}%</span></span>
               <el-progress :percentage="scope.row.percent" :show-text="false" style="width:80px" :stroke-width="10"></el-progress>
             </el-link>
-            <el-link :underline="false" class="font-12" type="warning" v-if="scope.row.status === 2">已完成</el-link>
-            <el-link :underline="false" class="font-12" type="success" v-if="scope.row.status === 3">成功</el-link>
-            <el-link :underline="false" class="font-12" type="danger" v-if="scope.row.status === 4">失败</el-link>
-            <el-link :underline="false" class="font-12" type="info" v-if="scope.row.status === 0">未开始</el-link>
+            <el-link :underline="false" class="font-12 no-decoration" type="warning" v-if="scope.row.status === 2">已完成</el-link>
+            <el-link :underline="false" class="font-12 no-decoration" type="success" v-if="scope.row.status === 3">成功</el-link>
+            <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 4">失败</el-link>
+            <el-link :underline="false" class="font-12 no-decoration" type="info" v-if="scope.row.status === 0">未开始</el-link>
           </template>
         </el-table-column>
         <el-table-column
@@ -52,9 +52,9 @@
           align="center"
           label="操作">
           <template slot-scope="scope">
-            <a class="font-12 pointer primary mr-5" @click="handleDetail(scope.$index, scope.row)">查看详情</a>
-            <a class="font-12 pointer primary mr-5" @click="handleDelete(scope.$index, scope.row)">删除记录</a>
-            <a class="font-12 pointer primary mr-20" @click="handleDownload(scope.$index, scope.row)">下载失败详情</a>
+            <el-link :underline="false" class="font-12 mr-5" type="primary" @click="handleDetail(scope.$index, scope.row)">查看详情</el-link>
+            <el-link :underline="false" class="font-12 mr-5" type="primary" @click="handleDelete(scope.$index, scope.row)">删除记录</el-link>
+            <el-link :underline="false" :class="['font-12  mr-20']" type="primary" @click="handleDownload(scope.$index, scope.row)" :disabled="!scope.row.fail_nums">下载失败详情</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -119,7 +119,7 @@ export default {
       })
     },
     handleDelete (value, row) {
-      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -151,6 +151,7 @@ export default {
       })
     },
     handleDownload (index, row) {
+      if (!row.fail_nums) return false
       if (window._hmt) {
         window._hmt.push([
           '_trackEvent',

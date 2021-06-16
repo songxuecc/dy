@@ -140,6 +140,7 @@ export default {
       this.expands = expandedRows.map((item) => item.goods_id)
     },
     handleDelete (index, row) {
+      this.$parent && this.$parent.deleteSelectProduct && this.$parent.deleteSelectProduct(row.goods_id)
       this.saveDelete(row.goods_id)
     },
     handleCurrentChange (pageIndex) {

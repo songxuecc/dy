@@ -134,6 +134,7 @@ export default {
       this.visible = !this.visible
     },
     handleDelete (index, row) {
+      this.$parent && this.$parent.deleteSelectProduct && this.$parent.deleteSelectProduct(row.goods_id)
       this.saveDelete(row.goods_id)
     },
     handleCurrentChange (pageIndex) {

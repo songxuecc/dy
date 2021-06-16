@@ -43,6 +43,12 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
           apiName: 'hhTaskProductOverview',
           ...payload
         })
+        const previewDeleteGoodsIds = state.previewDeleteGoodsIds
+        const hhTaskProductOverviewTableData = state.hhTaskProductOverviewTableData.filter(item => !previewDeleteGoodsIds.includes(item.goods_id))
+        commit('save', {
+          hhTaskProductOverviewTableData,
+          hhTaskProductOverviewTotal: state.hhTaskProductOverviewTotal - previewDeleteGoodsIds.length
+        })
       } catch (err) {
         this._vm.$message({
           message: `${err}`,
@@ -56,6 +62,12 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
           apiName: 'hhTaskProductOverview',
           ...payload
         })
+        const previewDeleteGoodsIds = state.previewDeleteGoodsIds
+        const hhTaskProductOverviewTableData = state.hhTaskProductOverviewTableData.filter(item => !previewDeleteGoodsIds.includes(item.goods_id))
+        commit('save', {
+          hhTaskProductOverviewTableData,
+          hhTaskProductOverviewTotal: state.hhTaskProductOverviewTotal - previewDeleteGoodsIds.length
+        })
       } catch (err) {
         this._vm.$message({
           message: `${err}`,
@@ -68,7 +80,6 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         apiName: 'hhTaskPage',
         ...payload
       })
-      console.log('执行了111')
       clearTimeout(state.getperprogressTimer)
       commit('save', {
         stopGetperprogress: false,
@@ -98,11 +109,12 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
       commit('save', { hhTaskProductPageTableData })
     },
     saveDelete ({commit, state, dispatch}, payload) {
-      const previewDeleteGoodsIds = [...state.previewDeleteGoodsIds, payload]
+      const previewDeleteGoodsIds = [...new Set([...state.previewDeleteGoodsIds, payload])]
       const hhTaskProductOverviewTableData = state.hhTaskProductOverviewTableData.filter(item => !previewDeleteGoodsIds.includes(item.goods_id))
       commit('save', {
-        previewDeleteGoodsIds,
-        hhTaskProductOverviewTableData
+        previewDeleteGoodsIds: [...new Set(previewDeleteGoodsIds)],
+        hhTaskProductOverviewTableData,
+        hhTaskProductOverviewTotal: state.hhTaskProductOverviewTotal - 1
       })
     },
     async updateProduct ({commit, state, dispatch}, payload) {
