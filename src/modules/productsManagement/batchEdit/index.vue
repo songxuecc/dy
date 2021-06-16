@@ -15,7 +15,7 @@
 
         <div v-if="editType !== 999">
             <div class="content left" >
-                <div style="height:120px;margin-top: 30px;">
+                <div style="min-height:120px;margin-top: 30px;">
                     <h1>修改范围</h1>
                     <el-radio-group v-model="modifyMethods" class="mb-20">
                         <el-radio-button label="area">按范围</el-radio-button>
@@ -74,7 +74,6 @@
                         v-model="goods_ids"
                         style="flex:1;margin-right:100px">
                     </el-input>
-                    <!-- <span class="click ml-10">确认</span> -->
                     </div>
                 </div>
 
