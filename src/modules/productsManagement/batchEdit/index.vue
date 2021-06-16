@@ -284,7 +284,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('productManagement/batchEdit', ['jobs']),
+    ...mapState('productManagement/batchEdit', ['jobs', 'clearSelectId']),
     statusOptions () {
       const options = []
       Object.entries(common.dyProductStatusMap).forEach(([value, label]) => {
@@ -298,6 +298,18 @@ export default {
   watch: {
     jobs (n, old) {
       if (old.length && !n.length) this.selectIds = []
+    },
+    clearSelectId (n, o) {
+      console.log(n, o)
+      if (n !== o) {
+        this.form = {
+          status: '-',
+          presell_type: -1,
+          captureStatus: -1
+        }
+        this.selectIds = []
+        this.goods_ids = ''
+      }
     }
   },
   created () {
