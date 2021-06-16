@@ -46,9 +46,7 @@
           <el-radio-button label="id" >按ID
           </el-radio-button>
         </el-radio-group>
-        <div style="padding-top:4px;display:inline-block"  v-if="userBindList.length ">
-            <NewFeatureTips type="绑定复制ID"/>
-          </div>
+        <div style="padding-top:4px;display:inline-block"  v-if="userBindList.length "></div>
 
         <el-form :inline="true" :model="modelBindCopy" class="start-migrate-setting flex wrap" size="medium" ref="modelCopyForm" :rules="modelBindCopyRules"
               v-if="userBindList.length">
