@@ -104,6 +104,7 @@
                   <el-table-column
                     prop="old_data"
                     label="修改前"
+                    v-if="[1,2,3,4,5].includes(task_sub_type)"
                     align="center">
                   </el-table-column>
                    <el-table-column
@@ -193,6 +194,7 @@ export default {
     ...mapActions('productManagement/batchEdit', ['fetchHhTaskProductPage']),
     async open (rowData) {
       this.rowData = rowData
+      console.log(rowData, 'rowData')
       this.activeName = 3
       await this.fetchHhTaskProductPage({
         filters: {
