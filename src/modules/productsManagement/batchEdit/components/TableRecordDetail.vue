@@ -194,7 +194,6 @@ export default {
     ...mapActions('productManagement/batchEdit', ['fetchHhTaskProductPage']),
     async open (rowData) {
       this.rowData = rowData
-      console.log(rowData, 'rowData')
       this.activeName = 3
       await this.fetchHhTaskProductPage({
         filters: {

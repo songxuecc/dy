@@ -224,7 +224,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('productManagement/batchEdit', ['fetchProductList', 'productListSetFilter']),
+    ...mapActions('productManagement/batchEdit', ['fetchProductList', 'productListSetFilter', 'productListSetState']),
     ...mapMutations('productManagement/batchEdit', ['save']),
     toggleVisible (index) {
       this.visible = false
@@ -310,6 +310,12 @@ export default {
         captureStatus: -1,
         keyword: ''
       }
+      this.productListSetState({
+        pagination: {
+          page_index: 1
+        },
+        filters: {}
+      })
     }
   }
 }

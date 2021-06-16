@@ -25,6 +25,7 @@ const listModel = (modelName = '') => {
   const filtersName = modelName ? `${modelName}Filters` : 'filters'
   const tableDataName = modelName ? `${modelName}TableData` : 'tableData'
   const setFilterName = modelName ? `${modelName}SetFilter` : 'setFilter'
+  const setStateName = modelName ? `${modelName}SetState` : 'setState'
 
   return {
     namespaced: true,
@@ -46,6 +47,17 @@ const listModel = (modelName = '') => {
       // }
     },
     actions: {
+      [setStateName] ({commit, state}, payload) {
+        const {pagination, filters, tableData, total} = payload || {}
+        const nextState = Object.assign(
+          pagination && {[paginationName]: pagination},
+          filters && {[filtersName]: filters},
+          tableData && {[tableDataName]: tableData},
+          total && {[totalName]: total},
+          {}
+        )
+        commit('save', nextState)
+      },
       async [setFilterName] ({commit, state}, payload) {
         const {pagination, filters} = payload || {}
         const apiName = payload.apiName
