@@ -209,7 +209,6 @@ export default {
   },
   methods: {
     handleCheck (type) {
-      console.log(type, 'type')
       this.form.stock_type = type
     },
     handleClear (attribute) {
