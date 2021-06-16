@@ -1,40 +1,84 @@
 <template lang="html">
   <div class="float-nav">
-    <div :class="['float-button relative',isDragging ?'move':'']" @click="goToHelp" @mouseover.stop="changeFlexFootIndex(1)" @mouseout.stop="changeFlexFootIndex(0)">
-      <hh-icon :type="flexFootIndex === 1 ? 'iconjiaochengbarhover':'iconjiaochengbar'" style="font-size:26px;" />
-      <div :class="['column-name text', flexFootIndex === 1 ? 'text-in' : '']" >教程</div>
+    <div
+        :class="['float-button relative',isDragging ?'move':'']"
+        @click="goToHelp"
+        @mouseover.stop="changeFlexFootIndex(1)"
+        @mouseout.stop="changeFlexFootIndex(0)">
+      <hh-icon
+            :type="flexFootIndex === 1 ? 'iconjiaochengbarhover':'iconjiaochengbar'"
+            style="font-size:26px;" />
+      <div :class="['column-name text', flexFootIndex === 1 ? 'text-in' : '']">教程</div>
     </div>
-    <div :class="['float-button wechat-button',isDragging ?'move':'']" @mouseover.stop="changeFlexFootIndex(2)" @mouseout.stop="changeFlexFootIndex(0)">
+    <div
+        :class="['float-button wechat-button',isDragging ?'move':'']"
+        v-if="flexFootVisible"
+        @mouseover.stop="changeFlexFootIndex(2)"
+        @mouseout.stop="changeFlexFootIndex(0)">
       <div class="'service-content" v-if="isServiceBoxShow" ref="ServiceBox">
         <service-box @serviceHandle="closeService"></service-box>
       </div>
-      <hh-icon @click="handleClick" :type="flexFootIndex === 2 ? 'iconkefuweixinbarhover':'iconkefuweixinbar'" style="font-size:26px;" />
-      <div  :class="['column-name text', flexFootIndex === 2 ? 'text-in' : '']"  @click="handleClick">客服</div>
+      <hh-icon
+            @click="handleClick"
+            :type="flexFootIndex === 2 ? 'iconkefuweixinbarhover':'iconkefuweixinbar'"
+        style="font-size:26px;" />
+      <div :class="['column-name text', flexFootIndex === 2 ? 'text-in' : '']"
+      @click="handleClick">客服</div>
     </div>
-    <div :class="['float-button',isDragging ?'move':'']" @click="goToComments" @mouseover.stop="changeFlexFootIndex(3)" @mouseout.stop="changeFlexFootIndex(0)">
-      <hh-icon :type="flexFootIndex === 3 ? 'iconyijianbarhover':'iconyijianbar'" style="font-size:26px;" />
-      <div  :class="['column-name text', flexFootIndex === 3 ? 'text-in' : '']" >意见</div>
+    <div
+        :class="['float-button',isDragging ?'move':'']"
+        @click="goToComments"
+        v-if="flexFootVisible"
+        @mouseover.stop="changeFlexFootIndex(3)"
+        @mouseout.stop="changeFlexFootIndex(0)">
+      <hh-icon
+            :type="flexFootIndex === 3 ? 'iconyijianbarhover':'iconyijianbar'"
+            style="font-size:26px;" />
+      <div :class="['column-name text', flexFootIndex === 3 ? 'text-in' : '']">意见</div>
     </div>
-    <div :class="['float-button',isDragging ?'move':'']" @click="openNotificationBox" @mouseover.stop="changeFlexFootIndex(4)" @mouseout.stop="changeFlexFootIndex(0)">
-      <span v-if="unRead > 0" class="notice-icon" @click="openNotificationBox">{{unRead}}</span>
-      <hh-icon :type="flexFootIndex === 4 ? 'icontongzhibarhover':'icontongzhibar'" style="font-size:26px;" />
-      <div  :class="['column-name text', flexFootIndex === 4 ? 'text-in' : '']" >通知</div>
+    <div
+        :class="['float-button',isDragging ?'move':'']"
+        @click="openNotificationBox"
+        v-if="flexFootVisible"
+        @mouseover.stop="changeFlexFootIndex(4)"
+        @mouseout.stop="changeFlexFootIndex(0)">
+      <span v-if="unRead > 0" class="notice-icon"
+          @click="openNotificationBox">{{unRead}}</span>
+      <hh-icon
+            :type="flexFootIndex === 4 ? 'icontongzhibarhover':'icontongzhibar'"
+            style="font-size:26px;" />
+      <div :class="['column-name text', flexFootIndex === 4 ? 'text-in' : '']">通知</div>
     </div>
-    <div :class="['float-button collect-button',isDragging ?'move':'']" @click="addToFavorite" @mouseover.stop="changeFlexFootIndex(5)" @mouseout.stop="changeFlexFootIndex(0)">
-      <hh-icon :type="flexFootIndex === 5 ? 'iconshoucangbarhover':'iconshoucangbar'" style="font-size:26px;" />
-      <div  :class="['column-name text', flexFootIndex === 5 ? 'text-in' : '']" >收藏</div>
+    <div
+        :class="['float-button collect-button',isDragging ?'move':'']"
+        @click="addToFavorite"
+        v-if="flexFootVisible"
+      @mouseover.stop="changeFlexFootIndex(5)" @mouseout.stop="changeFlexFootIndex(0)">
+      <hh-icon
+            :type="flexFootIndex === 5 ? 'iconshoucangbarhover':'iconshoucangbar'"
+            style="font-size:26px;" />
+      <div :class="['column-name text', flexFootIndex === 5 ? 'text-in' : '']">收藏</div>
     </div>
-    <div :class="['float-button nav-go-top',isDragging ?'move':'']" @click="backToTop" @mouseover.stop="changeFlexFootIndex(6)" @mouseout.stop="changeFlexFootIndex(0)">
-        <hh-icon type="iconshanglajiantou" style="font-size:18px;" />
-        <div  :class="['go-to-top text', flexFootIndex === 6 ? 'text-in' : '']" >到顶部</div>
+    <div
+        :class="['float-button nav-go-top',isDragging ?'move':'']"
+        @click="backToTop"
+        @mouseover.stop="changeFlexFootIndex(6)"
+        @mouseout.stop="changeFlexFootIndex(0)">
+      <hh-icon
+            type="iconshanglajiantou"
+            style="font-size:18px;" />
+      <div :class="['go-to-top text', flexFootIndex === 6 ? 'text-in' : '']">到顶部</div>
     </div>
   </div>
 </template>
 <script>
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import ServiceBox from './ServiceBox.vue'
 import common from '@/common/common.js'
 export default {
+  props: {
+    flexFootVisible: Boolean
+  },
   data () {
     return {
       isServiceBoxShow: false,
@@ -58,11 +102,18 @@ export default {
     handleClick (event) {
       // this.isServiceBoxShow = true
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '右下角微信', '点击', '展示微信公众号'])
+        window._hmt.push([
+          '_trackEvent',
+          '右下角微信',
+          '点击',
+          '展示微信公众号'
+        ])
       }
       // 阻止冒泡
       event || (event = window.event)
-      event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
       this.isServiceBoxShow ? this.hide() : this.show()
     },
     show () {
@@ -74,7 +125,8 @@ export default {
       document.removeEventListener('click', this.hidePanel, false)
     },
     hidePanel (e) {
-      if (this.$refs.ServiceBox && !this.$refs.ServiceBox.contains(e.target)) { // 点击除弹出层外的空白区域
+      if (this.$refs.ServiceBox && !this.$refs.ServiceBox.contains(e.target)) {
+        // 点击除弹出层外的空白区域
         this.hide()
       }
     },
@@ -105,39 +157,70 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '导航栏', '点击', '添加到收藏夹'])
       }
-      let strShortcut = navigator.userAgent.toLowerCase().indexOf('mac') !== -1 ? 'Command+D' : 'Ctrl+D'
+      let strShortcut =
+        navigator.userAgent.toLowerCase().indexOf('mac') !== -1
+          ? 'Command+D'
+          : 'Ctrl+D'
       let ua = navigator.userAgent.toLowerCase()
       if (ua.indexOf('360se') > -1) {
-        this.$alert(`由于360浏览器功能限制，请按 ${strShortcut} 手动收藏!`, '温馨提示', {
-          confirmButtonText: '确定'
-        })
+        this.$alert(
+          `由于360浏览器功能限制，请按 ${strShortcut} 手动收藏!`,
+          '温馨提示',
+          {
+            confirmButtonText: '确定'
+          }
+        )
       } else if (ua.indexOf('msie 8') > -1) {
-        window.external.AddToFavoritesBar(this.projectConfig.url, this.projectConfig.title) // IE8
+        window.external.AddToFavoritesBar(
+          this.projectConfig.url,
+          this.projectConfig.title
+        ) // IE8
       } else if (document.all) {
         try {
-          window.external.addFavorite(this.projectConfig.url, this.projectConfig.title)
+          window.external.addFavorite(
+            this.projectConfig.url,
+            this.projectConfig.title
+          )
         } catch (e) {
-          this.$alert(`您的浏览器不支持,请按 ${strShortcut} 手动收藏!`, '温馨提示', {
-            confirmButtonText: '确定'
-          })
+          this.$alert(
+            `您的浏览器不支持,请按 ${strShortcut} 手动收藏!`,
+            '温馨提示',
+            {
+              confirmButtonText: '确定'
+            }
+          )
         }
       } else if (window.sidebar) {
         try {
-          window.sidebar.addPanel(this.projectConfig.title, this.projectConfig.url, '')
+          window.sidebar.addPanel(
+            this.projectConfig.title,
+            this.projectConfig.url,
+            ''
+          )
         } catch (e) {
-          this.$alert(`您的浏览器不支持,请按 ${strShortcut} 手动收藏!`, '温馨提示', {
-            confirmButtonText: '确定'
-          })
+          this.$alert(
+            `您的浏览器不支持,请按 ${strShortcut} 手动收藏!`,
+            '温馨提示',
+            {
+              confirmButtonText: '确定'
+            }
+          )
         }
       } else {
-        this.$alert(`您的浏览器不支持,请按 ${strShortcut} 手动收藏!`, '温馨提示', {
-          confirmButtonText: '确定'
-        })
+        this.$alert(
+          `您的浏览器不支持,请按 ${strShortcut} 手动收藏!`,
+          '温馨提示',
+          {
+            confirmButtonText: '确定'
+          }
+        )
       }
     },
 
     changeFlexFootIndex (index) {
-      if (this.isDragging) { return false }
+      if (this.isDragging) {
+        return false
+      }
       this.flexFootIndex = parseInt(index)
     }
   },
@@ -147,8 +230,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
-  /* 右侧导航 */
+/* 右侧导航 */
 .float-nav {
   width: 50px;
   text-align: center;
@@ -177,7 +259,7 @@ export default {
       line-height: 1;
       color: #ffffff;
       border-radius: 8px;
-      background: #E02020;
+      background: #e02020;
       cursor: pointer;
       transform: scale(0.8, 0.8);
     }
@@ -210,17 +292,17 @@ export default {
   .text {
     position: absolute;
     font-size: 12px;
-    top:0;
+    top: 0;
     left: 0;
     height: 40px;
     width: 0;
-    background: #1D8FFF;
+    background: #1d8fff;
     line-height: 40px;
     text-align: center;
-    color: #fff ;
+    color: #fff;
     border-radius: 4px 0 0 4px;
     transition: all 0.2s;
-    opacity:0;
+    opacity: 0;
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
   }
   .go-to-top {
@@ -230,22 +312,22 @@ export default {
   .text-in {
     animation: fadeLeftIn ease 0.2s;
     width: 48px;
-    opacity:1;
+    opacity: 1;
     left: -48px;
   }
 
   @keyframes fadeLeftIn {
     0% {
-      opacity:0;
+      opacity: 0;
       left: 0;
     }
     100% {
-      opacity:1;
+      opacity: 1;
       left: -48px;
     }
   }
   .move {
-    cursor:move !important;
+    cursor: move !important;
   }
 }
 </style>

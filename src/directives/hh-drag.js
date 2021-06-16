@@ -8,7 +8,7 @@ const getAttr = (obj, key) => (
 )
 
 let right = 15
-let top = parseInt(getAttr(document.body, 'height')) / 2
+let top = parseInt(getAttr(document.body, 'height')) / 2 + 100
 let minRight = 0
 let maxRight = 0
 let minTop = 0
