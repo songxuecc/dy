@@ -300,7 +300,6 @@ export default {
       if (old.length && !n.length) this.selectIds = []
     },
     clearSelectId (n, o) {
-      console.log(n, o)
       if (n !== o) {
         this.form = {
           status: '-',
