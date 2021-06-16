@@ -2,9 +2,10 @@
 <template>
     <div class="batchEdit">
 
-        <title class="flex title">
-            <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer']" @click="toggleEditType(icon.index)">
+        <title class="flex title ">
+            <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer' , 'relative']" @click="toggleEditType(icon.index)">
             <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
+            <hh-icon type="iconhot3" class="hot" v-if="index === 0"></hh-icon>
             <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
             <div class="click" style="margin-top:104px" @click="examineEditRecord" @mouseenter="toggleEditRecordTip" @mouseleave="toggleEditRecordTip">
               查看修改记录
@@ -533,6 +534,14 @@ export default {
   height: 32px;
   line-height: 32px;
   font-size: 12px;
+}
+
+.hot {
+    position: absolute;
+    font-size: 39px;
+    color: #FA6400;
+    right: -1px;
+    top: -2px;
 }
 </style>
 
