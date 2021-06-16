@@ -1,11 +1,11 @@
 import Api from '@/api/apis'
 
-import modelExtend from '../../modelExtends'
+import assign from '../../commonModels/assign'
 import listModel from '../../commonModels/listModel'
 
 const tableDataRecord = listModel('productSkuExcel')
 const tableDataDetail = listModel('skuExcelDetail')
-const model = modelExtend(tableDataRecord, tableDataDetail, {
+const model = assign(tableDataRecord, tableDataDetail, {
   namespaced: true,
   state: () => ({
     filtersRecord: {
@@ -16,7 +16,6 @@ const model = modelExtend(tableDataRecord, tableDataDetail, {
   mutations: {
     save (state, payload) {
       Object.assign(state, payload)
-      console.log(state, 'state')
     }
   },
   actions: {
@@ -25,7 +24,7 @@ const model = modelExtend(tableDataRecord, tableDataDetail, {
         apiName: 'getProductSkuExcelPage',
         ...payload
       })
-      this.dispatch('productManagement/skuImport/getperprogress')
+      dispatch('getperprogress')
     },
     async fetchDetail ({commit, state, dispatch}, payload) {
       await dispatch('skuExcelDetailFetch', {
@@ -42,26 +41,33 @@ const model = modelExtend(tableDataRecord, tableDataDetail, {
       })
       commit('save', {skuExcelDetailTableData})
     },
-    async getperprogress ({commit, state}) {
+    async getperprogress ({commit, state, dispatch}) {
       const runingsIds = state.productSkuExcelTableData.filter(item => item.status === 'running').map(item => item.id)
       if (!runingsIds.length) return false
-      const progressData = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
-        id_list: JSON.stringify(runingsIds)
-      })
-      const productSkuExcelTableData = state.productSkuExcelTableData.map(originItem => {
-        const progressItem = progressData.find(progressItem => progressItem.id === originItem.id)
-        if (progressItem) {
-          return {...originItem, ...progressItem}
-        } else {
-          return originItem
-        }
-      })
-      commit('save', {
-        productSkuExcelTableData
-      })
-      setTimeout(() => {
-        this.dispatch('productManagement/skuImport/getperprogress')
-      }, 1000)
+      try {
+        const progressData = await Api.hhgjAPIs.getProductSkuExcelProgressQuery({
+          id_list: JSON.stringify(runingsIds)
+        })
+        const productSkuExcelTableData = state.productSkuExcelTableData.map(originItem => {
+          const progressItem = progressData.find(progressItem => progressItem.id === originItem.id)
+          if (progressItem) {
+            return {...originItem, ...progressItem}
+          } else {
+            return originItem
+          }
+        })
+        commit('save', {
+          productSkuExcelTableData
+        })
+        setTimeout(() => {
+          dispatch('getperprogress')
+        }, 1000)
+      } catch (err) {
+        this._vm.$message({
+          message: `${err}`,
+          type: 'error'
+        })
+      }
     }
   },
   getters: {
@@ -69,5 +75,4 @@ const model = modelExtend(tableDataRecord, tableDataDetail, {
   }
 })
 
-console.log(model)
 export default model

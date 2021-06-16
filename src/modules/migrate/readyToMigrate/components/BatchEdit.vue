@@ -60,15 +60,16 @@
 
 <script>
 import Api from '@/api/apis'
+import skuHandler from '@/mixins/skuHandler.js'
+import { productStatus } from '@/common/common'
+import utils from '@/common/utils'
+
 import categorySelectView from '@/components/CategorySelectView'
 import EditDelteRecord from '@migrate/readyToMigrate/components/EditDelteRecord'
 import EditTitle from '@migrate/readyToMigrate/components/EditTitle'
 import EditBrandId from '@migrate/readyToMigrate/components/EditBrandId'
 import EditDeleteCarousel from '@migrate/readyToMigrate/components/EditDeleteCarousel'
 import EditDelteDetailImage from '@migrate/readyToMigrate/components/EditDelteDetailImage'
-import skuHandler from '@/mixins/skuHandler.js'
-import { productStatus } from '@/common/common'
-import utils from '@/common/utils'
 
 export default {
   name: 'BatchEdit',
@@ -82,12 +83,12 @@ export default {
     isShopCapture: Boolean
   },
   components: {
+    categorySelectView,
     EditDelteRecord,
     EditBrandId,
     EditTitle,
     EditDeleteCarousel,
-    EditDelteDetailImage,
-    categorySelectView
+    EditDelteDetailImage
   },
   data () {
     return {

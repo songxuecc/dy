@@ -252,5 +252,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    @import '~./index';
+    .check-upload {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 20px;
+    }
 </style>

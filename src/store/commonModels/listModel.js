@@ -1,5 +1,6 @@
 // 列表的 分页 查询 搜索
 import Api from '@/api/apis'
+import isEqual from 'lodash/isEqual'
 
 /** 使用
  * this[fetchName]({
@@ -23,6 +24,8 @@ const listModel = (modelName = '') => {
   const paginationName = modelName ? `${modelName}Pagination` : 'pagination'
   const filtersName = modelName ? `${modelName}Filters` : 'filters'
   const tableDataName = modelName ? `${modelName}TableData` : 'tableData'
+  const setFilterName = modelName ? `${modelName}SetFilter` : 'setFilter'
+  const setStateName = modelName ? `${modelName}SetState` : 'setState'
 
   return {
     namespaced: true,
@@ -44,6 +47,57 @@ const listModel = (modelName = '') => {
       // }
     },
     actions: {
+      [setStateName] ({commit, state}, payload) {
+        const {pagination, filters, tableData, total} = payload || {}
+        const nextState = Object.assign(
+          pagination && {[paginationName]: pagination},
+          filters && {[filtersName]: filters},
+          tableData && {[tableDataName]: tableData},
+          total && {[totalName]: total},
+          {}
+        )
+        commit('save', nextState)
+      },
+      async [setFilterName] ({commit, state}, payload) {
+        const {pagination, filters} = payload || {}
+        const apiName = payload.apiName
+        try {
+          const nextPagination = {
+            ...state[paginationName],
+            ...pagination
+          }
+          const nextFilters = {
+            ...filters
+          }
+
+          // 如果filter和之前的条件不等 则从第一页开始获取数据
+          if (!isEqual(nextFilters, state[filtersName])) {
+            nextPagination.page_index = 1
+          }
+
+          const parmas = {
+            ...nextPagination,
+            ...nextFilters
+          }
+          const data = await Api.hhgjAPIs[apiName](parmas)
+
+          let items
+          if (data.hasOwnProperty('items')) {
+            items = data.items
+          } else {
+            items = data.item_list
+          }
+          commit('save', {
+            [paginationName]: nextPagination,
+            [filtersName]: nextFilters,
+            [tableDataName]: items,
+            [totalName]: data.total
+          })
+          return data
+        } catch (err) {
+          this._vm.$message.error(`${err}`)
+        }
+      },
       async [fetchName] ({commit, state}, payload) {
         const {pagination, filters} = payload || {}
         const apiName = payload.apiName
@@ -56,15 +110,26 @@ const listModel = (modelName = '') => {
             ...state[filtersName],
             ...filters
           }
+          // 如果filter和之前的条件不等 则从第一页开始获取数据
+          if (!isEqual(nextFilters, state[filtersName])) {
+            nextPagination.page_index = 1
+          }
           const parmas = {
             ...nextPagination,
             ...nextFilters
           }
           const data = await Api.hhgjAPIs[apiName](parmas)
+
+          let items
+          if (data.hasOwnProperty('items')) {
+            items = data.items
+          } else {
+            items = data.item_list
+          }
           commit('save', {
             [paginationName]: nextPagination,
             [filtersName]: nextFilters,
-            [tableDataName]: data.item_list,
+            [tableDataName]: items,
             [totalName]: data.total
           })
           return data
