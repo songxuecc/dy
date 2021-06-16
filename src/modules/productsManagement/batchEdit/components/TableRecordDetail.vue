@@ -75,14 +75,20 @@
                       >
                         <el-table-column prop="spec_names" label="规格名称" />
                         <el-table-column
-                          prop="old_data"
+                          prop="old_price"
                           label="修改前"
                           align="center">
+                          <template slot-scope="scope">
+                            {{ (scope.row.old_price / 100).toFixed(2) }}
+                          </template>
                         </el-table-column>
                         <el-table-column
-                          prop="new_data"
+                          prop="new_price"
                           label="修改后"
                           align="center">
+                           <template slot-scope="scope">
+                            {{ (scope.row.new_price / 100).toFixed(2) }}
+                          </template>
                         </el-table-column>
                       </el-table>
                     </template>
