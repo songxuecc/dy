@@ -6,7 +6,7 @@
         <el-radio v-model="form.is_formula" @change="handleIsFormulaChange" :label="1">
           <span class="color-4e font-12">按照公式修改&nbsp;原价*</span>
           <el-input
-            style="width: 80px"
+            style="width: 100px"
             :max="99999999"
             v-model="form.origin_price_rate"
             @focus="handleIsFormulaFocus"
@@ -16,7 +16,7 @@
           />
           <span class="color-4e font-12">&nbsp;%&nbsp;+&nbsp;</span>
           <el-input
-            style="width: 80px"
+            style="width: 100px"
             :max="99999999"
             v-model="form.incr_diff"
             @focus="handleIsFormulaFocus"
@@ -26,7 +26,7 @@
           />
           <span class="color-4e font-12">&nbsp;-&nbsp;</span>
           <el-input
-            style="width: 80px"
+            style="width: 100px"
             :max="99999999"
             v-model="form.desc_diff"
             @focus="handleIsFormulaFocus"
@@ -45,7 +45,7 @@
         >
           <span class="color-4e font-12">价格统一为&nbsp;</span>
           <el-input
-            style="width: 330px"
+            style="width: 390px"
             v-model="form.every_price"
             :max="99999999"
             @focus="handleIsEveryPriceFocus"
@@ -65,7 +65,7 @@
             >
               <el-input
                 :max="99999999"
-                style="width: 230px"
+                style="width: 289px"
                 v-model="form.min_price"
                 @focus="handlChecked('is_open_min_price')"
                 clearable
@@ -86,7 +86,7 @@
             >
               <el-input
                 :max="99999999"
-                style="width: 194px"
+                style="width: 254px"
                 @focus="handlChecked('is_open_min_price_rate')"
                 v-model="form.min_price_rate"
                 clearable
@@ -159,7 +159,11 @@ export default {
       this.form[attribute] = ''
     },
     handleBlur (e, attribute) {
-      this.form[attribute] = parseInt(e.target.value) ? parseInt(e.target.value) : ''
+      if (utils.isNumber(e.target.value)) {
+        this.form[attribute] = e.target.value
+      } else {
+        this.$message.error('请输入数字')
+      }
     },
     getForm () {
       if (!this.form.is_formula && !this.form.is_every_price) {
