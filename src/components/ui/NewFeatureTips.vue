@@ -26,17 +26,18 @@ class GetNewFeature {
   init (type) {
     if (this.hasMounted) {
       this.hasMounted = false
-      const newFeature = localStorage.getItem('newFeature')
+      const newFeature = localStorage.getItem('NewFeatureTips')
       if (!newFeature) {
-        let newFeatureMap = new Map()
-        localStorage.setItem('newFeature', JSON.stringify(newFeatureMap))
+        let newFeatureMap = '{}'
+        console.log('init')
+        localStorage.setItem('NewFeatureTips', JSON.stringify(newFeatureMap))
       }
     }
   }
   getVisible (type) {
-    const newFeature = localStorage.getItem('newFeature')
-    let newFeatureMap = new Map(JSON.parse(newFeature))
-    const value = newFeatureMap.get(type)
+    const newFeature = localStorage.getItem('NewFeatureTips')
+    let newFeatureMap = JSON.parse(newFeature || '{}') || {}
+    const value = newFeatureMap[type]
     let visible = false
     if (value && value.expiredTime) {
       const expiredTime = moment(value.expiredTime)
@@ -49,8 +50,8 @@ class GetNewFeature {
       }
     } else {
       const expiredTime = {expiredTime: moment()}
-      newFeatureMap.set(type, expiredTime)
-      localStorage.setItem('newFeature', JSON.stringify(newFeatureMap))
+      newFeatureMap[type] = expiredTime
+      localStorage.setItem('NewFeatureTips', JSON.stringify(newFeatureMap))
       visible = true
     }
     return visible
@@ -71,7 +72,9 @@ export default {
     this.newFeature.init(this.type)
   },
   beforeMount () {
-    this.visible = this.newFeature.getVisible(this.type)
+    if (this.newFeature && this.newFeature.getVisible) {
+      this.visible = this.newFeature.getVisible(this.type)
+    }
   },
   beforeDestroy () {
     this.newFeature = null
