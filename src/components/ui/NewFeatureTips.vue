@@ -28,15 +28,14 @@ class GetNewFeature {
       this.hasMounted = false
       const newFeature = localStorage.getItem('NewFeatureTips')
       if (!newFeature) {
-        let newFeatureMap = '{}'
-        console.log('init')
+        let newFeatureMap = ''
         localStorage.setItem('NewFeatureTips', JSON.stringify(newFeatureMap))
       }
     }
   }
   getVisible (type) {
     const newFeature = localStorage.getItem('NewFeatureTips')
-    let newFeatureMap = JSON.parse(newFeature || '{}') || {}
+    let newFeatureMap = JSON.parse(newFeature) || {}
     const value = newFeatureMap[type]
     let visible = false
     if (value && value.expiredTime) {
