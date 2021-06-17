@@ -26,15 +26,15 @@ class GetNewFeature {
   init (type) {
     if (this.hasMounted) {
       this.hasMounted = false
-      const newFeature = localStorage.getItem('NewFeatureTips')
+      const newFeature = localStorage.getItem('new_feature_tips')
       if (!newFeature) {
         let newFeatureMap = ''
-        localStorage.setItem('NewFeatureTips', JSON.stringify(newFeatureMap))
+        localStorage.setItem('new_feature_tips', JSON.stringify(newFeatureMap))
       }
     }
   }
   getVisible (type) {
-    const newFeature = localStorage.getItem('NewFeatureTips')
+    const newFeature = localStorage.getItem('new_feature_tips')
     let newFeatureMap = JSON.parse(newFeature) || {}
     const value = newFeatureMap[type]
     let visible = false
@@ -50,7 +50,7 @@ class GetNewFeature {
     } else {
       const expiredTime = {expiredTime: moment()}
       newFeatureMap[type] = expiredTime
-      localStorage.setItem('NewFeatureTips', JSON.stringify(newFeatureMap))
+      localStorage.setItem('new_feature_tips', JSON.stringify(newFeatureMap))
       visible = true
     }
     return visible
