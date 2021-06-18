@@ -17,7 +17,7 @@
         <div v-if="editType !== 999">
             <div class="content left" >
                 <div style="min-height:120px;margin-top: 30px;">
-                    <h1>修改范围</h1>
+                    <h1>修改范围<span class="right click" style="margin-left:30px" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span></h1>
                     <el-radio-group v-model="modifyMethods" class="mb-20">
                         <el-radio-button label="area">按范围</el-radio-button>
                         <el-radio-button label="product">按商品</el-radio-button>
