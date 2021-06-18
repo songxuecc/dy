@@ -133,10 +133,16 @@ export default {
         ...this.hhTaskProductOverviewFilters,
         goods_title_dict: JSON.stringify(goodsTitleDict)
       })
-      this.toggleVisible()
+      this.closeVisible()
     },
     toggleVisible () {
       this.visible = !this.visible
+    },
+    closeVisible () {
+      this.visible = false
+    },
+    openVisible () {
+      this.visible = true
     },
     handleDelete (index, row) {
       this.$parent && this.$parent.deleteSelectProduct && this.$parent.deleteSelectProduct(row.goods_id)

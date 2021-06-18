@@ -386,7 +386,7 @@ export default {
       this.save({previewDeleteGoodsIds: []})
       this.loading = false
       const tableRefName = this.iconList[this.editType - 1].tableRef
-      this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
+      this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
     },
     async idProductList () {
       this.loading = true
@@ -446,7 +446,7 @@ export default {
         this.save({previewDeleteGoodsIds: []})
         this.loading = false
         const tableRefName = this.iconList[this.editType - 1].tableRef
-        this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
+        this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
       }
     },
     async continueIdProductList () {
@@ -474,7 +474,7 @@ export default {
       this.save({previewDeleteGoodsIds: []})
       this.loading = false
       const tableRefName = this.iconList[this.editType - 1].tableRef
-      this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
+      this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
     },
     // 当按商品选择时 预览
     async previewProductList () {
@@ -482,7 +482,7 @@ export default {
         this.$message.error('请选择需要修改的商品')
       } else {
         this.visible = true
-
+        this.loading = true
         const extJson = this.getEditJson()
         if (!extJson) {
           this.loading = false
@@ -505,7 +505,7 @@ export default {
         this.save({previewDeleteGoodsIds: []})
         this.loading = false
         const tableRefName = this.iconList[this.editType - 1].tableRef
-        this.$refs[tableRefName] && this.$refs[tableRefName].toggleVisible()
+        this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
       }
     },
     // 选择修改的商品
