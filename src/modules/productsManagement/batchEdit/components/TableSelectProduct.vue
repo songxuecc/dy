@@ -119,11 +119,17 @@
                 prop="min_price"
                 label="售卖价"
                 width="120">
+                <template slot-scope="scope">
+                  {{ (scope.row.min_price / 100).toFixed(2) }}
+                </template>
               </el-table-column>
               <el-table-column
                 prop="market_price"
                 label="市场价"
                 width="120">
+                <template slot-scope="scope">
+                  {{ (scope.row.market_price / 100).toFixed(2) }}
+                </template>
               </el-table-column>
               <el-table-column
                 prop="status"
