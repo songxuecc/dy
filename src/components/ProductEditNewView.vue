@@ -142,20 +142,24 @@
                             :label="item.label"
                             :value="item.value">
                           </el-option>
+                        <el-option >
+                          <span v-if="!addSkuNameInputVisible" @click="addSkuNameInputVisible = true">新建规格名</span>
+                          <span v-if="addSkuNameInputVisible">
+                            <el-input v-model="newSkuName" size="mini" placeholder="请输入内容" style="width: 170px;"></el-input>
+                            <hh-icon type="iconduigou" class="fail ml-5" style="color: green" @click="addSkuName"></hh-icon>
+                            <hh-icon type="iconguanbi1" class="fail ml-5" style="color: #E02020" @click="addSkuNameInputVisible = false"></hh-icon>
+                          </span>
+                        </el-option>
                       </el-select>
                       <el-checkbox v-model="checked" size="mini">添加规格图片</el-checkbox>
                     </div>
                     <div class="skuText">规格值<span class="index_count">(已选2个)</span></div>
                     <el-checkbox-group v-model="checkList" >
-                      <el-checkbox label="复选框 A">
+                      <el-checkbox>
                         <el-input v-model="input" size="mini" placeholder="请输入内容" style="width: 170px;"></el-input>
                         <hh-icon type="iconhuanyuan" class="fail ml-5" style="color: green"></hh-icon>
                         <hh-icon type="iconguanbi1" class="fail ml-5" style="color: #E02020"></hh-icon>
                       </el-checkbox>
-                      <el-checkbox label="复选框 B"></el-checkbox>
-                      <el-checkbox label="复选框 C"></el-checkbox>
-                      <el-checkbox label="禁用" ></el-checkbox>
-                      <el-checkbox label="选中且禁用" ></el-checkbox>
                     </el-checkbox-group>
                     <div style="margin-top:15px"><el-input v-model="input" size="mini" placeholder="请输入内容" style="width: 170px;margin-right:10px"></el-input>添加<el-divider direction="vertical"></el-divider>自定义排序</div>
                   </div>
@@ -531,47 +535,10 @@ export default {
       propertyBatchMap: new Map(),
       visibleSkuImport: false,
       forceUpdatePropertySet: 0,
-      SkuNameoptions: [{
-        value: '选项1',
-        label: '颜色分类'
-      }, {
-        value: '选项2',
-        label: '床单尺寸'
-      }, {
-        value: '选项3',
-        label: '颜色'
-      }, {
-        value: '选项4',
-        label: '容量'
-      }, {
-        value: '选项5',
-        label: '尺码'
-      }, {
-        value: '选项5',
-        label: '规格'
-      }, {
-        value: '选项2',
-        label: '鞋码'
-      }, {
-        value: '选项3',
-        label: '套餐类型'
-      }, {
-        value: '选项4',
-        label: '化妆品净含量'
-      }, {
-        value: '选项5',
-        label: '默认规格分类'
-      }, {
-        value: '选项5',
-        label: '套餐'
-      }, {
-        value: '选项5',
-        label: '版本'
-      }, {
-        value: '选项5',
-        label: '多功能辅食料理机'
-      }],
-      checkList: []
+      SkuNameoptions: [],
+      skuNameList: [],
+      addSkuNameInputVisible: false,
+      newSkuName: ''
     }
   },
   watch: {
@@ -1570,6 +1537,17 @@ export default {
       } else {
         return item.brand_chinese_name.trim()
       }
+    },
+    toggleAddSkuNameInputVisible () {
+      this.addSkuNameInputVisible = true
+    },
+    addSkuName () {
+      const skuNameList = this.skuNameList
+      skuNameList.push({
+        value: this.newSkuName,
+        label: this.newSkuName
+      })
+      this.skuNameList = skuNameList
     }
   }
 }
