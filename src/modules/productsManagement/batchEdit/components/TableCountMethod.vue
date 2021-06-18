@@ -130,10 +130,16 @@ export default {
     ...mapActions('productManagement/batchEdit', ['updateProduct', 'fetchHhTaskProductOverview', 'saveDelete']),
     edit () {
       this.updateProduct(this.hhTaskProductOverviewFilters)
-      this.toggleVisible()
+      this.closeVisible()
     },
     toggleVisible () {
       this.visible = !this.visible
+    },
+    closeVisible () {
+      this.visible = false
+    },
+    openVisible () {
+      this.visible = true
     },
     handleDelete (index, row) {
       this.$parent && this.$parent.deleteSelectProduct && this.$parent.deleteSelectProduct(row.goods_id)
