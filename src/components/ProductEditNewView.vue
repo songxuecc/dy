@@ -132,6 +132,35 @@
                   </el-tooltip>
                   </span>
 
+                  <div class="left" style="background:rgb(249, 249, 250);padding: 16px 12px;margin-right:30px;border-radius:4px">
+                    <div class="left mb-10">
+                      <div class="skuText">规格名</div>
+                      <el-select size="mini" style="width:170px;margin-right:10px">
+                        <el-option
+                            v-for="item in SkuNameoptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                      </el-select>
+                      <el-checkbox v-model="checked" size="mini">添加规格图片</el-checkbox>
+                    </div>
+                    <div class="skuText">规格值<span class="index_count">(已选2个)</span></div>
+                    <el-checkbox-group v-model="checkList" >
+                      <el-checkbox label="复选框 A">
+                        <el-input v-model="input" size="mini" placeholder="请输入内容" style="width: 170px;"></el-input>
+                        <hh-icon type="iconhuanyuan" class="fail ml-5" style="color: green"></hh-icon>
+                        <hh-icon type="iconguanbi1" class="fail ml-5" style="color: #E02020"></hh-icon>
+                      </el-checkbox>
+                      <el-checkbox label="复选框 B"></el-checkbox>
+                      <el-checkbox label="复选框 C"></el-checkbox>
+                      <el-checkbox label="禁用" ></el-checkbox>
+                      <el-checkbox label="选中且禁用" ></el-checkbox>
+                    </el-checkbox-group>
+                    <div style="margin-top:15px"><el-input v-model="input" size="mini" placeholder="请输入内容" style="width: 170px;margin-right:10px"></el-input>添加<el-divider direction="vertical"></el-divider>自定义排序</div>
+                  </div>
+                  <div class="left mt-10 mb-10"><el-button type="primary" icon="el-icon-plus" size="medium" plain>添加规格</el-button></div>
+
                   <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
                             :cell-class-name="cellClassName"
                   >
@@ -501,7 +530,48 @@ export default {
       // 属性商品应用到所有 的数据记录
       propertyBatchMap: new Map(),
       visibleSkuImport: false,
-      forceUpdatePropertySet: 0
+      forceUpdatePropertySet: 0,
+      SkuNameoptions: [{
+        value: '选项1',
+        label: '颜色分类'
+      }, {
+        value: '选项2',
+        label: '床单尺寸'
+      }, {
+        value: '选项3',
+        label: '颜色'
+      }, {
+        value: '选项4',
+        label: '容量'
+      }, {
+        value: '选项5',
+        label: '尺码'
+      }, {
+        value: '选项5',
+        label: '规格'
+      }, {
+        value: '选项2',
+        label: '鞋码'
+      }, {
+        value: '选项3',
+        label: '套餐类型'
+      }, {
+        value: '选项4',
+        label: '化妆品净含量'
+      }, {
+        value: '选项5',
+        label: '默认规格分类'
+      }, {
+        value: '选项5',
+        label: '套餐'
+      }, {
+        value: '选项5',
+        label: '版本'
+      }, {
+        value: '选项5',
+        label: '多功能辅食料理机'
+      }],
+      checkList: []
     }
   },
   watch: {
@@ -730,6 +800,8 @@ export default {
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
 
+        console.log(this.skuPropertyList, 'this.skuPropertyList]')
+        console.log(this.skuPropertyValueMap, 'this.skuPropertyValueMap')
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
 
@@ -1551,5 +1623,16 @@ export default {
     border-radius: 10px;
     margin:auto;
     margin-top:20px;
+  }
+
+  .skuText {
+    font-size: 14px;
+    height: 20px;
+    margin-bottom: 4px;
+    color: #55585c;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';
+  }
+  .index_count{
+    color: #85878a;
   }
 </style>
