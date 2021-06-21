@@ -389,6 +389,9 @@ const hhgjAPIs = {
   },
   hhTaskProgressQuery: (params) => {
     return api.actionCreateGet('/api/hh_task/progress/query', params)
+  },
+  getTaskNums: (params) => {
+    return api.actionCreateGet('/api/system/monitor/query', params)
   }
 }
 
