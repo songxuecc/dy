@@ -297,7 +297,7 @@ export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditNewView: () => import('@/components/ProductEditNewView.vue')
+    productEditNewView: () => import('@/components/ProductEditNewView')
   },
   props: {
     tpProductList: Array,

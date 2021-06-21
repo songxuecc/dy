@@ -135,26 +135,27 @@
                   <div class="left" style="background:rgb(249, 249, 250);padding: 16px 12px;margin-right:30px;border-radius:4px">
                     <div class="left mb-10">
                       <div class="skuText">规格名</div>
-                      <el-select size="mini" style="width:170px;margin-right:10px">
+                      <el-select size="mini" style="width:170px;margin-right:10px" :value="skuSelect" popper-class="skuAddSelect" @change="handleSkuSelectChange">
                         <el-option
                             v-for="item in SkuNameoptions"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
                           </el-option>
-                        <el-option >
-                          <span v-if="!addSkuNameInputVisible" @click="addSkuNameInputVisible = true">新建规格名</span>
-                          <span v-if="addSkuNameInputVisible">
-                            <el-input v-model="newSkuName" size="mini" placeholder="请输入内容" style="width: 170px;"></el-input>
-                            <hh-icon type="iconduigou" class="fail ml-5" style="color: green" @click="addSkuName"></hh-icon>
-                            <hh-icon type="iconguanbi1" class="fail ml-5" style="color: #E02020" @click="addSkuNameInputVisible = false"></hh-icon>
-                          </span>
+                        <el-option style="height: 40px;padding: 0;line-height: 40px;">
+                          <!-- 可以创建并选中选项中不存在的条目 用这个组建 -->
+                          <div v-if="!addSkuNameInputVisible" @click.stop="addSkuNameInputVisible = true" style="padding-left: 12px;" class="color-primary pointer">新建规格名</div>
+                          <div v-if="addSkuNameInputVisible" style="padding-left: 2px;padding-right: 4px;">
+                            <el-input :value="newSkuName" @click.native="handleClickNewSkuName" @input="changeValue" @focus.stop="" size="mini" placeholder="请输入内容" style="width: 130px;" ></el-input>
+                            <hh-icon type="iconduigou" class="fail " style="color: green;margin-left: 2px;font-size:11px" @click.native="addSkuName"></hh-icon>
+                            <hh-icon type="iconguanbi1" class="fail " style="color: #E02020;margin-left: 2px;font-size:11px" @click.native="cancelAddSkuName"></hh-icon>
+                          </div>
                         </el-option>
                       </el-select>
-                      <el-checkbox v-model="checked" size="mini">添加规格图片</el-checkbox>
+                      <el-checkbox v-model="addSkuImage" size="mini" @change="handleAddSkuImage" :disabled="disabledAddSkuImage">添加规格图片</el-checkbox>
                     </div>
                     <div class="skuText">规格值<span class="index_count">(已选2个)</span></div>
-                    <el-checkbox-group v-model="checkList" >
+                    <el-checkbox-group v-model="skuSelectCheckList" >
                       <el-checkbox>
                         <el-input v-model="input" size="mini" placeholder="请输入内容" style="width: 170px;"></el-input>
                         <hh-icon type="iconhuanyuan" class="fail ml-5" style="color: green"></hh-icon>
@@ -538,7 +539,10 @@ export default {
       SkuNameoptions: [],
       skuNameList: [],
       addSkuNameInputVisible: false,
-      newSkuName: ''
+      newSkuName: '',
+      addSkuImage: false,
+      skuSelect: '',
+      skuSelectCheckList: []
     }
   },
   watch: {
@@ -590,6 +594,12 @@ export default {
           { validator: checkDefaultRecommendRremark, trigger: 'change' }
         ]
       }
+    },
+    disabledAddSkuImage () {
+      // 没有一个sku设置 返回true
+      // 有sku设置 且有一个sku内已经设置图片 返回true
+      // 有sku 且没有一个sku内有图片 返回false
+      return true
     }
   },
   mounted () {
@@ -1541,13 +1551,44 @@ export default {
     toggleAddSkuNameInputVisible () {
       this.addSkuNameInputVisible = true
     },
-    addSkuName () {
-      const skuNameList = this.skuNameList
-      skuNameList.push({
+    // addSkuName () {
+    //   const skuNameList = this.skuNameList
+      // skuNameList.push({
+      //   value: this.newSkuName,
+      //   label: this.newSkuName
+      // })
+      // this.skuNameList = skuNameList
+    // },
+    handleClickNewSkuName (e) {
+      e.stopPropagation()
+    },
+    changeValue (e) {
+      this.newSkuName = e
+    },
+    cancelAddSkuName (e) {
+      e.stopPropagation()
+      this.addSkuNameInputVisible = false
+    },
+    addSkuName (e) {
+      e.stopPropagation()
+      // 该规格名已经存在，请勿重复创建
+      if (this.SkuNameoptions.find(item => item.label === this.newSkuName)) {
+        return this.$message.warning('该规格名已经存在，请勿重复创建')
+      }
+      const newOption = {
         value: this.newSkuName,
         label: this.newSkuName
-      })
-      this.skuNameList = skuNameList
+      }
+      this.SkuNameoptions = [newOption, ...this.SkuNameoptions]
+      this.newSkuName = ''
+      this.addSkuNameInputVisible = false
+      console.log(this.SkuNameoptions, 'this.SkuNameoptions')
+    },
+    handleAddSkuImage (value) {
+      this.addSkuImage = value
+    },
+    handleSkuSelectChange (value) {
+      this.skuSelect = value
     }
   }
 }
@@ -1612,5 +1653,25 @@ export default {
   }
   .index_count{
     color: #85878a;
+  }
+
+</style>
+<style lang="less">
+.skuAddSelect {
+  .el-select-dropdown__list {
+    // padding: 0;
+  }
+    .el-select-dropdown__item {
+      text-align: left;
+      padding: 6px 8px 6px 12px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+      height:32px;
+      width: 170px;
+    }
+    .el-input__inner {
+      padding: 0 4px;
+    }
   }
 </style>
