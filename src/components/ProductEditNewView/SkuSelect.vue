@@ -301,14 +301,7 @@ export default {
     return {
       dialogVisible: false,
       specificationNameOptions: [],
-      skuNameList: [],
-      specificationNameVisible: false,
       activeIndex: 0,
-      addSkuImage: false,
-      specificationName: '',
-      skuSelectCheckList: [],
-      addSpecificationValue: '',
-      specificationValueList: [],
       drag: false,
       dragList: [],
       specifications: [
@@ -337,22 +330,12 @@ export default {
     }
   },
   methods: {
-    // addNewSpecificationName () {
-    //   const skuNameList = this.skuNameList
-    // skuNameList.push({
-    //   value: NewSpecificationName,
-    //   label: NewSpecificationName
-    // })
-    // this.skuNameList = skuNameList
-    // },
     handleNewSpecificationNameClick (e) {
       e.stopPropagation()
     },
     changeNewSpecificationName (e, index, row) {
       console.log(e, index, row)
       row.newSpecificationName = e
-
-      // this.newSpecificationName = e
     },
     cancelNewSpecificationName (e, index, row) {
       e.stopPropagation()
