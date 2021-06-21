@@ -9,6 +9,7 @@ import PayOrder from '@customerSetting/payOrder'
 import Login from '@customerSetting/login'
 import Fake from '@customerSetting/fake'
 import AppInfo from '@customerSetting/appInfo'
+import System from '@customerSetting/system/monitor'
 // 搬家
 // import MigrateSettingTemplate from '@migrate/migrateSettingTemplate'
 // import MigrateSetting from '@migrate/migrateSetting'
@@ -245,6 +246,14 @@ const router = new Router({
       path: '/fake',
       name: 'Fake',
       component: Fake,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/system/monitor',
+      name: 'SystemMonitor',
+      component: System,
       meta: {
         requiresAuth: true
       }
