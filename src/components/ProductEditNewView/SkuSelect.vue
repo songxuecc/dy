@@ -8,26 +8,33 @@
         padding: 16px 12px;
         margin-right: 30px;
         border-radius: 4px;
-				margin-bottom: 16px
+        margin-bottom: 16px;
       "
-			v-for="(specification,index) in specifications"
-			:key="index"
+      v-for="(specification, index) in specifications"
+      :key="index"
     >
       <div>
         <div class="left mb-10">
           <div class="skuText flex justify-b">
-						<span>规格名</span>
-						<span class="font-12 pointer" v-if="specifications.length > 1" @click="deleteSpecifications(index)">
-							<hh-icon type="iconshanchu1" class="font-12"></hh-icon>
-							删除</span>
-					</div>
+            <span>规格名</span>
+            <span
+              class="font-12 pointer"
+              v-if="specifications.length > 1"
+              @click="deleteSpecifications(index)"
+            >
+              <hh-icon type="iconshanchu1" class="font-12"></hh-icon>
+              删除</span
+            >
+          </div>
 
           <el-select
             size="mini"
             style="width: 170px; margin-right: 10px"
             :value="specification.specificationName"
             popper-class="skuAddSelect"
-            @change="handleSpecificationNameChange($event,index,specification)"
+            @change="
+              handleSpecificationNameChange($event, index, specification)
+            "
           >
             <el-option
               v-for="item in specificationNameOptions"
@@ -53,7 +60,9 @@
                 <el-input
                   :value="specification.newSpecificationName"
                   @click.native="handleNewSpecificationNameClick"
-                  @input="changeNewSpecificationName($event,index,specification)"
+                  @input="
+                    changeNewSpecificationName($event, index, specification)
+                  "
                   @focus.stop=""
                   size="mini"
                   placeholder="请输入内容"
@@ -63,13 +72,17 @@
                   type="iconduigou"
                   class="fail"
                   style="color: green; margin-left: 2px; font-size: 11px"
-                  @click.native="addNewSpecificationName($event,index,specification)"
+                  @click.native="
+                    addNewSpecificationName($event, index, specification)
+                  "
                 ></hh-icon>
                 <hh-icon
                   type="iconguanbi1"
                   class="fail"
                   style="color: #e02020; margin-left: 2px; font-size: 11px"
-                  @click.native="cancelNewSpecificationName($event,index,specification)"
+                  @click.native="
+                    cancelNewSpecificationName($event, index, specification)
+                  "
                 ></hh-icon>
               </div>
             </el-option>
@@ -88,62 +101,90 @@
           >
         </div>
         <el-checkbox-group
-					v-if="specification.specificationName"
+          v-if="specification.specificationName"
           v-model="specification.skuSelectCheckList"
           class="flex mb-15 wrap"
           @change="handleSkuSelectCheckListChange($event, index, specification)"
         >
-          <el-checkbox
-            v-for="(specificationValue, index) in specification.specificationValueList"
+          <div
+            v-for="(
+              specificationValue, index
+            ) in specification.specificationValueList"
             :key="index"
-            :label="specificationValue.value"
-            class="relative"
-            style="
-              display: inline-flex;
-              align-items: center;
-              margin-bottom: 8px;
-              flex: 0 0 25%;
-              max-width: 25%;
-            "
+            style="flex: 0 0 25%; max-width: 25%; margin-bottom: 8px"
           >
-            <span v-if="specificationValue.edit" class="skuValue"
-              >{{ specificationValue.value }}
-              <hh-icon
-                type="iconbianji-primary"
-                class="font-12 pointer iconbianji-primary"
-                @click.native.prevent="
-                  editSpecificationValue($event, index, specification)
-                "
-              ></hh-icon
-            ></span>
-            <span v-if="!specificationValue.edit">
-              <el-input
-                :value="specificationValue.value"
-                size="mini"
-                placeholder="请输入内容"
-                style="width: 136px"
-                @input="
-                  changeSpecificationValue($event, index, specification)
-                "
-              ></el-input>
-              <hh-icon
-                type="iconhuanyuan"
-                class="fail ml-5"
-                style="color: green; font-size: 11px"
-                @click.native.prevent="
-                  revertSpecificationValue($event, index, specification)
-                "
-              ></hh-icon>
-              <hh-icon
-                type="iconguanbi1"
-                class="fail ml-5"
-                style="color: #e02020; font-size: 11px"
-                @click.native.prevent="
-                  cancelSpecificationValue($event, index, specification)
-                "
-              ></hh-icon>
-            </span>
-          </el-checkbox>
+            <el-checkbox
+              :label="specificationValue.value"
+              class="relative"
+              style="
+                display: inline-flex;
+                align-items: center;
+                margin-bottom: 5px;
+                width: 100%;
+              "
+            >
+              <span v-if="specificationValue.edit" class="skuValue"
+                >{{ specificationValue.value }}
+                <hh-icon
+                  type="iconbianji-primary"
+                  class="font-12 pointer iconbianji-primary"
+                  @click.native.prevent="
+                    editSpecificationValue(
+                      $event,
+                      index,
+                      specification,
+                      specificationValue
+                    )
+                  "
+                ></hh-icon
+              ></span>
+              <span v-if="!specificationValue.edit">
+                <el-input
+                  :value="specificationValue.value"
+                  size="mini"
+                  placeholder="请输入内容"
+                  style="width: 136px"
+                  @input="
+                    changeSpecificationValue($event, index, specificationValue)
+                  "
+                ></el-input>
+                <hh-icon
+                  type="iconhuanyuan"
+                  class="fail ml-5"
+                  style="color: green; font-size: 11px"
+                  @click.native.prevent="
+                    revertSpecificationValue($event, index, specificationValue)
+                  "
+                ></hh-icon>
+                <hh-icon
+                  type="iconguanbi1"
+                  class="fail ml-5"
+                  style="color: #e02020; font-size: 11px"
+                  @click.native.prevent="
+                    cancelSpecificationValue($event, index, specificationValue)
+                  "
+                ></hh-icon>
+              </span>
+            </el-checkbox>
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :limit="1"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img
+                v-if="specification.imageUrl"
+                :src="specification.imageUrl"
+                class="avatar"
+              />
+              <div v-else>
+                （0/1）
+                <i class="el-icon-plus avatar-uploader-icon"></i>
+              </div>
+            </el-upload>
+          </div>
         </el-checkbox-group>
         <div style="margin-top: 10px" v-if="specification.specificationName">
           <el-input
@@ -155,7 +196,9 @@
           <span
             @click="handleAddSpecificationValue($event, index, specification)"
             :class="[
-              specification.addSpecificationValue ? 'color-primary' : 'color-767989',
+              specification.addSpecificationValue
+                ? 'color-primary'
+                : 'color-767989',
               'font-12',
               'pointer',
             ]"
@@ -164,19 +207,28 @@
           <el-divider direction="vertical"></el-divider>
           <span
             :class="[
-              specification.skuSelectCheckList.length > 1 ? 'color-primary' : 'color-767989',
+              specification.skuSelectCheckList.length > 1
+                ? 'color-primary'
+                : 'color-767989',
               'font-12',
               'pointer',
             ]"
-            @click="handleSortAddSpecificationValue($event, index, specification)"
+            @click="
+              handleSortAddSpecificationValue($event, index, specification)
+            "
             >自定义排序</span
           >
         </div>
       </div>
     </div>
 
-    <div class="left mt-10 mb-10" v-if="this.specifications.length < 3 && specificationName">
-      <el-button type="primary" icon="el-icon-plus" size="medium" plain @click="addSpecifications"
+    <div class="left mt-10 mb-10" v-if="specifications.length < 3">
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        size="medium"
+        plain
+        @click="addSpecifications"
         >添加规格</el-button
       >
     </div>
@@ -190,7 +242,9 @@
       :modal="false"
     >
       <div class="left sortDesc">
-        <span class="sortName">{{ specifications[activeIndex].specificationName }}</span
+        <span class="sortName">{{
+          specifications[activeIndex].specificationName
+        }}</span
         ><span class="sortDescInfo">请拖动规格值进行排序</span>
       </div>
       <draggable
@@ -257,15 +311,19 @@ export default {
       specificationValueList: [],
       drag: false,
       dragList: [],
-      specifications: [{
-        specificationName: '',
-        newSpecificationName: '',
-        addSkuImage: false,
-        skuSelectCheckList: [],
-        addSpecificationValue: '',
-        specificationValueList: [],
-        specificationNameVisible: false
-      }]
+      specifications: [
+        {
+          specificationName: '',
+          newSpecificationName: '',
+          addSkuImage: false,
+          skuSelectCheckList: [],
+          addSpecificationValue: '',
+          specificationValueList: [],
+          specificationNameVisible: false,
+          imageUrl: '',
+          date: new Date()
+        }
+      ]
     }
   },
   computed: {
@@ -302,7 +360,7 @@ export default {
     },
     addNewSpecificationName (e, index, row) {
       e.stopPropagation()
-			// 该规格名已经存在，请勿重复创建
+      // 该规格名已经存在，请勿重复创建
       if (
         this.specificationNameOptions.find(
           (item) => item.label === row.newSpecificationName
@@ -372,9 +430,9 @@ export default {
       this.dragList = row.specificationValueList.filter((item) => item.checked)
       this.activeIndex = index
     },
-    editSpecificationValue (e, index, row) {
+    editSpecificationValue (e, index, row, specificationValue) {
       console.log(row, 'row')
-      row.edit = false
+      specificationValue.edit = false
     },
     cancelSpecificationValue (e, index, row) {
       e.stopPropagation()
@@ -388,8 +446,6 @@ export default {
       row.edit = true
     },
     changeSpecificationValue (value, index, row) {
-      // e.stopPropagation()
-      console.log(value, 'value')
       row.value = value
     },
     mouseoverSpecificationValue (e, index, row) {
@@ -415,7 +471,10 @@ export default {
         .map((item, index) => {
           return { ...item, order: index + checkedList.length }
         })
-      activeSpecifications.specificationValueList = [...checkedList, ...noCheckedList]
+      activeSpecifications.specificationValueList = [
+        ...checkedList,
+        ...noCheckedList
+      ]
       console.log(activeSpecifications.specificationValueList)
       this.dialogVisible = false
     },
@@ -423,145 +482,53 @@ export default {
       this.dialogVisible = false
     },
     addSpecifications () {
-      const activeSpecifications = this.specifications[this.activeIndex]
-      activeSpecifications.specifications = [...activeSpecifications.specifications, new Date()]
+      this.specifications = [
+        ...this.specifications,
+        {
+          specificationName: '',
+          newSpecificationName: '',
+          addSkuImage: false,
+          skuSelectCheckList: [],
+          addSpecificationValue: '',
+          specificationValueList: [],
+          specificationNameVisible: false,
+          imageUrl: '',
+          date: new Date()
+        }
+      ]
     },
     deleteSpecifications (index) {
       this.$confirm('确定删除该规格么？', '', {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        const activeSpecifications = this.specifications[this.activeIndex]
-        activeSpecifications.specifications.splice(index, 1)
-      }).catch(() => {
-
       })
+        .then(() => {
+          const activeSpecifications = this.specifications[this.activeIndex]
+          activeSpecifications.specifications.splice(index, 1)
+        })
+        .catch(() => {})
+    },
+    handleAvatarSuccess (res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
     }
   }
 }
 </script>
 <style lang="less" scoped>
-.skuValue {
-  width: calc(100% - 20px);
-  max-width: 160px;
-  padding-right: 13px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  size: 14px;
-  height: 20px;
-  line-height: 20px;
-  color: #12141a;
-  display: block;
-  justify-content: space-between;
-  position: relative;
-  .iconbianji-primary {
-    position: absolute;
-    right: 0;
-    top: 4px;
-    display: none;
-  }
-  &:hover {
-    .iconbianji-primary {
-      position: absolute;
-      right: 0;
-      top: 4px;
-      display: block;
-    }
-  }
-}
-.selectedLength {
-  margin-top: 24px;
-  font-size: 14px;
-  color: #55585c;
-  height: 20px;
-  line-height: 20px;
-  margin-bottom: 8px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-}
-/deep/ .el-checkbox {
-  margin-right: 0;
-}
-/deep/ .el-checkbox__input {
-  padding-top: 2px;
-}
-/deep/ .el-checkbox__label {
-  width: 100%;
-  padding-left: 4px;
-}
-/deep/ .el-input__inner {
-  padding: 0 6px;
-}
-
-.skuSelect-dialog {
-  .sortDesc {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-      'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
-      sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    .sortName {
-      color: #55585c;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .sortDescInfo {
-      color: #85878a;
-      font-size: 12px;
-      margin-left: 8px;
-    }
-  }
-  .sortGround {
-    display: flex;
-    justify-self: flex-start;
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
-    text-align: left;
-    .sortItem {
-      display: inline-block;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-        'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica,
-        Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol';
-      word-wrap: break-word;
-      background: #f3f4f6;
-      border-radius: 4px;
-      margin-right: 12px;
-      margin-bottom: 12px;
-      padding: 6px 23px;
-      font-size: 14px;
-      line-height: 16px;
-      color: #12141a;
-      cursor: pointer;
-    }
-    .chosenClass {
-      background-color: none !important;
-    }
-    .flip-list-move {
-      transition: transform 0s;
-    }
-    .no-move {
-      transition: transform 0s;
-    }
-    .list-group-item {
-      cursor: move;
-    }
-    .list-group-item i {
-      cursor: pointer;
-    }
-    .ghost {
-      opacity: 0.3;
-    }
-    .sortable-chosen {
-      background: none !important;
-    }
-  }
-}
+@import '~./SkuSelect.less';
 </style>
 <style lang="less">
 .skuAddSelect {
