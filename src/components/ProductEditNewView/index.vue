@@ -135,6 +135,8 @@
                   <SkuSelect />
                   <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
                             :cell-class-name="cellClassName"
+                            row-class-name="rowClass"
+                            :span-method="objectSpanMethod"
                   >
                       <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id">
                           <template slot="header" slot-scope="scope">
@@ -168,9 +170,11 @@
                               </el-button>
                           </template>
                           <template slot-scope="scope">
-                            <span v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
+                            <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;" >{{scope.row.property_list[index].name}}</span>
+                            <!-- <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;"
+                            v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
                             <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
-                                      :class="['input-text-left']">
+                                      :class="['input-text-left']"> -->
                               <!-- <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span> -->
                             </el-input>
                           </template>
@@ -181,7 +185,10 @@
                               <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
-                              <el-input v-model.number="scope.row.quantity" size="mini" type="number"></el-input>
+                              <el-toolTip :content="scope.row.quantityBorder ? '只可以输入0-1000000的数字':''">
+                                <el-input v-model.number="scope.row.quantity" size="mini" type="textarea"  class="my-textarea" :class="[scope.row.quantityBorder ?'red':'']"
+                              @input="getStyle($event,scope.row,'quantityBorder')"></el-input>
+                              </el-toolTip>
                           </template>
                       </el-table-column>
                       <!-- <el-table-column key="4" width="100">
@@ -205,12 +212,12 @@
                                 <span class="info pointer" @click="toggleVisibleSkuImport">无法抓取</span><i class="el-icon-question"></i>
                           </template>
                           <template slot-scope="scope">
-                              <el-input v-model="scope.row.code" size="mini" type="text" :class="['input-text-left']"></el-input>
+                              <el-input v-model="scope.row.code" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
-                            <div class="preview">
+                            <div class="preview" style="padding:4px">
                               <el-popover
                                 placement="left"
                                 title=""
@@ -504,7 +511,8 @@ export default {
       // 属性商品应用到所有 的数据记录
       propertyBatchMap: new Map(),
       visibleSkuImport: false,
-      forceUpdatePropertySet: 0
+      forceUpdatePropertySet: 0,
+      skuPropertyList: []
 
     }
   },
@@ -739,6 +747,7 @@ export default {
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
+        console.log(this.product.model, 'this.product.model')
 
         console.log(this.skuPropertyList, 'this.skuPropertyList]')
         console.log(this.skuPropertyValueMap, 'this.skuPropertyValueMap')
@@ -1510,6 +1519,72 @@ export default {
       } else {
         return item.brand_chinese_name.trim()
       }
+    },
+    getStyle (number, row, key) {
+      console.log(number, row, row.border)
+      if (number > 9999999.99 && Boolean(row.border) === false) {
+        this.$set(row, key, true)
+      } else if (Boolean(row.border) === true && number <= 9999999.99) {
+        this.$set(row, key, false)
+      }
+    },
+    objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
+      if (this.isLoading) return false
+      const arr = []
+      this.skuPropertyList.map(item => {
+        const id = item.id
+        const skuLength = Object.keys(this.skuPropertyValueMap[id]).length || 1
+        arr.push(skuLength || 1)
+      })
+
+      // console.log(arr, 'arr')
+
+      if (arr.length === 3) {
+        const columnIndex0 = arr[1] * arr[2]
+        const columnIndex1 = arr[1]
+
+        if (columnIndex === 0) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else if (rowIndex % columnIndex1 === 0) {
+            return {
+              rowspan: columnIndex1,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      }
+      if (arr.length === 2) {
+        const columnIndex0 = arr[1]
+        if (columnIndex === 0) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      }
+
+      if (arr.length === 1) {
+        return {
+          rowspan: 1,
+          colspan: 1
+        }
+      }
     }
 
   }
@@ -1525,6 +1600,18 @@ export default {
   }
   /deep/ .cell {
     overflow: unset;
+    height: 100%;
+    width: 100%;
+    padding: 0 !important;
+    line-height: 16px;
+  }
+  /deep/ .rowClass {
+
+    td {
+      padding: 0;
+      height: 59px;
+    }
+
   }
   .preview {
     /deep/ .el-upload {
@@ -1576,5 +1663,66 @@ export default {
   .index_count{
     color: #85878a;
   }
+
+  /deep/ .my-textarea {
+    height: 59px;
+    textarea {
+      resize: none !important;
+      outline: none;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      color: #19191a;
+      line-height: 16px;
+      padding: 10px;
+      border: 1px solid transparent;
+      overflow: auto;
+      touch-action: manipulation;
+      cursor: text;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      column-count: initial !important;
+      -webkit-rtl-ordering: logical;
+      flex-direction: column;
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-transform: none;
+      text-indent: 0px;
+      text-shadow: none;
+      display: inline-block;
+      text-align: start;
+      text-rendering: auto;
+      border-radius: 0;
+      transition: none;
+      // border: 1px solid #1966ff;
+    }
+    textarea:active {
+      border: 1px solid #1966ff;
+    }
+    textarea:hover {
+      border: 1px solid #1966ff;
+    }
+    textarea:focus {
+      border: 1px solid #1966ff;
+    }
+
+  }
+
+  /deep/ .red {
+    textarea:active {
+      border: 1px solid red;
+    }
+    textarea:hover {
+      border: 1px solid red;
+    }
+    textarea:focus {
+      border: 1px solid red;
+    }
+    }
 
 </style>

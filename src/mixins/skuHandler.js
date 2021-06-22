@@ -34,9 +34,69 @@ export default {
       this.skuPropertyList = []
       this.skuShowList = []
 
+      // 排序
+      let sortSkuPropertyValueMapKey = []
+      let sortSkuPropertyValueMap = {}
+      let sortSkuKeys = []
+
+      this.skuShowList = []
+
       let nSkuPropertyValueMap = {}
+      let skuPropertyList = []
+
+      Object.entries(skuJson.sku_property_value_map).forEach(([skuPropertyValueKey, skuPropertyValue]) => {
+        if (Object.keys(skuPropertyValue).some(key => skuPropertyValue[key].image)) {
+          sortSkuKeys.unshift({[skuPropertyValueKey]: skuPropertyValue})
+        } else {
+          sortSkuKeys.push({[skuPropertyValueKey]: skuPropertyValue})
+        }
+      })
+      const length = sortSkuKeys.length
+      const skuMapNodes = Object.keys(skuJson.sku_map).map(keys => ({
+        ...skuJson.sku_map[keys],
+        keys
+      }))
+      // nodes 要遍历的元素集合
+      // sortSkuKeys 排序的列表
+      // previewStrings 该集合的前一个 字符串集合
+      // current 当前遍历到第几个集合
+      // length 总长度
+      let sortSkuMapNodes = []
+      function sortSku (nodes, previewStrings = [], current = 0) {
+        if (current !== length) {
+          const skuPropertyValueMapValue = sortSkuKeys[current]
+          current++
+          let nextPreviewStrings = [...previewStrings]
+          Object.entries(skuPropertyValueMapValue).map(([key, value]) => {
+            Object.keys(value).map(item => {
+              let str = `${key}:${item}`
+              nextPreviewStrings.push(str)
+              const arr = []
+              nodes.map(node => {
+                if (nextPreviewStrings.every(s => node.keys.includes(s))) {
+                  arr.push(node)
+                }
+              })
+              if (current === length) {
+                sortSkuMapNodes = [...sortSkuMapNodes, ...arr]
+              }
+              sortSku(arr, nextPreviewStrings, current)
+              nextPreviewStrings = [...previewStrings]
+            })
+          })
+        }
+      }
+
+      sortSku(skuMapNodes)
+
+      let sortSkuMapResult = {}
+      sortSkuMapNodes.map(item => {
+        sortSkuMapResult[item.keys] = item
+      })
+      this.skuMap = {...sortSkuMapResult}
+
       if (Object.keys(this.skuPropertyMap).length === 0) {
-        this.skuPropertyList.push({ id: 0, name: '', filter: false })
+        skuPropertyList.push({ id: 0, name: '', filter: false })
         let item = Object.values(this.skuMap)[0]
         this.skuShowList.push({
           property_key: 'default',
@@ -51,21 +111,24 @@ export default {
           hidden: false
         })
       } else {
+        // 排序
         let propertyIndexMap = {}
-        for (let key in this.skuPropertyMap) {
-          propertyIndexMap[key] = this.skuPropertyList.length
-          this.skuPropertyList.push({
+        sortSkuKeys.map(item => {
+          const key = Object.keys(item)[0]
+          propertyIndexMap[key] = skuPropertyList.length
+          skuPropertyList.push({
             id: key,
             name: this.skuPropertyMap[key]['name'],
             filter: false
           })
-        }
+        })
 
         for (let key in this.skuMap) {
           let item = this.skuMap[key]
           let propertyValList = key.split(';')
           let propertyList = []
           let sortKey = ''
+
           for (let i in propertyValList) {
             let propertyKVId = propertyValList[i]
             let propKVIds = propertyKVId.split(':')
@@ -79,7 +142,8 @@ export default {
             }
             nSkuPropertyValueMap[propKVIds[0]][propKVIds[1]] = {
               'value': skuJson.sku_property_value_map[propKVIds[0]][propKVIds[1]]['value'],
-              'checked': false
+              'checked': false,
+              image: skuJson.sku_property_value_map[propKVIds[0]][propKVIds[1]]['image']
             }
             sortKey += skuJson.sku_property_value_map[propKVIds[0]][propKVIds[1]]['value']
           }
@@ -98,6 +162,25 @@ export default {
           })
         }
       }
+
+      Object.entries(nSkuPropertyValueMap).forEach(([key, value]) => {
+        if (Object.values(value).some(item => item.image)) {
+          sortSkuPropertyValueMapKey.unshift(key)
+        } else {
+          sortSkuPropertyValueMapKey.push(key)
+        }
+      })
+
+      sortSkuPropertyValueMapKey.forEach(key => {
+        sortSkuPropertyValueMap[key] = nSkuPropertyValueMap[key]
+        const value = skuPropertyList.find(item => item.id === key)
+        this.skuPropertyList.push(value)
+      })
+
+      console.log(nSkuPropertyValueMap, 'nSkuPropertyValueMap')
+      console.log(this.skuShowList, 'this.skuShowList')
+      console.log(this.skuMap, 'this.skuMap')
+
       this.$set(this, 'skuPropertyValueMap', nSkuPropertyValueMap)
       this.updateIsSingleSku()
     },
