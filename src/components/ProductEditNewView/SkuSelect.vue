@@ -14,6 +14,7 @@
       :key="index"
     >
       <div>
+        <!-- 规格名 -->
         <div class="left mb-10">
           <div class="skuText flex justify-b">
             <span>规格名</span>
@@ -32,6 +33,7 @@
             style="width: 170px; margin-right: 10px"
             :value="specification.specificationName"
             popper-class="skuAddSelect"
+            filterable
             @change="
               handleSpecificationNameChange($event, index, specification)
             "
@@ -44,7 +46,6 @@
             >
             </el-option>
             <el-option style="height: 40px; padding: 0; line-height: 40px">
-              <!-- 可以创建并选中选项中不存在的条目 用这个组建 -->
               <div
                 v-if="!specification.specificationNameVisible"
                 @click.stop="specification.specificationNameVisible = true"
@@ -86,15 +87,79 @@
                 ></hh-icon>
               </div>
             </el-option>
+            <!-- 规格名搜索为空时 -->
+            <div slot="empty" class="left">
+              <div
+                class="center"
+                style="
+                  height: 60px;
+                  line-height: 60px;
+                  padding-left: 12px;
+                  color: #999999;
+                "
+              >
+                暂无数据
+              </div>
+              <div
+                style="
+                  height: 40px;
+                  padding: 0;
+                  line-height: 40px;
+                  background-color: #f2f8ff;
+                "
+              >
+                <!-- 可以创建并选中选项中不存在的条目 用这个组建 -->
+                <div
+                  v-if="!specification.specificationNameVisible"
+                  @click.stop="specification.specificationNameVisible = true"
+                  style="padding-left: 12px"
+                  class="color-primary pointer"
+                >
+                  新建规格名
+                </div>
+                <div
+                  v-if="specification.specificationNameVisible"
+                  style="padding-left: 2px; padding-right: 4px"
+                >
+                  <el-input
+                    :value="specification.newSpecificationName"
+                    @click.native="handleNewSpecificationNameClick"
+                    @input="
+                      changeNewSpecificationName($event, index, specification)
+                    "
+                    @focus.stop=""
+                    size="mini"
+                    placeholder="请输入内容"
+                    style="width: 130px"
+                  ></el-input>
+                  <hh-icon
+                    type="iconduigou"
+                    class="fail"
+                    style="color: green; margin-left: 2px; font-size: 11px"
+                    @click.native="
+                      addNewSpecificationName($event, index, specification)
+                    "
+                  ></hh-icon>
+                  <hh-icon
+                    type="iconguanbi1"
+                    class="fail"
+                    style="color: #e02020; margin-left: 2px; font-size: 11px"
+                    @click.native="
+                      cancelNewSpecificationName($event, index, specification)
+                    "
+                  ></hh-icon>
+                </div>
+              </div>
+            </div>
           </el-select>
           <el-checkbox
-            v-model="addSkuImage"
+            v-model="specification.addSkuImage"
             size="mini"
-            @change="handleAddSkuImage"
-            :disabled="disabledAddSkuImage"
+            v-if="index === 0"
             >添加规格图片
           </el-checkbox>
         </div>
+        <!-- 规格值 -->
         <div class="selectedLength" v-if="specification.specificationName">
           规格值<span class="index_count"
             >(已选{{ specification.skuSelectCheckList.length }}个)</span
@@ -107,14 +172,16 @@
           @change="handleSkuSelectCheckListChange($event, index, specification)"
         >
           <div
+            class="preview"
             v-for="(
-              specificationValue, index
+              specificationValue, idx
             ) in specification.specificationValueList"
-            :key="index"
+            :key="idx"
             style="flex: 0 0 25%; max-width: 25%; margin-bottom: 8px"
           >
             <el-checkbox
-              :label="specificationValue.value"
+              :label="specificationValue.checkedValue"
+              :value="specificationValue.checkedValue"
               class="relative"
               style="
                 display: inline-flex;
@@ -123,15 +190,18 @@
                 width: 100%;
               "
             >
-              <span v-if="specificationValue.edit" class="skuValue"
-                >{{ specificationValue.value }}
+						<el-tooltip :content="specificationValue.value" :disabled="specificationValue.value && specificationValue.value.length < 20" placement="top">
+              <span v-if="specificationValue.edit" class="skuValue">
+
+                  {{ specificationValue.value }}
+                <!-- {{ specificationValue.value }} -->
                 <hh-icon
                   type="iconbianji-primary"
                   class="font-12 pointer iconbianji-primary"
                   @click.native.prevent="
                     editSpecificationValue(
                       $event,
-                      index,
+                      idx,
                       specification,
                       specificationValue
                     )
@@ -144,16 +214,22 @@
                   size="mini"
                   placeholder="请输入内容"
                   style="width: 136px"
+                  ref="inputs"
                   @input="
-                    changeSpecificationValue($event, index, specificationValue)
+                    changeSpecificationValue(
+                      $event,
+                      idx,
+                      specificationValue,
+                      specification
+                    )
                   "
                 ></el-input>
                 <hh-icon
-                  type="iconhuanyuan"
+                  type="iconduigou"
                   class="fail ml-5"
                   style="color: green; font-size: 11px"
                   @click.native.prevent="
-                    revertSpecificationValue($event, index, specificationValue)
+                    setSpecificationValue($event, idx, specificationValue)
                   "
                 ></hh-icon>
                 <hh-icon
@@ -161,28 +237,70 @@
                   class="fail ml-5"
                   style="color: #e02020; font-size: 11px"
                   @click.native.prevent="
-                    cancelSpecificationValue($event, index, specificationValue)
+                    cancelSpecificationValue($event, idx, specificationValue)
                   "
                 ></hh-icon>
               </span>
+                </el-tooltip>
+
             </el-checkbox>
             <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              v-if="specification.addSkuImage"
+              slot="reference"
+              :class="[
+                'skuSelect-el-upload--picture-card ',
+                specificationValue.imageUrl
+                  ? ''
+                  : 'hover-skuSelect-el-upload--picture-card',
+              ]"
               :show-file-list="false"
-              :limit="1"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
+              :on-success="
+                (response, file, fileList) =>
+                  handleUploadSuccess(
+                    response,
+                    file,
+                    fileList,
+                    specificationValue
+                  )
+              "
+              :on-error="handleUploadError"
+              :before-upload="handleBeforeUpload"
+              action="/api/image/create"
+              :headers="getTokenHeaders"
+              :data="{ belong_type: belongType }"
+              :multiple="false"
             >
-              <img
-                v-if="specification.imageUrl"
-                :src="specification.imageUrl"
-                class="avatar"
-              />
-              <div v-else>
-                （0/1）
-                <i class="el-icon-plus avatar-uploader-icon"></i>
+              <div v-if="specificationValue.imageUrl" class="imgWrapper">
+                <img
+                  :src="specificationValue.imageUrl"
+                  class="avatar"
+                  v-on:mouseover="handlemouseover(specificationValue)"
+                  v-on:mouseleave="handlemouseleave(specificationValue)"
+                />
+                <div
+                  :class="[
+                    'mask',
+                    specificationValue.maskShow ? 'show' : '',
+                    'flex',
+                    'justify-b',
+                  ]"
+                >
+                  <hh-icon
+                    type="iconshanchu1"
+                    style="font-size: 13px"
+                    class="iconshanchu1"
+                  />
+                  <hh-icon
+                    type="iconreview"
+                    style="font-size: 15px"
+                    class="iconreview"
+                  />
+                </div>
               </div>
+              <span v-else class="flex column align-c justify-c">
+                <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
+                <span class="uploader-text">(0/1)</span>
+              </span>
             </el-upload>
           </div>
         </el-checkbox-group>
@@ -222,7 +340,7 @@
       </div>
     </div>
 
-    <div class="left mt-10 mb-10" v-if="specifications.length < 3">
+    <div class="left mt-10 mb-10" v-if="showAddSpecifications">
       <el-button
         type="primary"
         icon="el-icon-plus"
@@ -243,7 +361,9 @@
     >
       <div class="left sortDesc">
         <span class="sortName">{{
-          specifications[activeIndex].specificationName
+          specifications && specifications[activeIndex]
+            ? specifications[activeIndex].specificationName
+            : ''
         }}</span
         ><span class="sortDescInfo">请拖动规格值进行排序</span>
       </div>
@@ -288,11 +408,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 export default {
   name: 'component_name',
   props: {
-    msg: String
+    msg: String,
+    belongType: {
+      type: Number,
+      default: 0
+    }
   },
   components: {
     draggable
@@ -313,7 +438,6 @@ export default {
           addSpecificationValue: '',
           specificationValueList: [],
           specificationNameVisible: false,
-          imageUrl: '',
           date: new Date()
         }
       ]
@@ -327,14 +451,33 @@ export default {
         disabled: false,
         ghostClass: 'ghost'
       }
+    },
+    ...mapGetters(['getTokenHeaders']),
+    showAddSpecifications () {
+      return (
+        this.specifications.length < 3 &&
+        this.specifications.some(
+          (specification) => specification.specificationName
+        )
+      )
     }
   },
   methods: {
+    getDisabledAddSkuImage () {
+      return this.specifications.some((specification) => {
+        return (
+          specification &&
+          (specification.specificationValueList || []).some(
+            (specificationValue) =>
+              specificationValue && specificationValue.imgUrl
+          )
+        )
+      })
+    },
     handleNewSpecificationNameClick (e) {
       e.stopPropagation()
     },
     changeNewSpecificationName (e, index, row) {
-      console.log(e, index, row)
       row.newSpecificationName = e
     },
     cancelNewSpecificationName (e, index, row) {
@@ -361,20 +504,24 @@ export default {
       ]
       row.newSpecificationName = ''
       row.specificationNameVisible = false
-      console.log(
-        this.specificationNameOptions,
-        'this.specificationNameOptions'
-      )
     },
     handleAddSkuImage (value) {
       this.addSkuImage = value
     },
     handleSpecificationNameChange (value, index) {
+      const specificationNames = this.specifications.map(
+        (item) => item.specificationName
+      )
+      if (specificationNames.includes(value)) {
+        return this.$message.error('规格名不能重复')
+      }
       this.specifications[index].specificationName = value
     },
     // 添加规格值
     handleAddSpecificationValue (e, index, row) {
-      console.log(row, 'row')
+      if (!row.addSpecificationValue) {
+        return false
+      }
       if (
         row.specificationValueList.find(
           (item) => item.value === row.addSpecificationValue
@@ -385,18 +532,20 @@ export default {
       const newOption = {
         value: row.addSpecificationValue,
         originValue: row.addSpecificationValue,
+        checkedValue: row.addSpecificationValue,
         edit: true,
         editBtnVisible: false,
         order: row.specificationValueList.length,
-        checked: true
+        checked: true,
+        maskShow: false,
+        imgUrl: ''
       }
       this.$nextTick(() => {
         row.specificationValueList.push(newOption)
         row.skuSelectCheckList = row.specificationValueList
           .filter((item) => item.checked)
-          .map((item) => item.value)
+          .map((item) => item.checkedValue)
         row.addSpecificationValue = ''
-        console.log(row.skuSelectCheckList, 'this.skuSelectCheckList')
       })
     },
     handleSkuSelectCheckListChange (list, index, row) {
@@ -409,36 +558,39 @@ export default {
       })
     },
     handleSortAddSpecificationValue (e, index, row) {
-      this.dialogVisible = true
-      this.dragList = row.specificationValueList.filter((item) => item.checked)
-      this.activeIndex = index
+      if (row.skuSelectCheckList && row.skuSelectCheckList.length > 1) {
+        this.dialogVisible = true
+        this.dragList = row.specificationValueList.filter(
+          (item) => item.checked
+        )
+        this.activeIndex = index
+      }
     },
     editSpecificationValue (e, index, row, specificationValue) {
-      console.log(row, 'row')
       specificationValue.edit = false
     },
     cancelSpecificationValue (e, index, row) {
       e.stopPropagation()
-      console.log(row, 'row')
-      row.edit = true
-    },
-    revertSpecificationValue (e, index, row) {
-      e.stopPropagation()
-      console.log(row, 'row')
       row.value = row.originValue
       row.edit = true
     },
-    changeSpecificationValue (value, index, row) {
-      row.value = value
+    setSpecificationValue (e, index, row) {
+      e.stopPropagation()
+      row.originValue = row.value
+      row.edit = true
+    },
+    changeSpecificationValue (value, index, row, specification) {
+      if (!value) {
+        this.$message.error('请输入规格值')
+      }
+      this.$set(row, 'value', value)
     },
     mouseoverSpecificationValue (e, index, row) {
       e.stopPropagation()
-      console.log(row, 'row')
       row.editBtnVisible = true
     },
     mouseoutSpecificationValue (e, index, row) {
       e.stopPropagation()
-      console.log(row, 'row')
       row.editBtnVisible = false
     },
     resetSort () {
@@ -458,7 +610,6 @@ export default {
         ...checkedList,
         ...noCheckedList
       ]
-      console.log(activeSpecifications.specificationValueList)
       this.dialogVisible = false
     },
     cancelSort () {
@@ -487,8 +638,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          const activeSpecifications = this.specifications[this.activeIndex]
-          activeSpecifications.specifications.splice(index, 1)
+          this.specifications.splice(index, 1)
         })
         .catch(() => {})
     },
@@ -506,6 +656,36 @@ export default {
         this.$message.error('上传头像图片大小不能超过 2MB!')
       }
       return isJPG && isLt2M
+    },
+    handleBeforeUpload (file) {
+      let type = file.type
+      let size = file.size / 1024 / 1024
+      if (type !== 'image/jpeg' && type !== 'image/png') {
+        this.$message.error('只能上传jpg/jpeg/png文件')
+        return false
+      }
+      if (size > 8) {
+        this.$message.error('上传文件超过8M')
+        return false
+      }
+    },
+    handleUploadSuccess (response, file, fileList, row) {
+      if (parseInt(response.code) !== 0) {
+        if (response.msg) {
+          this.$message.error(response.msg)
+        }
+        return
+      }
+      this.$set(row, 'imageUrl', response.data.url)
+    },
+    handleUploadError (err, file, fileList) {
+      this.$message.error(err.message)
+    },
+    handlemouseover (item) {
+      this.$set(item, 'maskShow', true)
+    },
+    handlemouseleave (item) {
+      this.$set(item, 'maskShow', false)
     }
   }
 }
