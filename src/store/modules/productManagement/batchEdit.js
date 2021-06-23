@@ -128,7 +128,7 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         })
       } catch (err) {
         this._vm.$message({
-          message: `批量失败`,
+          message: err.message,
           type: 'error'
         })
       }
