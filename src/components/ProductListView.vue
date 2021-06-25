@@ -185,6 +185,12 @@
                               请刷新品牌后重新搬家
                             </ul>
                         </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('店铺未授权该类目，请先去抖店后台开通') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
+                              店铺未授权当前类目，请先去抖店后台检查。若已开通，则重新刷新类目后再搬家
+                            </ul>
+                        </div>
                         <div slot="content"  v-else>
                             <hh-icon type="iconjinggao1"></hh-icon>
                             <span style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
