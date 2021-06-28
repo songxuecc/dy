@@ -249,7 +249,7 @@
               slot="reference"
               :class="[
                 'skuSelect-el-upload--picture-card ',
-                specificationValue.imageUrl
+                specificationValue.image
                   ? ''
                   : 'hover-skuSelect-el-upload--picture-card',
               ]"
@@ -270,9 +270,9 @@
               :data="{ belong_type: belongType }"
               :multiple="false"
             >
-              <div v-if="specificationValue.imageUrl" class="imgWrapper">
+              <div v-if="specificationValue.image" class="imgWrapper">
                 <img
-                  :src="specificationValue.imageUrl"
+                  :src="specificationValue.image"
                   class="avatar"
                   v-on:mouseover="handlemouseover(specificationValue)"
                   v-on:mouseleave="handlemouseleave(specificationValue)"
@@ -417,19 +417,10 @@ export default {
     belongType: {
       type: Number,
       default: 0
-    }
-  },
-  components: {
-    draggable
-  },
-  data () {
-    return {
-      dialogVisible: false,
-      specificationNameOptions: [],
-      activeIndex: 0,
-      drag: false,
-      dragList: [],
-      specifications: [
+    },
+    specifications: {
+      type: Array,
+      default: [
         {
           specificationName: '',
           newSpecificationName: '',
@@ -441,6 +432,19 @@ export default {
           date: new Date()
         }
       ]
+    },
+    skuPropertyValueMap: Object
+  },
+  components: {
+    draggable
+  },
+  data () {
+    return {
+      dialogVisible: false,
+      specificationNameOptions: [],
+      activeIndex: 0,
+      drag: false,
+      dragList: []
     }
   },
   computed: {
@@ -548,6 +552,7 @@ export default {
         row.addSpecificationValue = ''
       })
     },
+    // 增加单个sku
     handleSkuSelectCheckListChange (list, index, row) {
       row.specificationValueList = row.specificationValueList.map((item) => {
         if (list.includes(item.value)) {
@@ -556,6 +561,7 @@ export default {
           return { ...item, checked: false }
         }
       })
+      this.$emit('change', row)
     },
     handleSortAddSpecificationValue (e, index, row) {
       if (row.skuSelectCheckList && row.skuSelectCheckList.length > 1) {
@@ -626,7 +632,7 @@ export default {
           addSpecificationValue: '',
           specificationValueList: [],
           specificationNameVisible: false,
-          imageUrl: '',
+          image: '',
           date: new Date()
         }
       ]
@@ -643,7 +649,7 @@ export default {
         .catch(() => {})
     },
     handleAvatarSuccess (res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
+      this.image = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
@@ -676,7 +682,7 @@ export default {
         }
         return
       }
-      this.$set(row, 'imageUrl', response.data.url)
+      this.$set(row, 'image', response.data.url)
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
@@ -686,6 +692,34 @@ export default {
     },
     handlemouseleave (item) {
       this.$set(item, 'maskShow', false)
+    },
+    // 更新单个sku维度信息
+    handleChangeSingleSku () {
+      this.$emit('onChangeSingleSku')
+    },
+    // 排序单个sku
+    handleSortSingleSku () {
+      this.$emit('onSortSingleSku')
+    },
+    // 增加单个sku
+    handleAddSingleSku () {
+      this.$emit('onAddSingleSku')
+    },
+    // 删除单个sku维度
+    handleDeleteSingleSku () {
+      this.$emit('onDeleteSingleSku')
+    },
+    // 删除整个sku维度
+    handleDeleteSku () {
+      this.$emit('onDeleteSku')
+    },
+    // 增加一个维度的sku
+    handleAddSku () {
+      this.$emit('onAddSku')
+    },
+    // 选中单个sku
+    handleCheckedSkuFilter () {
+      this.$emit('onCheckedSkuFilter')
     }
   }
 }

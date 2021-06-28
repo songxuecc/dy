@@ -132,7 +132,10 @@
                   </el-tooltip>
                   </span>
 
-                  <SkuSelect />
+                  <SkuSelect
+                    :specifications="specifications"
+                    :skuPropertyValueMap="skuPropertyValueMap"
+                    @change="onSkuSelectChange"/>
                   <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
                             :cell-class-name="cellClassName"
                             row-class-name="rowClass"
@@ -169,14 +172,14 @@
                                   取消筛选
                               </el-button>
                           </template>
-                          <template slot-scope="scope">
+                          <template slot-scope="scope" >
                             <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;" >{{scope.row.property_list[index].name}}</span>
                             <!-- <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;"
                             v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
                             <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
                                       :class="['input-text-left']"> -->
                               <!-- <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span> -->
-                            </el-input>
+                            <!-- </el-input> -->
                           </template>
                       </el-table-column>
                       <el-table-column key="2" width="130">
@@ -512,7 +515,20 @@ export default {
       propertyBatchMap: new Map(),
       visibleSkuImport: false,
       forceUpdatePropertySet: 0,
-      skuPropertyList: []
+      skuPropertyList: [],
+      // 属性设置
+      specifications: [
+        {
+          specificationName: '',
+          newSpecificationName: '',
+          addSkuImage: false,
+          skuSelectCheckList: [],
+          addSpecificationValue: '',
+          specificationValueList: [],
+          specificationNameVisible: false,
+          date: new Date()
+        }
+      ]
 
     }
   },
@@ -621,6 +637,14 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    onSkuSelectChange (row) {
+      const skuPropertyValueMap = this.skuPropertyValueMap
+      row.specificationValueList.map(item => {
+        skuPropertyValueMap[row.spec_id][item.skuValueKey].checked = item.checked
+      })
+      this.$set(this, 'skuPropertyValueMap', skuPropertyValueMap)
+      this.onSkuFilter()
+    },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
       this.productList = tpProductList
@@ -733,6 +757,8 @@ export default {
         this.product.assign({recommend_remark: data.recommend_remark})
         this.product.assign({skuPropertyList: [...this.skuPropertyList]})
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
+        this.product.assign({sortSkuKeys: this.sortSkuKeys})
+        this.product.assign({specifications: this.specifications})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
@@ -747,10 +773,15 @@ export default {
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
-        console.log(this.product.model, 'this.product.model')
+        this.sortSkuKeys = this.product.model.sortSkuKeys
+        this.specifications = this.product.model.specifications
 
+        console.log(this.product.model, 'this.product.model')
         console.log(this.skuPropertyList, 'this.skuPropertyList]')
         console.log(this.skuPropertyValueMap, 'this.skuPropertyValueMap')
+        console.log(this.sortSkuKeys, 'this.sortSkuKeys')
+        console.log(this.specifications, 'this.specifications')
+
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
 
@@ -861,10 +892,14 @@ export default {
       })
     },
     onDeleteSku (pId, pVid) {
+      console.log(pId, pVid, 'pId, pVid')
       this.deleteSkus(pId, pVid)
     },
     onDeleteSingleSku (idx) {
       this.deleteSingleSku(idx)
+    },
+    onChangeSingleSku (idx) {
+      this.changeSingleSku(idx)
     },
     cutOrigionAttrStr (key, val) {
       let len = 50 - utils.getStrRealLength(key)
@@ -1529,6 +1564,7 @@ export default {
       }
     },
     objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
+      const end = this.skuPropertyList.length + 2
       if (this.isLoading) return false
       const arr = []
       this.skuPropertyList.map(item => {
@@ -1536,8 +1572,6 @@ export default {
         const skuLength = Object.keys(this.skuPropertyValueMap[id]).length || 1
         arr.push(skuLength || 1)
       })
-
-      // console.log(arr, 'arr')
 
       if (arr.length === 3) {
         const columnIndex0 = arr[1] * arr[2]
@@ -1549,9 +1583,28 @@ export default {
               rowspan: columnIndex0,
               colspan: 1
             }
-          } else if (rowIndex % columnIndex1 === 0) {
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        } else if (columnIndex === 1) {
+          if (rowIndex % columnIndex1 === 0) {
             return {
               rowspan: columnIndex1,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        } else if (columnIndex === end) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
               colspan: 1
             }
           } else {
@@ -1576,14 +1629,24 @@ export default {
               colspan: 0
             }
           }
+        } else if (columnIndex === end) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
         }
       }
 
-      if (arr.length === 1) {
-        return {
-          rowspan: 1,
-          colspan: 1
-        }
+      return {
+        rowspan: 1,
+        colspan: 1
       }
     }
 
@@ -1604,6 +1667,13 @@ export default {
     width: 100%;
     padding: 0 !important;
     line-height: 16px;
+  }
+  /deep/ .cell-tight {
+    .cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
   /deep/ .rowClass {
 
