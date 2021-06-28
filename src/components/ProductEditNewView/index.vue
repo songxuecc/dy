@@ -134,34 +134,35 @@
 
                   <SkuSelect
                     :specifications="specifications"
-                    :skuPropertyValueMap="skuPropertyValueMap"
                     @change="onSkuSelectChange"/>
+                            <!-- :span-method="objectSpanMethod" -->
+
                   <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
                             :cell-class-name="cellClassName"
                             row-class-name="rowClass"
                             :span-method="objectSpanMethod"
                   >
-                      <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id">
+                      <el-table-column v-for="(item, index) in getSpecifications(specifications)" :key="index+':'+item.id">
                           <template slot="header" slot-scope="scope">
-                              <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.name }}</span>
-                              <el-dropdown v-if="skuPropertyValueMap[item.id] && skuPropertyList.length > 1"
+                              <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.specificationName }}</span>
+                              <el-dropdown v-if="skuPropertyValueMap[item.spec_id] && specifications.length > 1"
                                            style="line-height:0px; padding-left: 0px; cursor:pointer; vertical-align: middle;"
                                            trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                               >
                                   <span class="el-dropdown-link" style="color:#909399">
-                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+                                    ({{item.specificationValueList.length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                                   </span>
                                   <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
-                                      <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
+                                      <el-dropdown-item v-for="(ele, vid) in item.specificationValueList" :key="vid">
                                           <div style="display:flex">
                                               <el-checkbox v-model="ele.checked" @change="onSkuFilter" style="margin-right: 0">
-                                                <span v-if="skuPropertyList.length === 1">{{ele.value}}</span>
+                                                <span v-if="specifications.length === 1">{{ele.value}}</span>
                                                 <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
                                                           :class="['input-text-left']">
                                                   <!-- <span slot="append" class="hint">{{ ele.value.length }} / 18</span> -->
                                                 </el-input>
                                               </el-checkbox>
-                                              <el-button v-if="Object.keys(skuPropertyValueMap[item.id]).length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
+                                              <el-button v-if="item.specificationValueList.length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
                                                          @click="onDeleteSku(item.id,vid)"
                                               > 删除 </el-button>
                                           </div>
@@ -173,7 +174,7 @@
                               </el-button>
                           </template>
                           <template slot-scope="scope" >
-                            <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;" >{{scope.row.property_list[index].name}}</span>
+                            <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;" v-if="scope.row.property_list[index]">{{scope.row.property_list[index].value}}</span>
                             <!-- <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;"
                             v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
                             <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
@@ -220,32 +221,24 @@
                       </el-table-column>
                       <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
-                            <div class="preview" style="padding:4px">
-                              <el-popover
-                                placement="left"
-                                title=""
-                                :value="scope.row.maskShow">
-                                <img :src="scope.row.img" style="width: 250px;"/>
-                                <el-upload
-                                    slot="reference"
-                                    class="el-upload el-upload--picture-card"
-                                    :show-file-list="false"
-                                    :on-success="(response, file, fileList) => handleUploadSuccess(response, file, fileList, scope.row)"
-                                    :on-error="handleUploadError"
-                                    :before-upload="handleBeforeUpload"
-                                    action="/api/image/create"
-                                    :headers="getTokenHeaders"
-                                    :data="{'belong_type': belongType}"
-                                    :multiple="false"
-                                    style="width:50px; height: 50px; line-height: 80px;overflow:hidden"
-                                >
-                                    <img :src="scope.row.img" style="width: 40px; display: block;"/>
-                                    <div :class="['mask' ,scope.row.maskShow ? 'show':'' ]" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
-                                      <hh-icon type="icontihuan" style="font-size: 20px;"/>
-                                    </div>
-                                </el-upload>
-                              </el-popover>
+                            <div class="preview" style="padding:4px" v-if="scope.row.img">
+                              <!-- <el-image
+                                style="width: 40px; height: 40px"
+                                :src="scope.row.img"
+                                :preview-src-list="[scope.row.img]">
+                              </el-image>
+                              <div :class="['flex','align-c','justify-c','font-12' ,scope.row.maskShow ? 'show':'' ]" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
+                                点击放大
+                              </div> -->
+
+                              <el-image
+                                slot="reference"
+                                style="width: 40px; height: 40px"
+                                :src="scope.row.img"
+                                :preview-src-list="[scope.row.img]">
+                              </el-image>
                             </div>
+
                           </template>
                       </el-table-column>
                       <el-table-column key="7" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
@@ -593,42 +586,6 @@ export default {
 
   },
   updated () {
-    // if (this.activityTab === 'sku') {
-    //   let self = this
-    //   if (this.skuPropertyList.length === 1) {
-
-    //   }
-      // this.skuPropertyList.forEach(item => {
-      //   if (self.skuPropertyValueMap[item.id]) {
-      //     for (let vid in self.skuPropertyValueMap[item.id]) {
-      //       let ele = self.skuPropertyValueMap[item.id][vid]
-      //       if (self.isSkuNameWarn(ele.value, item.id)) {
-      //         if (self.$refs['sku-property-' + item.id]) {
-      //           self.$refs['sku-property-' + item.id][0].show()
-      //         }
-      //       }
-      //     }
-      //   }
-      // })
-      // if ('1' in this.product.model.check_error_msg_static) {
-      //   if ('1017' in this.product.model.check_error_msg_static['1']['code']) {
-      //     let maxNum = 0
-      //     let maxNumProperty = 0
-      //     this.skuPropertyList.forEach(item => {
-      //       if (self.skuPropertyValueMap[item.id]) {
-      //         let len = Object.keys(self.skuPropertyValueMap[item.id]).length
-      //         if (len > maxNum) {
-      //           maxNumProperty = item.id
-      //           maxNum = len
-      //         }
-      //       }
-      //     })
-      //     if (this.$refs['sku-property-' + maxNumProperty]) {
-      //       this.$refs['sku-property-' + maxNumProperty][0].show()
-      //     }
-      //   }
-      // }
-    // }
   },
   methods: {
     ...mapActions([
@@ -637,13 +594,14 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
-    onSkuSelectChange (row) {
-      const skuPropertyValueMap = this.skuPropertyValueMap
-      row.specificationValueList.map(item => {
-        skuPropertyValueMap[row.spec_id][item.skuValueKey].checked = item.checked
+    getSpecifications (specifications) {
+      return specifications.filter(item => {
+        return item.specificationValueList.some(v => v.checked)
       })
-      this.$set(this, 'skuPropertyValueMap', skuPropertyValueMap)
-      this.onSkuFilter()
+    },
+    onSkuSelectChange (specifications) {
+      this.$set(this, 'specifications', specifications)
+      this.handleSpecifications(specifications)
     },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
@@ -665,7 +623,7 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark'
+          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -684,6 +642,7 @@ export default {
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
+        this.specifications = this.product.model.specifications
         this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
         // this.$refs['bannerPicListView'].curPictureList = this.product.model.bannerPicUrlList
         this.descPicUrlList = [...this.product.model.descPicUrlList]
@@ -1564,19 +1523,22 @@ export default {
       }
     },
     objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
-      const end = this.skuPropertyList.length + 2
+      const end = this.specifications.length + 2
       if (this.isLoading) return false
       const arr = []
-      this.skuPropertyList.map(item => {
-        const id = item.id
-        const skuLength = Object.keys(this.skuPropertyValueMap[id]).length || 1
+      this.specifications.map(item => {
+        const skuLength = item.specificationValueList.length
         arr.push(skuLength || 1)
       })
+      // return {
+      //   rowspan: 1,
+      //   colspan: 1
+      // }
 
       if (arr.length === 3) {
         const columnIndex0 = arr[1] * arr[2]
-        const columnIndex1 = arr[1]
-
+        const columnIndex1 = arr[2]
+        // console.log(columnIndex0, columnIndex1, columnIndex2, arr)
         if (columnIndex === 0) {
           if (rowIndex % columnIndex0 === 0) {
             return {
@@ -1684,15 +1646,9 @@ export default {
 
   }
   .preview {
-    /deep/ .el-upload {
-      position: relative;
-    }
-    /deep/ .el-upload--picture-card i{
-      font-size: 20px;
-    }
-    /deep/ .el-upload--picture-card i {
-      color: #fff;
-    }
+    position: relative;
+    width: 50px;
+    height: 50px;
     .mask {
       position: absolute;
       left: 0;
@@ -1793,6 +1749,10 @@ export default {
     textarea:focus {
       border: 1px solid red;
     }
+    }
+
+    /deep/ .el-table--enable-row-hover .el-table__body tr:hover > td {
+      background:none
     }
 
 </style>

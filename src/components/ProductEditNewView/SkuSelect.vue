@@ -410,6 +410,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
+import shortid from 'shortid'
+
 export default {
   name: 'component_name',
   props: {
@@ -509,9 +511,7 @@ export default {
       row.newSpecificationName = ''
       row.specificationNameVisible = false
     },
-    handleAddSkuImage (value) {
-      this.addSkuImage = value
-    },
+    // 规格名字添加
     handleSpecificationNameChange (value, index) {
       const specificationNames = this.specifications.map(
         (item) => item.specificationName
@@ -520,6 +520,9 @@ export default {
         return this.$message.error('规格名不能重复')
       }
       this.specifications[index].specificationName = value
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
     // 添加规格值
     handleAddSpecificationValue (e, index, row) {
@@ -542,7 +545,8 @@ export default {
         order: row.specificationValueList.length,
         checked: true,
         maskShow: false,
-        imgUrl: ''
+        imgUrl: '',
+        skuString: shortid.generate()
       }
       this.$nextTick(() => {
         row.specificationValueList.push(newOption)
@@ -550,10 +554,14 @@ export default {
           .filter((item) => item.checked)
           .map((item) => item.checkedValue)
         row.addSpecificationValue = ''
+        this.$nextTick(() => {
+          this.$emit('change', this.specifications)
+        })
       })
     },
     // 增加单个sku
     handleSkuSelectCheckListChange (list, index, row) {
+      console.log(list, index, row, 'list, index, row')
       row.specificationValueList = row.specificationValueList.map((item) => {
         if (list.includes(item.value)) {
           return { ...item, checked: true }
@@ -561,8 +569,11 @@ export default {
           return { ...item, checked: false }
         }
       })
-      this.$emit('change', row)
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
+    // 排序
     handleSortAddSpecificationValue (e, index, row) {
       if (row.skuSelectCheckList && row.skuSelectCheckList.length > 1) {
         this.dialogVisible = true
@@ -571,6 +582,9 @@ export default {
         )
         this.activeIndex = index
       }
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
     editSpecificationValue (e, index, row, specificationValue) {
       specificationValue.edit = false
@@ -617,6 +631,9 @@ export default {
         ...noCheckedList
       ]
       this.dialogVisible = false
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
     cancelSort () {
       this.dialogVisible = false
@@ -645,11 +662,11 @@ export default {
       })
         .then(() => {
           this.specifications.splice(index, 1)
+          this.$nextTick(() => {
+            this.$emit('change', this.specifications)
+          })
         })
         .catch(() => {})
-    },
-    handleAvatarSuccess (res, file) {
-      this.image = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
@@ -664,6 +681,7 @@ export default {
       return isJPG && isLt2M
     },
     handleBeforeUpload (file) {
+      console.log(file)
       let type = file.type
       let size = file.size / 1024 / 1024
       if (type !== 'image/jpeg' && type !== 'image/png') {
@@ -683,6 +701,9 @@ export default {
         return
       }
       this.$set(row, 'image', response.data.url)
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
