@@ -445,7 +445,7 @@ export default {
           specification &&
           (specification.specificationValueList || []).some(
             (specificationValue) =>
-              specificationValue && specificationValue.imgUrl
+              specificationValue && specificationValue.image
           )
         )
       })
@@ -507,17 +507,20 @@ export default {
         return this.$message.warning('规格值不能重复')
       }
       const specId = `specId-${shortid.generate()}`
+      const skuValueKey = `skuString-${shortid.generate()}`
       const newOption = {
+        image: '',
         value: row.addSpecificationValue,
+        skuKey: specId,
+        skuValueKey: skuValueKey,
+        skuString: `${specId}:${skuValueKey}`,
         originValue: row.addSpecificationValue,
         checkedValue: row.addSpecificationValue,
         edit: true,
         editBtnVisible: false,
         order: row.specificationValueList.length,
         checked: true,
-        maskShow: false,
-        imgUrl: '',
-        skuString: `${specId}:skuString-${shortid.generate()}`
+        maskShow: false
       }
       this.$nextTick(() => {
         row.specificationValueList.push(newOption)
