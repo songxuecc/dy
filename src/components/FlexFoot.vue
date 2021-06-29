@@ -3,8 +3,8 @@
     <div
         :class="['float-button relative',isDragging ?'move':'']"
         @click="goToHelp"
-        @mouseover.stop="changeFlexFootIndex(1)"
-        @mouseout.stop="changeFlexFootIndex(0)">
+        @mouseover="changeFlexFootIndex($event,1)"
+        @mouseout="changeFlexFootIndex($event,0)">
       <hh-icon
             :type="flexFootIndex === 1 ? 'iconjiaochengbarhover':'iconjiaochengbar'"
             style="font-size:26px;" />
@@ -12,16 +12,16 @@
     </div>
     <div
         :class="['float-button wechat-button',isDragging ?'move':'']"
-        v-if="flexFootVisible"
-        @mouseover.stop="changeFlexFootIndex(2)"
-        @mouseout.stop="changeFlexFootIndex(0)">
+        v-if="flexFootVisible && isAuth"
+        @mouseover="changeFlexFootIndex($event,2)"
+        @mouseout="changeFlexFootIndex($event,0)">
       <div class="'service-content" v-if="isServiceBoxShow" ref="ServiceBox">
         <service-box @serviceHandle="closeService"></service-box>
       </div>
       <hh-icon
             @click="handleClick"
             :type="flexFootIndex === 2 ? 'iconkefuweixinbarhover':'iconkefuweixinbar'"
-        style="font-size:26px;" />
+        style="font-size:26px;color:#1aad19" />
       <div :class="['column-name text', flexFootIndex === 2 ? 'text-in' : '']"
       @click="handleClick">客服</div>
     </div>
@@ -29,8 +29,8 @@
         :class="['float-button',isDragging ?'move':'']"
         @click="goToComments"
         v-if="flexFootVisible"
-        @mouseover.stop="changeFlexFootIndex(3)"
-        @mouseout.stop="changeFlexFootIndex(0)">
+        @mouseover="changeFlexFootIndex($event,3)"
+        @mouseout="changeFlexFootIndex($event,0)">
       <hh-icon
             :type="flexFootIndex === 3 ? 'iconyijianbarhover':'iconyijianbar'"
             style="font-size:26px;" />
@@ -40,8 +40,8 @@
         :class="['float-button',isDragging ?'move':'']"
         @click="openNotificationBox"
         v-if="flexFootVisible"
-        @mouseover.stop="changeFlexFootIndex(4)"
-        @mouseout.stop="changeFlexFootIndex(0)">
+        @mouseover="changeFlexFootIndex($event,4)"
+        @mouseout="changeFlexFootIndex($event,0)">
       <span v-if="unRead > 0" class="notice-icon"
           @click="openNotificationBox">{{unRead}}</span>
       <hh-icon
@@ -53,7 +53,7 @@
         :class="['float-button collect-button',isDragging ?'move':'']"
         @click="addToFavorite"
         v-if="flexFootVisible"
-      @mouseover.stop="changeFlexFootIndex(5)" @mouseout.stop="changeFlexFootIndex(0)">
+      @mouseover="changeFlexFootIndex($event,5)" @mouseout="changeFlexFootIndex($event,0)">
       <hh-icon
             :type="flexFootIndex === 5 ? 'iconshoucangbarhover':'iconshoucangbar'"
             style="font-size:26px;" />
@@ -62,8 +62,8 @@
     <div
         :class="['float-button nav-go-top',isDragging ?'move':'']"
         @click="backToTop"
-        @mouseover.stop="changeFlexFootIndex(6)"
-        @mouseout.stop="changeFlexFootIndex(0)">
+        @mouseover="changeFlexFootIndex($event,6)"
+        @mouseout="changeFlexFootIndex($event,0)">
       <hh-icon
             type="iconshanglajiantou"
             style="font-size:18px;" />
@@ -92,7 +92,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      unRead: 'getUnRead'
+      unRead: 'getUnRead',
+      isAuth: 'getIsAuth'
     })
   },
   methods: {
@@ -100,7 +101,13 @@ export default {
       this.isDragging = !this.isDragging
     },
     handleClick (event) {
+      // 阻止冒泡
+      event || (event = window.event)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
       // this.isServiceBoxShow = true
+      if (!this.isAuth) return this.$message.error('您未购买')
       if (window._hmt) {
         window._hmt.push([
           '_trackEvent',
@@ -109,11 +116,6 @@ export default {
           '展示微信公众号'
         ])
       }
-      // 阻止冒泡
-      event || (event = window.event)
-      event.stopPropagation
-        ? event.stopPropagation()
-        : (event.cancelBubble = true)
       this.isServiceBoxShow ? this.hide() : this.show()
     },
     show () {
@@ -130,13 +132,23 @@ export default {
         this.hide()
       }
     },
-    openNotificationBox () {
+    openNotificationBox (event) {
+      event || (event = window.event)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
+      event.preventDefault()
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '通知列表', '点击', '打开通知列表'])
       }
       this.$emit('toggleDialogNotificationVisible', true)
     },
-    backToTop () {
+    backToTop (event) {
+      event || (event = window.event)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
+      event.preventDefault()
       const el = document.querySelector('.page-component__scroll')
       el.scrollTo({
         top: 0,
@@ -144,16 +156,36 @@ export default {
         behavior: 'smooth'
       })
     },
-    closeService () {
+    closeService (event) {
+      event || (event = window.event)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
+      event.preventDefault()
       this.isServiceBoxShow = false
     },
-    goToHelp () {
+    goToHelp (event) {
+      event || (event = window.event)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
+      event.preventDefault()
       window.open(common.HELP_LINK)
     },
-    goToComments () {
+    goToComments (event) {
+      event || (event = window.event)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
+      event.preventDefault()
       window.open(common.COMMENTS_LINK)
     },
-    addToFavorite () {
+    addToFavorite (event) {
+      event || (event = window.event)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
+      event.preventDefault()
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '导航栏', '点击', '添加到收藏夹'])
       }
@@ -217,7 +249,12 @@ export default {
       }
     },
 
-    changeFlexFootIndex (index) {
+    changeFlexFootIndex (event, index) {
+      event || (event = window.event)
+      event.stopPropagation
+        ? event.stopPropagation()
+        : (event.cancelBubble = true)
+      event.preventDefault()
       if (this.isDragging) {
         return false
       }
