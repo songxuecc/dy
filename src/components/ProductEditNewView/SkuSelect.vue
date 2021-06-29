@@ -100,56 +100,6 @@
               >
                 暂无数据
               </div>
-              <div
-                style="
-                  height: 40px;
-                  padding: 0;
-                  line-height: 40px;
-                  background-color: #f2f8ff;
-                "
-              >
-                <!-- 可以创建并选中选项中不存在的条目 用这个组建 -->
-                <div
-                  v-if="!specification.specificationNameVisible"
-                  @click.stop="specification.specificationNameVisible = true"
-                  style="padding-left: 12px"
-                  class="color-primary pointer"
-                >
-                  新建规格名
-                </div>
-                <div
-                  v-if="specification.specificationNameVisible"
-                  style="padding-left: 2px; padding-right: 4px"
-                >
-                  <el-input
-                    :value="specification.newSpecificationName"
-                    @click.native="handleNewSpecificationNameClick"
-                    @input="
-                      changeNewSpecificationName($event, index, specification)
-                    "
-                    @focus.stop=""
-                    size="mini"
-                    placeholder="请输入内容"
-                    style="width: 130px"
-                  ></el-input>
-                  <hh-icon
-                    type="iconduigou"
-                    class="fail"
-                    style="color: green; margin-left: 2px; font-size: 11px"
-                    @click.native="
-                      addNewSpecificationName($event, index, specification)
-                    "
-                  ></hh-icon>
-                  <hh-icon
-                    type="iconguanbi1"
-                    class="fail"
-                    style="color: #e02020; margin-left: 2px; font-size: 11px"
-                    @click.native="
-                      cancelNewSpecificationName($event, index, specification)
-                    "
-                  ></hh-icon>
-                </div>
-              </div>
             </div>
           </el-select>
           <el-checkbox
@@ -449,6 +399,16 @@ export default {
       dragList: []
     }
   },
+  watch: {
+    specifications (n) {
+      const nextSpecificationNames = n.map(item => item.specificationName)
+      const specificationNames = this.specificationNameOptions.map(item => item.value)
+      this.specificationNameOptions = [...new Set([...nextSpecificationNames, ...specificationNames])].filter(item => item).map(item => ({
+        value: item,
+        label: item
+      }))
+    }
+  },
   computed: {
     dragOptions () {
       return {
@@ -536,6 +496,7 @@ export default {
       ) {
         return this.$message.warning('规格值不能重复')
       }
+      const specId = `specId-${shortid.generate()}`
       const newOption = {
         value: row.addSpecificationValue,
         originValue: row.addSpecificationValue,
@@ -546,7 +507,7 @@ export default {
         checked: true,
         maskShow: false,
         imgUrl: '',
-        skuString: shortid.generate()
+        skuString: `${specId}:skuString-${shortid.generate()}`
       }
       this.$nextTick(() => {
         row.specificationValueList.push(newOption)
@@ -554,6 +515,8 @@ export default {
           .filter((item) => item.checked)
           .map((item) => item.checkedValue)
         row.addSpecificationValue = ''
+        row.spec_id = specId
+        row.id = `id-${shortid.generate()}`
         this.$nextTick(() => {
           this.$emit('change', this.specifications)
         })

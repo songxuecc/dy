@@ -195,7 +195,7 @@
                               </el-toolTip>
                           </template>
                       </el-table-column>
-                      <!-- <el-table-column key="4" width="100">
+                      <el-table-column key="4" width="150">
                           <template slot="header" slot-scope="scope">
                               <span>价格</span>
                               <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
@@ -206,14 +206,13 @@
                               </el-tooltip>
                           </template>
                           <template slot-scope="scope">
-                              <el-input v-if="scope.row.promo_price===0" v-model.number="scope.row.promo_price" size="mini" type="number"></el-input>
-                              <span v-else>{{scope.row.promo_price}}</span>
+                              <el-input v-model.number="scope.row.promo_price" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
                           </template>
-                      </el-table-column> -->
+                      </el-table-column>
                       <el-table-column key="5" width="150">
                           <template slot="header" slot-scope="scope">
                             <span @click="toggleVisibleSkuImport">商品编码</span>
-                                <span class="info pointer" @click="toggleVisibleSkuImport">无法抓取</span><i class="el-icon-question"></i>
+                            <span class="info pointer" @click="toggleVisibleSkuImport">无法抓取</span><i class="el-icon-question"></i>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model="scope.row.code" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
@@ -432,7 +431,7 @@ import { mapActions, mapGetters } from 'vuex'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import request from '@/mixins/request.js'
-import skuHandler from '@/mixins/skuHandler.js'
+import skuHandlerProductNewEdit from '@/mixins/skuHandlerProductNewEdit.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
 import { TextHandler } from '@/common/batchEditHandler'
@@ -444,7 +443,7 @@ import SkuSelect from './SkuSelect.vue'
 
 export default {
   inject: ['reload'],
-  mixins: [request, skuHandler],
+  mixins: [request, skuHandlerProductNewEdit],
   components: {
     categorySelectView,
     picturesUploadView,
@@ -643,6 +642,8 @@ export default {
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
         this.specifications = this.product.model.specifications
+        console.log(this.specifications, 'this.specifications')
+        console.log(this.skuShowList, 'this.skuShowList')
         this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
         // this.$refs['bannerPicListView'].curPictureList = this.product.model.bannerPicUrlList
         this.descPicUrlList = [...this.product.model.descPicUrlList]
@@ -734,12 +735,6 @@ export default {
         this.skuShowList = this.product.model.skuShowList
         this.sortSkuKeys = this.product.model.sortSkuKeys
         this.specifications = this.product.model.specifications
-
-        console.log(this.product.model, 'this.product.model')
-        console.log(this.skuPropertyList, 'this.skuPropertyList]')
-        console.log(this.skuPropertyValueMap, 'this.skuPropertyValueMap')
-        console.log(this.sortSkuKeys, 'this.sortSkuKeys')
-        console.log(this.specifications, 'this.specifications')
 
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
@@ -1523,22 +1518,17 @@ export default {
       }
     },
     objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
-      const end = this.specifications.length + 2
+      const end = this.specifications.length + 3
       if (this.isLoading) return false
       const arr = []
       this.specifications.map(item => {
-        const skuLength = item.specificationValueList.length
+        const skuLength = item.specificationValueList.filter(item => item.checked).length
         arr.push(skuLength || 1)
       })
-      // return {
-      //   rowspan: 1,
-      //   colspan: 1
-      // }
 
       if (arr.length === 3) {
         const columnIndex0 = arr[1] * arr[2]
         const columnIndex1 = arr[2]
-        // console.log(columnIndex0, columnIndex1, columnIndex2, arr)
         if (columnIndex === 0) {
           if (rowIndex % columnIndex0 === 0) {
             return {
@@ -1753,6 +1743,12 @@ export default {
 
     /deep/ .el-table--enable-row-hover .el-table__body tr:hover > td {
       background:none
+    }
+    /deep/ .el-table .el-table__header td{
+      padding-left: 10px;
+    }
+    /deep/ .el-table .el-table__header th {
+      padding-left: 10px;
     }
 
 </style>

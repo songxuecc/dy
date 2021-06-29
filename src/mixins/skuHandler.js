@@ -1,7 +1,5 @@
 import utils from '@/common/utils'
 import { StockHandler, PriceHandler } from '@/common/batchEditHandler'
-import cloneDeep from 'lodash/cloneDeep'
-import shortid from 'shortid'
 
 export default {
   data () {
@@ -9,39 +7,15 @@ export default {
       skuPropertyMap: {},
       skuPropertyValueMap: {},
       skuMap: {},
-      sortSkuKeys: [],
       skuPropertyList: [],
       skuShowList: [],
       isSingleSku: false,
       stockHandler: new StockHandler(),
       promoPriceHandler: new PriceHandler(),
-      priceHandler: new PriceHandler(),
-      skuJson: {},
-      originSkuShowList: []
+      priceHandler: new PriceHandler()
     }
   },
   computed: {
-    // skuRealShowList () {
-    //   let skuRealShowList = []
-    //   const specifications = this.specifications
-    //   for (let i in this.skuShowList) {
-    //     let sku = this.skuShowList[i]
-
-    //     const specDetailIds = sku.specDetailIds
-    //     const isShow = specDetailIds.every((ids, index) => {
-    //       const specification = specifications[index]
-    //       const specificationValueList = specification.specificationValueList
-    //       const i = specificationValueList.find(specificationValue => specificationValue.skuString === ids)
-    //       return i.checked
-    //     })
-    //     console.log(isShow, 'isShow')
-    //     sku.hidden = !isShow
-    //     if (!sku.hidden) {
-    //       skuRealShowList.push(sku)
-    //     }
-    //   }
-    //   return skuRealShowList
-    // }
     skuRealShowList () {
       let skuRealShowList = []
       for (let i in this.skuShowList) {
@@ -55,61 +29,77 @@ export default {
   },
   methods: {
     initSku (skuJson, tpId) {
-      const newSkuJson = cloneDeep(skuJson)
-      Object.entries(newSkuJson.sku_property_value_map).map(([skuPropertyValueKey, skuPropertyValue]) => {
-        Object.entries(skuPropertyValue).map(([key, value]) => {
-          value.skuKey = skuPropertyValueKey
-          value.skuValueKey = key
-          value.skuString = `${skuPropertyValueKey}:${key}`
-        })
-      })
+      this.skuPropertyMap = skuJson.sku_property_map
+      this.skuMap = skuJson.sku_map
+      this.skuPropertyList = []
+      this.skuShowList = []
 
-      this.originSkuShowList = []
-      Object.entries(newSkuJson.sku_map).forEach(([key, value]) => {
-        const specDetailIds = key.split(';')
-        const obj = {
-          ...value,
-          specDetailIds
-        }
-        this.originSkuShowList.push(obj)
-      })
-
-      // 自定义规格列表的名称
-      const specifications = Object.entries(newSkuJson.sku_property_value_map).map(([skuPropertyValueKey, skuPropertyValue]) => {
-        const nextSkuPropertyValue = {}
-        const specificationValueList = Object.entries(skuPropertyValue).map(([key, value]) => {
-          const nextValue = cloneDeep(value)
-          nextValue.originValue = nextValue.value
-          nextValue.checkedValue = nextValue.value
-          nextValue.edit = true
-          nextValue.editBtnVisible = false
-          nextValue.order = nextValue.length
-          nextValue.checked = true
-          nextValue.maskShow = false
-          nextValue.image = nextValue.image
-          return nextValue
+      let nSkuPropertyValueMap = {}
+      if (Object.keys(this.skuPropertyMap).length === 0) {
+        this.skuPropertyList.push({ id: 0, name: '', filter: false })
+        let item = Object.values(this.skuMap)[0]
+        this.skuShowList.push({
+          property_key: 'default',
+          property_list: [{ id: 0, name: '默认规格' }],
+          price: utils.fenToYuan(item.price),
+          // sku原价不随售价的变化而变化
+          originPrice: utils.fenToYuan(item.price),
+          promo_price: utils.fenToYuan(item.promo_price),
+          quantity: item.quantity,
+          img: item.img,
+          code: item.code,
+          hidden: false
         })
-        nextSkuPropertyValue.specificationName = newSkuJson.sku_property_map[skuPropertyValueKey].name
-        nextSkuPropertyValue.newSpecificationName = ''
-        nextSkuPropertyValue.addSkuImage = specificationValueList.some(property => property.image)
-        nextSkuPropertyValue.skuSelectCheckList = specificationValueList.map(item => item.value)
-        nextSkuPropertyValue.addSpecificationValue = ''
-        nextSkuPropertyValue.specificationValueList = specificationValueList
-        nextSkuPropertyValue.specificationNameVisible = false
-        nextSkuPropertyValue.date = new Date()
-        nextSkuPropertyValue.spec_id = skuPropertyValueKey
-        nextSkuPropertyValue.id = shortid.generate()
-        return nextSkuPropertyValue
-      })
-      const sortSpecifications = []
-      specifications.forEach(item => {
-        if (item.specificationValueList.some(property => property.image)) {
-          sortSpecifications.unshift(item)
-        } else {
-          sortSpecifications.push(item)
+      } else {
+        let propertyIndexMap = {}
+        for (let key in this.skuPropertyMap) {
+          propertyIndexMap[key] = this.skuPropertyList.length
+          this.skuPropertyList.push({
+            id: key,
+            name: this.skuPropertyMap[key]['name'],
+            filter: false
+          })
         }
-      })
-      this.handleSpecifications(sortSpecifications)
+
+        for (let key in this.skuMap) {
+          let item = this.skuMap[key]
+          let propertyValList = key.split(';')
+          let propertyList = []
+          let sortKey = ''
+          for (let i in propertyValList) {
+            let propertyKVId = propertyValList[i]
+            let propKVIds = propertyKVId.split(':')
+            let index = propertyIndexMap[propKVIds[0]]
+            propertyList[index] = {
+              id: propertyKVId,
+              name: skuJson.sku_property_value_map[propKVIds[0]][propKVIds[1]]['value']
+            }
+            if (!(propKVIds[0] in nSkuPropertyValueMap)) {
+              nSkuPropertyValueMap[propKVIds[0]] = {}
+            }
+            nSkuPropertyValueMap[propKVIds[0]][propKVIds[1]] = {
+              'value': skuJson.sku_property_value_map[propKVIds[0]][propKVIds[1]]['value'],
+              'checked': false
+            }
+            sortKey += skuJson.sku_property_value_map[propKVIds[0]][propKVIds[1]]['value']
+          }
+          this.skuShowList.push({
+            property_key: key,
+            sort_key: sortKey,
+            property_list: propertyList,
+            price: utils.fenToYuan(item.price),
+            // sku原价不随售价的变化而变化
+            originPrice: utils.fenToYuan(item.price),
+            promo_price: utils.fenToYuan(item.promo_price),
+            quantity: item.quantity,
+            img: item.img,
+            code: item.code,
+            hidden: false
+          })
+        }
+      }
+      this.$set(this, 'skuPropertyValueMap', nSkuPropertyValueMap)
+      this.updateIsSingleSku()
     },
     getSkuUploadObj () {
       let skuUploadObj = {}
@@ -209,7 +199,6 @@ export default {
       }
     },
     onSkuFilter () {
-      console.log(this.skuPropertyValueMap)
       let dicIsFilter = {}
       for (let i in this.skuPropertyList) {
         let pId = this.skuPropertyList[i].id
@@ -249,111 +238,6 @@ export default {
     },
     batchEditPrice () {
       this.priceHandler.handleSkus(this.skuShowList, 'price')
-    },
-    handleSpecifications (specifications) {
-      console.log(specifications, 'specifications')
-      const skuPropertyValueMap = {}
-      const skuPropertyMap = {}
-      let sortSkuMapNodes = []
-      specifications.map(specification => {
-        const specId = specification.spec_id
-        const specificationValueList = specification.specificationValueList
-        if (specificationValueList.some(specificationValue => specificationValue.checked)) {
-          const nextObj = {}
-          specificationValueList.map(specificationValue => {
-            if (specificationValue.checked) {
-              const skuValueKey = specificationValue.skuValueKey
-              nextObj[skuValueKey] = specificationValue
-            }
-          })
-          skuPropertyMap[specId] = {
-            id: specId,
-            values: specificationValueList,
-            name: specification.specificationName
-          }
-          skuPropertyValueMap[specId] = nextObj
-        }
-      })
-
-      let sortSkuKeys = []
-      Object.entries(skuPropertyValueMap).forEach(([skuPropertyValueKey, skuPropertyValue]) => {
-        if (Object.keys(skuPropertyValue).some(key => skuPropertyValue[key].image)) {
-          sortSkuKeys.unshift({[skuPropertyValueKey]: skuPropertyValue})
-        } else {
-          sortSkuKeys.push({[skuPropertyValueKey]: skuPropertyValue})
-        }
-      })
-      const sortSpecifications = specifications
-        .filter(item => item.specificationValueList.some(specificationValue => specificationValue.checked))
-
-      const length = sortSpecifications.length
-      const originSkuShowList = this.originSkuShowList
-      function sortSku (previewStrings = [], current = 0) {
-        if (current !== length) {
-          current++
-          let nextPreviewStrings = [...previewStrings]
-          sortSpecifications[current - 1].specificationValueList
-            .filter(item => item.checked)
-            .map(item => {
-              let str = item.skuString
-              nextPreviewStrings.push(str)
-              let arr = []
-              if (current === length) {
-                let propertyList = []
-                let img = ''
-                nextPreviewStrings.map(string => {
-                  specifications.map(item => {
-                    item.specificationValueList.map(v => {
-                      if (v.skuString === string) {
-                        propertyList.push(v)
-                        if (v.image) {
-                          img = v.image
-                        }
-                      }
-                    })
-                  })
-                })
-                let obj = {}
-                originSkuShowList.map(item => {
-                  if (nextPreviewStrings.every(str => item.specDetailIds.includes(str))) {
-                    obj = {
-                      code: item.code,
-                      keys: item.keys,
-                      price: item.price,
-                      originPrice: item.originPrice,
-                      promo_price: item.promo_price,
-                      quantity: item.quantity,
-                      sku_id: item.sku_id
-                    }
-                  }
-                })
-                const skuJson = {
-                  code: '',
-                  img: img,
-                  keys: '',
-                  price: 0,
-                  originPrice: 0,
-                  promo_price: 0,
-                  quantity: 0,
-                  sku_id: '',
-                  specDetailIds: nextPreviewStrings,
-                  property_key: nextPreviewStrings.join(';'),
-                  property_list: propertyList,
-                  hidden: false,
-                  ...obj
-                }
-                arr.push(skuJson)
-                sortSkuMapNodes = [...sortSkuMapNodes, ...arr]
-              }
-              sortSku(nextPreviewStrings, current)
-              nextPreviewStrings = [...previewStrings]
-            })
-        }
-      }
-      sortSku()
-      console.log(sortSkuMapNodes, 'sortSkuMapNodes')
-      this.skuShowList = sortSkuMapNodes
-      this.$set(this, 'specifications', specifications)
     }
   }
 }

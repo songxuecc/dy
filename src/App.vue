@@ -526,7 +526,7 @@ export default {
 
   .float-view-active {
     top: 85%;
-    right: -15px;
+    right: -30px;
   }
 
   .main-layout{
