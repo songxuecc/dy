@@ -926,7 +926,13 @@ export default {
                 // 属性设置数据
                 attribute_json: product.model.attrList,
                 desc_text: product.model.description,
-                sku_list: product.model.skuShowList,
+                sku_list: product.model.skuShowList.map(item => {
+                  return {
+                    ...item,
+                    price: utils.yuanToFen(item.price),
+                    promo_price: utils.yuanToFen(item.promo_price)
+                  }
+                }),
                 spec_list: product.model.specifications,
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
