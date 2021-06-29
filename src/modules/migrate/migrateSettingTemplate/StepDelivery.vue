@@ -80,10 +80,10 @@
                       @change="handleChange"
                       :picker-options="pickerOptions"
                       :min="3"
-                      :max="15"
+                      :max="5"
                       class="input-number margin-bottom-4"></el-input-number>
                     <span>天发货</span>
-                    <p class="info">阶梯发货期间商品发货时间以此限制为主，仅可设置3-15天</p>
+                    <p class="info">阶梯发货期间商品发货时间以此限制为主，仅可设置3-5天</p>
                   </div>
                 </template>
             </el-form-item>

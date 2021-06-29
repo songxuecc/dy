@@ -289,7 +289,7 @@ export default {
     statusOptions () {
       const options = []
       Object.entries(common.dyProductStatusMap).forEach(([value, label]) => {
-        if (!['草稿箱', '封禁中'].includes(label)) {
+        if (!['封禁中'].includes(label)) {
           options.push({ value, label })
         }
       })
