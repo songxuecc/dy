@@ -141,6 +141,7 @@
                             :cell-class-name="cellClassName"
                             row-class-name="rowClass"
                             :span-method="objectSpanMethod"
+                            row-key="keys"
                   >
                       <el-table-column v-for="(item, index) in getSpecifications(specifications)" :key="index+':'+item.id">
                           <template slot="header" slot-scope="scope">
@@ -189,10 +190,18 @@
                               <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
-                              <el-toolTip :content="scope.row.quantityBorder ? '只可以输入0-1000000的数字':''">
+                              <!-- <el-toolTip :content="scope.row.quantityBorder ? '只可以输入0-1000000的数字':''" effect="dark" placement="top">
                                 <el-input v-model.number="scope.row.quantity" size="mini" type="textarea"  class="my-textarea" :class="[scope.row.quantityBorder ?'red':'']"
-                              @input="getStyle($event,scope.row,'quantityBorder')"></el-input>
-                              </el-toolTip>
+                              @input="getStyle($event,scope.row,'quantityBorder','quantity')"></el-input>
+                              </el-toolTip> -->
+
+                              <el-tooltip effect="light" placement="top" v-if="scope.row.quantityBorder" popper-class="ProductEditNewView-popper-class">
+                                  <div slot="content" >
+                                    <ul style="padding: 0; margin: 0;" class="fail">只可以输入0-1000000的数字</ul>
+                                  </div>
+                                  <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model.number="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                              </el-tooltip>
+                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model.number="scope.row.quantity" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="4" width="150">
@@ -207,7 +216,13 @@
                               </el-tooltip>
                           </template>
                           <template slot-scope="scope">
-                              <el-input v-model.number="scope.row.promo_price" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
+                             <el-tooltip effect="light" placement="top" v-if="scope.row.promo_priceBorder" popper-class="ProductEditNewView-popper-class">
+                                  <div slot="content" >
+                                    <ul style="padding: 0; margin: 0;" class="fail">只可以输入0.01-9999999.99 的数字,最多保留2位小数</ul>
+                                  </div>
+                                  <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model.number="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                              </el-tooltip>
+                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model.number="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="5" width="150">
@@ -1512,12 +1527,42 @@ export default {
         return item.brand_chinese_name.trim()
       }
     },
-    getStyle (number, row, key) {
-      console.log(number, row, row.border)
-      if (number > 9999999.99 && Boolean(row.border) === false) {
-        this.$set(row, key, true)
-      } else if (Boolean(row.border) === true && number <= 9999999.99) {
-        this.$set(row, key, false)
+    getStyle (number, row, borderKey, key) {
+      if (number > 1000000 || number < 0) {
+        this.$set(row, borderKey, true)
+      } else if (number <= 1000000 && number >= 0) {
+        const originSkuShowList = []
+        this.originSkuShowList.forEach(item => {
+          if (
+            item.keys === row.keys &&
+          row.specDetailIds.every(str => item.specDetailIds.includes(str)) &&
+          row.specDetailIds.length === item.specDetailIds.length
+          ) {
+            item[key] = number
+          }
+          originSkuShowList.push(item)
+        })
+        this.originSkuShowList = cloneDeep(originSkuShowList)
+        this.$set(row, borderKey, false)
+      }
+    },
+    getPriceStyle (number, row, borderKey, key) {
+      if (number > 9999999.99 || number <= 0.01) {
+        this.$set(row, borderKey, true)
+      } else if (number <= 9999999.99 && number >= 0.01) {
+        const originSkuShowList = []
+        this.originSkuShowList.forEach(item => {
+          if (
+            item.keys === row.keys &&
+          row.specDetailIds.every(str => item.specDetailIds.includes(str)) &&
+          row.specDetailIds.length === item.specDetailIds.length
+          ) {
+            item[key] = number
+          }
+          originSkuShowList.push(item)
+        })
+        this.originSkuShowList = cloneDeep(originSkuShowList)
+        this.$set(row, borderKey, false)
       }
     },
     objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
@@ -1754,4 +1799,14 @@ export default {
       padding-left: 10px;
     }
 
+</style>
+
+<style >
+  .ProductEditNewView-popper-class {
+      border:none !important;
+      background-color: #fff;
+      background-clip: padding-box;
+      border-radius: 4px;
+      box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+    }
 </style>

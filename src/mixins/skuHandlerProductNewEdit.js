@@ -287,6 +287,7 @@ export default {
 
       const length = sortSpecifications.length
       const originSkuShowList = this.originSkuShowList
+      console.log(this.originSkuShowList, 'this.originSkuShowList')
       function sortSku (previewStrings = [], current = 0) {
         if (current !== length) {
           current++
@@ -314,7 +315,7 @@ export default {
                 })
                 let obj = {}
                 originSkuShowList.map(item => {
-                  if (nextPreviewStrings.every(str => item.specDetailIds.includes(str))) {
+                  if (nextPreviewStrings.every(str => item.specDetailIds.includes(str)) && nextPreviewStrings.length === item.specDetailIds.length) {
                     obj = {
                       code: item.code,
                       keys: item.keys,
