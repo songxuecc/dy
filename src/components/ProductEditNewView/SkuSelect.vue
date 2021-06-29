@@ -380,8 +380,7 @@ export default {
           skuSelectCheckList: [],
           addSpecificationValue: '',
           specificationValueList: [],
-          specificationNameVisible: false,
-          date: new Date()
+          specificationNameVisible: false
         }
       ]
     },
@@ -612,8 +611,7 @@ export default {
           addSpecificationValue: '',
           specificationValueList: [],
           specificationNameVisible: false,
-          image: '',
-          date: new Date()
+          image: ''
         }
       ]
     },

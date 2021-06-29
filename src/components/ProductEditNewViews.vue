@@ -548,12 +548,14 @@ export default {
   watch: {
     product: {
       handler (val, oldVal) {
+        console.log(val, 'val.isDiff()')
         if (oldVal.model.tp_product_id !== val.model.tp_product_id) {
           return
         }
         if (!this.productDic[val.model.tp_product_id]) {
           return
         }
+
         if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id]) {
           this.productDic[val.model.tp_product_id].isEdit = true
         } else {
@@ -667,6 +669,7 @@ export default {
       this.hasSelection = true
     },
     setProduct (tpProduct) {
+      console.log(tpProduct, 'tpProduct')
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
@@ -699,6 +702,7 @@ export default {
       }
     },
     handleProductSelect (val, old) {
+      console.log(val, old, 'val, old')
       if (this.isLoading) {
         return false
       }
@@ -729,6 +733,7 @@ export default {
       const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
+        console.log(data, 'data')
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         const brand = (!isEmpty(data.attribute_json) ? data.attribute_json : []).find(item => item.name === '品牌')
         // 设置品牌是否必填
@@ -748,6 +753,7 @@ export default {
       const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
+        console.log(data, 'data')
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
         this.attribute_json = isEmpty(data.attribute_json) ? [] : data.attribute_json
         this.bannerPicUrlList = data.banner_json
@@ -755,6 +761,10 @@ export default {
         this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
         this.initSku(data.sku_json, data.tp_id)
+        console.log(this.skuPropertyList, 'this.skuPropertyList')
+        console.log(this.skuPropertyValueMap, 'this.skuPropertyValueMap')
+        console.log(this.specifications, 'this.specifications')
+        console.log(this.skuShowList, 'this.skuShowList')
         this.updateIsSingleSku()
         this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
         this.product.assign({bannerPicUrlList: data.banner_json})
@@ -764,6 +774,7 @@ export default {
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
+        this.product.assign({specifications: this.specifications})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         const brand = (!isEmpty(data.attribute_json) ? data.attribute_json : []).find(item => item.name === '品牌')
         // 设置品牌是否必填
@@ -776,9 +787,8 @@ export default {
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
+        this.specifications = this.product.model.specifications
 
-        console.log(this.skuPropertyList, 'this.skuPropertyList]')
-        console.log(this.skuPropertyValueMap, 'this.skuPropertyValueMap')
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
 
@@ -1178,6 +1188,7 @@ export default {
       this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
     },
     onClose () {
+      console.log('onClose')
       this.setIsShowFloatView(true)
       for (let i in this.productList) {
         this.productList[i].isEdit = false
@@ -1242,6 +1253,7 @@ export default {
           // 批量修改属性商品
           this.checkedPropertyBatchMapHasValue(tpProductId)
         ) {
+          console.log('isEdit')
           this.productDic[tpProductId].isEdit = true
           isChanged = true
         } else {
@@ -1486,6 +1498,7 @@ export default {
       }
     },
     handleSelectionChange (selection) {
+      console.log(selection, 'selection')
       this.selectedProductIds = []
       for (let i in selection) {
         this.selectedProductIds.push(selection[i].tp_product_id)

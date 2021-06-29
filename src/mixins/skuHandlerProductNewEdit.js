@@ -69,7 +69,8 @@ export default {
         const specDetailIds = key.split(';')
         const obj = {
           ...value,
-          specDetailIds
+          specDetailIds,
+          keys: `keys-${shortid.generate()}`
         }
         this.originSkuShowList.push(obj)
       })
@@ -77,13 +78,13 @@ export default {
       // 自定义规格列表的名称
       const specifications = Object.entries(newSkuJson.sku_property_value_map).map(([skuPropertyValueKey, skuPropertyValue]) => {
         const nextSkuPropertyValue = {}
-        const specificationValueList = Object.entries(skuPropertyValue).map(([key, value]) => {
+        const specificationValueList = Object.entries(skuPropertyValue).map(([key, value], index) => {
           const nextValue = cloneDeep(value)
           nextValue.originValue = nextValue.value
           nextValue.checkedValue = nextValue.value
           nextValue.edit = true
           nextValue.editBtnVisible = false
-          nextValue.order = nextValue.length
+          nextValue.order = index
           nextValue.checked = true
           nextValue.maskShow = false
           nextValue.image = nextValue.image
@@ -96,7 +97,6 @@ export default {
         nextSkuPropertyValue.addSpecificationValue = ''
         nextSkuPropertyValue.specificationValueList = specificationValueList
         nextSkuPropertyValue.specificationNameVisible = false
-        nextSkuPropertyValue.date = new Date()
         nextSkuPropertyValue.spec_id = skuPropertyValueKey
         nextSkuPropertyValue.id = `id-${shortid.generate()}`
         return nextSkuPropertyValue
@@ -251,7 +251,6 @@ export default {
       this.priceHandler.handleSkus(this.skuShowList, 'price')
     },
     handleSpecifications (specifications) {
-      console.log(specifications, 'specifications')
       const skuPropertyValueMap = {}
       const skuPropertyMap = {}
       let sortSkuMapNodes = []
@@ -299,7 +298,6 @@ export default {
               nextPreviewStrings.push(str)
               let arr = []
               if (current === length) {
-                console.log(item, 'item')
                 let propertyList = []
                 let img = ''
                 nextPreviewStrings.map(string => {
@@ -352,12 +350,11 @@ export default {
         }
       }
       sortSku()
-      console.log(sortSkuMapNodes, 'specifications')
       this.skuShowList = sortSkuMapNodes
-      this.$set(this, 'specifications', specifications)
-      this.$set(this, 'skuShowList', sortSkuMapNodes)
-      this.product.assign({skuShowList: sortSkuMapNodes})
-      this.product.assign({specifications: specifications})
+      this.$set(this, 'specifications', cloneDeep(specifications))
+      this.$set(this, 'skuShowList', cloneDeep(sortSkuMapNodes))
+      console.log(sortSkuMapNodes, 'sortSkuMapNodes')
+      console.log(specifications, 'specifications')
     }
   }
 }

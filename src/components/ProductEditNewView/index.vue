@@ -200,7 +200,8 @@
                               <span>价格</span>
                               <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
                                   <div slot="content">
-                                    <ul style="padding: 0; margin: 0;">其他平台SKU价格，请在上传抖音时设置价格</ul>
+                                    <ul style="padding: 0; margin: 0;margin-bottom:5px">其他平台SKU价格，请在上传抖音时设置价格</ul>
+                                    <ul style="padding: 0; margin: 0;">请设置为初始价格，并非价格公示计算的价格</ul>
                                   </div>
                                   <i class="el-icon-question"></i>
                               </el-tooltip>
@@ -464,7 +465,7 @@ export default {
       dialogPromoPriceVisible: false,
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -601,6 +602,8 @@ export default {
     onSkuSelectChange (specifications) {
       this.$set(this, 'specifications', specifications)
       this.handleSpecifications(specifications)
+      this.product.assign({skuShowList: this.skuShowList})
+      this.product.assign({specifications: specifications})
     },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
