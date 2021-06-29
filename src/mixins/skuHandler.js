@@ -16,7 +16,8 @@ export default {
       stockHandler: new StockHandler(),
       promoPriceHandler: new PriceHandler(),
       priceHandler: new PriceHandler(),
-      skuJson: {}
+      skuJson: {},
+      originSkuShowList: []
     }
   },
   computed: {
@@ -62,7 +63,17 @@ export default {
           value.skuString = `${skuPropertyValueKey}:${key}`
         })
       })
-      this.skuMap = newSkuJson.sku_map
+
+      this.originSkuShowList = []
+      Object.entries(newSkuJson.sku_map).forEach(([key, value]) => {
+        const specDetailIds = key.split(';')
+        const obj = {
+          ...value,
+          specDetailIds
+        }
+        this.originSkuShowList.push(obj)
+      })
+
       // 自定义规格列表的名称
       const specifications = Object.entries(newSkuJson.sku_property_value_map).map(([skuPropertyValueKey, skuPropertyValue]) => {
         const nextSkuPropertyValue = {}
@@ -276,7 +287,7 @@ export default {
         .filter(item => item.specificationValueList.some(specificationValue => specificationValue.checked))
 
       const length = sortSpecifications.length
-      const skuMap = this.skuMap
+      const originSkuShowList = this.originSkuShowList
       function sortSku (previewStrings = [], current = 0) {
         if (current !== length) {
           current++
@@ -303,16 +314,16 @@ export default {
                   })
                 })
                 let obj = {}
-                Object.keys(skuMap).map(key => {
-                  if (nextPreviewStrings.every(str => key.includes(str))) {
+                originSkuShowList.map(item => {
+                  if (nextPreviewStrings.every(str => item.specDetailIds.includes(str))) {
                     obj = {
-                      code: skuMap[key].code,
-                      keys: skuMap[key].keys,
-                      price: skuMap[key].price,
-                      originPrice: skuMap[key].originPrice,
-                      promo_price: skuMap[key].promo_price,
-                      quantity: skuMap[key].quantity,
-                      sku_id: skuMap[key].sku_id
+                      code: item.code,
+                      keys: item.keys,
+                      price: item.price,
+                      originPrice: item.originPrice,
+                      promo_price: item.promo_price,
+                      quantity: item.quantity,
+                      sku_id: item.sku_id
                     }
                   }
                 })
