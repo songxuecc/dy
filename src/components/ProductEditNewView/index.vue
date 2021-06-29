@@ -222,18 +222,10 @@
                       <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
                             <div class="preview" style="padding:4px" v-if="scope.row.img">
-                              <!-- <el-image
-                                style="width: 40px; height: 40px"
-                                :src="scope.row.img"
-                                :preview-src-list="[scope.row.img]">
-                              </el-image>
-                              <div :class="['flex','align-c','justify-c','font-12' ,scope.row.maskShow ? 'show':'' ]" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
-                                点击放大
-                              </div> -->
-
                               <el-image
                                 slot="reference"
                                 style="width: 40px; height: 40px"
+                                class="pointer"
                                 :src="scope.row.img"
                                 :preview-src-list="[scope.row.img]">
                               </el-image>

@@ -192,16 +192,13 @@
                 ></hh-icon>
               </span>
                 </el-tooltip>
-
             </el-checkbox>
             <el-upload
-              v-if="specification.addSkuImage"
+              v-if="specification.addSkuImage && !specificationValue.image"
               slot="reference"
               :class="[
                 'skuSelect-el-upload--picture-card ',
-                specificationValue.image
-                  ? ''
-                  : 'hover-skuSelect-el-upload--picture-card',
+                'hover-skuSelect-el-upload--picture-card'
               ]"
               :show-file-list="false"
               :on-success="
@@ -220,12 +217,25 @@
               :data="{ belong_type: belongType }"
               :multiple="false"
             >
-              <div v-if="specificationValue.image" class="imgWrapper">
-                <img
+              <span class="flex column align-c justify-c">
+                <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
+                <span class="uploader-text">(0/1)</span>
+              </span>
+            </el-upload>
+
+            <div
+              v-if="specification.addSkuImage && specificationValue.image"
+              :class="[
+                'skuSelect-el-upload--picture-card ',
+              ]"
+            >
+              <div class="imgWrapper">
+                <el-image
                   :src="specificationValue.image"
                   class="avatar"
-                  v-on:mouseover="handlemouseover(specificationValue)"
-                  v-on:mouseleave="handlemouseleave(specificationValue)"
+                  :ref="`img${specificationValue.skuString}-${idx}`"
+                  :preview-src-list="[specificationValue.image]"
+                  v-on:mouseover.self="handlemouseover(specificationValue)"
                 />
                 <div
                   :class="[
@@ -233,25 +243,26 @@
                     specificationValue.maskShow ? 'show' : '',
                     'flex',
                     'justify-b',
+                    'align-c'
                   ]"
+                  v-on:mouseleave.self="handlemouseleave(specificationValue)"
                 >
                   <hh-icon
                     type="iconshanchu1"
-                    style="font-size: 13px"
+                    style="font-size: 13px;"
                     class="iconshanchu1"
+                    @click="deleteImage(specificationValue)"
                   />
                   <hh-icon
                     type="iconreview"
                     style="font-size: 15px"
                     class="iconreview"
+                    @click="previewImage(specificationValue,`img${specificationValue.skuString}-${idx}`)"
                   />
                 </div>
               </div>
-              <span v-else class="flex column align-c justify-c">
-                <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
-                <span class="uploader-text">(0/1)</span>
-              </span>
-            </el-upload>
+            </div>
+
           </div>
         </el-checkbox-group>
         <div style="margin-top: 10px" v-if="specification.specificationName">
@@ -674,6 +685,19 @@ export default {
     },
     handlemouseleave (item) {
       this.$set(item, 'maskShow', false)
+    },
+    deleteImage (item) {
+      if (!item.maskShow) return false
+      this.$set(item, 'image', '')
+    },
+    previewImage (item, refName) {
+      if (!item.maskShow) return false
+      this.$nextTick(() => {
+        this.$set(item, 'maskShow', false)
+      })
+      if (this.$refs[refName] && this.$refs[refName][0] && this.$refs[refName][0].clickHandler) {
+        this.$refs[refName][0].clickHandler()
+      }
     },
     // 更新单个sku维度信息
     handleChangeSingleSku () {
