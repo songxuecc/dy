@@ -602,8 +602,8 @@ export default {
     onSkuSelectChange (specifications) {
       this.$set(this, 'specifications', specifications)
       this.handleSpecifications(specifications)
-      this.product.assign({skuShowList: this.skuShowList})
-      this.product.assign({specifications: specifications})
+      this.product.model.skuShowList = this.skuShowList
+      this.product.model.specifications = specifications
     },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
@@ -934,7 +934,8 @@ export default {
                 // 属性设置数据
                 attribute_json: product.model.attrList,
                 desc_text: product.model.description,
-                sku_json: this.getSkuUploadObjByShowList(product.model.skuShowList),
+                sku_list: product.model.skuShowList,
+                spec_list: product.model.specifications,
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
                 brand_id: brandId,
@@ -999,6 +1000,7 @@ export default {
         tpProductIdListSlice = tpProductIdList.slice(tpProductIdListIdx, tpProductIdListIdx + 5)
         attrApplyCatMapTemp = attrApplyCatMap
       }
+
       let self = this
       this.request('batchUpdateTPProduct', {
         tp_product_list: JSON.stringify(tpProductListSlice),
