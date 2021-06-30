@@ -490,9 +490,7 @@ export default {
         return this.$message.error('规格名不能重复')
       }
       this.specifications[index].specificationName = value
-      this.$nextTick(() => {
-        this.$emit('change', this.specifications)
-      })
+      this.$emit('change', this.specifications)
     },
     // 添加规格值
     handleAddSpecificationValue (e, index, row) {
@@ -506,7 +504,7 @@ export default {
       ) {
         return this.$message.warning('规格值不能重复')
       }
-      const specId = `specId-${shortid.generate()}`
+      const specId = `${row.spec_id}`
       const skuValueKey = `skuString-${shortid.generate()}`
       const newOption = {
         image: '',
@@ -530,14 +528,11 @@ export default {
         row.addSpecificationValue = ''
         row.spec_id = specId
         row.id = `id-${shortid.generate()}`
-        this.$nextTick(() => {
-          this.$emit('change', this.specifications)
-        })
+        this.$emit('change', this.specifications)
       })
     },
     // 增加单个sku
     handleSkuSelectCheckListChange (list, index, row) {
-      console.log(list, index, row, 'list, index, row')
       row.specificationValueList = row.specificationValueList.map((item) => {
         if (list.includes(item.value)) {
           return { ...item, checked: true }
@@ -545,9 +540,7 @@ export default {
           return { ...item, checked: false }
         }
       })
-      this.$nextTick(() => {
-        this.$emit('change', this.specifications)
-      })
+      this.$emit('change', this.specifications)
     },
     // 排序
     handleSortAddSpecificationValue (e, index, row) {
@@ -558,9 +551,7 @@ export default {
         )
         this.activeIndex = index
       }
-      this.$nextTick(() => {
-        this.$emit('change', this.specifications)
-      })
+      this.$emit('change', this.specifications)
     },
     editSpecificationValue (e, index, row, specificationValue) {
       specificationValue.edit = false
@@ -607,9 +598,7 @@ export default {
         ...noCheckedList
       ]
       this.dialogVisible = false
-      this.$nextTick(() => {
-        this.$emit('change', this.specifications)
-      })
+      this.$emit('change', this.specifications)
     },
     cancelSort () {
       this.dialogVisible = false
@@ -656,7 +645,6 @@ export default {
       return isJPG && isLt2M
     },
     handleBeforeUpload (file) {
-      console.log(file)
       let type = file.type
       let size = file.size / 1024 / 1024
       if (type !== 'image/jpeg' && type !== 'image/png') {
@@ -676,9 +664,7 @@ export default {
         return
       }
       this.$set(row, 'image', response.data.url)
-      this.$nextTick(() => {
-        this.$emit('change', this.specifications)
-      })
+      this.$emit('change', this.specifications)
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)

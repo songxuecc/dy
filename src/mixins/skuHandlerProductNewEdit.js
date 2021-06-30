@@ -21,27 +21,6 @@ export default {
     }
   },
   computed: {
-    // skuRealShowList () {
-    //   let skuRealShowList = []
-    //   const specifications = this.specifications
-    //   for (let i in this.skuShowList) {
-    //     let sku = this.skuShowList[i]
-
-    //     const specDetailIds = sku.specDetailIds
-    //     const isShow = specDetailIds.every((ids, index) => {
-    //       const specification = specifications[index]
-    //       const specificationValueList = specification.specificationValueList
-    //       const i = specificationValueList.find(specificationValue => specificationValue.skuString === ids)
-    //       return i.checked
-    //     })
-    //     console.log(isShow, 'isShow')
-    //     sku.hidden = !isShow
-    //     if (!sku.hidden) {
-    //       skuRealShowList.push(sku)
-    //     }
-    //   }
-    //   return skuRealShowList
-    // }
     skuRealShowList () {
       let skuRealShowList = []
       for (let i in this.skuShowList) {
@@ -209,7 +188,6 @@ export default {
       }
     },
     onSkuFilter () {
-      console.log(this.skuPropertyValueMap)
       let dicIsFilter = {}
       for (let i in this.skuPropertyList) {
         let pId = this.skuPropertyList[i].id
@@ -244,7 +222,6 @@ export default {
       this.stockHandler.handleSkus(this.skuShowList)
     },
     batchEditPromoPrice () {
-      console.log(this.skuShowList)
       this.promoPriceHandler.handleSkus(this.skuShowList, 'promo_price')
     },
     batchEditPrice () {
@@ -287,7 +264,6 @@ export default {
 
       const length = sortSpecifications.length
       const originSkuShowList = this.originSkuShowList
-      console.log(this.originSkuShowList, 'this.originSkuShowList')
       function sortSku (previewStrings = [], current = 0) {
         if (current !== length) {
           current++
@@ -331,10 +307,10 @@ export default {
                   code: '',
                   img: img,
                   keys: '',
-                  price: 0,
-                  originPrice: 0,
-                  promo_price: 0,
-                  quantity: 0,
+                  price: '',
+                  originPrice: '',
+                  promo_price: '',
+                  quantity: '',
                   sku_id: '',
                   specDetailIds: nextPreviewStrings,
                   property_key: nextPreviewStrings.join(';'),
@@ -354,8 +330,8 @@ export default {
       this.skuShowList = sortSkuMapNodes
       this.$set(this, 'specifications', cloneDeep(specifications))
       this.$set(this, 'skuShowList', cloneDeep(sortSkuMapNodes))
-      console.log(sortSkuMapNodes, 'sortSkuMapNodes')
       console.log(specifications, 'specifications')
+      console.log(sortSkuMapNodes, 'sortSkuMapNodes')
     }
   }
 }
