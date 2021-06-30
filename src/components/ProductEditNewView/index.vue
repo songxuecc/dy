@@ -1,7 +1,7 @@
 <template lang="html">
   <div style="height: 100%" >
     <el-row :gutter="20" style="height: 100%">
-      <el-col :span="8" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
+      <el-col :span="7" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
         <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
                   :row-style="{height:'68px'}"
                   @current-change="handleProductSelect"
@@ -27,7 +27,7 @@
             </el-table-column>
             <el-table-column type="selection">
             </el-table-column>
-            <el-table-column label="图片" width="100" align="center">
+            <el-table-column label="图片" width="80" align="center">
                 <template slot-scope="scope">
                   <el-badge class="item" :value="Object.values(scope.row.check_error_msg_static).map(item => item.num).reduce((total, num) => total + num)"
                             v-if="scope.row.check_error_msg_static && Object.keys(scope.row.check_error_msg_static).length > 0">
@@ -46,7 +46,7 @@
             </el-table-column>
         </el-table>
       </el-col>
-      <el-col :span="16" style="height: 100%; padding-bottom: 100px;">
+      <el-col :span="17" style="height: 100%; padding-bottom: 100px;">
           <el-tabs v-loading="loadingCnt" v-model="activityTab" type="card" style="height: 100%;" @tab-click="handleTabClick">
               <el-tab-pane label="商品属性" name="info">
                   <span slot="label" v-if=" product.model.check_error_msg_static  && '0' in product.model.check_error_msg_static">商品属性
@@ -132,30 +132,38 @@
                   </el-tooltip>
                   </span>
 
+                  <SkuSelect
+                    :specifications="specifications"
+                    @change="onSkuSelectChange"/>
+                            <!-- :span-method="objectSpanMethod" -->
+
                   <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
                             :cell-class-name="cellClassName"
+                            row-class-name="rowClass"
+                            :span-method="objectSpanMethod"
+                            row-key="keys"
                   >
-                      <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id">
+                      <el-table-column v-for="(item, index) in getSpecifications(specifications)" :key="index+':'+item.id">
                           <template slot="header" slot-scope="scope">
-                              <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.name }}</span>
-                              <el-dropdown v-if="skuPropertyValueMap[item.id] && skuPropertyList.length > 1"
+                              <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.specificationName }}</span>
+                              <el-dropdown v-if="skuPropertyValueMap[item.spec_id] && specifications.length > 1"
                                            style="line-height:0px; padding-left: 0px; cursor:pointer; vertical-align: middle;"
                                            trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                               >
                                   <span class="el-dropdown-link" style="color:#909399">
-                                    ({{Object.keys(skuPropertyValueMap[item.id]).length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+                                    ({{item.specificationValueList.length}})<hh-icon type="iconbianji" style="font-size:12px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                                   </span>
                                   <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
-                                      <el-dropdown-item v-for="(ele, vid) in skuPropertyValueMap[item.id]" :key="vid">
+                                      <el-dropdown-item v-for="(ele, vid) in item.specificationValueList" :key="vid">
                                           <div style="display:flex">
                                               <el-checkbox v-model="ele.checked" @change="onSkuFilter" style="margin-right: 0">
-                                                <span v-if="skuPropertyList.length === 1">{{ele.value}}</span>
+                                                <span v-if="specifications.length === 1">{{ele.value}}</span>
                                                 <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
                                                           :class="['input-text-left']">
                                                   <!-- <span slot="append" class="hint">{{ ele.value.length }} / 18</span> -->
                                                 </el-input>
                                               </el-checkbox>
-                                              <el-button v-if="Object.keys(skuPropertyValueMap[item.id]).length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
+                                              <el-button v-if="item.specificationValueList.length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
                                                          @click="onDeleteSku(item.id,vid)"
                                               > 删除 </el-button>
                                           </div>
@@ -166,75 +174,91 @@
                                   取消筛选
                               </el-button>
                           </template>
-                          <template slot-scope="scope">
-                            <span v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
+                          <template slot-scope="scope" >
+                            <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;" v-if="scope.row.property_list[index]">{{scope.row.property_list[index].value}}</span>
+                            <!-- <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;"
+                            v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
                             <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
-                                      :class="['input-text-left']">
+                                      :class="['input-text-left']"> -->
                               <!-- <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span> -->
-                            </el-input>
+                            <!-- </el-input> -->
                           </template>
                       </el-table-column>
                       <el-table-column key="2" width="130">
                           <template slot="header" slot-scope="scope">
                               <span>总库存</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
+                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0display: inline-flex;
+    align-items: center;
+    justify-content: center;"> <hh-icon type="iconbianji" style="font-size:12px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
-                              <el-input v-model.number="scope.row.quantity" size="mini" type="number"></el-input>
+                              <!-- <el-toolTip :content="scope.row.quantityBorder ? '只可以输入0-1000000的数字':''" effect="dark" placement="top">
+                                <el-input v-model.number="scope.row.quantity" size="mini" type="textarea"  class="my-textarea" :class="[scope.row.quantityBorder ?'red':'']"
+                              @input="getStyle($event,scope.row,'quantityBorder','quantity')"></el-input>
+                              </el-toolTip> -->
+
+                              <el-tooltip effect="light" placement="top" v-if="scope.row.quantityBorder" popper-class="ProductEditNewView-popper-class">
+                                  <div slot="content" >
+                                    <ul style="padding: 0; margin: 0;" class="fail">只可以输入0-1000000的数字</ul>
+                                  </div>
+                                  <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                              </el-tooltip>
+                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
-                      <!-- <el-table-column key="4" width="100">
+                      <el-table-column key="4" width="130">
                           <template slot="header" slot-scope="scope">
                               <span>价格</span>
+                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true" style="padding:0">
+                              <hh-icon type="iconbianji" style="font-size:12px" />
+                              <span style="color:#999999;font-size:12px;">修改</span>
+                            </el-button>
                               <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
                                   <div slot="content">
-                                    <ul style="padding: 0; margin: 0;">其他平台SKU价格，请在上传抖音时设置价格</ul>
+                                    <ul style="padding: 0; margin: 0;margin-bottom:5px">其他平台SKU价格，请在上传抖音时设置价格</ul>
+                                    <ul style="padding: 0; margin: 0;">请设置为初始价格，并非价格公示计算的价格</ul>
                                   </div>
                                   <i class="el-icon-question"></i>
                               </el-tooltip>
                           </template>
                           <template slot-scope="scope">
-                              <el-input v-if="scope.row.promo_price===0" v-model.number="scope.row.promo_price" size="mini" type="number"></el-input>
-                              <span v-else>{{scope.row.promo_price}}</span>
+                             <el-tooltip effect="light" placement="top" v-if="scope.row.promo_priceBorder" popper-class="ProductEditNewView-popper-class">
+                                  <div slot="content" >
+                                    <ul style="padding: 0; margin: 0;" class="fail">只可以输入0.01-9999999.99 的数字,最多保留2位小数</ul>
+                                  </div>
+                                  <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                              </el-tooltip>
+                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
-                      </el-table-column> -->
+                      </el-table-column>
                       <el-table-column key="5" width="150">
                           <template slot="header" slot-scope="scope">
-                            <span @click="toggleVisibleSkuImport">商品编码</span>
-                                <span class="info pointer" @click="toggleVisibleSkuImport">无法抓取</span><i class="el-icon-question"></i>
+                            <div class="center">
+                              <span @click="toggleVisibleSkuImport" >商品编码</span>
+                            <el-button type="text" class="table-header-btn" @click="dialogCodeVisible=true" style="padding:0display: inline-flex;align-items: center;justify-content: center;">
+                              <hh-icon type="iconbianji" style="font-size:12px" />
+                              <span style="color:#999999;font-size:12px;">修改</span>
+                            </el-button>
+                            <br/>
+                            <span class="info pointer" @click="toggleVisibleSkuImport"><i class="el-icon-question" style="color:red"></i>无法抓取</span>
+                            </div>
                           </template>
                           <template slot-scope="scope">
-                              <el-input v-model="scope.row.code" size="mini" type="text" :class="['input-text-left']"></el-input>
+                              <el-input v-model="scope.row.code" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
                           <template slot-scope="scope">
-                            <div class="preview">
-                              <el-popover
-                                placement="left"
-                                title=""
-                                :value="scope.row.maskShow">
-                                <img :src="scope.row.img" style="width: 250px;"/>
-                                <el-upload
-                                    slot="reference"
-                                    class="el-upload el-upload--picture-card"
-                                    :show-file-list="false"
-                                    :on-success="(response, file, fileList) => handleUploadSuccess(response, file, fileList, scope.row)"
-                                    :on-error="handleUploadError"
-                                    :before-upload="handleBeforeUpload"
-                                    action="/api/image/create"
-                                    :headers="getTokenHeaders"
-                                    :data="{'belong_type': belongType}"
-                                    :multiple="false"
-                                    style="width:50px; height: 50px; line-height: 80px;overflow:hidden"
-                                >
-                                    <img :src="scope.row.img" style="width: 40px; display: block;"/>
-                                    <div :class="['mask' ,scope.row.maskShow ? 'show':'' ]" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
-                                      <hh-icon type="icontihuan" style="font-size: 20px;"/>
-                                    </div>
-                                </el-upload>
-                              </el-popover>
+                            <div class="preview" style="padding:4px" v-if="scope.row.img">
+                              <el-image
+                                slot="reference"
+                                style="width: 40px; height: 40px"
+                                class="pointer"
+                                :src="scope.row.img"
+                                :preview-src-list="[scope.row.img]">
+                              </el-image>
                             </div>
+
                           </template>
                       </el-table-column>
                       <el-table-column key="7" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
@@ -244,7 +268,7 @@
                       </el-table-column>
                   </el-table>
                   <div class="common-bottom">
-                  </div>
+                </div>
               </el-tab-pane>
 
               <el-tab-pane label="轮播页" name="carousel">
@@ -345,8 +369,66 @@
                     <span class="explain">&nbsp; 小于 0 设为 0</span>
                 </el-radio>
                 <div style="text-align: center; padding-top: 20px">
-                    <el-button type="primary" @click="handleBatchQuantity">确定</el-button>
-                    <el-button @click="dialogQuantityVisible = false">取消</el-button>
+                    <el-button @click="dialogQuantityVisible = false" style="width:100px">取消</el-button>
+                    <el-button type="primary" @click="handleBatchQuantity" style="width:100px">确定</el-button>
+                </div>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="批量修改价格" width="500px" :visible.sync="dialogPromoPriceVisible" append-to-body center v-hh-modal>
+            <div>
+                <div class="fail center mb-5">此价格为初始价格，并非价格公示计算的价格</div>
+                <div class="fail center mb-10">真实的售卖价请在后续价格页面设置</div>
+                <el-radio v-model="promoPriceHandler.radio" label="1">
+                    <span style="display:inline-block; width:150px">统一价格为</span>
+                    <el-input v-model="promoPriceHandler.textPrice" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='1'"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                </el-radio><br>
+                <el-radio v-model="promoPriceHandler.radio" label="2">
+                    <span style="display:inline-block; width:150px">每个SKU价格加数字：</span>
+                    <el-input v-model="promoPriceHandler.textPriceAdd" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='2'"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                </el-radio><br>
+                <el-radio v-model="promoPriceHandler.radio" label="3">
+                    <span style="display:inline-block; width:150px">每个SKU价格减数字：</span>
+                    <el-input v-model="promoPriceHandler.textPriceSub" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='3'"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                    <span class="explain">&nbsp; 小于 0 设为 0</span>
+                </el-radio>
+                <el-radio v-model="promoPriceHandler.radio" label="4">
+                    <span style="display:inline-block; width:150px">每个SKU价格加百分比：</span>
+                    <el-input v-model="promoPriceHandler.textPricePercentAdd" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='4'"
+                    ></el-input>
+                    <span style="display:inline-block;">%</span>
+                </el-radio>
+                <el-radio v-model="promoPriceHandler.radio" label="5">
+                    <span style="display:inline-block; width:150px">每个SKU价格减百分比：</span>
+                    <el-input v-model="promoPriceHandler.textPricePercentSub" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='5'"
+                    ></el-input>
+                    <span style="display:inline-block;">%</span>
+                    <span class="explain">&nbsp; 小于 0 设为 0</span>
+                </el-radio>
+                <div style="text-align: center; padding-top: 20px">
+                    <el-button @click="dialogPromoPriceVisible = false"  style="width:100px">取消</el-button>
+                    <el-button type="primary" @click="handleBatchPromoPrice"  style="width:100px">确定</el-button>
+                </div>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="批量修改编码" width="400px" :visible.sync="dialogCodeVisible" append-to-body center>
+            <div>
+                <el-input v-model="batchCodeInput" size="mini" ></el-input>
+                <div style="text-align: center; padding-top: 20px">
+                    <el-button @click="dialogCodeVisible = false" style="width:100px">取消</el-button>
+                    <el-button type="primary" @click="handleBatchCode" style="width:100px">确定</el-button>
                 </div>
             </div>
         </el-dialog>
@@ -428,22 +510,24 @@ import { mapActions, mapGetters } from 'vuex'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import request from '@/mixins/request.js'
-import skuHandler from '@/mixins/skuHandler.js'
+import skuHandlerProductNewEdit from '@/mixins/skuHandlerProductNewEdit.js'
 import utils from '@/common/utils'
 import FormModel from '@/common/formModel'
 import { TextHandler } from '@/common/batchEditHandler'
 import skuImport from '@/assets/images/sku_import.png'
 import categorySelectView from '@/components/CategorySelectView'
 import picturesUploadView from '@/components/PicturesUploadView'
-import PropertySet from '@/components/PropertySet.vue'
+import PropertySet from './PropertySet.vue'
+import SkuSelect from './SkuSelect.vue'
 
 export default {
   inject: ['reload'],
-  mixins: [request, skuHandler],
+  mixins: [request, skuHandlerProductNewEdit],
   components: {
     categorySelectView,
     picturesUploadView,
-    PropertySet
+    PropertySet,
+    SkuSelect
   },
   props: {
     belongType: {
@@ -457,9 +541,11 @@ export default {
       dialogVisible: false,
       dialogQuantityVisible: false,
       dialogPromoPriceVisible: false,
+      dialogCodeVisible: false,
+      batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -501,7 +587,23 @@ export default {
       // 属性商品应用到所有 的数据记录
       propertyBatchMap: new Map(),
       visibleSkuImport: false,
-      forceUpdatePropertySet: 0
+      forceUpdatePropertySet: 0,
+      skuPropertyList: [],
+      // 属性设置
+      specifications: [
+        {
+          specificationName: '',
+          newSpecificationName: '',
+          addSkuImage: false,
+          skuSelectCheckList: [],
+          addSpecificationValue: '',
+          specificationValueList: [],
+          specificationNameVisible: false,
+          date: new Date()
+        }
+      ],
+      priceEditError: false,
+      stockEditError: false
     }
   },
   watch: {
@@ -553,48 +655,18 @@ export default {
           { validator: checkDefaultRecommendRremark, trigger: 'change' }
         ]
       }
+    },
+    disabledAddSkuImage () {
+      // 没有一个sku设置 返回true
+      // 有sku设置 且有一个sku内已经设置图片 返回true
+      // 有sku 且没有一个sku内有图片 返回false
+      return true
     }
   },
   mounted () {
 
   },
   updated () {
-    // if (this.activityTab === 'sku') {
-    //   let self = this
-    //   if (this.skuPropertyList.length === 1) {
-
-    //   }
-      // this.skuPropertyList.forEach(item => {
-      //   if (self.skuPropertyValueMap[item.id]) {
-      //     for (let vid in self.skuPropertyValueMap[item.id]) {
-      //       let ele = self.skuPropertyValueMap[item.id][vid]
-      //       if (self.isSkuNameWarn(ele.value, item.id)) {
-      //         if (self.$refs['sku-property-' + item.id]) {
-      //           self.$refs['sku-property-' + item.id][0].show()
-      //         }
-      //       }
-      //     }
-      //   }
-      // })
-      // if ('1' in this.product.model.check_error_msg_static) {
-      //   if ('1017' in this.product.model.check_error_msg_static['1']['code']) {
-      //     let maxNum = 0
-      //     let maxNumProperty = 0
-      //     this.skuPropertyList.forEach(item => {
-      //       if (self.skuPropertyValueMap[item.id]) {
-      //         let len = Object.keys(self.skuPropertyValueMap[item.id]).length
-      //         if (len > maxNum) {
-      //           maxNumProperty = item.id
-      //           maxNum = len
-      //         }
-      //       }
-      //     })
-      //     if (this.$refs['sku-property-' + maxNumProperty]) {
-      //       this.$refs['sku-property-' + maxNumProperty][0].show()
-      //     }
-      //   }
-      // }
-    // }
   },
   methods: {
     ...mapActions([
@@ -603,6 +675,17 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    getSpecifications (specifications) {
+      return specifications.filter(item => {
+        return item.specificationValueList.some(v => v.checked)
+      })
+    },
+    onSkuSelectChange (specifications) {
+      this.$set(this, 'specifications', specifications)
+      this.handleSpecifications(specifications)
+      this.product.model.skuShowList = this.skuShowList
+      this.product.model.specifications = specifications
+    },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
       this.productList = tpProductList
@@ -623,7 +706,7 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark'
+          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -642,6 +725,7 @@ export default {
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
+        this.specifications = this.product.model.specifications
         this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
         // this.$refs['bannerPicListView'].curPictureList = this.product.model.bannerPicUrlList
         this.descPicUrlList = [...this.product.model.descPicUrlList]
@@ -715,6 +799,8 @@ export default {
         this.product.assign({recommend_remark: data.recommend_remark})
         this.product.assign({skuPropertyList: [...this.skuPropertyList]})
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
+        this.product.assign({sortSkuKeys: this.sortSkuKeys})
+        this.product.assign({specifications: this.specifications})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
@@ -729,6 +815,8 @@ export default {
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
+        this.sortSkuKeys = this.product.model.sortSkuKeys
+        this.specifications = this.product.model.specifications
 
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
@@ -800,6 +888,14 @@ export default {
       this.batchEditQuantity()
       this.dialogQuantityVisible = false
     },
+    handleBatchPromoPrice () {
+      this.batchEditPromoPrice()
+      this.dialogPromoPriceVisible = false
+    },
+    handleBatchCode () {
+      this.batchEditCode(this.batchCodeInput)
+      this.dialogCodeVisible = false
+    },
     handlePropertyNameChange (pid, vid, ele) {
       this.updateNameOfSkuPropertyValueMap(pid, vid, ele['value'])
     },
@@ -840,10 +936,14 @@ export default {
       })
     },
     onDeleteSku (pId, pVid) {
+      console.log(pId, pVid, 'pId, pVid')
       this.deleteSkus(pId, pVid)
     },
     onDeleteSingleSku (idx) {
       this.deleteSingleSku(idx)
+    },
+    onChangeSingleSku (idx) {
+      this.changeSingleSku(idx)
     },
     cutOrigionAttrStr (key, val) {
       let len = 50 - utils.getStrRealLength(key)
@@ -871,11 +971,12 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
-      // 检验推荐语
+
       let error = ''
       this.productList.forEach(item => {
         let tpProductId = item.tp_product_id
         if (tpProductId in this.products) {
+        // 检验推荐语
           const product = this.products[tpProductId]
           const recommendRemark = product.model.recommend_remark
           if (recommendRemark) {
@@ -883,8 +984,20 @@ export default {
               error = '商家推荐语只可以填写8-50个字符！'
             }
           }
+          // 检验价格 & 库存
+          const skuShowList = product.model.skuShowList
+          skuShowList.forEach(item => {
+            if (item.quantity > 1000000 || item.quantity < 0) {
+              error = 'sku库存必填，且只可以输入0-1000000的数字'
+            }
+            if (!item.promo_price || item.promo_price > 9999999.99 || item.promo_price < 0.01) {
+              error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+            }
+          })
         }
       })
+
+      console.log(error, 'error')
       if (error) {
         return this.$message.error(error)
       }
@@ -911,6 +1024,7 @@ export default {
             if (brand) {
               brandId = brand.tp_value
             }
+
             let productParams = {
               tp_product_id: product.model.tp_product_id,
               category_id: product.model.cat_id,
@@ -921,7 +1035,14 @@ export default {
                 // 属性设置数据
                 attribute_json: product.model.attrList,
                 desc_text: product.model.description,
-                sku_json: this.getSkuUploadObjByShowList(product.model.skuShowList),
+                sku_list: product.model.skuShowList.map(item => {
+                  return {
+                    ...item,
+                    price: utils.yuanToFen(item.price),
+                    promo_price: utils.yuanToFen(item.promo_price)
+                  }
+                }),
+                spec_list: product.model.specifications,
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
                 brand_id: brandId,
@@ -986,6 +1107,7 @@ export default {
         tpProductIdListSlice = tpProductIdList.slice(tpProductIdListIdx, tpProductIdListIdx + 5)
         attrApplyCatMapTemp = attrApplyCatMap
       }
+
       let self = this
       this.request('batchUpdateTPProduct', {
         tp_product_list: JSON.stringify(tpProductListSlice),
@@ -1498,7 +1620,134 @@ export default {
       } else {
         return item.brand_chinese_name.trim()
       }
+    },
+    getStyle (number, row, borderKey, key) {
+      if (number > 1000000 || number <= 0) {
+        this.$set(row, borderKey, true)
+        this.stockEditError = true
+      } else if (number <= 1000000 && number > 0) {
+        const originSkuShowList = []
+        this.originSkuShowList.forEach(item => {
+          if (
+            item.keys === row.keys &&
+          row.specDetailIds.every(str => item.specDetailIds.includes(str)) &&
+          row.specDetailIds.length === item.specDetailIds.length
+          ) {
+            item[key] = number
+          }
+          originSkuShowList.push(item)
+        })
+        this.originSkuShowList = cloneDeep(originSkuShowList)
+        this.$set(row, borderKey, false)
+        this.stockEditError = false
+      }
+    },
+    getPriceStyle (number, row, borderKey, key) {
+      if (number > 9999999.99 || number <= 0.01) {
+        this.$set(row, borderKey, true)
+        this.priceEditError = true
+      } else if (number <= 9999999.99 && number > 0.01) {
+        const originSkuShowList = []
+        this.originSkuShowList.forEach(item => {
+          if (
+            item.keys === row.keys &&
+          row.specDetailIds.every(str => item.specDetailIds.includes(str)) &&
+          row.specDetailIds.length === item.specDetailIds.length
+          ) {
+            item[key] = number
+          }
+          originSkuShowList.push(item)
+        })
+        this.originSkuShowList = cloneDeep(originSkuShowList)
+        this.$set(row, borderKey, false)
+        this.priceEditError = false
+      }
+    },
+    objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
+      const end = this.specifications.length + 3
+      if (this.isLoading) return false
+      const arr = []
+      this.specifications.map(item => {
+        const skuLength = item.specificationValueList.filter(item => item.checked).length
+        arr.push(skuLength || 1)
+      })
+
+      if (arr.length === 3) {
+        const columnIndex0 = arr[1] * arr[2]
+        const columnIndex1 = arr[2]
+        if (columnIndex === 0) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        } else if (columnIndex === 1) {
+          if (rowIndex % columnIndex1 === 0) {
+            return {
+              rowspan: columnIndex1,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        } else if (columnIndex === end) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      }
+      if (arr.length === 2) {
+        const columnIndex0 = arr[1]
+        if (columnIndex === 0) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        } else if (columnIndex === end) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      }
+
+      return {
+        rowspan: 1,
+        colspan: 1
+      }
     }
+
   }
 }
 </script>
@@ -1512,17 +1761,30 @@ export default {
   }
   /deep/ .cell {
     overflow: unset;
+    height: 100%;
+    width: 100%;
+    padding: 0 !important;
+    line-height: 16px;
+  }
+  /deep/ .cell-tight {
+    .cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  /deep/ .rowClass {
+
+    td {
+      padding: 0;
+      height: 59px;
+    }
+
   }
   .preview {
-    /deep/ .el-upload {
-      position: relative;
-    }
-    /deep/ .el-upload--picture-card i{
-      font-size: 20px;
-    }
-    /deep/ .el-upload--picture-card i {
-      color: #fff;
-    }
+    position: relative;
+    width: 50px;
+    height: 50px;
     .mask {
       position: absolute;
       left: 0;
@@ -1552,4 +1814,97 @@ export default {
     margin:auto;
     margin-top:20px;
   }
+
+  .skuText {
+    font-size: 14px;
+    height: 20px;
+    margin-bottom: 4px;
+    color: #55585c;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';
+  }
+  .index_count{
+    color: #85878a;
+  }
+
+  /deep/ .my-textarea {
+    height: 59px;
+    textarea {
+      resize: none !important;
+      outline: none;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      color: #19191a;
+      line-height: 16px;
+      padding: 10px;
+      border: 1px solid transparent;
+      overflow: auto;
+      touch-action: manipulation;
+      cursor: text;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      column-count: initial !important;
+      -webkit-rtl-ordering: logical;
+      flex-direction: column;
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-transform: none;
+      text-indent: 0px;
+      text-shadow: none;
+      display: inline-block;
+      text-align: start;
+      text-rendering: auto;
+      border-radius: 0;
+      transition: none;
+      // border: 1px solid #1966ff;
+    }
+    textarea:active {
+      border: 1px solid #1966ff;
+    }
+    textarea:hover {
+      border: 1px solid #1966ff;
+    }
+    textarea:focus {
+      border: 1px solid #1966ff;
+    }
+
+  }
+
+  /deep/ .red {
+    textarea:active {
+      border: 1px solid red;
+    }
+    textarea:hover {
+      border: 1px solid red;
+    }
+    textarea:focus {
+      border: 1px solid red;
+    }
+    }
+
+    /deep/ .el-table--enable-row-hover .el-table__body tr:hover > td {
+      background:none
+    }
+    /deep/ .el-table .el-table__header td{
+      padding-left: 10px;
+    }
+    /deep/ .el-table .el-table__header th {
+      padding-left: 10px;
+    }
+
+</style>
+
+<style >
+  .ProductEditNewView-popper-class {
+      border:none !important;
+      background-color: #fff;
+      background-clip: padding-box;
+      border-radius: 4px;
+      box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+    }
 </style>

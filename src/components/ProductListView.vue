@@ -277,7 +277,7 @@
           title="商品编辑"
           :visible.sync="dialogEditVisible"
           :with-header="false"
-          size="80%"
+          size="85%"
           @opened="dialogOpened"
           @close="dialogClose"
           :before-close="dialogBeforeClose"
@@ -309,7 +309,7 @@ export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditNewView: () => import('@/components/ProductEditNewView.vue')
+    productEditNewView: () => import('@/components/ProductEditNewView')
   },
   props: {
     tpProductList: Array,
@@ -913,7 +913,7 @@ export default {
 
     .closeBtn {
       position: fixed;
-      left:12%;
+      left:9%;
       top: 0;
       bottom: 0;
       margin: auto;
