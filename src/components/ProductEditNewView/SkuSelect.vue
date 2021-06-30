@@ -142,7 +142,6 @@
             >
 						<el-tooltip :content="specificationValue.value" :disabled="specificationValue.value && specificationValue.value.length < 20" placement="top">
               <span v-if="specificationValue.edit" class="skuValue">
-
                   {{ specificationValue.value }}
                 <!-- {{ specificationValue.value }} -->
                 <hh-icon
@@ -170,7 +169,8 @@
                       $event,
                       idx,
                       specificationValue,
-                      specification
+                      specification,
+                      index
                     )
                   "
                 ></el-input>
@@ -572,12 +572,19 @@ export default {
       row.originValue = row.value
       row.edit = true
     },
-    changeSpecificationValue (value, index, row, specification) {
+    changeSpecificationValue (value, idx, row, specification, index) {
       if (!value) {
         this.$message.error('请输入规格值')
       }
+      const specifications = this.specifications.map((item, i) => {
+        if (i === index) {
+          item.specificationValueList[idx].value = value
+        }
+        return item
+      })
       this.$nextTick(() => {
         this.$set(row, 'value', value)
+        this.$emit('change', specifications)
       })
     },
     mouseoverSpecificationValue (e, index, row) {
