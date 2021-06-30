@@ -528,8 +528,9 @@ export default {
           specificationNameVisible: false,
           date: new Date()
         }
-      ]
-
+      ],
+      priceEditError: false,
+      stockEditError: false
     }
   },
   watch: {
@@ -652,8 +653,6 @@ export default {
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
         this.specifications = this.product.model.specifications
-        console.log(this.specifications, 'this.specifications')
-        console.log(this.skuShowList, 'this.skuShowList')
         this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
         // this.$refs['bannerPicListView'].curPictureList = this.product.model.bannerPicUrlList
         this.descPicUrlList = [...this.product.model.descPicUrlList]
@@ -905,6 +904,12 @@ export default {
           }
         }
       })
+      if (this.priceEditError) {
+        error = 'sku价格填写错误'
+      }
+      if (this.stockEditError) {
+        error = 'sku库存填写错误'
+      }
       if (error) {
         return this.$message.error(error)
       }
@@ -931,6 +936,7 @@ export default {
             if (brand) {
               brandId = brand.tp_value
             }
+
             let productParams = {
               tp_product_id: product.model.tp_product_id,
               category_id: product.model.cat_id,
@@ -1530,6 +1536,7 @@ export default {
     getStyle (number, row, borderKey, key) {
       if (number > 1000000 || number < 0) {
         this.$set(row, borderKey, true)
+        this.stockEditError = true
       } else if (number <= 1000000 && number >= 0) {
         const originSkuShowList = []
         this.originSkuShowList.forEach(item => {
@@ -1544,11 +1551,13 @@ export default {
         })
         this.originSkuShowList = cloneDeep(originSkuShowList)
         this.$set(row, borderKey, false)
+        this.stockEditError = false
       }
     },
     getPriceStyle (number, row, borderKey, key) {
       if (number > 9999999.99 || number <= 0.01) {
         this.$set(row, borderKey, true)
+        this.priceEditError = true
       } else if (number <= 9999999.99 && number >= 0.01) {
         const originSkuShowList = []
         this.originSkuShowList.forEach(item => {
@@ -1563,6 +1572,7 @@ export default {
         })
         this.originSkuShowList = cloneDeep(originSkuShowList)
         this.$set(row, borderKey, false)
+        this.priceEditError = false
       }
     },
     objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
