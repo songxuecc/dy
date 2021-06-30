@@ -490,7 +490,9 @@ export default {
         return this.$message.error('规格名不能重复')
       }
       this.specifications[index].specificationName = value
-      this.$emit('change', this.specifications)
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
     // 添加规格值
     handleAddSpecificationValue (e, index, row) {
@@ -540,7 +542,9 @@ export default {
           return { ...item, checked: false }
         }
       })
-      this.$emit('change', this.specifications)
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
     // 排序
     handleSortAddSpecificationValue (e, index, row) {
@@ -551,7 +555,9 @@ export default {
         )
         this.activeIndex = index
       }
-      this.$emit('change', this.specifications)
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
     editSpecificationValue (e, index, row, specificationValue) {
       specificationValue.edit = false
@@ -570,7 +576,9 @@ export default {
       if (!value) {
         this.$message.error('请输入规格值')
       }
-      this.$set(row, 'value', value)
+      this.$nextTick(() => {
+        this.$set(row, 'value', value)
+      })
     },
     mouseoverSpecificationValue (e, index, row) {
       e.stopPropagation()
@@ -598,7 +606,9 @@ export default {
         ...noCheckedList
       ]
       this.dialogVisible = false
-      this.$emit('change', this.specifications)
+      this.$nextTick(() => {
+        this.$emit('change', this.specifications)
+      })
     },
     cancelSort () {
       this.dialogVisible = false
