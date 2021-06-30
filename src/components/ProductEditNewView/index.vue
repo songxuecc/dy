@@ -894,9 +894,9 @@ export default {
       let error = ''
       this.productList.forEach(item => {
         let tpProductId = item.tp_product_id
+        const product = this.products[tpProductId]
         // 检验推荐语
         if (tpProductId in this.products) {
-          const product = this.products[tpProductId]
           const recommendRemark = product.model.recommend_remark
           if (recommendRemark) {
             if (recommendRemark.split('').length > 50 || recommendRemark.split('').length < 8) {
@@ -905,13 +905,15 @@ export default {
           }
         }
         // 检验价格 & 库存
-        if (tpProductId.quantity > 1000000 || tpProductId.quantity <= 0) {
-          error = 'sku库存只可以输入0-1000000的数字'
+        if (!product.model.quantity || product.model.quantity > 1000000 || product.model.quantity <= 0) {
+          error = 'sku库存必填，且只可以输入0-1000000的数字'
         }
-        if (tpProductId.promo_price > 9999999.99 || tpProductId.promo_price <= 0.01) {
-          error = 'sku价格只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+        if (!product.model.promo_price || product.model.promo_price > 9999999.99 || product.model.promo_price <= 0.01) {
+          error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
         }
       })
+
+      console.log(error, 'error')
       if (error) {
         return this.$message.error(error)
       }
