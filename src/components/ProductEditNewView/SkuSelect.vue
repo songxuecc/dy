@@ -520,6 +520,7 @@ export default {
         skuValueKey: skuValueKey,
         skuString: `${specId}:${skuValueKey}`,
         originValue: row.addSpecificationValue,
+        sourceValue: row.addSpecificationValue,
         checkedValue: row.addSpecificationValue,
         edit: true,
         editBtnVisible: false,
@@ -541,7 +542,7 @@ export default {
     // 增加单个sku
     handleSkuSelectCheckListChange (list, index, row) {
       row.specificationValueList = row.specificationValueList.map((item) => {
-        if (list.includes(item.value)) {
+        if (list.includes(item.sourceValue)) {
           return { ...item, checked: true }
         } else {
           return { ...item, checked: false }

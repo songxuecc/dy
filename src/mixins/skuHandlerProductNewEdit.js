@@ -60,7 +60,9 @@ export default {
         const specificationValueList = Object.entries(skuPropertyValue).map(([key, value], index) => {
           const nextValue = cloneDeep(value)
           nextValue.originValue = nextValue.value
+          nextValue.sourceValue = nextValue.value
           nextValue.checkedValue = nextValue.value
+          nextValue.value = nextValue.value
           nextValue.edit = true
           nextValue.editBtnVisible = false
           nextValue.order = index
@@ -314,9 +316,9 @@ export default {
                   code: '',
                   img: img,
                   keys: '',
-                  price: 0.01,
+                  price: '',
                   originPrice: '',
-                  promo_price: 0.01,
+                  promo_price: '',
                   quantity: 0,
                   sku_id: '',
                   specDetailIds: nextPreviewStrings,
@@ -337,8 +339,6 @@ export default {
       this.skuShowList = sortSkuMapNodes
       this.$set(this, 'specifications', cloneDeep(specifications))
       this.$set(this, 'skuShowList', cloneDeep(sortSkuMapNodes))
-      console.log(specifications, 'specifications')
-      console.log(sortSkuMapNodes, 'sortSkuMapNodes')
     }
   }
 }
