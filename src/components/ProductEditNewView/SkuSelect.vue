@@ -235,17 +235,14 @@
                   class="avatar"
                   :ref="`img${specificationValue.skuString}-${idx}`"
                   :preview-src-list="[specificationValue.image]"
-                  v-on:mouseover.self="handlemouseover(specificationValue)"
                 />
                 <div
                   :class="[
                     'mask',
-                    specificationValue.maskShow ? 'show' : '',
                     'flex',
                     'justify-b',
                     'align-c'
                   ]"
-                  v-on:mouseleave.self="handlemouseleave(specificationValue)"
                 >
                   <hh-icon
                     type="iconshanchu1"
@@ -693,15 +690,8 @@ export default {
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
     },
-    handlemouseover (item) {
-      this.$set(item, 'maskShow', true)
-    },
-    handlemouseleave (item) {
-      this.$set(item, 'maskShow', false)
-    },
     // 删除图片
     deleteImage (idx, specificationValue, specification, index) {
-      if (!specificationValue.maskShow) return false
       const specifications = this.specifications.map((item, i) => {
         if (i === index) {
           item.specificationValueList[idx].image = ''
@@ -714,10 +704,6 @@ export default {
       })
     },
     previewImage (item, refName) {
-      if (!item.maskShow) return false
-      this.$nextTick(() => {
-        this.$set(item, 'maskShow', false)
-      })
       if (this.$refs[refName] && this.$refs[refName][0] && this.$refs[refName][0].clickHandler) {
         this.$refs[refName][0].clickHandler()
       }
