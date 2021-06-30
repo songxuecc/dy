@@ -207,6 +207,10 @@
                       <el-table-column key="4" width="150">
                           <template slot="header" slot-scope="scope">
                               <span>价格</span>
+                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true" style="padding:0">
+                              <hh-icon type="iconbianji" style="font-size:14px" />
+                              <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+                            </el-button>
                               <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
                                   <div slot="content">
                                     <ul style="padding: 0; margin: 0;margin-bottom:5px">其他平台SKU价格，请在上传抖音时设置价格</ul>
@@ -356,8 +360,56 @@
                     <span class="explain">&nbsp; 小于 0 设为 0</span>
                 </el-radio>
                 <div style="text-align: center; padding-top: 20px">
-                    <el-button type="primary" @click="handleBatchQuantity">确定</el-button>
-                    <el-button @click="dialogQuantityVisible = false">取消</el-button>
+                    <el-button @click="dialogQuantityVisible = false" style="width:100px">取消</el-button>
+                    <el-button type="primary" @click="handleBatchQuantity" style="width:100px">确定</el-button>
+                </div>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="批量修改价格" width="500px" :visible.sync="dialogPromoPriceVisible" append-to-body center v-hh-modal>
+            <div>
+                <div class="fail center mb-5">此价格为初始价格，并非价格公示计算的价格</div>
+                <div class="fail center mb-10">真实的售卖价请在后续价格页面设置</div>
+                <el-radio v-model="promoPriceHandler.radio" label="1">
+                    <span style="display:inline-block; width:150px">统一价格为</span>
+                    <el-input v-model="promoPriceHandler.textPrice" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='1'"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                </el-radio><br>
+                <el-radio v-model="promoPriceHandler.radio" label="2">
+                    <span style="display:inline-block; width:150px">每个SKU价格加数字：</span>
+                    <el-input v-model="promoPriceHandler.textPriceAdd" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='2'"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                </el-radio><br>
+                <el-radio v-model="promoPriceHandler.radio" label="3">
+                    <span style="display:inline-block; width:150px">每个SKU价格减数字：</span>
+                    <el-input v-model="promoPriceHandler.textPriceSub" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='3'"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                    <span class="explain">&nbsp; 小于 0 设为 0</span>
+                </el-radio>
+                <el-radio v-model="promoPriceHandler.radio" label="4">
+                    <span style="display:inline-block; width:150px">每个SKU价格加百分比：</span>
+                    <el-input v-model="promoPriceHandler.textPricePercentAdd" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='4'"
+                    ></el-input>
+                    <span style="display:inline-block;">%</span>
+                </el-radio>
+                <el-radio v-model="promoPriceHandler.radio" label="5">
+                    <span style="display:inline-block; width:150px">每个SKU价格减百分比：</span>
+                    <el-input v-model="promoPriceHandler.textPricePercentSub" size="mini" style="width:150px"
+                              @focus="promoPriceHandler.radio='5'"
+                    ></el-input>
+                    <span style="display:inline-block;">%</span>
+                    <span class="explain">&nbsp; 小于 0 设为 0</span>
+                </el-radio>
+                <div style="text-align: center; padding-top: 20px">
+                    <el-button @click="dialogPromoPriceVisible = false"  style="width:100px">取消</el-button>
+                    <el-button type="primary" @click="handleBatchPromoPrice"  style="width:100px">确定</el-button>
                 </div>
             </div>
         </el-dialog>
@@ -814,6 +866,10 @@ export default {
     handleBatchQuantity () {
       this.batchEditQuantity()
       this.dialogQuantityVisible = false
+    },
+    handleBatchPromoPrice () {
+      this.batchEditPromoPrice()
+      this.dialogPromoPriceVisible = false
     },
     handlePropertyNameChange (pid, vid, ele) {
       this.updateNameOfSkuPropertyValueMap(pid, vid, ele['value'])
