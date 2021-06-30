@@ -1643,10 +1643,10 @@ export default {
       }
     },
     getPriceStyle (number, row, borderKey, key) {
-      if (number > 9999999.99 || number <= 0.01) {
+      if (number > 9999999.99 || number < 0.01) {
         this.$set(row, borderKey, true)
         this.priceEditError = true
-      } else if (number <= 9999999.99 && number > 0.01) {
+      } else if (number <= 9999999.99 && number >= 0.01) {
         const originSkuShowList = []
         this.originSkuShowList.forEach(item => {
           if (
