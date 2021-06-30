@@ -315,7 +315,7 @@ export default {
                 const skuJson = {
                   code: '',
                   img: img,
-                  keys: '',
+                  keys: `keys-${shortid.generate()}`,
                   price: '',
                   originPrice: '',
                   promo_price: '',
