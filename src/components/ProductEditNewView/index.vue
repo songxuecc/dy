@@ -206,7 +206,7 @@
                               <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model.number="scope.row.quantity" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
-                      <el-table-column key="4" width="150">
+                      <el-table-column key="4" width="130">
                           <template slot="header" slot-scope="scope">
                               <span>价格</span>
                             <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true" style="padding:0">
@@ -231,14 +231,17 @@
                               <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model.number="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
-                      <el-table-column key="5" width="180">
+                      <el-table-column key="5" width="150">
                           <template slot="header" slot-scope="scope">
-                            <span @click="toggleVisibleSkuImport" >商品编码</span>
-                            <span class="info pointer" @click="toggleVisibleSkuImport"><i class="el-icon-question" style="color:red"></i>无法抓取</span>
+                            <div class="center">
+                              <span @click="toggleVisibleSkuImport" >商品编码</span>
                             <el-button type="text" class="table-header-btn" @click="dialogCodeVisible=true" style="padding:0display: inline-flex;align-items: center;justify-content: center;">
                               <hh-icon type="iconbianji" style="font-size:12px" />
                               <span style="color:#999999;font-size:12px;">修改</span>
                             </el-button>
+                            <br/>
+                            <span class="info pointer" @click="toggleVisibleSkuImport"><i class="el-icon-question" style="color:red"></i>无法抓取</span>
+                            </div>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model="scope.row.code" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
