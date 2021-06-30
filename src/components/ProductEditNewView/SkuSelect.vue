@@ -251,7 +251,12 @@
                     type="iconshanchu1"
                     style="font-size: 13px;"
                     class="iconshanchu1"
-                    @click="deleteImage(specificationValue)"
+                    @click="deleteImage(
+                      idx,
+                      specificationValue,
+                      specification,
+                      index
+                    )"
                   />
                   <hh-icon
                     type="iconreview"
@@ -572,6 +577,7 @@ export default {
       row.originValue = row.value
       row.edit = true
     },
+    // 修改规格
     changeSpecificationValue (value, idx, row, specification, index) {
       if (!value) {
         this.$message.error('请输入规格值')
@@ -692,9 +698,19 @@ export default {
     handlemouseleave (item) {
       this.$set(item, 'maskShow', false)
     },
-    deleteImage (item) {
-      if (!item.maskShow) return false
-      this.$set(item, 'image', '')
+    // 删除图片
+    deleteImage (idx, specificationValue, specification, index) {
+      if (!specificationValue.maskShow) return false
+      const specifications = this.specifications.map((item, i) => {
+        if (i === index) {
+          item.specificationValueList[idx].image = ''
+        }
+        return item
+      })
+      this.$nextTick(() => {
+        this.$set(specificationValue, 'image', '')
+        this.$emit('change', specifications)
+      })
     },
     previewImage (item, refName) {
       if (!item.maskShow) return false
