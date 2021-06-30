@@ -35,6 +35,34 @@ export default {
   methods: {
     initSku (skuJson, tpId) {
       const newSkuJson = cloneDeep(skuJson)
+
+      if (!Object.keys(newSkuJson.sku_property_value_map).length) {
+        const defaultSkuKey = `${shortid.generate()}`
+        const defaultSkuValueKey = `${shortid.generate()}`
+        const defaultSkuPropertyValueMap = {
+          [defaultSkuKey]: {
+            [defaultSkuValueKey]: {
+              image: newSkuJson.sku_map.default.img,
+              value: '默认规格值'
+            }
+          }
+        }
+        const defaultskuPropertyMap = {
+          [defaultSkuKey]: {
+            id: defaultSkuKey,
+            name: '默认规格名',
+            values: []
+          }
+        }
+        const defaultSkuMap = {
+          [`${defaultSkuKey}:${defaultSkuValueKey}`]: newSkuJson.sku_map.default
+        }
+
+        newSkuJson.sku_property_value_map = defaultSkuPropertyValueMap
+        newSkuJson.sku_property_map = defaultskuPropertyMap
+        newSkuJson.sku_map = defaultSkuMap
+      }
+
       Object.entries(newSkuJson.sku_property_value_map).map(([skuPropertyValueKey, skuPropertyValue]) => {
         Object.entries(skuPropertyValue).map(([key, value]) => {
           value.skuKey = skuPropertyValueKey
