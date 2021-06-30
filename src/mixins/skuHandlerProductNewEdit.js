@@ -227,6 +227,13 @@ export default {
     batchEditPrice () {
       this.priceHandler.handleSkus(this.skuShowList, 'price')
     },
+    batchEditCode (code) {
+      const nextSkuShowList = this.skuShowList.map(item => {
+        item.code = code
+        return item
+      })
+      this.$set(this, 'skuShowList', cloneDeep(nextSkuShowList))
+    },
     handleSpecifications (specifications) {
       const skuPropertyValueMap = {}
       const skuPropertyMap = {}

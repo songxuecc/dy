@@ -151,7 +151,7 @@
                                            trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
                               >
                                   <span class="el-dropdown-link" style="color:#909399">
-                                    ({{item.specificationValueList.length}})<hh-icon type="iconbianji" style="font-size:14px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+                                    ({{item.specificationValueList.length}})<hh-icon type="iconbianji" style="font-size:12px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
                                   </span>
                                   <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
                                       <el-dropdown-item v-for="(ele, vid) in item.specificationValueList" :key="vid">
@@ -187,7 +187,9 @@
                       <el-table-column key="2" width="130">
                           <template slot="header" slot-scope="scope">
                               <span>总库存</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0"> <hh-icon type="iconbianji" style="font-size:14px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
+                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0display: inline-flex;
+    align-items: center;
+    justify-content: center;"> <hh-icon type="iconbianji" style="font-size:12px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
                               <!-- <el-toolTip :content="scope.row.quantityBorder ? '只可以输入0-1000000的数字':''" effect="dark" placement="top">
@@ -208,8 +210,8 @@
                           <template slot="header" slot-scope="scope">
                               <span>价格</span>
                             <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true" style="padding:0">
-                              <hh-icon type="iconbianji" style="font-size:14px" />
-                              <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
+                              <hh-icon type="iconbianji" style="font-size:12px" />
+                              <span style="color:#999999;font-size:12px;">修改</span>
                             </el-button>
                               <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
                                   <div slot="content">
@@ -229,10 +231,14 @@
                               <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model.number="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
-                      <el-table-column key="5" width="150">
+                      <el-table-column key="5" width="180">
                           <template slot="header" slot-scope="scope">
-                            <span @click="toggleVisibleSkuImport">商品编码</span>
-                            <span class="info pointer" @click="toggleVisibleSkuImport">无法抓取</span><i class="el-icon-question"></i>
+                            <span @click="toggleVisibleSkuImport" >商品编码</span>
+                            <span class="info pointer" @click="toggleVisibleSkuImport"><i class="el-icon-question" style="color:red"></i>无法抓取</span>
+                            <el-button type="text" class="table-header-btn" @click="dialogCodeVisible=true" style="padding:0display: inline-flex;align-items: center;justify-content: center;">
+                              <hh-icon type="iconbianji" style="font-size:12px" />
+                              <span style="color:#999999;font-size:12px;">修改</span>
+                            </el-button>
                           </template>
                           <template slot-scope="scope">
                               <el-input v-model="scope.row.code" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
@@ -414,6 +420,16 @@
             </div>
         </el-dialog>
 
+        <el-dialog title="批量修改编码" width="400px" :visible.sync="dialogCodeVisible" append-to-body center>
+            <div>
+                <el-input v-model="batchCodeInput" size="mini" ></el-input>
+                <div style="text-align: center; padding-top: 20px">
+                    <el-button @click="dialogCodeVisible = false" style="width:100px">取消</el-button>
+                    <el-button type="primary" @click="handleBatchCode" style="width:100px">确定</el-button>
+                </div>
+            </div>
+        </el-dialog>
+
       </el-col>
       <div style="display: flex; box-sizing: border-box; background-color: #EBEEF5; width: 100%; height: 80px; position: fixed; bottom: 0px; z-index: 999; margin-left: 10px;">
         <div style="width: 100%; height: 100%; padding-top: 20px; padding-left: 30px; text-align:right;">
@@ -522,6 +538,8 @@ export default {
       dialogVisible: false,
       dialogQuantityVisible: false,
       dialogPromoPriceVisible: false,
+      dialogCodeVisible: false,
+      batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
         'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList'
@@ -870,6 +888,10 @@ export default {
     handleBatchPromoPrice () {
       this.batchEditPromoPrice()
       this.dialogPromoPriceVisible = false
+    },
+    handleBatchCode () {
+      this.batchEditCode(this.batchCodeInput)
+      this.dialogCodeVisible = false
     },
     handlePropertyNameChange (pid, vid, ele) {
       this.updateNameOfSkuPropertyValueMap(pid, vid, ele['value'])
