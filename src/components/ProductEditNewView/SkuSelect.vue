@@ -11,7 +11,7 @@
         margin-bottom: 16px;
       "
       v-for="(specification, index) in specifications"
-      :key="index"
+      :key="specification.spec_id"
     >
       <div>
         <!-- 规格名 -->
@@ -126,7 +126,7 @@
             v-for="(
               specificationValue, idx
             ) in specification.specificationValueList"
-            :key="idx"
+            :key="specificationValue.skuString"
             style="flex: 0 0 25%; max-width: 25%; margin-bottom: 8px"
           >
             <el-checkbox
@@ -346,7 +346,7 @@
           <span
             class="sortItem list-group-item"
             v-for="specificationValue in dragList"
-            :key="specificationValue.value"
+            :key="specificationValue.skuString"
             >{{ specificationValue.value }}</span
           >
         </transition-group>
