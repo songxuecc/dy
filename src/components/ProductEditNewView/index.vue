@@ -1,7 +1,7 @@
 <template lang="html">
   <div style="height: 100%" >
     <el-row :gutter="20" style="height: 100%">
-      <el-col :span="8" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
+      <el-col :span="7" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
         <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
                   :row-style="{height:'68px'}"
                   @current-change="handleProductSelect"
@@ -27,7 +27,7 @@
             </el-table-column>
             <el-table-column type="selection">
             </el-table-column>
-            <el-table-column label="图片" width="100" align="center">
+            <el-table-column label="图片" width="80" align="center">
                 <template slot-scope="scope">
                   <el-badge class="item" :value="Object.values(scope.row.check_error_msg_static).map(item => item.num).reduce((total, num) => total + num)"
                             v-if="scope.row.check_error_msg_static && Object.keys(scope.row.check_error_msg_static).length > 0">
@@ -46,7 +46,7 @@
             </el-table-column>
         </el-table>
       </el-col>
-      <el-col :span="16" style="height: 100%; padding-bottom: 100px;">
+      <el-col :span="17" style="height: 100%; padding-bottom: 100px;">
           <el-tabs v-loading="loadingCnt" v-model="activityTab" type="card" style="height: 100%;" @tab-click="handleTabClick">
               <el-tab-pane label="商品属性" name="info">
                   <span slot="label" v-if=" product.model.check_error_msg_static  && '0' in product.model.check_error_msg_static">商品属性
@@ -201,9 +201,9 @@
                                   <div slot="content" >
                                     <ul style="padding: 0; margin: 0;" class="fail">只可以输入0-1000000的数字</ul>
                                   </div>
-                                  <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model.number="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                                  <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                               </el-tooltip>
-                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model.number="scope.row.quantity" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="4" width="130">
@@ -226,9 +226,9 @@
                                   <div slot="content" >
                                     <ul style="padding: 0; margin: 0;" class="fail">只可以输入0.01-9999999.99 的数字,最多保留2位小数</ul>
                                   </div>
-                                  <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model.number="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                                  <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                               </el-tooltip>
-                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model.number="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="5" width="150">
@@ -989,10 +989,10 @@ export default {
         // 检验价格 & 库存
         const skuShowList = product.model.skuShowList
         skuShowList.forEach(item => {
-          if (!item.quantity || item.quantity > 1000000 || item.quantity <= 0) {
+          if (item.quantity > 1000000 || item.quantity < 0) {
             error = 'sku库存必填，且只可以输入0-1000000的数字'
           }
-          if (!item.promo_price || item.promo_price > 9999999.99 || item.promo_price <= 0.01) {
+          if (!item.promo_price || item.promo_price > 9999999.99 || item.promo_price < 0.01) {
             error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
           }
         })
@@ -1623,10 +1623,10 @@ export default {
       }
     },
     getStyle (number, row, borderKey, key) {
-      if (number > 1000000 || number < 0) {
+      if (number > 1000000 || number <= 0) {
         this.$set(row, borderKey, true)
         this.stockEditError = true
-      } else if (number <= 1000000 && number >= 0) {
+      } else if (number <= 1000000 && number > 0) {
         const originSkuShowList = []
         this.originSkuShowList.forEach(item => {
           if (
@@ -1647,7 +1647,7 @@ export default {
       if (number > 9999999.99 || number <= 0.01) {
         this.$set(row, borderKey, true)
         this.priceEditError = true
-      } else if (number <= 9999999.99 && number >= 0.01) {
+      } else if (number <= 9999999.99 && number > 0.01) {
         const originSkuShowList = []
         this.originSkuShowList.forEach(item => {
           if (
