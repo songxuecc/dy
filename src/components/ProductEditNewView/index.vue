@@ -890,10 +890,11 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
-      // 检验推荐语
+
       let error = ''
       this.productList.forEach(item => {
         let tpProductId = item.tp_product_id
+        // 检验推荐语
         if (tpProductId in this.products) {
           const product = this.products[tpProductId]
           const recommendRemark = product.model.recommend_remark
@@ -903,13 +904,14 @@ export default {
             }
           }
         }
+        // 检验价格 & 库存
+        if (tpProductId.quantity > 1000000 || tpProductId.quantity <= 0) {
+          error = 'sku库存只可以输入0-1000000的数字'
+        }
+        if (tpProductId.promo_price > 9999999.99 || tpProductId.promo_price <= 0.01) {
+          error = 'sku价格只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+        }
       })
-      if (this.priceEditError) {
-        error = 'sku价格填写错误'
-      }
-      if (this.stockEditError) {
-        error = 'sku库存填写错误'
-      }
       if (error) {
         return this.$message.error(error)
       }
