@@ -55,7 +55,10 @@ export default {
           }
         }
         const defaultSkuMap = {
-          [`${defaultSkuKey}:${defaultSkuValueKey}`]: newSkuJson.sku_map.default
+          [`${defaultSkuKey}:${defaultSkuValueKey}`]: {
+            ...newSkuJson.sku_map.default,
+            sku_id: shortid.generate()
+          }
         }
 
         newSkuJson.sku_property_value_map = defaultSkuPropertyValueMap
