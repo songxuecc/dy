@@ -145,7 +145,7 @@
                   {{ specificationValue.value }}
                 <!-- {{ specificationValue.value }} -->
                 <hh-icon
-                  type="iconbianji-primary"
+                  type="iconbianji"
                   class="font-12 pointer iconbianji-primary"
                   @click.native.prevent="
                     editSpecificationValue(
