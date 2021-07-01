@@ -8,7 +8,7 @@
         <el-table-empty slot="empty"/>
             <el-table-column type="selection" :selectable="isSelectionEnable">
             </el-table-column>
-            <el-table-column label="图片" width="78" align="center">
+            <el-table-column label="图片" width="68" align="center">
                 <template slot-scope="scope">
 
                     <el-image
@@ -27,19 +27,12 @@
                     <!-- <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail"> -->
                 </template>
             </el-table-column>
-            <el-table-column label="基本信息"  width="280">
+            <el-table-column label="基本信息"  width="300">
                 <template slot-scope="scope">
                     <el-link  :href="scope.row.url" target="_blank" :underline="false"  class="font-13">
                         {{ scope.row.title }}
                     </el-link><br>
-                    <div class="flex align-c wrap">
-                      <span class="flex align-c" style="margin-right:27px">
-                        <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(scope.row)">
-                        <label class="info">{{scope.row.source}}</label>
-                      </span>
-                      <span class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</span>
-                      <!-- <div class="info">创建时间: {{scope.row.create_time}}</div> -->
-                    </div>
+
                     <div>
                       <!-- <div class="font-12 ">类目 <span class="primary pointer">点击选择</span> <span class="info">zhuzhai</span> </div> -->
 
@@ -56,7 +49,18 @@
                             </el-tooltip>
                           </span>
                       </div>
-                      <div class="font-12 flex"><span style="flex:1">来源类目: zhuzhai </span> <span class="primary pointer">类目匹配设置</span></div>
+                      <div class="font-12 flex align-c"><span style="flex:1" class="flex align-c" >来源类目:&nbsp;
+                        <el-tooltip :content="scope.row.origin_category_name" v-if="scope.row.origin_category_name" placement="top"><span class="info ellipsis " style="width:150px">{{scope.row.origin_category_name}}</span></el-tooltip>
+                        <div v-else class="info">无</div>
+                        </span> <span class="primary pointer" @click="handleMatchCategory">类目匹配设置</span>
+                      </div>
+                    </div>
+                    <div class="flex align-c wrap">
+                      <span class="flex align-c" style="margin-right:27px">
+                        <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(scope.row)">
+                        <label class="info">{{scope.row.source}}</label>
+                      </span>
+                      <span class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</span>
                     </div>
                 </template>
             </el-table-column>
@@ -65,11 +69,11 @@
                     <span>{{ scope.row.price_range}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="类目" width="100" align="center">
+            <!-- <el-table-column label="类目" width="100" align="center">
                 <template slot-scope="scope">
                     <span> {{ getLastCategory(scope.row.category_show) }} </span>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column v-if="isSyncSource" label="最近同步" width="100">
                 <template slot-scope="scope">
                     {{ getSyncStatus(scope.row) }}
@@ -319,6 +323,34 @@
         <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
           <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
         </el-dialog>
+
+        <el-dialog
+            title="来源分类匹配设置"
+            :show-close="false"
+            :visible.sync="sourceCategoryVisible"
+            width="40%">
+            <div class="left">
+              以后复制 天猫"” 分类下的商品，均匹配桑前选择的抖店分类
+            </div>
+           <div class="flex align-c " style="height:28px">
+                <span class="mr-5">抖店分类:</span>
+                <el-button size="mini" v-if="sourceCategory && !sourceCategory.name" @click="chooseCategory"
+                  type="text">点击选择类目</el-button>
+                <a class="skeleton skeleton-item" v-if="!sourceCategory" style="width:100px;height:18px"/>
+                <span class="flex align-c" style="height:28px" v-if="sourceCategory && sourceCategory.name">
+                  <el-tooltip :content="sourceCategory && sourceCategory.name"
+                    :disabled="sourceCategory.name && sourceCategory.name.length < 18">
+                    <el-button size="mini" type="text" @click="chooseCategory" class="brand">
+                      {{sourceCategory && sourceCategory.name}}</el-button>
+                  </el-tooltip>
+                </span>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="plain" @click="sourceCategoryVisible=false">取消</el-button>
+                <el-button type="primary" @click="confirmSourceCategoryVisible">确定</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 <script>
@@ -327,13 +359,15 @@ import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
 import CategorySelectView from '@/components/CategorySelectView'
+import ModalSourceCategory from './ModalSourceCategory'
 
 export default {
   inject: ['reload'],
   mixins: [request],
   components: {
     productEditNewView: () => import('@/components/ProductEditNewView'),
-    CategorySelectView
+    CategorySelectView,
+    ModalSourceCategory
   },
   props: {
     tpProductList: Array,
@@ -346,6 +380,7 @@ export default {
   },
   data () {
     return {
+      sourceCategoryVisible: false,
       deleteProductId: -1,
       deleteProductVisible: false,
       dialogEditVisible: false,
@@ -359,7 +394,8 @@ export default {
       order_by: 1,
       visvileCategory: false,
       default_category: {},
-      default_category_id: undefined
+      default_category_id: undefined,
+      sourceCategory: {}
     }
   },
   computed: {
@@ -931,6 +967,12 @@ export default {
     removeCategory () {
       this.default_category = {}
       this.default_category_id = 0
+    },
+    handleMatchCategory () {
+      this.sourceCategoryVisible = true
+    },
+    confirmSourceCategoryVisible () {
+      // this.sourceCategory =
     }
   }
 }
