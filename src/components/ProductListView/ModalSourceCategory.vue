@@ -2,15 +2,27 @@
 <template>
     <div>
         <el-dialog
-            title="删除复制记录"
+            title="来源分类匹配设置"
             :show-close="false"
             :visible.sync="visible"
-            width="30%">
-            <p>只删除软件的记录，对小店后台商品没影响，删除后已复制的商品可进行再次复制搬家，您确定要操作吗？</p>
+            width="35%">
+             <div class="left">
+              以后复制&nbsp;{{row.source}}&nbsp;{{row.origin_category_name}}分类下的商品，均匹配桑前选择的抖店分类
+              <el-switch v-model="is_open"></el-switch>
+            </div>
 
-            <div>
-                <span>抖店分类</span>
-                <span>点击选择类目</span>
+            <div class="flex align-c " style="height:28px">
+                <span class="mr-5">类目:</span>
+                <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
+                  type="text">点击选择类目</el-button>
+                <a class="skeleton skeleton-item" v-if="!default_category" style="width:100px;height:18px"/>
+                <span class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
+                  <el-tooltip :content="default_category && default_category.name"
+                    :disabled="default_category.name && default_category.name.length < 18">
+                    <el-button size="mini" type="text" @click="chooseCategory" class="brand">
+                      {{default_category && default_category.name}}</el-button>
+                  </el-tooltip>
+                </span>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button type="plain" @click="visible=false">取消</el-button>
@@ -39,11 +51,19 @@ export default {
     return {
       visvileCategory: false,
       default_category: {},
-      default_category_id: undefined
+      default_category_id: undefined,
+      visible: false,
+      is_open: true,
+      row: {}
     }
   },
   methods: {
+    open (row) {
+      this.visible = true
+      this.row = row
+    },
     onChangeCate (category) {
+      console.log(category, 'category')
       if (!category || (category && !category.id)) {
         return this.$message.error('请选择分类')
       }
