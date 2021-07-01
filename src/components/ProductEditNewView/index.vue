@@ -989,14 +989,16 @@ export default {
           }
           // 检验价格 & 库存
           const skuShowList = product.model.skuShowList
-          skuShowList.forEach(sku => {
-            if (sku.quantity > 1000000 || sku.quantity < 0) {
-              error = 'sku库存必填，且只可以输入0-1000000的数字'
-            }
-            if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
-              error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
-            }
-          })
+          skuShowList
+            .filter(sku => sku.quantity)
+            .forEach(sku => {
+              if (sku.quantity > 1000000 || sku.quantity < 0) {
+                error = 'sku库存必填，且只可以输入0-1000000的数字'
+              }
+              if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
+                error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+              }
+            })
         }
       })
 
@@ -1041,13 +1043,15 @@ export default {
                 // 属性设置数据
                 attribute_json: product.model.attrList,
                 desc_text: product.model.description,
-                sku_list: product.model.skuShowList.map(item => {
-                  return {
-                    ...item,
-                    price: utils.yuanToFen(item.price),
-                    promo_price: utils.yuanToFen(item.promo_price)
-                  }
-                }),
+                sku_list: product.model.skuShowList
+                  .filter(item => item.quantity)
+                  .map(item => {
+                    return {
+                      ...item,
+                      price: utils.yuanToFen(item.price),
+                      promo_price: utils.yuanToFen(item.promo_price)
+                    }
+                  }),
                 spec_list: product.model.specifications,
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
