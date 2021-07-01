@@ -990,23 +990,26 @@ export default {
             if (item.quantity > 1000000 || item.quantity < 0) {
               error = 'sku库存必填，且只可以输入0-1000000的数字'
             }
-            if (!item.promo_price || item.promo_price > 9999999.99 || item.promo_price < 0.01) {
+            if (item.promo_price > 9999999.99 || item.promo_price < 0.01) {
               error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
             }
           })
         }
       })
 
-      console.log(error, 'error')
       if (error) {
         return this.$message.error(error)
       }
-      const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
-      if (propertySetValid) {
+      try {
+        const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
+        if (propertySetValid) {
         // 没有修改分类时不用传参数
-        this.productEditSavingPercent = 0
-        this.isProductEditSaving = true
-        this.saveProducts()
+          this.productEditSavingPercent = 0
+          this.isProductEditSaving = true
+          this.saveProducts()
+        }
+      } catch (err) {
+        return this.$message.error(err)
       }
     },
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
