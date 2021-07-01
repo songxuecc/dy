@@ -183,7 +183,7 @@ export default {
     validate () {
       return new Promise((resolve, reject) => {
         if (!this.$refs.propertySet) {
-          return reject(new Error('请选择商品属性-修改分类'))
+          return reject('请选择商品属性-修改分类')
         } else {
           this.$refs.propertySet.validate((valid, object) => {
             if (valid) {

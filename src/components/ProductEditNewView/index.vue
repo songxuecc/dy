@@ -886,14 +886,17 @@ export default {
     },
     handleBatchQuantity () {
       this.batchEditQuantity()
+      this.product.model.skuShowList = this.skuShowList
       this.dialogQuantityVisible = false
     },
     handleBatchPromoPrice () {
       this.batchEditPromoPrice()
+      this.product.model.skuShowList = this.skuShowList
       this.dialogPromoPriceVisible = false
     },
     handleBatchCode () {
       this.batchEditCode(this.batchCodeInput)
+      this.product.model.skuShowList = this.skuShowList
       this.dialogCodeVisible = false
     },
     handlePropertyNameChange (pid, vid, ele) {
@@ -986,11 +989,11 @@ export default {
           }
           // 检验价格 & 库存
           const skuShowList = product.model.skuShowList
-          skuShowList.forEach(item => {
-            if (item.quantity > 1000000 || item.quantity < 0) {
+          skuShowList.forEach(sku => {
+            if (sku.quantity > 1000000 || sku.quantity < 0) {
               error = 'sku库存必填，且只可以输入0-1000000的数字'
             }
-            if (item.promo_price > 9999999.99 || item.promo_price < 0.01) {
+            if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
               error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
             }
           })

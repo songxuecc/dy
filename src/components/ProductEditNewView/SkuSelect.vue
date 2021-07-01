@@ -376,7 +376,7 @@ import draggable from 'vuedraggable'
 import shortid from 'shortid'
 
 export default {
-  name: 'component_name',
+  name: 'SkuSelect',
   props: {
     msg: String,
     belongType: {
@@ -635,7 +635,8 @@ export default {
           addSpecificationValue: '',
           specificationValueList: [],
           specificationNameVisible: false,
-          image: ''
+          spec_id: shortid.generate(),
+          id: `id-${shortid.generate()}`
         }
       ]
     },
