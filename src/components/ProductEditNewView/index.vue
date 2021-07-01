@@ -990,7 +990,7 @@ export default {
           // 检验价格 & 库存
           const skuShowList = product.model.skuShowList
           skuShowList
-            .filter(item => item.quantity)
+            .filter(sku => sku.quantity)
             .forEach(sku => {
               if (sku.quantity > 1000000 || sku.quantity < 0) {
                 error = 'sku库存必填，且只可以输入0-1000000的数字'
