@@ -335,7 +335,7 @@ export default {
                     obj = {
                       code: item.code,
                       keys: item.keys,
-                      price: item.price,
+                      price: utils.fenToYuan(item.price),
                       originPrice: utils.fenToYuan(item.price),
                       promo_price: utils.fenToYuan(item.promo_price),
                       quantity: item.quantity,
