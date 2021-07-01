@@ -182,15 +182,19 @@ export default {
     // 验证
     validate () {
       return new Promise((resolve, reject) => {
-        this.$refs.propertySet.validate((valid, object) => {
-          if (valid) {
-            resolve(true)
-          } else {
-            this.$message.error(`${Object.keys(object).join('、')} 输入错误`)
-            this.validation = object
-            reject(object)
-          }
-        })
+        if (!this.$refs.propertySet) {
+          return reject(new Error('请选择商品属性-修改分类'))
+        } else {
+          this.$refs.propertySet.validate((valid, object) => {
+            if (valid) {
+              resolve(true)
+            } else {
+              this.$message.error(`${Object.keys(object).join('、')} 输入错误`)
+              this.validation = object
+              reject(object)
+            }
+          })
+        }
       })
     },
     // 清除数据
