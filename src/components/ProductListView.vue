@@ -27,7 +27,7 @@
                     <!-- <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail"> -->
                 </template>
             </el-table-column>
-            <el-table-column label="标题"  width="230">
+            <el-table-column label="基本信息"  width="280">
                 <template slot-scope="scope">
                     <el-link  :href="scope.row.url" target="_blank" :underline="false"  class="font-13">
                         {{ scope.row.title }}
@@ -39,6 +39,24 @@
                       </span>
                       <span class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</span>
                       <!-- <div class="info">创建时间: {{scope.row.create_time}}</div> -->
+                    </div>
+                    <div>
+                      <!-- <div class="font-12 ">类目 <span class="primary pointer">点击选择</span> <span class="info">zhuzhai</span> </div> -->
+
+                      <div class="flex align-c " style="height:28px">
+                          <span class="mr-5">类目:</span>
+                          <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
+                            type="text">点击选择类目</el-button>
+                          <a class="skeleton skeleton-item" v-if="!default_category" style="width:100px;height:18px"/>
+                          <span class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
+                            <el-tooltip :content="default_category && default_category.name"
+                              :disabled="default_category.name && default_category.name.length < 18">
+                              <el-button size="mini" type="text" @click="chooseCategory" class="brand">
+                                {{default_category && default_category.name}}</el-button>
+                            </el-tooltip>
+                          </span>
+                      </div>
+                      <div class="font-12 flex"><span style="flex:1">来源类目: zhuzhai </span> <span class="primary pointer">类目匹配设置</span></div>
                     </div>
                 </template>
             </el-table-column>
@@ -298,6 +316,9 @@
             <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
           </span>
         </el-dialog>
+        <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
+          <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -305,11 +326,14 @@
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
+import CategorySelectView from '@/components/CategorySelectView'
+
 export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditNewView: () => import('@/components/ProductEditNewView')
+    productEditNewView: () => import('@/components/ProductEditNewView'),
+    CategorySelectView
   },
   props: {
     tpProductList: Array,
@@ -332,7 +356,10 @@ export default {
       isSelectAll: false,
       mouseOverIndex: -1,
       commandSortText: '按复制时间降序',
-      order_by: 1
+      order_by: 1,
+      visvileCategory: false,
+      default_category: {},
+      default_category_id: undefined
     }
   },
   computed: {
@@ -889,6 +916,21 @@ export default {
       this.commandSortText = text
       this.order_by = obj[command].order_by
       this.$emit('sortByTime', obj[command].order_by)
+    },
+    onChangeCate (category) {
+      if (!category || (category && !category.id)) {
+        return this.$message.error('请选择分类')
+      }
+      this.visvileCategory = false
+      this.default_category = category
+      this.default_category_id = category.id
+    },
+    chooseCategory () {
+      this.visvileCategory = true
+    },
+    removeCategory () {
+      this.default_category = {}
+      this.default_category_id = 0
     }
   }
 }
