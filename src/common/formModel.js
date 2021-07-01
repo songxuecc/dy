@@ -1,6 +1,4 @@
 import utils from '@/common/utils'
-import isEqual from 'lodash/isEqual'
-import cloneDeep from 'lodash/cloneDeep'
 
 class FormModel {
   constructor (compareFields = []) {
