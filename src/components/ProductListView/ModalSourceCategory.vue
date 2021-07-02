@@ -45,21 +45,14 @@
           style="height: 28px"
           v-if="default_category && default_category.name"
         >
-          <el-tooltip
-            :content="default_category && default_category.name"
-            :disabled="
-              default_category.name && default_category.name.length < 18
-            "
+          <el-button
+            size="mini"
+            type="text"
+            @click="chooseCategory"
+            class="brand font-14"
           >
-            <el-button
-              size="mini"
-              type="text"
-              @click="chooseCategory"
-              class="brand font-14"
-            >
-              {{ default_category && default_category.name }}
-            </el-button>
-          </el-tooltip>
+            {{ default_category && default_category.name }}
+          </el-button>
         </span>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -82,6 +75,7 @@
 </template>
 
 <script>
+import isEmpty from 'lodash/isEmpty'
 import CategorySelectView from '@/components/CategorySelectView'
 import Api from '@/api/apis'
 
@@ -105,10 +99,32 @@ export default {
     }
   },
   methods: {
-    open (row) {
+    async open (row) {
       this.visible = true
       this.row = row
+      this.loading = true
+      const data = await Api.hhgjAPIs.userUserCategoryMapQuery({
+        tp_id: row.tp_id,
+        tp_cid: row.origin_category_id
+      })
+      this.loading = false
       console.log(row, 'row')
+
+      if (!isEmpty(data)) {
+        this.is_open = Boolean(data.is_open)
+        this.default_category = {
+          name: data.dy_category_name,
+          id: data.dy_cid
+        }
+        this.default_category_id = data.dy_cid
+      } else {
+        this.is_open = true
+        this.default_category = {
+          name: row.category_show,
+          id: row.category_id
+        }
+        this.default_category_id = row.category_id
+      }
     },
     onChangeCate (category) {
       console.log(category, 'category')
@@ -133,6 +149,10 @@ export default {
         dy_cid: this.default_category_id,
         is_open: Number(this.is_open)
       }
+
+      if (!this.default_category_id) {
+        this.$message.warning('请选择分类')
+      }
       this.loading = true
       try {
         await Api.hhgjAPIs.userCategoryMapCreate({
@@ -141,8 +161,10 @@ export default {
         this.loading = false
         this.$message.success('保存成功')
         this.visible = false
-        this.default_category = {}
-        this.default_category_id = undefined
+        setTimeout(() => {
+          this.default_category = {}
+          this.default_category_id = undefined
+        }, 300)
       } catch (err) {
         this.loading = false
         this.$message.error(`${err}`)

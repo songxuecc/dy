@@ -38,7 +38,8 @@
 
                       <div class="flex align-c " style="height:28px">
                           <span class="mr-5" style="flex:1">类目:
-                            <span>{{scope.row.category_show}}</span>
+                            <span v-if="scope.row.category_show" class="info">{{scope.row.category_show}}</span>
+                            <span v-if="!scope.row.category_show" class="info">无</span>
                           </span>
                           <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"
                           type="text">点击选择类目</el-button>
@@ -930,12 +931,13 @@ export default {
         })
         this.visvileCategory = false
         this.changeCategoryLoading = false
-        const productIndex = this.tpProductList.findIndex(item => item.tp_product_id === this.selectCategoryRow.tp_product_id)
-        const product = this.tpProductList[productIndex]
-        product.category_show = data[0].category_show
-        product.category_id = data[0].category_id
-        this.$set('tpProductList', productIndex, product)
-        this.$message.success('修改成功')
+        this.tpProductList.forEach((item, index) => {
+          if (item.tp_product_id === this.selectCategoryRow.tp_product_id) {
+            this.$set(item, 'category_show', data[0].category_show)
+            this.$set(item, 'category_id', data[0].category_id)
+            this.$message.success('修改成功')
+          }
+        })
       } catch (err) {
         this.changeCategoryLoading = false
         this.$message.error(`${err}`)

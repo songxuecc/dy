@@ -395,7 +395,20 @@ const hhgjAPIs = {
   },
   userCategoryMapCreate: (params) => {
     return api.actionCreatorPost('/api/user/category_map/create', params)
+  },
+  userCategoryMapQuery: (params) => {
+    return api.actionCreateGet('/api/user/category_map/query', params)
+  },
+  userCategoryMapList: (params) => {
+    return api.actionCreateGet('/api/user/category_map/list', params)
+  },
+  userUserCategoryMapQuery: (params) => {
+    return api.actionCreateGet('/api/user/category_map/query', params)
+  },
+  userUserCategoryMapDelete: (params) => {
+    return api.actionCreatorPost(' /api/user/category_map/delete', params)
   }
+
 }
 
 export default {
