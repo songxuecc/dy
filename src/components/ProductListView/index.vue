@@ -27,29 +27,41 @@
                     <!-- <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail"> -->
                 </template>
             </el-table-column>
-            <el-table-column label="标题"  width="230">
+            <el-table-column label="基本信息"  width="300">
                 <template slot-scope="scope">
                     <el-link  :href="scope.row.url" target="_blank" :underline="false"  class="font-13">
                         {{ scope.row.title }}
                     </el-link><br>
+
+                    <div>
+                      <!-- <div class="font-12 ">类目 <span class="primary pointer">点击选择</span> <span class="info">zhuzhai</span> </div> -->
+
+                      <div class="flex align-c " style="height:28px">
+                          <span class="mr-5" style="flex:1">类目:
+                            <span v-if="scope.row.category_show" class="info">{{scope.row.category_show}}</span>
+                            <span v-if="!scope.row.category_show" class="info">无</span>
+                          </span>
+                          <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"
+                          type="text">点击选择类目</el-button>
+                      </div>
+                      <div class="font-12 flex align-c"><span style="flex:1" class="flex align-c" >来源类目:&nbsp;
+                        <el-tooltip :content="scope.row.origin_category_name" v-if="scope.row.origin_category_name" placement="top"><span class="info ellipsis " style="width:150px">{{scope.row.origin_category_name}}</span></el-tooltip>
+                        <div v-else class="info">无</div>
+                        </span> <span class="primary pointer" @click="handleMatchCategory(scope.row)" v-if="scope.row.origin_category_name">类目匹配设置</span>
+                      </div>
+                    </div>
                     <div class="flex align-c wrap">
                       <span class="flex align-c" style="margin-right:27px">
                         <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(scope.row)">
                         <label class="info">{{scope.row.source}}</label>
                       </span>
                       <span class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</span>
-                      <!-- <div class="info">创建时间: {{scope.row.create_time}}</div> -->
                     </div>
                 </template>
             </el-table-column>
             <el-table-column label="源sku售价" width="100" align="center">
                 <template slot-scope="scope">
                     <span>{{ scope.row.price_range}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="类目" width="100" align="center">
-                <template slot-scope="scope">
-                    <span> {{ getLastCategory(scope.row.category_show) }} </span>
                 </template>
             </el-table-column>
             <el-table-column v-if="isSyncSource" label="最近同步" width="100">
@@ -298,6 +310,10 @@
             <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
           </span>
         </el-dialog>
+        <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
+          <categorySelectView ref="categorySelectView" @changeCate="onChangeCate"  v-loading="changeCategoryLoading"/>
+        </el-dialog>
+        <ModalSourceCategory  ref="ModalSourceCategory"/>
     </div>
 </template>
 <script>
@@ -305,11 +321,17 @@
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
+import CategorySelectView from '@/components/CategorySelectView'
+import ModalSourceCategory from './ModalSourceCategory'
+import Api from '@/api/apis'
+
 export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditNewView: () => import('@/components/ProductEditNewView')
+    productEditNewView: () => import('@/components/ProductEditNewView'),
+    CategorySelectView,
+    ModalSourceCategory
   },
   props: {
     tpProductList: Array,
@@ -322,6 +344,7 @@ export default {
   },
   data () {
     return {
+      sourceCategoryVisible: false,
       deleteProductId: -1,
       deleteProductVisible: false,
       dialogEditVisible: false,
@@ -332,7 +355,12 @@ export default {
       isSelectAll: false,
       mouseOverIndex: -1,
       commandSortText: '按复制时间降序',
-      order_by: 1
+      order_by: 1,
+      visvileCategory: false,
+      default_category: {},
+      default_category_id: undefined,
+      sourceCategory: {},
+      changeCategoryLoading: false
     }
   },
   computed: {
@@ -889,6 +917,45 @@ export default {
       this.commandSortText = text
       this.order_by = obj[command].order_by
       this.$emit('sortByTime', obj[command].order_by)
+    },
+    async onChangeCate (category) {
+      if (!category || (category && !category.id)) {
+        return this.$message.error('请选择分类')
+      }
+      this.changeCategoryLoading = true
+      const list = [this.selectCategoryRow.tp_product_id]
+      try {
+        const data = await Api.hhgjAPIs.batchUpdateCategory({
+          tp_product_ids: list,
+          cid: category.id
+        })
+        this.visvileCategory = false
+        this.changeCategoryLoading = false
+        this.tpProductList.forEach((item, index) => {
+          if (item.tp_product_id === this.selectCategoryRow.tp_product_id) {
+            this.$set(item, 'category_show', data[0].category_show)
+            this.$set(item, 'category_id', data[0].category_id)
+            this.$message.success('修改成功')
+          }
+        })
+      } catch (err) {
+        this.changeCategoryLoading = false
+        this.$message.error(`${err}`)
+      }
+    },
+    chooseCategory (row) {
+      this.visvileCategory = true
+      this.selectCategoryRow = row
+    },
+    removeCategory () {
+      this.default_category = {}
+      this.default_category_id = 0
+    },
+    handleMatchCategory (row) {
+      this.$refs.ModalSourceCategory.open(row)
+    },
+    confirmSourceCategoryVisible () {
+      // this.sourceCategory =
     }
   }
 }

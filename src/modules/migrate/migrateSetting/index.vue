@@ -27,6 +27,24 @@
             </div>
           </div>
         </el-form-item>
+        <el-form-item style="margin-bottom: 20px;" class="migrateSetting-category">
+          <span slot="label" style="display:inline">
+            <div>淘宝\天猫\拼多多</div>
+            <div>商品类目匹配:</div>
+          </span>
+          <div class="flex column left" v-loading="loadingCategoryMap">
+            <div v-for="category in showCategoryMap" :key="category.id" class="flex align-c" v-if="categoryMap.length">
+              <span class="info">{{category.tp_category_name}}</span>
+              <span class="mr-10 ml-10 font-12">对应抖店分类</span>
+              <span class="primary mr-10" @click="changeCategory(category)">{{category.dy_category_name}}</span>
+              <el-switch v-model="category.is_open" class="ml-5 mr-10" @change="changeCategoryOpen(category)"/>
+              <span class="primary" @click="deleteCategory(category)" >删除</span>
+            </div>
+            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 && !categoryVisible" @click="categoryVisible = true">点击展开类目匹配</span>
+            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 &&  categoryVisible" @click="categoryVisible = false">点击合并类目匹配</span>
+            <div v-if="!categoryMap.length">无，可以在 搬家列表-基本信息 中设置</div>
+          </div>
+        </el-form-item>
         <!-- 品牌 -->
         <el-form-item required label="品牌统一为:" style="margin-bottom: 20px;" class="migrateSetting-brand">
           <el-select v-model="default_brand_id" placeholder="默认无品牌设置" style="width:280px;margin-right:12px"
@@ -295,6 +313,7 @@ export default {
   },
   data () {
     return {
+      categoryVisible: false,
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
         { label: '品牌', className: '.migrateSetting-brand' },
@@ -397,7 +416,10 @@ export default {
         common.productStatus.FAILED,
         common.productStatus.REJECT
       ],
-      settingKeys: []
+      settingKeys: [],
+      categoryMap: [],
+      loadingCategoryMap: false,
+      changeCategoryVisible: false
     }
   },
   created () {
@@ -477,6 +499,12 @@ export default {
       return {
         'file_name': 'detail_last'
       }
+    },
+    showCategoryMap () {
+      if (this.categoryVisible) return this.categoryMap
+      let categoryMap = this.categoryMap
+      categoryMap = categoryMap.slice(0, 2)
+      return categoryMap
     },
     rules () {
       const checkMaxSkuStock = (rule, value, callback) => {
@@ -578,6 +606,8 @@ export default {
       const newImageBlackWords = [...imageBlackWords].filter(
         (item) => !originImageBlackWords.has(item)
       )
+
+      // 分类
       return (
         isEqualSetting && !newBlackWords.length && !newImageBlackWords.length && isEqualStatusList
       )
@@ -656,13 +686,14 @@ export default {
       try {
         this.loadingSettings = true
         const self = this
-        let [setting, blackWords, imgBlackWords] = await Promise.all([
+        let [ setting, blackWords, imgBlackWords ] = await Promise.all([
           Api.hhgjAPIs.getMigrateSetting({}),
           Api.hhgjAPIs.getBlackWordList({}),
           Api.hhgjAPIs.getBlackWordList({
             use_type: 1
           }),
-          self.loadData()
+          self.loadData(),
+          self.loadCategoryMapList()
         ])
         let originMigrateSetting = {}
         let settingKeys = []
@@ -894,13 +925,35 @@ export default {
       }
       this.imgTagLoading = false
     },
-    onChangeCate (category) {
-      if (!category || (category && !category.id)) {
-        return this.$message.error('请选择分类')
+    async onChangeCate (category) {
+      // 修改类目预设
+      if (this.changeCategoryVisible) {
+        try {
+          const categoryMap = {
+            tp_id: this.changeCategorydata.tp_id,
+            tp_cid: this.changeCategorydata.tp_cid,
+            dy_cid: category.id,
+            is_open: Number(this.changeCategorydata.is_open)
+          }
+          await Api.hhgjAPIs.userCategoryMapCreate({
+            category_map_list: JSON.stringify([categoryMap])
+          })
+          this.$message.success('修改成功')
+          this.visvileCategory = false
+          this.changeCategoryVisible = false
+          this.loadCategoryMapList()
+        } catch (err) {
+          this.$message.error(`${err}`)
+        }
+      // 修改统一类目
+      } else {
+        if (!category || (category && !category.id)) {
+          return this.$message.error('请选择分类')
+        }
+        this.visvileCategory = false
+        this.default_category = category
+        this.default_category_id = category.id
       }
-      this.visvileCategory = false
-      this.default_category = category
-      this.default_category_id = category.id
     },
     chooseCategory () {
       this.visvileCategory = true
@@ -917,6 +970,25 @@ export default {
         this.loadingBrandList = false
       } catch (err) {
         this.loadingBrandList = false
+        this.$message.error(`${err}`)
+      }
+      return Promise.resolve(true)
+    },
+    async loadCategoryMapList () {
+      this.loadingCategoryMap = true
+      try {
+        const categoryMap = await Api.hhgjAPIs.userCategoryMapList({})
+        // 类目匹配
+        console.log(categoryMap, 'categoryMap')
+        this.categoryMap = categoryMap.map(item => {
+          return {
+            ...item,
+            is_open: Boolean(item.is_open)
+          }
+        })
+        this.loadingCategoryMap = false
+      } catch (err) {
+        this.loadingCategoryMap = false
         this.$message.error(`${err}`)
       }
       return Promise.resolve(true)
@@ -978,6 +1050,42 @@ export default {
           common.productStatus.FAILED,
           common.productStatus.REJECT
         ]
+      }
+    },
+    changeCategory (category) {
+      this.changeCategorydata = category
+      console.log(this.changeCategorydata)
+      this.visvileCategory = true
+      this.changeCategoryVisible = true
+    },
+    async changeCategoryOpen (category) {
+      try {
+        const categoryMap = {
+          tp_id: category.tp_id,
+          tp_cid: category.tp_cid,
+          dy_cid: category.dy_cid,
+          is_open: Number(category.is_open)
+        }
+        await Api.hhgjAPIs.userCategoryMapCreate({
+          category_map_list: JSON.stringify([categoryMap])
+        })
+        this.$message.success('修改成功')
+        this.visvileCategory = false
+        this.changeCategoryVisible = false
+        this.loadCategoryMapList()
+      } catch (err) {
+        this.$message.error(`${err}`)
+      }
+    },
+    async deleteCategory (category) {
+      try {
+        await Api.hhgjAPIs.userUserCategoryMapDelete({
+          id_list: JSON.stringify([category.id])
+        })
+        this.$message.success('删除成功')
+        this.loadCategoryMapList()
+      } catch (err) {
+        this.$message.error(`${err}`)
       }
     }
   }
