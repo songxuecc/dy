@@ -37,17 +37,11 @@
                       <!-- <div class="font-12 ">类目 <span class="primary pointer">点击选择</span> <span class="info">zhuzhai</span> </div> -->
 
                       <div class="flex align-c " style="height:28px">
-                          <span class="mr-5">类目:</span>
-                          <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
-                            type="text">点击选择类目</el-button>
-                          <a class="skeleton skeleton-item" v-if="!default_category" style="width:100px;height:18px"/>
-                          <span class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
-                            <el-tooltip :content="default_category && default_category.name"
-                              :disabled="default_category.name && default_category.name.length < 18">
-                              <el-button size="mini" type="text" @click="chooseCategory" class="brand">
-                                {{default_category && default_category.name}}</el-button>
-                            </el-tooltip>
+                          <span class="mr-5" style="flex:1">类目:
+                            <span>{{scope.row.category_show}}</span>
                           </span>
+                          <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"
+                          type="text">点击选择类目</el-button>
                       </div>
                       <div class="font-12 flex align-c"><span style="flex:1" class="flex align-c" >来源类目:&nbsp;
                         <el-tooltip :content="scope.row.origin_category_name" v-if="scope.row.origin_category_name" placement="top"><span class="info ellipsis " style="width:150px">{{scope.row.origin_category_name}}</span></el-tooltip>
@@ -316,7 +310,7 @@
           </span>
         </el-dialog>
         <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
-          <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
+          <categorySelectView ref="categorySelectView" @changeCate="onChangeCate"  v-loading="changeCategoryLoading"/>
         </el-dialog>
         <ModalSourceCategory  ref="ModalSourceCategory"/>
     </div>
@@ -328,6 +322,7 @@ import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
 import CategorySelectView from '@/components/CategorySelectView'
 import ModalSourceCategory from './ModalSourceCategory'
+import Api from '@/api/apis'
 
 export default {
   inject: ['reload'],
@@ -363,7 +358,8 @@ export default {
       visvileCategory: false,
       default_category: {},
       default_category_id: undefined,
-      sourceCategory: {}
+      sourceCategory: {},
+      changeCategoryLoading: false
     }
   },
   computed: {
@@ -921,23 +917,39 @@ export default {
       this.order_by = obj[command].order_by
       this.$emit('sortByTime', obj[command].order_by)
     },
-    onChangeCate (category) {
+    async onChangeCate (category) {
       if (!category || (category && !category.id)) {
         return this.$message.error('请选择分类')
       }
-      this.visvileCategory = false
-      this.default_category = category
-      this.default_category_id = category.id
+      this.changeCategoryLoading = true
+      const list = [this.selectCategoryRow.tp_product_id]
+      try {
+        const data = await Api.hhgjAPIs.batchUpdateCategory({
+          tp_product_ids: list,
+          cid: category.id
+        })
+        this.visvileCategory = false
+        this.changeCategoryLoading = false
+        const productIndex = this.tpProductList.findIndex(item => item.tp_product_id === this.selectCategoryRow.tp_product_id)
+        const product = this.tpProductList[productIndex]
+        product.category_show = data[0].category_show
+        product.category_id = data[0].category_id
+        this.$set('tpProductList', productIndex, product)
+        this.$message.success('修改成功')
+      } catch (err) {
+        this.changeCategoryLoading = false
+        this.$message.error(`${err}`)
+      }
     },
-    chooseCategory () {
+    chooseCategory (row) {
       this.visvileCategory = true
+      this.selectCategoryRow = row
     },
     removeCategory () {
       this.default_category = {}
       this.default_category_id = 0
     },
     handleMatchCategory (row) {
-      console.log(this.$refs.ModalSourceCategory, 'this.$refs.ModalSourceCategory.')
       this.$refs.ModalSourceCategory.open(row)
     },
     confirmSourceCategoryVisible () {

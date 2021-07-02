@@ -8,7 +8,7 @@
       width="35%"
       v-hh-modal
     >
-      <div class="left">
+      <div class="left" >
         <div class="mb-5 color-333 flex align-c">
           以后复制
           <span class="color-danger align-c ml-10" style="display:inline-flex;">
@@ -64,7 +64,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="plain" @click="visible = false" style="width:100px" >取消</el-button>
-        <el-button type="primary" @click="confirmDeleteProduct" style="width:100px" >确定</el-button>
+        <el-button type="primary" @click="confirmDeleteProduct" style="width:100px" :disabled="loading" :loading="loading" >确定</el-button>
       </span>
     </el-dialog>
 
@@ -83,6 +83,7 @@
 
 <script>
 import CategorySelectView from '@/components/CategorySelectView'
+import Api from '@/api/apis'
 
 export default {
   name: 'ModalSourceCategory',
@@ -99,13 +100,15 @@ export default {
       default_category_id: undefined,
       visible: false,
       is_open: true,
-      row: {}
+      row: {},
+      loading: false
     }
   },
   methods: {
     open (row) {
       this.visible = true
       this.row = row
+      console.log(row, 'row')
     },
     onChangeCate (category) {
       console.log(category, 'category')
@@ -123,8 +126,27 @@ export default {
       this.default_category = {}
       this.default_category_id = 0
     },
-    confirmDeleteProduct () {
-      this.visible = true
+    async confirmDeleteProduct () {
+      const categoryMap = {
+        tp_id: this.row.tp_id,
+        tp_cid: this.row.origin_category_id,
+        dy_cid: this.default_category_id,
+        is_open: Number(this.is_open)
+      }
+      this.loading = true
+      try {
+        await Api.hhgjAPIs.userCategoryMapCreate({
+          category_map_list: JSON.stringify([categoryMap])
+        })
+        this.loading = false
+        this.$message.success('保存成功')
+        this.visible = false
+        this.default_category = {}
+        this.default_category_id = undefined
+      } catch (err) {
+        this.loading = false
+        this.$message.error(`${err}`)
+      }
     },
     getIcon (product) {
       if (product.source === '淘宝') {

@@ -392,6 +392,9 @@ const hhgjAPIs = {
   },
   getTaskNums: (params) => {
     return api.actionCreateGet('/api/system/monitor/query', params)
+  },
+  userCategoryMapCreate: (params) => {
+    return api.actionCreatorPost('/api/user/category_map/create', params)
   }
 }
 
