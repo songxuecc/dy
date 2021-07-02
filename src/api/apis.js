@@ -373,7 +373,7 @@ const hhgjAPIs = {
     return api.actionCreatorPost('/api/user/setting/update', params)
   },
   hhTaskProductOverview: (params) => {
-    return api.actionCreateGet('/api/hh_task/product/overview', params)
+    return api.actionCreatorPost('/api/hh_task/product/overview', params)
   },
   hhTaskCreate: (params) => {
     return api.actionCreatorPost('/api/hh_task/create', params)
