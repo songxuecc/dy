@@ -342,8 +342,8 @@
               </el-tab-pane>
               <el-tab-pane v-if="quarlityList.length" label="服务与资质">
                   <el-form class="setting-content" style="height: 460px">
-                      <el-form-item v-for="(quarlity) in quarlityList" :key="quarlity.quarlity_key" :label="quarlity.quarlity_name + ':'">
-                        <PictureQualification />
+                      <el-form-item v-for="(quarlitys) in quarlityList" :key="quarlitys.quarlity_key" :label="quarlitys.quarlity_name + ':'">
+                        <PictureQualification :quarlitys="quarlity"/>
                       </el-form-item>
                   </el-form>
               </el-tab-pane>
