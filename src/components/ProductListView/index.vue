@@ -45,7 +45,7 @@
                         <span class="flex align-c" style="flex:1">
                           <span style="flex-shrink: 0;">来源类目: </span>
                           <el-tooltip :content="scope.row.origin_category_name" v-if="scope.row.origin_category_name" placement="top">
-                            <span class="info ellipsis " >{{scope.row.origin_category_name}}</span>
+                            <span class="info ellipsis " style="max-width:235px">{{scope.row.origin_category_name}}</span>
                           </el-tooltip>
                           <div v-else class="info">无</div>
                         </span>
@@ -316,7 +316,7 @@
         <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
           <categorySelectView ref="categorySelectView" @changeCate="onChangeCate"  v-loading="changeCategoryLoading"/>
         </el-dialog>
-        <ModalSourceCategory  ref="ModalSourceCategory"/>
+        <ModalSourceCategory  ref="ModalSourceCategory" @onChange="onChangeModalSourceCategory"/>
     </div>
 </template>
 <script>
@@ -327,6 +327,7 @@ import request from '@/mixins/request.js'
 import CategorySelectView from '@/components/CategorySelectView'
 import ModalSourceCategory from './ModalSourceCategory'
 import Api from '@/api/apis'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   inject: ['reload'],
@@ -924,6 +925,8 @@ export default {
     async onChangeCate (category) {
       if (!category || (category && !category.id)) {
         return this.$message.error('请选择分类')
+      } else if (isEmpty(this.selectCategoryRow)) {
+        return this.$message.error('没有要修改的数据')
       }
       this.changeCategoryLoading = true
       const list = [this.selectCategoryRow.tp_product_id]
@@ -936,6 +939,7 @@ export default {
         this.changeCategoryLoading = false
         this.tpProductList.forEach((item, index) => {
           if (item.tp_product_id === this.selectCategoryRow.tp_product_id) {
+            this.selectCategoryRow = {}
             this.$set(item, 'category_show', data[0].category_show)
             this.$set(item, 'category_id', data[0].category_id)
             this.$message.success('修改成功')
@@ -955,9 +959,17 @@ export default {
       this.default_category_id = 0
     },
     handleMatchCategory (row) {
+      this.selectCategoryRow = row
       this.$refs.ModalSourceCategory.open(row)
     },
-    confirmSourceCategoryVisible () {
+    onChangeModalSourceCategory (category) {
+      this.tpProductList.forEach((item, index) => {
+        if (item.tp_product_id === this.selectCategoryRow.tp_product_id) {
+          this.$set(item, 'category_show', category.category_show)
+          this.$set(item, 'category_id', category.category_id)
+          this.selectCategoryRow = {}
+        }
+      })
       // this.sourceCategory =
     }
   }

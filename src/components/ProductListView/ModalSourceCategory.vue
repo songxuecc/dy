@@ -7,8 +7,9 @@
       :visible.sync="visible"
       width="35%"
       v-hh-modal
+
     >
-      <div class="left" >
+      <div class="left" v-loading="loading">
         <div class="mb-5 color-333 flex align-c">
           以后复制
           <span class="color-danger align-c ml-10" style="display:inline-flex;">
@@ -19,6 +20,7 @@
         <div class="color-primary ml-20">{{ row.origin_category_name }}</div>
         <div class="ml-20">
           分类下的商品，均匹配当前选择的抖店分类<el-switch
+
             v-model="is_open"
             class="ml-10"
           ></el-switch>
@@ -108,8 +110,6 @@ export default {
         tp_cid: row.origin_category_id
       })
       this.loading = false
-      console.log(row, 'row')
-
       if (!isEmpty(data)) {
         this.is_open = Boolean(data.is_open)
         this.default_category = {
@@ -118,12 +118,12 @@ export default {
         }
         this.default_category_id = data.dy_cid
       } else {
-        this.is_open = true
-        this.default_category = {
-          name: row.category_show,
-          id: row.category_id
-        }
-        this.default_category_id = row.category_id
+        // this.is_open = true
+        // this.default_category = {
+        //   name: row.category_show,
+        //   id: row.category_id
+        // }
+        // this.default_category_id = row.category_id
       }
     },
     onChangeCate (category) {
@@ -150,14 +150,21 @@ export default {
         is_open: Number(this.is_open)
       }
 
+      const list = [this.row.tp_product_id]
+
       if (!this.default_category_id) {
-        this.$message.warning('请选择分类')
+        return this.$message.warning('请选择分类')
       }
       this.loading = true
       try {
         await Api.hhgjAPIs.userCategoryMapCreate({
           category_map_list: JSON.stringify([categoryMap])
         })
+        const data = await Api.hhgjAPIs.batchUpdateCategory({
+          tp_product_ids: list,
+          cid: this.default_category_id
+        })
+        this.$emit('onChange', data[0])
         this.loading = false
         this.$message.success('保存成功')
         this.visible = false
