@@ -34,12 +34,11 @@
                     </el-link><br>
                     <div>
                       <div class="flex align-c " style="height:28px">
-                          <span class="mr-5" style="flex:1">类目:
-                            <span v-if="scope.row.category_show" class="info">{{scope.row.category_show}}</span>
+                          <span class="mr-5">类目:
+                            <span v-if="scope.row.category_show" class="info">{{getCategoryShow(scope.row.category_show)}}</span>
                             <span v-if="!scope.row.category_show" class="info">无</span>
                           </span>
-                          <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"
-                          type="text">选择类目</el-button>
+                          <hh-icon type="iconbianji-primary" class="pointer" style="font-size:12px;margin-top:4px" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"/>
                       </div>
                       <div class="font-12 flex align-c" v-if="scope.row.origin_category_name">
                         <span class="flex align-c" style="flex:1">
@@ -971,6 +970,12 @@ export default {
         }
       })
       // this.sourceCategory =
+    },
+    getCategoryShow (categoryName) {
+      if (categoryName.includes('>')) {
+        return categoryName.split('>').pop()
+      }
+      return categoryName
     }
   }
 }
