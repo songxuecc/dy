@@ -29,7 +29,7 @@
     </div>
 </template>
 <script>
-import productListView from '@/components/ProductListView.vue'
+import productListView from '@/components/ProductListView'
 import request from '@/mixins/request.js'
 import { mapGetters, mapActions } from 'vuex'
 export default {
