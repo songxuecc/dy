@@ -18,7 +18,7 @@
         </div>
         <div class="color-primary ml-20">{{ row.origin_category_name }}</div>
         <div class="ml-20">
-          分类下的商品，均匹配桑前选择的抖店分类<el-switch
+          分类下的商品，均匹配当前选择的抖店分类<el-switch
             v-model="is_open"
             class="ml-10"
           ></el-switch>
@@ -33,7 +33,7 @@
           @click="chooseCategory"
           class="font-14"
           type="text"
-          >点击选择类目</el-button
+          >选择类目</el-button
         >
         <a
           class="skeleton skeleton-item"
@@ -57,7 +57,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="plain" @click="visible = false" style="width:100px" >取消</el-button>
-        <el-button type="primary" @click="confirmDeleteProduct" style="width:100px" :disabled="loading" :loading="loading" >确定</el-button>
+        <el-button type="primary" @click="confirmDeleteProduct" style="width:100px" :disabled="loading" :loading="loading" >{{loading ? '加载中':'确定'}}</el-button>
       </span>
     </el-dialog>
 

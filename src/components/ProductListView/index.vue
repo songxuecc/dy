@@ -27,28 +27,31 @@
                     <!-- <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail"> -->
                 </template>
             </el-table-column>
-            <el-table-column label="基本信息"  width="300">
+            <el-table-column label="基本信息"  width="330">
                 <template slot-scope="scope">
                     <el-link  :href="scope.row.url" target="_blank" :underline="false"  class="font-13">
                         {{ scope.row.title }}
                     </el-link><br>
-
                     <div>
-                      <!-- <div class="font-12 ">类目 <span class="primary pointer">点击选择</span> <span class="info">zhuzhai</span> </div> -->
-
                       <div class="flex align-c " style="height:28px">
                           <span class="mr-5" style="flex:1">类目:
                             <span v-if="scope.row.category_show" class="info">{{scope.row.category_show}}</span>
                             <span v-if="!scope.row.category_show" class="info">无</span>
                           </span>
                           <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"
-                          type="text">点击选择类目</el-button>
+                          type="text">选择类目</el-button>
                       </div>
-                      <div class="font-12 flex align-c"><span style="flex:1" class="flex align-c" >来源类目:&nbsp;
-                        <el-tooltip :content="scope.row.origin_category_name" v-if="scope.row.origin_category_name" placement="top"><span class="info ellipsis " style="width:150px">{{scope.row.origin_category_name}}</span></el-tooltip>
-                        <div v-else class="info">无</div>
-                        </span> <span class="primary pointer" @click="handleMatchCategory(scope.row)" v-if="scope.row.origin_category_name">类目匹配设置</span>
+                      <div class="font-12 flex align-c">
+                        <span class="flex align-c" style="flex:1">
+                          <span style="flex-shrink: 0;">来源类目: </span>
+                          <el-tooltip :content="scope.row.origin_category_name" v-if="scope.row.origin_category_name" placement="top">
+                            <span class="info ellipsis " >{{scope.row.origin_category_name}}</span>
+                          </el-tooltip>
+                          <div v-else class="info">无</div>
+                        </span>
+                        <div style="flex-shrink: 0;" ><span class="primary pointer" @click="handleMatchCategory(scope.row)" v-if="scope.row.origin_category_name">类目设置</span></div>
                       </div>
+
                     </div>
                     <div class="flex align-c wrap">
                       <span class="flex align-c" style="margin-right:27px">
