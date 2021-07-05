@@ -930,7 +930,7 @@ export default {
       this.changeCategoryLoading = true
       const list = [this.selectCategoryRow.tp_product_id]
       try {
-        const data = await Api.hhgjAPIs.batchUpdateCategory({
+        await Api.hhgjAPIs.batchUpdateCategory({
           tp_product_ids: list,
           cid: category.id
         })
@@ -939,8 +939,7 @@ export default {
         this.tpProductList.forEach((item, index) => {
           if (item.tp_product_id === this.selectCategoryRow.tp_product_id) {
             this.selectCategoryRow = {}
-            this.$set(item, 'category_show', data[0].category_show)
-            this.$set(item, 'category_id', data[0].category_id)
+            this.reload()
             this.$message.success('修改成功')
           }
         })
@@ -962,14 +961,7 @@ export default {
       this.$refs.ModalSourceCategory.open(row)
     },
     onChangeModalSourceCategory (category) {
-      this.tpProductList.forEach((item, index) => {
-        if (item.tp_product_id === this.selectCategoryRow.tp_product_id) {
-          this.$set(item, 'category_show', category.category_show)
-          this.$set(item, 'category_id', category.category_id)
-          this.selectCategoryRow = {}
-        }
-      })
-      // this.sourceCategory =
+      this.reload()
     },
     getCategoryShow (categoryName) {
       if (categoryName.includes('>')) {
