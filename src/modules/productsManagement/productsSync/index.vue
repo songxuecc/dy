@@ -53,7 +53,7 @@
     </div>
 </template>
 <script>
-import productListView from '@/components/ProductListView.vue'
+import productListView from '@/components/ProductListView'
 import productsSyncSetting from '@/components/ProductsSyncSetting.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'

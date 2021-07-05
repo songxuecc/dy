@@ -78,6 +78,9 @@
 .primary {
   color: @color-primary;
   font-size: 12px;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .success {
@@ -369,4 +372,12 @@
 ::placeholder {
   color: #BFBFBF;
   font-size: 12px;
+}
+
+
+.ellipsis{
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
