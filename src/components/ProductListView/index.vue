@@ -41,10 +41,10 @@
                           <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"
                           type="text">选择类目</el-button>
                       </div>
-                      <div class="font-12 flex align-c">
+                      <div class="font-12 flex align-c" v-if="scope.row.origin_category_name">
                         <span class="flex align-c" style="flex:1">
-                          <span style="flex-shrink: 0;">来源类目: </span>
-                          <el-tooltip :content="scope.row.origin_category_name" v-if="scope.row.origin_category_name" placement="top">
+                          <span style="flex-shrink: 0;" >来源类目: </span>
+                          <el-tooltip :content="scope.row.origin_category_name"  placement="top" v-if="scope.row.origin_category_name">
                             <span class="info ellipsis " style="max-width:235px">{{scope.row.origin_category_name}}</span>
                           </el-tooltip>
                           <div v-else class="info">无</div>
