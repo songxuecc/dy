@@ -340,6 +340,13 @@
                       </el-row>
                   </el-form>
               </el-tab-pane>
+              <el-tab-pane v-if="quarlityList.length" label="服务与资质">
+                  <el-form class="setting-content" style="height: 460px">
+                      <el-form-item v-for="(quarlity) in quarlityList" :key="quarlity.quarlity_key" :label="quarlity.quarlity_name + ':'">
+                        <PictureQualification />
+                      </el-form-item>
+                  </el-form>
+              </el-tab-pane>
           </el-tabs>
 
         <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" @opened="onOpenedCate" append-to-body center>
@@ -519,6 +526,7 @@ import categorySelectView from '@/components/CategorySelectView'
 import picturesUploadView from '@/components/PicturesUploadView'
 import PropertySet from './PropertySet.vue'
 import SkuSelect from './SkuSelect.vue'
+import PictureQualification from './PictureQualification.vue'
 
 export default {
   inject: ['reload'],
@@ -527,7 +535,8 @@ export default {
     categorySelectView,
     picturesUploadView,
     PropertySet,
-    SkuSelect
+    SkuSelect,
+    PictureQualification
   },
   props: {
     belongType: {
@@ -552,6 +561,7 @@ export default {
       descPicUrlList: [],
       shopBrandList: [],
       origionAttr: {},
+      quarlityList: [],
       isShowTemplateTab: false,
       saveBtnText: '保存',
       checkedRefundable: false,
@@ -731,6 +741,7 @@ export default {
         this.descPicUrlList = [...this.product.model.descPicUrlList]
         // this.$refs['descPicListView'].curPictureList = this.product.model.descPicUrlList
         this.origionAttr = this.product.model.originAttr
+        this.quarlityList = [...this.product.model.quarlityList]
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
       }
@@ -786,6 +797,13 @@ export default {
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
+        // this.quarlityList = data.quarlityList ? data.quarlityList : []
+        this.quarlityList = [{
+          is_required: 0,
+          quarlity_attachments: [],
+          quarlity_key: 12312312321,
+          quarlity_name: 'quarlity_name'
+        }]
         this.attribute_json = isEmpty(data.attribute_json) ? [] : data.attribute_json
         this.bannerPicUrlList = data.banner_json
         this.descPicUrlList = data.desc_json
@@ -803,6 +821,7 @@ export default {
         this.product.assign({specifications: this.specifications})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
+        this.product.assign({quarlityList: [...this.quarlityList]})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         const brand = (!isEmpty(data.attribute_json) ? data.attribute_json : []).find(item => item.name === '品牌')
         // 设置品牌是否必填
@@ -817,6 +836,8 @@ export default {
         this.skuShowList = this.product.model.skuShowList
         this.sortSkuKeys = this.product.model.sortSkuKeys
         this.specifications = this.product.model.specifications
+        this.quarlityList = this.product.model.quarlityList
+        console.log(this.quarlityList, 'this.quarlityList')
 
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
