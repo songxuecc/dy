@@ -340,11 +340,9 @@
                       </el-row>
                   </el-form>
               </el-tab-pane>
-              <el-tab-pane v-if="quarlityList.length" label="服务与资质">
-                  <el-form class="setting-content" style="height: 460px">
-                      <el-form-item v-for="(quarlitys) in quarlityList" :key="quarlitys.quarlity_key" :label="quarlitys.quarlity_name + ':'">
-                        <PictureQualification :quarlitys="quarlitys.quarlity_attachments" />
-                      </el-form-item>
+              <el-tab-pane v-if="qualityList.length" label="服务与资质">
+                  <el-form class="setting-content">
+                      <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange"/>
                   </el-form>
               </el-tab-pane>
           </el-tabs>
@@ -527,7 +525,7 @@ import picturesUploadView from '@/components/PicturesUploadView'
 import PropertySet from './PropertySet.vue'
 import SkuSelect from './SkuSelect.vue'
 import PictureQualification from './PictureQualification.vue'
-
+import shortid from 'shortid'
 export default {
   inject: ['reload'],
   mixins: [request, skuHandlerProductNewEdit],
@@ -554,14 +552,14 @@ export default {
       batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList', 'quality_list'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
       descPicUrlList: [],
       shopBrandList: [],
       origionAttr: {},
-      quarlityList: [],
+      qualityList: [],
       isShowTemplateTab: false,
       saveBtnText: '保存',
       checkedRefundable: false,
@@ -716,7 +714,7 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications'
+          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications', 'quality_list'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -741,7 +739,7 @@ export default {
         this.descPicUrlList = [...this.product.model.descPicUrlList]
         // this.$refs['descPicListView'].curPictureList = this.product.model.descPicUrlList
         this.origionAttr = this.product.model.originAttr
-        this.quarlityList = [...this.product.model.quarlityList]
+        this.qualityList = [...this.product.model.qualityList]
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
       }
@@ -791,19 +789,24 @@ export default {
         this.isLoading = false
       })
     },
+    formatqualityList (qualityList) {
+      return qualityList.map(item => {
+        item.quality_attachments = item.quality_attachments.map(i => {
+          i.uid = item.url
+          return i
+        })
+        return item
+      })
+    },
     updateProperty (tpProductId) {
       this.isLoading = true
       const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
-        // this.quarlityList = data.quarlityList ? data.quarlityList : []
-        this.quarlityList = [{
-          is_required: 0,
-          quarlity_attachments: [],
-          quarlity_key: 12312312321,
-          quarlity_name: 'quarlity_name'
-        }]
+        // this.qualityList = data.quality_list ? data.quality_list : []
+        const qualityList = data.quality_list ? data.quality_list : []
+        this.qualityList = this.formatqualityList(qualityList)
         this.attribute_json = isEmpty(data.attribute_json) ? [] : data.attribute_json
         this.bannerPicUrlList = data.banner_json
         this.descPicUrlList = data.desc_json
@@ -821,7 +824,7 @@ export default {
         this.product.assign({specifications: this.specifications})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
-        this.product.assign({quarlityList: [...this.quarlityList]})
+        this.product.assign({qualityList: [...this.qualityList]})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         const brand = (!isEmpty(data.attribute_json) ? data.attribute_json : []).find(item => item.name === '品牌')
         // 设置品牌是否必填
@@ -836,8 +839,8 @@ export default {
         this.skuShowList = this.product.model.skuShowList
         this.sortSkuKeys = this.product.model.sortSkuKeys
         this.specifications = this.product.model.specifications
-        this.quarlityList = this.product.model.quarlityList
-        console.log(this.quarlityList, 'this.quarlityList')
+        this.qualityList = this.product.model.qualityList
+        console.log(this.qualityList, 'this.qualityList')
 
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
@@ -1077,7 +1080,8 @@ export default {
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
                 brand_id: brandId,
-                recommend_remark: product.model.recommend_remark
+                recommend_remark: product.model.recommend_remark,
+                quality_list: product.model.quality_list
               }
             }
             tpProductList.push(productParams)
@@ -1693,6 +1697,9 @@ export default {
         this.$set(row, borderKey, false)
         this.priceEditError = false
       }
+    },
+    handlePictureQualificationChange (data) {
+      Object.assign(this.product.model, {quality_list: data})
     },
     objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
       const end = this.specifications.length + 3

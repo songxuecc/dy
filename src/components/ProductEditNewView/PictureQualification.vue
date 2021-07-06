@@ -1,10 +1,11 @@
 <!-- 资质图片 -->
 <template>
-  <div class="flex wrap">
+  <div>
+    <el-form-item class="flex wrap" v-for="(quality, index) in qualitys" :key="index"  :label="quality.quality_name + ':'" :required="quality.is_required" label-width="100px">
     <div
-      v-for="(file, index) in quarlitys"
+      v-for="(file, index) in quality.quality_attachments"
       :key="index"
-      class="el-upload--picture-card"
+      class="el-upload--picture-card "
     >
       <el-image
         class="PictureQualification__item-thumbnail"
@@ -24,7 +25,7 @@
         <span
           v-if="!disabled"
           class="PictureQualification__item-delete"
-          @click="handleRemove(file)"
+          @click="handleRemove(file, quality.quality_attachments)"
         >
           <i class="el-icon-delete"></i>
         </span>
@@ -35,7 +36,7 @@
       class="PictureQualification--picture-card"
       :on-success="
         (response, file, fileList) =>
-          handleUploadSuccess(response, file, fileList, specificationValue)
+          handleUploadSuccess(response, file, fileList, quality.quality_attachments)
       "
       :on-error="handleUploadError"
       :before-upload="handleBeforeUpload"
@@ -44,9 +45,9 @@
       :multiple="true"
       :limit="limit"
       :on-exceed="imageExceedHandler"
-      :file-list="quarlitys"
+      :file-list="quality.quality_attachments"
       :show-file-list="false"
-      v-if="quarlitys.length < limit"
+      v-if="quality.quality_attachments && quality.quality_attachments.length < limit"
     >
       <span
         class="flex column align-c justify-c"
@@ -54,26 +55,25 @@
         style="line-height: 28px; padding-top: 12px"
       >
         <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
-        <span class="uploader-text">({{ quarlitys.length }}/{{ limit }})</span>
+        <span class="uploader-text">({{ quality.quality_attachments && quality.quality_attachments.length }}/{{ limit }})</span>
       </span>
     </el-upload>
+  </el-form-item>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import cloneDeep from 'lodash/cloneDeep'
 export default {
   name: 'PictureQualification',
   props: {
-    msg: String
+    qualitys: Array
   },
   data () {
     return {
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
-      quarlitys: [],
       limit: 20
     }
   },
@@ -83,25 +83,29 @@ export default {
     })
   },
   watch: {
-    quarlitys (n) {}
+    qualitys (n) {
+      console.log(n)
+    }
   },
   methods: {
     imageExceedHandler (files, fileList) {
       this.$message.error('图片最多上传' + this.limit + '张')
     },
-    handleRemove (file) {
-      const arr = []
-      this.quarlitys.forEach((item) => {
-        if (item.url !== file.url) {
-          arr.push(item)
+    handleRemove (file, row) {
+      console.log(row)
+      const index = row.findIndex((item, index) => item.url === file.url)
+      row.splice(index, 1)
+
+      const nextqualitys = this.qualitys.map(item => {
+        return {
+          ...item,
+          media_type: 1
         }
       })
-      this.quarlitys = arr
-      this.$set(this, 'quarlitys', arr)
+      this.$emit('change', nextqualitys)
     },
     handlePictureCardPreview (file) {
       const refName = file.url
-      console.log(this.$refs[refName])
       if (
         this.$refs[refName] &&
         this.$refs[refName][0] &&
@@ -110,9 +114,6 @@ export default {
         this.$refs[refName][0].clickHandler()
       }
     },
-    handleDownload (file) {
-      console.log(file)
-    },
     handleUploadSuccess (response, file, fileList, row) {
       if (parseInt(response.code) !== 0) {
         if (response.msg) {
@@ -120,10 +121,17 @@ export default {
         }
         return
       }
-      this.quarlitys.push({
+      row.push({
         url: response.data.url
       })
-      console.log(this.quarlitys, this.quarlitys.length === this.limit)
+      console.log(this.qualitys)
+      const nextqualitys = this.qualitys.map(item => {
+        return {
+          ...item,
+          media_type: 1
+        }
+      })
+      this.$emit('change', nextqualitys)
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
