@@ -1,8 +1,9 @@
 <!-- 资质图片 -->
 <template>
-  <div>
-    <el-form-item class="flex wrap" v-for="(quality, index) in qualitys" :key="index"  :label="quality.quality_name + ':'" :required="quality.is_required" label-width="100px">
-    <div
+  <div style="margin-bottom:50px">
+    <el-form-item  v-for="(quality, index) in qualitys" :key="index"  :label="quality.quality_name + ':'" :required="quality.is_required" label-width="100px">
+    <div class="flex wrap">
+      <div
       v-for="(file, index) in quality.quality_attachments"
       :key="index"
       class="el-upload--picture-card "
@@ -58,6 +59,7 @@
         <span class="uploader-text">({{ quality.quality_attachments && quality.quality_attachments.length }}/{{ limit }})</span>
       </span>
     </el-upload>
+    </div>
   </el-form-item>
   </div>
 </template>
