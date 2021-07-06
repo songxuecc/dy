@@ -525,7 +525,7 @@ import picturesUploadView from '@/components/PicturesUploadView'
 import PropertySet from './PropertySet.vue'
 import SkuSelect from './SkuSelect.vue'
 import PictureQualification from './PictureQualification.vue'
-import shortid from 'shortid'
+import xorWith from 'lodash/xorWith'
 export default {
   inject: ['reload'],
   mixins: [request, skuHandlerProductNewEdit],
@@ -552,7 +552,7 @@ export default {
       batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList', 'qualityList'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -623,7 +623,7 @@ export default {
         if (!this.productDic[val.model.tp_product_id]) {
           return
         }
-        if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id]) {
+        if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id] || this.checkQualityList(val)) {
           this.productDic[val.model.tp_product_id].isEdit = true
         } else {
           this.productDic[val.model.tp_product_id].isEdit = false
@@ -683,6 +683,19 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    // 检查资质中心
+    checkQualityList (product) {
+      const originQualityList = product.originModel.quality_list
+      const qualityList = product.model.quality_list
+      if (qualityList.length !== originQualityList.length) return true
+      return qualityList.some((item, index) => {
+        const list = (item.quality_attachments || []).map(i => i.url)
+        const originList = (originQualityList[index].quality_attachments).map(i => i.url)
+        const section = xorWith(originList, list)
+        // console.log(section, originList, list, product, 'section')
+        return section.length
+      })
+    },
     getSpecifications (specifications) {
       return specifications.filter(item => {
         return item.specificationValueList.some(v => v.checked)
@@ -714,7 +727,7 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications', 'qualityList'
+          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -785,8 +798,8 @@ export default {
           this.product.assign({brand_id: data.brand_id})
         }
         // 设置 资质
-        this.product.assign({qualityList: data.quality_list ? data.quality_list : []})
-        this.qualityList = this.product.model.qualityList
+        this.product.assign({quality_list: data.quality_list ? data.quality_list : []})
+        this.qualityList = this.product.model.quality_list
         this.isLoading = false
       }, data => {
         this.isLoading = false
@@ -827,7 +840,7 @@ export default {
         this.product.assign({specifications: this.specifications})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
-        this.product.assign({qualityList: [...this.qualityList]})
+        this.product.assign({quality_list: [...this.qualityList]})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         const brand = (!isEmpty(data.attribute_json) ? data.attribute_json : []).find(item => item.name === '品牌')
         // 设置品牌是否必填
@@ -842,7 +855,7 @@ export default {
         this.skuShowList = this.product.model.skuShowList
         this.sortSkuKeys = this.product.model.sortSkuKeys
         this.specifications = this.product.model.specifications
-        this.qualityList = this.product.model.qualityList
+        this.qualityList = this.product.model.quality_list
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
 
@@ -1048,7 +1061,7 @@ export default {
       const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
       for (let i in this.productList) {
         let tpProductId = this.productList[i].tp_product_id
-        if (this.products[tpProductId] && this.products[tpProductId].isDiff()) {
+        if (this.products[tpProductId] && (this.products[tpProductId].isDiff() || this.checkQualityList(this.products[tpProductId]))) {
           if (tpProductId in this.products) {
             let product = this.products[tpProductId]
             // 品牌和属性内的品牌是同一个值
