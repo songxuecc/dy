@@ -21,7 +21,10 @@
         </el-form-item>
     </div>
 
-    <span class="click mr-20" style="align-content:right" @click="openDialogExport">抖店商品导出</span>
+    <span>
+      <span class="click mr-20" style="align-content:right" @click="openDialogExport">抖店商品导出</span>
+      <span class="click mr-20" style="align-content:right" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/lzteg9'">使用教程</span>
+    </span>
     <ModelGoodsExport :dialogExportVisible.sync="dialogExportVisible"/>
   </el-form>
 </template>

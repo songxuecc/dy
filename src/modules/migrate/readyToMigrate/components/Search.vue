@@ -1,5 +1,13 @@
 <template>
-  <div class="left">
+  <div class="left relative">
+    <span
+      class="click mr-20"
+      style="
+        align-content:right;
+        position: absolute;
+        right: 10px;
+        top: 15px;"
+      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/npys24'">使用教程</span>
     <el-tabs v-model="activeTab" @tab-click="handelTabClick">
       <el-tab-pane
         :label="tab.text"

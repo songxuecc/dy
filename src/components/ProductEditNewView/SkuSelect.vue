@@ -1,6 +1,13 @@
 <!--  -->
 <template>
   <div>
+    <el-alert
+    class="mb-10"
+    title="取消选择规格值， 就可以删除"
+    show-icon
+    :closable="false"
+    type="warning">
+  </el-alert>
     <div
       class="left"
       style="
