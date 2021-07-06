@@ -552,7 +552,7 @@ export default {
       batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList', 'quality_list'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList', 'qualityList'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -714,7 +714,7 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications', 'quality_list'
+          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications', 'qualityList'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -784,6 +784,9 @@ export default {
         if (data.brand_id) {
           this.product.assign({brand_id: data.brand_id})
         }
+        // 设置 资质
+        this.product.assign({qualityList: data.quality_list ? data.quality_list : []})
+        this.qualityList = this.product.model.qualityList
         this.isLoading = false
       }, data => {
         this.isLoading = false
@@ -840,8 +843,6 @@ export default {
         this.sortSkuKeys = this.product.model.sortSkuKeys
         this.specifications = this.product.model.specifications
         this.qualityList = this.product.model.qualityList
-        console.log(this.qualityList, 'this.qualityList')
-
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
 

@@ -84,11 +84,6 @@ export default {
       getTokenHeaders: 'getTokenHeaders'
     })
   },
-  watch: {
-    qualitys (n) {
-      console.log(n)
-    }
-  },
   methods: {
     imageExceedHandler (files, fileList) {
       this.$message.error('图片最多上传' + this.limit + '张')
