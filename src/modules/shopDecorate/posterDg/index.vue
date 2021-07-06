@@ -11,7 +11,7 @@
       </template>
     </el-menu-item>
     <span
-      class="click mr-20"
+      class="click mr-20 pointer"
       style="
         align-content:right;
         position: absolute;

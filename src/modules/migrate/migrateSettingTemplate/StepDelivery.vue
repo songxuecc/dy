@@ -1,5 +1,5 @@
 <template lang="html">
-     <div class="step-delivery setting-content-with-tip">
+     <div class="step-delivery left">
           <el-form
             label-width="120px"
             size="small"
@@ -236,6 +236,7 @@ export default {
 }
 
 .step-delivery {
+  margin-bottom: 20px;
   .info {
     color: #999999;
     font-size: 12px;

@@ -1,13 +1,6 @@
 <!--  -->
 <template>
   <div>
-    <el-alert
-    class="mb-10"
-    title="取消选择规格值， 就可以删除"
-    show-icon
-    :closable="false"
-    type="warning">
-  </el-alert>
     <div
       class="left"
       style="
@@ -121,6 +114,7 @@
           规格值<span class="index_count"
             >(已选{{ specification.skuSelectCheckList.length }}个)</span
           >
+          <span class="fail">取消选择规格值， 就可以删除</span>
         </div>
         <el-checkbox-group
           v-if="specification.specificationName"
