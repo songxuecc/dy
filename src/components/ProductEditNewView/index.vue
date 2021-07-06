@@ -1081,7 +1081,7 @@ export default {
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
                 brand_id: brandId,
                 recommend_remark: product.model.recommend_remark,
-                quality_list: product.model.quality_list
+                quality_list: product.model.quality_list || []
               }
             }
             tpProductList.push(productParams)
