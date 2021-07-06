@@ -685,8 +685,8 @@ export default {
     }),
     // 检查资质中心
     checkQualityList (product) {
-      const originQualityList = product.originModel.quality_list
-      const qualityList = product.model.quality_list
+      const originQualityList = product.originModel.quality_list || []
+      const qualityList = product.model.quality_list || []
       if (qualityList.length !== originQualityList.length) return true
       return qualityList.some((item, index) => {
         const list = (item.quality_attachments || []).map(i => i.url)
