@@ -96,7 +96,7 @@
                   :min="0"
                   class="input-number"></el-input-number>
                 <span>,&nbsp;&nbsp;剩余为阶梯发货库存&nbsp;&nbsp;&nbsp;(原商品库存 = 现货库存 + 阶梯库存)</span>
-                <div style="position: absolute;top: 28px;left: 80px;color: #E02020; font-size: 1px;">抖音规则：现货库存 > 阶梯</div>
+                <div style="position: absolute;top: 28px;left: 80px;color: #E02020; font-size: 1px;">抖音规则：现货库存 > 阶梯库存，否则会搬家失败</div>
             </el-form-item>
         </el-form>
     </div>
