@@ -1295,6 +1295,7 @@ export default {
       this.propertyBatchCatIdMap = new Map()
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
+      this.qualityList = this.product.model.quality_list
       this.skuShowList = this.product.model.skuShowList
       this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
       this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)

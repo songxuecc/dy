@@ -89,7 +89,6 @@ export default {
       this.$message.error('图片最多上传' + this.limit + '张')
     },
     handleRemove (file, row) {
-      console.log(row)
       const index = row.findIndex((item, index) => item.url === file.url)
       row.splice(index, 1)
 
@@ -121,7 +120,6 @@ export default {
       row.push({
         url: response.data.url
       })
-      console.log(this.qualitys)
       const nextqualitys = this.qualitys.map(item => {
         return {
           ...item,
