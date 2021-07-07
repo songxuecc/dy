@@ -8,7 +8,7 @@
         right: 10px;
         top: 15px;
         z-index:1"
-      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/npys24'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span>
+      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/dsibrc'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span>
     <el-tabs v-model="activeTab" @tab-click="handelTabClick">
       <el-tab-pane
         :label="tab.text"
