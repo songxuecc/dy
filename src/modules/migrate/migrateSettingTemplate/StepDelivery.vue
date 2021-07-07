@@ -1,5 +1,5 @@
 <template lang="html">
-     <div class="step-delivery setting-content-with-tip">
+     <div class="step-delivery left">
           <el-form
             label-width="120px"
             size="small"
@@ -96,6 +96,7 @@
                   :min="0"
                   class="input-number"></el-input-number>
                 <span>,&nbsp;&nbsp;剩余为阶梯发货库存&nbsp;&nbsp;&nbsp;(原商品库存 = 现货库存 + 阶梯库存)</span>
+                <div style="position: absolute;top: 28px;left: 80px;color: #E02020; font-size: 1px;">抖音规则：现货库存 > 阶梯 ,否则会搬家失败，库存设置可以在搬家列表，点击编辑-sku规格进行设置</div>
             </el-form-item>
         </el-form>
     </div>
@@ -235,6 +236,7 @@ export default {
 }
 
 .step-delivery {
+  margin-bottom: 20px;
   .info {
     color: #999999;
     font-size: 12px;

@@ -3,6 +3,15 @@
     <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
     </help-tips>
     <SettingAlert/>
+    <span
+      class="click mr-20 pointer"
+      style="
+        align-content:right;
+        position: absolute;
+        left: 450px;
+        top: 56px;
+        z-index:1"
+      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/dsibrc'">使用教程</span>
     <el-tabs v-model="activeName">
       <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
         <el-input type="textarea" :rows="10" :placeholder="`输入其他平台的商品链接地址，换行分隔多个链接，最多不超过${limit}个`" class="mb-20"

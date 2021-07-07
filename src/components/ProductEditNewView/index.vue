@@ -340,6 +340,11 @@
                       </el-row>
                   </el-form>
               </el-tab-pane>
+              <el-tab-pane v-if="qualityList.length" label="服务与资质">
+                  <el-form class="setting-content">
+                      <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange"/>
+                  </el-form>
+              </el-tab-pane>
           </el-tabs>
 
         <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" @opened="onOpenedCate" append-to-body center>
@@ -519,7 +524,8 @@ import categorySelectView from '@/components/CategorySelectView'
 import picturesUploadView from '@/components/PicturesUploadView'
 import PropertySet from './PropertySet.vue'
 import SkuSelect from './SkuSelect.vue'
-
+import PictureQualification from './PictureQualification.vue'
+import xorWith from 'lodash/xorWith'
 export default {
   inject: ['reload'],
   mixins: [request, skuHandlerProductNewEdit],
@@ -527,7 +533,8 @@ export default {
     categorySelectView,
     picturesUploadView,
     PropertySet,
-    SkuSelect
+    SkuSelect,
+    PictureQualification
   },
   props: {
     belongType: {
@@ -552,6 +559,7 @@ export default {
       descPicUrlList: [],
       shopBrandList: [],
       origionAttr: {},
+      qualityList: [],
       isShowTemplateTab: false,
       saveBtnText: '保存',
       checkedRefundable: false,
@@ -615,7 +623,7 @@ export default {
         if (!this.productDic[val.model.tp_product_id]) {
           return
         }
-        if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id]) {
+        if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id] || this.checkQualityList(val)) {
           this.productDic[val.model.tp_product_id].isEdit = true
         } else {
           this.productDic[val.model.tp_product_id].isEdit = false
@@ -675,6 +683,19 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    // 检查资质中心
+    checkQualityList (product) {
+      const originQualityList = product.originModel.quality_list || []
+      const qualityList = product.model.quality_list || []
+      if (qualityList.length !== originQualityList.length) return true
+      return qualityList.some((item, index) => {
+        const list = (item.quality_attachments || []).map(i => i.url)
+        const originList = (originQualityList[index].quality_attachments).map(i => i.url)
+        const section = xorWith(originList, list)
+        // console.log(section, originList, list, product, 'section')
+        return section.length
+      })
+    },
     getSpecifications (specifications) {
       return specifications.filter(item => {
         return item.specificationValueList.some(v => v.checked)
@@ -731,6 +752,7 @@ export default {
         this.descPicUrlList = [...this.product.model.descPicUrlList]
         // this.$refs['descPicListView'].curPictureList = this.product.model.descPicUrlList
         this.origionAttr = this.product.model.originAttr
+        this.qualityList = [...this.product.model.qualityList]
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
       }
@@ -775,9 +797,21 @@ export default {
         if (data.brand_id) {
           this.product.assign({brand_id: data.brand_id})
         }
+        // 设置 资质
+        this.product.assign({quality_list: data.quality_list ? data.quality_list : []})
+        this.qualityList = this.product.model.quality_list
         this.isLoading = false
       }, data => {
         this.isLoading = false
+      })
+    },
+    formatqualityList (qualityList) {
+      return qualityList.map(item => {
+        item.quality_attachments = item.quality_attachments.map(i => {
+          i.uid = item.url
+          return i
+        })
+        return item
       })
     },
     updateProperty (tpProductId) {
@@ -786,6 +820,9 @@ export default {
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
+        // this.qualityList = data.quality_list ? data.quality_list : []
+        const qualityList = data.quality_list ? data.quality_list : []
+        this.qualityList = this.formatqualityList(qualityList)
         this.attribute_json = isEmpty(data.attribute_json) ? [] : data.attribute_json
         this.bannerPicUrlList = data.banner_json
         this.descPicUrlList = data.desc_json
@@ -803,6 +840,7 @@ export default {
         this.product.assign({specifications: this.specifications})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
+        this.product.assign({quality_list: [...this.qualityList]})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         const brand = (!isEmpty(data.attribute_json) ? data.attribute_json : []).find(item => item.name === '品牌')
         // 设置品牌是否必填
@@ -817,7 +855,7 @@ export default {
         this.skuShowList = this.product.model.skuShowList
         this.sortSkuKeys = this.product.model.sortSkuKeys
         this.specifications = this.product.model.specifications
-
+        this.qualityList = this.product.model.quality_list
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
 
@@ -1023,7 +1061,7 @@ export default {
       const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
       for (let i in this.productList) {
         let tpProductId = this.productList[i].tp_product_id
-        if (this.products[tpProductId] && this.products[tpProductId].isDiff()) {
+        if (this.products[tpProductId] && (this.products[tpProductId].isDiff() || this.checkQualityList(this.products[tpProductId]))) {
           if (tpProductId in this.products) {
             let product = this.products[tpProductId]
             // 品牌和属性内的品牌是同一个值
@@ -1056,7 +1094,8 @@ export default {
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
                 brand_id: brandId,
-                recommend_remark: product.model.recommend_remark
+                recommend_remark: product.model.recommend_remark,
+                quality_list: product.model.quality_list || []
               }
             }
             tpProductList.push(productParams)
@@ -1256,6 +1295,7 @@ export default {
       this.propertyBatchCatIdMap = new Map()
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
+      this.qualityList = this.product.model.quality_list
       this.skuShowList = this.product.model.skuShowList
       this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
       this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
@@ -1672,6 +1712,9 @@ export default {
         this.$set(row, borderKey, false)
         this.priceEditError = false
       }
+    },
+    handlePictureQualificationChange (data) {
+      Object.assign(this.product.model, {quality_list: data})
     },
     objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
       const end = this.specifications.length + 3

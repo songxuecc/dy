@@ -268,6 +268,7 @@
             </div>
         </el-form-item>
       </el-form>
+      <div class="color-danger">注：价格、运费模版、发货模式等重要信息的填写是在商品复制后再填写。这里不用设置哦～</div>
     </div>
 
     <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
