@@ -752,7 +752,7 @@ export default {
         this.descPicUrlList = [...this.product.model.descPicUrlList]
         // this.$refs['descPicListView'].curPictureList = this.product.model.descPicUrlList
         this.origionAttr = this.product.model.originAttr
-        this.qualityList = [...this.product.model.qualityList]
+        this.qualityList = [...this.product.model.quality_list]
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
       }
@@ -1031,6 +1031,7 @@ export default {
             .filter(sku => sku.quantity)
             .forEach(sku => {
               if (sku.quantity > 1000000 || sku.quantity < 0) {
+                console.log(sku, 'sku')
                 error = 'sku库存必填，且只可以输入0-1000000的数字'
               }
               if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
