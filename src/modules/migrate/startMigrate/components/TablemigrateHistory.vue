@@ -127,7 +127,7 @@ export default {
   left: 0;
   top: 91px;
   padding-bottom:10px;
-  box-shadow: 0 2px 6px 0 rgb(0 0 0 / 10%);
+  box-shadow: 0 2px 6px 0 rgba(65, 65, 65, 0.2);
   border: 1px solid #E5E5E5;
   border-radius: 0 0 4px 4px;
   background:#fff;
