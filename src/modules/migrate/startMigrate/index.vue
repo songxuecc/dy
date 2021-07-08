@@ -766,7 +766,6 @@ export default {
       text-align: start;
       text-rendering: auto;
       transition: none;
-      box-shadow: 0 2px 6px 0 rgb(0 0 0 / 10%);
     }
     textarea:active {
       border: 1px solid @color-primary;

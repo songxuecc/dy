@@ -272,7 +272,6 @@ export default {
       return function () {
         var _this = this // 取debounce执行作用域的this
         var list = [...arguments][0]
-        console.log(list, [...arguments], 'list')
         length = list.length
         let current = Math.min(previous + step, length)
 
