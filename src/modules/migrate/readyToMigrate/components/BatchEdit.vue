@@ -264,7 +264,7 @@ export default {
 
       return title.replace(/\s+/g, '')
     },
-    polling (fn, succeesCallback, failCallback, step = 5, percentName) {
+    polling (fn, succeesCallback, failCallback, step = 5) {
       let previous = 0
       let length = 0
       const vm = this
@@ -297,7 +297,7 @@ export default {
             return false
           }
           const percentage = Math.floor(previous / length * 100)
-          vm[percentName] = percentage
+          vm.percentage = percentage
           if (previous < length) {
             resultFn()
           } else {
