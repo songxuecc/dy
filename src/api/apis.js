@@ -407,8 +407,13 @@ const hhgjAPIs = {
   },
   userUserCategoryMapDelete: (params) => {
     return api.actionCreatorPost(' /api/user/category_map/delete', params)
+  },
+  captureShopPage: (params) => {
+    return api.actionCreateGet('/api/capture/shop/page', params)
+  },
+  captureShopPageDelete: (params) => {
+    return api.actionCreatorPost('/api/capture/delete', params)
   }
-
 }
 
 export default {

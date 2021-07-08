@@ -19,7 +19,10 @@
               {{item.label}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="primary" plain size="mini" style="padding:5px 20px;" class="ml-5" @click="handleDelete(5)">批量删除记录</el-button>
+        <el-button type="primary" plain size="mini" style="padding:5px 20px;width:120px" class="ml-5" @click="handleDelete(5)">批量删除记录</el-button>
+        <el-button type="warning" plain size="mini" style="padding:5px 20px;margin-left: 5px;min-width:120px"  @click="handleSyncCategory()">
+          <span >{{loadingPercent ?`刷新类目中..${refreshCategoryPercentage}%`:'刷新类目'}}</span>
+        </el-button>
       </el-col>
     </el-row>
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
@@ -140,6 +143,8 @@ export default {
         }
       ],
       percentage: 0,
+      refreshCategoryPercentage: 0,
+      loadingPercent: false,
       shutdown: false,
       value: this.pageSize,
       visibleEditTitle: false,
@@ -168,7 +173,8 @@ export default {
         productStatus.REJECT,
         productStatus.DY_APPROVING,
         productStatus.DELETED
-      ]
+      ],
+      timer: null
     }
   },
   watch: {
@@ -195,6 +201,29 @@ export default {
     handleDelete () {
       this.activeIndex = 5
       this.visibleEditDelteRecord = !this.visibleEditDelteRecord
+    },
+    async handleSyncCategory () {
+      try {
+        this.loadingPercent = true
+        await Api.hhgjAPIs.realSyncDyUserCategory()
+        const fn = async () => {
+          const data = await Api.hhgjAPIs.getSyncDyUserCategory()
+          this.refreshCategoryPercentage = data.percent
+          if (data.status !== 'complete') {
+            this.timer = setTimeout(() => {
+              fn()
+              clearTimeout(this.timer)
+              this.timer = null
+            }, 2000)
+          } else {
+            this.$message.success('刷新类目成功！')
+            this.loadingPercent = false
+          }
+        }
+        fn()
+      } catch (err) {
+        this.$message.error(`${err}`)
+      }
     },
     handleCommand (command) {
       this.activeIndex = command
@@ -235,7 +264,7 @@ export default {
 
       return title.replace(/\s+/g, '')
     },
-    polling (fn, succeesCallback, failCallback, step = 5) {
+    polling (fn, succeesCallback, failCallback, step = 5, percentName) {
       let previous = 0
       let length = 0
       const vm = this
@@ -243,6 +272,7 @@ export default {
       return function () {
         var _this = this // 取debounce执行作用域的this
         var list = [...arguments][0]
+        console.log(list, [...arguments], 'list')
         length = list.length
         let current = Math.min(previous + step, length)
 
@@ -267,7 +297,7 @@ export default {
             return false
           }
           const percentage = Math.floor(previous / length * 100)
-          vm.percentage = percentage
+          vm[percentName] = percentage
           if (previous < length) {
             resultFn()
           } else {
