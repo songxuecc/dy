@@ -2,7 +2,7 @@
 import createFromIconfontCN from './createFromIconfontCN.js'
 
 const IconFont = createFromIconfontCN([
-  '//at.alicdn.com/t/font_2290850_jdss4ulnawr.js'
+  '//at.alicdn.com/t/font_2290850_agbwkgvmxne.js'
 ])
 
 export default IconFont

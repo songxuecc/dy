@@ -7,17 +7,20 @@
             <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
             <hh-icon type="iconhot3" class="hot" v-if="index === 0"></hh-icon>
             <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
-            <div class="click" style="margin-top:104px" @click="examineEditRecord" @mouseenter="toggleEditRecordTip" @mouseleave="toggleEditRecordTip">
-              查看修改记录
-              <EditRecordTip v-show="showEditRecordTip" />
-            </div>
         </title>
+
+        <div class=" left font-16 poniter " style="margin-top:20px;padding: 8px 16px;background-color: #f0f9eb;color: #67c23a;" >
+          <span @click="examineEditRecord" @mouseenter="toggleEditRecordTip" @mouseleave="toggleEditRecordTip" style="font-weight: 700;text-decoration:underline;" class="pointer">
+            <hh-icon type="icontishi-copy" ></hh-icon>点击查看修改记录
+            <EditRecordTip v-show="showEditRecordTip" />
+          </span>
+        </div>
         <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
 
         <div v-if="editType !== 999">
             <div class="content left" >
                 <div style="min-height:120px;margin-top: 30px;">
-                    <h1>修改范围<span class="right click" style="margin-left:30px" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span></h1>
+                    <h1>修改范围<span class="right click" style="margin-left:30px;font-weight: 400" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span></h1>
                     <el-radio-group v-model="modifyMethods" class="mb-20">
                         <el-radio-button label="area">按范围</el-radio-button>
                         <el-radio-button label="product">按商品</el-radio-button>
@@ -95,6 +98,8 @@
                 <TableConsumerHotline ref="TableConsumerHotline" />
                 <CountMethod ref="CountMethod" v-if="editType === 8"/>
                 <TableCountMethod ref="TableCountMethod" />
+                <ProductDelete ref="ProductDelete" v-if="editType === 9"/>
+                <TableProductDelete ref="TableProductDelete" />
 
           </div>
           <div class="flex justify-c mt-20">
@@ -129,6 +134,7 @@ import Price from '@productsManagement/batchEdit/components/Price'
 import FareTemplate from '@productsManagement/batchEdit/components/FareTemplate'
 import ConsumerHotline from '@productsManagement/batchEdit/components/ConsumerHotline'
 import CountMethod from '@productsManagement/batchEdit/components/CountMethod'
+import ProductDelete from '@productsManagement/batchEdit/components/ProductDelete'
 
 import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
 import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
@@ -142,6 +148,7 @@ import TableDeliverMode from '@productsManagement/batchEdit/components/TableDeli
 import TableFareTemplate from '@productsManagement/batchEdit/components/TableFareTemplate'
 import TableConsumerHotline from '@productsManagement/batchEdit/components/TableConsumerHotline'
 import TableCountMethod from '@productsManagement/batchEdit/components/TableCountMethod'
+import TableProductDelete from '@productsManagement/batchEdit/components/TableProductDelete'
 
 export default {
   components: {
@@ -152,6 +159,7 @@ export default {
     ConsumerHotline,
     FareTemplate,
     CountMethod,
+    ProductDelete,
     Price,
     TablePrice,
     TableShelves,
@@ -164,7 +172,8 @@ export default {
     TableDeliverMode,
     TableFareTemplate,
     TableConsumerHotline,
-    TableCountMethod
+    TableCountMethod,
+    TableProductDelete
   },
   beforeRouteLeave (to, from, next) {
     this.save({
@@ -278,6 +287,15 @@ export default {
           text: '计数方式',
           ref: 'CountMethod',
           tableRef: 'TableCountMethod',
+          needExpand: false
+        },
+        {
+          primary: 'iconshanchuxuanzhong',
+          info: 'iconshanchuweixuanzhong',
+          index: 9,
+          text: '删除',
+          ref: 'ProductDelete',
+          tableRef: 'TableProductDelete',
           needExpand: false
         }
       ],

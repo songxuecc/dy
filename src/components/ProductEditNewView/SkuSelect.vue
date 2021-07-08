@@ -230,14 +230,22 @@
                 'skuSelect-el-upload--picture-card ',
               ]"
             >
-              <div class="imgWrapper">
-                <el-image
-                  :src="specificationValue.image"
-                  class="avatar"
-                  :ref="`img${specificationValue.skuString}-${idx}`"
-                  :preview-src-list="[specificationValue.image]"
-                />
+
+              <div class="imgWrapper" >
+                  <el-image
+                    :src="specificationValue.image"
+                    class="avatar"
+                    :ref="`img${specificationValue.skuString}-${idx}`"
+                    :preview-src-list="[specificationValue.image]"
+                  />
+                  <el-popover
+                placement="left"
+                width="270"
+                popper-class="SkuSelect-popper-class"
+                trigger="hover">
+                <img :src="specificationValue.image" style="width: 250px;"/>
                 <div
+                slot="reference"
                   :class="[
                     'mask',
                     'flex',
@@ -257,12 +265,20 @@
                     )"
                   />
                   <hh-icon
+                    type="iconxiazai1"
+                    style="font-size: 15px;"
+                    class="iconshanchu1"
+                    @click="downloadIamge(specificationValue.image,`${specification.specificationName}-${specificationValue.name}-${idx}`)"
+                  />
+                  <hh-icon
                     type="iconreview"
                     style="font-size: 15px"
                     class="iconreview"
                     @click="previewImage(specificationValue,`img${specificationValue.skuString}-${idx}`)"
                   />
                 </div>
+              </el-popover>
+
               </div>
             </div>
 
@@ -709,6 +725,25 @@ export default {
       if (this.$refs[refName] && this.$refs[refName][0] && this.$refs[refName][0].clickHandler) {
         this.$refs[refName][0].clickHandler()
       }
+    },
+    downloadIamge (imgsrc, name) { // 下载图片地址和图片名
+      var image = new Image()
+        // 解决跨域 Canvas 污染问题
+      image.setAttribute('crossOrigin', 'anonymous')
+      image.onload = function () {
+        var canvas = document.createElement('canvas')
+        canvas.width = image.width
+        canvas.height = image.height
+        var context = canvas.getContext('2d')
+        context.drawImage(image, 0, 0, image.width, image.height)
+        var url = canvas.toDataURL('image/png') // 得到图片的base64编码数据
+        var a = document.createElement('a') // 生成一个a元素
+        var event = new MouseEvent('click') // 创建一个单击事件
+        a.download = name || 'photo' // 设置图片名称
+        a.href = url // 将生成的URL设置为a.href属性
+        a.dispatchEvent(event) // 触发a的单击事件
+      }
+      image.src = imgsrc
     },
     // 更新单个sku维度信息
     handleChangeSingleSku () {
