@@ -253,6 +253,19 @@
                     'align-c'
                   ]"
                 >
+
+                  <hh-icon
+                    type="iconxiazai1"
+                    style="font-size: 15px;"
+                    class="iconshanchu1"
+                    @click="downloadIamge(specificationValue.image,`${specification.specificationName}-${specificationValue.value}-${idx}`)"
+                  />
+                  <hh-icon
+                    type="iconreview"
+                    style="font-size: 15px"
+                    class="iconreview"
+                    @click="previewImage(specificationValue,`img${specificationValue.skuString}-${idx}`)"
+                  />
                   <hh-icon
                     type="iconshanchu1"
                     style="font-size: 13px;"
@@ -263,18 +276,6 @@
                       specification,
                       index
                     )"
-                  />
-                  <hh-icon
-                    type="iconxiazai1"
-                    style="font-size: 15px;"
-                    class="iconshanchu1"
-                    @click="downloadIamge(specificationValue.image,`${specification.specificationName}-${specificationValue.name}-${idx}`)"
-                  />
-                  <hh-icon
-                    type="iconreview"
-                    style="font-size: 15px"
-                    class="iconreview"
-                    @click="previewImage(specificationValue,`img${specificationValue.skuString}-${idx}`)"
                   />
                 </div>
               </el-popover>
