@@ -18,9 +18,10 @@
           @input="changeCaptureUrl" v-model="textCaptureUrls">
         </el-input>
       </el-tab-pane>
-      <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop">
-        <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls" class="mb-20">
+      <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop" class="relative" style="height:320px ">
+        <el-input type="textarea" :rows="4" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls" class="my-textarea mb-20 shopCopyTexteare" style="resize: none;" @focus="handleFocus">
         </el-input>
+        <TablemigrateHistory class="TablemigrateHistory"  ref="TablemigrateHistory" @change="handleTablemigrateHistory"/>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
         <div style="width: 520px; margin: auto;margin-bottom:20px">
@@ -112,7 +113,7 @@
       </div>
     </div>
     <!-- 整店复制 -->
-    <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
+    <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'"  class="shopCopySupportPlatForm"/>
     <div class="startCopyBtn" v-if="activeName === 'shop'" >
       <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
         <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
@@ -149,6 +150,7 @@ import StartCopyTips from '@migrate/startMigrate/StartCopyTips'
 import SettingAlert from '@migrate/startMigrate/SettingAlert'
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
+import TablemigrateHistory from '@migrate/startMigrate/components/TablemigrateHistory'
 
 const {
   mapActions: mapActionsPaidRecharge,
@@ -193,7 +195,8 @@ export default {
     BindCopyTip,
     ModalBindCopyIdSearch,
     StartCopyTips,
-    SettingAlert
+    SettingAlert,
+    TablemigrateHistory
   },
   activated () {
     this.getUserBindList()
@@ -202,6 +205,19 @@ export default {
     if (this.$route.params.activeName) {
       this.activeName = this.$route.params.activeName || 'single'
     }
+
+    // 点击其他区域时, 隐藏店铺复制的 列表记录
+    // document.addEventListener('click', event => {
+    //   var shopCopyTexteare = document.querySelector('.shopCopyTexteare')
+    //   var shopCopyHistory = document.querySelector('.shopCopyHistory')
+    //   var otherDom = event.target
+    //   if (shopCopyHistory && shopCopyTexteare) {
+    //     if (shopCopyTexteare === otherDom || shopCopyTexteare.contains(otherDom) || shopCopyHistory === otherDom || shopCopyHistory.contains(otherDom)) {
+    //     } else {
+    //       this.handleBlur()
+    //     }
+    //   }
+    // })
   },
   computed: {
     ...mapGetters({
@@ -676,12 +692,30 @@ export default {
     },
     toggleStartCopyTips () {
       this.showStartCopyTips = !this.showStartCopyTips
+    },
+    handleFocus () {
+      // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.open()
+    },
+    handleBlur () {
+      // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.close()
+    },
+    handleTablemigrateHistory (captureId) {
+      this.$router.push({
+        path: '/migrate/productList',
+        query: {
+          captureId: captureId
+        }
+      })
+      // this.textCaptureShopUrls = url
     }
 
   }
 }
 </script>
 <style lang="less" scoped>
+/deep/ .el-tabs__content {
+  overflow: auto;
+}
 .left {
   text-align: left;
 }
@@ -699,4 +733,65 @@ export default {
   display: flex;
   justify-content: center;
 }
+
+/deep/ .my-textarea {
+    height: 90px;
+    textarea {
+      resize: none !important;
+      outline: none;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      color: #19191a;
+      line-height: 16px;
+      padding: 10px;
+      overflow: auto;
+      touch-action: manipulation;
+      cursor: text;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      column-count: initial !important;
+      flex-direction: column;
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-transform: none;
+      text-indent: 0px;
+      text-shadow: none;
+      display: inline-block;
+      text-align: start;
+      text-rendering: auto;
+      transition: none;
+      box-shadow: 0 2px 6px 0 rgb(0 0 0 / 10%);
+    }
+    textarea:active {
+      border: 1px solid @color-primary;
+      /deep/ .TablemigrateHistory {
+        display: block !important;
+      }
+    }
+    textarea:hover {
+      border: 1px solid @color-primary;
+      /deep/ .TablemigrateHistory {
+        display: block !important;
+      }
+    }
+    textarea:focus {
+      border: 1px solid @color-primary;
+      /deep/ .TablemigrateHistory {
+        display: block !important;
+      }
+    }
+
+  }
+
+  .shopCopySupportPlatForm {
+    // position: absolute;
+    // top:250px;
+  }
+
 </style>

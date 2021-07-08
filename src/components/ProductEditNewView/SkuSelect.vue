@@ -114,7 +114,7 @@
           规格值<span class="index_count"
             >(已选{{ specification.skuSelectCheckList.length }}个)</span
           >
-          <span class="fail">不勾选规格值， 就可以删除</span>
+          <span class="fail">不勾选规格值，就等于删除该规格</span>
         </div>
         <el-checkbox-group
           v-if="specification.specificationName"

@@ -83,12 +83,12 @@
           </template>
         </product-list-view>
         <br>
-        <el-tooltip v-if="isShopCapture" content="本页复制完才能复制下一页" placement="top">
+        <div v-if="isShopCapture" >
           <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0"
             @current-change="handleCurrentChange" :current-page="pagination.index" :page-size="pagination.size"
             layout="total, prev, pager, next, jumper" :total="pagination.total">
           </el-pagination>
-        </el-tooltip>
+        </div>
         <el-pagination v-else v-show="loadingCnt == 0" @size-change="handleSizeChange"
           @current-change="handleCurrentChange" :current-page="pagination.index" :page-sizes="[10, 20, 50, 100]"
           :page-size="pagination.size" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
