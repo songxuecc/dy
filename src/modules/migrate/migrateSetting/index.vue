@@ -34,7 +34,13 @@
           </span>
           <div class="flex column left" v-loading="loadingCategoryMap">
             <div v-for="category in showCategoryMap" :key="category.id" class="flex align-c" v-if="categoryMap.length">
-              <span class="info">{{category.tp_category_name}}</span>
+              <span class="flex align-c font-12 color-333">
+                <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(category)">
+                {{category.source}}-
+              </span>
+              <span class="info">
+                {{category.tp_category_name}}
+              </span>
               <span class="mr-10 ml-10 font-12">对应抖店分类</span>
               <span class="primary mr-10" @click="changeCategory(category)">{{category.dy_category_name}}</span>
               <el-switch v-model="category.is_open" class="ml-5 mr-10" @change="changeCategoryOpen(category)"/>
@@ -1088,6 +1094,32 @@ export default {
       } catch (err) {
         this.$message.error(`${err}`)
       }
+    },
+    getIcon (product) {
+      if (product.source === '淘宝') {
+        return require('@/assets/images/taobao.png')
+      } else if (product.source === '天猫') {
+        return require('@/assets/images/tm.png')
+      } else if (product.source === '1688') {
+        return require('@/assets/images/1688.png')
+      } else if (product.source === '京东') {
+        return require('@/assets/images/jd.png')
+      } else if (product.source === '苏宁') {
+        return require('@/assets/images/sn.png')
+      } else if (product.source === '网易考拉') {
+        return require('@/assets/images/kaola.png')
+      } else if (product.source === '唯品会') {
+        return require('@/assets/images/vph.png')
+      } else if (product.source === '一起做网店17zwd') {
+        return require('@/assets/images/17.png')
+      } else if (product.source === '抖音') {
+        return require('@/assets/images/dy.png')
+      } else if (product.source === '拼多多') {
+        return require('@/assets/images/pdd.png')
+      } else if (product.source === '蝉妈妈') {
+        return require('@/assets/images/chanmama.png')
+      }
+      return ''
     }
   }
 }
