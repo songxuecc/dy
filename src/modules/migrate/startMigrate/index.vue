@@ -18,10 +18,10 @@
           @input="changeCaptureUrl" v-model="textCaptureUrls">
         </el-input>
       </el-tab-pane>
-      <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop" class="relative" style="height:320px " @focus="handleFocus" @blur="handleBlur">
+      <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop" class="relative" style="height:320px ">
         <el-input type="textarea" :rows="4" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls" class="my-textarea mb-20 shopCopyTexteare" style="resize: none;" @focus="handleFocus">
         </el-input>
-        <TablemigrateHistory class="TablemigrateHistory shopCopyHistory"  ref="TablemigrateHistory" @change="handleTablemigrateHistory"/>
+        <TablemigrateHistory class="TablemigrateHistory"  ref="TablemigrateHistory" @change="handleTablemigrateHistory"/>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
         <div style="width: 520px; margin: auto;margin-bottom:20px">
@@ -207,17 +207,17 @@ export default {
     }
 
     // 点击其他区域时, 隐藏店铺复制的 列表记录
-    document.addEventListener('click', event => {
-      var shopCopyTexteare = document.querySelector('.shopCopyTexteare')
-      var shopCopyHistory = document.querySelector('.shopCopyHistory')
-      var otherDom = event.target
-      if (shopCopyHistory && shopCopyTexteare) {
-        if (shopCopyTexteare === otherDom || shopCopyTexteare.contains(otherDom) || shopCopyHistory === otherDom || shopCopyHistory.contains(otherDom)) {
-        } else {
-          this.handleBlur()
-        }
-      }
-    })
+    // document.addEventListener('click', event => {
+    //   var shopCopyTexteare = document.querySelector('.shopCopyTexteare')
+    //   var shopCopyHistory = document.querySelector('.shopCopyHistory')
+    //   var otherDom = event.target
+    //   if (shopCopyHistory && shopCopyTexteare) {
+    //     if (shopCopyTexteare === otherDom || shopCopyTexteare.contains(otherDom) || shopCopyHistory === otherDom || shopCopyHistory.contains(otherDom)) {
+    //     } else {
+    //       this.handleBlur()
+    //     }
+    //   }
+    // })
   },
   computed: {
     ...mapGetters({
@@ -694,13 +694,19 @@ export default {
       this.showStartCopyTips = !this.showStartCopyTips
     },
     handleFocus () {
-      this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.open()
+      // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.open()
     },
     handleBlur () {
-      this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.close()
+      // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.close()
     },
-    handleTablemigrateHistory (url) {
-      this.textCaptureShopUrls = url
+    handleTablemigrateHistory (captureId) {
+      this.$router.push({
+        path: '/migrate/productList',
+        query: {
+          captureId: captureId
+        }
+      })
+      // this.textCaptureShopUrls = url
     }
 
   }
@@ -784,8 +790,8 @@ export default {
   }
 
   .shopCopySupportPlatForm {
-    position: absolute;
-    top:250px;
+    // position: absolute;
+    // top:250px;
   }
 
 </style>

@@ -34,7 +34,7 @@
             width="250"
             align="center">
             <template slot-scope="scope">
-            <span class="primary " @click="handleUse(scope.$index, scope.row)">使用</span>
+            <span class="primary " @click="handleUse(scope.$index, scope.row)">查看</span>
             <el-divider direction="vertical"></el-divider>
             <span class="primary " slot="reference" @click="handleDelete(scope.row)">删除</span>
           </template>
@@ -59,7 +59,7 @@ export default {
   name: 'TablemigrateHistory',
   data () {
     return {
-      visible: false
+      visible: true
     }
   },
   created () {
@@ -94,15 +94,13 @@ export default {
       })
     },
     async handleDelete (row) {
-      console.log(row, 'row')
       await this.deleteCaptureId({
         capture_id: row.capture_id
       })
       this.refresh()
     },
     handleUse (index, row) {
-      this.visible = false
-      this.$emit('change', row.url)
+      this.$emit('change', row.capture_id)
     },
     refresh () {
       this.fetchDetail({
@@ -124,15 +122,15 @@ export default {
 
 .TablemigrateHistory{
   position: absolute;
-          width:100%;
-          box-sizing:border-box;
-          left: 0;
-          top: 91px;
-          padding-bottom:10px;
-          box-shadow: 0 2px 6px 0 rgb(0 0 0 / 10%);
-          border: 1px solid #E5E5E5;
-          border-radius: 0 0 4px 4px;
-          background:#fff;
-          z-index:9;
+  width:100%;
+  box-sizing:border-box;
+  left: 0;
+  top: 91px;
+  padding-bottom:10px;
+  box-shadow: 0 2px 6px 0 rgb(0 0 0 / 10%);
+  border: 1px solid #E5E5E5;
+  border-radius: 0 0 4px 4px;
+  background:#fff;
+  z-index:9;
 }
 </style>
