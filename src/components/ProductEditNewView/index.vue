@@ -977,7 +977,6 @@ export default {
       })
     },
     onDeleteSku (pId, pVid) {
-      console.log(pId, pVid, 'pId, pVid')
       this.deleteSkus(pId, pVid)
     },
     onDeleteSingleSku (idx) {
@@ -1071,7 +1070,7 @@ export default {
             if (brand) {
               brandId = brand.tp_value
             }
-
+            const specifications = (product.model.specifications || []).filter(item => item.specificationName && item.specificationValueList && item.specificationValueList.length)
             let productParams = {
               tp_product_id: product.model.tp_product_id,
               category_id: product.model.cat_id,
@@ -1091,7 +1090,7 @@ export default {
                       promo_price: utils.yuanToFen(item.promo_price)
                     }
                   }),
-                spec_list: product.model.specifications,
+                spec_list: specifications,
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
                 brand_id: brandId,
@@ -1459,7 +1458,6 @@ export default {
         })
       }
       this.propertyBatchMap = cloneDeep(propertyBatchMap)
-      console.log(this.propertyBatchMap, 'this.propertyBatchMap')
       // 批量应用到全部 的值
       const propertyBatchCatIdMapValue = propertyBatchCatIdMap.get(catId) || {}
       if (checked) {
@@ -1468,7 +1466,6 @@ export default {
         delete propertyBatchCatIdMapValue[originAttr.id]
       }
 
-      console.log('9999912312312')
       propertyBatchCatIdMap.set(catId, propertyBatchCatIdMapValue)
       this.propertyBatchCatIdMap = cloneDeep(propertyBatchCatIdMap)
       this.updateProductEditStatus()
