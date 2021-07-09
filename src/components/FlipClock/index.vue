@@ -16,6 +16,9 @@ import Flipper from './Flipper'
 
 export default {
   name: 'FlipClock',
+  props: {
+    FlipClockTime: String
+  },
   data () {
     return {
       timer: null,
@@ -25,10 +28,14 @@ export default {
   components: {
     Flipper
   },
+  beforeDestroy () {
+    clearTimeout(this.timer)
+    this.timer = null
+  },
   methods: {
     // 初始化数字
     init () {
-      let now = new Date()
+      let now = new Date(this.FlipClockTime)
       let nowTimeStr = this.formatDate(new Date(now.getTime()), 'hhiiss')
       this.now = now
       this.nowTimeStr = nowTimeStr
@@ -46,17 +53,12 @@ export default {
         this.now = new Date(now.getTime() - 1000)
         const nextTimeStr = this.formatDate(new Date(now.getTime() - 1000), 'hhiiss')
         this.nowTimeStr = nextTimeStr
-
         for (let i = 0; i < this.flipObjs.length; i++) {
-        //   if (nowTimeStr[i] === nextTimeStr[i]) {
-        //     continue
-        //   }
           this.flipObjs[i].flipDown(
             nowTimeStr[i],
             nextTimeStr[i]
           )
         }
-        console.log('9999')
         clearTimeout(this.timer)
         this.timer = null
         this.run()

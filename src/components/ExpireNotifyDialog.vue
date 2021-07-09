@@ -65,7 +65,7 @@
             <div class="flip">
               <span class="days" v-if="days">{{ days }} </span>
               <span class="text" v-if="days">天</span>
-              <FlipClock></FlipClock>
+              <FlipClock :FlipClockTime="FlipClockTime" v-if="FlipClockTime"></FlipClock>
             </div>
 
             <div class="weihai relative">
@@ -134,7 +134,8 @@ export default {
         is_show: false,
         show_type: 2
       },
-      showType: 2
+      showType: 2,
+      FlipClockTime: undefined
     }
   },
   mounted () {},
@@ -177,6 +178,7 @@ export default {
       this.second10 = parseInt(seconds / 10)
       this.second1 = seconds % 10
 
+      this.FlipClockTime = `2024-04-23 ${this.hour10}${this.hour1}:${this.minute10}${this.minute1}:${this.second10}${this.second1}`
       this.countdouwnTimer = setTimeout(this.countdown, 1000)
     },
     createStatisticsEvent (action) {
