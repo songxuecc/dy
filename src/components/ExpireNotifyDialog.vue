@@ -119,7 +119,7 @@ export default {
   mixins: [request],
   data () {
     return {
-      visible: true,
+      visible: false,
       dyServiceUrl: '',
       days: 0,
       moreDays: 0,
