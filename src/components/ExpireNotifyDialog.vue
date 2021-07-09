@@ -41,7 +41,7 @@
       </el-dialog>
     </div>
 
-    <div  v-if="showType === 1">
+    <div v-if="showType === 1">
       <el-dialog
         :visible.sync="visible"
         width="448px"
@@ -59,7 +59,7 @@
               <div class="daoqi left">
                 <div class="huiyuan">会员即将到期</div>
                 <div class="tip" v-if="days">您的虎虎搬家助手还有{{ days }}天到期</div>
-                <div class="tip">您的虎虎搬家助手今天到期</div>
+                <div class="tip" v-if="!days">您的虎虎搬家助手今天到期</div>
               </div>
             </div>
             <div class="flip">
@@ -133,15 +133,18 @@ export default {
       expireNotify: {
         is_show: false,
         show_type: 2
-      }
+      },
+      showType: 2
     }
   },
   mounted () {},
   watch: {
     subsc (val) {
       this.expireNotify = val.expire_notify
-      this.visible = this.expireNotify.is_show
       this.showType = this.expireNotify.show_type || 2
+      this.visible = this.expireNotify.is_show
+      console.log(this.visible, 'visible')
+      console.log(this.showType, 'showType')
       this.countdown()
     }
   },
