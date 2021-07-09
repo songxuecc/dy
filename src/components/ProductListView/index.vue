@@ -110,12 +110,12 @@
                 <template slot-scope="scope">
                     <div style="text-decoration:none;"  class="font-13">
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
-                        <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <hh-icon type="iconjinggao1"></hh-icon>
-                               搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
-                        </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
+<!--                        <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >-->
+<!--                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">-->
+<!--                              <hh-icon type="iconjinggao1"></hh-icon>-->
+<!--                               搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>-->
+<!--                        </div>-->
+                        <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <p style="">
                                 <hh-icon type="iconjinggao1"></hh-icon>
