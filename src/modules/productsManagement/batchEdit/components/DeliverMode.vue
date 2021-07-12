@@ -50,11 +50,11 @@
                 @change="handleChange"
                 :picker-options="pickerOptions"
                 v-model="form.presell_delay"
-                :min="3"
-                :max="5"
+                :min="2"
+                :max="15"
                 class="input-number mb-5"></el-input-number>
             <span>天发货</span>
-            <p class="info mb-10 ladderText">阶梯发货期间商品发货时间以此限制为主，仅可设置3-5天</p>
+            <p class="info mb-10 ladderText">预售发货时间需在2-15天</p>
         </el-form-item>
         <el-form-item label="下架商品修改后:">
             <el-radio-group v-model="form.commit_type">
