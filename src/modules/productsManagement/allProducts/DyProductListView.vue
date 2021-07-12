@@ -77,9 +77,9 @@
                     {{ scope.row.min_price === scope.row.max_price ? '' : scope.row.max_price / 100 }}
                 </template>
             </el-table-column>
-            <el-table-column label="市场价" width="80">
-                <template slot-scope="scope">
-                    {{ scope.row.market_price / 100 }}
+            <el-table-column label="货源链接" width="80">
+                <template slot-scope="scope" v-if="scope.row.origin_url">
+                  <el-link type="primary" :underline="false" :href="scope.row.origin_url" target="view_window">货源链接</el-link>
                 </template>
             </el-table-column>
             <el-table-column prop="goods_quantity" label="库存" width="80">
