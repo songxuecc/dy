@@ -29,6 +29,13 @@
                 <el-button type="text" @click="getCostTemplateList"><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
                 <el-button type="text" @click="open()">添加运费模版</el-button>
             </el-form-item>
+            <el-form-item label="重量:" prop="weight">
+              <el-radio-group v-model="template.model.weight_unit">
+                <el-radio :label="0">kg</el-radio>
+                <el-radio :label="1">g</el-radio>
+              </el-radio-group>
+              <el-input v-model="template.model.weight"  class="input-num" style="width:150px"></el-input>
+            </el-form-item>
             <el-form-item label="商品类型:" prop="product_type">
                 <el-radio-group v-model="template.model.product_type">
                     <el-radio :label="0">普通商品</el-radio>
