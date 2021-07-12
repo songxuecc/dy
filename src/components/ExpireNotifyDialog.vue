@@ -142,7 +142,7 @@ export default {
   watch: {
     subsc (val) {
       this.expireNotify = val.expire_notify
-      this.showType = this.expireNotify.show_type || 2
+      this.showType = this.expireNotify.show_type
       this.visible = this.expireNotify.is_show
       console.log(this.visible, 'visible')
       console.log(this.showType, 'showType')
@@ -183,11 +183,9 @@ export default {
     },
     createStatisticsEvent (action) {
       // 创建事件记录
+      let eventType = this.showType === 2 ? 'expire_notify_dialog' : 'expire_notify_dialog_new'
       this.request('createStatisticsEvent', {
-        event_type:
-          this.show_type === 2
-            ? 'expire_notify_dialog'
-            : 'expire_notify_dialog_new',
+        event_type: eventType,
         action: action
       })
       this.visible = false
