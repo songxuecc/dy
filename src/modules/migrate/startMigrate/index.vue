@@ -33,7 +33,7 @@
               style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
             <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
             <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span>
-              <span>只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持 1200 条<span class="click" style="margin-left: 10px" @click="downloadCSV">下载示例文件</span></span>
+              <span>只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持 10000 条<span class="click" style="margin-left: 10px" @click="downloadCSV">下载示例文件</span></span>
             </div>
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
