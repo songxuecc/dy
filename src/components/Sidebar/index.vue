@@ -49,11 +49,14 @@
             <el-menu-item index="" @click="openPdd" >
               <span slot="title">虎虎搬家（拼多多）</span>
             </el-menu-item>
-            <el-menu-item index="/customerSetting/meizhe">
-              <span slot="title">短信水印</span>
-            </el-menu-item>
-            <el-menu-item index="/customerSetting/woda">
-              <span slot="title">打单发货</span>
+<!--            <el-menu-item index="/customerSetting/meizhe">-->
+<!--              <span slot="title">短信水印</span>-->
+<!--            </el-menu-item>-->
+<!--            <el-menu-item index="/customerSetting/woda">-->
+<!--              <span slot="title">打单发货</span>-->
+<!--            </el-menu-item>-->
+            <el-menu-item index="" @click="openMeiZhe">
+              <span slot="title">开店必备工具</span>
             </el-menu-item>
           </el-submenu>
         </el-menu>
@@ -96,6 +99,9 @@ export default {
     },
     openPdd () {
       window.open('https://pdd.huhuguanjia.com/?from=douyin')
+    },
+    openMeiZhe () {
+      window.open('https://www.meideng.net/product?from=dyhhbjzs')
     },
     handleOpen (index) {
       setTimeout(() => {
