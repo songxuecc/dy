@@ -1097,6 +1097,7 @@ export default {
                 quality_list: product.model.quality_list || []
               }
             }
+            console.log(productParams, 'productParams')
             tpProductList.push(productParams)
           }
         } else {
