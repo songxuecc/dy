@@ -14,11 +14,11 @@
       <div class="mb-10 color-333 font-12"> <span style="width:90px;display:inline-block;">现货发货时间：</span>
       <el-select v-model="form.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:220px;margin-right:10px;align-items:center">
           <el-option label="2天" :value="2"></el-option>
-          <el-option :value="3">3天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-          <el-option :value="5">5天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-          <el-option :value="7">7天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-          <el-option :value="10">10天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-          <el-option :value="15">15天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
+          <el-option :value="3">3天  </el-option>
+          <el-option :value="5">5天  </el-option>
+          <el-option :value="7">7天  </el-option>
+          <el-option :value="10">10天  </el-option>
+          <el-option :value="15">15天  </el-option>
       </el-select>
       </div>
       <el-form-item>
