@@ -133,8 +133,10 @@
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,品牌不属于该类目') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <hh-icon type="iconjinggao1"></hh-icon>
-                              品牌未更新，建议亲亲点击品牌旁的刷新按钮后，再次进行搬家
+                              <p style="">
+                                <hh-icon type="iconjinggao1"></hh-icon>
+                                商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
+                              <p><a style="color: #409EFF;" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
                             </ul>
                         </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('品牌为必填属性且上传的品牌该店铺未授权') > -1 && scope.row.status === 5"  >
