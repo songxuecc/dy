@@ -1027,6 +1027,7 @@ export default {
           // 检验价格 & 库存
           const skuShowList = product.model.skuShowList
           skuShowList
+            .filter(sku => sku.quantity)
             .forEach(sku => {
               if (sku.quantity > 1000000 || sku.quantity < 0) {
                 console.log(sku, 'sku')
@@ -1081,7 +1082,6 @@ export default {
                 attribute_json: product.model.attrList,
                 desc_text: product.model.description,
                 sku_list: product.model.skuShowList
-                  .filter(item => item.quantity)
                   .map(item => {
                     return {
                       ...item,
