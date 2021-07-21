@@ -119,7 +119,7 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         const parmas = {...payload, delete_goods_id_list: JSON.stringify(state.previewDeleteGoodsIds)}
         await Api.hhgjAPIs.hhTaskCreate(parmas)
         this._vm.$message({
-          message: `批量修改开始,请点击 查看修改记录 按钮`,
+          message: `批量修改开始`,
           type: 'success',
           duration: 6000
         })
