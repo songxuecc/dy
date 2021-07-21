@@ -12,6 +12,7 @@
         <div class=" left font-16 poniter " style="margin-top:20px;padding: 8px 16px;background-color: #f0f9eb;color: #67c23a;" >
           <span @click="examineEditRecord" @mouseenter="toggleEditRecordTip" @mouseleave="toggleEditRecordTip" style="font-weight: 700;text-decoration:underline;" class="pointer">
             <hh-icon type="icontishi-copy" ></hh-icon>点击查看修改记录
+
             <EditRecordTip v-show="showEditRecordTip" />
           </span>
         </div>
@@ -20,8 +21,13 @@
         <div v-if="editType !== 999">
             <div class="content left" >
                 <div style="min-height:120px;margin-top: 30px;">
-                  <h1>修改范围<span class="right click" style="margin-left:20px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span></h1>
-                  <div style="margin-top: -12px;"><span style="color: red">*</span><span style="color: #999999; font-size: 10px;">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后在进行下一步批量操作</span></div>
+                  <h1 class="flex">修改范围
+                    <span style="margin-left:5px" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后在进行下一步批量操作</span>
+                    <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
+                      <hh-icon type="icontishi" ></hh-icon>
+                      点我查看教程视频
+                    </span>
+                  </h1>
                     <el-radio-group v-model="modifyMethods" class="mb-20">
                         <el-radio-button label="area">按范围</el-radio-button>
                         <el-radio-button label="product">按商品</el-radio-button>
