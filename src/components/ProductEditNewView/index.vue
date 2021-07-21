@@ -1027,6 +1027,7 @@ export default {
           }
           // 检验价格 & 库存
           const skuShowList = product.model.skuShowList
+          if (!skuShowList.length) error = 'sku为空，请设置sku'
           skuShowList
             .filter(sku => sku.quantity)
             .forEach(sku => {
