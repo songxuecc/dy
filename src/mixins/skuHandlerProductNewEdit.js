@@ -34,6 +34,33 @@ export default {
   },
   methods: {
     initSku (skuJson, tpId) {
+      // 添加默认属性
+      if (!skuJson.spec_list.length) {
+        const id = shortid.generate()
+        let img = ''
+        skuJson.spec_price_list.forEach(item => {
+          if (item.img) {
+            img = item.img
+          }
+          item.spec_detail_id_list = item.spec_detail_id_list.map(key => {
+            if (key === 'default') {
+              return `spec_id-${id}:default`
+            }
+            return key
+          })
+        })
+
+        skuJson.spec_list = [{
+          name: '默认属性名',
+          spec_id: `spec_id-${id}`,
+          value_list: [{
+            spec_detail_id: `spec_id-${id}:default`,
+            name: '默认属性值',
+            image: img
+          }]
+        }]
+      }
+
       this.originSkuShowList = []
       skuJson.spec_price_list.forEach(value => {
         const obj = {

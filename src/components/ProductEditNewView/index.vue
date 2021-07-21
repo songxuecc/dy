@@ -143,6 +143,7 @@
                             :span-method="objectSpanMethod"
                             row-key="keys"
                   >
+                    <el-table-empty slot="empty"/>
                       <el-table-column v-for="(item, index) in getSpecifications(specifications)" :key="index+':'+item.id">
                           <template slot="header" slot-scope="scope">
                               <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.specificationName }}</span>
