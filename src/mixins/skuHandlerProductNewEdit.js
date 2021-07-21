@@ -34,66 +34,27 @@ export default {
   },
   methods: {
     initSku (skuJson, tpId) {
-      const newSkuJson = cloneDeep(skuJson)
-
-      if (!Object.keys(newSkuJson.sku_property_value_map).length) {
-        const defaultSkuKey = `${shortid.generate()}`
-        const defaultSkuValueKey = `${shortid.generate()}`
-        const defaultSkuPropertyValueMap = {
-          [defaultSkuKey]: {
-            [defaultSkuValueKey]: {
-              image: newSkuJson.sku_map.default.img,
-              value: '默认规格值'
-            }
-          }
-        }
-        const defaultskuPropertyMap = {
-          [defaultSkuKey]: {
-            id: defaultSkuKey,
-            name: '默认规格名',
-            values: []
-          }
-        }
-        const defaultSkuMap = {
-          [`${defaultSkuKey}:${defaultSkuValueKey}`]: {
-            ...newSkuJson.sku_map.default,
-            sku_id: shortid.generate()
-          }
-        }
-
-        newSkuJson.sku_property_value_map = defaultSkuPropertyValueMap
-        newSkuJson.sku_property_map = defaultskuPropertyMap
-        newSkuJson.sku_map = defaultSkuMap
-      }
-
-      Object.entries(newSkuJson.sku_property_value_map).map(([skuPropertyValueKey, skuPropertyValue]) => {
-        Object.entries(skuPropertyValue).map(([key, value]) => {
-          value.skuKey = skuPropertyValueKey
-          value.skuValueKey = key
-          value.skuString = `${skuPropertyValueKey}:${key}`
-        })
-      })
-
       this.originSkuShowList = []
-      Object.entries(newSkuJson.sku_map).forEach(([key, value]) => {
-        const specDetailIds = key.split(';')
+      skuJson.spec_price_list.forEach(value => {
         const obj = {
           ...value,
-          specDetailIds,
+          specDetailIds: value.spec_detail_id_list,
           keys: `keys-${shortid.generate()}`
         }
         this.originSkuShowList.push(obj)
       })
 
-      // 自定义规格列表的名称
-      const specifications = Object.entries(newSkuJson.sku_property_value_map).map(([skuPropertyValueKey, skuPropertyValue]) => {
+      const specifications = skuJson.spec_list.map(spec => {
         const nextSkuPropertyValue = {}
-        const specificationValueList = Object.entries(skuPropertyValue).map(([key, value], index) => {
-          const nextValue = cloneDeep(value)
-          nextValue.originValue = nextValue.value
-          nextValue.sourceValue = nextValue.value
-          nextValue.checkedValue = nextValue.value
-          nextValue.value = nextValue.value
+        const specificationValueList = spec.value_list.map((item, index) => {
+          const nextValue = cloneDeep(item)
+          nextValue.originValue = nextValue.name
+          nextValue.sourceValue = nextValue.name
+          nextValue.checkedValue = nextValue.name
+          nextValue.value = nextValue.name
+          nextValue.skuString = nextValue.spec_detail_id
+          nextValue.skuValueKey = nextValue.spec_detail_id.split(':')[1]
+          nextValue.skuKey = nextValue.spec_detail_id.split(':')[0]
           nextValue.edit = true
           nextValue.editBtnVisible = false
           nextValue.order = index
@@ -102,26 +63,20 @@ export default {
           nextValue.image = nextValue.image
           return nextValue
         })
-        nextSkuPropertyValue.specificationName = newSkuJson.sku_property_map[skuPropertyValueKey].name
+
+        nextSkuPropertyValue.specificationName = spec.name
         nextSkuPropertyValue.newSpecificationName = ''
-        nextSkuPropertyValue.addSkuImage = specificationValueList.some(property => property.image)
-        nextSkuPropertyValue.skuSelectCheckList = specificationValueList.map(item => item.value)
+        nextSkuPropertyValue.addSkuImage = spec.value_list.some(property => property.image)
+        nextSkuPropertyValue.skuSelectCheckList = spec.value_list.map(item => item.name)
         nextSkuPropertyValue.addSpecificationValue = ''
         nextSkuPropertyValue.specificationValueList = specificationValueList
         nextSkuPropertyValue.specificationNameVisible = false
-        nextSkuPropertyValue.spec_id = skuPropertyValueKey
+        nextSkuPropertyValue.spec_id = spec.spec_id
         nextSkuPropertyValue.id = `id-${shortid.generate()}`
         return nextSkuPropertyValue
       })
-      const sortSpecifications = []
-      specifications.forEach(item => {
-        if (item.specificationValueList.some(property => property.image)) {
-          sortSpecifications.unshift(item)
-        } else {
-          sortSpecifications.push(item)
-        }
-      })
-      this.handleSpecifications(sortSpecifications)
+
+      this.handleSpecifications(specifications)
     },
     getSkuUploadObj () {
       let skuUploadObj = {}
@@ -268,9 +223,10 @@ export default {
       this.$set(this, 'skuShowList', cloneDeep(nextSkuShowList))
     },
     handleSpecifications (specifications) {
+      let sortSkuMapNodes = []
+
       const skuPropertyValueMap = {}
       const skuPropertyMap = {}
-      let sortSkuMapNodes = []
       specifications.map(specification => {
         const specId = specification.spec_id
         const specificationValueList = specification.specificationValueList
@@ -290,18 +246,8 @@ export default {
           skuPropertyValueMap[specId] = nextObj
         }
       })
-
-      let sortSkuKeys = []
-      Object.entries(skuPropertyValueMap).forEach(([skuPropertyValueKey, skuPropertyValue]) => {
-        if (Object.keys(skuPropertyValue).some(key => skuPropertyValue[key].image)) {
-          sortSkuKeys.unshift({[skuPropertyValueKey]: skuPropertyValue})
-        } else {
-          sortSkuKeys.push({[skuPropertyValueKey]: skuPropertyValue})
-        }
-      })
       const sortSpecifications = specifications
         .filter(item => item.specificationValueList.some(specificationValue => specificationValue.checked))
-
       const length = sortSpecifications.length
       const originSkuShowList = this.originSkuShowList
       function sortSku (previewStrings = [], current = 0) {
@@ -367,6 +313,7 @@ export default {
         }
       }
       sortSku()
+
       this.skuShowList = sortSkuMapNodes
       this.$set(this, 'specifications', cloneDeep(specifications))
       this.$set(this, 'skuShowList', cloneDeep(sortSkuMapNodes))

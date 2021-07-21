@@ -1082,7 +1082,6 @@ export default {
                 attribute_json: product.model.attrList,
                 desc_text: product.model.description,
                 sku_list: product.model.skuShowList
-                  .filter(item => item.quantity)
                   .map(item => {
                     return {
                       ...item,
@@ -1098,6 +1097,7 @@ export default {
                 quality_list: product.model.quality_list || []
               }
             }
+            console.log(productParams, 'productParams')
             tpProductList.push(productParams)
           }
         } else {
@@ -1297,6 +1297,7 @@ export default {
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.qualityList = this.product.model.quality_list
       this.skuShowList = this.product.model.skuShowList
+      this.specifications = this.product.model.specifications
       this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
       this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
     },

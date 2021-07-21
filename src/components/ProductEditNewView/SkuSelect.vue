@@ -303,8 +303,8 @@
             ]"
             >添加</span
           >
-          <!-- <el-divider direction="vertical"></el-divider> -->
-          <!-- <span
+          <el-divider direction="vertical"></el-divider>
+          <span
             :class="[
               specification.skuSelectCheckList.length > 1
                 ? 'color-primary'
@@ -316,7 +316,7 @@
               handleSortAddSpecificationValue($event, index, specification)
             "
             >自定义排序</span
-          > -->
+          >
         </div>
       </div>
     </div>
