@@ -726,33 +726,33 @@ export default {
       this.getSyncStatus(id)
     },
     async getSyncStatus (id) {
-      console.log(id, 'id')
-
       this.syncLoading = true
       const data = await Api.hhgjAPIs.getSyncStatus({
         target_user_id: id
       })
       this.syncLoading = false
+      console.log(data.status, id, data.status === 'complete', 'data.status')
       if (data.status === 'complete') {
         this.syncText = ''
         clearTimeout(this.syncTimer)
         this.syncTimer = null
-      }
-      this.syncText = `商品同步中....${data.cur}/${data.total}`
-      if (data.status === 'ready') {
-        this.syncText = '同步中'
-        this.syncTimer = setTimeout(() => {
-          clearTimeout(this.syncTimer)
-          this.syncTimer = null
-          this.getSyncStatus(id)
-        }, 5000)
-      }
-      if (data.status === 'running' && data.cur !== data.total) {
-        this.syncTimer = setTimeout(() => {
-          clearTimeout(this.syncTimer)
-          this.syncTimer = null
-          this.getSyncStatus(id)
-        }, 5000)
+      } else {
+        if (data.status === 'ready') {
+          this.syncText = '同步中'
+          this.syncTimer = setTimeout(() => {
+            clearTimeout(this.syncTimer)
+            this.syncTimer = null
+            this.getSyncStatus(id)
+          }, 5000)
+        }
+        if (data.status === 'running' && data.cur !== data.total) {
+          this.syncText = `商品同步中....${data.cur}/${data.total}`
+          this.syncTimer = setTimeout(() => {
+            clearTimeout(this.syncTimer)
+            this.syncTimer = null
+            this.getSyncStatus(id)
+          }, 5000)
+        }
       }
     }
 
