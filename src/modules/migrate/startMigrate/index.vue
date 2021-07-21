@@ -212,6 +212,13 @@ export default {
       this.activeName = this.$route.params.activeName || 'single'
     }
 
+    if (this.target_user_id) {
+      this.syncText = ''
+      clearTimeout(this.syncTimer)
+      this.syncTimer = null
+      this.getSyncStatus(this.target_user_id)
+    }
+
     // 点击其他区域时, 隐藏店铺复制的 列表记录
     // document.addEventListener('click', event => {
     //   var shopCopyTexteare = document.querySelector('.shopCopyTexteare')
@@ -224,6 +231,16 @@ export default {
     //     }
     //   }
     // })
+  },
+  deactivated () {
+    this.syncText = ''
+    clearTimeout(this.syncTimer)
+    this.syncTimer = null
+  },
+  beforeDestroy () {
+    this.syncText = ''
+    clearTimeout(this.syncTimer)
+    this.syncTimer = null
   },
   computed: {
     ...mapGetters({
