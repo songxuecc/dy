@@ -328,6 +328,7 @@ export default {
         }
         this.selectIds = []
         this.goods_ids = ''
+        this.examineEditRecord()
       }
     }
   },
