@@ -1,7 +1,27 @@
 <!-- 我的页面 -->
 <template>
-  <div class="left">
-    <el-form ref="form" :model="form" label-width="80px">
+  <div class="left" style="width:820px">
+    <el-form ref="form" :model="form" label-width="80px" style="height:600px;margin-bottom:10px">
+        <el-form-item label="导出宝贝">
+        <el-radio v-model="radio" :label="1">按商品编号导出</el-radio>
+        <el-radio v-model="radio" :label="2">导出全部商品</el-radio>
+    </el-form-item>
+    <el-form-item label="商品编号" v-if="radio === 1" class="relative">
+        <el-input
+            type="textarea"
+            :rows="8"
+            placeholder="请输入商品编号, 支持批量搜索多个编号用逗号分割(支持从Excel整列粘贴)"
+            v-model="textarea"
+            @input="handleChange"/>
+        <div class="">{{size}}/5000</div>
+    </el-form-item>
+    <el-form-item label="出售状态" v-if="radio === 2">
+        <el-radio-group v-model="resource">
+        <el-radio label="线上品牌商赞助"></el-radio>
+        <el-radio label="线下场地免费"></el-radio>
+        </el-radio-group>
+    </el-form-item>
+
       <el-form-item label="活动性质">
         <el-checkbox
           :indeterminate="isIndeterminate"
@@ -52,8 +72,11 @@
           }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-
     </el-form>
+
+    <div class="flex align-c justify-c">
+        <el-button type="primary" style="width:120px" @click="handleFilterChange">确认导出</el-button>
+    </div>
   </div>
 </template>
 
@@ -104,7 +127,11 @@ export default {
       cities3: cityOptions3,
       isIndeterminate1: true,
       isIndeterminate2: true,
-      isIndeterminate3: true
+      isIndeterminate3: true,
+      textarea: '',
+      resource: '',
+      radio: '',
+      size: 0
     }
   },
   computed: {},
@@ -124,6 +151,11 @@ export default {
       this[`checkAll${key}`] = checkedCount === this[`cities${key}`].length
       this[`isIndeterminate${key}`] =
         checkedCount > 0 && checkedCount < this[`cities${key}`].length
+    },
+    handleChange (str) {
+      let len = str.split('\n').length
+      console.log(len)
+      this.size = len
     }
   }
 }
@@ -137,5 +169,12 @@ export default {
 }
 /deep/ .el-form-item {
     margin-bottom: 0;
+}
+
+/deep/ .el-form-item__label {
+    font-size: 14px;
+}
+/deep/ .el-radio__label {
+    font-size: 14px;
 }
 </style>
