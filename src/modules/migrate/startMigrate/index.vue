@@ -68,7 +68,10 @@
                 <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
                 <div class="info" v-if="target_user_id" style="position:absolute;left:0;bottom:-12px;width:500px;transform: translateY(100%);">
                   <div  class="font-12">
-                      <p class="font-12" style="width:350px;word-break:break-all">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}，复制的是更新时间当下的商品详情，登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
+                      <div class="font-12" style="width:350px;word-break:break-all;line-height:18px">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}
+                        <p class="primary" v-if="!syncText" v-loading="syncLoading" @click="handleSyncProducts(target_user_id)">点击同步此店铺</p>
+                        <p class="primary" v-if="syncText" v-loading="syncLoading">{{syncText}}</p>
+                      </div>
                   </div>
                 </div>
               </el-form-item>
@@ -161,6 +164,9 @@ export default {
   mixins: [request],
   data () {
     return {
+      syncText: '',
+      syncTimer: null,
+      syncLoading: false,
       limit: 100,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
@@ -264,6 +270,11 @@ export default {
     },
     target_user_id (newVal) {
       if (newVal) {
+        console.log(newVal, 'newVal')
+        this.syncText = ''
+        clearTimeout(this.syncTimer)
+        this.syncTimer = null
+        this.getSyncStatus(newVal)
         const bandShopTip = this.userBindList.find(item => this.target_user_id === item.user_id)
         this.bandShopTip = bandShopTip
         const children = (bandShopTip.first_category_list || []).map(item => {
@@ -707,6 +718,42 @@ export default {
         }
       })
       // this.textCaptureShopUrls = url
+    },
+    async handleSyncProducts (id) {
+      await Api.hhgjAPIs.syncProducts({
+        target_user_id: id
+      })
+      this.getSyncStatus(id)
+    },
+    async getSyncStatus (id) {
+      this.syncLoading = true
+      const data = await Api.hhgjAPIs.getSyncStatus({
+        target_user_id: id
+      })
+      this.syncLoading = false
+      console.log(data.status, id, data.status === 'complete', 'data.status')
+      if (data.status === 'complete') {
+        this.syncText = ''
+        clearTimeout(this.syncTimer)
+        this.syncTimer = null
+      } else {
+        if (data.status === 'ready') {
+          this.syncText = '同步中'
+          this.syncTimer = setTimeout(() => {
+            clearTimeout(this.syncTimer)
+            this.syncTimer = null
+            this.getSyncStatus(id)
+          }, 5000)
+        }
+        if (data.status === 'running' && data.cur !== data.total) {
+          this.syncText = `商品同步中....${data.cur}/${data.total}`
+          this.syncTimer = setTimeout(() => {
+            clearTimeout(this.syncTimer)
+            this.syncTimer = null
+            this.getSyncStatus(id)
+          }, 5000)
+        }
+      }
     }
 
   }
