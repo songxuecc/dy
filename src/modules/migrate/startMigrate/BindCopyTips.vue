@@ -7,7 +7,7 @@
             <div class="ml-10">&nbsp;&nbsp;请点击<span  class="right pointer  fail" >同步此店铺按钮</span></div>
 
         </div>
-        <div class="color-666 font-12 left">同步完成后在操作哦~</div>
+        <div class="color-666 font-12 left">同步完成后再操作哦~</div>
         </div>
     </NewComer>
 </template>
