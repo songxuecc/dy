@@ -189,7 +189,7 @@ export default {
         { is_new: this.isNew },
         this.radio === 2 && status[this.resource],
         this.radio === 1 && {
-          goods_id_list: JSON.stringify(this.goods_id_list.split(/[\n,，]/g))
+          goods_id_list: this.goods_id_list ? JSON.stringify(this.goods_id_list.split(/[\n,，]/g)) : JSON.stringify([])
         },
         {}
       )
