@@ -137,7 +137,6 @@ export default {
           is_new: 0
         })
         this.loading = false
-        console.log(this.loading, 'this.loading')
         // 如果导出状态为未开始，成功或失败，则允许用户重新导出新文件
         if (['unbegin', 'success', 'fail'].includes(productExcel.status)) {
           if (productExcel.status === 'success') {
@@ -155,10 +154,8 @@ export default {
     handleCheckAllChange (val, key) {
       this[`checkedCities${key}`] = val ? this[`cities${key}`] : []
       this[`isIndeterminate${key}`] = false
-      console.log(val, this, 'val')
     },
     handleCheckedCitiesChange (value, key) {
-      console.log(value, key)
       let checkedCount = value.length
       this[`checkAll${key}`] = checkedCount === this[`cities${key}`].length
       this[`isIndeterminate${key}`] =
@@ -179,8 +176,6 @@ export default {
       utils.downloadURL(data.url, '')
     },
     async onGenProductsExcel () {
-      console.log(status[this.resource], this.resource, 'resource')
-      console.log(this.goods_id_list)
       const fieldList = [...this.checkedCities1, ...this.checkedCities2].map((key) => exportFieldList[key])
       if (this.isNew && fieldList.length === 0) {
         return this.$message.error('请选择需要导出的字段')
