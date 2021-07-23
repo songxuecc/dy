@@ -386,8 +386,11 @@ export default {
       this.checkAllFieldSelected()
     },
     openDialogExport () {
-      this.dialogExportVisible = true
-      // 百度统计打点
+      this.$router.push({
+        name: 'ProductExports'
+      })
+      // this.dialogExportVisible = true
+      // // 百度统计打点
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '全部商品', '点击', '商品导出'])
       }
