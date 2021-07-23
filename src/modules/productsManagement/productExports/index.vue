@@ -66,7 +66,7 @@
 
       <el-form-item label="最近导出" v-if="showDownloadFile">
         <div>
-          <el-link @click="onDownloadExcel()" :underline="false"
+          <el-link @click="onDownloadExcel()" :underline="false" type="primary"
             >商品列表.xlsx - {{ recentProductExcelTime }}</el-link
           >
         </div>
