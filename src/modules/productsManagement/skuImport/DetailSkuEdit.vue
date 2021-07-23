@@ -19,12 +19,9 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
-
+import { mapState } from 'vuex'
 import TableProductDetail from '@productsManagement/skuImport/TableProductDetail'
-const {
-  mapState
-} = createNamespacedHelpers('productManagement/skuImport')
+
 export default {
   name: 'DetailSkuEdit',
   props: {
@@ -36,8 +33,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('productManagement/skuImport', ['productSkuExcelFilters']),
-    ...mapState(['parentRowData']),
+    ...mapState('productManagement/skuImport', ['parentRowData']),
     tabs () {
       const tabs = [{
         id: 0,
