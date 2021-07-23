@@ -37,6 +37,9 @@
             <el-menu-item index="/productsManagement/skuImport" :disabled="!isAuth()">
               <span slot="title">导入表格修改</span>
             </el-menu-item>
+            <el-menu-item index="/productsManagement/productExports" :disabled="!isAuth()">
+              <span slot="title">导出商品</span>
+            </el-menu-item>
            <el-menu-item index="/shopDecorate/poster/dg/list" :disabled="!isAuth()">
              <span slot="title">批量新增详情</span>
            </el-menu-item>

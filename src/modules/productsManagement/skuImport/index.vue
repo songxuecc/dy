@@ -1,17 +1,12 @@
 <!-- sku 导入 -->
 <template>
 <div >
-  <el-collapse v-model="activeNames">
-    <el-collapse-item title="选择修改信息" name="1">
-      <Search />
-    </el-collapse-item>
-    <el-collapse-item title="导入修改文件" name="2">
-      <UploadFile />
-    </el-collapse-item>
-    <el-collapse-item title="修改记录列表" name="3">
-      <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
-    </el-collapse-item>
-  </el-collapse>
+  <h1 class="left mb-10 mt-5">选择修改信息</h1>
+  <Search />
+  <h1 class="left mb-10 mt-10">导入修改文件</h1>
+  <UploadFile />
+  <h1 class="left mb-10  mt-10">修改记录列表</h1>
+  <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
   <el-drawer
     :title="title"
     :visible.sync="visibleSkuEdit"

@@ -125,11 +125,11 @@
     </div>
     <!-- 绑定复制 -->
     <div class="startCopyBtn " v-if="activeName === 'bindCopy' && userBindList.length ">
-      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
+      <div style="width:160px;height:50px" @mouseenter="toggleBindCopyTips" @mouseleave="toggleBindCopyTips">
         <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:160px;height:50px;font-size:16px" class="ralative">开始复制
           <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
         </el-button>
-        <StartCopyTips v-show="showStartCopyTips"/>
+        <BindCopyTips v-show="showBindCopyTips"/>
       </div>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy'"/>
@@ -150,6 +150,7 @@ import SupportPlatForm from '@migrate/startMigrate/SupportPlatForm'
 import BindCopyTip from '@migrate/startMigrate/BindCopyTip'
 import ModalBindCopyIdSearch from '@migrate/startMigrate/ModalBindCopyIdSearch'
 import StartCopyTips from '@migrate/startMigrate/StartCopyTips'
+import BindCopyTips from '@migrate/startMigrate/BindCopyTips'
 import SettingAlert from '@migrate/startMigrate/SettingAlert'
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
@@ -192,7 +193,8 @@ export default {
       ModalBindCopyIdSearchShow: false,
       lostGoodsIds: [],
       productListCheckLoading: false,
-      showStartCopyTips: false
+      showStartCopyTips: false,
+      showBindCopyTips: false
     }
   },
   components: {
@@ -201,6 +203,7 @@ export default {
     BindCopyTip,
     ModalBindCopyIdSearch,
     StartCopyTips,
+    BindCopyTips,
     SettingAlert,
     TablemigrateHistory
   },
@@ -210,6 +213,13 @@ export default {
     // this.$refs.setting.getMigrateSetting()
     if (this.$route.params.activeName) {
       this.activeName = this.$route.params.activeName || 'single'
+    }
+
+    if (this.target_user_id) {
+      this.syncText = ''
+      clearTimeout(this.syncTimer)
+      this.syncTimer = null
+      this.getSyncStatus(this.target_user_id)
     }
 
     // 点击其他区域时, 隐藏店铺复制的 列表记录
@@ -224,6 +234,16 @@ export default {
     //     }
     //   }
     // })
+  },
+  deactivated () {
+    this.syncText = ''
+    clearTimeout(this.syncTimer)
+    this.syncTimer = null
+  },
+  beforeDestroy () {
+    this.syncText = ''
+    clearTimeout(this.syncTimer)
+    this.syncTimer = null
   },
   computed: {
     ...mapGetters({
@@ -703,6 +723,9 @@ export default {
     },
     toggleStartCopyTips () {
       this.showStartCopyTips = !this.showStartCopyTips
+    },
+    toggleBindCopyTips () {
+      this.showBindCopyTips = !this.showBindCopyTips
     },
     handleFocus () {
       // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.open()
