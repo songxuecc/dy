@@ -124,6 +124,9 @@ export default {
   created () {
     this.init()
   },
+  activated () {
+    this.init()
+  },
   mounted () {},
   updated () {},
   methods: {
