@@ -116,7 +116,8 @@ export default {
       recentProductExcelTime: '',
       excelPercent: -1,
       showDownloadFile: false,
-      showProcess: false
+      showProcess: false,
+      isNew: 0
     }
   },
   computed: {},
@@ -127,13 +128,14 @@ export default {
   activated () {
     this.init()
   },
-  mounted () {},
-  updated () {},
   methods: {
     async init () {
       try {
         // 查询最近一次商品导出的文件信息
         const excelFile = await Api.hhgjAPIs.getExcelFile()
+        this.showDownloadFile = true
+        this.recentProductExcelTime = excelFile['last_update_time']
+
         //   窗口打开，去查询当前导出任务的状态
         const productExcel = await Api.hhgjAPIs.genProductExcel({
           goods_attr_list: JSON.stringify([]),
@@ -149,7 +151,6 @@ export default {
         } else {
           this.onGenProductsExcel()
         }
-        this.recentProductExcelTime = excelFile.last_update_time
       } catch (err) {
         console.log(err)
       }
