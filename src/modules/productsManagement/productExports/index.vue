@@ -135,7 +135,10 @@ export default {
         const excelFile = await Api.hhgjAPIs.getExcelFile()
         this.showDownloadFile = true
         this.recentProductExcelTime = excelFile['last_update_time']
-
+      } catch (err) {
+        console.log(err)
+      }
+      try {
         //   窗口打开，去查询当前导出任务的状态
         const productExcel = await Api.hhgjAPIs.genProductExcel({
           goods_attr_list: JSON.stringify([]),
@@ -153,7 +156,6 @@ export default {
         }
       } catch (err) {
         console.log(err)
-        // this.onGenProductsExcel()
       }
     },
     handleCheckAllChange (val, key) {
