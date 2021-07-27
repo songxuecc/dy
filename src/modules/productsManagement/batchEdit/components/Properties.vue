@@ -8,12 +8,14 @@
     <div class="flex mt-10">
       <span style="flex-shrink: 0; margin-right: 10px">类目属性:</span>
       <el-form
+        :show-message="false"
         ref="form"
         :model="form"
         label-width="100px"
         size="small"
         :inline="true"
         style="background-color: #f9f9f9; padding: 15px 10px; border-radius: 2px"
+        :rules="rules"
       >
         <el-form-item
           :label="property.name"
@@ -21,25 +23,30 @@
           :key="idx"
           :required="property.required"
           style="margin-bottom: 5px"
+          :prop="`${property.id}`"
         >
           <el-input
-            v-model="form[property.id]"
+            v-model="form[`${property.id}`]"
             style="width: 220px"
             v-if="property.type === 'text'"
+            @clear="handleClear(property.id)"
+            :clearable="true"
           ></el-input>
           <el-select
-            v-model="form[property.id]"
+            v-model="form[`${property.id}`]"
             placeholder="请选择活动区域"
             style="width: 220px"
             v-else-if="property.type === 'select'"
             popper-class="select-popper-properties"
+            :clearable="true"
+            @clear="handleClear(property.id)"
           >
             <el-option :label="option.name" :value="option.value" v-for="(option,idx) in property.options" :key="idx">
                 {{option.name}}
             </el-option>
           </el-select>
           <el-checkbox-group
-            v-model="form[property.id]"
+            v-model="form[`${property.id}`]"
             style="width: 220px"
             v-else-if="property.type === 'multi_select'"
           >
@@ -57,7 +64,7 @@
             margin-bottom: 5px;
           "
         >
-          <el-button style="width:120px;margin:10px 10px 20px 0;" @click="close">取消</el-button>
+          <el-button style="width:120px;margin:10px 10px 20px 0;" @click="cancel">取消</el-button>
           <el-button type="primary" style="width:120px;margin:10px 0 20px 0;" @click="close">应用</el-button>
         </div>
   </div>
@@ -66,41 +73,69 @@
 <script>
 export default {
   name: 'Properties',
-  props: {
-    properties: Object,
-    category: Object
-  },
   data () {
     return {
       form: {},
-      originForm: {}
+      originForm: {},
+      properties: [],
+      category: {}
     }
   },
-  created () {
-    console.log(this.properties)
-    let originForm = {}
-    this.properties.map(item => {
-      originForm[item.id] = item.tp_value
-    })
-    this.form = {...originForm}
-    this.originForm = {...originForm}
+  computed: {
+    rules () {
+      if (!this.properties.length) return {}
+      let obj = {}
+      this.properties.filter(item => item.required).forEach(item => {
+        obj[`${item.id}`] = [{
+          required: true, message: `${item.name}不能为空`
+        }]
+      })
+      return obj
+    }
   },
-//   watch: {
-//     properties: {
-//       handler: function (newVal) {
-//         let originForm = {}
-//         newVal.map(item => {
-//           originForm[item.id] = item.tp_value
-//         })
-//         this.form = {...originForm}
-//         this.originForm = {...originForm}
-//       },
-//       deep: true
-//     }
-//   },
   methods: {
+    init (data, idx) {
+      if (!data.properties.length || !data.category) return
+      this.properties = data.properties
+      this.category = data.category
+      this.data = data
+      this.idx = idx
+      let originForm = {}
+      this.properties.map(item => {
+        originForm[`${item.id}`] = item.tp_value
+      })
+      this.form = {...originForm}
+      this.originForm = {...originForm}
+      this.$refs.form && this.$refs.form.clearValidate()
+    },
     close () {
-      this.$emit('close')
+      this.$refs.form.validate((valid, object) => {
+        if (valid) {
+          for (const key in this.form) {
+            this.data.properties = this.properties.map(property => {
+              if (String(property.id) === String(key)) {
+                property.tp_value = this.form[key]
+              }
+              return property
+            })
+          }
+          this.$emit('close', this.data, this.idx)
+          this.$refs.form && this.$refs.form.clearValidate()
+        } else {
+          const h = this.$createElement
+          const messages = Object.values(object).map(item => item[0].message).map(m => h('div', null, m))
+          this.$message({
+            message: h('p', null, messages),
+            type: 'error'
+          })
+        }
+      })
+    },
+    cancel () {
+      this.$emit('close', this.data, this.idx)
+    },
+    handleClear (id) {
+      this.form[`${id}`] = ''
     }
   }
 }

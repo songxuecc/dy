@@ -62,7 +62,21 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="修改后" prop="old_data">
+        <template slot-scope="scope">
+            <div v-for="data in getData(scope.row.old_data)" :key="data.name" class="left">
+              <span style="display:inline-block;width:100px;text-align:right;color:#999" >{{data.name}}：</span>
+              <span style="display:inline-block;">{{data.value}}</span>
+            </div>
+          </template>
+      </el-table-column>
       <el-table-column align="center" label="修改后" prop="new_data">
+        <template slot-scope="scope">
+            <div v-for="data in getData(scope.row.new_data)" :key="data.name" class="left">
+              <span style="display:inline-block;width:100px;text-align:right;color:#999" >{{data.name}}：</span>
+              <span style="display:inline-block;">{{data.value}}</span>
+            </div>
+          </template>
       </el-table-column>
       <el-table-column
           align="center"
@@ -122,10 +136,39 @@ export default {
     ]),
     ...mapState({
       loading: state => state['@@loading'].effects['productManagement/batchEdit/fetchHhTaskProductOverview']
-    })
+    }),
+    data () {
+      const a = this.hhTaskProductOverviewTableData.map(item => {
+        const oldData = JSON.parse(item.old_data)
+        const newData = JSON.parse(item.new_data)
+        item.old_data = Object.entries(oldData).map(([name, value]) => {
+          return {
+            name,
+            value
+          }
+        })
+        item.new_data = Object.entries(newData).map(([name, value]) => {
+          return {
+            name,
+            value
+          }
+        })
+        return item
+      })
+      console.log(a)
+      return a
+    }
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct', 'fetchHhTaskProductOverview', 'saveDelete']),
+    getData (data) {
+      return Object.entries(JSON.parse(data)).map(([name, value]) => {
+        return {
+          name,
+          value
+        }
+      })
+    },
     edit () {
       this.updateProduct(this.hhTaskProductOverviewFilters)
       this.closeVisible()
