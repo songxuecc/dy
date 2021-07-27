@@ -2,15 +2,15 @@
 <template>
   <div class=" ">
     <div v-for="(a,idx) in arr" :key="idx">
-      <span @click="chooseCategory"><span class="click tip" >选择分类: </span><span v-if="category.name">{{ category.name }}</span>
-        <span class="color-danger pointer" v-else>点击选择分类</span>
+      <span @click="chooseCategory"><span class="click tip" >选择分类: </span><span v-if="category.name" class="underline-hover pointer">{{ category.name }}</span>
+        <span class="color-danger pointer underline-hover" v-else>点击选择分类</span>
       </span>
       <span v-if="category.name">
         <span slot="reference" @click="visible = !visible">
-          <span class="click tip"  >
+          <span class="click tip "  >
             修改类目属性:
           </span>
-          <span>必填(2/2) , 选填(1/5)</span>
+          <span class="underline-hover pointer">必填(2/2) , 选填(1/5)</span>
         </span>
       </span>
       <hh-icon type="iconzengjiatianjiajiajian" class="pointer icon" @click="add" v-if="idx === 0"></hh-icon>
@@ -90,6 +90,12 @@ export default {
   }
   &:active{
     color: @color-primary;
+  }
+}
+
+.underline-hover {
+  &:hover {
+    text-decoration:underline;
   }
 }
 </style>
