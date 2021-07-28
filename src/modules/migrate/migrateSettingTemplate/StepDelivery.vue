@@ -25,6 +25,8 @@
             <el-form-item label="承诺发货时间:" prop="delivery_delay_day" v-if="template.model.presell_type === 0">
                 <div style="display:flex">
                   <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:150px;margin-right:10px;align-items:center">
+                    <el-option :value="9999">当天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                    <el-option :value="1">1天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
                     <el-option :value="2">2天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
                     <el-option :value="3">3天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
                     <el-option :value="5">5天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
