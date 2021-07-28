@@ -294,12 +294,14 @@
                     </el-form-item>
                     <el-form-item label="承诺发货时间:" prop="delivery_delay_day">
                         <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" @change="check">
-                            <el-option label="2天" :value="2"></el-option>
-                            <el-option label="3天" :value="3"></el-option>
-                            <el-option label="5天" :value="5"></el-option>
-                            <el-option label="7天" :value="7"></el-option>
-                            <el-option label="10天" :value="10"></el-option>
-                            <el-option label="15天" :value="15"></el-option>
+                            <el-option :value="9999" label="当日" :key="9999"> </el-option>
+                            <el-option :value="1" label="24小时"> </el-option>
+                            <el-option :value="2" label="48小时"> </el-option>
+                            <el-option :value="3" label="3天">3天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                            <el-option :value="5" label="5天">5天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                            <el-option :value="7" label="7天">7天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                            <el-option :value="10" label="10天">10天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                            <el-option :value="15" label="15天">15天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="是否预售:" prop="is_pre_sale">
