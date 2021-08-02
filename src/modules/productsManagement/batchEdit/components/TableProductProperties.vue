@@ -8,7 +8,7 @@
     size="80%"
   >
     <div class="title center">
-      预览要删除的商品
+      预览要修改属性的商品
       <hh-icon
         type="iconquxiaoanniu"
         class="close pointer"
@@ -62,7 +62,9 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="修改后" prop="old_data">
+      <el-table-column align="center" label="分类" prop="category_name">
+      </el-table-column>
+      <el-table-column align="center" label="修改前" prop="old_data">
         <template slot-scope="scope">
             <div v-for="data in scope.row.old_data" :key="data.name" class="left">
               <span style="display:inline-block;width:100px;text-align:right;color:#999" >{{data.name}}：</span>

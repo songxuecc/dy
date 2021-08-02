@@ -5,6 +5,7 @@
     size="80%"
     class="drawer"
     :with-header="false"
+    :append-to-body="true"
   >
     <div class="title center">
       {{ rowData.task_title }}修改详情
@@ -132,6 +133,8 @@
               </el-table-column>
               <el-table-column prop="goods_name" label="商品信息">
               </el-table-column>
+              <el-table-column align="center"  v-if="rowData.task_sub_type === 10" label="分类" prop="category_name">
+              </el-table-column>
               <el-table-column
                 prop="old_data"
                 label="修改前"
@@ -151,7 +154,7 @@
               >
                 <template slot-scope="scope">
                   <div
-                    v-for="data in getData(scope.row.old_data)"
+                    v-for="data in scope.row.old_data"
                     :key="data.name"
                     class="left"
                   >
@@ -185,7 +188,7 @@
               >
                 <template slot-scope="scope">
                   <div
-                    v-for="data in getData(scope.row.new_data)"
+                    v-for="data in scope.row.new_data"
                     :key="data.name"
                     class="left"
                   >
@@ -304,13 +307,13 @@ export default {
     async open (rowData) {
       this.rowData = rowData
       this.activeName = 3
+      this.drawer = true
       await this.fetchHhTaskProductPage({
         filters: {
           parent_id: rowData.task_id,
           status: 3
         }
       })
-      this.drawer = true
     },
     handleCurrentChange (pageIndex) {
       if (this.loading) return
