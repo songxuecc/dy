@@ -8,6 +8,10 @@
 .color-success{
   color: @color-success;
 }
+
+.color-warning {
+  color:#FA6400;
+}
 .color-info{
   color: @color-info;
 }
@@ -195,6 +199,9 @@
 .pt-20 {
   padding-top:20px;
 }
+.pb-20 {
+  padding-bottom:20px;
+}
 
 .pr-20 {
   padding-right:20px;
@@ -326,7 +333,9 @@
 
 .click {
   color: @color-primary;
-  text-decoration:underline;
+  &:hover {
+    text-decoration:underline;
+  }
   cursor: pointer;
 }
 

@@ -2,6 +2,7 @@
   <div class="table-empty flex column align-c">
     <hh-icon type="icon-table-empty" style="font-size:300px;"/>
     <div class="empty-text">{{msg || '这里暂时什么都没有哦～'}}</div>
+    <slot></slot>
   </div>
 </template>
 

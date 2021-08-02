@@ -413,6 +413,9 @@ const hhgjAPIs = {
   },
   captureShopPageDelete: (params) => {
     return api.actionCreatorPost('/api/capture/delete', params)
+  },
+  getPropductCategoryProperty: (params) => {
+    return api.actionCreateGet('/api/product/category/category_property/query', params)
   }
 }
 
