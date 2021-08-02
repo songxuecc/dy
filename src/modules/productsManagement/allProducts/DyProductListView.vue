@@ -99,6 +99,7 @@
                 <template slot-scope="scope">
                   <el-button type="primary" size="small" @click="productEdit(scope.row)" :disabled="!checkProductEnableEdit(scope.row)">修改</el-button>
                   <el-button type="primary" size="small" @click="syncProductOne(scope.row.goods_id_str)">同步</el-button>
+                  <el-button type="primary" size="small" @click="previewProduct(scope.row)">预览</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -176,6 +177,17 @@
             </el-table-column>
         </el-table>
         </el-dialog>
+      <el-drawer
+       :visible.sync="activeIdVisible"
+       direction="rtl"
+       custom-class="style_iframelayout"
+       title="商品预览"
+       :size="400"
+     >
+       <div class="style_iframeContainer">
+         <iframe title="预览" :src="`https://haohuo.jinritemai.com/views/product/detail?id=${activeId}&amp;origin_type=604`" style="width: 100%; height: 100%;" frameborder="no" border="0"></iframe>
+       </div>
+     </el-drawer>
     </div>
 </template>
 <script>
@@ -219,7 +231,9 @@ export default {
       dialogOptimizeVisible: false,
       dialogSelectProductListVisible: false,
       curProduct: {},
-      selectProductList: []
+      selectProductList: [],
+      activeId: undefined,
+      activeIdVisible: false
       // selectAllProductList: [], // 包含所有页的筛选
     }
   },
@@ -250,6 +264,10 @@ export default {
         2: {text: '阶梯发货', class: 'warning'}
       }
       return obj[Number(type)]
+    },
+    previewProduct (data) {
+      this.activeId = data.goods_id
+      this.activeIdVisible = true
     },
     dyGoodsLink (dyGoodsId) {
       return 'https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + dyGoodsId
@@ -508,4 +526,32 @@ export default {
 background: linear-gradient(180deg, #F9D6AF 0%, #D9A779 100%);
 border-radius: 8px 0px 8px 0px;
   }
+</style>
+
+<style lang="less">
+.style_iframeContainer {
+    height: 100%;
+    width: 375px;
+    outline: none;
+}
+
+.style_iframelayout {
+    height: 100%;
+    box-sizing: border-box;
+    padding:10px 10px 10px 10px;
+}
+
+.el-drawer__header {
+  margin-bottom: 0;
+  padding:5px;
+  color: #000;
+  text-align: left;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.el-drawer__wrapper {
+  z-index: 99999 !important;
+}
+
 </style>
