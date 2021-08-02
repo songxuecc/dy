@@ -30,6 +30,7 @@
           >
         </div>
       </el-alert>
+      <span v-if="[3, 4].includes(rowData.task_sub_type)">点击表格每行数据的左侧箭头，可以查看修改详情</span>
       <el-tabs v-model="activeName" @tab-click="tabClick">
         <el-tab-pane
           :label="tab.label"

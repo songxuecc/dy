@@ -103,7 +103,9 @@ export default {
     handleDetail (index, row) {
       this.visibleTableRecordDetail = false
       this.visibleTableRecordDetail = true
-      this.$refs.TableRecordDetail.open(row)
+      this.$nextTick(() => {
+        this.$refs.TableRecordDetail && this.$refs.TableRecordDetail.open(row)
+      })
     },
     handleCurrentChange (pageIndex) {
       if (this.loading) return
