@@ -35,7 +35,7 @@
                     <el-option :value="15" label="15天">15天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
                 </el-select>
                 <span class="info" style="line-height:16px;flex:1">
-                  注：目前抖店官方对发货模式及发货时限规则开始调整，若选择现货发货模式，需在消费者下单后<span class="fail">&nbsp;&nbsp;48小时&nbsp;&nbsp;</span>内发货。部分特殊类目可自主设置【2-15天】的发货时间，具体类目以商家后台展示为准。点击查看&nbsp;&nbsp;<el-link @click="open" type="primary" style="font-size:12px" :underline="false">官方文档</el-link>&nbsp;&nbsp;说明  。
+                  注：目前抖店官方对发货模式及发货时限规则开始调整，若选择现货发货模式，需在消费者下单后<span class="fail">&nbsp;&nbsp;48小时&nbsp;&nbsp;</span>内发货。部分特殊类目可自主设置【3-15天】的发货时间，具体类目以商家后台展示为准。点击查看&nbsp;&nbsp;<el-link @click="open" type="primary" style="font-size:12px" :underline="false">官方文档</el-link>&nbsp;&nbsp;说明  。
                 </span>
                 </div>
                 <div class="fail" v-if="template.model.delivery_delay_day !==2"> </div>
