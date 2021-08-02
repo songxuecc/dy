@@ -14,7 +14,7 @@
         label-width="100px"
         size="small"
         :inline="true"
-        style="background-color: #f9f9f9; padding: 15px 10px; border-radius: 2px"
+        style="background-color: #f9f9f9; padding: 15px 10px; border-radius: 2px;width:100%"
         :rules="rules"
       >
         <el-form-item
