@@ -140,6 +140,9 @@ export default {
       activeCategory.category = data
       this.categoryVislble = false
       this.$set(this.arr, this.activeCategoryIndex, activeCategory)
+      this.$nextTick(() => {
+        this.chooseProperties(activeCategory, this.activeCategoryIndex)
+      })
       this.activeCategoryIndex = undefined
       this.activeData = undefined
     },
@@ -187,6 +190,7 @@ export default {
       return false
     },
     async chooseProperties (data, idx) {
+      console.log(data, idx, 'data, idx')
       if (data.category && data.category.id) {
         const id = data.category.id
         // 如果这次请求和上次请求的id相同 则不请求

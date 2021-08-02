@@ -24,7 +24,9 @@
       v-loading="loading"
       style="width: 100%"
     >
-      <el-table-empty slot="empty" />
+      <el-table-empty slot="empty" >
+        <p class="color-warning font-18 mt-5">没有对应的分类下的商品，请重新选择分类!!</p>
+      </el-table-empty>
       <el-table-column label="商品信息" prop="id">
         <template slot-scope="scope">
           <div class="flex">
@@ -62,20 +64,20 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="分类" prop="category_name">
+      <el-table-column align="center" label="分类" prop="category_name" width="100">
       </el-table-column>
       <el-table-column align="center" label="修改前" prop="old_data">
         <template slot-scope="scope">
-            <div v-for="data in scope.row.old_data" :key="data.name" class="left">
-              <span style="display:inline-block;width:100px;text-align:right;color:#999" >{{data.name}}：</span>
+            <div v-for="data in scope.row.old_data" :key="data.name" class="left flex">
+              <span style="display:inline-block;width:100px;text-align:right;color:#999;flex-shrink: 0;" >{{data.name}}：</span>
               <span style="display:inline-block;">{{data.value}}</span>
             </div>
           </template>
       </el-table-column>
       <el-table-column align="center" label="修改后" prop="new_data">
         <template slot-scope="scope">
-            <div v-for="data in scope.row.new_data" :key="data.name" class="left">
-              <span style="display:inline-block;width:100px;text-align:right;color:#999" >{{data.name}}：</span>
+            <div v-for="data in scope.row.new_data" :key="data.name" class="left flex">
+              <span style="display:inline-block;width:100px;text-align:right;color:#999;flex-shrink: 0;" >{{data.name}}：</span>
               <span style="display:inline-block;">{{data.value}}</span>
             </div>
           </template>

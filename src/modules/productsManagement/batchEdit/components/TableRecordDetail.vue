@@ -121,7 +121,7 @@
               <el-table-column
                 prop="image_url"
                 label="商品图片"
-                width="120"
+                :width="rowData.task_sub_type === 10 ? '80':undefined"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -131,9 +131,9 @@
                   />
                 </template>
               </el-table-column>
-              <el-table-column prop="goods_name" label="商品信息">
+              <el-table-column prop="goods_name" label="商品信息" :width="rowData.task_sub_type === 10 ? '200':undefined">
               </el-table-column>
-              <el-table-column align="center"  v-if="rowData.task_sub_type === 10" label="分类" prop="category_name">
+              <el-table-column align="center"  v-if="rowData.task_sub_type === 10" label="分类" prop="category_name" width="100">
               </el-table-column>
               <el-table-column
                 prop="old_data"
@@ -156,7 +156,7 @@
                   <div
                     v-for="data in scope.row.old_data"
                     :key="data.name"
-                    class="left"
+                    class="left flex"
                   >
                     <span
                       style="
@@ -164,6 +164,7 @@
                         width: 100px;
                         text-align: right;
                         color: #999;
+                        flex-shrink: 0;
                       "
                       >{{ data.name }}：</span
                     >
@@ -190,7 +191,7 @@
                   <div
                     v-for="data in scope.row.new_data"
                     :key="data.name"
-                    class="left"
+                    class="left flex"
                   >
                     <span
                       style="
@@ -198,6 +199,7 @@
                         width: 100px;
                         text-align: right;
                         color: #999;
+                        flex-shrink: 0;
                       "
                       >{{ data.name }}：</span
                     >
