@@ -95,12 +95,20 @@ export default {
   },
   methods: {
     validData () {
-      return true
+      const arr = this.arr
+      return arr.every(item => {
+        const formValid = (item.properties || [])
+          .filter(item => item.required)
+          .every(item => item.tp_value)
+        return item.category !== -1 && formValid && item.properties.length
+      })
     },
     getForm () {
-      console.log(this.arr, 'arr')
       const bool = this.validData()
-      if (!bool) return false
+      if (!bool) {
+        this.$message.warning('请选择分类或填写必填属性')
+        return false
+      }
       let obj = {}
       this.arr.forEach(item => {
         const id = item.category.id
@@ -112,7 +120,6 @@ export default {
         })
         obj[id] = value
       })
-      console.log(obj, 'obj')
       return { category_dict: obj }
     },
     // 保存 修改的分类

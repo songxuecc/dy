@@ -382,6 +382,7 @@ export default {
     getEditJson () {
       const refName = this.iconList[this.editType - 1].ref
       const json = this.$refs[refName] && this.$refs[refName].getForm()
+      if (typeof json === 'boolean') return false
       return json
     },
     preview (index) {
@@ -406,6 +407,7 @@ export default {
       }
 
       const extJson = this.getEditJson()
+      console.log(extJson, 'extJson')
       if (!extJson) {
         this.loading = false
         return false

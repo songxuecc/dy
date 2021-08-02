@@ -132,6 +132,7 @@ export default {
       })
     },
     cancel () {
+      this.form = {}
       this.$emit('close', this.data, this.idx)
     },
     handleClear (id) {
