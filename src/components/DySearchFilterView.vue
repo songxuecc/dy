@@ -120,6 +120,9 @@ export default {
         if (this.onlyEditable && ['草稿箱', '封禁中'].includes(label)) {
           continue
         }
+        if (['回收站'].includes(label)) {
+          continue
+        }
         options.push({ value: key, label: label })
       }
       // return options.sort((a, b) => a.value - b.value)

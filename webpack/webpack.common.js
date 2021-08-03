@@ -80,12 +80,6 @@ const commonConfig = {
     new LodashModuleReplacementPlugin(),
     new VueLoaderPlugin(),
     new HardSourceWebpackPlugin({
-      // HardSource works with mini-css-extract-plugin but due to how
-      // mini-css emits assets, assets are not emitted on repeated builds with
-      // mini-css and hard-source together. Ignoring the mini-css loader
-      // modules, but not the other css loader modules, excludes the modules
-      // that mini-css needs rebuilt to output assets every time.
-      // test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
     })
   ],
   module: {
