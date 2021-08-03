@@ -47,7 +47,7 @@
       center
       ref="PropertiesVislble"
     >
-      <Properties ref="Properties" @close="handleClose" />
+      <Properties ref="Properties" @close="handleClose" v-if="visible"/>
     </el-dialog>
 
     <el-dialog
@@ -97,16 +97,14 @@ export default {
     validData () {
       const arr = this.arr
       return arr.every(item => {
-        const formValid = (item.properties || [])
-          .filter(item => item.required)
-          .every(item => item.tp_value)
+        const formValid = (item.properties || []).some(item => item.tp_value)
         return item.category !== -1 && formValid && item.properties.length
       })
     },
     getForm () {
       const bool = this.validData()
       if (!bool) {
-        this.$message.warning('请选择分类或填写必填属性')
+        this.$message.warning('请选择分类或填写属性')
         return false
       }
       let obj = {}

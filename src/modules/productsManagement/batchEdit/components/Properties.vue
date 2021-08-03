@@ -4,7 +4,9 @@
     <div style="color: #000; ">
       <span style="margin-right: 10px">当前类目:</span>
       <span style="font-weight: bold">{{ category.name }}</span>
+      <span class="font-14 ml-10 mt-5 mb-5 warning">(带<span class=" ml-10 mr-5 color-danger">*</span>为抖音必填属性, 不填写默认不修改)</span>
     </div>
+
     <div class="flex mt-10">
       <span style="flex-shrink: 0; margin-right: 10px">类目属性:</span>
       <el-form
@@ -15,7 +17,6 @@
         size="small"
         :inline="true"
         style="background-color: #f9f9f9; padding: 15px 10px; border-radius: 2px;width:100%"
-        :rules="rules"
       >
         <el-form-item
           :label="property.name"
@@ -109,27 +110,23 @@ export default {
       this.$refs.form && this.$refs.form.clearValidate()
     },
     close () {
-      this.$refs.form.validate((valid, object) => {
-        if (valid) {
-          for (const key in this.form) {
-            this.data.properties = this.properties.map(property => {
-              if (String(property.id) === String(key)) {
-                property.tp_value = this.form[key]
-              }
-              return property
-            })
-          }
-          this.$emit('close', this.data, this.idx)
-          this.$refs.form && this.$refs.form.clearValidate()
-        } else {
-          const h = this.$createElement
-          const messages = Object.values(object).map(item => item[0].message).map(m => h('div', null, m))
-          this.$message({
-            message: h('p', null, messages),
-            type: 'error'
+      const valid = Object.values(this.form).some(value => value)
+      if (valid) {
+        for (const key in this.form) {
+          this.data.properties = this.properties.map(property => {
+            if (String(property.id) === String(key)) {
+              property.tp_value = this.form[key]
+            }
+            return property
           })
         }
-      })
+        this.$emit('close', this.data, this.idx)
+      } else {
+        this.$message({
+          message: '至少填写一个属性设置',
+          type: 'warning'
+        })
+      }
     },
     cancel () {
       this.form = {}
