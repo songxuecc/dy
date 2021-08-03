@@ -1,5 +1,15 @@
 export const platformIconsUrl = [
   {
+    key: '抖音',
+    src: require('@/assets/images/dy.png'),
+    tip: '抖音App'
+  },
+  {
+    key: '拼多多',
+    src: require('@/assets/images/pdd.png'),
+    tip: '拼多多App'
+  },
+  {
     key: '淘宝',
     src: require('@/assets/images/taobao.png'),
     tip: '淘宝'
@@ -50,16 +60,6 @@ export const platformIconsUrl = [
     tip: '搜款网'
   },
   {
-    key: '抖音',
-    src: require('@/assets/images/dy.png'),
-    tip: '抖音App'
-  },
-  {
-    key: '拼多多',
-    src: require('@/assets/images/pdd.png'),
-    tip: '拼多多App'
-  },
-  {
     key: '淘宝特价',
     src: require('@/assets/images/tb-tejia.png'),
     tip: '淘宝特价App'
@@ -67,6 +67,11 @@ export const platformIconsUrl = [
 ]
 
 export const platformIconsStore = [
+  {
+    key: '抖音',
+    src: require('@/assets/images/dy.png'),
+    tip: '抖音App'
+  },
   {
     key: '淘宝',
     src: require('@/assets/images/taobao.png'),
@@ -106,10 +111,5 @@ export const platformIconsStore = [
     key: '搜款网',
     src: require('@/assets/images/soukuanwang.png'),
     tip: '搜款网'
-  },
-  {
-    key: '抖音',
-    src: require('@/assets/images/dy.png'),
-    tip: '抖音App'
   }
 ]
