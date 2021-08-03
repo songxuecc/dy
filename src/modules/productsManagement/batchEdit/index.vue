@@ -5,22 +5,20 @@
         <title class="flex title ">
             <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer' , 'relative']" @click="toggleEditType(icon.index)">
             <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
-            <hh-icon type="iconhot3" class="hot" v-if="index === 0"></hh-icon>
+            <hh-icon type="iconhot3" class="hot" v-if="icon.hot"></hh-icon>
             <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
         </title>
 
-        <div class=" left font-16 poniter " style="margin-top:20px;padding: 8px 16px;background-color: #f0f9eb;color: #67c23a;" >
+        <div class=" left font-16 poniter " style="margin-top:10px;padding: 8px 16px;background-color: #f0f9eb;color: #67c23a;" >
           <span @click="examineEditRecord" @mouseenter="toggleEditRecordTip" @mouseleave="toggleEditRecordTip" style="font-weight: 700;text-decoration:underline;" class="pointer">
             <hh-icon type="icontishi-copy" ></hh-icon>点击查看修改记录
-
             <EditRecordTip v-show="showEditRecordTip" />
           </span>
         </div>
         <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
-
         <div v-if="editType !== 999">
             <div class="content left" >
-                <div style="min-height:120px;margin-top: 30px;">
+                <div style="min-height:120px;margin-top: 15px;">
                   <h1 class="flex">修改范围
                     <span style="margin-left:5px" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后在进行下一步批量操作</span>
                     <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
@@ -107,9 +105,11 @@
                 <TableCountMethod ref="TableCountMethod" />
                 <ProductDelete ref="ProductDelete" v-if="editType === 9"/>
                 <TableProductDelete ref="TableProductDelete" />
+                <ProductProperties ref="ProductProperties" v-if="editType === 10"/>
+                <TableProductProperties ref="TableProductProperties" />
 
           </div>
-          <div class="flex justify-c mt-20">
+          <div class="flex justify-c mt-20 pb-20">
               <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
           </div>
         </div>
@@ -142,6 +142,7 @@ import FareTemplate from '@productsManagement/batchEdit/components/FareTemplate'
 import ConsumerHotline from '@productsManagement/batchEdit/components/ConsumerHotline'
 import CountMethod from '@productsManagement/batchEdit/components/CountMethod'
 import ProductDelete from '@productsManagement/batchEdit/components/ProductDelete'
+import ProductProperties from '@productsManagement/batchEdit/components/ProductProperties'
 
 import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
 import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
@@ -156,6 +157,7 @@ import TableFareTemplate from '@productsManagement/batchEdit/components/TableFar
 import TableConsumerHotline from '@productsManagement/batchEdit/components/TableConsumerHotline'
 import TableCountMethod from '@productsManagement/batchEdit/components/TableCountMethod'
 import TableProductDelete from '@productsManagement/batchEdit/components/TableProductDelete'
+import TableProductProperties from '@productsManagement/batchEdit/components/TableProductProperties'
 
 export default {
   components: {
@@ -180,7 +182,9 @@ export default {
     TableFareTemplate,
     TableConsumerHotline,
     TableCountMethod,
-    TableProductDelete
+    TableProductDelete,
+    TableProductProperties,
+    ProductProperties
   },
   beforeRouteLeave (to, from, next) {
     this.save({
@@ -200,7 +204,7 @@ export default {
   data () {
     return {
       showEditRecordTip: false,
-      editType: 1,
+      editType: 10,
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
@@ -303,7 +307,19 @@ export default {
           text: '删除',
           ref: 'ProductDelete',
           tableRef: 'TableProductDelete',
-          needExpand: false
+          needExpand: false,
+          hot: true
+
+        },
+        {
+          primary: 'iconshuxingxuanzhong',
+          info: 'iconshuxingweixuanzhong',
+          index: 10,
+          text: '属性',
+          ref: 'ProductProperties',
+          tableRef: 'TableProductProperties',
+          needExpand: false,
+          hot: true
         }
       ],
       visibleSelectProduct: false
@@ -366,6 +382,7 @@ export default {
     getEditJson () {
       const refName = this.iconList[this.editType - 1].ref
       const json = this.$refs[refName] && this.$refs[refName].getForm()
+      if (typeof json === 'boolean') return false
       return json
     },
     preview (index) {
@@ -390,6 +407,7 @@ export default {
       }
 
       const extJson = this.getEditJson()
+      console.log(extJson, 'extJson')
       if (!extJson) {
         this.loading = false
         return false

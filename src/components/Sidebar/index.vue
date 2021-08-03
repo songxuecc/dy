@@ -32,7 +32,7 @@
               <span slot="title">全部商品</span>
             </el-menu-item>
             <el-menu-item index="/productsManagement/batchEdit/title" :disabled="!isAuth()">
-              <span slot="title" style="display: flex;align-items: center;">批量处理<NewFeatureTips type="批量处理新版本"/></span>
+              <span slot="title" style="display: flex;align-items: center;">批量处理<NewFeatureTips type="批量处理新版本-属性"/></span>
             </el-menu-item>
             <el-menu-item index="/productsManagement/skuImport" :disabled="!isAuth()">
               <span slot="title">导入表格修改</span>
