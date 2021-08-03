@@ -4,7 +4,7 @@
     <div style="color: #000; ">
       <span style="margin-right: 10px">当前类目:</span>
       <span style="font-weight: bold">{{ category.name }}</span>
-      <span class="font-14 ml-10 mt-5 mb-5 warning">(带<span class=" ml-10 mr-5 color-danger">*</span>为抖音必填属性, 不填写默认不修改)</span>
+      <span class="font-14 ml-10 mt-5 mb-5 warning">(带<span class=" ml-10 mr-5 color-danger">*</span>为抖音必填属性, 不填写默认不修改,不可以输入{{'|,^,&,@'}}字符)</span>
     </div>
 
     <div class="flex mt-10">
@@ -13,19 +13,18 @@
         :show-message="false"
         ref="form"
         :model="form"
-        label-width="100px"
         size="small"
         :inline="true"
         style="background-color: #f9f9f9; padding: 15px 10px; border-radius: 2px;width:100%"
+        :rules="rules"
       >
         <el-form-item
-          :label="property.name"
           v-for="(property, idx) in properties"
           :key="idx"
-          :required="property.required"
           style="margin-bottom: 5px"
           :prop="`${property.id}`"
         >
+          <span solt="label"><span style="display:inline-block;width:95px;text-align:right"><span v-if="property.required" class="fail">*</span>{{property.name}}</span></span>
           <el-input
             v-model="form[`${property.id}`]"
             style="width: 220px"
@@ -85,11 +84,17 @@ export default {
   computed: {
     rules () {
       if (!this.properties.length) return {}
+      const validatePass = name => (rule, value, callback) => {
+        const patrn = /&|@|\^|\|/
+        if (patrn.test(value)) {
+          callback(new Error(`${name}: 不可以输入特殊字符I,^,&,@`))
+        } else {
+          callback()
+        }
+      }
       let obj = {}
-      this.properties.filter(item => item.required).forEach(item => {
-        obj[`${item.id}`] = [{
-          required: true, message: `${item.name}不能为空`
-        }]
+      this.properties.forEach(item => {
+        obj[`${item.id}`] = [{ validator: validatePass(item.name), trigger: 'blur' }]
       })
       return obj
     }
@@ -110,17 +115,32 @@ export default {
       this.$refs.form && this.$refs.form.clearValidate()
     },
     close () {
-      const valid = Object.values(this.form).some(value => value)
-      if (valid) {
-        for (const key in this.form) {
-          this.data.properties = this.properties.map(property => {
-            if (String(property.id) === String(key)) {
-              property.tp_value = this.form[key]
+      const isChange = Object.values(this.form).some(value => value)
+
+      if (isChange) {
+        this.$refs.form.validate((valid, object) => {
+          if (valid) {
+            for (const key in this.form) {
+              this.data.properties = this.properties.map(property => {
+                if (String(property.id) === String(key)) {
+                  property.tp_value = this.form[key]
+                }
+                return property
+              })
             }
-            return property
-          })
-        }
-        this.$emit('close', this.data, this.idx)
+            this.$emit('close', this.data, this.idx)
+            this.$refs.form && this.$refs.form.clearValidate()
+          } else {
+            const h = this.$createElement
+            const messages = Object.values(object).map(item => item[0].message).map(m => h('div', {
+              style: {'text-align': 'left'}
+            }, m))
+            this.$message({
+              message: h('p', null, messages),
+              type: 'error'
+            })
+          }
+        })
       } else {
         this.$message({
           message: '至少填写一个属性设置',

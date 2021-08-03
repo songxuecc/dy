@@ -85,7 +85,7 @@
 
         </el-form-item>
         <div class="tip">
-          <p >带<span style="color:#f56c6c">红色 &nbsp;*&nbsp;符号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
+          <p >带<span style="color:#f56c6c">红色 &nbsp;*&nbsp;符号</span> 为必填属性，所有属性都不可以输入{{'I,^,&,@'}}字符。不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
             <!-- 二期会实现本功能 -->
             <!-- <span v-if="catId!==0">，勾选应用到本页相同分类商品，蓝色高亮</span> -->
         </div>
@@ -126,10 +126,22 @@ export default {
   },
   computed: {
     rules () {
+      const validatePass = name => (rule, value, callback) => {
+        const patrn = /&|@|\^|\|/
+        if (patrn.test(value)) {
+          callback(new Error(`${name}: 不可以输入特殊字符`))
+        } else {
+          callback()
+        }
+      }
+
       return (this.productModel || []).reduce((target, item) => {
         let message = item.options.length ? `请选择${item.name}` : `请输入${item.name}`
         if (item.name === '品牌') message = ''
-        const current = {[item.name]: [{required: !!item.required, message, trigger: 'change'}]}
+        const current = {[item.name]: [
+          {required: !!item.required, message, trigger: 'change'},
+          { validator: validatePass(item.name), trigger: 'blur' }
+        ]}
         return {...target, ...current}
       }, {})
     },
@@ -183,15 +195,16 @@ export default {
     validate () {
       return new Promise((resolve, reject) => {
         if (!this.$refs.propertySet) {
-          return reject('请选择商品属性-修改分类')
+          const msg = '请选择商品属性-修改分类'
+          return reject(msg)
         } else {
           this.$refs.propertySet.validate((valid, object) => {
             if (valid) {
               resolve(true)
             } else {
-              this.$message.error(`${Object.keys(object).join('、')} 输入错误`)
+              const error = `${Object.keys(object).join('、')} 输入错误`
               this.validation = object
-              reject(object)
+              reject(error)
             }
           })
         }
