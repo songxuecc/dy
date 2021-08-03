@@ -25,7 +25,7 @@
       style="width: 100%"
     >
       <el-table-empty slot="empty" >
-        <p class="color-warning font-18 mt-5">没有对应的分类下的商品，请重新选择分类!!</p>
+        <p class="color-warning font-18 mt-5">没有对应分类下的商品，请重新选择分类!!</p>
       </el-table-empty>
       <el-table-column label="商品信息" prop="id">
         <template slot-scope="scope">

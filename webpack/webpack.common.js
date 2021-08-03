@@ -85,7 +85,7 @@ const commonConfig = {
       // mini-css and hard-source together. Ignoring the mini-css loader
       // modules, but not the other css loader modules, excludes the modules
       // that mini-css needs rebuilt to output assets every time.
-      test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
+      // test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
     })
   ],
   module: {
