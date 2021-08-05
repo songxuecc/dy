@@ -134,7 +134,7 @@ export default {
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
         'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max',
         'presell_type', 'commit_type', 'reduce_type', 'product_type', 'unit', 'supply_7day_return',
-        'weight', 'weight_unit'
+        'weight', 'weight_unit', 'ext_json'
       ]
       const model = this.template.model
       const params = pick(model, keyList)
@@ -153,6 +153,8 @@ export default {
         presell.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
         presell.presell_end_time = ''
       }
+      // 处理多余属性
+      params.ext_json = JSON.stringify(params.ext_json)
 
       // 处理搬家数据
       const template = Object.assign(params, presell)

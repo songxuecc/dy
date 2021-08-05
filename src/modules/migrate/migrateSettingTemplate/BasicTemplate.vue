@@ -36,9 +36,11 @@
               </el-radio-group>
               <el-input v-model="template.model.weight"  class="input-num" style="width:150px"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="商品限购设置:" prop="weight">
-
-            </el-form-item> -->
+            <el-form-item label="商品限购设置:" prop="weight" v-if="template.model.ext_json">
+              <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单限购件数<el-input v-model="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:105px"></el-input></span>
+              <span class="font-12  mb-10" style="margin-right:30px">每个用户累计限购件数<el-input v-model="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:105px"></el-input></span>
+              <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单至少购买的件数<el-input v-model="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:105px"></el-input></span>
+            </el-form-item>
             <el-form-item label="商品类型:" prop="product_type">
                 <el-radio-group v-model="template.model.product_type">
                     <el-radio :label="0">普通商品</el-radio>
@@ -75,7 +77,7 @@
     </div>
 </template>
 <script>
-import { createNamespacedHelpers, mapGetters, mapState } from 'vuex'
+import { createNamespacedHelpers, mapGetters, mapState, mapMutations } from 'vuex'
 
 const {
   mapState: mapStateMigrate,
@@ -105,7 +107,21 @@ export default {
         reduce_type: [
           { required: true, message: '请选择订单库存计数', trigger: 'blur' }
         ]
+        // 'ext_json.maximum_per_order': [
+        //   { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
+        // ],
+        // 'ext_json.limit_per_buyer': [
+        //   { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
+        // ],
+        // 'ext_json.minimum_per_order': [
+        //   { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
+        // ]
       }
+    }
+  },
+  watch: {
+    template (n) {
+      console.log(n)
     }
   },
   computed: {
@@ -115,6 +131,12 @@ export default {
   },
   methods: {
     ...mapActionsMigrate(['getCostTemplateList']),
+    handleInput (value, key) {
+      console.log(this.template.model, key)
+      this.template.model.ext_json[key] = value
+
+      console.log(this.template.model.ext_json)
+    },
     resetForm () {
       this.$refs.form && this.$refs.form.resetFields()
     },
