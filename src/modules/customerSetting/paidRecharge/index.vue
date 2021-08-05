@@ -2,11 +2,11 @@
 <template>
     <div class='left'  v-loading="loadingVersion">
         <div style="margin-bottom: 20px;margin-top: 20px;font-size:18px;font-weight:bold">
-          <h label="PayRecord" v-if="userVersion && userVersion.is_free_upgrate" >拼多多额度充值</h>
-          <h label="VersionUp" v-if="userVersion && !userVersion.is_free_upgrate" >试用版本升级</h>
+          <h label="PayRecord" v-if="userVersion && !userVersion.free_upgrate_amount" >拼多多额度充值</h>
+          <h label="VersionUp" v-if="userVersion && userVersion.free_upgrate_amount" >试用版本升级</h>
         </div>
-        <PayRecord v-if="userVersion && userVersion.is_free_upgrate"/>
-        <VersionUp v-if="userVersion && !userVersion.is_free_upgrate"/>
+        <PayRecord v-if="userVersion && !userVersion.free_upgrate_amount"/>
+        <VersionUp v-if="userVersion && userVersion.free_upgrate_amount"/>
     </div>
 </template>
 
