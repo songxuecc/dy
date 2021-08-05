@@ -4,7 +4,7 @@
         <div class="flex align-c column">
         <el-alert title="微信扫一扫支付" type="info" show-icon :closable="false" :center="true" ></el-alert>
         <img :src="'data:image/png;base64,'+ qrCode" class="qrcode" v-if="orderStatus === 'unpay'"/>
-        <span class="info font-12">{{seconds}}秒后自动关闭</span>
+        <!-- <span class="info font-12">{{seconds}}秒后自动关闭</span> -->
         </div>
     </el-dialog>
 </template>
