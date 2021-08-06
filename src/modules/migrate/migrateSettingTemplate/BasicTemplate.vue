@@ -36,15 +36,15 @@
               </el-radio-group>
               <el-input v-model="template.model.weight"  class="input-num" style="width:150px"></el-input>
             </el-form-item>
-            <el-form-item label="商品限购设置:" prop="ext_json" v-if="template.model.ext_json" class="flex item-order">
-              <el-form-item prop="maximum_per_order" style="display:inline-block">
-                <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单限购件数<el-input v-model="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:105px"></el-input></span>
+            <el-form-item label="商品限购设置:" v-if="template.model.ext_json" class="flex item-order">
+              <el-form-item prop="ext_json.maximum_per_order" style="display:inline-block">
+                <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单限购件数<el-input @change="handleChange" v-model.number="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:105px"></el-input></span>
               </el-form-item>
-              <el-form-item prop="limit_per_buyer"  style="display:inline-block">
-              <span class="font-12  mb-10" style="margin-right:30px">每个用户累计限购件数<el-input v-model="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:105px"></el-input></span>
+              <el-form-item prop="ext_json.limit_per_buyer"  style="display:inline-block">
+              <span class="font-12  mb-10" style="margin-right:30px">每个用户累计限购件数<el-input @change="handleChange" v-model.number="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:105px"></el-input></span>
               </el-form-item>
-              <el-form-item prop="minimum_per_order"  style="display:inline-block">
-              <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单至少购买的件数<el-input v-model="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:105px"></el-input></span>
+              <el-form-item prop="ext_json.minimum_per_order"  style="display:inline-block">
+              <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单至少购买的件数<el-input @change="handleChange" v-model.number="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:105px"></el-input></span>
               </el-form-item>
             </el-form-item>
             <el-form-item label="商品类型:" prop="product_type">
@@ -83,7 +83,7 @@
     </div>
 </template>
 <script>
-import { createNamespacedHelpers, mapGetters, mapState, mapMutations } from 'vuex'
+import { createNamespacedHelpers, mapGetters, mapState } from 'vuex'
 
 const {
   mapState: mapStateMigrate,
@@ -92,9 +92,26 @@ const {
 
 export default {
   data () {
+    const validatePass = (rule, value, callback) => {
+      // 每次下单至少购买的件数
+      const minimum = this.template.model.ext_json.minimum_per_order
+      // 累计限购件数
+      const limit = this.template.model.ext_json.limit_per_buyer
+      // 每次下单限购件数
+      const maximum = this.template.model.ext_json.maximum_per_order
+
+      if (minimum > limit) {
+        callback(new Error('商品每次下单至少购买的件数不能超过累计限购件数'))
+      } else if (minimum > maximum) {
+        callback(new Error('商品每次下单至少购买的件数不能超过每次下单限购件数'))
+      } else {
+        callback()
+      }
+    }
     return {
       dySupplyImg: 'https://img.pddpic.com/mms-material-img/2021-04-21/091fb3a4-fa82-49eb-9821-229aaa330567.png.a.jpeg',
       rules: {
+
         pay_type: [
           { required: true, message: '请选择付款方式', trigger: 'change' }
         ],
@@ -113,14 +130,15 @@ export default {
         reduce_type: [
           { required: true, message: '请选择订单库存计数', trigger: 'blur' }
         ],
-        maximum_per_order: [
-          { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
+        'ext_json.maximum_per_order': [
+          { type: 'number', message: '必须为数字值', trigger: 'blur' }
         ],
-        limit_per_buyer: [
-          { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
+        'ext_json.limit_per_buyer': [
+          { type: 'number', message: '必须为数字值', trigger: 'blur' }
         ],
-        minimum_per_order: [
-          { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
+        'ext_json.minimum_per_order': [
+          { validator: validatePass, trigger: 'blur' },
+          { type: 'number', message: '必须为数字值', trigger: 'blur' }
         ]
       }
     }
@@ -137,6 +155,9 @@ export default {
   },
   methods: {
     ...mapActionsMigrate(['getCostTemplateList']),
+    handleChange () {
+      this.$refs.form.validateField('ext_json.minimum_per_order')
+    },
     resetForm () {
       this.$refs.form && this.$refs.form.resetFields()
     },
