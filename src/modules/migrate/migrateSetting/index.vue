@@ -880,6 +880,16 @@ export default {
             this.$message.error(`${error}`)
           }
         } else {
+          this.$nextTick(() => {
+            let isError = document.getElementsByClassName('is-error')
+            isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+              block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+              behavior: 'smooth'
+            })
+          })
           return this.$message.error('请提示要求填写基础设置')
         }
       })
