@@ -1,9 +1,9 @@
 <!--  -->
 <template>
-    <el-dialog :visible.sync="dialogTableVisible" width="40%" @closed="closed" >
-    <div class="pointer relative" @click="handleClick" v-loading="loading">
-        <hh-icon type="iconguanbi2" class="icon pointer"></hh-icon>
-        <img :src="image" alt="" style="width:100%">
+    <el-dialog :visible.sync="dialogTableVisible" width="40%" @closed="closed">
+    <div class="pointer relative"  v-loading="loading">
+        <hh-icon type="iconguanbi2" class="icon pointer" @click.native.prevent="handleClose"></hh-icon>
+        <img :src="image" alt="" style="width:100%" @click="handleClick">
     </div>
     </el-dialog>
 </template>
@@ -20,7 +20,8 @@ export default {
     return {
       image,
       dialogTableVisible: false,
-      loading: true
+      loading: true,
+      open: false
     }
   },
   created () {
@@ -32,7 +33,6 @@ export default {
     const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
     if (!hasShow) {
       if (window._hmt) {
-        console.log('000000')
         window._hmt.push(['_trackEvent', '美折', '展示', '新用户弹窗展示'])
       }
       this.dialogTableVisible = true
@@ -46,16 +46,22 @@ export default {
     })
   },
   methods: {
+    handleClose (e) {
+      this.dialogTableVisible = false
+    },
     handleClick () {
+      this.open = true
       this.dialogTableVisible = false
     },
     closed () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '美折', '点击', '新用户弹窗点击'])
       }
-      const url = 'https://dx5.cn/YbqpPb'
       localStorage.setItem('hasShowMeizheActivityModel', 1)
-      window.open(url)
+      if (this.open) {
+        const url = 'https://dx5.cn/YbqpPb'
+        window.open(url)
+      }
     }
   }
 }
