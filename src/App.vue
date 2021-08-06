@@ -70,6 +70,7 @@
                 </div>
             </template>
         </hh-dialog>
+        <MeizheActivityModel />
     </div>
 </template>
 
@@ -79,6 +80,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import NotificationListView from '@/components/NotificationListView.vue'
+import MeizheActivityModel from '@/components/MeizheActivityModel'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
@@ -133,7 +135,8 @@ export default {
     GoodAssessDialog,
     ExpireNotifyDialog,
     vueCustomScrollbar,
-    NotificationListView
+    NotificationListView,
+    MeizheActivityModel
   },
   computed: {
     ...mapGetters({
