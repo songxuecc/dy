@@ -36,10 +36,16 @@
               </el-radio-group>
               <el-input v-model="template.model.weight"  class="input-num" style="width:150px"></el-input>
             </el-form-item>
-            <el-form-item label="商品限购设置:" prop="weight" v-if="template.model.ext_json">
-              <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单限购件数<el-input v-model="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:105px"></el-input></span>
+            <el-form-item label="商品限购设置:" prop="ext_json" v-if="template.model.ext_json" class="flex item-order">
+              <el-form-item prop="maximum_per_order" style="display:inline-block">
+                <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单限购件数<el-input v-model="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:105px"></el-input></span>
+              </el-form-item>
+              <el-form-item prop="limit_per_buyer"  style="display:inline-block">
               <span class="font-12  mb-10" style="margin-right:30px">每个用户累计限购件数<el-input v-model="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:105px"></el-input></span>
+              </el-form-item>
+              <el-form-item prop="minimum_per_order"  style="display:inline-block">
               <span class="font-12  mb-10" style="margin-right:30px">每个用户每次下单至少购买的件数<el-input v-model="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:105px"></el-input></span>
+              </el-form-item>
             </el-form-item>
             <el-form-item label="商品类型:" prop="product_type">
                 <el-radio-group v-model="template.model.product_type">
@@ -106,16 +112,16 @@ export default {
         ],
         reduce_type: [
           { required: true, message: '请选择订单库存计数', trigger: 'blur' }
+        ],
+        maximum_per_order: [
+          { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
+        ],
+        limit_per_buyer: [
+          { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
+        ],
+        minimum_per_order: [
+          { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
         ]
-        // 'ext_json.maximum_per_order': [
-        //   { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
-        // ],
-        // 'ext_json.limit_per_buyer': [
-        //   { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
-        // ],
-        // 'ext_json.minimum_per_order': [
-        //   { type: 'number', message: '年龄必须为数字值', trigger: 'blur' }
-        // ]
       }
     }
   },
@@ -131,12 +137,6 @@ export default {
   },
   methods: {
     ...mapActionsMigrate(['getCostTemplateList']),
-    handleInput (value, key) {
-      console.log(this.template.model, key)
-      this.template.model.ext_json[key] = value
-
-      console.log(this.template.model.ext_json)
-    },
     resetForm () {
       this.$refs.form && this.$refs.form.resetFields()
     },
@@ -227,6 +227,11 @@ export default {
   }
   .margin-bottom-4 {
     margin-bottom: 4px;
+  }
+  /deep/ .item-order{
+    .el-form-item__content {
+      margin-left: 0 !important;
+    }
   }
 }
 
