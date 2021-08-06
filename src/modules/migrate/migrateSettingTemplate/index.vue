@@ -245,7 +245,19 @@ export default {
        */
       try {
         const validate = await this.validForms()
-        if (!validate) return this.$message.error('请按提示正确填写模版')
+        if (!validate) {
+          this.$nextTick(() => {
+            let isError = document.getElementsByClassName('is-error')
+            isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+              block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+              behavior: 'smooth'
+            })
+          })
+          return this.$message.error('请按提示正确填写模版')
+        }
         this.removeTempTemplate()
         this.updateTemplate()
         const {template} = this.getTemplateParams()
