@@ -30,20 +30,21 @@ export default {
   },
   created () {
     if (!this.isAuth) return false
-    Api.hhgjAPIs.is_new_migrate().then((data) => {
-      console.log(data, 'data')
-      if (!data) {
-        const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
-        if (!hasShow) {
+    const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
+    if (!hasShow) {
+      Api.hhgjAPIs.is_new_migrate().then((data) => {
+        if (!data) {
           if (window._hmt) {
             window._hmt.push(['_trackEvent', '美折', '展示', '新用户弹窗展示'])
           }
           this.dialogTableVisible = true
         }
-      }
-    }).finally(() => {
+      }).finally(() => {
+        this.loading = false
+      })
+    } else {
       this.loading = false
-    })
+    }
   },
   computed: {
     ...mapGetters({
