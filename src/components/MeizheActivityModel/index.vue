@@ -11,6 +11,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import image from './image.png'
+import Api from '@/api/apis'
+
 export default {
   name: 'MeizheActivityModel',
   props: {
@@ -26,23 +28,25 @@ export default {
   },
   created () {
     if (!this.isAuth) return false
-    if (!this.currentSubsc) {
-      return false
-    }
-    if (this.currentSubsc.is_newcomer) return false
     const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
     if (!hasShow) {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '美折', '展示', '新用户弹窗展示'])
-      }
-      this.dialogTableVisible = true
+      Api.hhgjAPIs.is_new_migrate().then((data) => {
+        if (!data) {
+          if (window._hmt) {
+            window._hmt.push(['_trackEvent', '美折', '展示', '新用户弹窗展示'])
+          }
+          this.dialogTableVisible = true
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    } else {
+      this.loading = false
     }
-    this.loading = false
   },
   computed: {
     ...mapGetters({
-      isAuth: 'getIsAuth',
-      currentSubsc: 'getCurrentSubsc'
+      isAuth: 'getIsAuth'
     })
   },
   methods: {
