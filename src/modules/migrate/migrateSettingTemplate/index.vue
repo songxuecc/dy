@@ -6,8 +6,8 @@
     <StepDelivery ref="stepDelivery"></StepDelivery>
     <ShopsMigrate ref="shopsMigrate"></ShopsMigrate>
     <!-- 搬家店铺 end -->
-    <div class="help-tips" @click="goHelpLink">
-      <span class="pointer"><i class="el-icon-s-opportunity"></i>如何填写？</span>
+    <div class="help-tips" >
+      <span class="pointer" @click="goHelpLink"><i class="el-icon-s-opportunity"></i>如何填写？</span>
     </div>
     <div class="common-bottom  flex justify-c">
         <el-button style="margin-right: 15px;width:120px" @click="goback"  plain type="primary">返回</el-button>
@@ -148,7 +148,7 @@ export default {
         presell = pick(model, ['presell_end_time', 'presell_delay'])
         presell.presell_end_time = moment(model.presell_end_time).format('YYYY-MM-DD HH:mm:ss')
       } else {
-        presell = pick(model, ['presell_delay', 'step_stock_num_diff'])
+        presell = pick(model, ['presell_delay', 'step_stock_num_percentage'])
         // 抖音阶梯发货 现货都是48小时
         presell.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
         presell.presell_end_time = ''
