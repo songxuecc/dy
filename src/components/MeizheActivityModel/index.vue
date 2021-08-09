@@ -31,7 +31,7 @@ export default {
     const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
     if (!hasShow) {
       Api.hhgjAPIs.is_new_migrate().then((data) => {
-        if (!data) {
+        if (data) {
           if (window._hmt) {
             window._hmt.push(['_trackEvent', '美折', '展示', '新用户弹窗展示'])
           }
