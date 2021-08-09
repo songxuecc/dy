@@ -121,7 +121,7 @@ export default {
       }
     }
     return {
-      tip: '50% <= 现货库存设置 <= 100%',
+      tip: '51% <= 现货库存设置 <= 100%',
       rules: {
         presell_type: [
           { required: true, message: '请选择发货模式', trigger: ['blur', 'change'] }
