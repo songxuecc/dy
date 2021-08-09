@@ -10,12 +10,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import request from '@/mixins/request.js'
 import image from './image.png'
 import Api from '@/api/apis'
 
 export default {
-  mixins: [request],
   name: 'MeizheActivityModel',
   props: {
     msg: String
