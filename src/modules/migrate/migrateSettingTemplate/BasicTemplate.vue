@@ -37,14 +37,14 @@
               <el-input v-model="template.model.weight"  class="input-num" style="width:150px"></el-input>
             </el-form-item>
             <el-form-item label="商品限购设置:" v-if="template.model.ext_json" class="flex item-order">
-              <el-form-item prop="ext_json.maximum_per_order" style="display:inline-block">
-                <span class="font-12  mb-10" style="margin-right:30px">每次限购<el-input @input="handleChange" v-model.number="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:105px"></el-input></span>
-              </el-form-item>
               <el-form-item prop="ext_json.limit_per_buyer"  style="display:inline-block">
-              <span class="font-12  mb-10" style="margin-right:30px">单用户累计限购<el-input @input="handleChange" v-model.number="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:105px"></el-input></span>
+              <span class="font-12  mb-10" style="margin-right:30px">单用户累计限购<el-input @input="handleChange" v-model.number="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:125px"></el-input> 件 </span>
+              </el-form-item>
+              <el-form-item prop="ext_json.maximum_per_order" style="display:inline-block">
+                <span class="font-12  mb-10" style="margin-right:30px">每次限购<el-input @input="handleChange" v-model.number="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:125px"></el-input> 件 </span>
               </el-form-item>
               <el-form-item prop="ext_json.minimum_per_order"  style="display:inline-block">
-              <span class="font-12  mb-10" style="margin-right:30px">每次至少购买<el-input @input="handleChange" v-model.number="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:105px"></el-input></span>
+              <span class="font-12  mb-10" style="margin-right:30px">每次至少购买<el-input @input="handleChange" v-model.number="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:125px"></el-input> 件 </span>
               </el-form-item>
             </el-form-item>
             <el-form-item label="商品类型:" prop="product_type">
@@ -101,7 +101,9 @@ export default {
       // 每次下单限购件数
       const maximum = this.template.model.ext_json.maximum_per_order
 
-      if (limit && minimum > limit) {
+      if (minimum && minimum > 200) {
+        callback(new Error('商品起售件数需为小于或等于200件的正整数'))
+      } else if (limit && minimum > limit) {
         callback(new Error('起售件数不能超过商品每次限购件数'))
       } else if (maximum && minimum > maximum) {
         callback(new Error('起售件数不能超过商品每次限购件数'))
@@ -110,6 +112,7 @@ export default {
       }
     }
 
+    // 每次限购
     const validatePass2 = (rule, value, callback) => {
       // 起售件数
       // 累计限购件数
@@ -117,8 +120,19 @@ export default {
       // 每次下单限购件数
       const maximum = this.template.model.ext_json.maximum_per_order
 
-      if (limit && maximum && maximum > limit) {
+      if (maximum && maximum > 200) {
+        callback(new Error('每次限购件数需为小于200的正整数'))
+      } else if (limit && maximum && maximum > limit) {
         callback(new Error('每次限购件数不能超过累计限购件数'))
+      } else {
+        callback()
+      }
+    }
+    // 单用户累计限购
+    const validatePass1 = (rule, value, callback) => {
+      const limit = this.template.model.ext_json.limit_per_buyer
+      if (limit && limit > 200) {
+        callback(new Error('累计限购件数需为小于200的正整数'))
       } else {
         callback()
       }
@@ -150,7 +164,7 @@ export default {
           { validator: validatePass2, trigger: 'blur' }
         ],
         'ext_json.limit_per_buyer': [
-          { validator: validatePass2, trigger: 'blur' }
+          { validator: validatePass1, trigger: 'blur' }
         ],
         'ext_json.minimum_per_order': [
           { validator: validatePass, trigger: 'blur' }
@@ -172,6 +186,8 @@ export default {
     ...mapActionsMigrate(['getCostTemplateList']),
     handleChange () {
       this.$refs.form.validateField('ext_json.minimum_per_order')
+      this.$refs.form.validateField('ext_json.maximum_per_order')
+      this.$refs.form.validateField('ext_json.limit_per_buyer')
     },
     resetForm () {
       this.$refs.form && this.$refs.form.resetFields()
@@ -269,6 +285,12 @@ export default {
       margin-left: 0 !important;
     }
   }
+}
+
+.setting-content-with-tip {
+  /deep/  .el-form-item .el-form-item__error {
+    padding-top: 3px;
+}
 }
 
 </style>
