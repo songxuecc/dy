@@ -10,8 +10,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import request from '@/mixins/request.js'
 import image from './image.png'
+import Api from '@/api/apis'
+
 export default {
+  mixins: [request],
   name: 'MeizheActivityModel',
   props: {
     msg: String
@@ -26,23 +30,24 @@ export default {
   },
   created () {
     if (!this.isAuth) return false
-    if (!this.currentSubsc) {
-      return false
-    }
-    if (this.currentSubsc.is_newcomer) return false
-    const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
-    if (!hasShow) {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '美折', '展示', '新用户弹窗展示'])
+    Api.hhgjAPIs.is_new_migrate().then((data) => {
+      console.log(data, 'data')
+      if (!data) {
+        const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
+        if (!hasShow) {
+          if (window._hmt) {
+            window._hmt.push(['_trackEvent', '美折', '展示', '新用户弹窗展示'])
+          }
+          this.dialogTableVisible = true
+        }
       }
-      this.dialogTableVisible = true
-    }
-    this.loading = false
+    }).finally(() => {
+      this.loading = false
+    })
   },
   computed: {
     ...mapGetters({
-      isAuth: 'getIsAuth',
-      currentSubsc: 'getCurrentSubsc'
+      isAuth: 'getIsAuth'
     })
   },
   methods: {
