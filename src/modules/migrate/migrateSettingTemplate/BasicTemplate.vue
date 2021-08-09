@@ -147,16 +147,13 @@ export default {
           { required: true, message: '请选择订单库存计数', trigger: 'blur' }
         ],
         'ext_json.maximum_per_order': [
-          { validator: validatePass2, trigger: 'blur' },
-          { type: 'number', message: '必须为数字值', trigger: 'blur' }
+          { validator: validatePass2, trigger: 'blur' }
         ],
         'ext_json.limit_per_buyer': [
-          { validator: validatePass2, trigger: 'blur' },
-          { type: 'number', message: '必须为数字值', trigger: 'blur' }
+          { validator: validatePass2, trigger: 'blur' }
         ],
         'ext_json.minimum_per_order': [
-          { validator: validatePass, trigger: 'blur' },
-          { type: 'number', message: '必须为数字值', trigger: 'blur' }
+          { validator: validatePass, trigger: 'blur' }
         ]
       }
     }
