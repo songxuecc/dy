@@ -153,12 +153,6 @@
                               <p><a style="color: #409EFF;" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
-                              <hh-icon type="iconjinggao1"></hh-icon>
-                              商品详情图中有空白图，建议将空白图删除后再次搬家
-                            </ul>
-                        </div>
                         <div slot="content"  v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
