@@ -4,9 +4,11 @@
     <el-form ref="form" :model="form" size="small" label-position="left">
       <el-form-item>
         <el-radio v-model="form.is_formula" @change="handleIsFormulaChange" :label="1" class="flex align-c">
-          <span class="flex align-c"><span class="color-4e font-12">按照公式修改&nbsp;<span class="bold">原价</span>&nbsp;*&nbsp;</span>
+          <span class="flex align-c"><span class="color-4e font-12">按照公式修改&nbsp;<span class="bold">原价</span>
+            <span class="font-12 ml-5 mr-5">x&nbsp;</span>
+          </span>
           <el-input
-            style="width: 103px"
+            style="width: 95px"
             :max="99999999"
             v-model="form.origin_price_rate"
             @focus="handleIsFormulaFocus"
@@ -17,9 +19,9 @@
           >
             <template slot="append">%</template>
           </el-input>
-          <span class="color-4e font-12">&nbsp;&nbsp;+&nbsp;&nbsp;</span>
+          <span class="color-4e font-14 ml-5 mr-5">&nbsp;+&nbsp;</span>
           <el-input
-            style="width: 103px"
+            style="width: 95px"
             :max="99999999"
             v-model="form.incr_diff"
             @focus="handleIsFormulaFocus"
@@ -30,9 +32,9 @@
           >
             <template slot="append">元</template>
           </el-input>
-          <span class="color-4e font-12">&nbsp;&nbsp;-&nbsp;&nbsp;</span>
+          <span class="color-4e font-18 ml-5 mr-5">&nbsp;-&nbsp;</span>
           <el-input
-            style="width: 103px"
+            style="width: 95px"
             :max="99999999"
             v-model="form.desc_diff"
             @focus="handleIsFormulaFocus"

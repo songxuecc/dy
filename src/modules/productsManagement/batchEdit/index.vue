@@ -252,7 +252,7 @@ export default {
       categoryVislble: false,
       category: {},
       showEditRecordTip: false,
-      editType: 10,
+      editType: 11,
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
@@ -470,6 +470,7 @@ export default {
     }),
     getEditJson () {
       const refName = this.iconList[this.editType - 1].ref
+      console.log(refName, 'refName')
       const json = this.$refs[refName] && this.$refs[refName].getForm()
       if (typeof json === 'boolean') return false
       return json
