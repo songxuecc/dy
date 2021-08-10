@@ -3,37 +3,47 @@
   <div>
     <el-form ref="form" :model="form" size="small" label-position="left">
       <el-form-item>
-        <el-radio v-model="form.is_formula" @change="handleIsFormulaChange" :label="1">
-          <span class="color-4e font-12">按照公式修改&nbsp;原价*</span>
+        <el-radio v-model="form.is_formula" @change="handleIsFormulaChange" :label="1" class="flex align-c">
+          <span class="flex align-c"><span class="color-4e font-12">按照公式修改&nbsp;<span class="bold">原价</span>&nbsp;*&nbsp;</span>
           <el-input
-            style="width: 100px"
+            style="width: 103px"
             :max="99999999"
             v-model="form.origin_price_rate"
             @focus="handleIsFormulaFocus"
             clearable
             @clear="handleClear('origin_price_rate')"
             @blur="handleBlur($event,'origin_price_rate')"
-          />
-          <span class="color-4e font-12">&nbsp;%&nbsp;+&nbsp;</span>
+            class="price"
+          >
+            <template slot="append">%</template>
+          </el-input>
+          <span class="color-4e font-12">&nbsp;&nbsp;+&nbsp;&nbsp;</span>
           <el-input
-            style="width: 100px"
+            style="width: 103px"
             :max="99999999"
             v-model="form.incr_diff"
             @focus="handleIsFormulaFocus"
             clearable
             @clear="handleClear('incr_diff')"
             @blur="handleBlur($event,'incr_diff')"
-          />
-          <span class="color-4e font-12">&nbsp;-&nbsp;</span>
+          class="price"
+          >
+            <template slot="append">元</template>
+          </el-input>
+          <span class="color-4e font-12">&nbsp;&nbsp;-&nbsp;&nbsp;</span>
           <el-input
-            style="width: 100px"
+            style="width: 103px"
             :max="99999999"
             v-model="form.desc_diff"
             @focus="handleIsFormulaFocus"
             clearable
             @clear="handleClear('desc_diff')"
             @blur="handleBlur($event,'desc_diff')"
-          />
+          class="price"
+          >
+            <template slot="append">元</template>
+          </el-input>
+              </span>
         </el-radio>
       </el-form-item>
       <el-form-item>
@@ -41,10 +51,12 @@
           v-model="form.is_every_price"
           @change="handleIsEveryPriceChange"
           :label="1"
-
+          class="flex align-c"
         >
-          <span class="color-4e font-12">价格统一为&nbsp;</span>
+        <span class="flex align-c">
+          <span class="color-4e font-12">价格统一为&nbsp;&nbsp;</span>
           <el-input
+            class="price"
             style="width: 390px"
             v-model="form.every_price"
             :max="99999999"
@@ -52,7 +64,11 @@
             clearable
             @clear="handleClear('every_price')"
             @blur="handleBlur($event,'every_price')"
-          />
+          >
+            <template slot="append">元</template>
+          </el-input>
+              </span>
+
         </el-radio>
       </el-form-item>
 
@@ -71,7 +87,10 @@
                 clearable
                 @clear="handleClear('min_price')"
                 @blur="handleBlur($event,'min_price')"
-              />
+              class="price"
+          >
+            <template slot="append">元</template>
+          </el-input>
             </el-tooltip>
           </el-form-item>
         </el-checkbox>
@@ -92,9 +111,11 @@
                 clearable
                 @clear="handleClear('min_price_rate')"
                 @blur="handleBlur($event,'min_price_rate')"
-              />
+              class="price"
+          >
+            <template slot="append">%</template>
+          </el-input>
             </el-tooltip>
-            <span class="color-4e font-12">&nbsp;%&nbsp;</span>
           </el-form-item>
         </el-checkbox>
       </el-form-item>
@@ -219,4 +240,18 @@ export default {
   padding-left: 10px;
   padding-right: 10px;
 }
+/deep/ .el-input-group__append {
+    background: none;
+    padding: 0;
+    padding-right: 10px;
+  }
+
+  .price {
+    /deep/ .el-input__inner {
+      border-right: none;
+      padding: 5px;
+      padding-left: 10px;
+    }
+
+  }
 </style>
