@@ -202,9 +202,9 @@
                                   <div slot="content" >
                                     <ul style="padding: 0; margin: 0;" class="fail">只可以输入0-1000000的数字</ul>
                                   </div>
-                                  <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                                  <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
                               </el-tooltip>
-                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="4" width="130">
@@ -227,9 +227,9 @@
                                   <div slot="content" >
                                     <ul style="padding: 0; margin: 0;" class="fail">只可以输入0.01-9999999.99 的数字,最多保留2位小数</ul>
                                   </div>
-                                  <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                                  <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
                               </el-tooltip>
-                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red':'']" type="textarea"  class="my-textarea"></el-input>
+                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="5" width="150">
@@ -1043,6 +1043,16 @@ export default {
       })
 
       if (error) {
+        this.$nextTick(() => {
+          let isError = document.getElementsByClassName('is-error')
+          isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+            block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+            behavior: 'smooth'
+          })
+        })
         return this.$message.error(error)
       }
       try {
@@ -1713,6 +1723,8 @@ export default {
         this.$set(row, borderKey, false)
         this.priceEditError = false
       }
+
+      console.log(row, 'row')
     },
     handlePictureQualificationChange (data) {
       Object.assign(this.product.model, {quality_list: data})
@@ -1930,16 +1942,17 @@ export default {
   }
 
   /deep/ .red {
-    textarea:active {
-      border: 1px solid red;
-    }
-    textarea:hover {
-      border: 1px solid red;
-    }
-    textarea:focus {
-      border: 1px solid red;
-    }
-    }
+    border: 1px solid red;
+    // textarea:active {
+    //   border: 1px solid red;
+    // }
+    // textarea:hover {
+    //   border: 1px solid red;
+    // }
+    // textarea:focus {
+    //   border: 1px solid red;
+    // }
+  }
 
     /deep/ .el-table--enable-row-hover .el-table__body tr:hover > td {
       background:none

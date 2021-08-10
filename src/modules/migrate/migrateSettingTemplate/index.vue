@@ -6,8 +6,8 @@
     <StepDelivery ref="stepDelivery"></StepDelivery>
     <ShopsMigrate ref="shopsMigrate"></ShopsMigrate>
     <!-- 搬家店铺 end -->
-    <div class="help-tips" @click="goHelpLink">
-      <span class="pointer"><i class="el-icon-s-opportunity"></i>如何填写？</span>
+    <div class="help-tips" >
+      <span class="pointer" @click="goHelpLink"><i class="el-icon-s-opportunity"></i>如何填写？</span>
     </div>
     <div class="common-bottom  flex justify-c">
         <el-button style="margin-right: 15px;width:120px" @click="goback"  plain type="primary">返回</el-button>
@@ -134,7 +134,7 @@ export default {
         'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
         'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max',
         'presell_type', 'commit_type', 'reduce_type', 'product_type', 'unit', 'supply_7day_return',
-        'weight', 'weight_unit'
+        'weight', 'weight_unit', 'ext_json'
       ]
       const model = this.template.model
       const params = pick(model, keyList)
@@ -148,11 +148,13 @@ export default {
         presell = pick(model, ['presell_end_time', 'presell_delay'])
         presell.presell_end_time = moment(model.presell_end_time).format('YYYY-MM-DD HH:mm:ss')
       } else {
-        presell = pick(model, ['presell_delay', 'step_stock_num_diff'])
+        presell = pick(model, ['presell_delay', 'step_stock_num_percentage'])
         // 抖音阶梯发货 现货都是48小时
         presell.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
         presell.presell_end_time = ''
       }
+      // 处理多余属性
+      params.ext_json = JSON.stringify(params.ext_json)
 
       // 处理搬家数据
       const template = Object.assign(params, presell)
@@ -243,7 +245,19 @@ export default {
        */
       try {
         const validate = await this.validForms()
-        if (!validate) return this.$message.error('请按提示正确填写模版')
+        if (!validate) {
+          this.$nextTick(() => {
+            let isError = document.getElementsByClassName('is-error')
+            isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+              block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+              behavior: 'smooth'
+            })
+          })
+          return this.$message.error('请按提示正确填写模版')
+        }
         this.removeTempTemplate()
         this.updateTemplate()
         const {template} = this.getTemplateParams()
