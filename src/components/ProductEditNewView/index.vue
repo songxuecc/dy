@@ -204,7 +204,7 @@
                                   </div>
                                   <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
                               </el-tooltip>
-                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
+                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini"  type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="4" width="130">
@@ -229,7 +229,7 @@
                                   </div>
                                   <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
                               </el-tooltip>
-                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
+                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini"  type="textarea"  class="my-textarea"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column key="5" width="150">
@@ -1031,6 +1031,8 @@ export default {
           skuShowList
             .filter(sku => sku.quantity)
             .forEach(sku => {
+              this.getPriceStyle(sku.promo_price, sku, 'promo_priceBorder', 'promo_price')
+              this.getPriceStyle(sku.quantity, sku, 'quantityBorder', 'quantity')
               if (sku.quantity > 1000000 || sku.quantity < 0) {
                 console.log(sku, 'sku')
                 error = 'sku库存必填，且只可以输入0-1000000的数字'
@@ -1041,17 +1043,20 @@ export default {
             })
         }
       })
-
       if (error) {
+        this.activityTab = 'sku'
         this.$nextTick(() => {
           let isError = document.getElementsByClassName('is-error')
-          isError[0].scrollIntoView({
+          console.log(isError, 'isError')
+          if (isError && isError[0]) {
+            isError[0].scrollIntoView({
                 // 滚动到指定节点
                 // 值有start,center,end，nearest，当前显示在视图区域中间
-            block: 'center',
+              block: 'center',
                 // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-            behavior: 'smooth'
-          })
+              behavior: 'smooth'
+            })
+          }
         })
         return this.$message.error(error)
       }
@@ -1064,6 +1069,19 @@ export default {
           this.saveProducts()
         }
       } catch (err) {
+        this.activityTab = 'info'
+        this.$nextTick(() => {
+          let isError = document.getElementsByClassName('el-form-item__error')
+          if (isError && isError[0]) {
+            isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+              block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+              behavior: 'smooth'
+            })
+          }
+        })
         return this.$message.error(err)
       }
     },

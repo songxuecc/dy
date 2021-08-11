@@ -71,7 +71,6 @@ export default {
        * @param state
        */
     loadTempTemplate ({commit, state}, payload) {
-      console.log(payload, 'payload')
       let strTemplate = localStorage.getItem('temp_template') || ''
       let strCustomPrices = localStorage.getItem('custom_prices') || ''
       let template = payload
