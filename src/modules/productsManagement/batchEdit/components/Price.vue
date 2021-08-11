@@ -1,50 +1,48 @@
 <!-- 库存 -->
 <template>
   <div>
-    <el-form ref="form" :model="form" size="small" label-position="left">
+    <el-form ref="form" :model="form" size="small" label-position="left" :rules="rules">
       <el-form-item>
         <el-radio v-model="form.is_formula" @change="handleIsFormulaChange" :label="1" class="flex align-c">
           <span class="flex align-c"><span class="color-4e font-12">按照公式修改&nbsp;<span class="bold">原价</span>
             <span class="font-12 ml-5 mr-5">x&nbsp;</span>
           </span>
-          <el-input
-            style="width: 95px"
-            :max="99999999"
-            v-model="form.origin_price_rate"
-            @focus="handleIsFormulaFocus"
-            clearable
-            @clear="handleClear('origin_price_rate')"
-            @blur="handleBlur($event,'origin_price_rate')"
-            class="price"
-          >
-            <template slot="append">%</template>
-          </el-input>
+          <el-form-item prop="origin_price_rate">
+            <el-input
+              style="width: 95px"
+              :max="99999999"
+              v-model="form.origin_price_rate"
+              @focus="handleIsFormulaFocus"
+              class="price"
+            >
+              <template slot="append">%</template>
+            </el-input>
+          </el-form-item>
           <span class="color-4e font-14 ml-5 mr-5">&nbsp;+&nbsp;</span>
+          <el-form-item prop="incr_diff">
           <el-input
             style="width: 95px"
             :max="99999999"
             v-model="form.incr_diff"
             @focus="handleIsFormulaFocus"
-            clearable
-            @clear="handleClear('incr_diff')"
-            @blur="handleBlur($event,'incr_diff')"
           class="price"
           >
             <template slot="append">元</template>
           </el-input>
+          </el-form-item>
           <span class="color-4e font-18 ml-5 mr-5">&nbsp;-&nbsp;</span>
+          <el-form-item prop="desc_diff">
           <el-input
             style="width: 95px"
             :max="99999999"
             v-model="form.desc_diff"
             @focus="handleIsFormulaFocus"
-            clearable
-            @clear="handleClear('desc_diff')"
-            @blur="handleBlur($event,'desc_diff')"
           class="price"
           >
             <template slot="append">元</template>
           </el-input>
+          </el-form-item>
+
               </span>
         </el-radio>
       </el-form-item>
@@ -57,6 +55,7 @@
         >
         <span class="flex align-c">
           <span class="color-4e font-12">价格统一为&nbsp;&nbsp;</span>
+          <el-form-item prop="every_price">
           <el-input
             class="price"
             style="width: 390px"
@@ -65,10 +64,11 @@
             @focus="handleIsEveryPriceFocus"
             clearable
             @clear="handleClear('every_price')"
-            @blur="handleBlur($event,'every_price')"
           >
             <template slot="append">元</template>
           </el-input>
+      </el-form-item>
+
               </span>
 
         </el-radio>
@@ -81,6 +81,7 @@
               content="若此处填10，当新价格低于10元，则将新价格调整为10"
               placement="right"
             >
+          <el-form-item prop="min_price">
               <el-input
                 :max="99999999"
                 style="width: 289px"
@@ -88,11 +89,12 @@
                 @focus="handlChecked('is_open_min_price')"
                 clearable
                 @clear="handleClear('min_price')"
-                @blur="handleBlur($event,'min_price')"
               class="price"
           >
             <template slot="append">元</template>
           </el-input>
+      </el-form-item>
+
             </el-tooltip>
           </el-form-item>
         </el-checkbox>
@@ -100,7 +102,7 @@
           v-model="form.is_open_min_price_rate"
           style="margin-left: 84px; display: block; margin-top: 5px"
         >
-          <el-form-item label="新价格不低于原价的">
+          <el-form-item label="新价格不低于原价的" prop="min_price_rate">
             <el-tooltip
               content="若此处填200，当新价格低于原价的2倍时，则将新价格调整为原价的2倍"
               placement="right"
@@ -112,7 +114,6 @@
                 v-model="form.min_price_rate"
                 clearable
                 @clear="handleClear('min_price_rate')"
-                @blur="handleBlur($event,'min_price_rate')"
               class="price"
           >
             <template slot="append">%</template>
@@ -137,10 +138,76 @@ export default {
     msg: String
   },
   data () {
+    // 每次至少购买
+    const validatePass1 = (rule, value, callback) => {
+      this.valid()
+
+      if (value && !utils.isNumber(value)) {
+        callback(new Error('必须填写数字'))
+      } else {
+        callback()
+      }
+    }
+
+    // 每次至少购买
+    const validatePass2 = (rule, value, callback) => {
+      this.valid()
+      if (this.form.is_every_price === 1) {
+        if (value && !utils.isNumber(value)) {
+          callback(new Error('必须填写数字'))
+        } else {
+          callback()
+        }
+      } else {
+        this.$refs.form.clearValidate(['every_price'])
+        callback()
+      }
+    }
+
+    // 每次至少购买
+    const validatePass3 = (rule, value, callback) => {
+      this.valid()
+      if (value && !utils.isNumber(value)) {
+        callback(new Error('必须填写数字'))
+      } else {
+        callback()
+      }
+    }
+
+    // 每次至少购买
+    const validatePass4 = (rule, value, callback) => {
+      this.valid()
+      if (value && !utils.isNumber(value)) {
+        callback(new Error('必须填写数字'))
+      } else {
+        callback()
+      }
+    }
     return {
+
+      rules: {
+        'origin_price_rate': [
+          { validator: validatePass1, trigger: ['blur', 'change'] }
+        ],
+        'incr_diff': [
+          { validator: validatePass1, trigger: ['blur', 'change'] }
+        ],
+        'desc_diff': [
+          { validator: validatePass1, trigger: ['blur', 'change'] }
+        ],
+        'every_price': [
+          { validator: validatePass2, trigger: ['blur', 'change'] }
+        ],
+        'min_price': [
+          { validator: validatePass3, trigger: ['blur', 'change'] }
+        ],
+        'min_price_rate': [
+          { validator: validatePass4, trigger: ['blur', 'change'] }
+        ]
+      },
       form: {
         is_formula: 1,
-        origin_price_rate: '',
+        origin_price_rate: '100',
         incr_diff: '',
         desc_diff: '',
         is_every_price: 0,
@@ -153,6 +220,20 @@ export default {
     }
   },
   methods: {
+    valid () {
+      if (!this.form.is_formula) {
+        this.$refs.form.clearValidate(['origin_price_rate', 'incr_diff', 'desc_diff'])
+      }
+      if (!this.form.is_every_price) {
+        this.$refs.form.clearValidate(['every_price'])
+      }
+      if (!this.form.is_open_min_price) {
+        this.$refs.form.clearValidate(['min_price'])
+      }
+      if (!this.form.is_open_min_price_rate) {
+        this.$refs.form.clearValidate(['min_price_rate'])
+      }
+    },
     handleIsFormulaChange (value) {
       if (this.form.is_formula) {
         this.form.is_every_price = 0
@@ -180,13 +261,6 @@ export default {
     },
     handleClear (attribute) {
       this.form[attribute] = ''
-    },
-    handleBlur (e, attribute) {
-      if (utils.isNumber(e.target.value)) {
-        this.form[attribute] = e.target.value
-      } else {
-        this.$message.error('请输入数字')
-      }
     },
     getForm () {
       if (!this.form.is_formula && !this.form.is_every_price) {
@@ -245,12 +319,13 @@ export default {
 /deep/ .el-input-group__append {
     background: none;
     padding: 0;
-    padding-right: 10px;
+    padding-right: 5px;
+    padding-left: 5px;
   }
 
   .price {
     /deep/ .el-input__inner {
-      border-right: none;
+      // border-right: none;
       padding: 5px;
       padding-left: 10px;
     }

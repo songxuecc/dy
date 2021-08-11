@@ -1,27 +1,24 @@
 <!-- 批量修改 -->
 <template>
     <div class="batchEdit">
-
         <title class="flex title wrap">
-            <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer' , 'relative','mb-10']" @click="toggleEditType(icon.index)">
-              <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
-              <hh-icon type="iconhot3" class="hot" v-if="icon.hot"></hh-icon>
-              <p class="font-12 color-4e yaHei">{{ icon.text }}</p>
-            </div>
+          <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer' , 'relative','mb-10']" @click="toggleEditType(icon.index)">
+            <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
+            <hh-icon type="iconhot3" class="hot" v-if="icon.hot"></hh-icon>
+            <p class="font-12 color-4e yaHei">{{ icon.text }}</p>
+          </div>
+          <div :class="['iconBox' , 'center','pointer' , 'relative','mb-10' , 'align-c','record']" @click="examineEditRecord">
+            <hh-icon type="icon-record" class="icon" style="color:rgb(247, 181, 0);font-size:50px;margin-bottom: -10px;margin-top: 15px;margin-left: 5px;"></hh-icon>
+            <p class="font-12 color-4e yaHei">修改记录</p>
+          </div>
         </title>
 
-        <div class=" left font-16 poniter " style="padding: 8px 16px;background-color: #f0f9eb;color: #67c23a;" >
-          <span @click="examineEditRecord" @mouseenter="toggleEditRecordTip" @mouseleave="toggleEditRecordTip" style="font-weight: 700;text-decoration:underline;" class="pointer">
-            <hh-icon type="icontishi-copy" ></hh-icon>点击查看修改记录
-            <EditRecordTip v-show="showEditRecordTip" />
-          </span>
-        </div>
         <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
         <div v-if="editType !== 999">
             <div class="content left" >
                 <div style="min-height:120px;margin-top: 20px;">
                   <h1 class="flex">修改范围
-                    <span style="margin-left:5px" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后在进行下一步批量操作</span>
+                    <span style="margin-left:5px;font-weight:normal" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后在进行下一步批量操作</span>
                     <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
                       <hh-icon type="icontishi" ></hh-icon>
                       点我查看教程视频
@@ -308,10 +305,20 @@ export default {
           primary: 'iconjiagexuanzhong',
           info: 'iconjiageweixuanzhong',
           index: 4,
-          text: '价格',
+          text: '改sku价格',
           ref: 'Price',
           tableRef: 'TablePrice',
           needExpand: true
+        },
+        {
+          primary: 'icona-shoumaihuaxianjiaxuanzhong',
+          info: 'icona-shoumaihuaxianjiaweixuanzhong',
+          index: 11,
+          text: '售卖&划线价',
+          ref: 'SaleAndUnderlinedPrice',
+          tableRef: 'TableSaleAndUnderlinedPrice',
+          needExpand: false,
+          hot: false
         },
         {
           primary: 'iconfahuomoshixuanzhong',
@@ -369,16 +376,6 @@ export default {
           tableRef: 'TableProductProperties',
           needExpand: false,
           hot: true
-        },
-        {
-          primary: 'icona-shoumaihuaxianjiaxuanzhong',
-          info: 'icona-shoumaihuaxianjiaweixuanzhong',
-          index: 11,
-          text: '售卖&划线价',
-          ref: 'SaleAndUnderlinedPrice',
-          tableRef: 'TableSaleAndUnderlinedPrice',
-          needExpand: false,
-          hot: false
         },
         {
           primary: 'iconxiangoushuliangxuanzhong',
@@ -464,13 +461,16 @@ export default {
     examineEditRecord: debounce(function () {
       this.editType = 999
       this.fetchHhTaskPage()
-    }, 2000, {
+    }, 1000, {
       leading: true,
       trailing: false
     }),
     getEditJson () {
-      const refName = this.iconList[this.editType - 1].ref
-      console.log(refName, 'refName')
+      const el = this.iconList.find(item => item.index === this.editType)
+      if (!el) {
+        return false
+      }
+      const refName = el.ref
       const json = this.$refs[refName] && this.$refs[refName].getForm()
       if (typeof json === 'boolean') return false
       return json
@@ -519,7 +519,9 @@ export default {
       })
       this.save({previewDeleteGoodsIds: []})
       this.loading = false
-      const tableRefName = this.iconList[this.editType - 1].tableRef
+      const el = this.iconList.find(item => item.index === this.editType)
+      const tableRefName = el.tableRef
+
       this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
     },
     async idProductList () {
@@ -579,7 +581,9 @@ export default {
         })
         this.save({previewDeleteGoodsIds: []})
         this.loading = false
-        const tableRefName = this.iconList[this.editType - 1].tableRef
+        const el = this.iconList.find(item => item.index === this.editType)
+        const tableRefName = el.tableRef
+
         this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
       }
     },
@@ -607,7 +611,9 @@ export default {
       })
       this.save({previewDeleteGoodsIds: []})
       this.loading = false
-      const tableRefName = this.iconList[this.editType - 1].tableRef
+      const el = this.iconList.find(item => item.index === this.editType)
+      const tableRefName = el.tableRef
+
       this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
     },
     // 当按商品选择时 预览
@@ -638,7 +644,9 @@ export default {
         })
         this.save({previewDeleteGoodsIds: []})
         this.loading = false
-        const tableRefName = this.iconList[this.editType - 1].tableRef
+        const el = this.iconList.find(item => item.index === this.editType)
+        const tableRefName = el.tableRef
+
         this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
       }
     },
@@ -692,6 +700,14 @@ export default {
   color:@color-primary;
   &:hover {
     text-decoration: underline;
+  }
+}
+
+.record {
+  &:hover {
+    p {
+      color:#e6a23c;
+    }
   }
 }
 </style>

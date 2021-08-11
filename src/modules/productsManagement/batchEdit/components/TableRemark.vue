@@ -57,10 +57,10 @@
                 prop="new_data">
                 <template slot-scope="scope">
                   <el-input
+                      type="textarea"
                       v-model="scope.row.new_data"
-                      size="mini"
-                      :class="['input-text-left', {'warn': getTitleLengthWarning(scope.row.new_data)}]">
-                      <span slot="append" class="hint">{{ getTitleLength(scope.row.new_data) }} / 30</span>
+                      size="mini">
+                      <!-- <span slot="append" class="hint">{{ getTitleLength(scope.row.new_data) }} / 30</span> -->
                   </el-input>
                 </template>
             </el-table-column>
@@ -118,12 +118,12 @@ export default {
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct', 'fetchHhTaskProductOverview', 'saveDelete']),
-    getTitleLength (title) {
-      return utils.getDyStrRealLength(title)
-    },
-    getTitleLengthWarning (title) {
-      return utils.getDyStrRealLength(title) > 30
-    },
+    // getTitleLength (title) {
+    //   return utils.getDyStrRealLength(title)
+    // },
+    // getTitleLengthWarning (title) {
+    //   return utils.getDyStrRealLength(title) > 30
+    // },
     edit () {
       const goodsTitleDict = {}
       this.hhTaskProductOverviewTableData.forEach(item => {

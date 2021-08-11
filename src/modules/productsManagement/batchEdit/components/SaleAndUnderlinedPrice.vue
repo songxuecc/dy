@@ -58,6 +58,11 @@
               将售卖价设置为对应SKU的最低价
             </el-radio>
           </el-form-item>
+          <el-form-item>
+            <el-radio v-model="form.discount.discount_price_type"  :label="3" class="flex align-c">
+              不修改
+            </el-radio>
+          </el-form-item>
         </div>
       </div>
 
@@ -111,6 +116,11 @@
               </span>
             </el-radio>
           </el-form-item>
+           <el-form-item>
+            <el-radio v-model="form.discount.discount_price_type"  :label="3" class="flex align-c">
+              不修改
+            </el-radio>
+          </el-form-item>
         </div>
       </div>
 
@@ -146,14 +156,57 @@ export default {
   data () {
     // 每次至少购买
     const validatePass1 = (rule, value, callback) => {
-      if (value && !utils.isNumber(value)) {
-        callback(new Error('必须填写数字'))
+      if (['discount.price_rate', 'discount.incr_diff', 'discount.desc_diff'].includes(rule.field)) {
+        this.$refs.form.clearValidate(['discount.price'])
+        if (value && !utils.isNumber(value)) {
+          this.changeError(true)
+          callback(new Error('必须填写数字'))
+        } else {
+          this.changeError(false)
+          callback()
+        }
+      } else if (['discount.price'].includes(rule.field)) {
+        this.$refs.form.clearValidate(['discount.price_rate', 'discount.incr_diff', 'discount.desc_diff'])
+        if (value && !utils.isNumber(value)) {
+          this.changeError(true)
+          callback(new Error('必须填写数字'))
+        } else {
+          this.changeError(false)
+          callback()
+        }
       } else {
+        this.changeError(false)
+        callback()
+      }
+    }
+
+    const validatePass2 = (rule, value, callback) => {
+      if (['market.price_rate', 'market.incr_diff', 'market.desc_diff'].includes(rule.field)) {
+        this.$refs.form.clearValidate(['market.price'])
+        if (value && !utils.isNumber(value)) {
+          this.changeError(true)
+          callback(new Error('必须填写数字'))
+        } else {
+          this.changeError(false)
+          callback()
+        }
+      } else if (['market.price'].includes(rule.field)) {
+        this.$refs.form.clearValidate(['market.price_rate', 'market.incr_diff', 'market.desc_diff'])
+        if (value && !utils.isNumber(value)) {
+          this.changeError(true)
+          callback(new Error('必须填写数字'))
+        } else {
+          this.changeError(false)
+          callback()
+        }
+      } else {
+        this.changeError(false)
         callback()
       }
     }
 
     return {
+      hasError: false,
       options: [{
         value: 1,
         label: '原售卖价'
@@ -193,33 +246,36 @@ export default {
       },
       rules: {
         'discount.price': [
-          { validator: validatePass1, trigger: ['blur', 'change'] }
+          { validator: validatePass1, trigger: ['focus', 'blur', 'change'] }
         ],
         'discount.desc_diff': [
-          { validator: validatePass1, trigger: ['blur', 'change'] }
+          { validator: validatePass1, trigger: ['focus', 'blur', 'change'] }
         ],
         'discount.incr_diff': [
-          { validator: validatePass1, trigger: ['blur', 'change'] }
+          { validator: validatePass1, trigger: ['focus', 'blur', 'change'] }
         ],
         'discount.price_rate': [
-          { validator: validatePass1, trigger: ['blur', 'change'] }
+          { validator: validatePass1, trigger: ['focus', 'blur', 'change'] }
         ],
         'market.price': [
-          { validator: validatePass1, trigger: ['blur', 'change'] }
+          { validator: validatePass2, trigger: ['focus', 'blur', 'change'] }
         ],
         'market.desc_diff': [
-          { validator: validatePass1, trigger: ['blur', 'change'] }
+          { validator: validatePass2, trigger: ['focus', 'blur', 'change'] }
         ],
         'market.incr_diff': [
-          { validator: validatePass1, trigger: ['blur', 'change'] }
+          { validator: validatePass2, trigger: ['focus', 'blur', 'change'] }
         ],
         'market.price_rate': [
-          { validator: validatePass1, trigger: ['blur', 'change'] }
+          { validator: validatePass2, trigger: ['focus', 'blur', 'change'] }
         ]
       }
     }
   },
   methods: {
+    changeError (bool) {
+      this.hasError = bool
+    },
     handleFocus (key, value) {
       set(this.form, key, value)
     },
@@ -227,30 +283,32 @@ export default {
       this.form[attribute] = ''
     },
     getForm () {
-      this.$refs.form.validate((valid, object) => {
-        if (valid) {
-
-        } else {
-          console.log(object, 'object')
+      if (this.hasError) {
+        this.$message.error('请按提示修改错误')
+        return false
+      } else {
+        const form = {
+          discount: {
+            discount_price_type: Number(this.form.discount.discount_price_type),
+            price_type: Number(this.form.discount.price_type),
+            price_rate: utils.yuanToFen(this.form.discount.price_rate),
+            incr_diff: utils.yuanToFen(this.form.discount.incr_diff),
+            decr_diff: utils.yuanToFen(this.form.discount.decr_diff),
+            price: utils.yuanToFen(this.form.discount.price)
+          },
+          market: {
+            discount_price_type: Number(this.form.market.discount_price_type),
+            price_type: Number(this.form.market.price_type),
+            price_rate: utils.yuanToFen(this.form.market.price_rate),
+            incr_diff: utils.yuanToFen(this.form.market.incr_diff),
+            decr_diff: utils.yuanToFen(this.form.market.decr_diff),
+            price: utils.yuanToFen(this.form.market.price)
+          },
+          unit: Number(this.form.unit)
         }
-      })
-      console.log(
-        {
-          ...this.form
-        }
-      )
-      // ,
-      //     is_formula: Number(this.form.is_formula),
-      //     is_every_price: Number(this.form.is_every_price),
-      //     is_open_min_price: Number(this.form.is_open_min_price),
-      //     is_open_min_price_rate: Number(this.form.is_open_min_price_rate),
-      //     every_price: utils.yuanToFen(this.form.every_price),
-      //     min_price: utils.yuanToFen(this.form.min_price),
-      //     origin_price_rate: utils.yuanToFen(this.form.origin_price_rate),
-      //     incr_diff: utils.yuanToFen(this.form.incr_diff || 0),
-      //     desc_diff: utils.yuanToFen(this.form.desc_diff || 0),
-      //     min_price_rate: utils.yuanToFen(this.form.min_price_rate)
-      return this.form
+        console.log(form, 'form')
+        return form
+      }
     }
   }
 }

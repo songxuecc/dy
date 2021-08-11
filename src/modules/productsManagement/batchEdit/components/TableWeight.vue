@@ -1,4 +1,4 @@
-<!-- 批量修改标题 -->
+<!-- 上下架 -->
 <template>
     <el-drawer
         :visible.sync="visible"
@@ -6,14 +6,7 @@
         direction="rtl"
         custom-class="pl-10 pt-10"
         size="80%">
-         <div class="title center">
-          预览批量修改标题效果
-          <hh-icon
-            type="iconquxiaoanniu"
-            class="close pointer"
-            @click="toggleVisible"
-          ></hh-icon>
-        </div>
+        <div class="title center ">预览批量修改上下架效果 <hh-icon type="iconquxiaoanniu" class="close pointer" @click="toggleVisible"></hh-icon></div>
         <el-table
             :data="hhTaskProductOverviewTableData"
             class="mt-10"
@@ -25,20 +18,18 @@
             v-loading="loading"
             style="width: 100%">
             <el-table-empty slot="empty"/>
-
             <el-table-column
                 label="商品信息"
-                width="300"
                 prop="id">
             <template slot-scope="scope">
               <div  class="flex">
-                  <HhImage :src="scope.row.image_url" style="height:50px;max-width:65px" class="mr-10"/>
+                <HhImage :src="scope.row.image_url" style="height:50px;max-width:65px" class="mr-10"/>
                 <div>
-                    <el-link style="font-size:12px" :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
+                    <el-link :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
                     {{ scope.row.goods_name }}
                     </el-link><br>
                     <div class="font-12 flex align-c color-999 mt-5">
-                        <span class="font-12" >{{ scope.row.goods_id }}</span>
+                        <span >{{ scope.row.goods_id }}</span>
                         <span class="ml-10 mr-10 presell_type jieti" v-if="scope.row.presell_type === 2">阶梯发货</span>
                         <span class="ml-10 mr-10 presell_type xianhuo" v-if="scope.row.presell_type === 0">现货发货</span>
                         <span class="ml-10 mr-10 presell_type yushou" v-if="scope.row.presell_type === 1">预售发货</span>
@@ -48,26 +39,19 @@
             </template>
             </el-table-column>
             <el-table-column
-                width="220"
+                align="center"
                 label="修改前"
                 prop="old_data">
             </el-table-column>
             <el-table-column
+                align="center"
                 label="修改后"
                 prop="new_data">
-                <template slot-scope="scope">
-                  <el-input
-                      v-model="scope.row.new_data"
-                      size="mini"
-                      :class="['input-text-left', {'warn': getTitleLengthWarning(scope.row.new_data)}]">
-                      <span slot="append" class="hint">{{ getTitleLength(scope.row.new_data) }} / 30</span>
-                  </el-input>
-                </template>
             </el-table-column>
             <el-table-column
                 align="center"
                 label="操作"
-                width="100">
+                width="150">
                 <template slot-scope="scope">
                   <span class="click" @click="handleDelete(scope.$index, scope.row)">删除</span>
                 </template>
@@ -92,10 +76,9 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import utils from '@/common/utils'
 
 export default {
-  name: 'TableTitle',
+  name: 'TableShelves',
   props: {
   },
   data () {
@@ -118,21 +101,8 @@ export default {
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['updateProduct', 'fetchHhTaskProductOverview', 'saveDelete']),
-    getTitleLength (title) {
-      return utils.getDyStrRealLength(title)
-    },
-    getTitleLengthWarning (title) {
-      return utils.getDyStrRealLength(title) > 30
-    },
     edit () {
-      const goodsTitleDict = {}
-      this.hhTaskProductOverviewTableData.forEach(item => {
-        goodsTitleDict[item.goods_id] = item.new_data
-      })
-      this.updateProduct({
-        ...this.hhTaskProductOverviewFilters,
-        goods_title_dict: JSON.stringify(goodsTitleDict)
-      })
+      this.updateProduct(this.hhTaskProductOverviewFilters)
       this.closeVisible()
     },
     toggleVisible () {
@@ -190,6 +160,7 @@ export default {
     background: linear-gradient(180deg, #F9D6AF 0%, #D9A779 100%);
     border-radius: 8px 0px 8px 0px;
   }
+
   .title {
     font-size: 22px;
     font-family: PingFangSC-Medium, PingFang SC;
@@ -206,4 +177,5 @@ export default {
       margin: auto;
     }
   }
+
 </style>
