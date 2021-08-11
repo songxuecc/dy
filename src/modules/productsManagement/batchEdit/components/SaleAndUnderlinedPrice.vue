@@ -59,7 +59,7 @@
             </el-radio>
           </el-form-item>
           <el-form-item>
-            <el-radio v-model="form.discount.discount_price_type"  :label="3" class="flex align-c">
+            <el-radio v-model="form.discount.discount_price_type"  :label="0" class="flex align-c">
               不修改
             </el-radio>
           </el-form-item>
@@ -117,7 +117,7 @@
             </el-radio>
           </el-form-item>
            <el-form-item>
-            <el-radio v-model="form.discount.discount_price_type"  :label="3" class="flex align-c">
+            <el-radio v-model="form.discount.discount_price_type"  :label="0" class="flex align-c">
               不修改
             </el-radio>
           </el-form-item>
