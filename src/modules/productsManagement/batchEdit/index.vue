@@ -436,6 +436,7 @@ export default {
         }
         this.selectIds = []
         this.goods_ids = ''
+        this.category = {}
         this.examineEditRecord()
       }
     }
@@ -510,6 +511,7 @@ export default {
         check_status: checkStatus,
         is_capture: this.form.captureStatus,
         presell_type: this.form.presell_type,
+        category_id: this.category.id,
         goods_id_list: JSON.stringify([]),
         ext_json: JSON.stringify(this.getEditJson())
       }
