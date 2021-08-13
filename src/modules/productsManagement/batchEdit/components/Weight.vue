@@ -3,7 +3,7 @@
     <el-form ref="form" :model="form" label-width="70px" size="small" label-position="left">
 
         <el-form-item label="重量：" style="width:200px">
-            <el-input clearable @clear="handleClear('weight')"  v-model.number="form.weight" @focus="handleCheck('weight')"></el-input>
+            <el-input clearable @clear="handleClear('weight')"  v-model.number="form.weight" ></el-input>
         </el-form-item>
 
         <el-form-item label-width="95px">
@@ -25,14 +25,11 @@ export default {
     return {
       form: {
         weight_unit: 1,
-        weight: 0
+        weight: 1000
       }
     }
   },
   methods: {
-    handleCheck (attribute) {
-      if (!this.form[attribute]) this.form[attribute] = true
-    },
     handleClear (attribute) {
       if (this.form[attribute]) this.form[attribute] = ''
     },

@@ -12,6 +12,7 @@
 import { mapGetters } from 'vuex'
 import image from './image.png'
 import Api from '@/api/apis'
+import moment from 'moment'
 
 export default {
   name: 'MeizheActivityModel',
@@ -28,6 +29,11 @@ export default {
   },
   created () {
     if (!this.isAuth) return false
+    const timeShow = moment(new Date()).isAfter('2021-08-15')
+    // 截止到8.15
+    if (timeShow) {
+      return false
+    }
     const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
     if (!hasShow) {
       Api.hhgjAPIs.is_new_migrate().then((data) => {

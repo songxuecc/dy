@@ -7,6 +7,8 @@
     label-position="right"
     label-width="100px"
     :inline="true"
+    :rules="rules"
+    class="limitCount"
   >
       <el-form-item prop="limit_per_buyer"  label="单用户累计限购">
         <el-input @input="handleChange" v-model.number="form.limit_per_buyer"  class="input-num ml-5 append" style="width:155px">
@@ -35,11 +37,11 @@ export default {
     // 每次至少购买
     const validatePass = (rule, value, callback) => {
       // 起售件数
-      const minimum = this.template.model.ext_json.minimum_per_order
+      const minimum = this.form.minimum_per_order
       // 累计限购件数
-      const limit = this.template.model.ext_json.limit_per_buyer
+      const limit = this.form.limit_per_buyer
       // 每次下单限购件数
-      const maximum = this.template.model.ext_json.maximum_per_order
+      const maximum = this.form.maximum_per_order
 
       if (minimum && minimum > 200) {
         callback(new Error('商品起售件数需为小于或等于200件的正整数'))
@@ -56,9 +58,9 @@ export default {
     const validatePass2 = (rule, value, callback) => {
       // 起售件数
       // 累计限购件数
-      const limit = this.template.model.ext_json.limit_per_buyer
+      const limit = this.form.limit_per_buyer
       // 每次下单限购件数
-      const maximum = this.template.model.ext_json.maximum_per_order
+      const maximum = this.form.maximum_per_order
 
       if (maximum && maximum > 200) {
         callback(new Error('每次限购件数需为小于200的正整数'))
@@ -70,7 +72,7 @@ export default {
     }
     // 单用户累计限购
     const validatePass1 = (rule, value, callback) => {
-      const limit = this.template.model.ext_json.limit_per_buyer
+      const limit = this.form.limit_per_buyer
       if (limit && limit > 200) {
         callback(new Error('累计限购件数需为小于200的正整数'))
       } else {
@@ -85,19 +87,25 @@ export default {
       },
       rules: {
         maximum_per_order: [
-          { validator: validatePass2, trigger: 'blur' }
+          { validator: validatePass2, trigger: ['focus', 'blur', 'change'] }
         ],
         limit_per_buyer: [
-          { validator: validatePass1, trigger: 'blur' }
+          { validator: validatePass1, trigger: ['focus', 'blur', 'change'] }
         ],
         minimum_per_order: [
-          { validator: validatePass, trigger: 'blur' }
+          { validator: validatePass, trigger: ['focus', 'blur', 'change'] }
         ]
       }
     }
   },
   methods: {
     getForm () {
+      const className = '.limitCount .el-form-item__error'
+      const error = document.querySelector(className)
+      if (error) {
+        this.$message.error('请按提示修改错误')
+        return false
+      }
       return this.form
     }
   }
@@ -107,12 +115,12 @@ export default {
 /deep/ .el-input-group__append{
     background: none;
     padding:  0;
-    padding-right:  10px;
+    padding-right: 5px;
+    padding-left: 5px;
 }
 
 .append {
     /deep/ .el-input__inner{
-        border-right: none;
         padding:5px;
         padding-left: 10px;
     }

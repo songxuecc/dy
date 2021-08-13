@@ -1,4 +1,4 @@
-<!-- 批量修改标题 -->
+<!-- 批量修改备注 -->
 <template>
     <el-drawer
         :visible.sync="visible"
@@ -7,7 +7,7 @@
         custom-class="pl-10 pt-10"
         size="80%">
          <div class="title center">
-          预览批量修改标题效果
+          预览批量修改备注效果
           <hh-icon
             type="iconquxiaoanniu"
             class="close pointer"
@@ -48,19 +48,13 @@
             </template>
             </el-table-column>
             <el-table-column
-                width="220"
-                label="修改前"
-                prop="old_data">
-            </el-table-column>
-            <el-table-column
                 label="修改后"
                 prop="new_data">
                 <template slot-scope="scope">
                   <el-input
-                      type="textarea"
-                      v-model="scope.row.new_data"
-                      size="mini">
-                      <!-- <span slot="append" class="hint">{{ getTitleLength(scope.row.new_data) }} / 30</span> -->
+                    type="textarea"
+                    v-model="scope.row.new_data"
+                    size="mini">
                   </el-input>
                 </template>
             </el-table-column>
@@ -92,7 +86,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import utils from '@/common/utils'
 
 export default {
   name: 'TableTitle',
