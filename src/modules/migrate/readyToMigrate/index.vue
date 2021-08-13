@@ -10,18 +10,23 @@
           <template slot='title'>
             <!-- 整店复制的提示语 -->
             <div v-if="isShopCapture">
-              <span v-if="ShopsCaptureStatus == 6">
+              <span v-if="ShopsCaptureStatus === 6">
                 {{ captureStatusMap[capture.page_status] }}
               </span>
               <span v-if="ShopsCaptureStatus === 1">【{{capture.shop_name}}】等待复制中...</span>
               <span v-if="ShopsCaptureStatus === 2">
-                正在复制【{{capture.shop_name}}】第{{pagination.index}}页:&nbsp;&nbsp;
-                <span v-if="capture.status_statistics.length > 0">
-                  共 {{ capture.capture_num }}条&nbsp;&nbsp;{{ captureStatusMap[capture.page_status] }}
-                  <span v-for="(item, index) in capture.status_statistics" :key="index">
-                    {{ captureStatusMap[item.status] }} {{ item.count }}条&nbsp;&nbsp;
-                  </span>
+                正在复制{{capture.source}}平台的【{{capture.shop_name}}】
+                <span v-if="capture.tp_id === 2002">
+                  已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
                 </span>
+                <span v-else>
+                  已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}，预计需要{{getFormatLeftTime(capture.left_seconds)}}
+                </span>
+<!--                <span v-if="capture.status_statistics.length > 0">-->
+<!--                  <span v-for="(item, index) in capture.status_statistics" :key="index">-->
+<!--                    {{ captureStatusMap[item.status] }} {{ item.count }}条&nbsp;&nbsp;-->
+<!--                  </span>-->
+<!--                </span>-->
               </span>
               <span v-if="ShopsCaptureStatus === 3" >
                 已复制【{{capture.shop_name}}】第{{pagination.index}}页:
@@ -53,7 +58,7 @@
               </span>
             </div>
           </template>
-          <el-tooltip v-show="getCaptureStatus ==='capture-item' && [0, 1].includes(this.capture.page_status)"
+          <el-tooltip v-show="getCaptureStatus ==='capture-item' && ([0, 1].includes(this.capture.page_status) || [1].includes(this.capture.current_page_status))"
             class="item" effect="light" placement="bottom" :content="calcProgressText(capture)">
             <div class="progress-bar blue stripes" style="width: 200px;margin: 5px auto;">
               <span :style="{ width: calcProgressVal(capture) }"></span>
@@ -288,10 +293,6 @@ export default {
         return 6
         // 等待抓取
       }
-      if (this.capture.status === 2 && this.capture.page_status === 2) {
-        return 3
-        // 本页抓取成功
-      }
 
       if (this.capture.status === 2 && this.capture.page_status === 4) {
         return 1
@@ -303,16 +304,32 @@ export default {
         // 等待
       }
 
-      if (this.capture.status === 2 && this.capture.page_status === 2) {
-        if (this.capture.total_num && (this.capture.page_size * this.capture.page_id > this.capture.total_num)) {
-          return 4
+      if (this.capture.tp_id === 2002) {
+        // 如果是抖音平台
+        if (this.capture.current_page_status === 1) {
+          // 等待
+          return 2
         }
-        // 完成
+        if (this.capture.current_page_status === 2) {
+          // 全部抓取成功
+          return 3
+        }
       }
 
       if (this.capture.status === 2 && this.capture.page_status === 3) {
         return 5
         // 失败
+      }
+
+      if (this.capture.status === 2 && this.capture.page_status === 2) {
+        return 3
+        // 本页抓取成功
+      }
+      if (this.capture.status === 2 && this.capture.page_status === 2) {
+        if (this.capture.total_num && (this.capture.page_size * this.capture.page_id > this.capture.total_num)) {
+          return 4
+        }
+        // 完成
       }
     },
     productStatusMap () {
@@ -438,12 +455,18 @@ export default {
         ) {
           return 'capture-list'
         }
-        if (this.capture.page_status === 2 && this.capture.status === 2) {
+        if (this.capture.current_page_id === '') {
+          if (this.capture.page_status === 2 && this.capture.status === 2) {
+            return 'finish'
+          }
+          if (this.capture.status === 3 || this.capture.page_status === 3) {
+            return 'finish'
+          }
+        }
+        if (this.capture.current_page_id !== '' && this.capture.current_page_status === 2) {
           return 'finish'
         }
-        if (this.capture.status === 3 || this.capture.page_status === 3) {
-          return 'finish'
-        }
+
         return 'capture-item'
       } else {
         if ([0, 1].includes(this.capture.status)) {
@@ -546,6 +569,19 @@ export default {
       'userVersionQuery',
       'getMigrateSetting'
     ]),
+    getFormatLeftTime (seconds) {
+      let minutes = parseInt(seconds / 60)
+      seconds = seconds % 60
+      let hours = parseInt(minutes / 60)
+      minutes = minutes % 60
+      if (hours > 0) {
+        return hours + '小时' + minutes + '分钟' + seconds + '秒'
+      } else if (minutes > 0) {
+        return minutes + '分钟' + seconds + '秒'
+      } else {
+        return seconds + '秒'
+      }
+    },
     getNewMigrate () {
       this.request('is_new_migrate', {}, data => {
         this.is_migrate_new = data
@@ -1066,6 +1102,15 @@ export default {
       return count + ' / ' + capture.capture_num
     },
     calcProgressVal (capture) {
+      if (capture.tp_id === 2002) {
+        // 如果是抖音平台，进度条固定
+        if (capture.current_page_status === 2) {
+          return 100
+        } else {
+          return parseInt((capture.current_page_id - 1) * 100 / capture.current_page_id)
+        }
+      }
+
       if (parseInt(capture.capture_num) === 0) {
         return 0
       }
@@ -1184,6 +1229,9 @@ export default {
     },
     closeNewComer () {
       this.$refs.newComer.close && this.$refs.newComer.close()
+    },
+    closeShopCapture () {
+      this.$refs.newComerShop.close && this.$refs.newComerShop.close()
     },
     versionTypeUp (btnText) {
       let routeData = this.$router.resolve({
