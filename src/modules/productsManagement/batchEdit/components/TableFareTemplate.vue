@@ -130,6 +130,9 @@ export default {
     ...mapActions('productManagement/batchEdit', ['updateProduct', 'fetchHhTaskProductOverview', 'saveDelete']),
     edit () {
       this.updateProduct(this.hhTaskProductOverviewFilters)
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '批量处理', '点击', '开始批量修改_运费模版'])
+      }
       this.closeVisible()
     },
     toggleVisible () {

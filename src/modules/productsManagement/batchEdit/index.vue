@@ -480,11 +480,20 @@ export default {
       if (this.modifyMethods === 'area') {
         this.selectIds = []
         this.areaProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-范围'])
+        }
       } else if (this.modifyMethods === 'id') {
         this.selectIds = []
         this.idProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-商品选择'])
+        }
       } else {
         this.previewProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-按id'])
+        }
       }
     },
     async areaProductList () {
