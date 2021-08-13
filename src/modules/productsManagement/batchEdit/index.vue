@@ -318,7 +318,7 @@ export default {
           ref: 'SaleAndUnderlinedPrice',
           tableRef: 'TableSaleAndUnderlinedPrice',
           needExpand: false,
-          hot: false
+          hot: true
         },
         {
           primary: 'iconfahuomoshixuanzhong',
