@@ -1,4 +1,4 @@
-<!-- 上下架 -->
+<!-- 重量 -->
 <template>
     <el-drawer
         :visible.sync="visible"
@@ -6,7 +6,7 @@
         direction="rtl"
         custom-class="pl-10 pt-10"
         size="80%">
-        <div class="title center ">预览批量修改上下架效果 <hh-icon type="iconquxiaoanniu" class="close pointer" @click="toggleVisible"></hh-icon></div>
+        <div class="title center ">预览批量修改重量效果 <hh-icon type="iconquxiaoanniu" class="close pointer" @click="toggleVisible"></hh-icon></div>
         <el-table
             :data="hhTaskProductOverviewTableData"
             class="mt-10"
@@ -37,11 +37,6 @@
                 </div>
               </div>
             </template>
-            </el-table-column>
-            <el-table-column
-                align="center"
-                label="修改前"
-                prop="old_data">
             </el-table-column>
             <el-table-column
                 align="center"
