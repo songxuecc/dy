@@ -6,7 +6,7 @@ const hhOpen = {
     const url = binding.value
     el.onclick = function () {
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '打开新网址', url])
+        window._hmt.push(['_trackEvent', '打开新网址链接', '点击', url])
       }
       window.open(url)
     }

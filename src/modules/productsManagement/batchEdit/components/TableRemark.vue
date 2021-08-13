@@ -126,6 +126,9 @@ export default {
         ...this.hhTaskProductOverviewFilters,
         goods_title_dict: JSON.stringify(goodsTitleDict)
       })
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '批量处理', '点击', '开始批量修改_备注'])
+      }
       this.closeVisible()
     },
     toggleVisible () {
