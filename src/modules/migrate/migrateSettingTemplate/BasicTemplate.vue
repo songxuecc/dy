@@ -103,9 +103,9 @@ export default {
 
       if (minimum && minimum > 200) {
         callback(new Error('商品起售件数需为小于或等于200件的正整数'))
-      } else if (limit && minimum > limit) {
+      } else if (limit && minimum && minimum > limit) {
         callback(new Error('起售件数不能超过商品每次限购件数'))
-      } else if (maximum && minimum > maximum) {
+      } else if (maximum && minimum && minimum > maximum) {
         callback(new Error('起售件数不能超过商品每次限购件数'))
       } else {
         callback()

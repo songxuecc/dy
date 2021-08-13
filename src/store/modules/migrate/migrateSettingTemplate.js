@@ -46,7 +46,17 @@ export default {
         }
         Object.assign(template.model, data)
         template.assign({...template.model, ...data})
-        if (typeof template.model.ext_json === 'string') template.model.ext_json = JSON.parse(template.model.ext_json)
+        const defaultExtJson = {
+          limit_per_buyer: '',
+          maximum_per_order: '',
+          minimum_per_order: ''
+        }
+        if (typeof template.model.ext_json === 'string') {
+          template.model.ext_json = {
+            ...defaultExtJson,
+            ...JSON.parse(template.model.ext_json)
+          }
+        }
         // 设置默认 抹角抹分的数据
         if (!template.model.unit) {
           template.model.unit = 100
@@ -77,7 +87,17 @@ export default {
       if (strTemplate) {
         template = cloneDeep(payload)
         Object.assign(template.model, JSON.parse(strTemplate))
-        if (typeof template.model.ext_json === 'string') template.model.ext_json = JSON.parse(template.model.ext_json)
+        const defaultExtJson = {
+          limit_per_buyer: '',
+          maximum_per_order: '',
+          minimum_per_order: ''
+        }
+        if (typeof template.model.ext_json === 'string') {
+          template.model.ext_json = {
+            ...defaultExtJson,
+            ...JSON.parse(template.model.ext_json)
+          }
+        }
         commit('save', {template})
       }
       if (strCustomPrices) {
