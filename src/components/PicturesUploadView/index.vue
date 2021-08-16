@@ -4,6 +4,7 @@
         <ul class="el-upload-list el-upload-list--picture-card">
             <draggable v-model="curPictureList" group="people" :disabled="!canDraggable || isPauseDraggable"
                        @start="isDraging=true" @end="isDraging=false"
+                       class="flex wrap"
             >
               <div v-for="(picture, index) in curPictureList"
                    style="display: inline-flex;text-align: left;"
