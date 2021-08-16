@@ -25,7 +25,7 @@
                 </el-tooltip>
               </template>
             </el-table-column>
-            <el-table-column type="selection">
+            <el-table-column type="selection" class-name="ProductEditNewView-select">
             </el-table-column>
             <el-table-column label="图片" width="80" align="center">
                 <template slot-scope="scope">
@@ -1834,6 +1834,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+/deep/ .ProductEditNewView-select{
+  text-align: center;
+}
   /deep/ .el-tabs__content {
     height: 100%;
     overflow-y: auto;
