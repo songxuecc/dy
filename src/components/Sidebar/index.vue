@@ -32,10 +32,13 @@
               <span slot="title">全部商品</span>
             </el-menu-item>
             <el-menu-item index="/productsManagement/batchEdit/title" :disabled="!isAuth()">
-              <span slot="title" style="display: flex;align-items: center;">批量处理<NewFeatureTips type="批量处理新版本"/></span>
+              <span slot="title" style="display: flex;align-items: center;">批量处理<NewFeatureTips type="批量处理新版本-售卖价"/></span>
             </el-menu-item>
             <el-menu-item index="/productsManagement/skuImport" :disabled="!isAuth()">
               <span slot="title">导入表格修改</span>
+            </el-menu-item>
+            <el-menu-item index="/productsManagement/productExports" :disabled="!isAuth()">
+              <span slot="title">导出商品<NewFeatureTips type="导出商品"/></span>
             </el-menu-item>
            <el-menu-item index="/shopDecorate/poster/dg/list" :disabled="!isAuth()">
              <span slot="title">批量新增详情</span>
@@ -49,11 +52,14 @@
             <el-menu-item index="" @click="openPdd" >
               <span slot="title">虎虎搬家（拼多多）</span>
             </el-menu-item>
-            <el-menu-item index="/customerSetting/meizhe">
-              <span slot="title">短信水印</span>
-            </el-menu-item>
-            <el-menu-item index="/customerSetting/woda">
-              <span slot="title">打单发货</span>
+<!--            <el-menu-item index="/customerSetting/meizhe">-->
+<!--              <span slot="title">短信水印</span>-->
+<!--            </el-menu-item>-->
+<!--            <el-menu-item index="/customerSetting/woda">-->
+<!--              <span slot="title">打单发货</span>-->
+<!--            </el-menu-item>-->
+            <el-menu-item index="" @click="openMeiZhe">
+              <span slot="title">开店必备工具</span>
             </el-menu-item>
           </el-submenu>
         </el-menu>
@@ -96,6 +102,9 @@ export default {
     },
     openPdd () {
       window.open('https://pdd.huhuguanjia.com/?from=douyin')
+    },
+    openMeiZhe () {
+      window.open('https://www.meideng.net/product?from=dyhhbjzs')
     },
     handleOpen (index) {
       setTimeout(() => {

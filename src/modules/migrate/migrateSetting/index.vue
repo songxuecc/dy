@@ -27,6 +27,30 @@
             </div>
           </div>
         </el-form-item>
+        <el-form-item style="margin-bottom: 20px;" class="migrateSetting-category">
+          <span slot="label" style="display:inline">
+            <div>淘宝\天猫\拼多多</div>
+            <div>商品类目匹配:</div>
+          </span>
+          <div class="flex column left" v-loading="loadingCategoryMap">
+            <div v-for="category in showCategoryMap" :key="category.id" class="flex align-c" v-if="categoryMap.length">
+              <span class="flex align-c font-12 color-333">
+                <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(category)">
+                {{category.source}}-
+              </span>
+              <span class="info">
+                {{category.tp_category_name}}
+              </span>
+              <span class="mr-10 ml-10 font-12">对应抖店分类</span>
+              <span class="primary mr-10" @click="changeCategory(category)">{{category.dy_category_name}}</span>
+              <el-switch v-model="category.is_open" class="ml-5 mr-10" @change="changeCategoryOpen(category)"/>
+              <span class="primary" @click="deleteCategory(category)" >删除</span>
+            </div>
+            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 && !categoryVisible" @click="categoryVisible = true">点击展开类目匹配</span>
+            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 &&  categoryVisible" @click="categoryVisible = false">点击合并类目匹配</span>
+            <div v-if="!categoryMap.length">无，可以在 搬家列表-基本信息 中设置</div>
+          </div>
+        </el-form-item>
         <!-- 品牌 -->
         <el-form-item required label="品牌统一为:" style="margin-bottom: 20px;" class="migrateSetting-brand">
           <el-select v-model="default_brand_id" placeholder="默认无品牌设置" style="width:280px;margin-right:12px"
@@ -122,6 +146,18 @@
             <p class="font-12 mb-10 mt-5">轮播图+详情图+规格图片超过50张自动删除详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
             <p class="font-12 mb-10">删除详情首图<el-switch class="ml-5" v-model="is_cut_detail_first" /></p>
             <p class="font-12 mb-10">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
+            <p class="font-12 mb-10">如果是天猫商品，优先抓天猫 &nbsp;
+              <el-radio-group v-model="is_tmall_pc_first">
+                <el-radio :label="1">电脑端详情图</el-radio>
+                <el-radio :label="0">移动端详情图</el-radio>
+              </el-radio-group>
+            </p>
+            <p class="font-12 mb-10">如果是淘宝商品，优先抓淘宝 &nbsp;
+              <el-radio-group v-model="is_taobao_pc_first">
+                <el-radio :label="1">电脑端详情图</el-radio>
+                <el-radio :label="0">移动端详情图</el-radio>
+              </el-radio-group>
+            </p>
             <p class="font-12" style="display: flex;align-items: center;">批量增加详情首图
             <el-upload
               class="avatar-uploader"
@@ -151,6 +187,8 @@
                 </i>
               </el-upload>
               <el-switch class="ml-5" v-model="is_batch_add_detail_last" />
+            </p>
+            <p class="font-12" style="display: flex;align-items: center;">
             </p>
         </el-form-item>
 
@@ -250,6 +288,7 @@
             </div>
         </el-form-item>
       </el-form>
+      <div class="color-danger">注：价格、运费模版、发货模式等重要信息的填写是在商品复制后再填写。这里不用设置哦～</div>
     </div>
 
     <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
@@ -295,6 +334,7 @@ export default {
   },
   data () {
     return {
+      categoryVisible: false,
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
         { label: '品牌', className: '.migrateSetting-brand' },
@@ -342,6 +382,8 @@ export default {
       is_cut_banner_last: undefined,
       is_cut_detail_last: undefined,
       is_cut_detail_first: undefined,
+      is_tmall_pc_first: undefined,
+      is_taobao_pc_first: undefined,
       is_batch_add_detail_first: undefined,
       is_batch_add_detail_last: undefined,
       is_keep_main_banner: undefined,
@@ -397,7 +439,10 @@ export default {
         common.productStatus.FAILED,
         common.productStatus.REJECT
       ],
-      settingKeys: []
+      settingKeys: [],
+      categoryMap: [],
+      loadingCategoryMap: false,
+      changeCategoryVisible: false
     }
   },
   created () {
@@ -477,6 +522,12 @@ export default {
       return {
         'file_name': 'detail_last'
       }
+    },
+    showCategoryMap () {
+      if (this.categoryVisible) return this.categoryMap
+      let categoryMap = this.categoryMap
+      categoryMap = categoryMap.slice(0, 2)
+      return categoryMap
     },
     rules () {
       const checkMaxSkuStock = (rule, value, callback) => {
@@ -578,6 +629,8 @@ export default {
       const newImageBlackWords = [...imageBlackWords].filter(
         (item) => !originImageBlackWords.has(item)
       )
+
+      // 分类
       return (
         isEqualSetting && !newBlackWords.length && !newImageBlackWords.length && isEqualStatusList
       )
@@ -656,13 +709,14 @@ export default {
       try {
         this.loadingSettings = true
         const self = this
-        let [setting, blackWords, imgBlackWords] = await Promise.all([
+        let [ setting, blackWords, imgBlackWords ] = await Promise.all([
           Api.hhgjAPIs.getMigrateSetting({}),
           Api.hhgjAPIs.getBlackWordList({}),
           Api.hhgjAPIs.getBlackWordList({
             use_type: 1
           }),
-          self.loadData()
+          self.loadData(),
+          self.loadCategoryMapList()
         ])
         let originMigrateSetting = {}
         let settingKeys = []
@@ -731,6 +785,8 @@ export default {
         is_cut_banner_last: Number(this.is_cut_banner_last),
         is_cut_detail_last: Number(this.is_cut_detail_last),
         is_cut_detail_first: Number(this.is_cut_detail_first),
+        is_tmall_pc_first: Number(this.is_tmall_pc_first),
+        is_taobao_pc_first: Number(this.is_taobao_pc_first),
         is_keep_main_banner: Number(this.is_keep_main_banner),
         is_mix_banner: Number(this.is_mix_banner),
         is_batch_add_detail_first: Number(this.is_batch_add_detail_first),
@@ -824,6 +880,16 @@ export default {
             this.$message.error(`${error}`)
           }
         } else {
+          this.$nextTick(() => {
+            let isError = document.getElementsByClassName('is-error')
+            isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+              block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+              behavior: 'smooth'
+            })
+          })
           return this.$message.error('请提示要求填写基础设置')
         }
       })
@@ -894,13 +960,35 @@ export default {
       }
       this.imgTagLoading = false
     },
-    onChangeCate (category) {
-      if (!category || (category && !category.id)) {
-        return this.$message.error('请选择分类')
+    async onChangeCate (category) {
+      // 修改类目预设
+      if (this.changeCategoryVisible) {
+        try {
+          const categoryMap = {
+            tp_id: this.changeCategorydata.tp_id,
+            tp_cid: this.changeCategorydata.tp_cid,
+            dy_cid: category.id,
+            is_open: Number(this.changeCategorydata.is_open)
+          }
+          await Api.hhgjAPIs.userCategoryMapCreate({
+            category_map_list: JSON.stringify([categoryMap])
+          })
+          this.$message.success('修改成功')
+          this.visvileCategory = false
+          this.changeCategoryVisible = false
+          this.loadCategoryMapList()
+        } catch (err) {
+          this.$message.error(`${err}`)
+        }
+      // 修改统一类目
+      } else {
+        if (!category || (category && !category.id)) {
+          return this.$message.error('请选择分类')
+        }
+        this.visvileCategory = false
+        this.default_category = category
+        this.default_category_id = category.id
       }
-      this.visvileCategory = false
-      this.default_category = category
-      this.default_category_id = category.id
     },
     chooseCategory () {
       this.visvileCategory = true
@@ -917,6 +1005,25 @@ export default {
         this.loadingBrandList = false
       } catch (err) {
         this.loadingBrandList = false
+        this.$message.error(`${err}`)
+      }
+      return Promise.resolve(true)
+    },
+    async loadCategoryMapList () {
+      this.loadingCategoryMap = true
+      try {
+        const categoryMap = await Api.hhgjAPIs.userCategoryMapList({})
+        // 类目匹配
+        console.log(categoryMap, 'categoryMap')
+        this.categoryMap = categoryMap.map(item => {
+          return {
+            ...item,
+            is_open: Boolean(item.is_open)
+          }
+        })
+        this.loadingCategoryMap = false
+      } catch (err) {
+        this.loadingCategoryMap = false
         this.$message.error(`${err}`)
       }
       return Promise.resolve(true)
@@ -979,6 +1086,68 @@ export default {
           common.productStatus.REJECT
         ]
       }
+    },
+    changeCategory (category) {
+      this.changeCategorydata = category
+      console.log(this.changeCategorydata)
+      this.visvileCategory = true
+      this.changeCategoryVisible = true
+    },
+    async changeCategoryOpen (category) {
+      try {
+        const categoryMap = {
+          tp_id: category.tp_id,
+          tp_cid: category.tp_cid,
+          dy_cid: category.dy_cid,
+          is_open: Number(category.is_open)
+        }
+        await Api.hhgjAPIs.userCategoryMapCreate({
+          category_map_list: JSON.stringify([categoryMap])
+        })
+        this.$message.success('修改成功')
+        this.visvileCategory = false
+        this.changeCategoryVisible = false
+        this.loadCategoryMapList()
+      } catch (err) {
+        this.$message.error(`${err}`)
+      }
+    },
+    async deleteCategory (category) {
+      try {
+        await Api.hhgjAPIs.userUserCategoryMapDelete({
+          id_list: JSON.stringify([category.id])
+        })
+        this.$message.success('删除成功')
+        this.loadCategoryMapList()
+      } catch (err) {
+        this.$message.error(`${err}`)
+      }
+    },
+    getIcon (product) {
+      if (product.source === '淘宝') {
+        return require('@/assets/images/taobao.png')
+      } else if (product.source === '天猫') {
+        return require('@/assets/images/tm.png')
+      } else if (product.source === '1688') {
+        return require('@/assets/images/1688.png')
+      } else if (product.source === '京东') {
+        return require('@/assets/images/jd.png')
+      } else if (product.source === '苏宁') {
+        return require('@/assets/images/sn.png')
+      } else if (product.source === '网易考拉') {
+        return require('@/assets/images/kaola.png')
+      } else if (product.source === '唯品会') {
+        return require('@/assets/images/vph.png')
+      } else if (product.source === '一起做网店17zwd') {
+        return require('@/assets/images/17.png')
+      } else if (product.source === '抖音') {
+        return require('@/assets/images/dy.png')
+      } else if (product.source === '拼多多') {
+        return require('@/assets/images/pdd.png')
+      } else if (product.source === '蝉妈妈') {
+        return require('@/assets/images/chanmama.png')
+      }
+      return ''
     }
   }
 }

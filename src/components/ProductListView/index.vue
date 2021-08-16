@@ -27,29 +27,43 @@
                     <!-- <img v-if="scope.row.thumbnail" style="height:50px;max-width:50px" class="border-2"  :src="scope.row.thumbnail"> -->
                 </template>
             </el-table-column>
-            <el-table-column label="标题"  width="230">
+            <el-table-column label="基本信息"  width="330">
                 <template slot-scope="scope">
                     <el-link  :href="scope.row.url" target="_blank" :underline="false"  class="font-13">
                         {{ scope.row.title }}
                     </el-link><br>
+                    <div>
+                      <div class="flex align-c " style="height:28px">
+                          <span class="mr-5">类目:
+                            <span v-if="scope.row.category_show" class="info">{{getCategoryShow(scope.row.category_show)}}</span>
+                            <span v-if="!scope.row.category_show" class="info">无</span>
+                          </span>
+                          <hh-icon type="iconbianji-primary" class="pointer" style="font-size:12px;margin-top:4px" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"/>
+                      </div>
+                      <div class="font-12 flex align-c" v-if="scope.row.origin_category_name">
+                        <span class="flex align-c" style="flex:1">
+                          <span style="flex-shrink: 0;" >来源类目: </span>
+                          <el-tooltip :content="scope.row.origin_category_name"  placement="top" v-if="scope.row.origin_category_name">
+                            <span class="info ellipsis " style="max-width:235px">{{scope.row.origin_category_name}}</span>
+                          </el-tooltip>
+                          <div v-else class="info">无</div>
+                        </span>
+                        <div style="flex-shrink: 0;" ><span class="primary pointer" @click="handleMatchCategory(scope.row)" v-if="scope.row.origin_category_name">类目设置</span></div>
+                      </div>
+
+                    </div>
                     <div class="flex align-c wrap">
                       <span class="flex align-c" style="margin-right:27px">
                         <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(scope.row)">
                         <label class="info">{{scope.row.source}}</label>
                       </span>
                       <span class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</span>
-                      <!-- <div class="info">创建时间: {{scope.row.create_time}}</div> -->
                     </div>
                 </template>
             </el-table-column>
             <el-table-column label="源sku售价" width="100" align="center">
                 <template slot-scope="scope">
                     <span>{{ scope.row.price_range}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="类目" width="100" align="center">
-                <template slot-scope="scope">
-                    <span> {{ getLastCategory(scope.row.category_show) }} </span>
                 </template>
             </el-table-column>
             <el-table-column v-if="isSyncSource" label="最近同步" width="100">
@@ -96,12 +110,12 @@
                 <template slot-scope="scope">
                     <div style="text-decoration:none;"  class="font-13">
                       <span manual :value="scope.row.index === mouseOverIndex"  v-if="[productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" :disabled="![productStatus.FAILED, productStatus.WAIT_MODIFY, productStatus.REJECT].includes(scope.row.status)" class="item" effect="dark" placement="top">
-                        <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <hh-icon type="iconjinggao1"></hh-icon>
-                               搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>
-                        </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
+<!--                        <div slot="content"  v-if="scope.row.migration_msg[0].indexOf('发生未知错误') > -1 && scope.row.status === 5"  >-->
+<!--                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">-->
+<!--                              <hh-icon type="iconjinggao1"></hh-icon>-->
+<!--                               搬家失败可能是接口不稳定导致。建议15分钟后重新进行搬家，若再次失败请联系客服解决</ul>-->
+<!--                        </div>-->
+                        <div slot="content"  v-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,承诺发货时间不在合理范围内') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <p style="">
                                 <hh-icon type="iconjinggao1"></hh-icon>
@@ -109,7 +123,7 @@
                               <p><a style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101706">点击查询规则</a ></p>
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,请重新选择品牌') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <p style="">
                                 <hh-icon type="iconjinggao1"></hh-icon>
@@ -117,19 +131,7 @@
                               <p><a  style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101810">点击查询哪些类目需填品牌</a ></p>
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,品牌不属于该类目') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <hh-icon type="iconjinggao1"></hh-icon>
-                              品牌未更新，建议亲亲点击品牌旁的刷新按钮后，再次进行搬家
-                            </ul>
-                        </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('品牌为必填属性且上传的品牌该店铺未授权') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
-                              <hh-icon type="iconjinggao1"></hh-icon>
-                              虎虎建议点击“修改”按钮，刷新品牌后重新选择品牌，进行再次搬家
-                            </ul>
-                        </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,该类目下无品牌') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,品牌不属于该类目') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <p style="">
                                 <hh-icon type="iconjinggao1"></hh-icon>
@@ -137,64 +139,79 @@
                               <p><a style="color: #409EFF;" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失') > -1 && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('品牌为必填属性且上传的品牌该店铺未授权') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
                               <hh-icon type="iconjinggao1"></hh-icon>
-                              商品详情图中有空白图，建议将空白图删除后再次搬家
+                              虎虎建议点击“修改”按钮，刷新品牌后重新选择品牌，进行再次搬家
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
-                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
-                              <hh-icon type="iconjinggao1"></hh-icon>
-                              {{getSkuDuplicateFormatText(scope.row.migration_msg[0])}}
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,该类目下无品牌') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0">
+                              <p style="">
+                                <hh-icon type="iconjinggao1"></hh-icon>
+                                商品所选品牌没有授权所选类目，建议根据品牌授权情况更换类目后再次搬家</p>
+                              <p><a style="color: #409EFF;" target="view_window" href="https://fxg.jinritemai.com/index.html#/ffa/mshop/qualification/list">点击查询品牌授权情况</a></p>
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败30-2, transImgToLocal failed 图片转链失败') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].match('规格值不能重复') && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
+                              {{getSkuDuplicateFormatText(scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0])}}
+                            </ul>
+                        </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败30-2, transImgToLocal failed 图片转链失败') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
                               抖音官方下载图片失败，请稍后重新尝试搬家
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,非叶子节点不允许，创建或编辑商品') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,非叶子节点不允许，创建或编辑商品') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
                               请刷新分类后重新搬家
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,规格图片和规格值数量不匹配') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,规格图片和规格值数量不匹配') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
                               规格图片和规格值数量不匹配,虎虎建议重新尝试搬家
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传主图有缺失，请重新上传') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,上传主图有缺失，请重新上传') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
                               上传主图有缺失，请重新上传,虎虎建议重新尝试搬家
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失，请重新上传') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,上传产品详情有缺失，请重新上传') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0" class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
                               上传产品详情有缺失，请重新上传,虎虎建议重新尝试搬家
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('brand_id格式错误') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('brand_id格式错误') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
                               请刷新品牌后重新搬家
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('店铺未授权该类目，请先去抖店后台开通') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('店铺未授权该类目') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
-                              店铺未授权当前类目，请先去抖店后台检查。若已开通，则重新刷新类目后再搬家
+                              若店铺未授权当前类目，请先去抖店后台检查。若已开通，则重新刷新类目后再搬家
                             </ul>
                         </div>
-                        <div slot="content"  v-else-if="scope.row.migration_msg[0].indexOf('商品创建失败31,设置商品库存，现货库存数必须大于阶梯库存数') > -1 && scope.row.status === 5"  >
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,设置商品库存，现货库存数必须大于阶梯库存数') > -1 && scope.row.status === 5"  >
                             <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
                               <hh-icon type="iconjinggao1"></hh-icon>
-                              现货库存必须大于阶梯库存数，虎虎建议先搬家至草稿箱，再批量上架提审
+                              现货库存必须大于阶梯库存数
+                            </ul>
+                        </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,发货模式暂不支持阶梯发货') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
+                              <p>发货模式暂不支持阶梯发货</p>
+                              <p><a style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/113081">点击查询阶梯发货规则</a></p>
                             </ul>
                         </div>
                         <div slot="content"  v-else>
@@ -277,7 +294,7 @@
           title="商品编辑"
           :visible.sync="dialogEditVisible"
           :with-header="false"
-          size="80%"
+          size="85%"
           @opened="dialogOpened"
           @close="dialogClose"
           :before-close="dialogBeforeClose"
@@ -298,6 +315,10 @@
             <el-button type="primary" @click="confirmDeleteProduct">确定</el-button>
           </span>
         </el-dialog>
+        <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
+          <categorySelectView ref="categorySelectView" @changeCate="onChangeCate"  v-loading="changeCategoryLoading"/>
+        </el-dialog>
+        <ModalSourceCategory  ref="ModalSourceCategory" @onChange="onChangeModalSourceCategory"/>
     </div>
 </template>
 <script>
@@ -305,11 +326,18 @@
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
+import CategorySelectView from '@/components/CategorySelectView'
+import ModalSourceCategory from './ModalSourceCategory'
+import Api from '@/api/apis'
+import isEmpty from 'lodash/isEmpty'
+
 export default {
   inject: ['reload'],
   mixins: [request],
   components: {
-    productEditNewView: () => import('@/components/ProductEditNewView.vue')
+    productEditNewView: () => import('@/components/ProductEditNewView'),
+    CategorySelectView,
+    ModalSourceCategory
   },
   props: {
     tpProductList: Array,
@@ -322,6 +350,7 @@ export default {
   },
   data () {
     return {
+      sourceCategoryVisible: false,
       deleteProductId: -1,
       deleteProductVisible: false,
       dialogEditVisible: false,
@@ -332,7 +361,12 @@ export default {
       isSelectAll: false,
       mouseOverIndex: -1,
       commandSortText: '按复制时间降序',
-      order_by: 1
+      order_by: 1,
+      visvileCategory: false,
+      default_category: {},
+      default_category_id: undefined,
+      sourceCategory: {},
+      changeCategoryLoading: false
     }
   },
   computed: {
@@ -736,9 +770,16 @@ export default {
       })
     },
     dialogOpened () {
+      const selectId = Object.entries(this.dicSelectId).filter(([key, value]) => value).map(([key, value]) => Number(key))
+      let showProducts = this.tpProductList
+      selectId.push(Number(this.curTPProduct.tp_product_id))
+      showProducts = this.tpProductList.filter(item => selectId.includes(item.tp_product_id))
+      // if ([...new Set(selectId)].length !== 1) {
+      // }
+
       if (this.curTPProduct.tp_product_id) {
         this.$refs.productEditNewView
-          .initList(this.curTPProduct, this.tpProductList
+          .initList(this.curTPProduct, showProducts
             .filter(product => [
               common.productStatus.WAIT_ONLINE,
               common.productStatus.SAVE_DRAFT,
@@ -889,6 +930,54 @@ export default {
       this.commandSortText = text
       this.order_by = obj[command].order_by
       this.$emit('sortByTime', obj[command].order_by)
+    },
+    async onChangeCate (category) {
+      if (!category || (category && !category.id)) {
+        return this.$message.error('请选择分类')
+      } else if (isEmpty(this.selectCategoryRow)) {
+        return this.$message.error('没有要修改的数据')
+      }
+      this.changeCategoryLoading = true
+      const list = [this.selectCategoryRow.tp_product_id]
+      try {
+        await Api.hhgjAPIs.batchUpdateCategory({
+          tp_product_ids: list,
+          cid: category.id
+        })
+        this.visvileCategory = false
+        this.changeCategoryLoading = false
+        this.tpProductList.forEach((item, index) => {
+          if (item.tp_product_id === this.selectCategoryRow.tp_product_id) {
+            this.selectCategoryRow = {}
+            this.reload()
+            this.$message.success('修改成功')
+          }
+        })
+      } catch (err) {
+        this.changeCategoryLoading = false
+        this.$message.error(`${err}`)
+      }
+    },
+    chooseCategory (row) {
+      this.visvileCategory = true
+      this.selectCategoryRow = row
+    },
+    removeCategory () {
+      this.default_category = {}
+      this.default_category_id = 0
+    },
+    handleMatchCategory (row) {
+      this.selectCategoryRow = row
+      this.$refs.ModalSourceCategory.open(row)
+    },
+    onChangeModalSourceCategory (category) {
+      this.reload()
+    },
+    getCategoryShow (categoryName) {
+      if (categoryName.includes('>')) {
+        return categoryName.split('>').pop()
+      }
+      return categoryName
     }
   }
 }
@@ -913,7 +1002,7 @@ export default {
 
     .closeBtn {
       position: fixed;
-      left:12%;
+      left:9%;
       top: 0;
       bottom: 0;
       margin: auto;

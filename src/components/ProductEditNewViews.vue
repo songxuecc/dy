@@ -132,6 +132,40 @@
                   </el-tooltip>
                   </span>
 
+                  <div class="left" style="background:rgb(249, 249, 250);padding: 16px 12px;margin-right:30px;border-radius:4px">
+                    <div class="left mb-10">
+                      <div class="skuText">规格名</div>
+                      <el-select size="mini" style="width:170px;margin-right:10px" :value="skuSelect" popper-class="skuAddSelect" @change="handleSkuSelectChange">
+                        <el-option
+                            v-for="item in SkuNameoptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        <el-option style="height: 40px;padding: 0;line-height: 40px;">
+                          <!-- 可以创建并选中选项中不存在的条目 用这个组建 -->
+                          <div v-if="!addSkuNameInputVisible" @click.stop="addSkuNameInputVisible = true" style="padding-left: 12px;" class="color-primary pointer">新建规格名</div>
+                          <div v-if="addSkuNameInputVisible" style="padding-left: 2px;padding-right: 4px;">
+                            <el-input :value="newSkuName" @click.native="handleClickNewSkuName" @input="changeValue" @focus.stop="" size="mini" placeholder="请输入内容" style="width: 130px;" ></el-input>
+                            <hh-icon type="iconduigou" class="fail " style="color: green;margin-left: 2px;font-size:11px" @click.native="addSkuName"></hh-icon>
+                            <hh-icon type="iconguanbi1" class="fail " style="color: #E02020;margin-left: 2px;font-size:11px" @click.native="cancelAddSkuName"></hh-icon>
+                          </div>
+                        </el-option>
+                      </el-select>
+                      <el-checkbox v-model="addSkuImage" size="mini" @change="handleAddSkuImage" :disabled="disabledAddSkuImage">添加规格图片</el-checkbox>
+                    </div>
+                    <div class="skuText">规格值<span class="index_count">(已选2个)</span></div>
+                    <el-checkbox-group v-model="skuSelectCheckList" >
+                      <el-checkbox>
+                        <el-input v-model="input" size="mini" placeholder="请输入内容" style="width: 170px;"></el-input>
+                        <hh-icon type="iconhuanyuan" class="fail ml-5" style="color: green"></hh-icon>
+                        <hh-icon type="iconguanbi1" class="fail ml-5" style="color: #E02020"></hh-icon>
+                      </el-checkbox>
+                    </el-checkbox-group>
+                    <div style="margin-top:15px"><el-input v-model="input" size="mini" placeholder="请输入内容" style="width: 170px;margin-right:10px"></el-input>添加<el-divider direction="vertical"></el-divider>自定义排序</div>
+                  </div>
+                  <div class="left mt-10 mb-10"><el-button type="primary" icon="el-icon-plus" size="medium" plain>添加规格</el-button></div>
+
                   <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
                             :cell-class-name="cellClassName"
                   >
@@ -501,18 +535,27 @@ export default {
       // 属性商品应用到所有 的数据记录
       propertyBatchMap: new Map(),
       visibleSkuImport: false,
-      forceUpdatePropertySet: 0
+      forceUpdatePropertySet: 0,
+      SkuNameoptions: [],
+      skuNameList: [],
+      addSkuNameInputVisible: false,
+      newSkuName: '',
+      addSkuImage: false,
+      skuSelect: '',
+      skuSelectCheckList: []
     }
   },
   watch: {
     product: {
       handler (val, oldVal) {
+        console.log(val, 'val.isDiff()')
         if (oldVal.model.tp_product_id !== val.model.tp_product_id) {
           return
         }
         if (!this.productDic[val.model.tp_product_id]) {
           return
         }
+
         if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id]) {
           this.productDic[val.model.tp_product_id].isEdit = true
         } else {
@@ -553,6 +596,12 @@ export default {
           { validator: checkDefaultRecommendRremark, trigger: 'change' }
         ]
       }
+    },
+    disabledAddSkuImage () {
+      // 没有一个sku设置 返回true
+      // 有sku设置 且有一个sku内已经设置图片 返回true
+      // 有sku 且没有一个sku内有图片 返回false
+      return true
     }
   },
   mounted () {
@@ -620,6 +669,7 @@ export default {
       this.hasSelection = true
     },
     setProduct (tpProduct) {
+      console.log(tpProduct, 'tpProduct')
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
@@ -652,6 +702,7 @@ export default {
       }
     },
     handleProductSelect (val, old) {
+      console.log(val, old, 'val, old')
       if (this.isLoading) {
         return false
       }
@@ -682,6 +733,7 @@ export default {
       const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
+        console.log(data, 'data')
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         const brand = (!isEmpty(data.attribute_json) ? data.attribute_json : []).find(item => item.name === '品牌')
         // 设置品牌是否必填
@@ -701,6 +753,7 @@ export default {
       const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
       this.request('getTPProductProperty', params, data => {
+        console.log(data, 'data')
         this.origionAttr = data.raw_attribute_json ? data.raw_attribute_json : {}
         this.attribute_json = isEmpty(data.attribute_json) ? [] : data.attribute_json
         this.bannerPicUrlList = data.banner_json
@@ -708,6 +761,10 @@ export default {
         this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
         this.initSku(data.sku_json, data.tp_id)
+        console.log(this.skuPropertyList, 'this.skuPropertyList')
+        console.log(this.skuPropertyValueMap, 'this.skuPropertyValueMap')
+        console.log(this.specifications, 'this.specifications')
+        console.log(this.skuShowList, 'this.skuShowList')
         this.updateIsSingleSku()
         this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
         this.product.assign({bannerPicUrlList: data.banner_json})
@@ -717,6 +774,7 @@ export default {
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
+        this.product.assign({specifications: this.specifications})
         this.product.assign({attrList: !isEmpty(data.attribute_json) ? data.attribute_json : []})
         const brand = (!isEmpty(data.attribute_json) ? data.attribute_json : []).find(item => item.name === '品牌')
         // 设置品牌是否必填
@@ -729,6 +787,7 @@ export default {
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
+        this.specifications = this.product.model.specifications
 
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
@@ -1129,6 +1188,7 @@ export default {
       this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
     },
     onClose () {
+      console.log('onClose')
       this.setIsShowFloatView(true)
       for (let i in this.productList) {
         this.productList[i].isEdit = false
@@ -1193,6 +1253,7 @@ export default {
           // 批量修改属性商品
           this.checkedPropertyBatchMapHasValue(tpProductId)
         ) {
+          console.log('isEdit')
           this.productDic[tpProductId].isEdit = true
           isChanged = true
         } else {
@@ -1286,7 +1347,6 @@ export default {
         })
       }
       this.propertyBatchMap = cloneDeep(propertyBatchMap)
-      console.log(this.propertyBatchMap, 'this.propertyBatchMap')
       // 批量应用到全部 的值
       const propertyBatchCatIdMapValue = propertyBatchCatIdMap.get(catId) || {}
       if (checked) {
@@ -1294,8 +1354,6 @@ export default {
       } else {
         delete propertyBatchCatIdMapValue[originAttr.id]
       }
-
-      console.log('9999912312312')
       propertyBatchCatIdMap.set(catId, propertyBatchCatIdMapValue)
       this.propertyBatchCatIdMap = cloneDeep(propertyBatchCatIdMap)
       this.updateProductEditStatus()
@@ -1437,6 +1495,7 @@ export default {
       }
     },
     handleSelectionChange (selection) {
+      console.log(selection, 'selection')
       this.selectedProductIds = []
       for (let i in selection) {
         this.selectedProductIds.push(selection[i].tp_product_id)
@@ -1498,6 +1557,48 @@ export default {
       } else {
         return item.brand_chinese_name.trim()
       }
+    },
+    toggleAddSkuNameInputVisible () {
+      this.addSkuNameInputVisible = true
+    },
+    // addSkuName () {
+    //   const skuNameList = this.skuNameList
+      // skuNameList.push({
+      //   value: this.newSkuName,
+      //   label: this.newSkuName
+      // })
+      // this.skuNameList = skuNameList
+    // },
+    handleClickNewSkuName (e) {
+      e.stopPropagation()
+    },
+    changeValue (e) {
+      this.newSkuName = e
+    },
+    cancelAddSkuName (e) {
+      e.stopPropagation()
+      this.addSkuNameInputVisible = false
+    },
+    addSkuName (e) {
+      e.stopPropagation()
+      // 该规格名已经存在，请勿重复创建
+      if (this.SkuNameoptions.find(item => item.label === this.newSkuName)) {
+        return this.$message.warning('该规格名已经存在，请勿重复创建')
+      }
+      const newOption = {
+        value: this.newSkuName,
+        label: this.newSkuName
+      }
+      this.SkuNameoptions = [newOption, ...this.SkuNameoptions]
+      this.newSkuName = ''
+      this.addSkuNameInputVisible = false
+      console.log(this.SkuNameoptions, 'this.SkuNameoptions')
+    },
+    handleAddSkuImage (value) {
+      this.addSkuImage = value
+    },
+    handleSkuSelectChange (value) {
+      this.skuSelect = value
     }
   }
 }
@@ -1551,5 +1652,36 @@ export default {
     border-radius: 10px;
     margin:auto;
     margin-top:20px;
+  }
+
+  .skuText {
+    font-size: 14px;
+    height: 20px;
+    margin-bottom: 4px;
+    color: #55585c;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';
+  }
+  .index_count{
+    color: #85878a;
+  }
+
+</style>
+<style lang="less">
+.skuAddSelect {
+  .el-select-dropdown__list {
+    // padding: 0;
+  }
+    .el-select-dropdown__item {
+      text-align: left;
+      padding: 6px 8px 6px 12px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+      height:32px;
+      width: 170px;
+    }
+    .el-input__inner {
+      padding: 0 4px;
+    }
   }
 </style>

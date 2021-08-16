@@ -10,7 +10,7 @@
         <h1 class="color333 mb-10">如何进行绑定复制？</h1>
         <p class="info pointer">第1步：<span class="color-primary ml-5 underline" @click="gotoBindShop">去绑定店铺</span></p>
         <p class="info">第2步：若是将A店商品复制到B店，则登录B店铺（右上角的店铺名需是B店铺）</p>
-        <p class="info">第3步：进入绑定复制页面，选择被复制的店铺A，点击开始复制</p>
+        <p class="info">第3步：进入绑定复制页面，选择被复制的店铺A，点击同步此店铺按钮，等同步完成后，点击开始复制</p>
     </div>
 </template>
 

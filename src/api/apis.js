@@ -373,7 +373,7 @@ const hhgjAPIs = {
     return api.actionCreatorPost('/api/user/setting/update', params)
   },
   hhTaskProductOverview: (params) => {
-    return api.actionCreateGet('/api/hh_task/product/overview', params)
+    return api.actionCreatorPost('/api/hh_task/product/overview', params)
   },
   hhTaskCreate: (params) => {
     return api.actionCreatorPost('/api/hh_task/create', params)
@@ -393,8 +393,32 @@ const hhgjAPIs = {
   getTaskNums: (params) => {
     return api.actionCreateGet('/api/system/monitor/query', params)
   },
-  doCmd: (params) => {
-    return api.actionCreatorPost('/api/system/monitor/do_cmd', params)
+  userCategoryMapCreate: (params) => {
+    return api.actionCreatorPost('/api/user/category_map/create', params)
+  },
+  userCategoryMapQuery: (params) => {
+    return api.actionCreateGet('/api/user/category_map/query', params)
+  },
+  userCategoryMapList: (params) => {
+    return api.actionCreateGet('/api/user/category_map/list', params)
+  },
+  userUserCategoryMapQuery: (params) => {
+    return api.actionCreateGet('/api/user/category_map/query', params)
+  },
+  userUserCategoryMapDelete: (params) => {
+    return api.actionCreatorPost(' /api/user/category_map/delete', params)
+  },
+  captureShopPage: (params) => {
+    return api.actionCreateGet('/api/capture/shop/page', params)
+  },
+  captureShopPageDelete: (params) => {
+    return api.actionCreatorPost('/api/capture/delete', params)
+  },
+  getPropductCategoryProperty: (params) => {
+    return api.actionCreateGet('/api/product/category/category_property/query', params)
+  },
+  getCaptureShopCompleteList: (params) => {
+    return api.actionCreateGet('/api/capture/shop/complete/list', params)
   }
 }
 

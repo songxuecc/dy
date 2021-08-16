@@ -13,12 +13,14 @@
     <div v-if="form.presell_type == 0">
       <div class="mb-10 color-333 font-12"> <span style="width:90px;display:inline-block;">现货发货时间：</span>
       <el-select v-model="form.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:220px;margin-right:10px;align-items:center">
-          <el-option label="2天" :value="2"></el-option>
-          <el-option :value="3">3天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-          <el-option :value="5">5天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-          <el-option :value="7">7天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-          <el-option :value="10">10天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-          <el-option :value="15">15天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
+          <el-option :value="9999" label="当日" :key="9999"> </el-option>
+          <el-option :value="1" label="24小时"> </el-option>
+          <el-option :value="2" label="48小时"> </el-option>
+          <el-option :value="3" label="3天">3天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+          <el-option :value="5" label="5天">5天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+          <el-option :value="7" label="7天">7天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+          <el-option :value="10" label="10天">10天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+          <el-option :value="15" label="15天">15天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
       </el-select>
       </div>
       <el-form-item>
@@ -50,11 +52,11 @@
                 @change="handleChange"
                 :picker-options="pickerOptions"
                 v-model="form.presell_delay"
-                :min="3"
+                :min="2"
                 :max="15"
                 class="input-number mb-5"></el-input-number>
             <span>天发货</span>
-            <p class="info mb-10 ladderText">阶梯发货期间商品发货时间以此限制为主，仅可设置3-15天</p>
+            <p class="info mb-10 ladderText">预售发货时间需在2-15天</p>
         </el-form-item>
         <el-form-item label="下架商品修改后:">
             <el-radio-group v-model="form.commit_type">
@@ -74,10 +76,10 @@
                 :picker-options="pickerOptions"
                 v-model="form.presell_delay"
                 :min="3"
-                :max="15"
+                :max="5"
                 class="input-number mb-5 "></el-input-number>
             <span>天发货</span>
-            <p class="info mb-10 ladderText">阶梯发货期间商品发货时间以此限制为主，仅可设置3-15天</p>
+            <p class="info mb-10 ladderText">阶梯发货期间商品发货时间以此限制为主，仅可设置3-5天</p>
         </el-form-item>
         <el-form-item label="下架商品修改后:">
             <el-radio-group v-model="form.commit_type">

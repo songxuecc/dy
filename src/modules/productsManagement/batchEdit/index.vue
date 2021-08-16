@@ -1,24 +1,30 @@
 <!-- 批量修改 -->
 <template>
     <div class="batchEdit">
-
-        <title class="flex title ">
-            <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer' , 'relative']" @click="toggleEditType(icon.index)">
+        <title class="flex title wrap">
+          <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer' , 'relative','mb-10']" @click="toggleEditType(icon.index)">
             <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
-            <hh-icon type="iconhot3" class="hot" v-if="index === 0"></hh-icon>
-            <p class="font-12 color-4e yaHei">{{ icon.text }}</p> </div>
-            <div class="click" style="margin-top:104px" @click="examineEditRecord" @mouseenter="toggleEditRecordTip" @mouseleave="toggleEditRecordTip">
-              查看修改记录
-              <EditRecordTip v-show="showEditRecordTip" />
-            </div>
+            <hh-icon type="iconhot3" class="hot" v-if="icon.hot"></hh-icon>
+            <p class="font-12 color-4e yaHei">{{ icon.text }}</p>
+          </div>
+          <div :class="['iconBox' , 'center','pointer' , 'relative','mb-10' , 'align-c','record']" @click="examineEditRecord">
+            <hh-icon type="icon-record" class="icon" style="color:rgb(247, 181, 0);font-size:50px;margin-bottom: -10px;margin-top: 15px;margin-left: 5px;"></hh-icon>
+            <p class="font-12 color-4e yaHei">修改记录</p>
+          </div>
         </title>
-        <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
 
+        <el-alert type="success" class="mt-10" :title="`有${jobs.length}组任务正在进行中...`" :closable="false" v-if="jobs.length"></el-alert>
         <div v-if="editType !== 999">
             <div class="content left" >
-                <div style="min-height:120px;margin-top: 30px;">
-                    <h1>修改范围<span class="right click" style="margin-left:30px" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span></h1>
-                    <el-radio-group v-model="modifyMethods" class="mb-20">
+                <div style="min-height:120px;margin-top: 20px;">
+                  <h1 class="flex">修改范围
+                    <span style="margin-left:5px;font-weight:normal" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后在进行下一步批量操作</span>
+                    <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
+                      <hh-icon type="icontishi" ></hh-icon>
+                      点我查看教程视频
+                    </span>
+                  </h1>
+                    <el-radio-group v-model="modifyMethods" class="mb-10">
                         <el-radio-button label="area">按范围</el-radio-button>
                         <el-radio-button label="product">按商品</el-radio-button>
                         <el-radio-button label="id">按ID</el-radio-button>
@@ -28,12 +34,12 @@
                         ref="form"
                         label-width="60px"
                         inline
-                        size="medium"
+                        size="small"
                         v-show="modifyMethods === 'area'"
                         label-position="left"
                     >
                         <el-form-item label="商品状态" prop="region">
-                        <el-select v-model="form.status" placeholder="请选择商品状态"  class="w-200 mr-20">
+                        <el-select v-model="form.status" placeholder="请选择商品状态"  class="w-180 mr-20">
                             <el-option
                             class="left dropdown"
                             v-for="item in statusOptions"
@@ -43,7 +49,7 @@
                         </el-select>
                         </el-form-item>
                         <el-form-item label="发货模式" prop="region">
-                        <el-select v-model="form.presell_type" placeholder="请选择发货模式"  class="w-200 mr-20">
+                        <el-select v-model="form.presell_type" placeholder="请选择发货模式"  class="w-180 mr-20">
                             <el-option
                             class="left dropdown"
                             v-for="item in presellTypeOptions"
@@ -53,7 +59,7 @@
                         </el-select>
                         </el-form-item>
                         <el-form-item label="是否抓取" prop="region">
-                        <el-select v-model="form.captureStatus" placeholder="请选择是否抓取"  class="w-200 mr-20">
+                        <el-select v-model="form.captureStatus" placeholder="请选择是否抓取"  class="w-180 mr-20">
                             <el-option
                             class="left dropdown"
                             v-for="item in captureStatusOptions"
@@ -62,9 +68,17 @@
                             :value="item.value"> </el-option>
                         </el-select>
                         </el-form-item>
+
+                        <el-form-item label="商品分类" prop="region">
+                          <span @click="chooseCategory">
+                            <span v-if="category && category.name" class="underline-hover pointer">{{category.name}}</span>
+                            <span class="pointer underline-hover" v-else>点击选择分类</span>
+                          </span>
+                        </el-form-item>
+
                     </el-form>
                     <div v-show="modifyMethods === 'product'">
-                    <el-button type="primary " class="w-120" @click="chooseProductList">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">{{selectIds.length}}</span> 个商品</span>
+                    <el-button type="primary " class="w-120" size="medium" @click="chooseProductList">选择修改商品</el-button> <span class="yaHei ml-10">已选 <span class="color-danger">{{selectIds.length}}</span> 个商品</span>
                     </div>
                     <div class="flex align-c" v-show="modifyMethods === 'id'">
                     <span class="color-4e yaHei font-12 mr-10">输入商品ID</span>
@@ -78,7 +92,7 @@
                     </div>
                 </div>
 
-                <h1 class="mt-30" >修改内容</h1>
+                <h1 class="mt-20" >修改内容</h1>
                 <Shelves ref="Shelves" v-if="editType === 1"/>
                 <TableShelves ref="TableShelves"  />
                 <Title ref="Title" v-if="editType === 2"/>
@@ -95,9 +109,20 @@
                 <TableConsumerHotline ref="TableConsumerHotline" />
                 <CountMethod ref="CountMethod" v-if="editType === 8"/>
                 <TableCountMethod ref="TableCountMethod" />
-
+                <ProductDelete ref="ProductDelete" v-if="editType === 9"/>
+                <TableProductDelete ref="TableProductDelete" />
+                <ProductProperties ref="ProductProperties" v-if="editType === 10"/>
+                <TableProductProperties ref="TableProductProperties" />
+                <SaleAndUnderlinedPrice ref="SaleAndUnderlinedPrice" v-if="editType === 11"/>
+                <TableSaleAndUnderlinedPrice ref="TableSaleAndUnderlinedPrice" />
+                <LimitCount ref="LimitCount" v-if="editType === 12"/>
+                <TableLimitCount ref="TableLimitCount" />
+                <Weight ref="Weight" v-if="editType === 13"/>
+                <TableWeight ref="TableWeight" />
+                <Remark ref="Remark" v-if="editType === 14"/>
+                <TableRemark ref="TableRemark" />
           </div>
-          <div class="flex justify-c mt-20">
+          <div class="flex justify-c pb-20 mt-20">
               <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
           </div>
         </div>
@@ -112,6 +137,18 @@
           ref="TableSelectProduct"
           @preview="previewTableSelectProduct" />
 
+        <el-dialog
+          class="dialog-tight"
+          title="修改分类"
+          width="800px"
+          :visible.sync="categoryVislble"
+          append-to-body
+          center
+        >
+          <category-select-view ref="categorySelectView" @changeCate="onChangeCate">
+          </category-select-view>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -120,6 +157,7 @@ import { mapState, mapActions, mapMutations } from 'vuex'
 import common from '@/common/common.js'
 import Api from '@/api/apis'
 import debounce from 'lodash/debounce'
+import categorySelectView from '@/components/CategorySelectView'
 
 import Title from '@productsManagement/batchEdit/components/Title'
 import Shelves from '@productsManagement/batchEdit/components/Shelves'
@@ -129,6 +167,12 @@ import Price from '@productsManagement/batchEdit/components/Price'
 import FareTemplate from '@productsManagement/batchEdit/components/FareTemplate'
 import ConsumerHotline from '@productsManagement/batchEdit/components/ConsumerHotline'
 import CountMethod from '@productsManagement/batchEdit/components/CountMethod'
+import ProductDelete from '@productsManagement/batchEdit/components/ProductDelete'
+import ProductProperties from '@productsManagement/batchEdit/components/ProductProperties'
+import SaleAndUnderlinedPrice from '@productsManagement/batchEdit/components/SaleAndUnderlinedPrice'
+import LimitCount from '@productsManagement/batchEdit/components/LimitCount'
+import Weight from '@productsManagement/batchEdit/components/Weight'
+import Remark from '@productsManagement/batchEdit/components/Remark'
 
 import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
 import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
@@ -142,6 +186,12 @@ import TableDeliverMode from '@productsManagement/batchEdit/components/TableDeli
 import TableFareTemplate from '@productsManagement/batchEdit/components/TableFareTemplate'
 import TableConsumerHotline from '@productsManagement/batchEdit/components/TableConsumerHotline'
 import TableCountMethod from '@productsManagement/batchEdit/components/TableCountMethod'
+import TableProductDelete from '@productsManagement/batchEdit/components/TableProductDelete'
+import TableProductProperties from '@productsManagement/batchEdit/components/TableProductProperties'
+import TableSaleAndUnderlinedPrice from '@productsManagement/batchEdit/components/TableSaleAndUnderlinedPrice'
+import TableLimitCount from '@productsManagement/batchEdit/components/TableLimitCount'
+import TableWeight from '@productsManagement/batchEdit/components/TableWeight'
+import TableRemark from '@productsManagement/batchEdit/components/TableRemark'
 
 export default {
   components: {
@@ -152,6 +202,7 @@ export default {
     ConsumerHotline,
     FareTemplate,
     CountMethod,
+    ProductDelete,
     Price,
     TablePrice,
     TableShelves,
@@ -164,7 +215,19 @@ export default {
     TableDeliverMode,
     TableFareTemplate,
     TableConsumerHotline,
-    TableCountMethod
+    TableCountMethod,
+    TableProductDelete,
+    TableProductProperties,
+    ProductProperties,
+    SaleAndUnderlinedPrice,
+    TableSaleAndUnderlinedPrice,
+    LimitCount,
+    TableLimitCount,
+    Weight,
+    TableWeight,
+    Remark,
+    TableRemark,
+    categorySelectView
   },
   beforeRouteLeave (to, from, next) {
     this.save({
@@ -183,8 +246,10 @@ export default {
   },
   data () {
     return {
+      categoryVislble: false,
+      category: {},
       showEditRecordTip: false,
-      editType: 1,
+      editType: 11,
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
@@ -215,7 +280,8 @@ export default {
           text: '上下架',
           ref: 'Shelves',
           tableRef: 'TableShelves',
-          needExpand: false
+          needExpand: false,
+          hot: true
         },
         {
           primary: 'iconbiaotixuanzhong',
@@ -239,10 +305,20 @@ export default {
           primary: 'iconjiagexuanzhong',
           info: 'iconjiageweixuanzhong',
           index: 4,
-          text: '价格',
+          text: '改sku价格',
           ref: 'Price',
           tableRef: 'TablePrice',
           needExpand: true
+        },
+        {
+          primary: 'icona-shoumaihuaxianjiaxuanzhong',
+          info: 'icona-shoumaihuaxianjiaweixuanzhong',
+          index: 11,
+          text: '售卖&划线价',
+          ref: 'SaleAndUnderlinedPrice',
+          tableRef: 'TableSaleAndUnderlinedPrice',
+          needExpand: false,
+          hot: true
         },
         {
           primary: 'iconfahuomoshixuanzhong',
@@ -279,6 +355,57 @@ export default {
           ref: 'CountMethod',
           tableRef: 'TableCountMethod',
           needExpand: false
+        },
+        {
+          primary: 'iconshanchuxuanzhong',
+          info: 'iconshanchuweixuanzhong',
+          index: 9,
+          text: '删除',
+          ref: 'ProductDelete',
+          tableRef: 'TableProductDelete',
+          needExpand: false,
+          hot: true
+
+        },
+        {
+          primary: 'iconshuxingxuanzhong',
+          info: 'iconshuxingweixuanzhong',
+          index: 10,
+          text: '属性',
+          ref: 'ProductProperties',
+          tableRef: 'TableProductProperties',
+          needExpand: false,
+          hot: true
+        },
+        {
+          primary: 'iconxiangoushuliangxuanzhong',
+          info: 'iconxiangoushuliangweixuanzhong',
+          index: 12,
+          text: '限购数量',
+          ref: 'LimitCount',
+          tableRef: 'TableLimitCount',
+          needExpand: false,
+          hot: false
+        },
+        {
+          primary: 'iconzhongliangxuanzhong',
+          info: 'iconzhongliangweixuanzhong',
+          index: 13,
+          text: '重量',
+          ref: 'Weight',
+          tableRef: 'TableWeight',
+          needExpand: false,
+          hot: false
+        },
+        {
+          primary: 'iconbeizhuxuanzhong',
+          info: 'iconbeizhuweixuanzhong',
+          index: 14,
+          text: '备注',
+          ref: 'Remark',
+          tableRef: 'TableRemark',
+          needExpand: false,
+          hot: false
         }
       ],
       visibleSelectProduct: false
@@ -289,7 +416,7 @@ export default {
     statusOptions () {
       const options = []
       Object.entries(common.dyProductStatusMap).forEach(([value, label]) => {
-        if (!['草稿箱', '封禁中'].includes(label)) {
+        if (!['封禁中', '回收站'].includes(label)) {
           options.push({ value, label })
         }
       })
@@ -309,6 +436,8 @@ export default {
         }
         this.selectIds = []
         this.goods_ids = ''
+        this.category = {}
+        this.examineEditRecord()
       }
     }
   },
@@ -333,24 +462,38 @@ export default {
     examineEditRecord: debounce(function () {
       this.editType = 999
       this.fetchHhTaskPage()
-    }, 2000, {
+    }, 1000, {
       leading: true,
       trailing: false
     }),
     getEditJson () {
-      const refName = this.iconList[this.editType - 1].ref
+      const el = this.iconList.find(item => item.index === this.editType)
+      if (!el) {
+        return false
+      }
+      const refName = el.ref
       const json = this.$refs[refName] && this.$refs[refName].getForm()
+      if (typeof json === 'boolean') return false
       return json
     },
     preview (index) {
       if (this.modifyMethods === 'area') {
         this.selectIds = []
         this.areaProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-范围'])
+        }
       } else if (this.modifyMethods === 'id') {
         this.selectIds = []
         this.idProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-商品选择'])
+        }
       } else {
         this.previewProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-按id'])
+        }
       }
     },
     async areaProductList () {
@@ -364,6 +507,7 @@ export default {
       }
 
       const extJson = this.getEditJson()
+      console.log(extJson, 'extJson')
       if (!extJson) {
         this.loading = false
         return false
@@ -376,6 +520,7 @@ export default {
         check_status: checkStatus,
         is_capture: this.form.captureStatus,
         presell_type: this.form.presell_type,
+        category_id: this.category.id,
         goods_id_list: JSON.stringify([]),
         ext_json: JSON.stringify(this.getEditJson())
       }
@@ -385,7 +530,9 @@ export default {
       })
       this.save({previewDeleteGoodsIds: []})
       this.loading = false
-      const tableRefName = this.iconList[this.editType - 1].tableRef
+      const el = this.iconList.find(item => item.index === this.editType)
+      const tableRefName = el.tableRef
+
       this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
     },
     async idProductList () {
@@ -445,7 +592,9 @@ export default {
         })
         this.save({previewDeleteGoodsIds: []})
         this.loading = false
-        const tableRefName = this.iconList[this.editType - 1].tableRef
+        const el = this.iconList.find(item => item.index === this.editType)
+        const tableRefName = el.tableRef
+
         this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
       }
     },
@@ -473,7 +622,9 @@ export default {
       })
       this.save({previewDeleteGoodsIds: []})
       this.loading = false
-      const tableRefName = this.iconList[this.editType - 1].tableRef
+      const el = this.iconList.find(item => item.index === this.editType)
+      const tableRefName = el.tableRef
+
       this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
     },
     // 当按商品选择时 预览
@@ -504,7 +655,9 @@ export default {
         })
         this.save({previewDeleteGoodsIds: []})
         this.loading = false
-        const tableRefName = this.iconList[this.editType - 1].tableRef
+        const el = this.iconList.find(item => item.index === this.editType)
+        const tableRefName = el.tableRef
+
         this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
       }
     },
@@ -521,6 +674,17 @@ export default {
     },
     toggleEditRecordTip () {
       this.showEditRecordTip = !this.showEditRecordTip
+    },
+    chooseCategory () {
+      this.categoryVislble = true
+      const category = this.category
+      if (category && category.id && category.id !== 0) {
+        this.$refs.categorySelectView.initCate(category.id, category.name)
+      }
+    },
+    onChangeCate (data) {
+      this.categoryVislble = false
+      this.category = data
     }
   }
 
@@ -538,10 +702,24 @@ export default {
 
 .hot {
     position: absolute;
-    font-size: 39px;
+    font-size: 30px;
     color: #FA6400;
     right: -1px;
     top: -2px;
+}
+.underline-hover {
+  color:@color-primary;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.record {
+  &:hover {
+    p {
+      color:#e6a23c;
+    }
+  }
 }
 </style>
 

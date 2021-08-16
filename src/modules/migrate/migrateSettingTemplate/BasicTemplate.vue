@@ -29,6 +29,24 @@
                 <el-button type="text" @click="getCostTemplateList"><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
                 <el-button type="text" @click="open()">添加运费模版</el-button>
             </el-form-item>
+            <el-form-item label="商品重量:" prop="weight">
+              <el-radio-group v-model="template.model.weight_unit">
+                <el-radio :label="0">kg</el-radio>
+                <el-radio :label="1">g</el-radio>
+              </el-radio-group>
+              <el-input v-model="template.model.weight"  class="input-num" style="width:150px"></el-input>
+            </el-form-item>
+            <el-form-item label="商品限购设置:" v-if="template.model.ext_json" class="flex item-order">
+              <el-form-item prop="ext_json.limit_per_buyer"  style="display:inline-block">
+              <span class="font-12  mb-10" style="margin-right:30px">单用户累计限购<el-input @input="handleChange" v-model.number="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:125px"></el-input> 件 </span>
+              </el-form-item>
+              <el-form-item prop="ext_json.maximum_per_order" style="display:inline-block">
+                <span class="font-12  mb-10" style="margin-right:30px">每次限购<el-input @input="handleChange" v-model.number="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:125px"></el-input> 件 </span>
+              </el-form-item>
+              <el-form-item prop="ext_json.minimum_per_order"  style="display:inline-block">
+              <span class="font-12  mb-10" style="margin-right:30px">每次至少购买<el-input @input="handleChange" v-model.number="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:125px"></el-input> 件 </span>
+              </el-form-item>
+            </el-form-item>
             <el-form-item label="商品类型:" prop="product_type">
                 <el-radio-group v-model="template.model.product_type">
                     <el-radio :label="0">普通商品</el-radio>
@@ -49,7 +67,7 @@
                     <el-radio :label="0">不支持7天无理由退换货</el-radio>
 <!--                    <el-radio :label="2">支持（拆封后不支持）</el-radio>-->
                 </el-radio-group>
-                <div style="position: absolute;top: 15px;left: 192px;color: #E02020; font-size: 1px;">仅少数商品可选，一般商品不要选择此项</div>
+                <div style="position: absolute;top: 15px;left: 192px;color: #E02020; font-size: 1px;color:#FA6400">仅少数商品可选，一般商品不要选择此项</div>
                 <el-popover
                   placement="top"
                   width="600"
@@ -74,9 +92,56 @@ const {
 
 export default {
   data () {
+    // 每次至少购买
+    const validatePass = (rule, value, callback) => {
+      // 起售件数
+      const minimum = this.template.model.ext_json.minimum_per_order
+      // 累计限购件数
+      const limit = this.template.model.ext_json.limit_per_buyer
+      // 每次下单限购件数
+      const maximum = this.template.model.ext_json.maximum_per_order
+
+      if (minimum && minimum > 200) {
+        callback(new Error('商品起售件数需为小于或等于200件的正整数'))
+      } else if (limit && minimum && minimum > limit) {
+        callback(new Error('起售件数不能超过商品每次限购件数'))
+      } else if (maximum && minimum && minimum > maximum) {
+        callback(new Error('起售件数不能超过商品每次限购件数'))
+      } else {
+        callback()
+      }
+    }
+
+    // 每次限购
+    const validatePass2 = (rule, value, callback) => {
+      // 起售件数
+      // 累计限购件数
+      const limit = this.template.model.ext_json.limit_per_buyer
+      // 每次下单限购件数
+      const maximum = this.template.model.ext_json.maximum_per_order
+
+      if (maximum && maximum > 200) {
+        callback(new Error('每次限购件数需为小于200的正整数'))
+      } else if (limit && maximum && maximum > limit) {
+        callback(new Error('每次限购件数不能超过累计限购件数'))
+      } else {
+        callback()
+      }
+    }
+    // 单用户累计限购
+    const validatePass1 = (rule, value, callback) => {
+      const limit = this.template.model.ext_json.limit_per_buyer
+      if (limit && limit > 200) {
+        callback(new Error('累计限购件数需为小于200的正整数'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       dySupplyImg: 'https://img.pddpic.com/mms-material-img/2021-04-21/091fb3a4-fa82-49eb-9821-229aaa330567.png.a.jpeg',
       rules: {
+
         pay_type: [
           { required: true, message: '请选择付款方式', trigger: 'change' }
         ],
@@ -94,8 +159,22 @@ export default {
         ],
         reduce_type: [
           { required: true, message: '请选择订单库存计数', trigger: 'blur' }
+        ],
+        'ext_json.maximum_per_order': [
+          { validator: validatePass2, trigger: 'blur' }
+        ],
+        'ext_json.limit_per_buyer': [
+          { validator: validatePass1, trigger: 'blur' }
+        ],
+        'ext_json.minimum_per_order': [
+          { validator: validatePass, trigger: 'blur' }
         ]
       }
+    }
+  },
+  watch: {
+    template (n) {
+      console.log(n)
     }
   },
   computed: {
@@ -105,6 +184,11 @@ export default {
   },
   methods: {
     ...mapActionsMigrate(['getCostTemplateList']),
+    handleChange () {
+      this.$refs.form.validateField('ext_json.minimum_per_order')
+      this.$refs.form.validateField('ext_json.maximum_per_order')
+      this.$refs.form.validateField('ext_json.limit_per_buyer')
+    },
     resetForm () {
       this.$refs.form && this.$refs.form.resetFields()
     },
@@ -196,6 +280,17 @@ export default {
   .margin-bottom-4 {
     margin-bottom: 4px;
   }
+  /deep/ .item-order{
+    .el-form-item__content {
+      margin-left: 0 !important;
+    }
+  }
+}
+
+.setting-content-with-tip {
+  /deep/  .el-form-item .el-form-item__error {
+    padding-top: 3px;
+}
 }
 
 </style>

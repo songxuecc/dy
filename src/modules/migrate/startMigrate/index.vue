@@ -3,15 +3,25 @@
     <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
     </help-tips>
     <SettingAlert/>
+    <span
+      class="click mr-20 pointer"
+      style="
+        align-content:right;
+        position: absolute;
+        left: 450px;
+        top: 56px;
+        z-index:1"
+      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span>
     <el-tabs v-model="activeName">
       <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
         <el-input type="textarea" :rows="10" :placeholder="`输入其他平台的商品链接地址，换行分隔多个链接，最多不超过${limit}个`" class="mb-20"
           @input="changeCaptureUrl" v-model="textCaptureUrls">
         </el-input>
       </el-tab-pane>
-      <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop">
-        <el-input type="textarea" :rows="10" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls" class="mb-20">
+      <el-tab-pane v-loading="loadingCnt" label="整店复制" name="shop" class="relative" style="height:320px ">
+        <el-input type="textarea" :rows="4" placeholder="输入其他平台的店铺地址" v-model="textCaptureShopUrls" class="my-textarea mb-20 shopCopyTexteare" style="resize: none;" @focus="handleFocus">
         </el-input>
+        <TablemigrateHistory class="TablemigrateHistory"  ref="TablemigrateHistory" @change="handleTablemigrateHistory"/>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
         <div style="width: 520px; margin: auto;margin-bottom:20px">
@@ -23,7 +33,7 @@
               style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
             <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
             <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span>
-              <span>只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持 1200 条<span class="click" style="margin-left: 10px" @click="downloadCSV">下载示例文件</span></span>
+              <span>只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持 10000 条<span class="click" style="margin-left: 10px" @click="downloadCSV">下载示例文件</span></span>
             </div>
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
@@ -58,7 +68,10 @@
                 <el-button type="text" @click="gotoBindShop" size="small">绑定新店铺</el-button>
                 <div class="info" v-if="target_user_id" style="position:absolute;left:0;bottom:-12px;width:500px;transform: translateY(100%);">
                   <div  class="font-12">
-                      <p class="font-12" style="width:350px;word-break:break-all">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}，复制的是更新时间当下的商品详情，登录该店铺，点击上方导航栏【同步后台商品】即可更新一次</p>
+                      <div class="font-12" style="width:350px;word-break:break-all;line-height:18px">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}
+                        <p class="primary" v-if="!syncText" v-loading="syncLoading" @click="handleSyncProducts(target_user_id)">点击同步此店铺</p>
+                        <p class="primary" v-if="syncText" v-loading="syncLoading">{{syncText}}</p>
+                      </div>
                   </div>
                 </div>
               </el-form-item>
@@ -103,7 +116,7 @@
       </div>
     </div>
     <!-- 整店复制 -->
-    <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'" />
+    <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'"  class="shopCopySupportPlatForm"/>
     <div class="startCopyBtn" v-if="activeName === 'shop'" >
       <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
         <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
@@ -112,11 +125,11 @@
     </div>
     <!-- 绑定复制 -->
     <div class="startCopyBtn " v-if="activeName === 'bindCopy' && userBindList.length ">
-      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
+      <div style="width:160px;height:50px" @mouseenter="toggleBindCopyTips" @mouseleave="toggleBindCopyTips">
         <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:160px;height:50px;font-size:16px" class="ralative">开始复制
           <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
         </el-button>
-        <StartCopyTips v-show="showStartCopyTips"/>
+        <BindCopyTips v-show="showBindCopyTips"/>
       </div>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy'"/>
@@ -137,9 +150,11 @@ import SupportPlatForm from '@migrate/startMigrate/SupportPlatForm'
 import BindCopyTip from '@migrate/startMigrate/BindCopyTip'
 import ModalBindCopyIdSearch from '@migrate/startMigrate/ModalBindCopyIdSearch'
 import StartCopyTips from '@migrate/startMigrate/StartCopyTips'
+import BindCopyTips from '@migrate/startMigrate/BindCopyTips'
 import SettingAlert from '@migrate/startMigrate/SettingAlert'
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
+import TablemigrateHistory from '@migrate/startMigrate/components/TablemigrateHistory'
 
 const {
   mapActions: mapActionsPaidRecharge,
@@ -150,6 +165,9 @@ export default {
   mixins: [request],
   data () {
     return {
+      syncText: '',
+      syncTimer: null,
+      syncLoading: false,
       limit: 100,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
@@ -175,7 +193,8 @@ export default {
       ModalBindCopyIdSearchShow: false,
       lostGoodsIds: [],
       productListCheckLoading: false,
-      showStartCopyTips: false
+      showStartCopyTips: false,
+      showBindCopyTips: false
     }
   },
   components: {
@@ -184,7 +203,9 @@ export default {
     BindCopyTip,
     ModalBindCopyIdSearch,
     StartCopyTips,
-    SettingAlert
+    BindCopyTips,
+    SettingAlert,
+    TablemigrateHistory
   },
   activated () {
     this.getUserBindList()
@@ -193,6 +214,36 @@ export default {
     if (this.$route.params.activeName) {
       this.activeName = this.$route.params.activeName || 'single'
     }
+
+    if (this.target_user_id) {
+      this.syncText = ''
+      clearTimeout(this.syncTimer)
+      this.syncTimer = null
+      this.getSyncStatus(this.target_user_id)
+    }
+
+    // 点击其他区域时, 隐藏店铺复制的 列表记录
+    // document.addEventListener('click', event => {
+    //   var shopCopyTexteare = document.querySelector('.shopCopyTexteare')
+    //   var shopCopyHistory = document.querySelector('.shopCopyHistory')
+    //   var otherDom = event.target
+    //   if (shopCopyHistory && shopCopyTexteare) {
+    //     if (shopCopyTexteare === otherDom || shopCopyTexteare.contains(otherDom) || shopCopyHistory === otherDom || shopCopyHistory.contains(otherDom)) {
+    //     } else {
+    //       this.handleBlur()
+    //     }
+    //   }
+    // })
+  },
+  deactivated () {
+    this.syncText = ''
+    clearTimeout(this.syncTimer)
+    this.syncTimer = null
+  },
+  beforeDestroy () {
+    this.syncText = ''
+    clearTimeout(this.syncTimer)
+    this.syncTimer = null
   },
   computed: {
     ...mapGetters({
@@ -239,6 +290,11 @@ export default {
     },
     target_user_id (newVal) {
       if (newVal) {
+        console.log(newVal, 'newVal')
+        this.syncText = ''
+        clearTimeout(this.syncTimer)
+        this.syncTimer = null
+        this.getSyncStatus(newVal)
         const bandShopTip = this.userBindList.find(item => this.target_user_id === item.user_id)
         this.bandShopTip = bandShopTip
         const children = (bandShopTip.first_category_list || []).map(item => {
@@ -261,6 +317,7 @@ export default {
     ...mapActions([
       'setCaptureIdList'
     ]),
+    ...mapActions('migrate/startMigrate', ['getCaptureShopCompleteList']),
     ...mapActionsPaidRecharge(['getUserAccountQuery']),
     clearTargetUserId () {
       this.target_user_id = undefined
@@ -378,6 +435,12 @@ export default {
         return
       }
       this.capture({ urls, capture_type: 1 })
+
+      if (urls.every(url => url.indexOf('jinritemai') > -1)) {
+        this.getCaptureShopCompleteList()
+      }
+
+      // Api.hhgjAPIs.getCaptureShopCompleteList()
     },
     // 绑定复制
     async onCaptureBindCopy () {
@@ -667,12 +730,69 @@ export default {
     },
     toggleStartCopyTips () {
       this.showStartCopyTips = !this.showStartCopyTips
+    },
+    toggleBindCopyTips () {
+      this.showBindCopyTips = !this.showBindCopyTips
+    },
+    handleFocus () {
+      // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.open()
+    },
+    handleBlur () {
+      // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.close()
+    },
+    handleTablemigrateHistory (captureId) {
+      this.$router.push({
+        path: '/migrate/productList',
+        query: {
+          captureId: captureId
+        }
+      })
+      // this.textCaptureShopUrls = url
+    },
+    async handleSyncProducts (id) {
+      await Api.hhgjAPIs.syncProducts({
+        target_user_id: id
+      })
+      this.getSyncStatus(id)
+    },
+    async getSyncStatus (id) {
+      this.syncLoading = true
+      const data = await Api.hhgjAPIs.getSyncStatus({
+        target_user_id: id
+      })
+      this.syncLoading = false
+      console.log(data.status, id, data.status === 'complete', 'data.status')
+      if (data.status === 'complete') {
+        this.syncText = ''
+        clearTimeout(this.syncTimer)
+        this.syncTimer = null
+      } else {
+        if (data.status === 'ready') {
+          this.syncText = '同步中'
+          this.syncTimer = setTimeout(() => {
+            clearTimeout(this.syncTimer)
+            this.syncTimer = null
+            this.getSyncStatus(id)
+          }, 5000)
+        }
+        if (data.status === 'running' && data.cur !== data.total) {
+          this.syncText = `商品同步中....${data.cur}/${data.total}`
+          this.syncTimer = setTimeout(() => {
+            clearTimeout(this.syncTimer)
+            this.syncTimer = null
+            this.getSyncStatus(id)
+          }, 5000)
+        }
+      }
     }
 
   }
 }
 </script>
 <style lang="less" scoped>
+/deep/ .el-tabs__content {
+  overflow: auto;
+}
 .left {
   text-align: left;
 }
@@ -690,4 +810,64 @@ export default {
   display: flex;
   justify-content: center;
 }
+
+/deep/ .my-textarea {
+    height: 90px;
+    textarea {
+      resize: none !important;
+      outline: none;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      color: #19191a;
+      line-height: 16px;
+      padding: 10px;
+      overflow: auto;
+      touch-action: manipulation;
+      cursor: text;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      column-count: initial !important;
+      flex-direction: column;
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-transform: none;
+      text-indent: 0px;
+      text-shadow: none;
+      display: inline-block;
+      text-align: start;
+      text-rendering: auto;
+      transition: none;
+    }
+    textarea:active {
+      border: 1px solid @color-primary;
+      /deep/ .TablemigrateHistory {
+        display: block !important;
+      }
+    }
+    textarea:hover {
+      border: 1px solid @color-primary;
+      /deep/ .TablemigrateHistory {
+        display: block !important;
+      }
+    }
+    textarea:focus {
+      border: 1px solid @color-primary;
+      /deep/ .TablemigrateHistory {
+        display: block !important;
+      }
+    }
+
+  }
+
+  .shopCopySupportPlatForm {
+    // position: absolute;
+    // top:250px;
+  }
+
 </style>

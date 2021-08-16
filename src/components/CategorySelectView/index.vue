@@ -7,7 +7,7 @@
                 <el-button slot="append" icon="el-icon-search" @click="searchCategory"></el-button>
             </el-input>
             <br><br>
-            <el-card v-show="!searchTableVisible" shadow="never" :body-style="{ padding: '0px', display: 'flex' }">
+            <el-card v-show="!searchTableVisible" v-loading="loadingPercent"  shadow="never" :body-style="{ padding: '0px', display: 'flex' }">
                 <div class="el-cascader-panel cate-content">
                     <el-scrollbar :ref="'cate' + i + 'List'" v-for="i in maxLevel" :key="i">
                         <ul class="el-scrollbar__view el-cascader-menu__list">
@@ -35,24 +35,22 @@
                 <div x-arrow="true" class="popper__arrow" style="left: 35px;"></div>
                 {{ "已选：" + selectCate.name }}
             </div>
-            <div style="margin-top: 40px;">
-              <el-link type="primary" target="_blank" :underline="false" @click="realSyncCategory">
-              <hh-icon type="iconjiazai" style="font-size:12px;"/>
-              获取新类目
-              <span><el-progress v-if="isShowProgress" type="line" :percentage="percentage" :width="20"></el-progress></span>
-            </el-link>
+            <RefershCategoryBtn class="mt-10" :style="{'margin-left':0,'margin-top':!selectCate.name?'10px':'40px'}" />
+            <div class="flex justify-c common-bottom" v-if="!$slots.footer">
+              <el-button :disabled="selectCate.leaf !== 1 || loadingPercent" type="primary" @click="confirm" style="width:120px">保存</el-button>
             </div>
-            <div class="flex justify-c common-bottom" v-if="!$slots.footer"><el-button :disabled="selectCate.leaf !== 1" type="primary" @click="confirm" style="width:120px">保存</el-button></div>
             <slot name="footer"></slot>
         </el-row>
     </div>
 </template>
 <script>
 import request from '@/mixins/request.js'
-import { mapGetters, mapActions } from 'vuex'
+import RefershCategoryBtn from '@/components/RefershCategoryBtn'
+import { mapGetters, mapActions, mapState } from 'vuex'
 export default {
   mixins: [request],
   components: {
+    RefershCategoryBtn
   },
   data () {
     return {
@@ -75,7 +73,8 @@ export default {
       recentCatId: 'getRecentCatId',
       recentCatName: 'getRecentCatName',
       firstCategoryList: 'getFirstCategoryList'
-    })
+    }),
+    ...mapState('migrate/refershCategoryBtn', ['loadingPercent'])
   },
   mounted () {
     this.init()

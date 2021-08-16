@@ -19,7 +19,8 @@
               {{item.label}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="primary" plain size="mini" style="padding:5px 20px;" class="ml-5" @click="handleDelete(5)">批量删除记录</el-button>
+        <el-button type="primary" plain size="mini" style="padding:5px 20px;width:120px" class="ml-5" @click="handleDelete(5)">批量删除记录</el-button>
+        <RefershCategoryBtn />
       </el-col>
     </el-row>
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
@@ -65,6 +66,8 @@ import { productStatus } from '@/common/common'
 import utils from '@/common/utils'
 
 import categorySelectView from '@/components/CategorySelectView'
+import RefershCategoryBtn from '@/components/RefershCategoryBtn'
+
 import EditDelteRecord from '@migrate/readyToMigrate/components/EditDelteRecord'
 import EditTitle from '@migrate/readyToMigrate/components/EditTitle'
 import EditBrandId from '@migrate/readyToMigrate/components/EditBrandId'
@@ -88,7 +91,8 @@ export default {
     EditBrandId,
     EditTitle,
     EditDeleteCarousel,
-    EditDelteDetailImage
+    EditDelteDetailImage,
+    RefershCategoryBtn
   },
   data () {
     return {

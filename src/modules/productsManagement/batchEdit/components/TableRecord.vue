@@ -70,7 +70,7 @@
         :total="hhTaskPageTotal">
       </el-pagination>
 
-      <TableRecordDetail ref="TableRecordDetail"/>
+      <TableRecordDetail ref="TableRecordDetail" v-if="visibleTableRecordDetail"/>
    </div>
 
 </template>
@@ -89,6 +89,7 @@ export default {
   },
   data () {
     return {
+      visibleTableRecordDetail: false
     }
   },
   computed: {
@@ -100,7 +101,11 @@ export default {
   methods: {
     ...mapActions('productManagement/batchEdit', ['fetchHhTaskPage']),
     handleDetail (index, row) {
-      this.$refs.TableRecordDetail.open(row)
+      this.visibleTableRecordDetail = false
+      this.visibleTableRecordDetail = true
+      this.$nextTick(() => {
+        this.$refs.TableRecordDetail && this.$refs.TableRecordDetail.open(row)
+      })
     },
     handleCurrentChange (pageIndex) {
       if (this.loading) return

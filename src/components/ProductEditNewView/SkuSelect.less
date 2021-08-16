@@ -1,0 +1,300 @@
+.skuValue {
+  width: calc(100% - 20px);
+  max-width: 160px;
+  padding-right: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  size: 14px;
+  height: 20px;
+  line-height: 20px;
+  color: #12141a;
+  display: block;
+  justify-content: space-between;
+  position: relative;
+
+  .iconbianji-primary {
+    position: absolute;
+    right: 0;
+    top: 4px;
+  }
+
+  // &:hover {
+  //   .iconbianji-primary {
+  //     position: absolute;
+  //     right: 0;
+  //     top: 4px;
+  //     display: block;
+  //   }
+  // }
+}
+
+.selectedLength {
+  margin-top: 24px;
+  font-size: 14px;
+  color: #55585c;
+  height: 20px;
+  line-height: 20px;
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+/deep/ .el-checkbox {
+  margin-right: 0;
+}
+
+/deep/ .el-checkbox__input {
+  padding-top: 2px;
+}
+
+/deep/ .el-checkbox__label {
+  width: 100%;
+  padding-left: 4px;
+}
+
+/deep/ .el-input__inner {
+  padding: 0 6px;
+}
+
+.skuSelect-dialog {
+  .sortDesc {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+      'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+      sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+
+    .sortName {
+      color: #55585c;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sortDescInfo {
+      color: #85878a;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+  }
+
+  .sortGround {
+    display: flex;
+    justify-self: flex-start;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    text-align: left;
+
+    .sortItem {
+      display: inline-block;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+        'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica,
+        Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol';
+      word-wrap: break-word;
+      background: #f3f4f6;
+      border-radius: 4px;
+      margin-right: 12px;
+      margin-bottom: 12px;
+      padding: 6px 23px;
+      font-size: 14px;
+      line-height: 16px;
+      color: #12141a;
+      cursor: pointer;
+    }
+
+    .chosenClass {
+      background-color: none !important;
+    }
+
+    .flip-list-move {
+      transition: transform 0s;
+    }
+
+    .no-move {
+      transition: transform 0s;
+    }
+
+    .list-group-item {
+      cursor: move;
+    }
+
+    .list-group-item i {
+      cursor: pointer;
+    }
+
+    .ghost {
+      opacity: 0.3;
+    }
+
+    .sortable-chosen {
+      background: none !important;
+    }
+  }
+}
+
+.avatar-uploader {
+  margin-right: 16px;
+  width: 64px;
+  height: 64px;
+  border-radius: 5px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  flex-direction: column;
+  border: 1px dashed #d5d6d9;
+  text-align: center;
+  background-color: #fff;
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+
+.avatar-uploader-icon {
+  font-size: 12px;
+  color: #707173;
+  line-height: 12px;
+  text-align: center;
+  padding-top: 15px;
+}
+
+.preview {
+  /deep/ .el-upload {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  /deep/ .skuSelect-el-upload--picture-card {
+    width: 64px;
+    height: 64px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    flex-direction: column;
+    border: 1px dashed #d5d6d9;
+    text-align: center;
+    background-color: #fff;
+  }
+
+  /deep/ .skuSelect-el-upload--picture-card .el-upload {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .uploader-text {
+    display: block;
+    width: 100px;
+    height: 40px;
+    color: #707173;
+    padding-top: 10px;
+    font-size: 12px;
+  }
+
+  /deep/ .hover-skuSelect-el-upload--picture-card:hover {
+    border-color: #409EFF;
+
+    .avatar-uploader-icon {
+      color: #409EFF;
+    }
+
+    .uploader-text {
+      color: #409EFF;
+    }
+  }
+
+
+  .imgWrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 5px;
+    &:hover {
+      .mask {
+        display: flex;
+      }
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      background-color: rgba(0, 0, 0, .04);
+      user-select: none;
+    }
+
+    .mask {
+      // opacity: 0;
+      display: none;
+      // pointer-events: none;
+      transition: all .3s;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .65);
+
+      .iconshanchu1 {
+        color: #fff;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color:#fff;
+        cursor: pointer;
+        &:hover {
+          color: @color-primary;
+        }
+      }
+
+      .iconreview {
+        color: #fff;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color:#fff;
+        cursor: pointer;
+        &:hover {
+          color: @color-primary;
+        }
+      }
+    }
+  }
+}

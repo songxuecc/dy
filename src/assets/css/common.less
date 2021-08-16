@@ -8,6 +8,10 @@
 .color-success{
   color: @color-success;
 }
+
+.color-warning {
+  color:#FA6400;
+}
 .color-info{
   color: @color-info;
 }
@@ -78,6 +82,10 @@
 .primary {
   color: @color-primary;
   font-size: 12px;
+  cursor: pointer;
+  &:hover {
+    text-decoration:underline;
+  }
 }
 
 .success {
@@ -190,6 +198,9 @@
 
 .pt-20 {
   padding-top:20px;
+}
+.pb-20 {
+  padding-bottom:20px;
 }
 
 .pr-20 {
@@ -322,7 +333,9 @@
 
 .click {
   color: @color-primary;
-  text-decoration:underline;
+  &:hover {
+    text-decoration:underline;
+  }
   cursor: pointer;
 }
 
@@ -369,4 +382,17 @@
 ::placeholder {
   color: #BFBFBF;
   font-size: 12px;
+}
+
+
+.ellipsis{
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+.display {
+  display:none;
 }

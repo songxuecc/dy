@@ -148,13 +148,13 @@ class PriceHandler {
           if (parseInt(this._radio) === 1 && utils.isNumber(this.textPrice)) {
             sku[field] = parseFloat(this.textPrice)
           } else if (parseInt(this._radio) === 2 && utils.isNumber(this.textPriceAdd)) {
-            sku[field] = parseFloat(sku[field]) + parseFloat(this.textPriceAdd)
+            sku[field] = parseFloat(sku[field] || 0) + parseFloat(this.textPriceAdd)
           } else if (parseInt(this._radio) === 3 && utils.isNumber(this.textPriceSub)) {
-            sku[field] = parseFloat(sku[field]) - parseFloat(this.textPriceSub)
+            sku[field] = parseFloat(sku[field] || 0) - parseFloat(this.textPriceSub)
           } else if (parseInt(this._radio) === 4 && utils.isNumber(this.textPricePercentAdd)) {
-            sku[field] = parseFloat(sku[field]) * (1 + parseFloat(this.textPricePercentAdd) / 100)
+            sku[field] = parseFloat(sku[field] || 0) * (1 + parseFloat(this.textPricePercentAdd) / 100)
           } else if (parseInt(this._radio) === 5 && utils.isNumber(this.textPricePercentSub)) {
-            sku[field] = parseFloat(sku[field]) * (1 - parseFloat(this.textPricePercentSub) / 100)
+            sku[field] = parseFloat(sku[field] || 0) * (1 - parseFloat(this.textPricePercentSub) / 100)
           }
           sku[field] = Math.max(sku[field], 0)
           sku[field] = Math.round(sku[field] * 100) / 100
@@ -169,13 +169,13 @@ class PriceHandler {
         if (parseInt(this._radio) === 1 && utils.isNumber(this.textPrice)) {
           sku[field] = parseFloat(this.textPrice)
         } else if (parseInt(this._radio) === 2 && utils.isNumber(this.textPriceAdd)) {
-          sku[field] = parseFloat(sku[field]) + parseFloat(this.textPriceAdd)
+          sku[field] = parseFloat(sku[field] || 0) + parseFloat(this.textPriceAdd)
         } else if (parseInt(this._radio) === 3 && utils.isNumber(this.textPriceSub)) {
-          sku[field] = parseFloat(sku[field]) - parseFloat(this.textPriceSub)
+          sku[field] = parseFloat(sku[field] || 0) - parseFloat(this.textPriceSub)
         } else if (parseInt(this._radio) === 4 && utils.isNumber(this.textPricePercentAdd)) {
-          sku[field] = parseFloat(sku[field]) * (1 + parseFloat(this.textPricePercentAdd) / 100)
+          sku[field] = parseFloat(sku[field] || 0) * (1 + parseFloat(this.textPricePercentAdd) / 100)
         } else if (parseInt(this._radio) === 5 && utils.isNumber(this.textPricePercentSub)) {
-          sku[field] = parseFloat(sku[field]) * (1 - parseFloat(this.textPricePercentSub) / 100)
+          sku[field] = parseFloat(sku[field] || 0) * (1 - parseFloat(this.textPricePercentSub) / 100)
         } else if (parseInt(this._radio) === 6 && utils.isNumber(this.arithmetic.subtraction1) && utils.isNumber(this.arithmetic.subtraction2) && utils.isNumber(this.arithmetic.subtraction3)) {
           // 保持和原始价格一致
           sku[field] = parseFloat((sku[originField] - this.arithmetic.subtraction1) * (this.arithmetic.subtraction2 / 100) - this.arithmetic.subtraction3)

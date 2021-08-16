@@ -79,7 +79,8 @@ const commonConfig = {
     new FriendlyErrorsWebpackPlugin(),
     new LodashModuleReplacementPlugin(),
     new VueLoaderPlugin(),
-    new HardSourceWebpackPlugin({})
+    new HardSourceWebpackPlugin({
+    })
   ],
   module: {
     rules: [

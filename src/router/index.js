@@ -205,6 +205,18 @@ const router = new Router({
       }
     },
     {
+      path: '/productsManagement/productExports',
+      name: 'ProductExports',
+      component: () => import(
+        /* webpackChunkName: `ProductExports` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/productExports'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
       path: '/productsManagement/batchEdit/:tab',
       name: 'BatchEdit',
       component: () => import(

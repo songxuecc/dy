@@ -1,5 +1,5 @@
 <template lang="html">
-     <div class="step-delivery setting-content-with-tip">
+     <div class="step-delivery left">
           <el-form
             label-width="120px"
             size="small"
@@ -25,18 +25,20 @@
             <el-form-item label="承诺发货时间:" prop="delivery_delay_day" v-if="template.model.presell_type === 0">
                 <div style="display:flex">
                   <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:150px;margin-right:10px;align-items:center">
-                    <el-option label="2天" :value="2"></el-option>
-                    <el-option :value="3">3天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-                    <el-option :value="5">5天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-                    <el-option :value="7">7天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-                    <el-option :value="10">10天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
-                    <el-option :value="15">15天 <span class="fail">仅支持</span><el-link type="danger" :underline="false"  class="font-12" @click="openSpacialCategory">特殊类目</el-link><span class="fail">选择</span></el-option>
+                    <el-option :value="9999" label="当日" :key="9999"> </el-option>
+                    <el-option :value="1" label="24小时"> </el-option>
+                    <el-option :value="2" label="48小时"> </el-option>
+                    <el-option :value="3" label="3天">3天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                    <el-option :value="5" label="5天">5天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                    <el-option :value="7" label="7天">7天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                    <el-option :value="10" label="10天">10天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                    <el-option :value="15" label="15天">15天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
                 </el-select>
-                <span class="info" style="line-height:16px;flex:1" v-if="template.model.delivery_delay_day !==2">
-                  注：目前抖店官方对发货模式及发货时限规则开始调整，若选择现货发货模式，需在消费者下单后<span class="fail">&nbsp;&nbsp;2天&nbsp;&nbsp;</span>内发货。部分特殊类目可自主设置【2-15天】的发货时间，具体类目以商家后台展示为准。建议选择阶梯发货模式，将现货库存设为0。点击查看&nbsp;&nbsp;<el-link @click="open" type="primary" style="font-size:12px" :underline="false">官方文档</el-link>&nbsp;&nbsp;说明  。
+                <span class="info" style="line-height:16px;flex:1">
+                  注：目前抖店官方对发货模式及发货时限规则开始调整，若选择现货发货模式，需在消费者下单后<span class="fail">&nbsp;&nbsp;48小时&nbsp;&nbsp;</span>内发货。部分特殊类目可自主设置【3-15天】的发货时间，具体类目以商家后台展示为准。点击查看&nbsp;&nbsp;<el-link @click="open" type="primary" style="font-size:12px" :underline="false">官方文档</el-link>&nbsp;&nbsp;说明  。
                 </span>
                 </div>
-                <div class="fail" v-if="template.model.delivery_delay_day !==2">可能导致上货失败，请谨慎选择</div>
+                <div class="fail" v-if="template.model.delivery_delay_day !==2"> </div>
             </el-form-item>
             <!-- 全款预售发货模式 -->
             <el-form-item label="预售结束时间:"  v-if="template.model.presell_type === 1" prop="presell_end_time">
@@ -80,22 +82,22 @@
                       @change="handleChange"
                       :picker-options="pickerOptions"
                       :min="3"
-                      :max="15"
+                      :max="5"
                       class="input-number margin-bottom-4"></el-input-number>
                     <span>天发货</span>
-                    <p class="info">阶梯发货期间商品发货时间以此限制为主，仅可设置3-15天</p>
+                    <p class="info">阶梯发货期间商品发货时间以此限制为主，仅可设置3-5天</p>
                   </div>
                 </template>
             </el-form-item>
-            <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2" prop="step_stock_num_diff">
-                <span>现货库存设置为</span>
-                <el-input-number
-                  v-model="template.model.step_stock_num_diff"
-                  controls-position="right"
-                  @change="handleChange"
-                  :min="0"
-                  class="input-number"></el-input-number>
-                <span>,&nbsp;&nbsp;剩余为阶梯发货库存&nbsp;&nbsp;&nbsp;(原商品库存 = 现货库存 + 阶梯库存)</span>
+            <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2" prop="step_stock_num_percentage">
+                <span>现货库存设置为总库存的</span>
+                <el-input
+                  v-model.number="template.model.step_stock_num_percentage"
+                  @input="handleChangeStock"
+                  style="width:150px">
+                  <template slot="append">%</template>
+                </el-input>
+                <span>(原商品库存 = 现货库存 + 阶梯库存，<span style="color:#FA6400">{{tip}}</span>)</span>
             </el-form-item>
         </el-form>
     </div>
@@ -111,7 +113,15 @@ const {
 
 export default {
   data () {
+    const validatePass = (rule, value, callback) => {
+      if (value <= 50 || value > 100) {
+        callback(new Error('必须大于等于51, 小于等于100'))
+      } else {
+        callback()
+      }
+    }
     return {
+      tip: '51% <= 现货库存设置 <= 100%',
       rules: {
         presell_type: [
           { required: true, message: '请选择发货模式', trigger: ['blur', 'change'] }
@@ -126,7 +136,8 @@ export default {
         presell_delay: [
           { required: true, message: '请输入发货时间', trigger: ['blur', 'change'] }
         ],
-        step_stock_num_diff: [
+        step_stock_num_percentage: [
+          { validator: validatePass, trigger: ['blur', 'change'] },
           { required: true, message: '请输入库存设置', trigger: ['blur', 'change'] }
         ]
       },
@@ -159,8 +170,13 @@ export default {
       } else if (value === 1) {
         this.$refs.form.validateField(['presell_end_time', 'presell_delay'])
       } else if (value === 2) {
-        this.$refs.form.validateField(['presell_delay', 'step_stock_num_diff'])
+        this.$refs.form.validateField(['presell_delay', 'step_stock_num_percentage'])
       }
+    },
+    handleChangeStock () {
+      console.log('999')
+      this.$refs.form.validateField(['presell_delay'])
+      this.$refs.form.validateField(['step_stock_num_percentage'])
     },
     open () {
       window.open('https://school.jinritemai.com/doudian/web/article/101706')
@@ -235,6 +251,7 @@ export default {
 }
 
 .step-delivery {
+  margin-bottom: 20px;
   .info {
     color: #999999;
     font-size: 12px;
