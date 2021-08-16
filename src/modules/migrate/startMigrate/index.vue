@@ -317,6 +317,7 @@ export default {
     ...mapActions([
       'setCaptureIdList'
     ]),
+    ...mapActions('migrate/startMigrate', ['getCaptureShopCompleteList']),
     ...mapActionsPaidRecharge(['getUserAccountQuery']),
     clearTargetUserId () {
       this.target_user_id = undefined
@@ -434,6 +435,12 @@ export default {
         return
       }
       this.capture({ urls, capture_type: 1 })
+
+      if (urls.every(url => url.indexOf('jinritemai') > -1)) {
+        this.getCaptureShopCompleteList()
+      }
+
+      // Api.hhgjAPIs.getCaptureShopCompleteList()
     },
     // 绑定复制
     async onCaptureBindCopy () {
