@@ -1347,7 +1347,6 @@ export default {
         })
       }
       this.propertyBatchMap = cloneDeep(propertyBatchMap)
-      console.log(this.propertyBatchMap, 'this.propertyBatchMap')
       // 批量应用到全部 的值
       const propertyBatchCatIdMapValue = propertyBatchCatIdMap.get(catId) || {}
       if (checked) {
@@ -1355,8 +1354,6 @@ export default {
       } else {
         delete propertyBatchCatIdMapValue[originAttr.id]
       }
-
-      console.log('9999912312312')
       propertyBatchCatIdMap.set(catId, propertyBatchCatIdMapValue)
       this.propertyBatchCatIdMap = cloneDeep(propertyBatchCatIdMap)
       this.updateProductEditStatus()

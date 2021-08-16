@@ -6,42 +6,44 @@
                        @start="isDraging=true" @end="isDraging=false"
             >
               <div v-for="(picture, index) in curPictureList"
-                   style="display: inline-block;"
+                   style="display: inline-flex;text-align: left;"
                    :key="index"
               >
-                <li :key="picture.url + index"
-                    class="el-upload-list__item is-success" @click="onClickImage(picture, index)"
-                    style="margin-bottom: 0px;"
-                >
-                    <el-popover
-                      placement="left"
-                      title=""
-                      :ref="'popover-picture-wall-'+index"
-                      trigger="manual">
-                      <img :src="picture.url" style="width: 250px;"/>
-                      <el-image :ref="'image'+index" :src="picture.url" :preview-src-list="curPictureUrlList" fit="scale-down"
-                        style="width:100%; height:100%;" slot="reference"
-                      ></el-image>
-                  </el-popover>
-                    <label class="el-upload-list__item-status-label" :style="{visibility: picture.bg ? 'visible' : 'hidden'}">
-                        <i class="el-icon-upload-success el-icon-check"></i>
-                    </label>
-                    <span class="el-upload-list__item-actions" @click.self="onClick(picture, index)" v-on:mouseover.self="handlemouseover(index)"  v-on:mouseleave.self="handlemouseleave(index)">
-                        <span class="el-upload-list__item-preview" style="margin-left: 0px;"
-                              @click="onShowPreview(picture, index)"
-                        > <i class="el-icon-zoom-in"></i> </span>
-                        <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete"
-                              style="visibility: visible;" @click="onHandle(picture, index)"
-                        > <i class="el-icon-edit-outline"></i> </span>
-                        <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete"
-                              style="visibility: visible;" @click="onRemove(picture, index)"
-                        > <i class="el-icon-delete"></i> </span>
-                    </span>
-                    <input type="checkbox" v-if="isAllowOperation('select')" :ref="'pictureCheck'+index" class="check-upload"
-                           @change="handleSelect(picture, index, $event.target || $event.srcElement)"
-                    >
-                </li>
-                <div style="font-size: 12px">第{{index + 1}}张</div>
+                <span class="center mb-5">
+                  <li :key="picture.url + index"
+                      class="el-upload-list__item is-success" @click="onClickImage(picture, index)"
+                      style="margin-bottom: 0px;"
+                  >
+                      <el-popover
+                        placement="left"
+                        title=""
+                        :ref="'popover-picture-wall-'+index"
+                        trigger="manual">
+                        <img :src="picture.url" style="width: 250px;"/>
+                        <el-image :ref="'image'+index" :src="picture.url" :preview-src-list="curPictureUrlList" fit="scale-down"
+                          style="width:100%; height:100%;" slot="reference"
+                        ></el-image>
+                    </el-popover>
+                      <label class="el-upload-list__item-status-label" :style="{visibility: picture.bg ? 'visible' : 'hidden'}">
+                          <i class="el-icon-upload-success el-icon-check"></i>
+                      </label>
+                      <span class="el-upload-list__item-actions" @click.self="onClick(picture, index)" v-on:mouseover.self="handlemouseover(index)"  v-on:mouseleave.self="handlemouseleave(index)">
+                          <span class="el-upload-list__item-preview" style="margin-left: 0px;"
+                                @click="onShowPreview(picture, index)"
+                          > <i class="el-icon-zoom-in"></i> </span>
+                          <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete"
+                                style="visibility: visible;" @click="onHandle(picture, index)"
+                          > <i class="el-icon-edit-outline"></i> </span>
+                          <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete"
+                                style="visibility: visible;" @click="onRemove(picture, index)"
+                          > <i class="el-icon-delete"></i> </span>
+                      </span>
+                      <input type="checkbox" v-if="isAllowOperation('select')" :ref="'pictureCheck'+index" class="check-upload"
+                            @change="handleSelect(picture, index, $event.target || $event.srcElement)"
+                      >
+                  </li>
+                  <div style="font-size: 12px">第{{index + 1}}张</div>
+                </span>
               </div>
                 <el-upload
                     slot="footer"
