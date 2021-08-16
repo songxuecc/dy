@@ -770,9 +770,16 @@ export default {
       })
     },
     dialogOpened () {
+      const selectId = Object.entries(this.dicSelectId).filter(([key, value]) => value).map(([key, value]) => Number(key))
+      let showProducts = this.tpProductList
+      selectId.push(Number(this.curTPProduct.tp_product_id))
+      showProducts = this.tpProductList.filter(item => selectId.includes(item.tp_product_id))
+      // if ([...new Set(selectId)].length !== 1) {
+      // }
+
       if (this.curTPProduct.tp_product_id) {
         this.$refs.productEditNewView
-          .initList(this.curTPProduct, this.tpProductList
+          .initList(this.curTPProduct, showProducts
             .filter(product => [
               common.productStatus.WAIT_ONLINE,
               common.productStatus.SAVE_DRAFT,
