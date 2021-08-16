@@ -1741,8 +1741,6 @@ export default {
         this.$set(row, borderKey, false)
         this.priceEditError = false
       }
-
-      console.log(row, 'row')
     },
     handlePictureQualificationChange (data) {
       Object.assign(this.product.model, {quality_list: data})
