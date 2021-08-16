@@ -1,4 +1,4 @@
-<!-- 上下架 -->
+<!-- 售卖和划线价 -->
 <template>
     <el-drawer
         :visible.sync="visible"
@@ -6,7 +6,7 @@
         direction="rtl"
         custom-class="pl-10 pt-10"
         size="80%">
-        <div class="title center ">预览批量修改上下架效果 <hh-icon type="iconquxiaoanniu" class="close pointer" @click="toggleVisible"></hh-icon></div>
+        <div class="title center ">预览批量修改售卖和划线价效果 <hh-icon type="iconquxiaoanniu" class="close pointer" @click="toggleVisible"></hh-icon></div>
         <el-table
             :data="hhTaskProductOverviewTableData"
             class="mt-10"
@@ -103,6 +103,9 @@ export default {
     ...mapActions('productManagement/batchEdit', ['updateProduct', 'fetchHhTaskProductOverview', 'saveDelete']),
     edit () {
       this.updateProduct(this.hhTaskProductOverviewFilters)
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '批量处理', '点击', '开始批量修改_售卖价&划线价'])
+      }
       this.closeVisible()
     },
     toggleVisible () {

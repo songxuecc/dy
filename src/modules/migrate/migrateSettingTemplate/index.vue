@@ -233,7 +233,7 @@ export default {
           Api.hhgjAPIs.updateTemplate(template)
         }
       } catch (err) {
-        this.$message.error(`${err || err.message}`)
+        this.$message.error(`updateTemplate: ${err || err.message}`)
       }
     },
     async  startMigrate () {
@@ -252,7 +252,7 @@ export default {
                 // 滚动到指定节点
                 // 值有start,center,end，nearest，当前显示在视图区域中间
               block: 'center',
-                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）s
               behavior: 'smooth'
             })
           })
@@ -264,7 +264,7 @@ export default {
         this.setPresellEndTime(template.presell_end_time)
         this.migrage()
       } catch (err) {
-        this.$message.error(`${err || err.message}`)
+        this.$message.error(`startMigrate: ${err || err.message}`)
       }
     },
     async migrage () {

@@ -1,6 +1,6 @@
 <!-- 售卖&划线价 -->
 <template>
-  <div>
+  <div class="saleAndUnderlinedPrice">
     <el-form ref="form" :model="form" size="small" label-position="left" :rules="rules" >
       <div class="flex mb-10">
         <p style="padding-top: 10px;padding-right: 25px;">售卖价</p>
@@ -54,12 +54,12 @@
             </el-radio>
           </el-form-item>
           <el-form-item>
-            <el-radio v-model="form.discount.discount_price_type"  :label="3" class="flex align-c">
+            <el-radio v-model="form.discount.discount_price_type"  :label="2" class="flex align-c">
               将售卖价设置为对应SKU的最低价
             </el-radio>
           </el-form-item>
           <el-form-item>
-            <el-radio v-model="form.discount.discount_price_type"  :label="3" class="flex align-c">
+            <el-radio v-model="form.discount.discount_price_type"  :label="0" class="flex align-c">
               不修改
             </el-radio>
           </el-form-item>
@@ -117,7 +117,7 @@
             </el-radio>
           </el-form-item>
            <el-form-item>
-            <el-radio v-model="form.discount.discount_price_type"  :label="3" class="flex align-c">
+            <el-radio v-model="form.market.discount_price_type"  :label="0" class="flex align-c">
               不修改
             </el-radio>
           </el-form-item>
@@ -159,23 +159,18 @@ export default {
       if (['discount.price_rate', 'discount.incr_diff', 'discount.desc_diff'].includes(rule.field)) {
         this.$refs.form.clearValidate(['discount.price'])
         if (value && !utils.isNumber(value)) {
-          this.changeError(true)
           callback(new Error('必须填写数字'))
         } else {
-          this.changeError(false)
           callback()
         }
       } else if (['discount.price'].includes(rule.field)) {
         this.$refs.form.clearValidate(['discount.price_rate', 'discount.incr_diff', 'discount.desc_diff'])
         if (value && !utils.isNumber(value)) {
-          this.changeError(true)
           callback(new Error('必须填写数字'))
         } else {
-          this.changeError(false)
           callback()
         }
       } else {
-        this.changeError(false)
         callback()
       }
     }
@@ -184,29 +179,23 @@ export default {
       if (['market.price_rate', 'market.incr_diff', 'market.desc_diff'].includes(rule.field)) {
         this.$refs.form.clearValidate(['market.price'])
         if (value && !utils.isNumber(value)) {
-          this.changeError(true)
           callback(new Error('必须填写数字'))
         } else {
-          this.changeError(false)
           callback()
         }
       } else if (['market.price'].includes(rule.field)) {
         this.$refs.form.clearValidate(['market.price_rate', 'market.incr_diff', 'market.desc_diff'])
         if (value && !utils.isNumber(value)) {
-          this.changeError(true)
           callback(new Error('必须填写数字'))
         } else {
-          this.changeError(false)
           callback()
         }
       } else {
-        this.changeError(false)
         callback()
       }
     }
 
     return {
-      hasError: false,
       options: [{
         value: 1,
         label: '原售卖价'
@@ -227,7 +216,7 @@ export default {
       value: '',
       form: {
         discount: {
-          discount_price_type: 3,
+          discount_price_type: 2,
           price_type: 1,
           price_rate: 100,
           incr_diff: '',
@@ -273,9 +262,6 @@ export default {
     }
   },
   methods: {
-    changeError (bool) {
-      this.hasError = bool
-    },
     handleFocus (key, value) {
       set(this.form, key, value)
     },
@@ -283,7 +269,9 @@ export default {
       this.form[attribute] = ''
     },
     getForm () {
-      if (this.hasError) {
+      const className = '.saleAndUnderlinedPrice .el-form-item__error'
+      const error = document.querySelector(className)
+      if (error) {
         this.$message.error('请按提示修改错误')
         return false
       } else {

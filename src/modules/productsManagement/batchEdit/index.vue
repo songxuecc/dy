@@ -318,7 +318,7 @@ export default {
           ref: 'SaleAndUnderlinedPrice',
           tableRef: 'TableSaleAndUnderlinedPrice',
           needExpand: false,
-          hot: false
+          hot: true
         },
         {
           primary: 'iconfahuomoshixuanzhong',
@@ -436,6 +436,7 @@ export default {
         }
         this.selectIds = []
         this.goods_ids = ''
+        this.category = {}
         this.examineEditRecord()
       }
     }
@@ -479,11 +480,20 @@ export default {
       if (this.modifyMethods === 'area') {
         this.selectIds = []
         this.areaProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-范围'])
+        }
       } else if (this.modifyMethods === 'id') {
         this.selectIds = []
         this.idProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-商品选择'])
+        }
       } else {
         this.previewProductList()
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '批量处理', '点击', '效果预览-按id'])
+        }
       }
     },
     async areaProductList () {
@@ -510,6 +520,7 @@ export default {
         check_status: checkStatus,
         is_capture: this.form.captureStatus,
         presell_type: this.form.presell_type,
+        category_id: this.category.id,
         goods_id_list: JSON.stringify([]),
         ext_json: JSON.stringify(this.getEditJson())
       }
