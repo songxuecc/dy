@@ -392,6 +392,9 @@ const hhgjAPIs = {
   },
   getTaskNums: (params) => {
     return api.actionCreateGet('/api/system/monitor/query', params)
+  },
+  doCmd: (params) => {
+    return api.actionCreatorPost('/api/system/monitor/do_cmd', params)
   }
 }
 
