@@ -416,6 +416,9 @@ const hhgjAPIs = {
   },
   getPropductCategoryProperty: (params) => {
     return api.actionCreateGet('/api/product/category/category_property/query', params)
+  },
+  getCaptureShopCompleteList: (params) => {
+    return api.actionCreateGet('/api/capture/shop/complete/list', params)
   }
 }
 
