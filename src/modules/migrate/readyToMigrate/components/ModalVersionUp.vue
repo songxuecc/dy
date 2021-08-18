@@ -75,7 +75,7 @@ export default {
   methods: {
     close () {
       this.visible = !this.visible
-      this.$emit('visibleModalVersionUpChange')
+      this.$emit('change')
     },
     up (btnText) {
       this.close()

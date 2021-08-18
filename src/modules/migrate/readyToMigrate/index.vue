@@ -142,10 +142,10 @@
         </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
           <span v-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior" class="pt-10">
-            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
+            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
           </span>
           <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" class="pt-10">
-            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 订购高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
+            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 订购高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
           </span>
         </div>
       </div>
@@ -209,12 +209,14 @@
         <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <ModalVersionUp :visible="visibleModalVersionUp" @visibleModalVersionUpChange="visibleModalVersionUpChange" />
+    <ModalVersionUp :visible="visibleModalVersionUp" @change="visibleModalVersionUpChange" />
+    <ModalVersionUpOrder :visible="visibleModalVersionUpOrder" @change="visibleModalVersionUpOrderChange" />
   </div>
 </template>
 <script>
 import productListView from '@/components/ProductListView'
 import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
+import ModalVersionUpOrder from '@migrate/readyToMigrate/components/ModalVersionUpOrder'
 import Search from '@migrate/readyToMigrate/components/Search'
 
 import request from '@/mixins/request.js'
@@ -231,6 +233,7 @@ export default {
     productListView,
     BatchEdit: () => import('./components/BatchEdit'),
     ModalVersionUp,
+    ModalVersionUpOrder,
     Search
   },
   data () {
@@ -277,6 +280,7 @@ export default {
       startMigrateBtnFixed: false,
       scrollWidth: 0,
       visibleModalVersionUp: false,
+      visibleModalVersionUpOrder: false,
       order_by: 1
     }
   },
@@ -1012,13 +1016,24 @@ export default {
     visibleModalVersionUpChange () {
       this.visibleModalVersionUp = !this.visibleModalVersionUp
     },
+    visibleModalVersionUpOrderChange () {
+      this.visibleModalVersionUpOrder = !this.visibleModalVersionUpOrder
+    },
+
     async toMigrate () {
       const userVersion = this.userVersion || (await this.userVersionQuery())
       const isFreeUpgrate = userVersion.is_free_upgrate
       const isSenior = userVersion.is_senior
       const limit = 10
+      const versionTipType = userVersion.version_type
       if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit && !isSenior) {
-        this.visibleModalVersionUp = true
+        // 3个月试用引导内部升级
+        // 7天试用引导在服务市场
+        if (versionTipType === 'free_three_months') {
+          this.visibleModalVersionUp = true
+        } else {
+          this.visibleModalVersionUpOrder = true
+        }
       } else {
         this.removeTempTemplate()
         this.closeNewComer()
@@ -1255,13 +1270,17 @@ export default {
       this.$refs.newComerShop.close && this.$refs.newComerShop.close()
     },
     versionTypeUp (btnText) {
-      let routeData = this.$router.resolve({
-        name: 'PaidRecharge',
-        params: {
-          active: 'VersionUp'
-        }
-      })
-      window.open(routeData.href, '_blank')
+      if (btnText === 'free_seven_days') {
+        window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
+      } else {
+        let routeData = this.$router.resolve({
+          name: 'PaidRecharge',
+          params: {
+            active: 'VersionUp'
+          }
+        })
+        window.open(routeData.href, '_blank')
+      }
     },
     onSearchChange (data) {
       // 店铺选择 状态选择 标题搜索 clearSelect resetPaginationIndex updateInfo
