@@ -60,7 +60,9 @@ const commonConfig = {
       '@customerSetting': path.join(__dirname, '..', 'src/modules/customerSetting'),
       '@migrate': path.join(__dirname, '..', 'src/modules/migrate'),
       '@moreFeatures': path.join(__dirname, '..', 'src/modules/moreFeatures'),
-      '@shopDecorate': path.join(__dirname, '..', 'src/modules/shopDecorate')
+      '@shopDecorate': path.join(__dirname, '..', 'src/modules/shopDecorate'),
+      '@commonModels': path.join(__dirname, '..', 'src/store/commonModels'),
+      '@servises': path.join(__dirname, '..', 'src/api/servises.js')
     }
   },
   plugins: [

@@ -205,6 +205,18 @@ const router = new Router({
       }
     },
     {
+      path: '/productsManagement/productsSync',
+      name: 'ProductsSync',
+      component: () => import(
+        /* webpackChunkName: `AllProducts` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/productsSync'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
       path: '/productsManagement/productExports',
       name: 'ProductExports',
       component: () => import(

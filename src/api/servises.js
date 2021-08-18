@@ -414,6 +414,4 @@ const hhgjAPIs = {
   }
 }
 
-export default {
-  hhgjAPIs
-}
+export default hhgjAPIs
