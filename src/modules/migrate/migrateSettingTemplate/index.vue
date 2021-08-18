@@ -290,6 +290,17 @@ export default {
           migrate_shop: JSON.stringify(migrateShop)
         }
 
+        // 百度统计打点，直接上线，草稿箱，仓库中
+        let commitTypeText = '直接上线'
+        if (formatParmas.commit_type === 1) {
+          commitTypeText = '草稿箱'
+        } else if (formatParmas.commit_type === 2) {
+          commitTypeText = '仓库中'
+        }
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '搬家模板', '搬家', commitTypeText])
+        }
+
         await Api.hhgjAPIs.migrate(params)
         if (!this.loadingCnt) {
           this.isStartMigrate = false

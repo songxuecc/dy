@@ -12,6 +12,7 @@
                 <el-radio-group v-model="template.model.commit_type">
                     <el-radio :label="0">直接上线</el-radio>
                     <el-radio :label="1">草稿箱</el-radio>
+                    <el-radio :label="2">仓库中</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="客服电话:" prop="mobile" >
