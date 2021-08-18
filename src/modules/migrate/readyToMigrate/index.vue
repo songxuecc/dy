@@ -209,8 +209,8 @@
         <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <ModalVersionUp :visible="visibleModalVersionUp" @change="visibleModalVersionUpChange" />
-    <ModalVersionUpOrder :visible="visibleModalVersionUpOrder" @change="visibleModalVersionUpOrderChange" />
+    <ModalVersionUp ref="ModalVersionUp" />
+    <ModalVersionUpOrder  ref="ModalVersionUpOrder" />
   </div>
 </template>
 <script>
@@ -279,8 +279,6 @@ export default {
       common,
       startMigrateBtnFixed: false,
       scrollWidth: 0,
-      visibleModalVersionUp: false,
-      visibleModalVersionUpOrder: false,
       order_by: 1
     }
   },
@@ -1013,13 +1011,6 @@ export default {
       }
       this.$router.replace({ query })
     },
-    visibleModalVersionUpChange () {
-      this.visibleModalVersionUp = !this.visibleModalVersionUp
-    },
-    visibleModalVersionUpOrderChange () {
-      this.visibleModalVersionUpOrder = !this.visibleModalVersionUpOrder
-    },
-
     async toMigrate () {
       const userVersion = this.userVersion || (await this.userVersionQuery())
       const isFreeUpgrate = userVersion.is_free_upgrate
@@ -1030,9 +1021,9 @@ export default {
         // 3个月试用引导内部升级
         // 7天试用引导在服务市场
         if (versionTipType === 'free_three_months') {
-          this.visibleModalVersionUp = true
+          this.$refs && this.$refs.ModalVersionUp.open()
         } else {
-          this.visibleModalVersionUpOrder = true
+          this.$refs && this.$refs.ModalVersionUpOrder.open()
         }
       } else {
         this.removeTempTemplate()

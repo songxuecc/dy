@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="modalVersionUpBtn " slot="footer" v-if="versionType">
-      <p class="relative heartbeat">
+      <p class="relative heartbeat pointer" @click="up">
         订购高级版 搬家无限制
         <span>15元/月</span>
       </p>
@@ -51,30 +51,49 @@
 
 <script>
 import { mapState } from 'vuex'
+import Api from '@/api/apis'
 
 export default {
-  name: 'ModalVersionUp',
+  name: 'ModalVersionUpOrder',
   props: {
     key: {
       type: String,
       default: 'up'
-    },
-    visible: Boolean
+    }
   },
   data () {
-    return {}
+    return {
+      visible: false
+    }
   },
   computed: {
     ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType'])
   },
   methods: {
+    open () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '试用限制优化20210507', '弹层曝光', '试用限制_展示弹层'])
+      }
+      this.visible = !this.visible
+    },
     close () {
       this.visible = !this.visible
-      this.$emit('change')
     },
-    up () {
-      this.close()
-      window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
+    async up () {
+      try {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '试用限制_订购高级版本'])
+        }
+      // 订单统计打点
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_upgrade',
+          action: 'resubscribe'
+        })
+        this.close()
+        window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
+      } catch (err) {
+        this.$message.error(`${err}`)
+      }
     }
   }
 }
