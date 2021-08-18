@@ -115,15 +115,6 @@ export default {
           versionType = configs[userVersion.version_type]
           versionTipType = userVersion.version_type
         }
-
-        versionTipType = 'free_three_months'
-        versionType = {
-          price: `${3 / 100}元/天`,
-          tip: '版本升级',
-          left: '升级前',
-          right: '升级后',
-          btn: '去升级'
-        }
         commit('save', {userVersion, versionType, versionTipType})
         return userVersion
       } catch (err) {
