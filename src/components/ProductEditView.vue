@@ -297,11 +297,11 @@
                             <el-option :value="9999" label="当日" :key="9999"> </el-option>
                             <el-option :value="1" label="24小时"> </el-option>
                             <el-option :value="2" label="48小时"> </el-option>
-                            <el-option :value="3" label="3天">3天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
-                            <el-option :value="5" label="5天">5天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
-                            <el-option :value="7" label="7天">7天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
-                            <el-option :value="10" label="10天">10天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
-                            <el-option :value="15" label="15天">15天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                            <el-option :value="3" label="3天">3天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
+                            <el-option :value="5" label="5天">5天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
+                            <el-option :value="7" label="7天">7天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
+                            <el-option :value="10" label="10天">10天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
+                            <el-option :value="15" label="15天">15天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="是否预售:" prop="is_pre_sale">

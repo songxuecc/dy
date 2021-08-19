@@ -19,7 +19,7 @@
                     <p  v-if="template.model.presell_type === 2">现货库存售罄后生成的订单需以阶梯发货时间进行发货</p>
                   </el-radio>
                 </el-radio-group>
-                <div class="info">如果切换发货模式，原发货模式下的订单若被取消，系统不会自动回增库存</div>
+                <div class="font-12 color-warning">仅部分店铺支持阶梯发货，请确认是否满足条件<span class="primary" style="color:#1D8FFF" @click="jietiImgVisible =! jietiImgVisible">（点击查看阶梯发货使用范围）</span></div>
             </el-form-item>
             <!-- 现货发货模式 -->
             <el-form-item label="承诺发货时间:" prop="delivery_delay_day" v-if="template.model.presell_type === 0">
@@ -28,11 +28,11 @@
                     <el-option :value="9999" label="当日" :key="9999"> </el-option>
                     <el-option :value="1" label="24小时"> </el-option>
                     <el-option :value="2" label="48小时"> </el-option>
-                    <el-option :value="3" label="3天">3天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
-                    <el-option :value="5" label="5天">5天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
-                    <el-option :value="7" label="7天">7天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
-                    <el-option :value="10" label="10天">10天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
-                    <el-option :value="15" label="15天">15天 <span class="fail">仅支持特殊类目</span><span class="fail">选择</span></el-option>
+                    <el-option :value="3" label="3天">3天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
+                    <el-option :value="5" label="5天">5天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
+                    <el-option :value="7" label="7天">7天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
+                    <el-option :value="10" label="10天">10天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
+                    <el-option :value="15" label="15天">15天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
                 </el-select>
                 <span class="info" style="line-height:16px;flex:1">
                   注：目前抖店官方对发货模式及发货时限规则开始调整，若选择现货发货模式，需在消费者下单后<span class="fail">&nbsp;&nbsp;48小时&nbsp;&nbsp;</span>内发货。部分特殊类目可自主设置【3-15天】的发货时间，具体类目以商家后台展示为准。点击查看&nbsp;&nbsp;<el-link @click="open" type="primary" style="font-size:12px" :underline="false">官方文档</el-link>&nbsp;&nbsp;说明  。
@@ -100,6 +100,14 @@
                 <span>(原商品库存 = 现货库存 + 阶梯库存，<span style="color:#FA6400">{{tip}}</span>)</span>
             </el-form-item>
         </el-form>
+
+        <el-dialog :visible.sync="jietiImgVisible">
+          <el-image
+            :src="jietiImg"
+            fit="fit">
+          </el-image>
+        </el-dialog>
+
     </div>
 </template>
 <script>
@@ -121,6 +129,8 @@ export default {
       }
     }
     return {
+      jietiImgVisible: false,
+      jietiImg: 'https://img.pddpic.com/mms-material-img/2021-08-18/094e8bb6-74b6-4d00-952c-94b4203bd870.png.a.jpeg',
       tip: '51% <= 现货库存设置 <= 100%',
       rules: {
         presell_type: [

@@ -69,18 +69,17 @@
 <!--                    <el-radio :label="2">支持（拆封后不支持）</el-radio>-->
                 </el-radio-group>
                 <div style="position: absolute;top: 15px;left: 192px;color: #E02020; font-size: 1px;color:#FA6400">仅少数商品可选，一般商品不要选择此项</div>
-                <el-popover
-                  placement="top"
-                  width="600"
-                  trigger="click">
+                <el-link  :underline="false" style="margin-left: 130px; color: #1D8FFF; font-size: 1px;" @click="dySupplyImgVisible = !dySupplyImgVisible">注:什么商品可以不支持7天无理由退换货?</el-link>
+                <el-dialog :visible.sync="dySupplyImgVisible">
                   <el-image
                     :src="dySupplyImg"
                     fit="fit">
                   </el-image>
-                  <el-link slot="reference" :underline="false" style="margin-left: 100px; color: #1D8FFF; font-size: 1px;">注:什么商品可以不支持7天无理由退换货?</el-link>
-                </el-popover>
+                </el-dialog>
+
             </el-form-item>
         </el-form>
+
     </div>
 </template>
 <script>
@@ -141,8 +140,8 @@ export default {
 
     return {
       dySupplyImg: 'https://img.pddpic.com/mms-material-img/2021-04-21/091fb3a4-fa82-49eb-9821-229aaa330567.png.a.jpeg',
+      dySupplyImgVisible: false,
       rules: {
-
         pay_type: [
           { required: true, message: '请选择付款方式', trigger: 'change' }
         ],

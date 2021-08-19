@@ -63,19 +63,20 @@ export default {
     key: {
       type: String,
       default: 'up'
-    },
-    visible: Boolean
+    }
   },
   data () {
-    return {}
+    return {visible: false}
   },
   computed: {
     ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType'])
   },
   methods: {
+    open () {
+      this.visible = !this.visible
+    },
     close () {
       this.visible = !this.visible
-      this.$emit('visibleModalVersionUpChange')
     },
     up (btnText) {
       this.close()
