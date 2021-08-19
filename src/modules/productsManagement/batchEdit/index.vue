@@ -249,7 +249,7 @@ export default {
       categoryVislble: false,
       category: {},
       showEditRecordTip: false,
-      editType: 11,
+      editType: 1,
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,

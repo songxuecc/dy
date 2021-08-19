@@ -83,6 +83,7 @@
 </template>
 <script>
 import { createNamespacedHelpers, mapGetters, mapState } from 'vuex'
+import utils from '@/common/utils'
 
 const {
   mapState: mapStateMigrate,
@@ -100,7 +101,10 @@ export default {
       // 每次下单限购件数
       const maximum = this.template.model.ext_json.maximum_per_order
 
-      if (minimum && minimum > 200) {
+      const r = /^[1-9][0-9]*$/
+      if (!utils.isNumber(value) || !r.test(value)) {
+        callback(new Error('请填写正整数'))
+      } else if (minimum && minimum > 200) {
         callback(new Error('商品起售件数需为小于或等于200件的正整数'))
       } else if (limit && minimum && minimum > limit) {
         callback(new Error('起售件数不能超过商品每次限购件数'))
@@ -119,7 +123,10 @@ export default {
       // 每次下单限购件数
       const maximum = this.template.model.ext_json.maximum_per_order
 
-      if (maximum && maximum > 200) {
+      const r = /^[1-9][0-9]*$/
+      if (!utils.isNumber(value) || !r.test(value)) {
+        callback(new Error('请填写正整数'))
+      } else if (maximum && maximum > 200) {
         callback(new Error('每次限购件数需为小于200的正整数'))
       } else if (limit && maximum && maximum > limit) {
         callback(new Error('每次限购件数不能超过累计限购件数'))
@@ -130,7 +137,10 @@ export default {
     // 单用户累计限购
     const validatePass1 = (rule, value, callback) => {
       const limit = this.template.model.ext_json.limit_per_buyer
-      if (limit && limit > 200) {
+      const r = /^[1-9][0-9]*$/
+      if (!utils.isNumber(value) || !r.test(value)) {
+        callback(new Error('请填写正整数'))
+      } else if (limit && limit > 200) {
         callback(new Error('累计限购件数需为小于200的正整数'))
       } else {
         callback()
