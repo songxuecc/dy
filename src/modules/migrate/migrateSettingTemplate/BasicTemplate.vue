@@ -101,8 +101,7 @@ export default {
       // 每次下单限购件数
       const maximum = this.template.model.ext_json.maximum_per_order
 
-      const r = /^[1-9][0-9]*$/
-      if (!utils.isNumber(value) || !r.test(value)) {
+      if (!utils.isNumber(value) || value % 1 || value < 0) {
         callback(new Error('请填写正整数'))
       } else if (minimum && minimum > 200) {
         callback(new Error('商品起售件数需为小于或等于200件的正整数'))
@@ -123,8 +122,7 @@ export default {
       // 每次下单限购件数
       const maximum = this.template.model.ext_json.maximum_per_order
 
-      const r = /^[1-9][0-9]*$/
-      if (!utils.isNumber(value) || !r.test(value)) {
+      if (!utils.isNumber(value) || value % 1 || value < 0) {
         callback(new Error('请填写正整数'))
       } else if (maximum && maximum > 200) {
         callback(new Error('每次限购件数需为小于200的正整数'))
@@ -137,8 +135,7 @@ export default {
     // 单用户累计限购
     const validatePass1 = (rule, value, callback) => {
       const limit = this.template.model.ext_json.limit_per_buyer
-      const r = /^[1-9][0-9]*$/
-      if (!utils.isNumber(value) || !r.test(value)) {
+      if (!utils.isNumber(value) || value % 1 || value < 0) {
         callback(new Error('请填写正整数'))
       } else if (limit && limit > 200) {
         callback(new Error('累计限购件数需为小于200的正整数'))
