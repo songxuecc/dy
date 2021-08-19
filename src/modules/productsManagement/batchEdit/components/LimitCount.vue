@@ -30,12 +30,44 @@
 </template>
 
 <script>
+import utils from '@/common/utils'
+
 export default {
   name: 'LimitCount',
   props: {},
   data () {
+    // 每次限购
+    const validatePass1 = (rule, value, callback) => {
+      // 起售件数
+      // 累计限购件数
+      const limit = this.form.limit_per_buyer
+      // 每次下单限购件数
+      const maximum = this.form.maximum_per_order
+
+      if ((value && !utils.isNumber(value)) || value % 1 || value < 0) {
+        callback(new Error('请填写正整数'))
+      } else if (maximum && maximum > 200) {
+        callback(new Error('每次限购件数需为小于200的正整数'))
+      } else if (limit && maximum && maximum > limit) {
+        callback(new Error('每次限购件数不能超过累计限购件数'))
+      } else {
+        callback()
+      }
+    }
+    // 单用户累计限购
+    const validatePass2 = (rule, value, callback) => {
+      const limit = this.form.limit_per_buyer
+      if ((value && !utils.isNumber(value)) || value % 1 || value < 0) {
+        callback(new Error('请填写正整数'))
+      } else if (limit && limit > 200) {
+        callback(new Error('累计限购件数需为小于200的正整数'))
+      } else {
+        callback()
+      }
+    }
+
     // 每次至少购买
-    const validatePass = (rule, value, callback) => {
+    const validatePass3 = (rule, value, callback) => {
       // 起售件数
       const minimum = this.form.minimum_per_order
       // 累计限购件数
@@ -43,7 +75,9 @@ export default {
       // 每次下单限购件数
       const maximum = this.form.maximum_per_order
 
-      if (minimum && minimum > 200) {
+      if ((value && !utils.isNumber(value)) || value % 1 || value < 0) {
+        callback(new Error('请填写正整数'))
+      } else if (minimum && minimum > 200) {
         callback(new Error('商品起售件数需为小于或等于200件的正整数'))
       } else if (limit && minimum > limit) {
         callback(new Error('起售件数不能超过商品每次限购件数'))
@@ -54,31 +88,6 @@ export default {
       }
     }
 
-    // 每次限购
-    const validatePass2 = (rule, value, callback) => {
-      // 起售件数
-      // 累计限购件数
-      const limit = this.form.limit_per_buyer
-      // 每次下单限购件数
-      const maximum = this.form.maximum_per_order
-
-      if (maximum && maximum > 200) {
-        callback(new Error('每次限购件数需为小于200的正整数'))
-      } else if (limit && maximum && maximum > limit) {
-        callback(new Error('每次限购件数不能超过累计限购件数'))
-      } else {
-        callback()
-      }
-    }
-    // 单用户累计限购
-    const validatePass1 = (rule, value, callback) => {
-      const limit = this.form.limit_per_buyer
-      if (limit && limit > 200) {
-        callback(new Error('累计限购件数需为小于200的正整数'))
-      } else {
-        callback()
-      }
-    }
     return {
       form: {
         limit_per_buyer: 1,
@@ -87,13 +96,13 @@ export default {
       },
       rules: {
         maximum_per_order: [
-          { validator: validatePass2, trigger: ['focus', 'blur', 'change'] }
-        ],
-        limit_per_buyer: [
           { validator: validatePass1, trigger: ['focus', 'blur', 'change'] }
         ],
+        limit_per_buyer: [
+          { validator: validatePass2, trigger: ['focus', 'blur', 'change'] }
+        ],
         minimum_per_order: [
-          { validator: validatePass, trigger: ['focus', 'blur', 'change'] }
+          { validator: validatePass3, trigger: ['focus', 'blur', 'change'] }
         ]
       }
     }
