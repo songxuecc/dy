@@ -518,6 +518,15 @@ export default {
         return item
       })
       commit('save', {tableData: nextTableData})
+    },
+    deleteRow ({commit, state, dispatch}, payload) {
+      const nextTableData = state.tableData.filter(item => item.tp_product_id !== payload.tp_product_id)
+      let list = localStorage.getItem('selectTPProductIdList')
+      if (list) {
+        list = list.split(',').filter(item => Number(item) !== Number(payload.tp_product_id))
+        this.dispatch('setSelectTPProductIdList', list)
+      }
+      commit('save', {tableData: nextTableData})
     }
   },
   getters: {
