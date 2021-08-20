@@ -28,11 +28,21 @@
         <el-form-item label-width="95px">
             <span slot="label">超过30个字：</span>
             <el-radio-group v-model="form.title_cut_type">
-                <el-radio :label="1">自动去末尾</el-radio>
-                <el-radio :label="2">自动去开头</el-radio>
-                <el-radio :label="3">不处理</el-radio>
+                <el-radio :label="1" style="width:100px">自动去末尾</el-radio>
+                <el-radio :label="2" style="width:100px">自动去开头</el-radio>
+                <el-radio :label="3" style="width:100px">不处理</el-radio>
             </el-radio-group>
         </el-form-item>
+
+        <el-form-item label-width="95px">
+            <span slot="label">删除指定内容</span>
+            <el-checkbox-group v-model="form.cut_type_list">
+                <el-checkbox label="is_cut_digit" style="width:100px">删除英文</el-checkbox>
+                <el-checkbox label="is_cut_alpha" style="width:100px">删除数字</el-checkbox>
+                <el-checkbox label="is_cut_brackets">删除数字、删除括号以及括号里的内容字</el-checkbox>
+            </el-checkbox-group>
+        </el-form-item>
+
     </el-form>
 </template>
 
@@ -54,7 +64,8 @@ export default {
         source_str: '',
         target_str: '',
         delete_str: '',
-        title_cut_type: 3
+        title_cut_type: 3,
+        cut_type_list: []
       }
     }
   },

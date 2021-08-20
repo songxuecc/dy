@@ -200,14 +200,7 @@
         </el-form-item>
 
         <el-form-item required label="标题:"  style="margin-bottom: 20px;" class="flex migrateSetting-title" >
-          <p class="flex align-c mb-5">
-            <span style="font-size: 12px;margin-right:4px">超过30个字</span>
-            <el-radio-group v-model="title_cut_type">
-              <el-radio :label="1">自动去末尾</el-radio>
-              <el-radio :label="2">自动去开头</el-radio>
-              <el-radio :label="3">不处理</el-radio>
-            </el-radio-group>
-          </p>
+
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p style="margin-right:10px">
               <el-input clearable @clear="handleClear('title_prefix')" v-model="title_prefix" placeholder="前缀" style="width: 280px;margin-right:10px"></el-input>
@@ -228,6 +221,25 @@
             </p>
             <el-switch v-model="is_open_title_replace" class="ml-5"/>
           </div>
+
+          <p class="flex align-c mb-5">
+            <span style="font-size: 12px;margin-right:10px">超过30个字</span>
+            <el-radio-group v-model="title_cut_type">
+              <el-radio :label="1">自动去末尾</el-radio>
+              <el-radio :label="2">自动去开头</el-radio>
+              <el-radio :label="3">不处理</el-radio>
+            </el-radio-group>
+          </p>
+
+          <p style="display:flex;flex:1" class="mb-10">
+            <span style="font-size: 12px;margin-right:10px">删除指定内容</span>
+            <el-checkbox-group v-model="cut_type_list">
+                <el-checkbox label="is_cut_digit" style="width:100px;color:333">删除英文</el-checkbox>
+                <el-checkbox label="is_cut_alpha" style="width:100px;color:333">删除数字</el-checkbox>
+                <el-checkbox label="is_cut_brackets">删除数字、删除括号以及括号里的内容字</el-checkbox>
+            </el-checkbox-group>
+          </p>
+
         </el-form-item>
 
         <el-form-item required label="重复搬家设置"  class="flex migrateProductsFilter migrateSetting-choose" style="height:25px;margin-bottom: 20px;">
@@ -249,13 +261,13 @@
             <div style="display:flex;flex:1" >
                 <p style="width: 280px;text-align:right;position:relative" >
                     <el-input v-model="back_words" @input="formatBlackWords" type="textarea"
-                    size="small" placeholder="请输入自定义违规词，换行或空格或逗号，分隔多个违规词"
+                    size="small" :placeholder="pt"
                     :autosize="{ minRows: 10,maxRows: 15}"
                     style="width: 100%;" >
                     </el-input>
                     <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" :disabled="!this.black_word_list.length" @click="createBlackWords" :loading="createBlackWordsLoading">添加</el-button>
                 </p>
-                <div style="flex:1;max-width:550px;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:15px" v-loading="wordsTagLoading">
+                <div style="flex:1;max-width:550px;max-height:250px;overflow-y:auto;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:15px" v-loading="wordsTagLoading">
                     <el-tag v-for="(tag,index) in defaultBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
                         {{tag}}
                     </el-tag>
@@ -277,7 +289,7 @@
                     </el-input>
                     <el-button size="small" style="margin-top:10px;position:absolute;bottom:5px;right:10px" type="primary" :disabled="!this.image_black_word_list.length" @click="createImageBlackWords" :loading="createBlackWordsLoading">添加</el-button>
                 </p>
-                <div style="flex:1;max-width:550px;border: 1px solid #DCDFE6;border-radius: 4px;margin-left:15px" v-loading="imgTagLoading">
+                <div style="flex:1;max-width:550px;border: 1px solid #DCDFE6;max-height:250px;overflow-y:auto;border-radius: 4px;margin-left:15px" v-loading="imgTagLoading">
                     <el-tag v-for="(tag,index) in defaultImageBlackWords" :disable-transitions="true" :key="tag"  :type="typeList[index%5]" >
                         {{tag}}
                     </el-tag>
@@ -389,6 +401,7 @@ export default {
       is_keep_main_banner: undefined,
       is_mix_banner: undefined,
       title_cut_type: 3,
+      cut_type_list: [],
       title_prefix: '',
       title_suffix: '',
       source_title_str: '',
@@ -434,6 +447,7 @@ export default {
       defaultBlackWords: [],
       defaultImageBlackWords: [],
       placeholder: `请输入自定义违规词，换行或空格或逗号分隔多个违规词\n\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n\n检测图片会影响抓取速度，若抓取抖音商品则不检测`,
+      pt: `请输入自定义违规词，换行或空格或逗号，分隔多个违规词\n\n表中已有的违禁词是默认违禁词，不可删除，是抖音官方判定的违禁词`,
       able_migrate_status_list: [
         common.productStatus.WAIT_ONLINE,
         common.productStatus.FAILED,
@@ -605,6 +619,7 @@ export default {
     },
     shouldUpdate () {
       const product = cloneDeep(this.getFormatSettings()) || {}
+      // 搬家状态
       const originMigrateSetting = cloneDeep(this.originMigrateSetting) || {}
       const migrateStatus = originMigrateSetting.able_migrate_status_list || []
       const currentMigrateStatus = this.able_migrate_status_list || []
@@ -613,6 +628,14 @@ export default {
       const isEqualSetting = isEqual(originMigrateSetting, product)
       var isEqualStatusList = migrateStatus.length === currentMigrateStatus.length &&
       migrateStatus.sort().toString() === currentMigrateStatus.sort().toString()
+      // 搬家标题-删除指定内容
+      const cutTypeList = originMigrateSetting.cut_type_list || []
+      const currentCutTypeList = this.cut_type_list || []
+      delete product.cut_type_list
+      delete originMigrateSetting.cut_type_list
+      const isEqualCutTypeList = cutTypeList.length === currentCutTypeList.length &&
+      cutTypeList.sort().toString() === currentCutTypeList.sort().toString()
+
       const blackWords = new Set(this.blackWords)
       const originBlackWords = new Set([
         ...this.customerBlackWords,
@@ -632,7 +655,7 @@ export default {
 
       // 分类
       return (
-        isEqualSetting && !newBlackWords.length && !newImageBlackWords.length && isEqualStatusList
+        isEqualSetting && !newBlackWords.length && !newImageBlackWords.length && isEqualStatusList && isEqualCutTypeList
       )
     }
   },
@@ -796,6 +819,7 @@ export default {
         is_open_title_prefix_suffix: Number(this.is_open_title_prefix_suffix),
         is_open_title_replace: Number(this.is_open_title_replace),
         title_cut_type: this.title_cut_type,
+        cut_type_list: this.cut_type_list,
         title_prefix: this.title_prefix,
         title_suffix: this.title_suffix,
         source_title_str: this.source_title_str,
@@ -1185,4 +1209,5 @@ export default {
     height: 90px;
     display: block;
   }
+
 </style>

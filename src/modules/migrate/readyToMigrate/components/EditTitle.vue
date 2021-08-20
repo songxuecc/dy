@@ -22,11 +22,11 @@
         </p>
       </div>
       <div style="display:flex;align-items:center">
-        <p style="margin-right:42px">
-          <el-input v-model="model.textDelete" style="width: 290px;margin-right:13px" placeholder="请输入需要全部删除的关键字">
+          <el-input v-model="model.textDelete" style="margin-right:13px" placeholder="请输入需要全部删除的关键字">
           </el-input>
-        </p>
-        <p style="width:300px;display:flex;flex:1">
+      </div>
+
+      <p style="width:300px;display:flex;flex:1;margin-left:5px" class="mt-20">
           <span style="font-size: 12px;margin-right:4px">超过30个字:</span>
           <el-radio-group v-model="model.radio">
             <el-radio :label="6">自动去末尾</el-radio>
@@ -34,7 +34,16 @@
             <el-radio :label="9">不处理</el-radio>
           </el-radio-group>
         </p>
-      </div>
+
+      <p style="display:flex;flex:1;margin-left:5px" class="mt-20">
+        <span style="font-size: 12px;margin-right:4px">删除指定内容:</span>
+        <el-checkbox-group v-model="model.cut_type_list">
+            <el-checkbox label="is_cut_digit" style="width:100px">删除英文</el-checkbox>
+            <el-checkbox label="is_cut_alpha" style="width:100px">删除数字</el-checkbox>
+            <el-checkbox label="is_cut_brackets">删除数字、删除括号以及括号里的内容字</el-checkbox>
+        </el-checkbox-group>
+      </p>
+
     </div>
     <div class="mt-10"  v-if="loading"><el-progress :percentage="percentage" :format="format" ></el-progress></div>
     <span slot="footer">
@@ -64,6 +73,7 @@ export default {
         textReplaceOrigin: '',
         textReplaceNew: '',
         textDelete: '',
+        cut_type_list: [],
         radio: 9
       }
     }

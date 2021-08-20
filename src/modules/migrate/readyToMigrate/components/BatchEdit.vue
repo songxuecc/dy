@@ -233,6 +233,25 @@ export default {
         title = title.substring(0, 30)
       }
 
+      if (model.cut_type_list.includes('is_cut_digit')) {
+        const reg = /[a-zA-Z]+/g
+        title = title.replace(reg, '')
+      }
+
+      if (model.cut_type_list.includes('is_cut_alpha')) {
+        const reg = /[0-9]+/g
+        title = title.replace(reg, '')
+      }
+
+      if (model.cut_type_list.includes('is_cut_brackets')) {
+        const reg1 = /（.*?）/g
+        title = title.replace(reg1, '')
+        const reg2 = /\([^\)]*\)/g
+        title = title.replace(reg2, '')
+        const reg3 = /[0-9]+/g
+        title = title.replace(reg3, '')
+      }
+
       if (model.radio === 3) {
         title = title.split('').reverse().slice(0, 30).reverse().join('')
       }
