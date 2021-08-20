@@ -225,6 +225,7 @@ import { mapActions, mapState } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
+import Api from '@/api/apis'
 
 export default {
   inject: ['reload'],
@@ -1260,10 +1261,24 @@ export default {
     closeShopCapture () {
       this.$refs.newComerShop.close && this.$refs.newComerShop.close()
     },
-    versionTypeUp (btnText) {
+    async versionTypeUp (btnText) {
       if (btnText === 'free_seven_days') {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_底部文案提示点击'])
+        }
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_seven_days',
+          action: 'readyToMigrate_text'
+        })
         window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
       } else {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_底部文案提示点击'])
+        }
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_three_months',
+          action: 'readyToMigrate_text'
+        })
         let routeData = this.$router.resolve({
           name: 'PaidRecharge',
           params: {

@@ -4,29 +4,27 @@
     :visible.sync="visible"
     width="600px"
     class="versionUp"
-    :show-close="false"
   >
+  <div slot="title">
+      <p class="title">升级高级版，搬家次数无上限</p>
+  </div>
     <div class="ModalVersionUp" v-if="versionType">
       <div class="flex mb-20 justify-c">
         <div class="old">
           <div class="flex column justify-c">
-            <p class="shengji left">{{ versionType.left }}</p>
-            <p class="shiyong left">试用版</p>
-            <p class="shiyongri left">10个/日</p>
+            <p class="shiyong left">3个月试用用户</p>
+            <p class="shiyongri left">每日搬家数：10</p>
           </div>
         </div>
         <div class="flex column align-c justify-c color-999 ml-10 mr-10">
-          <p class="font-12">版本升级</p>
-          <p class="font-12 jiantou flex align-c justify-c mt-5">
-            <hh-icon type="iconjiantou1" style="color: #fff"></hh-icon>
+          <p class="center">
+            <hh-icon type="icona-VS2x" style="font-size:40px"></hh-icon>
           </p>
-          <p class="font-12 mt-5">{{ versionType.price }}</p>
         </div>
         <div class="new">
           <div class="flex column justify-c">
-            <p class="shengji left">{{ versionType.right }}</p>
-            <p class="shiyong left">高级版</p>
-            <p class="shiyongri left">无上限/日</p>
+            <p class="shiyong left">高级版用户</p>
+            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span><span >无上限/日</span></p>
           </div>
         </div>
       </div>
@@ -38,24 +36,22 @@
         个额度
       </div>
       <div class="color-666 font-14">
-        建议您升级为高级版，升级后每日搬家数 <span class="price">无上限</span>
+        建议您升级为高级版，升级后每日搬家数: <span >无上限</span>
       </div>
     </div>
-    <div class="flex justify-b modalVersionUpBtn center" slot="footer" v-if="versionType">
-      <div class="moreThink pointer" @click="close">再想想</div>
-      <div
-        class="up flex align-c justify-c pointer"
-        @click="up(versionType.btn)"
-      >
-        {{ versionType.btn }}
-        <div class="tip">限时特惠{{ versionType.price }}</div>
-      </div>
+    <div class="modalVersionUpBtn pb-20" slot="footer" v-if="versionType">
+      <p class="relative heartbeat pointer" @click="up">
+        升级高级版 搬家无限制
+        <span>0.25/天</span>
+      </p>
+      <!-- <div><span style="color:#DC4041">* </span>升级后试用版剩余时长全部转为高级版</div> -->
     </div>
   </el-dialog>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import Api from '@/api/apis'
 
 export default {
   name: 'ModalVersionUp',
@@ -66,27 +62,44 @@ export default {
     }
   },
   data () {
-    return {visible: false}
+    return {
+      visible: false
+    }
   },
   computed: {
     ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType'])
   },
   methods: {
     open () {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '试用限制优化20210507', '弹层曝光', '3个月试用限制_展示弹层'])
+      }
       this.visible = !this.visible
     },
     close () {
       this.visible = !this.visible
     },
-    up (btnText) {
-      this.close()
-      let routeData = this.$router.resolve({
-        name: 'PaidRecharge',
-        params: {
-          active: 'VersionUp'
+    async up () {
+      try {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_升级高级版本'])
         }
-      })
-      window.open(routeData.href, '_blank')
+        // 订单统计打点
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_three_months',
+          action: 'modal'
+        })
+        this.close()
+        let routeData = this.$router.resolve({
+          name: 'PaidRecharge',
+          params: {
+            active: 'VersionUp'
+          }
+        })
+        window.open(routeData.href, '_blank')
+      } catch (err) {
+        this.$message.error(`${err}`)
+      }
     }
   }
 }
@@ -95,6 +108,17 @@ export default {
 .versionUp {
   /deep/ .el-dialog__footer {
     padding: 0;
+  }
+  /deep/ .el-dialog__body {
+    padding-bottom: 24px;
+  }
+
+  .title {
+    height: 35px;
+    font-size: 26px;
+    font-family: MicrosoftYaHei;
+    color: #6A6E80;
+    line-height: 35px;
   }
   .price {
     color: #dc4041;
@@ -111,11 +135,12 @@ export default {
     border-radius: 10px;
     overflow: hidden;
     .old {
-      width: 200px;
-      height: 132px;
-      background: linear-gradient(206deg, #f9fafe 0%, #e8e6e9 100%);
+      height: 108px;
+      background: linear-gradient(206deg, #F9FAFE 0%, #E8E6E9 100%);
       border-radius: 7px;
-      position: relative;
+      div {
+        padding: 19px 15px;
+      }
       .shengji {
         font-size: 12px;
         font-family: PingFangSC-Medium, PingFang SC;
@@ -129,12 +154,12 @@ export default {
         text-align: center;
       }
       .shiyong {
-        font-size: 32px;
+        height: 42px;
+        font-size: 30px;
         font-family: PingFangSC-Semibold, PingFang SC;
         font-weight: 600;
         color: #535360;
-        line-height: 45px;
-        opacity: 0.5;
+        line-height: 42px;
       }
       .shiyongri {
         font-size: 20px;
@@ -143,42 +168,22 @@ export default {
         color: #999999;
         line-height: 28px;
       }
-      div {
-        position: absolute;
-        left: 20px;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        z-index: 1;
-      }
-      &::after {
-        content: '';
-        position: absolute;
-        display: block;
-        width: 200px;
-        height: 132px;
-        background: linear-gradient(206deg, #f9fafe 0%, #e8e6e9 100%);
-        border-radius: 7px;
-        opacity: 0.2;
-        top: 8px;
-      }
+    }
+
+    .center {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(360deg, #C9C9C9 0%, #999999 100%);
+      border-radius: 50%;
+      line-height: 42px;
     }
 
     .new {
-      width: 200px;
-      height: 132px;
-      background: linear-gradient(206deg, #e4d2a8 0%, #c6a776 100%);
+      height: 108px;
+      background: linear-gradient(206deg, #E4D2A8 0%, #C6A776 100%);
       border-radius: 7px;
-      position: relative;
       div {
-        position: absolute;
-        left: 20px;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        z-index: 1;
+        padding: 19px 15px;
       }
       .shengji {
         font-size: 12px;
@@ -193,11 +198,12 @@ export default {
         text-align: center;
       }
       .shiyong {
-        font-size: 32px;
+        height: 42px;
+        font-size: 30px;
         font-family: PingFangSC-Semibold, PingFang SC;
         font-weight: 600;
-        color: #ffffff;
-        line-height: 45px;
+        color: #FFFFFF;
+        line-height: 42px
       }
       .shiyongri {
         font-size: 20px;
@@ -205,52 +211,85 @@ export default {
         font-weight: 500;
         color: #ffffff;
         line-height: 28px;
-      }
-      &::after {
-        content: '';
-        position: absolute;
-        display: block;
-        width: 200px;
-        height: 132px;
-        background: linear-gradient(206deg, #e4d2a8 0%, #c6a776 100%);
-        border-radius: 7px;
-        opacity: 0.2;
-        top: 8px;
+        height: 19px;
+        font-size: 14px;
+        font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
+        font-weight: normal;
+        color: #D3B98B;
+        line-height: 19px;
+        padding-top: 4px;
+
+        .meiribanjia {
+          height: 25px;
+          font-size: 18px;
+          font-family: PingFangSC-Medium, PingFang SC;
+          font-weight: 500;
+          color: #FFFFFF;
+          line-height: 25px;
+        }
+        .meiri {
+          font-size: 12px;
+          font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
+          font-weight: normal;
+          color: #D3B98B;
+          line-height: 19px;
+          display: inline-block;
+          height: 20px;
+          background: #FFFFFF;
+          border-radius: 10px 0px 10px 0px;
+          line-height: 20px;
+          padding: 0 5px;
+        }
       }
     }
   }
   .modalVersionUpBtn {
-    height: 64px;
-    background: #f9f9f9;
-    border-radius: 0 0 10px 10px;
-
-    .moreThink {
-      font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    p{
+      height: 46px;
+      background: linear-gradient(180deg, #2972E8 0%, #6CA9FF 100%);
+      box-shadow: 0px 3px 6px 0px rgba(191, 214, 249, 0.77);
+      border-radius: 22px;
+      box-sizing: border-box;
+      width: 310px;
+      font-size: 22px;
       font-family: MicrosoftYaHei;
-      color: #c2c2c2;
-      width: 50%;
+      color: #FFFFFF;
+      line-height: 46px;
       text-align: center;
-      line-height: 64px;
-    }
-
-    .up {
-      font-size: 18px;
-      font-family: MicrosoftYaHei;
-      color: #3d9fff;
-      width: 50%;
-      text-align: center;
-      line-height: 64px;
-      .tip {
-        height: 18px;
-        padding: 0 4px;
-        margin-left: 4px;
-        background: linear-gradient(165deg, #ff9527 0%, #eb2202 100%);
+      margin-bottom: 12px;
+      span {
+        width: 51px;
+        font-size: 14px;
+        font-family: MicrosoftYaHei;
+        color: #FFFFFF;
+        position: absolute;
+        width: 70px;
+        height: 28px;
+        background: linear-gradient(270deg, #FF6717 0%, #FFC300 100%);
         border-radius: 10px 0px 10px 0px;
-        color: #ffffff;
-        font-size: 12px;
-        line-height: 18px;
+        top:-10px;
+        right:-50px;
+        line-height: 28px;
       }
     }
+    div {
+      margin-bottom: 27px;
+    }
   }
+
+  .heartbeat {
+    animation: breath 0.95s infinite linear;
+  }
+  @keyframes breath {
+    from { opacity: 1; transform: scale(1);  }                          /* 动画开始时 */
+    50%  { opacity: 0.8; transform: scale(1.05); }      /* 动画50% 时 */
+    to   { opacity: 1; transform: scale(1); }                          /* 动画结束时 */
+  }
+
 }
+
 </style>

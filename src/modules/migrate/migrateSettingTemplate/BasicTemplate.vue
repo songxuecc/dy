@@ -29,22 +29,24 @@
                 <el-button type="text" @click="getCostTemplateList"><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
                 <el-button type="text" @click="open()">添加运费模版</el-button>
             </el-form-item>
-            <el-form-item label="商品重量:" prop="weight">
-              <el-radio-group v-model="template.model.weight_unit">
+            <el-form-item label="商品重量:" class="flex item-order">
+              <el-radio-group v-model="template.model.weight_unit" style="">
                 <el-radio :label="0">kg</el-radio>
                 <el-radio :label="1">g</el-radio>
               </el-radio-group>
-              <el-input v-model="template.model.weight"  class="input-num" style="width:150px"></el-input>
+              <el-form-item prop="weight" style="display:inline-flex;margin-left:10px;margin-bottom: 0;" class="weight">
+                <el-input v-model.number="template.model.weight"  class="input-num" style="width:150px"></el-input>
+              </el-form-item>
             </el-form-item>
             <el-form-item label="商品限购设置:" v-if="template.model.ext_json" class="flex item-order">
-              <el-form-item prop="ext_json.limit_per_buyer"  style="display:inline-block">
-              <span class="font-12  mb-10" style="margin-right:30px">单用户累计限购<el-input @input="handleChange" v-model.number="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:125px"></el-input> 件 </span>
+              <el-form-item prop="ext_json.limit_per_buyer"  style="display:inline-block;margin-bottom:0">
+              <span class="font-12  " style="margin-right:30px">单用户累计限购<el-input @input="handleChange" v-model.number="template.model.ext_json.limit_per_buyer"  class="input-num ml-5" style="width:125px"></el-input> 件 </span>
               </el-form-item>
-              <el-form-item prop="ext_json.maximum_per_order" style="display:inline-block">
-                <span class="font-12  mb-10" style="margin-right:30px">每次限购<el-input @input="handleChange" v-model.number="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:125px"></el-input> 件 </span>
+              <el-form-item prop="ext_json.maximum_per_order" style="display:inline-block;margin-bottom:0">
+                <span class="font-12  " style="margin-right:30px">每次限购<el-input @input="handleChange" v-model.number="template.model.ext_json.maximum_per_order" class="input-num ml-5" style="width:125px"></el-input> 件 </span>
               </el-form-item>
-              <el-form-item prop="ext_json.minimum_per_order"  style="display:inline-block">
-              <span class="font-12  mb-10" style="margin-right:30px">每次至少购买<el-input @input="handleChange" v-model.number="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:125px"></el-input> 件 </span>
+              <el-form-item prop="ext_json.minimum_per_order"  style="display:inline-block;margin-bottom:0">
+              <span class="font-12  " style="margin-right:30px">每次至少购买<el-input @input="handleChange" v-model.number="template.model.ext_json.minimum_per_order"  class="input-num ml-5" style="width:125px"></el-input> 件 </span>
               </el-form-item>
             </el-form-item>
             <el-form-item label="商品类型:" prop="product_type">
@@ -67,8 +69,8 @@
                     <el-radio :label="0">不支持7天无理由退换货</el-radio>
 <!--                    <el-radio :label="2">支持（拆封后不支持）</el-radio>-->
                 </el-radio-group>
-                <div style="position: absolute;top: 15px;left: 192px;color: #E02020; font-size: 1px;color:#FA6400">仅少数商品可选，一般商品不要选择此项</div>
-                <el-link  :underline="false" style="margin-left: 130px; color: #1D8FFF; font-size: 1px;" @click="dySupplyImgVisible = !dySupplyImgVisible">注:什么商品可以不支持7天无理由退换货?</el-link>
+                <div style="position: absolute;top: 15px;left: 192px;color: #E02020; font-size: 1px;color:#FA6400" v-if="!template.model.supply_7day_return">仅少数商品可选，一般商品不要选择此项</div>
+                <el-link  :underline="false" style="margin-left: 130px; color: #1D8FFF; font-size: 1px;" @click="dySupplyImgVisible = !dySupplyImgVisible">什么商品可以{{template.model.supply_7day_return ? '支持7天无理由退换货':'不支持7天无理由退换货'}}</el-link>
                 <el-dialog :visible.sync="dySupplyImgVisible">
                   <el-image
                     :src="dySupplyImg"
@@ -144,6 +146,14 @@ export default {
       }
     }
 
+    const validateWeight = (rule, value, callback) => {
+      if ((value && !utils.isNumber(value))) {
+        callback(new Error('请填写数字'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       dySupplyImg: 'https://img.pddpic.com/mms-material-img/2021-04-21/091fb3a4-fa82-49eb-9821-229aaa330567.png.a.jpeg',
       dySupplyImgVisible: false,
@@ -158,22 +168,25 @@ export default {
           { required: true, message: '请选择运费模版', trigger: 'blur' }
         ],
         commit_type: [
-          { required: true, message: '请选择搬迁方式', trigger: 'change' }
+          { required: true, message: '请选择搬迁方式', trigger: ['blur', 'change'] }
         ],
         product_type: [
-          { required: true, message: '请选择商品类型', trigger: 'change' }
+          { required: true, message: '请选择商品类型', trigger: ['blur', 'change'] }
         ],
         reduce_type: [
-          { required: true, message: '请选择订单库存计数', trigger: 'blur' }
+          { required: true, message: '请选择订单库存计数', trigger: ['blur', 'change'] }
+        ],
+        weight: [
+          { validator: validateWeight, trigger: ['focus', 'blur', 'change'] }
         ],
         'ext_json.maximum_per_order': [
-          { validator: validatePass2, trigger: 'blur' }
+          { validator: validatePass2, trigger: ['focus', 'blur', 'change'] }
         ],
         'ext_json.limit_per_buyer': [
-          { validator: validatePass1, trigger: 'blur' }
+          { validator: validatePass1, trigger: ['focus', 'blur', 'change'] }
         ],
         'ext_json.minimum_per_order': [
-          { validator: validatePass, trigger: 'blur' }
+          { validator: validatePass, trigger: ['focus', 'blur', 'change'] }
         ]
       }
     }
@@ -286,9 +299,18 @@ export default {
   .margin-bottom-4 {
     margin-bottom: 4px;
   }
+  .weight {
+      /deep/ .el-form-item__content {
+        display: inline-block;
+      }
+    }
+
   /deep/ .item-order{
     .el-form-item__content {
       margin-left: 0 !important;
+      align-items: center;
+    display: flex;
+
     }
   }
 }
@@ -296,7 +318,7 @@ export default {
 .setting-content-with-tip {
   /deep/  .el-form-item .el-form-item__error {
     padding-top: 3px;
-}
+  }
 }
 
 </style>
