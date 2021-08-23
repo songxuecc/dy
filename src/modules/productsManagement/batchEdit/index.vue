@@ -68,11 +68,20 @@
                             :value="item.value"> </el-option>
                         </el-select>
                         </el-form-item>
-
-                        <el-form-item label="商品分类" prop="region">
-                          <span @click="chooseCategory">
-                            <span v-if="category && category.name" class="underline-hover pointer">{{category.name}}</span>
-                            <span class="pointer underline-hover" v-else>点击选择分类</span>
+                        <el-form-item label="商品分类" prop="region" style="display:block" class="mt-10">
+                          <span style="display:inline-flex;align-items:center;flex-wrap:wrap;max-width:800px" v-if="!l">
+                            <el-tag
+                                v-if="category && category.name"
+                                @click="chooseCategory(idx,category)"
+                                @close="handleClose(category)"
+                                v-for="(category,idx) in categorys"
+                                :key="category.name"
+                                closable
+                                style="margin-right:10px;margin-top:10px;display:inline-block"
+                                :type="category.type">
+                                {{category.name}}
+                            </el-tag>
+                            <el-button class="button-new-tag" size="small" @click="chooseCategory(-1)">+ 添加分类</el-button>
                           </span>
                         </el-form-item>
 
@@ -246,6 +255,16 @@ export default {
   },
   data () {
     return {
+      tags: [
+        { name: '标签一', type: '' },
+        { name: '标签二', type: 'success' },
+        { name: '标签三', type: 'info' },
+        { name: '标签四', type: 'warning' },
+        { name: '标签五', type: 'danger' }
+      ],
+      categorys: [],
+      categoryActiveIdx: -1,
+      l: false,
       categoryVislble: false,
       category: {},
       showEditRecordTip: false,
@@ -436,6 +455,7 @@ export default {
         }
         this.selectIds = []
         this.goods_ids = ''
+        this.categorys = []
         this.category = {}
         this.examineEditRecord()
       }
@@ -520,7 +540,7 @@ export default {
         check_status: checkStatus,
         is_capture: this.form.captureStatus,
         presell_type: this.form.presell_type,
-        category_id: this.category.id,
+        category_id_list: JSON.stringify(this.categorys.map(item => item.id)),
         goods_id_list: JSON.stringify([]),
         ext_json: JSON.stringify(this.getEditJson())
       }
@@ -675,16 +695,46 @@ export default {
     toggleEditRecordTip () {
       this.showEditRecordTip = !this.showEditRecordTip
     },
-    chooseCategory () {
+    chooseCategory (idx, category) {
       this.categoryVislble = true
-      const category = this.category
+      // const category = this.category
+      if (category) {
+        this.categoryActiveIdx = idx
+        this.category = category
+      }
       if (category && category.id && category.id !== 0) {
         this.$refs.categorySelectView.initCate(category.id, category.name)
       }
     },
+    handleClose (category) {
+      this.categorys.splice(this.categorys.indexOf(category), 1)
+    },
     onChangeCate (data) {
+      const currentCategory = this.categorys.map(item => item.name)
+      if (currentCategory.includes(data.name)) {
+        return this.$message.warning('已存在，请重新选择')
+      }
       this.categoryVislble = false
-      this.category = data
+      const arr = ['', 'success', 'info', 'warning', 'danger']
+      let category = {}
+      this.l = true
+      if (this.category && this.categoryActiveIdx > -1) {
+        category = this.category
+        category = data
+        category.type = this.category.type
+        this.$nextTick(() => {
+          this.$set(this.categorys, this.categoryActiveIdx, category)
+          this.categoryActiveIdx = -1
+          this.category = undefined
+          this.l = false
+        })
+        return
+      }
+      this.l = false
+      this.categorys.push({
+        ...data,
+        type: arr[this.categorys.length % 5]
+      })
     }
   }
 
@@ -721,6 +771,14 @@ export default {
     }
   }
 }
+
+.button-new-tag {
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top:10px;
+  }
 </style>
 
 <style>

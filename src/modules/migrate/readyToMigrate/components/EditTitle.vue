@@ -38,8 +38,8 @@
       <p style="display:flex;flex:1;margin-left:5px" class="mt-20">
         <span style="font-size: 12px;margin-right:4px">删除指定内容:</span>
         <el-checkbox-group v-model="model.cut_type_list">
-            <el-checkbox label="is_cut_digit" style="width:100px">删除英文</el-checkbox>
-            <el-checkbox label="is_cut_alpha" style="width:100px">删除数字</el-checkbox>
+            <el-checkbox label="is_cut_alpha" style="width:100px">删除英文</el-checkbox>
+            <el-checkbox label="is_cut_digit" style="width:100px">删除数字</el-checkbox>
             <el-checkbox label="is_cut_brackets">删除括号以及括号里的内容字</el-checkbox>
         </el-checkbox-group>
       </p>

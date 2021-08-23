@@ -234,8 +234,8 @@
           <p style="display:flex;flex:1" class="mb-10">
             <span style="font-size: 12px;margin-right:10px">删除指定内容</span>
             <el-checkbox-group v-model="cut_type_list">
-                <el-checkbox label="is_cut_digit" style="width:100px;color:333">删除英文</el-checkbox>
-                <el-checkbox label="is_cut_alpha" style="width:100px;color:333">删除数字</el-checkbox>
+                <el-checkbox label="is_cut_alpha" style="width:100px;color:333">删除英文</el-checkbox>
+                <el-checkbox label="is_cut_digit" style="width:100px;color:333">删除数字</el-checkbox>
                 <el-checkbox label="is_cut_brackets">删除括号以及括号里的内容字</el-checkbox>
             </el-checkbox-group>
           </p>
@@ -409,7 +409,6 @@ export default {
       default_category: {},
       default_category_id: undefined,
       default_brand_id: 0,
-
       property_radio: '1',
       goods_property_selected: '',
       goods_code_type: 0,
@@ -847,6 +846,8 @@ export default {
         window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
       }
       const product = this.getFormatSettings()
+      console.log(product, 'product')
+
       this.$refs.template.validate(async (valid) => {
         if (valid) {
           let productParams = {

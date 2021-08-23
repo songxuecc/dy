@@ -122,6 +122,21 @@
           </el-form-item>
         </el-checkbox>
       </el-form-item>
+
+      <el-form-item label="抹零设置：" class="flex mt-5">
+        <el-radio-group v-model="form.unit" class="ml-10">
+          <el-radio   :label="1">
+            四舍五入保留整数
+          </el-radio>
+          <el-radio   :label="2">
+            四舍五入保留一位小数点
+          </el-radio>
+          <el-radio   :label="3">
+            四舍五入保留两位小数点
+          </el-radio>
+        </el-radio-group>
+      </el-form-item>
+
     </el-form>
     <p class="tip mt-10">
       <span class="fail">*</span
@@ -135,7 +150,6 @@ import utils from '@/common/utils'
 export default {
   name: 'Stocks',
   props: {
-    msg: String
   },
   data () {
     // 每次至少购买
@@ -215,7 +229,8 @@ export default {
         is_open_min_price: false,
         min_price: '',
         is_open_min_price_rate: false,
-        min_price_rate: ''
+        min_price_rate: '',
+        unit: 3
       }
     }
   },
