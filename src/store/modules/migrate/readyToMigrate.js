@@ -115,6 +115,7 @@ export default {
           versionType = configs[userVersion.version_type]
           versionTipType = userVersion.version_type
         }
+        console.log(versionTipType, 'versionTipType')
         commit('save', {userVersion, versionType, versionTipType})
         return userVersion
       } catch (err) {

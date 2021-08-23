@@ -24,7 +24,7 @@
         <div class="new">
           <div class="flex column justify-c">
             <p class="shiyong left">高级版用户</p>
-            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span><span >无上限/日</span></p>
+            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span>无上限</p>
           </div>
         </div>
       </div>
@@ -44,7 +44,6 @@
         升级高级版 搬家无限制
         <span>0.25/天</span>
       </p>
-      <!-- <div><span style="color:#DC4041">* </span>升级后试用版剩余时长全部转为高级版</div> -->
     </div>
   </el-dialog>
 </template>
@@ -165,8 +164,9 @@ export default {
         font-size: 20px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
-        color: #999999;
         line-height: 28px;
+        color: #999999;
+        padding-top: 4px;
       }
     }
 
@@ -207,39 +207,15 @@ export default {
       }
       .shiyongri {
         font-size: 20px;
-        font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
         color: #ffffff;
-        line-height: 28px;
-        height: 19px;
-        font-size: 14px;
         font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
         font-weight: normal;
-        color: #D3B98B;
-        line-height: 19px;
         padding-top: 4px;
-
-        .meiribanjia {
-          height: 25px;
-          font-size: 18px;
-          font-family: PingFangSC-Medium, PingFang SC;
-          font-weight: 500;
-          color: #FFFFFF;
-          line-height: 25px;
-        }
-        .meiri {
-          font-size: 12px;
-          font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
-          font-weight: normal;
-          color: #D3B98B;
-          line-height: 19px;
-          display: inline-block;
-          height: 20px;
-          background: #FFFFFF;
-          border-radius: 10px 0px 10px 0px;
-          line-height: 20px;
-          padding: 0 5px;
-        }
+        font-size: 20px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        line-height: 28px;
       }
     }
   }

@@ -244,10 +244,8 @@ export default {
       }
 
       if (model.cut_type_list.includes('is_cut_brackets')) {
-        const reg1 = /（.*?）/g
+        const reg1 = /\(.*?\)|\[.*?\]|\{.*?\}|\（.*?\）|\【.*?\】|\「.*?\」/g
         title = title.replace(reg1, '')
-        const reg2 = /\([^\)]*\)/g
-        title = title.replace(reg2, '')
       }
 
       if (model.radio === 3) {

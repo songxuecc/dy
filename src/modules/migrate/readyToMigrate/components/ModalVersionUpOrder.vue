@@ -24,7 +24,7 @@
         <div class="new">
           <div class="flex column justify-c">
             <p class="shiyong left">高级版用户</p>
-            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span><span >无上限/日</span></p>
+            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span><span >无上限</span></p>
           </div>
         </div>
       </div>
@@ -36,7 +36,7 @@
         个额度
       </div>
       <div class="color-666 font-14">
-        建议您升级为高级版，升级后每日搬家数: <span class="price">无上限</span>
+        建议您订购为高级版，订购后每日搬家数: <span class="price">无上限</span>
       </div>
     </div>
     <div class="modalVersionUpBtn  pb-20" slot="footer" v-if="versionType">
@@ -159,8 +159,9 @@ export default {
         font-size: 20px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
-        color: #999999;
         line-height: 28px;
+        color: #999999;
+        padding-top: 4px;
       }
     }
 
@@ -201,39 +202,15 @@ export default {
       }
       .shiyongri {
         font-size: 20px;
-        font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
         color: #ffffff;
-        line-height: 28px;
-        height: 19px;
-        font-size: 14px;
         font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
         font-weight: normal;
-        color: #D3B98B;
-        line-height: 19px;
         padding-top: 4px;
-
-        .meiribanjia {
-          height: 25px;
-          font-size: 18px;
-          font-family: PingFangSC-Medium, PingFang SC;
-          font-weight: 500;
-          color: #FFFFFF;
-          line-height: 25px;
-        }
-        .meiri {
-          font-size: 12px;
-          font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
-          font-weight: normal;
-          color: #D3B98B;
-          line-height: 19px;
-          display: inline-block;
-          height: 20px;
-          background: #FFFFFF;
-          border-radius: 10px 0px 10px 0px;
-          line-height: 20px;
-          padding: 0 5px;
-        }
+        font-size: 20px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        line-height: 28px;
       }
     }
   }
