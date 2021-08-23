@@ -77,7 +77,7 @@
                                 v-for="(category,idx) in categorys"
                                 :key="category.name"
                                 closable
-                                style="margin-right:10px;margin-top:10px;display:inline-block"
+                                style="margin-right:10px;margin-bottom:10px;display:inline-block"
                                 :type="category.type">
                                 {{category.name}}
                             </el-tag>
@@ -777,7 +777,7 @@ export default {
     line-height: 30px;
     padding-top: 0;
     padding-bottom: 0;
-    margin-top:10px;
+    margin-bottom:10px;
   }
 </style>
 
