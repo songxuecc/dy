@@ -143,8 +143,7 @@ export default {
   },
   methods: {
     ...mapActions('migrate/readyToMigrate', [
-      'userVersionQuery',
-      'getMigrateSetting'
+      'userVersionQuery'
     ]),
     ...mapActions([
       'logout',

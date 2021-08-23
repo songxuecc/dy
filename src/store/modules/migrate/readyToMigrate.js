@@ -1,7 +1,7 @@
 import Api from '@/api/apis'
 import utils from '@/common/utils'
 import moment from 'moment'
-
+import debounce from 'lodash/debounce'
 // 店铺绑定
 export default {
   namespaced: true,
@@ -86,10 +86,9 @@ export default {
           bandShopsMap.set(item.user_id, item)
         }
       })
-
       commit('save', {bindShopList: [...bandShopsMap.values()]})
     },
-    async userVersionQuery ({commit}, payload) {
+    userVersionQuery: debounce(async function ({commit}, payload) {
       try {
         const userVersion = await Api.hhgjAPIs.userVersionQuery()
         const configs = {
@@ -115,7 +114,6 @@ export default {
           versionType = configs[userVersion.version_type]
           versionTipType = userVersion.version_type
         }
-        console.log(versionTipType, 'versionTipType')
         commit('save', {userVersion, versionType, versionTipType})
         return userVersion
       } catch (err) {
@@ -125,7 +123,9 @@ export default {
         })
         return false
       }
-    },
+    }, 1000, {
+      leading: true
+    }),
 
     async getMigrateSetting ({commit}, payload) {
       try {

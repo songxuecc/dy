@@ -42,7 +42,7 @@
     <div class="modalVersionUpBtn pb-20" slot="footer" v-if="versionType">
       <p class="relative heartbeat pointer" @click="up">
         升级高级版 搬家无限制
-        <span>0.25/天</span>
+        <span>0.25元/天</span>
       </p>
     </div>
   </el-dialog>

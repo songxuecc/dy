@@ -1039,7 +1039,6 @@ export default {
       try {
         const categoryMap = await Api.hhgjAPIs.userCategoryMapList({})
         // 类目匹配
-        console.log(categoryMap, 'categoryMap')
         this.categoryMap = categoryMap.map(item => {
           return {
             ...item,

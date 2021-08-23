@@ -556,7 +556,6 @@ export default {
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
     this.getNewMigrate()
-    this.userVersionQuery()
   },
   deactivated () {
     this.$refs.productListView.dialogEditVisible = false
