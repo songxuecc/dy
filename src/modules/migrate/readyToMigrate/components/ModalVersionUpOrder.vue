@@ -35,9 +35,6 @@
         <span class="price">{{ userVersion.left_cnt || 0 }}</span>
         个额度
       </div>
-      <div class="color-666 font-14">
-        建议您订购为高级版，订购后每日搬家数: <span class="price">无上限</span>
-      </div>
     </div>
     <div class="modalVersionUpBtn  pb-20" slot="footer" v-if="versionType">
       <p class="relative heartbeat pointer" @click="up">
