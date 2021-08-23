@@ -82,7 +82,8 @@ export default {
         (this.form.suffix && this.form.is_suffix) ||
         (this.form.source_str && this.form.target_str && this.form.is_replace) ||
         (this.form.prefix && this.form.is_prefix) ||
-        (this.form.is_delete && this.form.delete_str)
+        (this.form.is_delete && this.form.delete_str) ||
+        (this.form.cut_type_list.length)
       ) {
         return {
           ...this.form,

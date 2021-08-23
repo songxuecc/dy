@@ -75,6 +75,7 @@
                                 @click="chooseCategory(idx,category)"
                                 @close="handleClose(category)"
                                 v-for="(category,idx) in categorys"
+                                class="pointer"
                                 :key="category.name"
                                 closable
                                 style="margin-right:10px;margin-bottom:10px;display:inline-block"
