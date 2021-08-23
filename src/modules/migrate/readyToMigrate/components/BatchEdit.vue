@@ -248,8 +248,6 @@ export default {
         title = title.replace(reg1, '')
         const reg2 = /\([^\)]*\)/g
         title = title.replace(reg2, '')
-        const reg3 = /[0-9]+/g
-        title = title.replace(reg3, '')
       }
 
       if (model.radio === 3) {
