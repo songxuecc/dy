@@ -92,7 +92,7 @@
             <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2" prop="step_stock_num_percentage">
                 <span>现货库存设置为总库存的</span>
                 <el-input
-                  v-model.number="template.model.step_stock_num_percentage"
+                  v-model="template.model.step_stock_num_percentage"
                   @input="handleChangeStock"
                   style="width:150px">
                   <template slot="append">%</template>
@@ -114,6 +114,7 @@
 import { createNamespacedHelpers } from 'vuex'
 import moment from 'moment'
 import commonUtils from '@/common/commonUtils'
+import utils from '@/common/utils'
 
 const {
   mapGetters: mapGettersMigrate
@@ -122,8 +123,8 @@ const {
 export default {
   data () {
     const validatePass = (rule, value, callback) => {
-      if (value <= 50 || value > 100) {
-        callback(new Error('必须大于等于51, 小于等于100'))
+      if (!utils.isNumber(value) || (utils.isNumber(value) && value % 1)) {
+        callback(new Error('必须大于等于51, 小于等于100，且为整数'))
       } else {
         callback()
       }

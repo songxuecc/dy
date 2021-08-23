@@ -72,7 +72,7 @@
                         <p  v-if="!syncText" v-loading="syncLoading" @click="handleSyncProducts(target_user_id)">
                           <span class="fail">*复制前需进行店铺数据同步，</span> <span class="primary">点击开始同步</span>
                         </p>
-                        <p class="primary" v-if="syncText" v-loading="syncLoading"  :style="syncText && syncText.includes('同步中')? 'color:#FA6400;text-decoration: none !important;':''">{{syncText}}</p>
+                        <p class="primary" v-if="syncText" v-loading="syncLoading"  :style="syncText && syncText.includes('同步中')? '':''">{{syncText}}</p>
                       </div>
                   </div>
                 </div>

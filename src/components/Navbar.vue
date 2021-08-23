@@ -13,7 +13,7 @@
                  <el-tooltip v-if="subsc.order_list.length">
                   <div slot="content" >
                     <p v-for="order in subsc.order_list" :key="order.order_id"  class="left font-12">
-                      {{order.start_time}}~{{order.end_time}} 您的版本为 {{order.sku_spec || '-'}} <a v-if="!order.is_free_upgrate " class="primary pointer" @click="paidUp">{{versionTipType === 'free_three_months'?'升级':'订购'}}高级版</a>
+                      {{order.start_time}}~{{order.end_time}} 您的版本为 {{order.sku_spec || '-'}} <a v-if="!order.is_free_upgrate " class="primary pointer" @click="paidUp">{{versionTipType === 'free_three_months'?'升级为':'订购'}}高级版</a>
                     </p>
                   </div>
                   <div @click="goToOrder()" class="flex align-c" >
