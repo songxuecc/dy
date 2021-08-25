@@ -142,10 +142,10 @@
         </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
           <span v-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior" class="pt-10">
-            当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限！ </span>
+            当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
           <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" class="pt-10">
-            当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 订购高级版 </a>，高级版每日搬家数<span class="color-333 bold"> 无上限！ </span>
+            当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 订购高级版 </a>，高级版每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
         </div>
       </div>
