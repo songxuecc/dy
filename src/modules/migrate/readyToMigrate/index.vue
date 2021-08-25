@@ -142,10 +142,10 @@
         </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
           <span v-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior" class="pt-10">
-            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
+            当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
           <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" class="pt-10">
-            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 订购高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
+            当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 订购高级版 </a>，高级版每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
         </div>
       </div>
@@ -225,6 +225,7 @@ import { mapActions, mapState } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
+import Api from '@/api/apis'
 
 export default {
   inject: ['reload'],
@@ -555,7 +556,6 @@ export default {
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
     this.getNewMigrate()
-    // this.userVersionQuery()
   },
   deactivated () {
     this.$refs.productListView.dialogEditVisible = false
@@ -1260,10 +1260,24 @@ export default {
     closeShopCapture () {
       this.$refs.newComerShop.close && this.$refs.newComerShop.close()
     },
-    versionTypeUp (btnText) {
+    async versionTypeUp (btnText) {
       if (btnText === 'free_seven_days') {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_底部文案提示点击'])
+        }
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_seven_days',
+          action: 'readyToMigrate_text'
+        })
         window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
       } else {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_底部文案提示点击'])
+        }
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_three_months',
+          action: 'readyToMigrate_text'
+        })
         let routeData = this.$router.resolve({
           name: 'PaidRecharge',
           params: {

@@ -124,17 +124,17 @@
         </div>
       </div>
 
-      <div class="flex">
+      <div class="flex align-c">
         <p style="padding-right: 10px;">抹零设置</p>
-        <el-form-item>
+        <el-form-item >
           <el-radio-group v-model="form.unit">
-            <el-radio   :label="1" class="flex align-c">
+            <el-radio   :label="1" >
               四舍五入保留整数
             </el-radio>
-            <el-radio   :label="2" class="flex align-c">
+            <el-radio   :label="2" >
               四舍五入保留一位小数点
             </el-radio>
-            <el-radio   :label="3" class="flex align-c">
+            <el-radio   :label="3" >
               四舍五入保留两位小数点
             </el-radio>
           </el-radio-group>

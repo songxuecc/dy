@@ -19,7 +19,7 @@
                     <p  v-if="template.model.presell_type === 2">现货库存售罄后生成的订单需以阶梯发货时间进行发货</p>
                   </el-radio>
                 </el-radio-group>
-                <div class="font-12 color-warning">仅部分店铺支持阶梯发货，请确认是否满足条件<span class="primary" style="color:#1D8FFF" @click="jietiImgVisible =! jietiImgVisible">（点击查看阶梯发货使用范围）</span></div>
+                <div class="font-12 color-warning" v-if="template.model.presell_type === 2">仅部分店铺支持阶梯发货，请确认是否满足条件<span class="primary" style="color:#1D8FFF" @click="jietiImgVisible =! jietiImgVisible">（点击查看阶梯发货使用范围）</span></div>
             </el-form-item>
             <!-- 现货发货模式 -->
             <el-form-item label="承诺发货时间:" prop="delivery_delay_day" v-if="template.model.presell_type === 0">
@@ -92,7 +92,7 @@
             <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2" prop="step_stock_num_percentage">
                 <span>现货库存设置为总库存的</span>
                 <el-input
-                  v-model.number="template.model.step_stock_num_percentage"
+                  v-model="template.model.step_stock_num_percentage"
                   @input="handleChangeStock"
                   style="width:150px">
                   <template slot="append">%</template>
@@ -114,6 +114,7 @@
 import { createNamespacedHelpers } from 'vuex'
 import moment from 'moment'
 import commonUtils from '@/common/commonUtils'
+import utils from '@/common/utils'
 
 const {
   mapGetters: mapGettersMigrate
@@ -122,8 +123,8 @@ const {
 export default {
   data () {
     const validatePass = (rule, value, callback) => {
-      if (value <= 50 || value > 100) {
-        callback(new Error('必须大于等于51, 小于等于100'))
+      if (!utils.isNumber(value) || (utils.isNumber(value) && value % 1)) {
+        callback(new Error('必须大于等于51, 小于等于100，且为整数'))
       } else {
         callback()
       }

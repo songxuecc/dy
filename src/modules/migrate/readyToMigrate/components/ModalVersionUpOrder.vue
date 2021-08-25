@@ -24,7 +24,7 @@
         <div class="new">
           <div class="flex column justify-c">
             <p class="shiyong left">高级版用户</p>
-            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span><span class="meiri">无上限/日</span></p>
+            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span><span >无上限</span></p>
           </div>
         </div>
       </div>
@@ -35,16 +35,13 @@
         <span class="price">{{ userVersion.left_cnt || 0 }}</span>
         个额度
       </div>
-      <div class="color-666 font-14">
-        建议您升级为高级版，升级后每日搬家数 <span class="price">无上限</span>
-      </div>
     </div>
-    <div class="modalVersionUpBtn " slot="footer" v-if="versionType">
+    <div class="modalVersionUpBtn  pb-20" slot="footer" v-if="versionType">
       <p class="relative heartbeat pointer" @click="up">
         订购高级版 搬家无限制
         <span>15元/月</span>
       </p>
-      <div><span style="color:#DC4041">* </span>订购后试用版剩余时长全部转为高级版</div>
+      <!-- <div><span style="color:#DC4041">* </span>订购后试用版剩余时长全部转为高级版</div> -->
     </div>
   </el-dialog>
 </template>
@@ -72,7 +69,7 @@ export default {
   methods: {
     open () {
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '试用限制优化20210507', '弹层曝光', '试用限制_展示弹层'])
+        window._hmt.push(['_trackEvent', '试用限制优化20210507', '弹层曝光', '7天试用限制_展示弹层'])
       }
       this.visible = !this.visible
     },
@@ -82,11 +79,11 @@ export default {
     async up () {
       try {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '试用限制_订购高级版本'])
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_订购高级版本'])
         }
       // 订单统计打点
         await Api.hhgjAPIs.statisticsEventCreate({
-          event_type: 'free_upgrade',
+          event_type: 'free_seven_days',
           action: 'resubscribe'
         })
         this.close()
@@ -159,8 +156,9 @@ export default {
         font-size: 20px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
-        color: #999999;
         line-height: 28px;
+        color: #999999;
+        padding-top: 4px;
       }
     }
 
@@ -201,39 +199,15 @@ export default {
       }
       .shiyongri {
         font-size: 20px;
-        font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
         color: #ffffff;
-        line-height: 28px;
-        height: 19px;
-        font-size: 14px;
         font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
         font-weight: normal;
-        color: #D3B98B;
-        line-height: 19px;
         padding-top: 4px;
-
-        .meiribanjia {
-          height: 25px;
-          font-size: 18px;
-          font-family: PingFangSC-Medium, PingFang SC;
-          font-weight: 500;
-          color: #FFFFFF;
-          line-height: 25px;
-        }
-        .meiri {
-          font-size: 12px;
-          font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
-          font-weight: normal;
-          color: #D3B98B;
-          line-height: 19px;
-          display: inline-block;
-          height: 20px;
-          background: #FFFFFF;
-          border-radius: 10px 0px 10px 0px;
-          line-height: 20px;
-          padding: 0 5px;
-        }
+        font-size: 20px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        line-height: 28px;
       }
     }
   }

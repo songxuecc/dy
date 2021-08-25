@@ -13,7 +13,7 @@
                  <el-tooltip v-if="subsc.order_list.length">
                   <div slot="content" >
                     <p v-for="order in subsc.order_list" :key="order.order_id"  class="left font-12">
-                      {{order.start_time}}~{{order.end_time}} 您的版本为 {{order.sku_spec || '-'}} <a v-if="!order.is_free_upgrate " class="primary pointer" @click="paidUp">升级为高级版</a>
+                      {{order.start_time}}~{{order.end_time}} 您的版本为 {{order.sku_spec || '-'}} <a v-if="!order.is_free_upgrate " class="primary pointer" @click="paidUp">{{versionTipType === 'free_three_months'?'升级为':'订购'}}高级版</a>
                     </p>
                   </div>
                   <div @click="goToOrder()" class="flex align-c" >
@@ -62,10 +62,12 @@
     </div>
 </template>
 <script>
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers, mapState } from 'vuex'
 import commonUtils from '@/common/commonUtils'
 import utils from '@/common/utils'
 import common from '@/common/common.js'
+import Api from '@/api/apis'
+
 const { mapActions: mapActionsNavbar } = createNamespacedHelpers(
   'customerSetting/shopsBand'
 )
@@ -92,6 +94,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('migrate/readyToMigrate', ['userVersion', 'versionTipType']),
     ...mapGetters({
       name: 'getName',
       shopName: 'getShopName',
@@ -122,6 +125,7 @@ export default {
     }
   },
   mounted () {
+    this.userVersionQuery()
     if (this.isAuth && window.location.pathname !== 'authorize') {
       this.asyncUserAndNotice()
     }
@@ -138,6 +142,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('migrate/readyToMigrate', [
+      'userVersionQuery'
+    ]),
     ...mapActions([
       'logout',
       'requestUserInfo',
@@ -269,13 +276,31 @@ export default {
         }
       })
     },
-    paidUp () {
-      this.$router.push({
-        name: 'PaidRecharge',
-        params: {
-          active: 'VersionUp'
+    async paidUp () {
+      if (this.versionTipType === 'free_three_months') {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_narvbar点击'])
         }
-      })
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_three_months',
+          action: 'narvebar_text'
+        })
+        this.$router.push({
+          name: 'PaidRecharge',
+          params: {
+            active: 'VersionUp'
+          }
+        })
+      } else {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_narvbar点击'])
+        }
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_seven_days',
+          action: 'narvebar_text'
+        })
+        window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
+      }
     }
   }
 }
