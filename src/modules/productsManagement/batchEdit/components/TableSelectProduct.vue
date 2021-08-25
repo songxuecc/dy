@@ -102,7 +102,6 @@
                     <el-link :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
                       {{ scope.row.goods_name }}
                       </el-link><br>
-                      <div class="font-12 warning" style="margin-top:3px">分类：{{scope.row.category_name}}</div>
                     <div class="font-12 flex align-c color-999" style="margin-top:3px">
                           <span >商品ID: {{ scope.row.goods_id }}</span>
                           <span class="ml-10 mr-10 presell_type jieti" v-if="scope.row.presell_type === 2">阶梯发货</span>
