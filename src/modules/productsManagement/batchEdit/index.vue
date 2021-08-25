@@ -83,7 +83,7 @@
                                 {{category.name}}
                             </el-tag>
                             <el-button class="button-new-tag" size="small" type="primary" plain @click="chooseCategory(-1)">+ 添加分类筛选</el-button>
-                            <el-button class="button-new-tag" size="small" @click="clearCategory" v-if="categorys.length">- 清楚全部</el-button>
+                            <el-button class="button-new-tag" size="small" @click="clearCategory" v-if="categorys.length">- 清除全部</el-button>
                           </span>
                         </el-form-item>
 
