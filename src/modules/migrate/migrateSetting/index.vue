@@ -236,7 +236,7 @@
             <el-checkbox-group v-model="cut_type_list">
                 <el-checkbox label="is_cut_alpha" style="width:100px;color:333">删除英文</el-checkbox>
                 <el-checkbox label="is_cut_digit" style="width:100px;color:333">删除数字</el-checkbox>
-                <el-checkbox label="is_cut_brackets">删除括号以及括号里的内容字</el-checkbox>
+                <el-checkbox label="is_cut_brackets">删除括号以及括号里的内容</el-checkbox>
             </el-checkbox-group>
           </p>
 
