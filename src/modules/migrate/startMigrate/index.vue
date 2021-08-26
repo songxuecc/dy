@@ -170,7 +170,7 @@ export default {
       syncText: '',
       syncTimer: null,
       syncLoading: false,
-      limit: 100,
+      limit: 200,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
       activeName: 'single',
