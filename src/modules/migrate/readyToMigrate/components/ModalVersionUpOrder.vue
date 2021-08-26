@@ -24,7 +24,7 @@
         <div class="new">
           <div class="flex column justify-c">
             <p class="shiyong left">高级版用户</p>
-            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span><span >无上限</span></p>
+            <p class="shiyongri left flex align-c"> <span class="meiribanjia">每日搬家数：</span><span class="wushangxian">无上限</span></p>
           </div>
         </div>
       </div>
@@ -151,6 +151,7 @@ export default {
         font-weight: 600;
         color: #535360;
         line-height: 42px;
+        opacity: 0.7;
       }
       .shiyongri {
         font-size: 20px;
@@ -256,6 +257,15 @@ export default {
     from { opacity: 1; transform: scale(1);  }                          /* 动画开始时 */
     50%  { opacity: 0.8; transform: scale(1.05); }      /* 动画50% 时 */
     to   { opacity: 1; transform: scale(1); }                          /* 动画结束时 */
+  }
+  .wushangxian {
+    width: 54px;
+    height: 25px;
+    font-size: 18px;
+    font-family: FZLTTHK--GBK1-0, FZLTTHK--GBK1;
+    font-weight: normal;
+    color: #FFFFFF;
+    line-height: 25px;
   }
 
 }
