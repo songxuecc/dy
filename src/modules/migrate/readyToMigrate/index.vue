@@ -6,7 +6,7 @@
           :capture="capture"
           @change="onSearchChange"/>
         <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center class="mt-5"/>
-        <el-alert v-if="capture.capture_id" type="success" :closable="false" center class="mt-5">
+        <el-alert v-if="capture.capture_id && !isEmpty(capture)" type="success" :closable="false" center class="mt-5">
           <template slot='title'>
             <!-- 整店复制的提示语 -->
             <div v-if="isShopCapture">
@@ -15,9 +15,9 @@
               </span>
               <span v-if="ShopsCaptureStatus === 1">【{{capture.shop_name}}】等待复制中...</span>
               <span v-if="ShopsCaptureStatus === 2">
-                正在复制{{capture.source}}平台的【{{capture.shop_name}}】
+                正在复制 {{capture.source}} 平台的【{{capture.shop_name}}】
                 <span v-if="capture.tp_id === 2002">
-                  {{capture.source}}平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
+                  该平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
                 </span>
                 <span v-else>
                   该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}，预计需要{{getFormatLeftTime(capture.left_seconds)}}
@@ -36,6 +36,17 @@
               <span v-if="ShopsCaptureStatus === 4">【{{capture.shop_name}}】所有商品均复制完成！</span>
               <span v-if="ShopsCaptureStatus === 5">【{{capture.shop_name}}】无法继续复制，小虎猜测原因是：当前店铺所有商品已复制完成</span>
               <span v-if="ShopsCaptureStatus === 7">【{{capture.shop_name}}】已经抓取完成，共{{capture.total_num}}条数据，共{{Math.ceil(capture.total_num / 10)}}页，当前第{{pagination.index}}页</span>
+
+              <!-- 淘宝自动抓取的状态逻辑判断 -->
+              <span v-if="ShopsCaptureStatus === 10" >
+                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                <br/><span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size)}}页，第{{capture.max_current_page_id}}页 </span> <span> 等待复制中...</span>
+              </span>
+              <span v-if="ShopsCaptureStatus === 11">
+                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                <br/> 共{{Math.ceil(capture.total_num / capture.page_size) }}页， 正在抓取第{{capture.max_current_page_id}}页<span v-if="capture.left_seconds">，预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
+              </span>
+
             </div>
             <!-- 链接复制的提示语 -->
             <div v-else>
@@ -87,10 +98,16 @@
         </product-list-view>
         <br>
         <div v-if="isShopCapture" >
-          <!-- 非抖音店铺的整店抓取分页 -->
-          <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0" v-if="capture.tp_id !== 2002"
+          <!-- 非抖音淘宝店铺的整店抓取分页 -->
+          <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0" v-if="![2002,1002,1001].includes(capture.tp_id)"
             @current-change="handleCurrentChange" :current-page="pagination.index" :page-size="pagination.size"
             layout="total, prev, pager, next, jumper" :total="pagination.total">
+          </el-pagination>
+
+          <!-- 淘宝、天猫 店铺的整店抓取分页 -->
+          <el-pagination v-show="loadingCnt == 0" v-if="capture.tp_id === 1002 || capture.tp_id === 1001"
+            @current-change="handleCurrentChangeTaobao" :current-page="pagination.index" :page-size="pagination.size"
+            layout="total, prev, pager, next, jumper" :total="capture.max_current_page_id * pagination.size">
           </el-pagination>
 
           <!-- 自动抓取抖音店铺的分页 -->
@@ -162,6 +179,8 @@
     </el-dialog>
     <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="slideDialogVisible" width="30%">
+      <div class="warning" style="font-size:16px">滑动到右侧后，如果滑块在加载转圈</div>
+      <div class="warning" style="font-size:16px">可点击下方继续操作按钮</div>
       <iframe id="slide" v-bind:src="slideUrl" style="width:100%; height: 350px;" scrolling="no"
         frameborder="0"></iframe>
       <span slot="footer" class="dialog-footer">
@@ -218,6 +237,7 @@ import productListView from '@/components/ProductListView'
 import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
 import ModalVersionUpOrder from '@migrate/readyToMigrate/components/ModalVersionUpOrder'
 import Search from '@migrate/readyToMigrate/components/Search'
+import isEmpty from 'lodash/isEmpty'
 
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
@@ -246,7 +266,7 @@ export default {
       captureOptionList: [],
       captureId: '-1',
       shopCaptureOptionList: [],
-
+      isEmpty,
       search: {
         key: '',
         status: '-1',
@@ -297,6 +317,27 @@ export default {
     ]),
     ShopsCaptureStatus () {
       if (!this.isShopCapture) return 0
+
+      if (this.capture.tp_id === 1002 || this.capture.tp_id === 1001) {
+        console.log(this.getCaptureStatus, 'this.getCaptureStatus---')
+        // 淘宝平台
+        const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
+        // 总数据全部抓取完成
+        const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id)
+        // 抓取完成
+        if (isShopFinish) {
+          return 4
+        } else {
+          console.log(this.getCaptureStatus, this.capture, 'this.getCaptureStatus---2')
+          // 等待中
+          if (this.getCaptureStatus === 'capture-item-waiting') {
+            return 10
+          // 抓取中
+          } else if (this.getCaptureStatus === 'capture-item' || this.getCaptureStatus === 'finish') {
+            return 11
+          }
+        }
+      }
 
       if (this.capture.status === 2 && this.capture.page_status === 3 && this.capture.tp_id === 2002) {
         return 5
@@ -469,13 +510,11 @@ export default {
         ) {
           return 'capture-list'
         }
-        if (this.capture.current_page_id === '') {
-          if (this.capture.page_status === 2 && this.capture.status === 2) {
-            return 'finish'
-          }
-          if (this.capture.status === 3 || this.capture.page_status === 3) {
-            return 'finish'
-          }
+        if (this.capture.current_page_id === '' && this.capture.page_status === 2 && this.capture.status === 2) {
+          return 'finish'
+        }
+        if (this.capture.current_page_id === '' && (this.capture.status === 3 || this.capture.page_status === 3)) {
+          return 'finish'
         }
         if (this.capture.current_page_id !== '' && this.capture.current_page_status === 2) {
           return 'finish'
@@ -820,7 +859,7 @@ export default {
         )
       }
     },
-    getCapture (isSilent = false) {
+    getCapture (isSilent = false, customPageIndex) {
       clearTimeout(this.timer)
       this.timer = null
       let captureId = this.search.captureId
@@ -839,7 +878,7 @@ export default {
         keyword: this.search.key,
         status: this.search.status,
         capture_id: captureId,
-        page_index: this.pagination.index,
+        page_index: customPageIndex || this.pagination.index,
         page_size: this.pagination.size,
         force: this.isForceGetCapture
       }
@@ -865,7 +904,7 @@ export default {
               this.pageData[data.page_id] == null
             ) {
               if (data.shop_async_link !== '') {
-                this.requestJsonp(data.shop_async_link).then((res) => {
+                this.requestJsonp(data.shop_async_link + '&_ksTS=1630040629473_119&spm=a1z10.1-c.w5002-23138838278.1.1f782c8cPRyLED').then((res) => {
                   if (res.hasOwnProperty('rgv587_flag')) {
                     if (res.url.indexOf('login.taobao.com') !== -1) {
                       if (this.isFinishLogin) {
@@ -898,26 +937,129 @@ export default {
           if (this.loginDialogVisible || this.slideDialogVisible) {
             return
           }
-          if (this.getCaptureStatus === 'finish') {
+          if (this.getCaptureStatus === 'finish' && ![1002, 1001].includes(this.capture.tp_id)) {
             this.getProductList(isSilent)
             return
           }
-          // 定时任务的 isSilent = true
-          let self = this
-          this.timer = setTimeout(function () {
-            if (
-              self.isShopCapture &&
-              self.getCaptureStatus === 'capture-item-waiting'
-            ) {
-              self.triggerShopCapture(true)
+          if (![1002, 1001].includes(this.capture.tp_id)) {
+            // 定时任务的 isSilent = true
+            let self = this
+            this.timer = setTimeout(function () {
+              if (
+                self.isShopCapture &&
+                self.getCaptureStatus === 'capture-item-waiting'
+              ) {
+                self.triggerShopCapture(true)
+              }
+              if (self.getCaptureStatus === 'capture-item') {
+                self.getProductList(true)
+                // self.triggerShopCaptureDy(true)
+              }
+              self.getCapture(true)
+            }, 5000)
+          } else {
+            const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
+            // 总数据全部抓取完成
+            const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id)
+            // 抓取页码为展示页码
+            const isCurrentPage = this.pagination.index === this.capture.max_current_page_id
+            console.log(isCurrentPage, 'isCurrentPage')
+            console.log(isShopFinish, 'isShopFinish')
+            // 总数据全部抓取完成 且 抓取页码为展示页码
+            if (isShopFinish && isCurrentPage) {
+              clearTimeout(this.timer)
+              this.timer = null
+              return this.getProductList(isSilent)
+            // 总数据全部抓取完成 且 抓取页码非展示页码
+            } else if (isShopFinish && !isCurrentPage) {
+              clearTimeout(this.timer)
+              this.timer = null
+              return this.getProductList(isSilent)
+            // 总数据未抓取完成
+            } else {
+              if (this.tpProductList && !this.tpProductList.length) {
+                this.getProductList(true)
+              }
+              this.timer = setTimeout(() => {
+                let pageIndex = this.capture.max_current_page_id || 1
+                if (this.getCaptureStatus === 'capture-item-waiting' && isCurrentPage) {
+                  this.resetProductList()
+                  this.triggerTaobaoShopCapture(true, {
+                    page_index: pageIndex,
+                    page_size: data.page_size
+                  })
+                  this.getProductList(true)
+                  console.log('等待中 且 抓取页码为展示页码')
+                } else if (this.getCaptureStatus === 'capture-item-waiting' && !isCurrentPage) {
+                  this.triggerTaobaoShopCapture(true, {
+                    page_index: pageIndex,
+                    page_size: data.page_size
+                  })
+                  console.log('等待中  且 抓取页码非展示页码')
+                } else if (this.getCaptureStatus === 'capture-item' && isCurrentPage) {
+                  // this.getProductList(true)
+                  console.log('抓取中  且 抓取页码为展示页码')
+                } else if (this.getCaptureStatus === 'capture-item' && !isCurrentPage) {
+                  console.log('抓取中  且 抓取页码非展示页码')
+                } else if (this.getCaptureStatus === 'finish' && isCurrentPage) {
+                  this.getProductList(isSilent)
+                  pageIndex = pageIndex + 1
+                  this.triggerTaobaoShopCapture(true, {
+                    page_index: pageIndex,
+                    page_size: this.capture.page_size
+                  })
+                  console.log('本页抓取完成 且 抓取页码为展示页码', pageIndex)
+                } else if (this.getCaptureStatus === 'finish' && !isCurrentPage) {
+                  pageIndex = pageIndex + 1
+                  this.triggerTaobaoShopCapture(true, {
+                    page_index: pageIndex,
+                    page_size: this.capture.page_size
+                  })
+                  console.log('本页抓取完成 且 抓取页码非展示页码', pageIndex)
+                }
+                this.getCapture(true, pageIndex)
+              }, 5000)
+              return false
             }
-            if (self.getCaptureStatus === 'capture-item') {
-              self.getProductList(true)
-              // self.triggerShopCaptureDy(true)
-            }
-            self.getCapture(true)
-          }, 5000)
+          }
         },
+        undefined,
+        isSilent
+      )
+    },
+    triggerTaobaoShopCapture (isSilent = false, pagination) {
+      let captureId = this.search.captureId
+      if (captureId.toString() === '-1') {
+        return
+      }
+      let params = {
+        capture_id: this.search.captureId,
+        page_index: pagination.page_index,
+        page_size: pagination.page_size
+      }
+      if (
+        this.triggerShopCaptureRunOnce.hasOwnProperty(params['page_index']) &&
+        this.triggerShopCaptureRunOnce[params['page_index']] === true
+      ) {
+        return
+      }
+      if (
+        this.pageData.hasOwnProperty(params['page_index']) &&
+        this.pageData[params['page_index']]
+      ) {
+        params['page_data'] = this.pageData[params['page_index']]
+        this.triggerShopCaptureRunOnce[params['page_index']] = true
+      }
+      if (
+        this.shopCaptureType === common.SHOP_CAPTURE_TYPE['client'] &&
+        !params.hasOwnProperty('page_data')
+      ) {
+        return
+      }
+      this.request(
+        'triggerShopCapture',
+        params,
+        (data) => {},
         undefined,
         isSilent
       )
@@ -991,6 +1133,13 @@ export default {
       this.resetProductList()
       // this.capture = {}
       // this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
+      this.getProductList(false)
+    },
+    handleCurrentChangeTaobao (val) {
+      this.pagination.index = val
+      this.triggerShopCaptureRunOnce[val] = false
+      this.pageData[val] = null
+      this.resetProductList()
       this.getProductList(false)
     },
     handleCommonCaptureChange () {
