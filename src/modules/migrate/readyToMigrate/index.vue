@@ -519,11 +519,16 @@ export default {
         if (this.capture.current_page_id === '' && this.capture.page_status === 2 && this.capture.status === 2) {
           return 'finish'
         }
-        if (this.capture.current_page_id === '' && (this.capture.status === 3 || this.capture.page_status === 3) && ![1002, 1001].includes(this.capture.tp_id)) {
+
+        // if (this.capture.current_page_id === '' && (this.capture.status === 3 || this.capture.page_status === 3) && ![1002, 1001].includes(this.capture.tp_id)) {
+        //   return 'finish'
+        // }
+        // if (this.capture.current_page_id === '' && (this.capture.page_status === 3) && [1002, 1001].includes(this.capture.tp_id)) {
+        //   return 'fail'
+        // }
+
+        if (this.capture.current_page_id === '' && (this.capture.status === 3 || this.capture.page_status === 3)) {
           return 'finish'
-        }
-        if (this.capture.current_page_id === '' && (this.capture.page_status === 3) && [1002, 1001].includes(this.capture.tp_id)) {
-          return 'fail'
         }
         if (this.capture.current_page_id !== '' && this.capture.current_page_status === 2) {
           return 'finish'
@@ -986,10 +991,12 @@ export default {
               return this.getProductList(isSilent)
             // 总数据未抓取完成
             // 抓取失败
-            } else if (this.getCaptureStatus === 'fail') {
-              clearTimeout(this.timer)
-              this.timer = null
-              return this.getProductList(isSilent)
+
+            // else if (isShopFinish && this.getCaptureStatus === 'fail') {
+            //   clearTimeout(this.timer)
+            //   this.timer = null
+            //   return false
+            // }
             } else {
               if (this.tpProductList && !this.tpProductList.length) {
                 this.getProductList(true)
@@ -1011,7 +1018,7 @@ export default {
                   })
                   console.log('等待中  且 抓取页码非展示页码')
                 } else if (this.getCaptureStatus === 'capture-item' && isCurrentPage) {
-                  // this.getProductList(true)
+                  this.getProductList(true)
                   console.log('抓取中  且 抓取页码为展示页码')
                 } else if (this.getCaptureStatus === 'capture-item' && !isCurrentPage) {
                   console.log('抓取中  且 抓取页码非展示页码')
