@@ -45,7 +45,7 @@
               </span>
               <span v-if="ShopsCaptureStatus === 11">
                 正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
-                <br/> 共{{Math.ceil(capture.total_num / capture.page_size) }}页， 正在抓取第{{capture.max_current_page_id}}页<span v-if="capture.left_seconds">，预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
+                <br/> <span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size) }}页， 正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">，预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
               </span>
               <span v-if="ShopsCaptureStatus === 12">
                 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
@@ -328,6 +328,7 @@ export default {
         const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
         // 总数据全部抓取完成
         const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id)
+        // const isCurrentPage = this.pagination.index === this.capture.max_current_page_id
         // 抓取完成
         if (isShopFinish) {
           return 4
