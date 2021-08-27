@@ -41,14 +41,19 @@
               <!-- 淘宝自动抓取的状态逻辑判断 -->
               <span v-if="ShopsCaptureStatus === 10" >
                 正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
-                <br/><span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size)}}页，第{{capture.max_current_page_id}}页 </span> <span> 等待复制中...</span>
+                <br/><span> 等待复制中...</span>
               </span>
               <span v-if="ShopsCaptureStatus === 11">
                 正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
-                <br/> <span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size) }}页， 正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">，预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
+                <br/> <span v-if="capture.total_num ">共{{Math.ceil(capture.total_num / capture.page_size) }}页， 正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">，预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
               </span>
               <span v-if="ShopsCaptureStatus === 12">
-                {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
+                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
+              </span>
+
+              <span v-if="ShopsCaptureStatus === 13">
+                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                <br/> <span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size) }}页， 上一页抓取完成，正在准备抓取下一页中...</span>
               </span>
 
             </div>
@@ -304,7 +309,8 @@ export default {
       common,
       startMigrateBtnFixed: false,
       scrollWidth: 0,
-      order_by: 1
+      order_by: 1,
+      captureTaobaoShopPageIndex: undefined
     }
   },
   watch: {
@@ -321,9 +327,7 @@ export default {
     ]),
     ShopsCaptureStatus () {
       if (!this.isShopCapture) return 0
-
       if (this.capture.tp_id === 1002 || this.capture.tp_id === 1001) {
-        console.log(this.getCaptureStatus, 'this.getCaptureStatus---')
         // 淘宝平台
         const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
         // 总数据全部抓取完成
@@ -333,15 +337,16 @@ export default {
         if (isShopFinish) {
           return 4
         } else {
-          console.log(this.getCaptureStatus, this.capture, 'this.getCaptureStatus---2')
           // 等待中
           if (this.getCaptureStatus === 'capture-item-waiting') {
             return 10
           // 抓取中
-          } else if (this.getCaptureStatus === 'capture-item' || this.getCaptureStatus === 'finish') {
+          } else if (this.getCaptureStatus === 'capture-item') {
             return 11
           } else if (this.getCaptureStatus === 'fail') {
             return 12
+          } else if (this.getCaptureStatus === 'finish') {
+            return 13
           }
         }
       }
@@ -1003,43 +1008,50 @@ export default {
                 this.getProductList(true)
               }
               this.timer = setTimeout(() => {
+                clearTimeout(this.timer)
+                this.timer = null
                 let pageIndex = this.capture.max_current_page_id || 1
                 if (this.getCaptureStatus === 'capture-item-waiting' && isCurrentPage) {
-                  this.resetProductList()
-                  this.triggerTaobaoShopCapture(true, {
-                    page_index: pageIndex,
-                    page_size: data.page_size
-                  })
-                  this.getProductList(true)
                   console.log('等待中 且 抓取页码为展示页码')
-                } else if (this.getCaptureStatus === 'capture-item-waiting' && !isCurrentPage) {
+                  if (this.shouldAddIndex) {
+                    pageIndex = pageIndex + 1
+                  } else {
+                    this.resetProductList()
+                  }
                   this.triggerTaobaoShopCapture(true, {
                     page_index: pageIndex,
                     page_size: data.page_size
                   })
-                  console.log('等待中  且 抓取页码非展示页码')
-                } else if (this.getCaptureStatus === 'capture-item' && isCurrentPage) {
+                  this.shouldAddIndex = false
                   this.getProductList(true)
+                } else if (this.getCaptureStatus === 'capture-item-waiting' && !isCurrentPage) {
+                  console.log('等待中  且 抓取页码非展示页码')
+                  if (this.shouldAddIndex) pageIndex = pageIndex + 1
+                  this.triggerTaobaoShopCapture(true, {
+                    page_index: pageIndex,
+                    page_size: data.page_size
+                  })
+                  this.shouldAddIndex = false
+                } else if (this.getCaptureStatus === 'capture-item' && isCurrentPage) {
                   console.log('抓取中  且 抓取页码为展示页码')
+                  this.getProductList(true)
                 } else if (this.getCaptureStatus === 'capture-item' && !isCurrentPage) {
                   console.log('抓取中  且 抓取页码非展示页码')
-                } else if (this.getCaptureStatus === 'finish' && isCurrentPage) {
-                  this.getProductList(isSilent)
+                } else if (this.getCaptureStatus === 'finish') {
+                  console.log('本页抓取完成')
                   pageIndex = pageIndex + 1
+                  // 表示是否triggerTaobaoShopCapture 下一页 如果trigger了 则 下一个getcapture的page_index + 1
+                  this.shouldAddIndex = true
                   this.triggerTaobaoShopCapture(true, {
                     page_index: pageIndex,
-                    page_size: this.capture.page_size
+                    page_size: data.page_size
                   })
-                  console.log('本页抓取完成 且 抓取页码为展示页码', pageIndex)
-                } else if (this.getCaptureStatus === 'finish' && !isCurrentPage) {
-                  pageIndex = pageIndex + 1
-                  this.triggerTaobaoShopCapture(true, {
-                    page_index: pageIndex,
-                    page_size: this.capture.page_size
-                  })
-                  console.log('本页抓取完成 且 抓取页码非展示页码', pageIndex)
                 }
-                this.getCapture(true, pageIndex)
+                this.timer1 = setTimeout(() => {
+                  clearTimeout(this.timer1)
+                  this.timer1 = null
+                  this.getCapture(true, pageIndex)
+                }, 2000)
               }, 5000)
               return false
             }
@@ -1050,6 +1062,7 @@ export default {
       )
     },
     triggerTaobaoShopCapture (isSilent = false, pagination) {
+      console.log('执行 triggerTaobaoShopCapture')
       let captureId = this.search.captureId
       if (captureId.toString() === '-1') {
         return
@@ -1059,6 +1072,7 @@ export default {
         page_index: pagination.page_index,
         page_size: pagination.page_size
       }
+      // this.captureTaobaoShopPageIndex = pagination.page_index
       if (
         this.triggerShopCaptureRunOnce.hasOwnProperty(params['page_index']) &&
         this.triggerShopCaptureRunOnce[params['page_index']] === true
@@ -1076,6 +1090,10 @@ export default {
         this.shopCaptureType === common.SHOP_CAPTURE_TYPE['client'] &&
         !params.hasOwnProperty('page_data')
       ) {
+        return
+      }
+
+      if (!params.hasOwnProperty('page_data')) {
         return
       }
       this.request(
