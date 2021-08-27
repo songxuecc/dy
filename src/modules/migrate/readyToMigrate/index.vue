@@ -23,6 +23,7 @@
                   该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}，预计需要{{getFormatLeftTime(capture.left_seconds)}}
                 </span>
               </span>
+
               <span v-if="ShopsCaptureStatus === 3" >
                 已复制【{{capture.shop_name}}】第{{pagination.index}}页:
                 <span v-if="capture.status_statistics.length > 0">
@@ -45,6 +46,9 @@
               <span v-if="ShopsCaptureStatus === 11">
                 正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
                 <br/> 共{{Math.ceil(capture.total_num / capture.page_size) }}页， 正在抓取第{{capture.max_current_page_id}}页<span v-if="capture.left_seconds">，预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
+              </span>
+              <span v-if="ShopsCaptureStatus === 12">
+                {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
               </span>
 
             </div>
@@ -335,6 +339,8 @@ export default {
           // 抓取中
           } else if (this.getCaptureStatus === 'capture-item' || this.getCaptureStatus === 'finish') {
             return 11
+          } else if (this.getCaptureStatus === 'fail') {
+            return 12
           }
         }
       }
@@ -513,8 +519,11 @@ export default {
         if (this.capture.current_page_id === '' && this.capture.page_status === 2 && this.capture.status === 2) {
           return 'finish'
         }
-        if (this.capture.current_page_id === '' && (this.capture.status === 3 || this.capture.page_status === 3)) {
+        if (this.capture.current_page_id === '' && (this.capture.status === 3 || this.capture.page_status === 3) && ![1002, 1001].includes(this.capture.tp_id)) {
           return 'finish'
+        }
+        if (this.capture.current_page_id === '' && (this.capture.page_status === 3) && [1002, 1001].includes(this.capture.tp_id)) {
+          return 'fail'
         }
         if (this.capture.current_page_id !== '' && this.capture.current_page_status === 2) {
           return 'finish'
@@ -976,6 +985,11 @@ export default {
               this.timer = null
               return this.getProductList(isSilent)
             // 总数据未抓取完成
+            // 抓取失败
+            } else if (this.getCaptureStatus === 'fail') {
+              clearTimeout(this.timer)
+              this.timer = null
+              return this.getProductList(isSilent)
             } else {
               if (this.tpProductList && !this.tpProductList.length) {
                 this.getProductList(true)
