@@ -79,6 +79,14 @@ export default {
   mounted () {
     this.init()
   },
+  watch: {
+    // 刷新类目成功后 重新获取列表
+    loadingPercent (n, o) {
+      if (o && !n) {
+        this.init()
+      }
+    }
+  },
   methods: {
     ...mapActions([
       'setRecentCat'
