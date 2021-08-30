@@ -1,25 +1,27 @@
-import {createBaseModel} from '@commonModels/baseModel.js'
-import assign from '@commonModels/assign.js'
+import createBaseModel from '@commonModels/createBaseModel.js'
+import modelExtend from '@commonModels/modelExtend.js'
 import servises from '@servises'
 
-const model = assign(createBaseModel({
-  fetch: servises.hhTaskPage,
-  pagination: {
-    page_size: 5,
-    page_index: 1
-  }
-}), {
-  namespaced: true,
-  state: () => ({
+const model = modelExtend(
+  createBaseModel({
+    fetch: servises.hhTaskPage
   }),
-  actions: {
-    async fetch ({commit, state, dispatch}, payload) {
-      await dispatch('query', { ...payload })
-      console.log(state, 'data-drawerSyncDetail')
+  {
+    namespaced: true,
+    state: () => ({
+      pagination: {
+        page_size: 5,
+        page_index: 1
+      }
+    }),
+    actions: {
+      async fetch ({commit, state, dispatch}, payload) {
+        await dispatch('query', { ...payload })
+        console.log(state, 'data-drawerSyncDetail')
+      }
+    },
+    getters: {
     }
-  },
-  getters: {
-  }
-})
+  })
 
 export default model

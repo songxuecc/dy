@@ -1,4 +1,4 @@
-<!--  -->
+<!-- 详情 -->
 <template>
     <div></div>
 </template>
@@ -6,7 +6,7 @@
 <script>
 import {mapActions} from 'vuex'
 export default {
-  name: 'component_name',
+  name: 'DrawerSyncDetail',
   props: {
     msg: String
   },

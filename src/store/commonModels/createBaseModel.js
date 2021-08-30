@@ -1,4 +1,5 @@
 import isEqual from 'lodash/isEqual'
+import debounce from 'lodash/debounce'
 
 function isFunction (func) {
   return typeof func === 'function'
@@ -8,7 +9,11 @@ let getList = () => ({
   tableData: [],
   pagination: {},
   total: 0
+})
 
+let formatParmas = (parmas) => ({
+  ...parmas.pagination,
+  ...parmas.filters
 })
 
 let originPagination = {
@@ -28,8 +33,8 @@ export function setBaseModelConfig (options) {
   if (options.handleError && !isFunction(options.handleError)) {
     throw new TypeError('handleError is not a Function.')
   }
-
-  getList = options.getList
+  if (options.getList) getList = options.getList
+  if (options.formatParmas) formatParmas = options.formatParmas
   if (options.pagination && options.pagination.page_size && !hasSetPaginationSize) originPagination.page_size = options.pagination.page_size
   if (options.pagination && options.pagination.page_index && !hasSetPaginationIndex) originPagination.page_index = options.pagination.page_index
   if (options.handleError && !hasSetHandleError) {
@@ -54,117 +59,9 @@ const checkHandleError = (handleError) => {
   }
 }
 
-const baseModel = ({fetch, pagination, handleError}) => {
-  if (!isFunction(fetch)) {
-    throw new TypeError('fetch is not a Function.')
-  }
-  checkPagination(pagination)
-  checkHandleError(handleError)
-  if (pagination && pagination.page_size) {
-    hasSetPaginationSize = true
-    originPagination.page_size = pagination.page_size
-  }
-  if (pagination && pagination.page_index) {
-    hasSetPaginationIndex = true
-    originPagination.page_index = pagination.page_index
-  }
-  if (handleError && isFunction(handleError)) {
-    originHandleError = handleError
-    hasSetHandleError = true
-  }
-
-  return ({
-    namespaced: true,
-    state: () => ({
-      total: 0,
-      pagination: originPagination,
-      filters: {},
-      tableData: []
-    }),
-    mutations: {
-      save (state, payload) {
-        Object.assign(state, payload)
-      }
-    },
-    actions: {
-      async query ({
-        commit,
-        state
-      }, payload) {
-        const {pagination = state.pagination, filters = {}} = payload || {}
-        try {
-          // 如果filter和之前的条件不等 则从第一页开始获取数据
-          if (!isEqual(filters, state.filters)) {
-            pagination.page_index = 1
-          }
-          const parmas = {
-            ...pagination,
-            ...filters
-          }
-
-          const originData = await fetch(parmas)
-          const formatData = getList(originData)
-          const nextFilters = filters
-          const nextTotal = formatData.total
-          const nextTableData = formatData.tableData
-          commit('save', {
-            pagination,
-            filters: nextFilters,
-            tableData: nextTableData,
-            total: nextTotal
-          })
-          return formatData
-        } catch (err) {
-          if (originHandleError && isFunction(originHandleError)) {
-            originHandleError(err, this)
-          } else {
-            throw new Error(err)
-          }
-        }
-      },
-      handleSizeChange ({
-        state,
-        dispatch
-      }, payload) {
-        const pagination = state.pagination
-        pagination.page_size = payload
-        const filters = state.filters
-        dispatch('query', {
-          pagination,
-          filters
-        })
-      },
-      handleCurrentChange ({
-        state,
-        dispatch
-      }, payload) {
-        const pagination = state.pagination
-        pagination.page_index = payload
-        const filters = state.filters
-        dispatch('query', {
-          pagination,
-          filters
-        })
-      },
-      setFilter ({
-        dispatch
-      }, payload) {
-        const filters = payload
-        dispatch('query', {
-          filters,
-          pagination: originPagination
-        })
-      }
-    }
-  })
-}
-
 class BaseModelClass {
   constructor (options) {
-    this.originPagination = {
-      page_size: 10,
-      page_index: 1
-    }
+    this.originPagination = originPagination
     this.hasSetPaginationSize = false
     this.hasSetPaginationIndex = false
     this.hasSetHandleError = false
@@ -180,6 +77,9 @@ class BaseModelClass {
   baseModel ({fetch, pagination, handleError}) {
     if (!isFunction(fetch)) {
       throw new TypeError('fetch is not a Function.')
+    }
+    if (!isFunction(formatParmas)) {
+      throw new TypeError('formatParmas is not a Function.')
     }
     checkPagination(pagination)
     checkHandleError(handleError)
@@ -221,15 +121,17 @@ class BaseModelClass {
               pagination.page_index = 1
             }
             const parmas = {
-              ...pagination,
-              ...filters
+              pagination,
+              filters
             }
 
-            const originData = await fetch(parmas)
+            const originData = await fetch(formatParmas(parmas))
+
             const formatData = getList(originData)
             const nextFilters = filters
             const nextTotal = formatData.total
             const nextTableData = formatData.tableData
+
             commit('save', {
               pagination,
               filters: nextFilters,
@@ -239,6 +141,7 @@ class BaseModelClass {
             return formatData
           } catch (err) {
             if (originHandleError && isFunction(originHandleError)) {
+              originHandleError = debounce(originHandleError, 1500)
               originHandleError(err, this)
             } else {
               throw new Error(err)
@@ -283,5 +186,5 @@ class BaseModelClass {
   }
 }
 
-export const createBaseModel = (props) => new BaseModelClass(props)
-export default baseModel
+const createBaseModel = (props) => new BaseModelClass(props)
+export default createBaseModel

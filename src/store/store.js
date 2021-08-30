@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {setBaseModelConfig} from '@commonModels/baseModel.js'
 import createLoadingPlugin from './plugins/createLoadingPlugin'
 import user from './modules/user'
 import category from './modules/category'
@@ -13,8 +12,10 @@ import controller from './modules/controller'
 import migrate from './modules/migrate'
 import productManagement from './modules/productManagement'
 import customerSetting from './modules/customerSetting'
+import {setBaseModelConfig} from '@commonModels/createBaseModel.js'
 
 setBaseModelConfig({
+  // 列表获取
   getList: (response) => {
     let tableData
     if (response.hasOwnProperty('items')) {
@@ -27,12 +28,21 @@ setBaseModelConfig({
       total: response.total
     }
   },
+  // 参数格式化
+  formatParmas: (parmas) => {
+    return {
+      ...parmas.pagination,
+      ...parmas.filters
+    }
+  },
+  // 错误警告
   handleError: (err, self) => {
     self._vm.$message({
       message: `${err}`,
       type: 'error'
     })
   },
+  // 分页配置
   pagination: {
     page_size: 10,
     page_index: 1

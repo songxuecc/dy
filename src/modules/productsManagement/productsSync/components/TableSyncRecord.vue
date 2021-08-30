@@ -1,4 +1,4 @@
-<!--  -->
+<!-- 记录 -->
 <template>
     <div></div>
 </template>
@@ -6,7 +6,7 @@
 <script>
 import {mapActions} from 'vuex'
 export default {
-  name: 'component_name',
+  name: 'TableSyncRecord',
   props: {
     msg: String
   },
