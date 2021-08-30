@@ -40,11 +40,11 @@
 
               <!-- 淘宝自动抓取的状态逻辑判断 -->
               <span v-if="ShopsCaptureStatus === 10" >
-                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取 - 请打开新页面进行其他操作，否则抓取中断！
                 <br/><span> 等待复制中...</span>
               </span>
               <span v-if="ShopsCaptureStatus === 11">
-                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取 - 请打开新页面进行其他操作，否则抓取中断！
                 <br/> <span v-if="capture.total_num ">共{{Math.ceil(capture.total_num / capture.page_size) }}页，正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">，预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
               </span>
               <span v-if="ShopsCaptureStatus === 12">
@@ -52,7 +52,7 @@
               </span>
 
               <span v-if="ShopsCaptureStatus === 13">
-                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取 - 请打开新页面进行其他操作，否则抓取中断！
                 <br/> <span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size) }}页，第{{captureTaobaoShopPageIndex}}页抓取完成，正在准备抓取下一页中...</span>
               </span>
 
@@ -318,6 +318,27 @@ export default {
       captureTaobaoShopPageIndex: undefined
     }
   },
+  beforeRouteLeave (to, from, next) {
+    // 导航离开该组件的对应路由时调用
+    // 可以访问组件实例 `this`
+    if (![10, 11, 13].includes(this.ShopsCaptureStatus)) {
+      next()
+    } else {
+      this.$confirm('您现在正在抓取淘宝店铺，离开就会停止抓取，在新页面操作即可继续抓取，点击确定打开新页面？')
+        .then(_ => {
+          console.log('e')
+          console.log(to.name, 'to')
+          let routeData = this.$router.resolve({
+            name: to.name
+          })
+          window.open(routeData.href, '_blank')
+        })
+        .catch(_ => {
+          next()
+        })
+    }
+  },
+
   watch: {
     tpProductList (newVal) {
       this.$nextTick(this.scroll)
@@ -623,6 +644,7 @@ export default {
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
     this.getNewMigrate()
+    window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   deactivated () {
     this.$refs.productListView.dialogEditVisible = false
@@ -642,6 +664,7 @@ export default {
       clearTimeout(this.statusStatisticsTimer)
       this.statusStatisticsTimer = null
     }
+    window.removeEventListener('beforeunload', this.beforeunloadFn)
   },
   methods: {
     ...mapActions(['setSelectTPProductIdList']),
@@ -653,6 +676,18 @@ export default {
       'userVersionQuery',
       'getMigrateSetting'
     ]),
+    beforeunloadFn (e) {
+      if ([10, 11, 13].includes(this.ShopsCaptureStatus)) {
+        let msg = '您现在正在抓取淘宝店铺，离开就会停止抓取，在新页面操作即可继续抓取，点击确定打开新页面？'
+        e = e || window.event
+        if (e) {
+          e.preventDefault()
+          e.returnValue = msg
+        }
+        return msg
+      }
+      return false
+    },
     getFormatLeftTime (seconds) {
       let minutes = parseInt(seconds / 60)
       seconds = seconds % 60
