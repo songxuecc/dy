@@ -42,6 +42,7 @@ export default {
             commit('save', {
               loadingPercent: false
             })
+            // window.location.reload()
           }
         }
         fn()
