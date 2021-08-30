@@ -36,7 +36,7 @@
       @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown"
       :shutdown="shutdown" />
     <!-- 修改分类 -->
-    <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal
+    <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal v-if="visvileCategory"
       :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" >
         <template slot="footer">

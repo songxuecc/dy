@@ -155,6 +155,7 @@
           :visible.sync="categoryVislble"
           append-to-body
           center
+          v-if="categoryVislble"
         >
           <category-select-view ref="categorySelectView" @changeCate="onChangeCate">
           </category-select-view>
