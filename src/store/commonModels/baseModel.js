@@ -159,4 +159,129 @@ const baseModel = ({fetch, pagination, handleError}) => {
   })
 }
 
+class BaseModelClass {
+  constructor (options) {
+    this.originPagination = {
+      page_size: 10,
+      page_index: 1
+    }
+    this.hasSetPaginationSize = false
+    this.hasSetPaginationIndex = false
+    this.hasSetHandleError = false
+    this.hasSetHandleError = false
+
+    this.fetch = options.fetch
+    this.pagination = options.pagination
+    this.handleError = options.handleError
+
+    return this.baseModel(options)
+  }
+
+  baseModel ({fetch, pagination, handleError}) {
+    if (!isFunction(fetch)) {
+      throw new TypeError('fetch is not a Function.')
+    }
+    checkPagination(pagination)
+    checkHandleError(handleError)
+    if (pagination && pagination.page_size) {
+      this.hasSetPaginationSize = true
+      this.originPagination.page_size = pagination.page_size
+    }
+    if (pagination && pagination.page_index) {
+      this.hasSetPaginationIndex = true
+      this.originPagination.page_index = pagination.page_index
+    }
+    if (handleError && isFunction(handleError)) {
+      this.originHandleError = handleError
+      this.hasSetHandleError = true
+    }
+
+    return ({
+      namespaced: true,
+      state: () => ({
+        total: 0,
+        pagination: this.originPagination,
+        filters: {},
+        tableData: []
+      }),
+      mutations: {
+        save (state, payload) {
+          Object.assign(state, payload)
+        }
+      },
+      actions: {
+        async query ({
+          commit,
+          state
+        }, payload) {
+          const {pagination = state.pagination, filters = {}} = payload || {}
+          try {
+            // 如果filter和之前的条件不等 则从第一页开始获取数据
+            if (!isEqual(filters, state.filters)) {
+              pagination.page_index = 1
+            }
+            const parmas = {
+              ...pagination,
+              ...filters
+            }
+
+            const originData = await fetch(parmas)
+            const formatData = getList(originData)
+            const nextFilters = filters
+            const nextTotal = formatData.total
+            const nextTableData = formatData.tableData
+            commit('save', {
+              pagination,
+              filters: nextFilters,
+              tableData: nextTableData,
+              total: nextTotal
+            })
+            return formatData
+          } catch (err) {
+            if (originHandleError && isFunction(originHandleError)) {
+              originHandleError(err, this)
+            } else {
+              throw new Error(err)
+            }
+          }
+        },
+        handleSizeChange ({
+          state,
+          dispatch
+        }, payload) {
+          const pagination = state.pagination
+          pagination.page_size = payload
+          const filters = state.filters
+          dispatch('query', {
+            pagination,
+            filters
+          })
+        },
+        handleCurrentChange ({
+          state,
+          dispatch
+        }, payload) {
+          const pagination = state.pagination
+          pagination.page_index = payload
+          const filters = state.filters
+          dispatch('query', {
+            pagination,
+            filters
+          })
+        },
+        setFilter ({
+          dispatch
+        }, payload) {
+          const filters = payload
+          dispatch('query', {
+            filters,
+            pagination: this.originPagination
+          })
+        }
+      }
+    })
+  }
+}
+
+export const createBaseModel = (props) => new BaseModelClass(props)
 export default baseModel

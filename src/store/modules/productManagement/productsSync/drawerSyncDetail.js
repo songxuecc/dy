@@ -1,8 +1,8 @@
-import baseModel from '@commonModels/baseModel.js'
+import {createBaseModel} from '@commonModels/baseModel.js'
 import assign from '@commonModels/assign.js'
 import servises from '@servises'
 
-const model = assign(baseModel({
+const model = assign(createBaseModel({
   fetch: servises.hhTaskPage,
   pagination: {
     page_size: 5,
@@ -14,8 +14,8 @@ const model = assign(baseModel({
   }),
   actions: {
     async fetch ({commit, state, dispatch}, payload) {
-      const data = await dispatch('query', { ...payload })
-      console.log(data, 'data-drawerSyncDetail')
+      await dispatch('query', { ...payload })
+      console.log(state, 'data-drawerSyncDetail')
     }
   },
   getters: {
