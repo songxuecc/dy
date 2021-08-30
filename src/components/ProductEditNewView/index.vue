@@ -348,7 +348,7 @@
               </el-tab-pane>
           </el-tabs>
 
-        <el-dialog class="dialog-tight" title="修改分类" width="800px" :visible.sync="dialogVisible" @opened="onOpenedCate" append-to-body center>
+        <el-dialog class="dialog-tight-category" title="修改分类" width="800px" :visible.sync="dialogVisible" @opened="onOpenedCate" append-to-body center v-if="dialogVisible" :style="'z-index:9999 !important'">
             <category-select-view ref="categorySelectView" @changeCate="onChangeCate">
             </category-select-view>
         </el-dialog>
@@ -1981,6 +1981,10 @@ export default {
     }
     /deep/ .el-table .el-table__header th {
       padding-left: 10px;
+    }
+
+    /deep/ .dialog-tight-category {
+      z-index: 9999 !important;
     }
 
 </style>
