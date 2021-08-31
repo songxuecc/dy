@@ -17,7 +17,7 @@
               <span v-if="ShopsCaptureStatus === 2">
                 正在复制【{{capture.source}}】平台的【{{capture.shop_name}}】
                 <span v-if="[2002,2004].includes(capture.tp_id)">
-                  该平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
+                  该平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id === '' ? 0 : capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
                 </span>
                 <span v-else>
                   该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}，本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}
@@ -36,7 +36,7 @@
               </span>
               <span v-if="ShopsCaptureStatus === 4">【{{capture.shop_name}}】所有商品均复制完成！</span>
               <span v-if="ShopsCaptureStatus === 5">【{{capture.shop_name}}】无法继续复制，小虎猜测原因是：当前店铺所有商品已复制完成</span>
-              <span v-if="ShopsCaptureStatus === 7">【{{capture.shop_name}}】已经抓取完成，共{{capture.total_num}}条数据，共{{Math.ceil(capture.total_num / 10)}}页，当前第{{pagination.index}}页</span>
+              <span v-if="ShopsCaptureStatus === 7">【{{capture.shop_name}}】已经抓取完成，共{{capture.total_num}}条数据，共{{Math.ceil(capture.total_num / capture.page_size)}}页，当前第{{pagination.index}}页</span>
 
               <!-- 淘宝自动抓取的状态逻辑判断 -->
               <span v-if="ShopsCaptureStatus === 10" >
@@ -131,7 +131,7 @@
           <!-- 自动抓取抖音店铺的分页 -->
           <el-pagination  v-show="loadingCnt == 0" v-else
             @current-change="handleCurrentChangeDy" :current-page="pagination.index" :page-size="pagination.size"
-            layout="total, prev, pager, next, jumper" :total="capture.current_page_id * 10">
+            layout="total, prev, pager, next, jumper" :total="getPageTotal">
           </el-pagination>
 
         </div>
@@ -375,6 +375,23 @@ export default {
       'versionTipType',
       'versionType'
     ]),
+    getPageTotal () {
+      let total = 10
+      let currentPageId = this.capture.current_page_id
+      if (currentPageId === '') {
+        currentPageId = 0
+      }
+
+      if (this.capture.tp_id === 2002) {
+        total = this.capture.total_num === 9999 ? parseInt(currentPageId) * 10 : this.capture.total_num
+      }
+
+      if (this.capture.tp_id === 2004) {
+        total = this.capture.total_num === 9999 ? parseInt(currentPageId) * 20 : this.capture.total_num
+      }
+      console.log(total)
+      return total
+    },
     ShopsCaptureStatus () {
       if (!this.isShopCapture) return 0
       if (this.capture.tp_id === 1002 || this.capture.tp_id === 1001) {
@@ -402,17 +419,20 @@ export default {
           }
         }
       }
-
-      if (this.capture.status === 2 && this.capture.page_status === 3 && [2002, 2004].includes(this.capture.tp_id)) {
-        return 5
-        // 失败
-      }
-
       if (this.capture.status_statistics.length === 0) {
         return 6
         // 等待抓取
       }
 
+      if (this.capture.status === 2 && this.capture.page_status === 4) {
+        return 1
+        // 抓取中
+      }
+
+      if (this.capture.status === 2 && this.capture.page_status === 1) {
+        return 2
+        // 等待
+      }
       if ([2002, 2004].includes(this.capture.tp_id)) {
         // 如果是抖音平台
         if (this.capture.current_page_status === 1) {
@@ -424,15 +444,9 @@ export default {
           return 7
         }
       }
-
-      if (this.capture.status === 2 && this.capture.page_status === 4) {
-        return 1
-        // 抓取中
-      }
-
-      if (this.capture.status === 2 && this.capture.page_status === 1) {
-        return 2
-        // 等待
+      if (this.capture.status === 2 && this.capture.page_status === 3 && [2002, 2004].includes(this.capture.tp_id)) {
+        return 5
+        // 失败
       }
 
       if (this.capture.status === 2 && this.capture.page_status === 3) {
