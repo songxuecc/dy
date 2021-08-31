@@ -9,18 +9,18 @@
         <el-alert v-if="capture.capture_id && !isEmpty(capture)" type="success" :closable="false" center class="mt-5">
           <template slot='title'>
             <!-- 整店复制的提示语 -->
-            <div v-if="isShopCapture">
+            <div v-if="isShopCapture" style="font-weight:normal">
               <span v-if="ShopsCaptureStatus === 6">
                 {{ captureStatusMap[capture.page_status] }}
               </span>
               <span v-if="ShopsCaptureStatus === 1">【{{capture.shop_name}}】等待复制中...</span>
               <span v-if="ShopsCaptureStatus === 2">
-                正在复制 {{capture.source}} 平台的【{{capture.shop_name}}】
+                正在复制【{{capture.source}}】平台的【{{capture.shop_name}}】
                 <span v-if="capture.tp_id === 2002">
                   该平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
                 </span>
                 <span v-else>
-                  该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}，预计需要{{getFormatLeftTime(capture.left_seconds)}}
+                  该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}
                 </span>
               </span>
 
@@ -40,20 +40,29 @@
 
               <!-- 淘宝自动抓取的状态逻辑判断 -->
               <span v-if="ShopsCaptureStatus === 10" >
-                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取 - 请打开新页面进行其他操作，否则抓取中断！
+                正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
                 <br/><span> 等待复制中...</span>
+                <div>
+                  <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
+                </div>
               </span>
               <span v-if="ShopsCaptureStatus === 11">
-                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取 - 请打开新页面进行其他操作，否则抓取中断！
-                <br/> <span v-if="capture.total_num ">共{{Math.ceil(capture.total_num / capture.page_size) }}页，正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">，预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
+                正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                <br/> <span v-if="capture.total_num ">共{{Math.ceil(capture.total_num / capture.page_size) }}页，正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
+                <div>
+                  <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
+                </div>
               </span>
               <span v-if="ShopsCaptureStatus === 12">
-                {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
+                【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
               </span>
 
               <span v-if="ShopsCaptureStatus === 13">
-                正在复制 {{capture.source}} 平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取 - 请打开新页面进行其他操作，否则抓取中断！
+                正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
                 <br/> <span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size) }}页，第{{captureTaobaoShopPageIndex}}页抓取完成，正在准备抓取下一页中...</span>
+                <div>
+                  <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
+                </div>
               </span>
 
             </div>
@@ -324,17 +333,32 @@ export default {
     if (![10, 11, 13].includes(this.ShopsCaptureStatus)) {
       next()
     } else {
-      this.$confirm('您现在正在抓取淘宝店铺，离开就会停止抓取，在新页面操作即可继续抓取，点击确定打开新页面？')
+      const h = this.$createElement
+      this.$confirm('', {
+        message: h('p', null, [
+          h('hh-icon', {
+            props: {
+              type: 'iconjinggao1'
+            },
+            style: 'margin-right:5px'
+          }),
+          h('span', null, '请勿关闭或操作本页面，如需进行操作请重新打开一个网页？ ')
+        ]),
+        confirmButtonText: '打开新页面',
+        cancelButtonText: '留在本页面',
+        type: 'warning',
+        cancelButtonClass: 'readyToMigrate-cancelButtonClass',
+        confirmButtonClass: 'readyToMigrate-confirmButtonClass',
+        customClass: 'readyToMigrate-customClass'
+      })
         .then(_ => {
-          console.log('e')
-          console.log(to.name, 'to')
           let routeData = this.$router.resolve({
             name: to.name
           })
           window.open(routeData.href, '_blank')
         })
         .catch(_ => {
-          next()
+          return false
         })
     }
   },
@@ -676,6 +700,7 @@ export default {
       'userVersionQuery',
       'getMigrateSetting'
     ]),
+    ...mapActions('migrate/startMigrate', ['getCaptureShopCompleteList']),
     beforeunloadFn (e) {
       if ([10, 11, 13].includes(this.ShopsCaptureStatus)) {
         let msg = '您现在正在抓取淘宝店铺，离开就会停止抓取，在新页面操作即可继续抓取，点击确定打开新页面？'
@@ -1042,6 +1067,7 @@ export default {
               this.timer1 = null
               this.taoBaoPagination.size = data.page_size
               this.taoBaoPagination.total = data.total_num
+              this.getCaptureShopCompleteList()
               return this.getProductList(isSilent)
             // 总数据全部抓取完成 且 抓取页码非展示页码
             } else if (isShopFinish && !isCurrentPage) {
@@ -1051,6 +1077,7 @@ export default {
               this.timer1 = null
               this.taoBaoPagination.size = data.page_size
               this.taoBaoPagination.total = data.total_num
+              this.getCaptureShopCompleteList()
               return this.getProductList(isSilent)
 
             // 抓取失败
@@ -1620,7 +1647,43 @@ export default {
   padding: 7px 7px;
 }
 .price {
-    color: #dc4041;
-    font-weight: bold;
+  color: #dc4041;
+  font-weight: bold;
+}
+</style>
+<style lang="less">
+.readyToMigrate-cancelButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    margin-right: 10px;
+    width: 110px;
+
+}
+
+.readyToMigrate-confirmButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    width: 110px;
+}
+
+.readyToMigrate-customClass {
+  padding-bottom: 25px;
+
+  .el-message-box__btns {
+    text-align: center;
   }
+  .el-message-box__content {
+    .el-message-box__message {
+      padding-left: 0;
+    }
+    p {
+      font-size: 18px;
+      margin: 15px 0 10px;
+      text-align: center;
+    }
+    .el-icon-warning {
+      display: none;
+    }
+  }
+}
 </style>

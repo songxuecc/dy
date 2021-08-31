@@ -125,9 +125,9 @@ export default {
     }
   },
   mounted () {
-    this.userVersionQuery()
     if (this.isAuth && window.location.pathname !== 'authorize') {
       this.asyncUserAndNotice()
+      this.userVersionQuery()
     }
   },
   watch: {
