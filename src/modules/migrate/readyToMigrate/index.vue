@@ -20,7 +20,7 @@
                   该平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
                 </span>
                 <span v-else>
-                  该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}
+                  该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}，本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}
                 </span>
               </span>
 
@@ -48,7 +48,7 @@
               </span>
               <span v-if="ShopsCaptureStatus === 11">
                 正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
-                <br/> <span v-if="capture.total_num ">共{{Math.ceil(capture.total_num / capture.page_size) }}页，正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
+                <br/> <span v-if="capture.total_num ">共{{Math.ceil(capture.total_num / capture.page_size) }}页，正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">，本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
                 <div>
                   <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
                 </div>
