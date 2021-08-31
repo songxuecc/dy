@@ -52,7 +52,8 @@ export default {
         '拼多多': 'http://mobile.yangkeduo.com/',
         '禅妈妈': 'https://www.chanmama.com/',
         '搜款网': 'https://www.vvic.com/gz',
-        '淘宝特价': 'https://www.yuque.com/huxiao-rkndm/ksui6u/gb8emy'
+        '淘宝特价': 'https://www.yuque.com/huxiao-rkndm/ksui6u/gb8emy',
+        '有赞': 'https://www.youzan.com/'
       }
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '搬家上货', '开始复制', name])

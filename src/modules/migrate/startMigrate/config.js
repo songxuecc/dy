@@ -63,6 +63,11 @@ export const platformIconsUrl = [
     key: '淘宝特价',
     src: require('@/assets/images/tb-tejia.png'),
     tip: '淘宝特价App'
+  },
+  {
+    key: '有赞',
+    src: require('@/assets/images/youzan.png'),
+    tip: '有赞'
   }
 ]
 
@@ -111,5 +116,10 @@ export const platformIconsStore = [
     key: '搜款网',
     src: require('@/assets/images/soukuanwang.png'),
     tip: '搜款网'
+  },
+  {
+    key: '有赞',
+    src: require('@/assets/images/youzan.png'),
+    tip: '有赞'
   }
 ]
