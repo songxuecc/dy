@@ -39,6 +39,7 @@ export default assign(tableData, {
           data.forEach(item => {
             const handleClick = (e, captureId) => {
               e.preventDefault()
+              console.log(payload, 'payload')
               payload.push({
                 path: '/migrate/productList',
                 query: {
@@ -91,7 +92,7 @@ export default assign(tableData, {
           const timer = setTimeout(() => {
             clearTimeout(state.timer)
             commit('save', {timer: null})
-            dispatch('getCaptureShopCompleteList')
+            dispatch('getCaptureShopCompleteList', payload)
           }, 10000)
           commit('save', {timer})
         }

@@ -489,6 +489,8 @@ export default {
         return require('@/assets/images/pdd.png')
       } else if (product.source === '蝉妈妈') {
         return require('@/assets/images/chanmama.png')
+      } else if (product.source === '有赞') {
+        return require('@/assets/images/youzan.png')
       }
       return ''
     },
