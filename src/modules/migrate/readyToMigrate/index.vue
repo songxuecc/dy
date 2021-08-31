@@ -16,7 +16,7 @@
               <span v-if="ShopsCaptureStatus === 1">【{{capture.shop_name}}】等待复制中...</span>
               <span v-if="ShopsCaptureStatus === 2">
                 正在复制【{{capture.source}}】平台的【{{capture.shop_name}}】
-                <span v-if="capture.tp_id === 2002">
+                <span v-if="[2002,2004].includes(capture.tp_id)">
                   该平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
                 </span>
                 <span v-else>
@@ -117,7 +117,7 @@
         <br>
         <div v-if="isShopCapture" >
           <!-- 非抖音淘宝店铺的整店抓取分页 -->
-          <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0" v-if="![2002,1002,1001].includes(capture.tp_id)"
+          <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0" v-if="![2002,2004,1002,1001].includes(capture.tp_id)"
             @current-change="handleCurrentChange" :current-page="pagination.index" :page-size="pagination.size"
             layout="total, prev, pager, next, jumper" :total="pagination.total">
           </el-pagination>
@@ -403,16 +403,17 @@ export default {
         }
       }
 
-      if (this.capture.status === 2 && this.capture.page_status === 3 && this.capture.tp_id === 2002) {
+      if (this.capture.status === 2 && this.capture.page_status === 3 && [2002, 2004].includes(this.capture.tp_id)) {
         return 5
         // 失败
       }
+
       if (this.capture.status_statistics.length === 0) {
         return 6
         // 等待抓取
       }
 
-      if (this.capture.tp_id === 2002) {
+      if ([2002, 2004].includes(this.capture.tp_id)) {
         // 如果是抖音平台
         if (this.capture.current_page_status === 1) {
           // 等待
@@ -1067,7 +1068,9 @@ export default {
               this.timer1 = null
               this.taoBaoPagination.size = data.page_size
               this.taoBaoPagination.total = data.total_num
-              this.getCaptureShopCompleteList()
+              this.getCaptureShopCompleteList({
+                push: this.$router.push.bind(this.$router)
+              })
               return this.getProductList(isSilent)
             // 总数据全部抓取完成 且 抓取页码非展示页码
             } else if (isShopFinish && !isCurrentPage) {
@@ -1077,7 +1080,9 @@ export default {
               this.timer1 = null
               this.taoBaoPagination.size = data.page_size
               this.taoBaoPagination.total = data.total_num
-              this.getCaptureShopCompleteList()
+              this.getCaptureShopCompleteList({
+                push: this.$router.push.bind(this.$router)
+              })
               return this.getProductList(isSilent)
 
             // 抓取失败
@@ -1385,6 +1390,8 @@ export default {
             }
           })
           if (isFinish) {
+            clearTimeout(this.statusStatisticsTimer)
+            this.statusStatisticsTimer = null
             return
           }
           let self = this
@@ -1408,7 +1415,7 @@ export default {
       return count + ' / ' + capture.capture_num
     },
     calcProgressVal () {
-      if (this.capture.tp_id === 2002) {
+      if ([2002, 2004].includes(this.capture.tp_id)) {
         // 如果是抖音平台，进度条固定
         if (this.capture.current_page_status === 2) {
           return 100 + '%'
