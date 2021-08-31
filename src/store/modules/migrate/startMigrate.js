@@ -37,7 +37,7 @@ export default assign(tableData, {
         if (data.length) {
           let msg = ''
           data.forEach(item => {
-            msg += `<div>恭喜，抖音平台【${item.shop_name}】店铺已全部抓取完毕，您可以前往进行下一步操作</div>`
+            msg += `<div>恭喜，【${item.tp_name}】平台【${item.shop_name}】店铺已全部抓取完毕，您可以前往进行下一步操作</div>`
           })
           this._vm.$message({
             type: 'success',
