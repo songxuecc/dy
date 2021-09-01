@@ -2,7 +2,6 @@
 <template>
   <div>
     <TableSyncRecord @handleCreateSyncPlan="handleCreateSyncPlan"  v-if="!createSyncPlanVisible"/>
-    <DrawerSyncDetail />
     <CreateSyncPlan v-if="createSyncPlanVisible" @goback="goback"></CreateSyncPlan>
 
   </div>
@@ -10,13 +9,12 @@
 
 <script>
 import TableSyncRecord from './components/TableSyncRecord'
-import DrawerSyncDetail from './components/DrawerSyncDetail'
 import CreateSyncPlan from './components/CreateSyncPlan'
 
 export default {
   data () {
     return {
-      createSyncPlanVisible: true
+      createSyncPlanVisible: false
     }
   },
   computed: {},
@@ -29,7 +27,6 @@ export default {
   updated () { },
   components: {
     TableSyncRecord,
-    DrawerSyncDetail,
     CreateSyncPlan
   },
   methods: {

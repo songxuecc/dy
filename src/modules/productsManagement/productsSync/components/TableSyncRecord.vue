@@ -27,7 +27,7 @@
       <el-table-column label="操作" width="270">
          <template slot-scope="scope">
           <a class="pramiry pointer " @click="onDelete(scope.row)">开始同步</a>
-          <a class="pramiry pointer pl-5" @click="onDelete(scope.row)" >检测详情</a>
+          <a class="pramiry pointer pl-5" @click="handleOpen(scope.row)" >检测详情</a>
           <a class="pramiry pointer pl-5" @click="onDelete(scope.row)" >修改商品</a>
           <a class="pramiry pointer pl-5" @click="onDelete(scope.row)" >编辑计划</a>
           <a class="fail pointer pl-5" @click="onDelete(scope.row)" >删除</a>
@@ -35,6 +35,7 @@
       </el-table-column>
     </el-table>
 
+    <DrawerSyncDetail ref="DrawerSyncDetail" />
     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
       :current-page="pagination.page_index" class=" pt-20 right mr-20" :page-size="pagination.page_size"  :page-sizes="[10, 20, 50, 100]"
       layout="total, sizes, prev, pager, next, jumper" :total="total">
@@ -44,6 +45,7 @@
 </template>
 
 <script>
+import DrawerSyncDetail from './DrawerSyncDetail'
 import {
   mapActions,
   mapState
@@ -59,6 +61,10 @@ export default {
   },
   created () {
     this.fetch()
+  },
+
+  components: {
+    DrawerSyncDetail
   },
   computed: {
     ...mapState('productManagement/productsSync/tableSyncRecord', [
@@ -76,25 +82,42 @@ export default {
     ]),
     onDelete () {
       const h = this.$createElement
-      this.$confirm({
-        message: h('p', null, [
-          h('span', null, '内容可以是 '),
-          h('i', { style: 'color: teal' }, 'VNode')
+      this.$confirm('', {
+        message: h('div', null, [
+          h('div', {
+            class: 'center'
+          }, [
+            h('hh-icon', {
+              props: {
+                type: 'iconjinggao1'
+              },
+              class: 'TableSyncRecord-icon'
+            })
+          ]),
+          h('div', {
+            class: 'TableSyncRecord-text'
+          }, '确定删除该计划?')
         ]),
-        confirmButtonText: '删除',
-        cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        customClass: 'TableSyncRecord-customClass',
+        cancelButtonClass: 'TableSyncRecord-cancelButtonClass',
+        confirmButtonClass: 'TableSyncRecord-confirmButtonClass',
+        showClose: false
       })
-        .then(() => {
-          // this.specifications.splice(index, 1)
-          // this.$nextTick(() => {
-          //   this.$emit('change', this.specifications)
-          // })
+        .then(_ => {
+          console.log('00000')
         })
-        .catch(() => {})
+        .catch(_ => {
+          return false
+        })
     },
     handleCreateSyncPlan () {
       this.$emit('handleCreateSyncPlan')
+    },
+    handleOpen (row) {
+      this.$nextTick(() => {
+        this.$refs.DrawerSyncDetail && this.$refs.DrawerSyncDetail.open(row)
+      })
     }
   }
 }
@@ -120,5 +143,61 @@ export default {
       margin-left: 17px;
     }
   }
+}
+</style>
+<style lang="less">
+.TableSyncRecord-cancelButtonClass{
+  font-size: 12px;
+  margin-right: 10px;
+  width: 120px;
+  padding: 12px;
+}
+
+.TableSyncRecord-confirmButtonClass{
+  font-size: 12px;
+  width: 120px;
+  padding: 12px;
+}
+
+.TableSyncRecord-icon {
+  width: 50px;
+  height: 50px;
+  font-size: 50px;
+}
+
+.TableSyncRecord-text {
+  width: 364px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #4E4E4E;
+  line-height: 20px;
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.TableSyncRecord-customClass {
+    padding-bottom: 20px;
+    .el-message-box__header {
+      padding-top: 0;
+    }
+    .el-message-box__btns {
+      text-align: center;
+    }
+    .el-message-box__content {
+      .el-message-box__message {
+        padding-left: 0;
+      }
+      p {
+        font-size: 18px;
+        margin: 15px 0 10px;
+        text-align: center;
+      }
+      .el-icon-warning {
+        display: none;
+      }
+    }
 }
 </style>
