@@ -1,23 +1,23 @@
 <!--  -->
 <template>
-  <div class="left">
-    <p>创建商品计划</p>
+  <div class="left" style="padding-left: 10px">
+    <p class="title">创建商品计划</p>
     <el-divider></el-divider>
 
     <el-form ref="form" :model="form" label-width="80px">
-      <el-form-item label="计划名称">
-        <el-input v-model="form.name"></el-input>
+      <el-form-item label="计划名称" size="small">
+        <el-input v-model="form.name" style="width: 300px"></el-input>
       </el-form-item>
 
       <el-form-item label="计划类型">
-        <el-radio-group v-model="form.resource">
+        <el-radio-group v-model="form.type">
           <el-radio label="检测变化并提交修改"></el-radio>
           <el-radio label="仅检测变化，需人工提交修改"></el-radio>
         </el-radio-group>
       </el-form-item>
 
       <el-form-item label="配置内容">
-        <el-checkbox-group v-model="form.type">
+        <el-checkbox-group v-model="form.content">
           <el-checkbox
             label="同步上下架"
             name="type"
@@ -30,19 +30,17 @@
           ></el-checkbox>
 
           <el-form-item style="margin-left: 15px">
-            <el-radio-group v-model="form.resource">
-              <el-radio
-                label="若是阶梯发货，按照搬家时的设置分配现货库"
-                style="display: block"
-              ></el-radio>
-              <el-radio
-                label="若是阶梯发货，重新设置分配现货库存和阶梯"
-                style="display: block"
-              ></el-radio>
+            <el-radio-group v-model="form.store_template">
+              <el-radio :label="0" style="display: block"
+                >若是阶梯发货，按照搬家时的设置分配现货库</el-radio
+              >
+              <el-radio :label="1" style="display: block"
+                >若是阶梯发货，重新设置分配现货库存和阶梯</el-radio
+              >
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item style="margin-left: 40px">
+          <el-form-item style="margin-left: 40px" v-if="form.store_template">
             <span class="font-12 color-4e">现货库存设置为原库存的</span>
             <el-input v-model="form.name" class="price-sku-input"></el-input>
             <span class="font-12 color-4e"
@@ -57,17 +55,15 @@
           ></el-checkbox>
 
           <el-form-item style="margin-left: 15px">
-            <el-radio-group v-model="form.resource">
-              <el-radio
-                label="按照搬家时的设置调整价格"
-                style="display: block"
-              ></el-radio>
-              <el-radio
-                label="重新设置公式调整价格"
-                style="display: block"
-              ></el-radio>
+            <el-radio-group v-model="form.price_template">
+              <el-radio :label="0" style="display: block"
+                >按照搬家时的设置调整价格</el-radio
+              >
+              <el-radio :label="1" style="display: block"
+                >重新设置公式调整价格</el-radio
+              >
 
-              <div class="price price-text">
+              <div class="price price-text" v-if="form.price_template">
                 <el-form-item style="display: inline-block">
                   sku价格 = 原价 -
                   <el-input
@@ -86,10 +82,14 @@
                   ></el-input>
                 </el-form-item>
 
-                <el-form-item style="display: inline-block" label="售卖价" class="mr-20">
+                <el-form-item
+                  style="display: inline-block"
+                  label="售卖价"
+                  class="mr-20"
+                >
                   <el-radio-group v-model="form.resource">
-                    <el-radio label="最低价" style="width:40px"></el-radio>
-                    <el-radio label="最高价" style="width:40px"></el-radio>
+                    <el-radio label="最低价" style="width: 40px"></el-radio>
+                    <el-radio label="最高价" style="width: 40px"></el-radio>
                   </el-radio-group>
                 </el-form-item>
 
@@ -123,17 +123,111 @@
             style="display: block"
           ></el-checkbox>
 
-          <el-form-item style="margin-left: 15px">
-            <el-radio-group v-model="form.resource" style="margin-left: 15px">
-              <el-radio
-                label="按照搬家时的设置调整标题"
-                style="display: block"
-              ></el-radio>
-              <el-radio
-                label="重新设置公式调整标题"
-                style="display: block"
-              ></el-radio>
+          <el-form-item style="margin-left: 30px">
+            <el-radio-group v-model="form.title_template">
+              <el-radio :label="0" style="display: block"
+                >按照搬家时的设置调整标题</el-radio
+              >
+              <el-radio :label="1" style="display: block"
+                >重新设置公式调整标题</el-radio
+              >
             </el-radio-group>
+
+            <div style="margin-left: 30px" v-if="form.title_template">
+              <div>
+                <el-form-item
+                  style="display: inline-block; width: 300px"
+                  size="small"
+                >
+                  <el-input
+                    clearable
+                    @clear="handleClear('source_str')"
+                    v-model="form.source_str"
+                    @focus="handleCheck('is_replace')"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item
+                  label="原标题"
+                  style="display: inline-block; width: 300px"
+                  label-width="65px"
+                  class="ml-10"
+                  size="small"
+                >
+                  <el-input
+                    clearable
+                    @clear="handleClear('target_str')"
+                    v-model="form.target_str"
+                    @focus="handleCheck('is_replace')"
+                  ></el-input>
+                </el-form-item>
+              </div>
+
+              <div>
+                <el-form-item
+                  style="display: inline-block; width: 300px"
+                  size="small"
+                >
+                  <el-input
+                    clearable
+                    @clear="handleClear('source_str')"
+                    v-model="form.source_str"
+                    @focus="handleCheck('is_replace')"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item
+                  label="替换为"
+                  style="display: inline-block; width: 300px"
+                  label-width="65px"
+                  class="ml-10"
+                  size="small"
+                >
+                  <el-input
+                    clearable
+                    @clear="handleClear('target_str')"
+                    v-model="form.target_str"
+                    @focus="handleCheck('is_replace')"
+                  ></el-input>
+                </el-form-item>
+              </div>
+              <el-form-item
+                label="关键词删除"
+                size="small"
+                style="width: 613px; margin-top: 2px"
+              >
+                <el-input
+                  clearable
+                  v-model="form.delete_str"
+                ></el-input>
+              </el-form-item>
+
+              <el-form-item label-width="95px" size="small">
+                <span slot="label">超过30个字：</span>
+                <el-radio-group v-model="form.title_cut_type">
+                  <el-radio :label="1" style="width: 100px"
+                    >自动去末尾</el-radio
+                  >
+                  <el-radio :label="2" style="width: 100px"
+                    >自动去开头</el-radio
+                  >
+                  <el-radio :label="3" style="width: 100px">不处理</el-radio>
+                </el-radio-group>
+              </el-form-item>
+
+              <el-form-item label-width="95px" size="small">
+                <span slot="label">删除指定内容</span>
+                <el-checkbox-group v-model="form.cut_type_list">
+                  <el-checkbox label="is_cut_alpha" style="width: 100px"
+                    >删除英文</el-checkbox
+                  >
+                  <el-checkbox label="is_cut_digit" style="width: 100px"
+                    >删除数字</el-checkbox
+                  >
+                  <el-checkbox label="is_cut_brackets"
+                    >删除括号以及括号里的内容</el-checkbox
+                  >
+                </el-checkbox-group>
+              </el-form-item>
+            </div>
           </el-form-item>
         </el-checkbox-group>
       </el-form-item>
@@ -161,7 +255,7 @@
       </span>
     </el-dialog>
 
-    <div>
+    <div class="center btn">
       <el-button @click="goback" plain type="primary" style="width: 120px"
         >取消</el-button
       >
@@ -182,7 +276,8 @@ export default {
     return {
       isShowSample: false,
       form: {
-        type: []
+        content: [],
+        cut_type_list: []
       }
     }
   },
@@ -238,14 +333,24 @@ export default {
     font-weight: bold;
   }
 }
+/deep/ .el-form-item {
+  margin-bottom: 2px;
+}
+.title {
+  width: 84px;
+  height: 19px;
+  font-size: 14px;
+  font-family: MicrosoftYaqiHeiLight;
+  color: #333333;
+  line-height: 19px;
+  margin-top: 30px;
+}
 
-// .price {
-//   width: 103px;
-//   height: 24px;
-//   font-size: 18px;
-//   font-family: MicrosoftYaHei;
-//   color: #4e4e4e;
-//   line-height: 24px;
-//   font-weight: bold;
-// }
+/deep/ .el-divider--horizontal {
+  margin: 14px 0;
+}
+
+.btn {
+  margin-top: 40px;
+}
 </style>
