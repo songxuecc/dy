@@ -10,6 +10,11 @@
     </div>
     <el-table :data="tableData" style="width: 100%;min-height:270px">
       <el-table-empty slot="empty" />
+      <el-table-column label="操作" width="50" align="center">
+        <template slot-scope="scope">
+          <span class="primary" @click="handleDelete(scope.row)">删除</span>
+        </template>
+      </el-table-column>
       <el-table-column label="图片" width="78" align="center">
         <template slot-scope="scope">
           <img
@@ -284,7 +289,8 @@ export default {
       'clearMarketPrice',
       'clearDiscountPrice',
       'parsetIntFloat',
-      'updateTemplate'
+      'updateTemplate',
+      'deleteRow'
     ]),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
@@ -365,6 +371,25 @@ export default {
         template: this.template,
         key
       })
+    },
+    // 删除
+    handleDelete (row) {
+      this.$confirm('确认删除该商品?', '', {
+        confirmButtonText: '确认，删除',
+        cancelButtonText: '点错了',
+        type: 'warning',
+        cancelButtonClass: 'TableSkuPriceList-cancelButtonClass',
+        confirmButtonClass: 'TableSkuPriceList-confirmButtonClass',
+        customClass: 'TableSkuPriceList-customClass'
+      }).then(() => {
+        console.log(row)
+        this.deleteRow(row)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+      })
     }
   }
 }
@@ -435,6 +460,43 @@ export default {
 
   .tutorials {
     transform: scale(0.7);
+  }
+}
+
+</style>
+
+<style lang="less">
+.TableSkuPriceList-cancelButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    margin-right: 10px;
+    width: 100px;
+
+}
+
+.TableSkuPriceList-confirmButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    width: 100px;
+}
+
+.TableSkuPriceList-customClass {
+  padding-bottom: 25px;
+  .el-message-box__btns {
+    text-align: center;
+  }
+  .el-message-box__content {
+    .el-message-box__message {
+      padding-left: 0;
+    }
+    p {
+      font-size: 18px;
+      margin: 15px 0 10px;
+      text-align: center;
+    }
+    .el-icon-warning {
+      display: none;
+    }
   }
 }
 

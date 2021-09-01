@@ -6,13 +6,13 @@
     class="versionUp"
   >
   <div slot="title">
-      <p class="title">升级高级版，搬家次数无上限</p>
+      <p class="title">订购高级版，搬家次数无上限</p>
   </div>
     <div class="ModalVersionUp" v-if="versionType">
       <div class="flex mb-20 justify-c">
         <div class="old">
           <div class="flex column justify-c">
-            <p class="shiyong left">3个月试用用户</p>
+            <p class="shiyong left">7天试用用户</p>
             <p class="shiyongri left">每日搬家数：10</p>
           </div>
         </div>
@@ -36,11 +36,12 @@
         个额度
       </div>
     </div>
-    <div class="modalVersionUpBtn pb-20" slot="footer" v-if="versionType">
+    <div class="modalVersionUpBtn  pb-20" slot="footer" v-if="versionType">
       <p class="relative heartbeat pointer" @click="up">
-        升级高级版 搬家无限制
-        <span>0.25元/天</span>
+        订购高级版 搬家无限制
+        <span>15元/月</span>
       </p>
+      <!-- <div><span style="color:#DC4041">* </span>订购后试用版剩余时长全部转为高级版</div> -->
     </div>
   </el-dialog>
 </template>
@@ -50,7 +51,7 @@ import { mapState } from 'vuex'
 import Api from '@/api/apis'
 
 export default {
-  name: 'ModalVersionUp',
+  name: 'ModalVersionUpOrder',
   props: {
     key: {
       type: String,
@@ -68,7 +69,7 @@ export default {
   methods: {
     open () {
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '试用限制优化20210507', '弹层曝光', '3个月试用限制_展示弹层'])
+        window._hmt.push(['_trackEvent', '试用限制优化20210507', '弹层曝光', '7天试用限制_展示弹层'])
       }
       this.visible = !this.visible
     },
@@ -78,21 +79,15 @@ export default {
     async up () {
       try {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_升级高级版本'])
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_订购高级版本'])
         }
-        // 订单统计打点
+      // 订单统计打点
         await Api.hhgjAPIs.statisticsEventCreate({
-          event_type: 'free_three_months',
-          action: 'modal'
+          event_type: 'free_seven_days',
+          action: 'resubscribe'
         })
         this.close()
-        let routeData = this.$router.resolve({
-          name: 'PaidRecharge',
-          params: {
-            active: 'VersionUp'
-          }
-        })
-        window.open(routeData.href, '_blank')
+        window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
       } catch (err) {
         this.$message.error(`${err}`)
       }
@@ -156,6 +151,7 @@ export default {
         font-weight: 600;
         color: #535360;
         line-height: 42px;
+        opacity: 0.7;
       }
       .shiyongri {
         font-size: 20px;

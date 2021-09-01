@@ -85,7 +85,7 @@
 
         </el-form-item>
         <div class="tip">
-          <p >带<span style="color:#f56c6c">红色 &nbsp;*&nbsp;符号</span> 为必填属性，所有属性都不可以输入{{'I,^,&,@'}}字符。不填写会导致<span style="color:#f56c6c">商品上传失败</span></p>
+          <p >带<span style="color:#f56c6c">红色 &nbsp;*&nbsp;符号</span> 为必填属性，不填写会导致<span style="color:#f56c6c">商品上传失败</span>。所有属性都不可以输入{{'I,^,&,@'}}字符。</p>
             <!-- 二期会实现本功能 -->
             <!-- <span v-if="catId!==0">，勾选应用到本页相同分类商品，蓝色高亮</span> -->
         </div>

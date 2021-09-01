@@ -6,23 +6,24 @@
           :capture="capture"
           @change="onSearchChange"/>
         <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center class="mt-5"/>
-        <el-alert v-if="capture.capture_id" type="success" :closable="false" center class="mt-5">
+        <el-alert v-if="capture.capture_id && !isEmpty(capture)" type="success" :closable="false" center class="mt-5">
           <template slot='title'>
             <!-- 整店复制的提示语 -->
-            <div v-if="isShopCapture">
+            <div v-if="isShopCapture" style="font-weight:normal">
               <span v-if="ShopsCaptureStatus === 6">
                 {{ captureStatusMap[capture.page_status] }}
               </span>
               <span v-if="ShopsCaptureStatus === 1">【{{capture.shop_name}}】等待复制中...</span>
               <span v-if="ShopsCaptureStatus === 2">
-                正在复制{{capture.source}}平台的【{{capture.shop_name}}】
+                正在复制【{{capture.source}}】平台的【{{capture.shop_name}}】
                 <span v-if="capture.tp_id === 2002">
-                  {{capture.source}}平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
+                  该平台现支持自动化抓取 <br/>已抓取{{capture.current_page_id - 1}}页，正在抓取第{{capture.current_page_id}}页
                 </span>
                 <span v-else>
-                  该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}，预计需要{{getFormatLeftTime(capture.left_seconds)}}
+                  该平台暂不支持自动化抓取，需点击页码触发下一页的抓取~  <br/>已复制商品数{{capture.capture_num - (capture.left_seconds / 5)}}，待复制商品数{{capture.left_seconds / 5}}，本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}
                 </span>
               </span>
+
               <span v-if="ShopsCaptureStatus === 3" >
                 已复制【{{capture.shop_name}}】第{{pagination.index}}页:
                 <span v-if="capture.status_statistics.length > 0">
@@ -36,6 +37,34 @@
               <span v-if="ShopsCaptureStatus === 4">【{{capture.shop_name}}】所有商品均复制完成！</span>
               <span v-if="ShopsCaptureStatus === 5">【{{capture.shop_name}}】无法继续复制，小虎猜测原因是：当前店铺所有商品已复制完成</span>
               <span v-if="ShopsCaptureStatus === 7">【{{capture.shop_name}}】已经抓取完成，共{{capture.total_num}}条数据，共{{Math.ceil(capture.total_num / 10)}}页，当前第{{pagination.index}}页</span>
+
+              <!-- 淘宝自动抓取的状态逻辑判断 -->
+              <span v-if="ShopsCaptureStatus === 10" >
+                正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                <br/><span> 等待复制中...</span>
+                <div>
+                  <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
+                </div>
+              </span>
+              <span v-if="ShopsCaptureStatus === 11">
+                正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                <br/> <span v-if="capture.total_num ">共{{Math.ceil(capture.total_num / capture.page_size) }}页，正在抓取第{{capture.max_current_page_id}}页</span><span v-if="capture.left_seconds">，本页复制完成预计需要{{getFormatLeftTime(capture.left_seconds)}}</span>
+                <div>
+                  <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
+                </div>
+              </span>
+              <span v-if="ShopsCaptureStatus === 12">
+                【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
+              </span>
+
+              <span v-if="ShopsCaptureStatus === 13">
+                正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
+                <br/> <span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size) }}页，第{{captureTaobaoShopPageIndex}}页抓取完成，正在准备抓取下一页中...</span>
+                <div>
+                  <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
+                </div>
+              </span>
+
             </div>
             <!-- 链接复制的提示语 -->
             <div v-else>
@@ -87,10 +116,16 @@
         </product-list-view>
         <br>
         <div v-if="isShopCapture" >
-          <!-- 非抖音店铺的整店抓取分页 -->
-          <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0" v-if="capture.tp_id !== 2002"
+          <!-- 非抖音淘宝店铺的整店抓取分页 -->
+          <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0" v-if="![2002,1002,1001].includes(capture.tp_id)"
             @current-change="handleCurrentChange" :current-page="pagination.index" :page-size="pagination.size"
             layout="total, prev, pager, next, jumper" :total="pagination.total">
+          </el-pagination>
+
+          <!-- 淘宝、天猫 店铺的整店抓取分页 -->
+          <el-pagination v-show="loadingCnt == 0" v-if="capture.tp_id === 1002 || capture.tp_id === 1001"
+            @current-change="handleCurrentChangeTaobao" :current-page="pagination.index" :page-size="pagination.size"
+            layout="total, prev, pager, next, jumper" :total="taoBaoPagination.total">
           </el-pagination>
 
           <!-- 自动抓取抖音店铺的分页 -->
@@ -142,10 +177,10 @@
         </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
           <span v-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior" class="pt-10">
-            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
+            当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
           <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" class="pt-10">
-            提示：当前版本为试用版(每日搬家数限制10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议<a class="primary pointer bold" @click="versionTypeUp(versionType.btn)"> 订购高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限 </span>
+            当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 订购高级版 </a>，高级版每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
         </div>
       </div>
@@ -162,6 +197,8 @@
     </el-dialog>
     <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="slideDialogVisible" width="30%">
+      <div class="warning" style="font-size:16px">滑动到右侧后，如果滑块在加载转圈</div>
+      <div class="warning" style="font-size:16px">可点击下方继续操作按钮</div>
       <iframe id="slide" v-bind:src="slideUrl" style="width:100%; height: 350px;" scrolling="no"
         frameborder="0"></iframe>
       <span slot="footer" class="dialog-footer">
@@ -209,13 +246,16 @@
         <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <ModalVersionUp :visible="visibleModalVersionUp" @visibleModalVersionUpChange="visibleModalVersionUpChange" />
+    <ModalVersionUp ref="ModalVersionUp" />
+    <ModalVersionUpOrder  ref="ModalVersionUpOrder" />
   </div>
 </template>
 <script>
 import productListView from '@/components/ProductListView'
 import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
+import ModalVersionUpOrder from '@migrate/readyToMigrate/components/ModalVersionUpOrder'
 import Search from '@migrate/readyToMigrate/components/Search'
+import isEmpty from 'lodash/isEmpty'
 
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
@@ -223,6 +263,7 @@ import { mapActions, mapState } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
+import Api from '@/api/apis'
 
 export default {
   inject: ['reload'],
@@ -231,6 +272,7 @@ export default {
     productListView,
     BatchEdit: () => import('./components/BatchEdit'),
     ModalVersionUp,
+    ModalVersionUpOrder,
     Search
   },
   data () {
@@ -242,7 +284,7 @@ export default {
       captureOptionList: [],
       captureId: '-1',
       shopCaptureOptionList: [],
-
+      isEmpty,
       search: {
         key: '',
         status: '-1',
@@ -251,6 +293,11 @@ export default {
         shopCaptureId: '-1'
       },
       pagination: {
+        index: 1,
+        size: 100,
+        total: 0
+      },
+      taoBaoPagination: {
         index: 1,
         size: 100,
         total: 0
@@ -276,10 +323,46 @@ export default {
       common,
       startMigrateBtnFixed: false,
       scrollWidth: 0,
-      visibleModalVersionUp: false,
-      order_by: 1
+      order_by: 1,
+      captureTaobaoShopPageIndex: undefined
     }
   },
+  beforeRouteLeave (to, from, next) {
+    // 导航离开该组件的对应路由时调用
+    // 可以访问组件实例 `this`
+    if (![10, 11, 13].includes(this.ShopsCaptureStatus)) {
+      next()
+    } else {
+      const h = this.$createElement
+      this.$confirm('', {
+        message: h('p', null, [
+          h('hh-icon', {
+            props: {
+              type: 'iconjinggao1'
+            },
+            style: 'margin-right:5px'
+          }),
+          h('span', null, '请勿关闭或操作本页面，如需进行操作请重新打开一个网页？ ')
+        ]),
+        confirmButtonText: '打开新页面',
+        cancelButtonText: '留在本页面',
+        type: 'warning',
+        cancelButtonClass: 'readyToMigrate-cancelButtonClass',
+        confirmButtonClass: 'readyToMigrate-confirmButtonClass',
+        customClass: 'readyToMigrate-customClass'
+      })
+        .then(_ => {
+          let routeData = this.$router.resolve({
+            name: to.name
+          })
+          window.open(routeData.href, '_blank')
+        })
+        .catch(_ => {
+          return false
+        })
+    }
+  },
+
   watch: {
     tpProductList (newVal) {
       this.$nextTick(this.scroll)
@@ -294,6 +377,31 @@ export default {
     ]),
     ShopsCaptureStatus () {
       if (!this.isShopCapture) return 0
+      if (this.capture.tp_id === 1002 || this.capture.tp_id === 1001) {
+        // 淘宝平台
+        const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
+        // 总数据全部抓取完成
+        const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id)
+        // const isCurrentPage = this.pagination.index === this.capture.max_current_page_id
+        // 抓取完成
+        if (isShopFinish) {
+          return 4
+        } else {
+          // 等待中
+          if (this.getCaptureStatus === 'capture-item-waiting') {
+            return 10
+          // 抓取中
+          } else if (this.getCaptureStatus === 'capture-item') {
+            return 11
+            //  失败
+          } else if (this.capture.page_status === 3 && this.capture.status_statistics.length === 0) {
+            return 12
+            // 完成本页复制
+          } else if (this.getCaptureStatus === 'finish') {
+            return 13
+          }
+        }
+      }
 
       if (this.capture.status === 2 && this.capture.page_status === 3 && this.capture.tp_id === 2002) {
         return 5
@@ -466,13 +574,12 @@ export default {
         ) {
           return 'capture-list'
         }
-        if (this.capture.current_page_id === '') {
-          if (this.capture.page_status === 2 && this.capture.status === 2) {
-            return 'finish'
-          }
-          if (this.capture.status === 3 || this.capture.page_status === 3) {
-            return 'finish'
-          }
+        if (this.capture.current_page_id === '' && this.capture.page_status === 2 && this.capture.status === 2) {
+          return 'finish'
+        }
+
+        if (this.capture.current_page_id === '' && (this.capture.status === 3 || this.capture.page_status === 3)) {
+          return 'finish'
         }
         if (this.capture.current_page_id !== '' && this.capture.current_page_status === 2) {
           return 'finish'
@@ -535,6 +642,14 @@ export default {
       }
       return
     }
+    if (this.timer) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
+    if (this.timer1) {
+      clearTimeout(this.timer1)
+      this.timer1 = null
+    }
     this.resetInfo()
     if (this.$route.query.captureId) {
       this.search.captureId = this.$route.query.captureId.toString()
@@ -553,13 +668,17 @@ export default {
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
     this.getNewMigrate()
-    // this.userVersionQuery()
+    window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   deactivated () {
     this.$refs.productListView.dialogEditVisible = false
     if (this.timer) {
       clearTimeout(this.timer)
       this.timer = null
+    }
+    if (this.timer1) {
+      clearTimeout(this.timer1)
+      this.timer1 = null
     }
     if (this.productStatusSyncTimer) {
       clearTimeout(this.productStatusSyncTimer)
@@ -569,6 +688,7 @@ export default {
       clearTimeout(this.statusStatisticsTimer)
       this.statusStatisticsTimer = null
     }
+    window.removeEventListener('beforeunload', this.beforeunloadFn)
   },
   methods: {
     ...mapActions(['setSelectTPProductIdList']),
@@ -580,6 +700,19 @@ export default {
       'userVersionQuery',
       'getMigrateSetting'
     ]),
+    ...mapActions('migrate/startMigrate', ['getCaptureShopCompleteList']),
+    beforeunloadFn (e) {
+      if ([10, 11, 13].includes(this.ShopsCaptureStatus)) {
+        let msg = '您现在正在抓取淘宝店铺，离开就会停止抓取，在新页面操作即可继续抓取，点击确定打开新页面？'
+        e = e || window.event
+        if (e) {
+          e.preventDefault()
+          e.returnValue = msg
+        }
+        return msg
+      }
+      return false
+    },
     getFormatLeftTime (seconds) {
       let minutes = parseInt(seconds / 60)
       seconds = seconds % 60
@@ -818,9 +951,11 @@ export default {
         )
       }
     },
-    getCapture (isSilent = false) {
+    getCapture (isSilent = false, customPageIndex) {
       clearTimeout(this.timer)
       this.timer = null
+      clearTimeout(this.timer1)
+      this.timer1 = null
       let captureId = this.search.captureId
 
       if (this.search.shopCaptureId.toString() !== '-1') {
@@ -837,7 +972,7 @@ export default {
         keyword: this.search.key,
         status: this.search.status,
         capture_id: captureId,
-        page_index: this.pagination.index,
+        page_index: customPageIndex || this.pagination.index,
         page_size: this.pagination.size,
         force: this.isForceGetCapture
       }
@@ -863,7 +998,7 @@ export default {
               this.pageData[data.page_id] == null
             ) {
               if (data.shop_async_link !== '') {
-                this.requestJsonp(data.shop_async_link).then((res) => {
+                this.requestJsonp(data.shop_async_link + '&_ksTS=1630040629473_119&spm=a1z10.1-c.w5002-23138838278.1.1f782c8cPRyLED').then((res) => {
                   if (res.hasOwnProperty('rgv587_flag')) {
                     if (res.url.indexOf('login.taobao.com') !== -1) {
                       if (this.isFinishLogin) {
@@ -896,26 +1031,165 @@ export default {
           if (this.loginDialogVisible || this.slideDialogVisible) {
             return
           }
-          if (this.getCaptureStatus === 'finish') {
+          if (this.getCaptureStatus === 'finish' && ![1002, 1001].includes(this.capture.tp_id)) {
             this.getProductList(isSilent)
             return
           }
-          // 定时任务的 isSilent = true
-          let self = this
-          this.timer = setTimeout(function () {
-            if (
-              self.isShopCapture &&
-              self.getCaptureStatus === 'capture-item-waiting'
-            ) {
-              self.triggerShopCapture(true)
+          if (![1002, 1001].includes(this.capture.tp_id)) {
+            // 定时任务的 isSilent = true
+            let self = this
+            this.timer = setTimeout(function () {
+              if (
+                self.isShopCapture &&
+                self.getCaptureStatus === 'capture-item-waiting'
+              ) {
+                self.triggerShopCapture(true)
+              }
+              if (self.getCaptureStatus === 'capture-item') {
+                self.getProductList(true)
+                // self.triggerShopCaptureDy(true)
+              }
+              self.getCapture(true)
+            }, 5000)
+          } else {
+            const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
+            // 总数据全部抓取完成
+            const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id)
+            // 抓取页码为展示页码
+            const isCurrentPage = this.pagination.index === this.capture.max_current_page_id
+            console.log(isCurrentPage, 'isCurrentPage')
+            console.log(isShopFinish, this.pagination.index, 'isShopFinish')
+            // 总数据全部抓取完成 且 抓取页码为展示页码
+            if (isShopFinish && isCurrentPage) {
+              clearTimeout(this.timer)
+              this.timer = null
+              clearTimeout(this.timer1)
+              this.timer1 = null
+              this.taoBaoPagination.size = data.page_size
+              this.taoBaoPagination.total = data.total_num
+              this.getCaptureShopCompleteList()
+              return this.getProductList(isSilent)
+            // 总数据全部抓取完成 且 抓取页码非展示页码
+            } else if (isShopFinish && !isCurrentPage) {
+              clearTimeout(this.timer)
+              this.timer = null
+              clearTimeout(this.timer1)
+              this.timer1 = null
+              this.taoBaoPagination.size = data.page_size
+              this.taoBaoPagination.total = data.total_num
+              this.getCaptureShopCompleteList()
+              return this.getProductList(isSilent)
+
+            // 抓取失败
+            } else if (this.ShopsCaptureStatus === 12) {
+              clearTimeout(this.timer)
+              this.timer = null
+              clearTimeout(this.timer1)
+              this.timer1 = null
+              this.taoBaoPagination.size = data.page_size
+              this.taoBaoPagination.total = data.total_num
+              return false
+            // 总数据未抓取完成
+            } else {
+              this.taoBaoPagination.size = data.page_size
+              this.taoBaoPagination.total = data.max_current_page_id * data.page_size
+              if (this.tpProductList && !this.tpProductList.length) {
+                this.getProductList(true)
+              }
+              this.timer = setTimeout(() => {
+                clearTimeout(this.timer)
+                this.timer = null
+                let pageIndex = this.capture.max_current_page_id || 1
+                if (this.getCaptureStatus === 'capture-item-waiting' && isCurrentPage) {
+                  console.log('等待中 且 抓取页码为展示页码')
+                  if (this.shouldAddIndex) {
+                    pageIndex = pageIndex + 1
+                  } else {
+                    this.resetProductList()
+                  }
+                  this.triggerTaobaoShopCapture(true, {
+                    page_index: pageIndex,
+                    page_size: data.page_size
+                  })
+                  this.shouldAddIndex = false
+                  this.getProductList(true)
+                } else if (this.getCaptureStatus === 'capture-item-waiting' && !isCurrentPage) {
+                  console.log('等待中  且 抓取页码非展示页码')
+                  if (this.shouldAddIndex) pageIndex = pageIndex + 1
+                  this.triggerTaobaoShopCapture(true, {
+                    page_index: pageIndex,
+                    page_size: data.page_size
+                  })
+                  this.shouldAddIndex = false
+                } else if (this.getCaptureStatus === 'capture-item' && isCurrentPage) {
+                  console.log('抓取中  且 抓取页码为展示页码')
+                  this.getProductList(true)
+                } else if (this.getCaptureStatus === 'capture-item' && !isCurrentPage) {
+                  console.log('抓取中  且 抓取页码非展示页码')
+                } else if (this.getCaptureStatus === 'finish') {
+                  console.log('本页抓取完成')
+                  pageIndex = pageIndex + 1
+                  // 表示是否triggerTaobaoShopCapture 下一页 如果trigger了 则 下一个getcapture的page_index + 1
+                  this.shouldAddIndex = true
+                  this.triggerTaobaoShopCapture(true, {
+                    page_index: pageIndex,
+                    page_size: data.page_size
+                  })
+                }
+                this.timer1 = setTimeout(() => {
+                  clearTimeout(this.timer1)
+                  this.timer1 = null
+                  this.getCapture(true, pageIndex)
+                }, 2000)
+              }, 5000)
+              return false
             }
-            if (self.getCaptureStatus === 'capture-item') {
-              self.getProductList(true)
-              // self.triggerShopCaptureDy(true)
-            }
-            self.getCapture(true)
-          }, 5000)
+          }
         },
+        undefined,
+        isSilent
+      )
+    },
+    triggerTaobaoShopCapture (isSilent = false, pagination) {
+      console.log('执行 triggerTaobaoShopCapture')
+      let captureId = this.search.captureId
+      if (captureId.toString() === '-1') {
+        return
+      }
+      let params = {
+        capture_id: this.search.captureId,
+        page_index: pagination.page_index,
+        page_size: pagination.page_size
+      }
+
+      if (
+        this.triggerShopCaptureRunOnce.hasOwnProperty(params['page_index']) &&
+        this.triggerShopCaptureRunOnce[params['page_index']] === true
+      ) {
+        return
+      }
+      if (
+        this.pageData.hasOwnProperty(params['page_index']) &&
+        this.pageData[params['page_index']]
+      ) {
+        params['page_data'] = this.pageData[params['page_index']]
+        this.triggerShopCaptureRunOnce[params['page_index']] = true
+      }
+      if (
+        this.shopCaptureType === common.SHOP_CAPTURE_TYPE['client'] &&
+        !params.hasOwnProperty('page_data')
+      ) {
+        return
+      }
+
+      if (!params.hasOwnProperty('page_data')) {
+        return
+      }
+      this.captureTaobaoShopPageIndex = pagination.page_index
+      this.request(
+        'triggerShopCapture',
+        params,
+        (data) => {},
         undefined,
         isSilent
       )
@@ -991,6 +1265,13 @@ export default {
       // this.shopCaptureType = common.SHOP_CAPTURE_TYPE['server']
       this.getProductList(false)
     },
+    handleCurrentChangeTaobao (val) {
+      this.pagination.index = val
+      this.triggerShopCaptureRunOnce[val] = false
+      this.pageData[val] = null
+      this.resetProductList()
+      this.getProductList(false)
+    },
     handleCommonCaptureChange () {
       this.pageData = {}
       this.triggerShopCaptureRunOnce = {}
@@ -1009,16 +1290,20 @@ export default {
       }
       this.$router.replace({ query })
     },
-    visibleModalVersionUpChange () {
-      this.visibleModalVersionUp = !this.visibleModalVersionUp
-    },
     async toMigrate () {
       const userVersion = this.userVersion || (await this.userVersionQuery())
       const isFreeUpgrate = userVersion.is_free_upgrate
       const isSenior = userVersion.is_senior
       const limit = 10
+      const versionTipType = userVersion.version_type
       if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit && !isSenior) {
-        this.visibleModalVersionUp = true
+        // 3个月试用引导内部升级
+        // 7天试用引导在服务市场
+        if (versionTipType === 'free_three_months') {
+          this.$refs && this.$refs.ModalVersionUp.open()
+        } else {
+          this.$refs && this.$refs.ModalVersionUpOrder.open()
+        }
       } else {
         this.removeTempTemplate()
         this.closeNewComer()
@@ -1254,14 +1539,32 @@ export default {
     closeShopCapture () {
       this.$refs.newComerShop.close && this.$refs.newComerShop.close()
     },
-    versionTypeUp (btnText) {
-      let routeData = this.$router.resolve({
-        name: 'PaidRecharge',
-        params: {
-          active: 'VersionUp'
+    async versionTypeUp (btnText) {
+      if (btnText === 'free_seven_days') {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_底部文案提示点击'])
         }
-      })
-      window.open(routeData.href, '_blank')
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_seven_days',
+          action: 'readyToMigrate_text'
+        })
+        window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
+      } else {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_底部文案提示点击'])
+        }
+        await Api.hhgjAPIs.statisticsEventCreate({
+          event_type: 'free_three_months',
+          action: 'readyToMigrate_text'
+        })
+        let routeData = this.$router.resolve({
+          name: 'PaidRecharge',
+          params: {
+            active: 'VersionUp'
+          }
+        })
+        window.open(routeData.href, '_blank')
+      }
     },
     onSearchChange (data) {
       // 店铺选择 状态选择 标题搜索 clearSelect resetPaginationIndex updateInfo
@@ -1344,7 +1647,43 @@ export default {
   padding: 7px 7px;
 }
 .price {
-    color: #dc4041;
-    font-weight: bold;
+  color: #dc4041;
+  font-weight: bold;
+}
+</style>
+<style lang="less">
+.readyToMigrate-cancelButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    margin-right: 10px;
+    width: 110px;
+
+}
+
+.readyToMigrate-confirmButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    width: 110px;
+}
+
+.readyToMigrate-customClass {
+  padding-bottom: 25px;
+
+  .el-message-box__btns {
+    text-align: center;
   }
+  .el-message-box__content {
+    .el-message-box__message {
+      padding-left: 0;
+    }
+    p {
+      font-size: 18px;
+      margin: 15px 0 10px;
+      text-align: center;
+    }
+    .el-icon-warning {
+      display: none;
+    }
+  }
+}
 </style>

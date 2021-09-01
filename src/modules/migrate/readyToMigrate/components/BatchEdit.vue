@@ -36,7 +36,7 @@
       @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown"
       :shutdown="shutdown" />
     <!-- 修改分类 -->
-    <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal
+    <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal v-if="visvileCategory"
       :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" >
         <template slot="footer">
@@ -231,6 +231,21 @@ export default {
 
       if (model.radio === 6) {
         title = title.substring(0, 30)
+      }
+
+      if (model.cut_type_list.includes('is_cut_digit')) {
+        const reg = /[a-zA-Z]+/g
+        title = title.replace(reg, '')
+      }
+
+      if (model.cut_type_list.includes('is_cut_alpha')) {
+        const reg = /[0-9]+/g
+        title = title.replace(reg, '')
+      }
+
+      if (model.cut_type_list.includes('is_cut_brackets')) {
+        const reg = /\(.*?\)|\[.*?\]|\{.*?\}|\（.*?\）|\【.*?\】|\「.*?\」|\｛.*?\｝/g
+        title = title.replace(reg, '')
       }
 
       if (model.radio === 3) {

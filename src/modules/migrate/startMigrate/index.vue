@@ -69,8 +69,10 @@
                 <div class="info" v-if="target_user_id" style="position:absolute;left:0;bottom:-12px;width:500px;transform: translateY(100%);">
                   <div  class="font-12">
                       <div class="font-12" style="width:350px;word-break:break-all;line-height:18px">{{bandShopTip.shop_name}}&nbsp;最近更新时间{{bandShopTip.last_goods_sync_time}}
-                        <p class="primary" v-if="!syncText" v-loading="syncLoading" @click="handleSyncProducts(target_user_id)">点击同步此店铺</p>
-                        <p class="primary" v-if="syncText" v-loading="syncLoading">{{syncText}}</p>
+                        <p  v-if="!syncText" v-loading="syncLoading" @click="handleSyncProducts(target_user_id)">
+                          <span class="fail">*复制前需进行店铺数据同步，</span> <span class="primary">点击开始同步</span>
+                        </p>
+                        <p class="primary" v-if="syncText" v-loading="syncLoading"  :style="syncText && syncText.includes('同步中')? '':''">{{syncText}}</p>
                       </div>
                   </div>
                 </div>
@@ -168,7 +170,7 @@ export default {
       syncText: '',
       syncTimer: null,
       syncLoading: false,
-      limit: 100,
+      limit: 200,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
       activeName: 'single',
@@ -750,6 +752,9 @@ export default {
       // this.textCaptureShopUrls = url
     },
     async handleSyncProducts (id) {
+      if (this.syncText === '同步中') {
+        return
+      }
       await Api.hhgjAPIs.syncProducts({
         target_user_id: id
       })

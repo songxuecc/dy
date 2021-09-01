@@ -78,7 +78,8 @@
               >
                 {{ scope.row.goods_name }} </el-link
               ><br />
-              <div class="font-12 flex align-c color-999 mt-5">
+              <div class="font-12 warning" style="margin-top:3px">分类：{{scope.row.category_name}}</div>
+                    <div class="font-12 flex align-c color-999" style="margin-top:3px">
                 <span>{{ scope.row.goods_id }}</span>
                 <span
                   class="ml-10 mr-10 presell_type jieti"
