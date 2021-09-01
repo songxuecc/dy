@@ -75,7 +75,23 @@ export default {
       'handleSizeChange'
     ]),
     onDelete () {
-
+      const h = this.$createElement
+      this.$confirm({
+        message: h('p', null, [
+          h('span', null, '内容可以是 '),
+          h('i', { style: 'color: teal' }, 'VNode')
+        ]),
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          // this.specifications.splice(index, 1)
+          // this.$nextTick(() => {
+          //   this.$emit('change', this.specifications)
+          // })
+        })
+        .catch(() => {})
     },
     handleCreateSyncPlan () {
       this.$emit('handleCreateSyncPlan')
