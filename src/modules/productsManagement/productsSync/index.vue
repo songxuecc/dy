@@ -1,23 +1,22 @@
 <!-- 我的页面 -->
 <template>
-  <div class=''>
-    <el-container>
-      <el-header>Header</el-header>
-      <el-main>Main</el-main>
-      <el-footer>Footer</el-footer>
-      <TableSyncRecord />
-      <DrawerSyncDetail />
-    </el-container>
+  <div>
+    <TableSyncRecord @handleCreateSyncPlan="handleCreateSyncPlan"  v-if="!createSyncPlanVisible"/>
+    <DrawerSyncDetail />
+    <CreateSyncPlan v-if="createSyncPlanVisible" @goback="goback"></CreateSyncPlan>
+
   </div>
 </template>
 
 <script>
 import TableSyncRecord from './components/TableSyncRecord'
 import DrawerSyncDetail from './components/DrawerSyncDetail'
+import CreateSyncPlan from './components/CreateSyncPlan'
+
 export default {
   data () {
     return {
-
+      createSyncPlanVisible: true
     }
   },
   computed: {},
@@ -30,12 +29,16 @@ export default {
   updated () { },
   components: {
     TableSyncRecord,
-    DrawerSyncDetail
+    DrawerSyncDetail,
+    CreateSyncPlan
   },
   methods: {
     // 事件名称
-    methodsName () {
-      this.dialogVisible = false
+    handleCreateSyncPlan () {
+      this.createSyncPlanVisible = true
+    },
+    goback () {
+      this.createSyncPlanVisible = false
     }
   }
 }
