@@ -40,7 +40,7 @@ export default assign(tableData, {
             const handleClick = (e, captureId) => {
               e.preventDefault()
               console.log(payload, 'payload')
-              payload.push({
+              payload.push && captureId && payload.push({
                 path: '/migrate/productList',
                 query: {
                   captureId
@@ -77,7 +77,12 @@ export default assign(tableData, {
                         size: 'small'
                       },
                       on: {
-                        click: (e) => handleClick(e, item.capture_id)
+                        click: (e) => {
+                          handleClick(e, item.capture_id)
+                          this._vm.$nextTick(() => {
+                            ref && ref.close()
+                          })
+                        }
                       }
                     }, `前往操作`)
                   ])

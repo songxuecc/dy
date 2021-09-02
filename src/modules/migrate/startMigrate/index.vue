@@ -444,6 +444,11 @@ export default {
         })
       }
 
+      if (urls.every(url => url.indexOf('youzan.com') > -1)) {
+        this.getCaptureShopCompleteList({
+          push: this.$router.push.bind(this.$router)
+        })
+      }
       // Api.hhgjAPIs.getCaptureShopCompleteList()
     },
     // 绑定复制
