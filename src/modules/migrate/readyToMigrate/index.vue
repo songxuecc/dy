@@ -327,6 +327,15 @@ export default {
       captureTaobaoShopPageIndex: undefined
     }
   },
+  beforeRouteUpdate (to, from, next) {
+    if (to.query.captureId) {
+      this.search.captureId = (to.query.captureId || '-1').toString()
+      this.$refs.productListView.clearSelect()
+      this.updateInfo()
+      this.getMigrateStatusStatistics()
+    }
+    next()
+  },
   beforeRouteLeave (to, from, next) {
     // 导航离开该组件的对应路由时调用
     // 可以访问组件实例 `this`
@@ -362,13 +371,14 @@ export default {
         })
     }
   },
-
   watch: {
     tpProductList (newVal) {
       this.$nextTick(this.scroll)
     }
+
   },
   computed: {
+    ...mapState('migrate/startMigrate', ['refresh']),
     ...mapState('migrate/readyToMigrate', [
       'migrateSetting',
       'userVersion',
@@ -389,7 +399,6 @@ export default {
       if (this.capture.tp_id === 2004) {
         total = this.capture.total_num === 9999 ? parseInt(currentPageId) * 20 : this.capture.total_num
       }
-      console.log(total)
       return total
     },
     ShopsCaptureStatus () {
@@ -1046,34 +1055,18 @@ export default {
           if (this.loginDialogVisible || this.slideDialogVisible) {
             return
           }
-          if (this.getCaptureStatus === 'finish' && ![1002, 1001].includes(this.capture.tp_id)) {
+
+          if (this.getCaptureStatus === 'finish' && !(this.isShopCapture && [1002, 1001].includes(this.capture.tp_id))) {
             this.getProductList(isSilent)
             return
           }
-          if (![1002, 1001].includes(this.capture.tp_id)) {
-            // 定时任务的 isSilent = true
-            let self = this
-            this.timer = setTimeout(function () {
-              if (
-                self.isShopCapture &&
-                self.getCaptureStatus === 'capture-item-waiting'
-              ) {
-                self.triggerShopCapture(true)
-              }
-              if (self.getCaptureStatus === 'capture-item') {
-                self.getProductList(true)
-                // self.triggerShopCaptureDy(true)
-              }
-              self.getCapture(true)
-            }, 5000)
-          } else {
+          // 淘宝整店抓取
+          if (this.isShopCapture && [1002, 1001].includes(this.capture.tp_id)) {
             const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
             // 总数据全部抓取完成
             const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id)
             // 抓取页码为展示页码
             const isCurrentPage = this.pagination.index === this.capture.max_current_page_id
-            console.log(isCurrentPage, 'isCurrentPage')
-            console.log(isShopFinish, this.pagination.index, 'isShopFinish')
             // 总数据全部抓取完成 且 抓取页码为展示页码
             if (isShopFinish && isCurrentPage) {
               clearTimeout(this.timer)
@@ -1163,6 +1156,22 @@ export default {
               }, 5000)
               return false
             }
+          } else {
+            // 定时任务的 isSilent = true
+            let self = this
+            this.timer = setTimeout(function () {
+              if (
+                self.isShopCapture &&
+                self.getCaptureStatus === 'capture-item-waiting'
+              ) {
+                self.triggerShopCapture(true)
+              }
+              if (self.getCaptureStatus === 'capture-item') {
+                self.getProductList(true)
+                // self.triggerShopCaptureDy(true)
+              }
+              self.getCapture(true)
+            }, 5000)
           }
         },
         undefined,
