@@ -45,7 +45,7 @@
                 <el-date-picker
                   class="margin-bottom-4"
                   v-model="template.model.presell_end_time"
-                   :picker-options="pickerOptions"
+                  :picker-options="pickerOptions"
                   type="datetime"
                   placeholder="选择日期时间"
                   default-time="00:00:00">
@@ -157,7 +157,7 @@ export default {
           const value = moment(time)
           const now = moment()
           const diff = value.diff(now, 'days', true)
-          return diff > 30
+          return diff > 30 || value.isBefore(now, 'days')
         }
       }
     }
