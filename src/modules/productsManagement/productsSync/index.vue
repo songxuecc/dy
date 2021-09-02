@@ -1,8 +1,9 @@
 <!-- 我的页面 -->
 <template>
   <div>
-    <TableSyncRecord @handleCreateSyncPlan="handleCreateSyncPlan"  v-if="!createSyncPlanVisible"/>
-    <CreateSyncPlan v-if="createSyncPlanVisible" @goback="goback"></CreateSyncPlan>
+    <TableSyncRecord @go="handleGo"  v-if="step === 1"/>
+    <CreateSyncPlan v-if="step === 2" @goback="goback" @go="handleGo"></CreateSyncPlan>
+    <TableProductList v-if="step === 3" @goback="goback" @go="handleGo"></TableProductList>
 
   </div>
 </template>
@@ -10,11 +11,13 @@
 <script>
 import TableSyncRecord from './components/TableSyncRecord'
 import CreateSyncPlan from './components/CreateSyncPlan'
+import TableProductList from './components/TableProductList'
 
 export default {
   data () {
     return {
-      createSyncPlanVisible: false
+      step: 1,
+      prevStep: 3
     }
   },
   computed: {},
@@ -27,15 +30,19 @@ export default {
   updated () { },
   components: {
     TableSyncRecord,
-    CreateSyncPlan
+    CreateSyncPlan,
+    TableProductList
   },
   methods: {
     // 事件名称
-    handleCreateSyncPlan () {
-      this.createSyncPlanVisible = true
+    handleGo (row, type) {
+      this.prevStep = this.step
+      this.step = type
     },
     goback () {
-      this.createSyncPlanVisible = false
+      const prevStep = this.step
+      this.step = this.prevStep
+      this.prevStep = prevStep
     }
   }
 }

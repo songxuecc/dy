@@ -414,6 +414,9 @@ const hhgjAPIs = {
   },
   statisticsEventCreate: (params) => {
     return api.actionCreatorPost('/api/statisticsEvent/create ', params)
+  },
+  productSourceSyncDetailPage: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/detail/page', params)
   }
 
 }

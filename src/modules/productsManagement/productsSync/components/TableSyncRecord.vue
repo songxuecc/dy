@@ -11,7 +11,7 @@
             </div>
             <p>当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。避免因货源方的信息变化造成损失。</p>
       </div>
-      <el-button type="primary" size="medium" class="mb-10" @click="handleCreateSyncPlan">创建商品原同步计划</el-button>
+      <el-button type="primary" size="medium" class="mb-10" @click="handleGo(undefined,2)">创建商品原同步计划</el-button>
 
     <el-table :data="tableData" style="width: 100%">
       <el-table-column prop="task_title" label="计划名称" >
@@ -28,8 +28,8 @@
          <template slot-scope="scope">
           <a class="pramiry pointer " @click="onDelete(scope.row)">开始同步</a>
           <a class="pramiry pointer pl-5" @click="handleOpen(scope.row)" >检测详情</a>
-          <a class="pramiry pointer pl-5" @click="onDelete(scope.row)" >修改商品</a>
-          <a class="pramiry pointer pl-5" @click="onDelete(scope.row)" >编辑计划</a>
+          <a class="pramiry pointer pl-5" @click="handleGo(scope.row,3)" >修改商品</a>
+          <a class="pramiry pointer pl-5" @click="handleGo(scope.row,2)" >编辑计划</a>
           <a class="fail pointer pl-5" @click="onDelete(scope.row)" >删除</a>
         </template>
       </el-table-column>
@@ -112,12 +112,15 @@ export default {
         })
     },
     handleCreateSyncPlan () {
-      this.$emit('handleCreateSyncPlan')
+      this.$emit('go')
     },
     handleOpen (row) {
       this.$nextTick(() => {
         this.$refs.DrawerSyncDetail && this.$refs.DrawerSyncDetail.open(row)
       })
+    },
+    handleGo (row, type) {
+      this.$emit('go', row, type)
     }
   }
 }
