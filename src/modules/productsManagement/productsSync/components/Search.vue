@@ -8,13 +8,14 @@
       inline
       size="small"
       label-position="left"
-      class=""
     >
       <el-form-item style="width: 325px" label="商品状态" prop="region" class="">
         <el-select
           v-model="form.status"
           placeholder="请选择商品状态"
           class="w-235  mb-10"
+          clearable
+          @clear="handleClear('status')"
         >
           <el-option
             class="left dropdown"
@@ -31,6 +32,8 @@
           v-model="form.presell_type"
           placeholder="请选择发货模式"
           class="w-235 mb-10"
+          clearable
+          @clear="handleClear('presell_type')"
         >
           <el-option
             class="left dropdown"
@@ -65,18 +68,20 @@
           v-model="form.tp_id"
           placeholder="请选择抓取平台"
           class="w-235 mb-10"
+          clearable
+          @clear="handleClear('tp_id')"
         >
           <el-option
             class="left dropdown"
             v-for="item in captureTpId"
-            :key="item.value"
-            :label="item.label"
+            :key="item.label"
             :value="item.value"
+            :label="item.label"
           >
-            <span style="float: left">{{ item.label }}</span>
-            <!-- <images style="float: right; color: #8492a6; width: 13px" v-if="item.label !== -1" :src="getIcon(item.label)"></images> -->
-
-            <img style="width: 14px;float: right; height: 14px;margin-right:2px;" v-if="item.label !== -1" :src="getIcon(item.label)">
+            <div class="flex align-c justify-b">
+              <span style="">{{ item.label }}</span>
+              <img style="width: 18px;height: 18px;" v-if="item.value !== -1" :src="getIcon(item.label)">
+            </div>
           </el-option>
         </el-select>
       </el-form-item>
@@ -87,6 +92,8 @@
           placeholder="输入名称"
           v-model="form.goods_name"
           class="w-235 mb-10"
+          clearable
+          @clear="handleClear('goods_name')"
         >
         </el-input>
       </el-form-item>
@@ -101,6 +108,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
+          clearable
         >
         </el-date-picker>
       </el-form-item>
@@ -115,7 +123,7 @@
           type="textarea"
           autosize
           placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
-          v-model="form.goods_id_list"
+          v-model="goods_ids"
           style="width:235px"
           class="mb-10 textarea-id"
         >
@@ -173,7 +181,7 @@
         >
           <span class="font-12">查询</span>
         </el-button>
-        <NewComer type="商品源同步查询提示" ref="newComer" direction="bottom" :noAuth="true" class="nn">
+        <NewComer :type="'tipType'" ref="newComer" direction="bottom" :noAuth="true" class="nn">
           <div style="width:190px">
           <div  class="color-666 font-12 left mb-5">
               <hh-icon type="icontishi" ></hh-icon>&nbsp;小提醒：选择后请点击查询哦~
@@ -210,7 +218,7 @@ export default {
   },
   name: 'component_name',
   props: {
-    msg: String
+    tipType: String
   },
   data () {
     return {
@@ -228,6 +236,16 @@ export default {
         captureTime: [],
         goods_name: ''
       },
+      originForm: {
+        status: '-',
+        presell_type: -1,
+        captureStatus: -1,
+        tp_id: -1,
+        goods_id_list: '',
+        captureTime: [],
+        goods_name: ''
+      },
+      goods_ids: '',
       captureTpId: [
         { value: -1, label: '全部' },
         { value: 1001, label: '天猫' },
@@ -270,8 +288,39 @@ export default {
   },
   methods: {
     handleFilterChange () {
-      const data = {}
-      console.log(this.form)
+      const limit = 100
+      const goodsIds = this.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const goodsIdsSet = [...new Set(goodsIds)]
+      if (goodsIdsSet.length > limit) {
+        this.loading = false
+        return this.$message.error(`搜索id不可以超过${limit}条！`)
+      }
+      const statusArray = this.form.status.split('-')
+      let status = -1
+      let checkStatus = -1
+      if (statusArray.length > 1 && statusArray[0]) {
+        status = parseInt(statusArray[0])
+        checkStatus = parseInt(statusArray[1])
+      }
+
+      const data = {
+        status: status,
+        check_status: checkStatus,
+        presell_type: this.form.presell_type,
+        category_leaf_id_list: JSON.stringify(this.categorys.map(item => item.id)),
+        goods_id_list: JSON.stringify(goodsIdsSet.length ? goodsIdsSet : ''),
+        tp_id: this.form.tp_id,
+        goods_name: this.form.goods_name
+      }
+      if (this.form.captureTime) {
+        const startTime = this.form.captureTime[0]
+        const endTime = this.form.captureTime[1]
+        if (startTime && endTime) {
+          data.migrate_start_time = startTime
+          data.migrate_end_time = endTime
+        }
+      }
+      console.log(data)
       this.$emit('filter', data)
     },
     clearCategory () {
@@ -322,6 +371,10 @@ export default {
       event.stopPropagation()
       const ref = this.$refs.newComer
       ref && ref.close && ref.close()
+    },
+    handleClear (key) {
+      this.form[key] = this.originForm[key]
+      console.log(this.form, 'this.form')
     },
     getIcon (name) {
       if (name === '淘宝') {
@@ -397,7 +450,7 @@ export default {
 .btn {
   position:absolute;
   right:20px;
-  bottom:10px;
+  bottom:5px;
 }
 
 .textarea-id {

@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div>
-    <Search />
+    <Search  @filter="handleFilter" tipType="源同步"/>
     <div class="left pr-10 click mb-10 pl-20 pt-10 flex align-c">
       <el-checkbox v-model="handleAllSelectionChange">一键全选所有商品</el-checkbox>
       <el-tooltip
@@ -146,7 +146,8 @@ export default {
     ...mapActions('productManagement/productsSync/tableProductList', [
       'fetch',
       'handleCurrentChange',
-      'handleSizeChange'
+      'handleSizeChange',
+      'setFilter'
     ]),
     handleCancel () {
       this.$emit('goback')
@@ -156,6 +157,9 @@ export default {
     },
     handleAllSelectionChange () {
 
+    },
+    handleFilter (data) {
+      this.setFilter(data)
     }
   }
 }
