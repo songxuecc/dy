@@ -128,6 +128,9 @@ export default {
     if (this.isAuth && window.location.pathname !== 'authorize') {
       this.asyncUserAndNotice()
       this.userVersionQuery()
+      this.getCaptureShopCompleteList({
+        push: this.$router.push.bind(this.$router)
+      })
     }
   },
   watch: {
@@ -142,6 +145,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('migrate/startMigrate', ['getCaptureShopCompleteList']),
     ...mapActions('migrate/readyToMigrate', [
       'userVersionQuery'
     ]),

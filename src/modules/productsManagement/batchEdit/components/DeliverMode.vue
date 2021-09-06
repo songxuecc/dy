@@ -50,7 +50,6 @@
             <el-input-number
                 controls-position="right"
                 @change="handleChange"
-                :picker-options="pickerOptions"
                 v-model="form.presell_delay"
                 :min="2"
                 :max="15"
@@ -73,7 +72,6 @@
             <el-input-number
                 controls-position="right"
                 @change="handleChange"
-                :picker-options="pickerOptions"
                 v-model="form.presell_delay"
                 :min="3"
                 :max="5"
@@ -110,6 +108,14 @@ export default {
         delivery_delay_day: 2,
         presell_end_time: '',
         presell_delay: 3
+      },
+      pickerOptions: {
+        disabledDate: (time) => {
+          const value = moment(time)
+          const now = moment()
+          const diff = value.diff(now, 'days', true)
+          return diff > 30 || value.isBefore(now, 'days')
+        }
       },
       rules: {
         presell_end_time: [
