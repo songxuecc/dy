@@ -11,22 +11,47 @@
             </div>
             <p>当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。避免因货源方的信息变化造成损失。</p>
       </div>
-      <el-button type="primary" size="medium" class="mb-10" @click="handleGo(undefined,2)">创建商品原同步计划</el-button>
+      <el-button type="primary" size="medium" class="mb-10" @click="handleGo(undefined,2)">创建商品源同步计划</el-button>
 
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%" v-loading="loading">
       <el-table-column prop="task_title" label="计划名称" >
+        <template slot-scope="scope">
+          <div>
+            我是计划名称最多20个 字最多两行字最多两行
+          </div>
+        </template>
       </el-table-column>
-      <el-table-column prop="task_title" label="计划类型" >
+      <el-table-column prop="sync_type" label="计划类型"  align="center" width="195">
+        <template slot-scope="scope">
+          <div>
+            {{sync_type[scope.row.sync_type || 2]}}
+          </div>
+        </template>
       </el-table-column>
-      <el-table-column prop="success_nums" label="商品数">
+      <el-table-column prop="total_nums" label="商品数" align="center" width="65">
       </el-table-column>
-      <el-table-column prop="date" label="同步结果" >
+      <el-table-column   label="检测结果" align="center" width="195">
+        <template slot-scope="scope">
+          <div>
+            <div class="color-4e font-13 mb-5">
+              <span>成功{{scope.row.success_nums}}</span>
+              <span>失败{{scope.row.fail_nums}}</span>
+            </div>
+            <div class="color-999 font-12">2021-08-25 22:42:58 完成检测</div>
+          </div>
+        </template>
       </el-table-column>
-      <el-table-column prop="create_time" label="状态" >
+      <el-table-column prop="status" label="状态"   align="center" width="65">
+        <template slot-scope="scope">
+          <div>
+            {{status[scope.row.status]}}
+          </div>
+        </template>
       </el-table-column>
-      <el-table-column label="操作" width="270">
+      <el-table-column label="操作" width="310"   align="center">
          <template slot-scope="scope">
-          <a class="pramiry pointer " @click="onDelete(scope.row)">开始同步</a>
+          <a class="pramiry pointer " @click="onDelete(scope.row)" v-if="scope.row.sync_type === 1">开始检测</a>
+          <a class="pramiry pointer " @click="onDelete(scope.row)" v-else>开始检测修改</a>
           <a class="pramiry pointer pl-5" @click="handleOpen(scope.row)" >检测详情</a>
           <a class="pramiry pointer pl-5" @click="handleGo(scope.row,3)" >修改商品</a>
           <a class="pramiry pointer pl-5" @click="handleGo(scope.row,2)" >编辑计划</a>
@@ -36,9 +61,15 @@
     </el-table>
 
     <DrawerSyncDetail ref="DrawerSyncDetail" />
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-      :current-page="pagination.page_index" class=" pt-20 right mr-20" :page-size="pagination.page_size"  :page-sizes="[10, 20, 50, 100]"
-      layout="total, sizes, prev, pager, next, jumper" :total="total">
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagination.page_index"
+      class=" pt-20 right mr-20"
+      :page-size="pagination.page_size"
+      :page-sizes="[10, 20, 50, 100]"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
     </el-pagination>
 
   </div>
@@ -57,12 +88,23 @@ export default {
   },
   data () {
     return {
+      status: {
+        0: '未开始',
+        1: '进行中',
+        2: '已完成',
+        3: '失败'
+      },
+      sync_type: {
+        1: '检测变化并提交修改',
+        2: '仅检测变化，需人工提交修改'
+      }
     }
   },
   created () {
     this.fetch()
   },
-
+  watch: {
+  },
   components: {
     DrawerSyncDetail
   },
@@ -72,7 +114,10 @@ export default {
       'total',
       'pagination',
       'filters'
-    ])
+    ]),
+    ...mapState({
+      loading: state => state['@@loading'].effects['productManagement/productsSync/tableSyncRecord/query']
+    })
   },
   methods: {
     ...mapActions('productManagement/productsSync/tableSyncRecord', [

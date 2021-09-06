@@ -15,11 +15,68 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"> </el-table-column>
-      <el-table-column label="日期" width="120">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
+       <el-table-column
+          label="图片"
+          width="70"
+          align="center"
+          prop="id">
+        <template slot-scope="scope">
+          <el-image
+              style="height:50px;max-width:50px;border-radius:2px"
+              :src="scope.row.image_url"
+              fit="contain"
+              :preview-src-list="[scope.row.image_url]"
+              >
+              <div slot="placeholder">
+                  <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
+              </div>
+              <div slot="error" class="flex align-c" style="height:100%">
+                  <hh-icon  type="icontupianjiazaishibai03" style="font-size:30px" />
+              </div>
+          </el-image>
+        </template>
       </el-table-column>
-      <el-table-column prop="name" label="姓名" width="120"> </el-table-column>
-      <el-table-column prop="address" label="地址" show-overflow-tooltip>
+
+      <el-table-column
+        label="标题"
+        width="">
+        <template slot-scope="scope">
+            <el-link :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' + scope.row.goods_id" target="_blank" >
+              {{ scope.row.goods_name }}
+              </el-link><br>
+            <div class="font-12 flex align-c color-999" style="margin-top:3px">
+                  <span >商品ID: {{ scope.row.goods_id }}</span>
+                  <span class="ml-10 mr-10 presell_type jieti" v-if="scope.row.presell_type === 2">阶梯发货</span>
+                  <span class="ml-10 mr-10 presell_type xianhuo" v-if="scope.row.presell_type === 0">现货发货</span>
+                  <span class="ml-10 mr-10 presell_type yushou" v-if="scope.row.presell_type === 1">预售发货</span>
+              </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="category_show"
+        label="类目"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="min_price"
+        label="售卖价"
+        width="120">
+        <template slot-scope="scope">
+          {{ (scope.row.min_price / 100).toFixed(2) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="market_price"
+        label="市场价"
+        width="120">
+        <template slot-scope="scope">
+          {{ (scope.row.market_price / 100).toFixed(2) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="status"
+        label="销售状态"
+        width="120">
       </el-table-column>
     </el-table>
 
@@ -37,8 +94,10 @@
 <script>
 import Search from './Search'
 import {
+  mapActions,
   mapState
 } from 'vuex'
+
 export default {
   name: 'component_name',
   props: {},
@@ -47,55 +106,29 @@ export default {
   },
   data () {
     return {
-      tableData: [
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-08',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-07',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }
-      ],
       multipleSelection: []
     }
   },
   computed: {
-    ...mapState('productManagement/productsSync/tableSyncRecord', [
+    ...mapState({
+      loading: state => state['@@loading'].effects['productManagement/productsSync/tableProductList/query']
+    }),
+    ...mapState('productManagement/productsSync/tableProductList', [
       'tableData',
       'total',
       'pagination',
       'filters'
     ])
   },
+  created () {
+    this.fetch()
+  },
   methods: {
+    ...mapActions('productManagement/productsSync/tableProductList', [
+      'fetch',
+      'handleCurrentChange',
+      'handleSizeChange'
+    ]),
     handleCancel () {
       this.$emit('goback')
     },

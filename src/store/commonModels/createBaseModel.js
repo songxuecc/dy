@@ -48,6 +48,7 @@ const checkHandleError = (handleError) => {
 }
 
 const checkFetch = (fetch) => {
+  console.log(fetch, 'fetch')
   if (fetch && !isFunction(fetch)) {
     throw new TypeError('fetch is not a Function.')
   }
@@ -66,12 +67,14 @@ class BaseModelClass {
 
     // 函数名称前缀
     this.name = options.name
+    console.log(options, 'options')
 
     return this.baseModel()
   }
 
   baseModel () {
     const self = this
+
     return ({
       namespaced: true,
       // 在extends的model.state里写同key值数据就可以覆盖本下面初始化的model.state
@@ -127,6 +130,7 @@ class BaseModelClass {
               let debounceHandleError = debounce(handleError, 1500)
               debounceHandleError(err, this)
             } else {
+              console.log(`[createBaseModel] : ${err}`)
               throw new Error(err)
             }
           }

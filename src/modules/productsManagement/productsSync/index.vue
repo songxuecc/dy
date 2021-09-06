@@ -16,7 +16,7 @@ import TableProductList from './components/TableProductList'
 export default {
   data () {
     return {
-      step: 1,
+      step: 3,
       prevStep: 3
     }
   },

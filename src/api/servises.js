@@ -411,7 +411,17 @@ const hhgjAPIs = {
   },
   getCaptureShopCompleteList: (params) => {
     return api.actionCreateGet('/api/capture/shop/complete/list', params)
+  },
+  statisticsEventCreate: (params) => {
+    return api.actionCreatorPost('/api/statisticsEvent/create ', params)
+  },
+  productSourceSyncDetailPage: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/detail/page', params)
+  },
+  productSourceSyncCreate: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/create', params)
   }
+
 }
 
 export default hhgjAPIs

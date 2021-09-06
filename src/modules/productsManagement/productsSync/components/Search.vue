@@ -9,7 +9,7 @@
       size="small"
       label-position="left"
     >
-      <el-form-item label="商品状态" prop="region" >
+      <el-form-item label="商品状态" prop="region">
         <el-select
           v-model="form.status"
           placeholder="请选择商品状态"
@@ -58,10 +58,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item
-        label="输入名称"
-        prop="region"
-      >
+      <el-form-item label="输入名称" prop="region">
         <el-input
           autosize
           placeholder="输入名称"
@@ -69,6 +66,17 @@
           class="w-180"
         >
         </el-input>
+      </el-form-item>
+
+      <el-form-item label="搬家时间" prop="region">
+        <el-date-picker
+          v-model="value1"
+          type="datetimerange"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="['12:00:00']"
+        >
+        </el-date-picker>
       </el-form-item>
 
       <el-form-item
@@ -86,11 +94,7 @@
         </el-input>
       </el-form-item>
 
-      <el-form-item
-        label="商品分类"
-        prop="region"
-        style="display: block"
-      >
+      <el-form-item label="商品分类" prop="region" style="display: block">
         <span
           style="display: inline-flex; align-items: center; flex-wrap: wrap"
           v-if="!l"
@@ -263,7 +267,13 @@ export default {
 .w-180 {
   width: 180px;
 }
- /deep/ .el-form-item{
-        margin-bottom: 2px;
-    }
+/deep/ .el-form-item {
+  margin-bottom: 2px;
+}
+
+.dropdown {
+  height: 32px;
+  line-height: 32px;
+  font-size: 12px;
+}
 </style>
