@@ -1,19 +1,20 @@
 <!--  -->
 <template>
-  <div class="left search">
+  <div class="left search relative">
     <el-form
       :model="form"
       ref="form"
-      label-width="60px"
+      label-width="65px"
       inline
       size="small"
       label-position="left"
+      class=""
     >
-      <el-form-item label="商品状态" prop="region">
+      <el-form-item style="width: 325px" label="商品状态" prop="region" class="">
         <el-select
           v-model="form.status"
           placeholder="请选择商品状态"
-          class="w-180 mr-10"
+          class="w-235  mb-10"
         >
           <el-option
             class="left dropdown"
@@ -25,11 +26,11 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="发货模式" prop="region">
+      <el-form-item style="width: 325px" label="发货模式" prop="region">
         <el-select
           v-model="form.presell_type"
           placeholder="请选择发货模式"
-          class="w-180 mr-10"
+          class="w-235 mb-10"
         >
           <el-option
             class="left dropdown"
@@ -41,11 +42,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="是否抓取" prop="region">
+
+      <!-- <el-form-item style="width: 325px" label="是否抓取" prop="region">
         <el-select
           v-model="form.captureStatus"
           placeholder="请选择是否抓取"
-          class="w-180 mr-10"
+          class="w-235 mb-10"
         >
           <el-option
             class="left dropdown"
@@ -56,45 +58,73 @@
           >
           </el-option>
         </el-select>
+      </el-form-item> -->
+
+      <el-form-item style="width: 325px" label="抓取平台" prop="region">
+        <el-select
+          v-model="form.tp_id"
+          placeholder="请选择抓取平台"
+          class="w-235 mb-10"
+        >
+          <el-option
+            class="left dropdown"
+            v-for="item in captureTpId"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+            <span style="float: left">{{ item.label }}</span>
+            <!-- <images style="float: right; color: #8492a6; width: 13px" v-if="item.label !== -1" :src="getIcon(item.label)"></images> -->
+
+            <img style="width: 14px;float: right; height: 14px;margin-right:2px;" v-if="item.label !== -1" :src="getIcon(item.label)">
+          </el-option>
+        </el-select>
       </el-form-item>
 
-      <el-form-item label="输入名称" prop="region">
+      <el-form-item label="输入名称" prop="region" style="width: 325px">
         <el-input
           autosize
           placeholder="输入名称"
-          v-model="goods_ids"
-          class="w-180"
+          v-model="form.goods_name"
+          class="w-235 mb-10"
         >
         </el-input>
       </el-form-item>
 
-      <el-form-item label="搬家时间" prop="region">
+      <el-form-item label="搬家时间" prop="region" style="width: 325px">
         <el-date-picker
-          v-model="value1"
-          type="datetimerange"
+          style="width:235px"
+          class="mb-10"
+          v-model="form.captureTime"
+          type="daterange"
+          range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          :default-time="['12:00:00']"
+          value-format="yyyy-MM-dd"
         >
         </el-date-picker>
       </el-form-item>
 
       <el-form-item
-        label="输入商品ID"
         prop="region"
-        style="display: block"
-        class="mt-10"
+        class="product-id relative"
+        style="width: 325px;"
       >
+        <span slot="label" style="display:inline-block;">输入商品ID</span>
         <el-input
           type="textarea"
           autosize
           placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
-          v-model="goods_ids"
+          v-model="form.goods_id_list"
+          style="width:235px"
+          class="mb-10 textarea-id"
         >
         </el-input>
       </el-form-item>
 
-      <el-form-item label="商品分类" prop="region" style="display: block">
+      <el-form-item prop="region" class="product-id " style="min-width:325px;margin-right:90px;display: inline-flex;">
+        <span slot="label" style="display:inline-block;">商品分类</span>
+
         <span
           style="display: inline-flex; align-items: center; flex-wrap: wrap"
           v-if="!l"
@@ -134,6 +164,25 @@
           >
         </span>
       </el-form-item>
+
+       <el-form-item class="btn">
+        <el-button
+          type="primary"
+          @click="handleFilterChange"
+          style="width: 60px;margin-left:30px;"
+        >
+          <span class="font-12">查询</span>
+        </el-button>
+        <NewComer type="商品源同步查询提示" ref="newComer" direction="bottom" :noAuth="true" class="nn">
+          <div style="width:190px">
+          <div  class="color-666 font-12 left mb-5">
+              <hh-icon type="icontishi" ></hh-icon>&nbsp;小提醒：选择后请点击查询哦~
+              <div class="ml-10 right">&nbsp;&nbsp;<span  class="right pointer underline primary" @click="tipTrigger">好的</span></div>
+          </div>
+          </div>
+      </NewComer>
+      </el-form-item>
+
     </el-form>
 
     <el-dialog
@@ -173,8 +222,27 @@ export default {
       form: {
         status: '-',
         presell_type: -1,
-        captureStatus: -1
+        captureStatus: -1,
+        tp_id: -1,
+        goods_id_list: '',
+        captureTime: [],
+        goods_name: ''
       },
+      captureTpId: [
+        { value: -1, label: '全部' },
+        { value: 1001, label: '天猫' },
+        { value: 1002, label: '淘宝' },
+        { value: 1003, label: '1688' },
+        { value: 1004, label: '京东' },
+        { value: 1005, label: '苏宁' },
+        { value: 1006, label: '网易考拉' },
+        { value: 1007, label: '唯品会' },
+        { value: 1012, label: 'vvic搜款网' },
+        { value: 1014, label: '一起做网店17' },
+        { value: 2002, label: '抖音' },
+        { value: 2003, label: '拼多多' },
+        { value: 2004, label: '有赞' }
+      ],
       captureStatusOptions: [
         { value: -1, label: '全部' },
         { value: 0, label: '非抓取' },
@@ -201,6 +269,11 @@ export default {
     }
   },
   methods: {
+    handleFilterChange () {
+      const data = {}
+      console.log(this.form)
+      this.$emit('filter', data)
+    },
     clearCategory () {
       this.categorys = []
     },
@@ -244,6 +317,42 @@ export default {
         ...data,
         type: arr[this.categorys.length % 5]
       })
+    },
+    tipTrigger (e) {
+      event.stopPropagation()
+      const ref = this.$refs.newComer
+      ref && ref.close && ref.close()
+    },
+    getIcon (name) {
+      if (name === '淘宝') {
+        return require('@/assets/images/taobao.png')
+      } else if (name === '天猫') {
+        return require('@/assets/images/tm.png')
+      } else if (name === '1688') {
+        return require('@/assets/images/1688.png')
+      } else if (name === '京东') {
+        return require('@/assets/images/jd.png')
+      } else if (name === '苏宁') {
+        return require('@/assets/images/sn.png')
+      } else if (name === '网易考拉') {
+        return require('@/assets/images/kaola.png')
+      } else if (name === '唯品会') {
+        return require('@/assets/images/vph.png')
+      } else if (name === '一起做网店17') {
+        return require('@/assets/images/17.png')
+      } else if (name === '抖音') {
+        return require('@/assets/images/dy.png')
+      } else if (name === '拼多多') {
+        return require('@/assets/images/pdd.png')
+      } else if (name === '蝉妈妈') {
+        return require('@/assets/images/chanmama.png')
+      } else if (name === 'vvic搜款网') {
+        return require('@/assets/images/soukuanwang.png')
+      } else if (name === '有赞') {
+        return require('@/assets/images/youzan.png')
+      }
+
+      return ''
     }
   }
 }
@@ -264,8 +373,8 @@ export default {
   margin-bottom: 10px;
 }
 
-.w-180 {
-  width: 180px;
+.w-235 {
+  width: 235px;
 }
 /deep/ .el-form-item {
   margin-bottom: 2px;
@@ -275,5 +384,23 @@ export default {
   height: 32px;
   line-height: 32px;
   font-size: 12px;
+}
+
+/deep/ .product-id {
+  .el-form-item__label {
+  padding-right: 0px;
+  margin-right: 0px;
+  flex-shrink: 0;
+
+  }
+}
+.btn {
+  position:absolute;
+  right:20px;
+  bottom:10px;
+}
+
+.textarea-id {
+  position: absolute;
 }
 </style>

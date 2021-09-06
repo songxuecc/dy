@@ -38,6 +38,8 @@ export default {
     handleGo (row, type) {
       this.prevStep = this.step
       this.step = type
+
+      console.log(this.step, 'this.step')
     },
     goback () {
       const prevStep = this.step

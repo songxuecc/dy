@@ -402,11 +402,11 @@ export default {
       this.$refs.form.validateField(['config_json.is_sync_shelf', 'config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])
     },
     goback: debounce(function () {
-      this.$emit('goback')
+      this.$emit('go', null, 3)
       // this.$refs.form.validate((valid, object) => {
       //   console.log(object, 'object')
       //   if (valid) {
-      //     this.$emit('goback')
+      //     this.$emit('go')
       //   }
       // })
       // 验证
@@ -414,7 +414,7 @@ export default {
       // servises.hhgjAPIs.productSourceSyncCreate(data=>{
 
       // })
-      // this.$emit('goback')
+      // this.$emit('go')
     }, 300),
     toggleIsShowSample () {
       this.isShowSample = true
