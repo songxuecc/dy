@@ -214,6 +214,13 @@
                               <p><a style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/113081">点击查询阶梯发货规则</a></p>
                             </ul>
                         </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('商品创建失败31,商品标题未明确描述商品品名') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
+                              <p>商品标题不符合抖音填写规范，请按照商品标题填写规范进行修改</p>
+                              <p><a style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101800?from=shop_article">商品标题填写规范</a></p>
+                            </ul>
+                        </div>
                         <div slot="content"  v-else>
                             <hh-icon type="iconjinggao1"></hh-icon>
                             <span style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">

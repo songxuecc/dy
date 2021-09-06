@@ -439,9 +439,16 @@ export default {
       this.capture({ urls, capture_type: 1 })
 
       if (urls.every(url => url.indexOf('jinritemai') > -1)) {
-        this.getCaptureShopCompleteList()
+        this.getCaptureShopCompleteList({
+          push: this.$router.push.bind(this.$router)
+        })
       }
 
+      if (urls.every(url => url.indexOf('youzan.com') > -1)) {
+        this.getCaptureShopCompleteList({
+          push: this.$router.push.bind(this.$router)
+        })
+      }
       // Api.hhgjAPIs.getCaptureShopCompleteList()
     },
     // 绑定复制
