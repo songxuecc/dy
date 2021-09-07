@@ -139,7 +139,7 @@ class BaseModelClass {
           dispatch
         }, payload) {
           const pagination = state.pagination
-          pagination.page_size = payload.pagination.page_size
+          pagination.page_size = payload
           const filters = state.filters
           dispatch('query', {
             pagination,
@@ -151,7 +151,7 @@ class BaseModelClass {
           dispatch
         }, payload) {
           const pagination = state.pagination
-          pagination.page_index = payload.pagination.page_index
+          pagination.page_index = payload
           const filters = state.filters
           dispatch('query', {
             pagination,
