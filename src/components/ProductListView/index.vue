@@ -221,6 +221,12 @@
                               <p><a style="color: #409EFF;" target="view_window" href="https://school.jinritemai.com/doudian/web/article/101800?from=shop_article">商品标题填写规范</a></p>
                             </ul>
                         </div>
+                        <div slot="content"  v-else-if="scope.row.migration_msg && scope.row.migration_msg[0] && scope.row.migration_msg[0].indexOf('现货库存数必须大于阶梯库存数') > -1 && scope.row.status === 5"  >
+                            <ul style="padding: 0; margin: 0; margin-top: 6px;" :key="0"  class="font-13">
+                              <hh-icon type="iconjinggao1"></hh-icon>
+                              <p>官方规定现货库存需大于阶梯库存。由于该商品总库存为0，无法满足该要求。请修改商品库存或者调整发货方式。</p>
+                            </ul>
+                        </div>
                         <div slot="content"  v-else>
                             <hh-icon type="iconjinggao1"></hh-icon>
                             <span style="padding: 0; margin: 0; margin-top: 6px;" v-for="(v,i) in scope.row.migration_msg" :key="i">
