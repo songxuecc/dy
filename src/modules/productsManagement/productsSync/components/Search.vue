@@ -90,10 +90,10 @@
         <el-input
           autosize
           placeholder="输入名称"
-          v-model="form.goods_name"
+          v-model="form.keyword"
           class="w-235 mb-10"
           clearable
-          @clear="handleClear('goods_name')"
+          @clear="handleClear('keyword')"
         >
         </el-input>
       </el-form-item>
@@ -234,7 +234,7 @@ export default {
         tp_id: -1,
         goods_id_list: '',
         captureTime: [],
-        goods_name: ''
+        keyword: ''
       },
       originForm: {
         status: '-',
@@ -243,7 +243,7 @@ export default {
         tp_id: -1,
         goods_id_list: '',
         captureTime: [],
-        goods_name: ''
+        keyword: ''
       },
       goods_ids: '',
       captureTpId: [
@@ -287,6 +287,7 @@ export default {
     }
   },
   methods: {
+    // 查询
     handleFilterChange () {
       const limit = 100
       const goodsIds = this.goods_ids.split(/[\s\n]/).filter(item => item).map(item => item.trim())
@@ -310,7 +311,7 @@ export default {
         category_leaf_id_list: JSON.stringify(this.categorys.map(item => item.id)),
         goods_id_list: JSON.stringify(goodsIdsSet.length ? goodsIdsSet : ''),
         tp_id: this.form.tp_id,
-        goods_name: this.form.goods_name
+        keyword: this.form.keyword
       }
       if (this.form.captureTime) {
         const startTime = this.form.captureTime[0]
@@ -328,7 +329,6 @@ export default {
     },
     chooseCategory (idx, category) {
       this.categoryVislble = true
-      // const category = this.category
       if (category) {
         this.categoryActiveIdx = idx
         this.category = category

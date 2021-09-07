@@ -48,7 +48,6 @@ const checkHandleError = (handleError) => {
 }
 
 const checkFetch = (fetch) => {
-  console.log(fetch, 'fetch')
   if (fetch && !isFunction(fetch)) {
     throw new TypeError('fetch is not a Function.')
   }
@@ -67,7 +66,6 @@ class BaseModelClass {
 
     // 函数名称前缀
     this.name = options.name
-    console.log(options, 'options')
 
     return this.baseModel()
   }
@@ -96,6 +94,7 @@ class BaseModelClass {
         }, payload) {
           const {pagination = state.pagination, filters = {}} = payload || {}
 
+          console.log(payload, 'payload')
           // 保存初始化的pagination
           if (self.isFitsrFetch) {
             self.originPagination = state.pagination
@@ -140,7 +139,7 @@ class BaseModelClass {
           dispatch
         }, payload) {
           const pagination = state.pagination
-          pagination.page_size = payload
+          pagination.page_size = payload.pagination.page_size
           const filters = state.filters
           dispatch('query', {
             pagination,
@@ -152,7 +151,7 @@ class BaseModelClass {
           dispatch
         }, payload) {
           const pagination = state.pagination
-          pagination.page_index = payload
+          pagination.page_index = payload.pagination.page_index
           const filters = state.filters
           dispatch('query', {
             pagination,
@@ -162,10 +161,10 @@ class BaseModelClass {
         setFilter ({
           dispatch
         }, payload) {
-          const filters = payload
+          const { filters } = payload
           dispatch('query', {
             filters,
-            pagination: this.originPagination
+            pagination: self.originPagination
           })
         }
       }

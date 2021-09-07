@@ -415,11 +415,27 @@ const hhgjAPIs = {
   statisticsEventCreate: (params) => {
     return api.actionCreatorPost('/api/statisticsEvent/create ', params)
   },
-  productSourceSyncDetailPage: (params) => {
-    return api.actionCreatorPost('/api/product/source/sync/detail/page', params)
-  },
+  // 商品源同步
   productSourceSyncCreate: (params) => {
     return api.actionCreatorPost('/api/product/source/sync/create', params)
+  },
+  productSourceSyncPage: (params) => {
+    return api.actionCreateGet('/api/product/source/sync/page', params)
+  },
+  productSourceSyncDelete: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/delete', params)
+  },
+  productSourceSyncDetailPage: (params) => {
+    return api.actionCreateGet('/api/product/source/sync/detail/page', params)
+  },
+  productSourceSyncProgressQuery: (params) => {
+    return api.actionCreateGet('/api/product/source/sync/progress/query', params)
+  },
+  productSourceSyncDetailRun: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/run', params)
+  },
+  productSourceSyncPublish: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/publish', params)
   }
 
 }

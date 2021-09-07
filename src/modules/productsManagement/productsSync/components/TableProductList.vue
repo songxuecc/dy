@@ -171,25 +171,12 @@ export default {
     },
     selectParmas () {
       const parmas = {
-        is_all: false,
-        delete_goods_id_list: [],
-        goods_id_list: []
+        is_all: this.is_all,
+        delete_goods_id_list: JSON.stringify([]),
+        goods_id_list: JSON.stringify([])
       }
-      if (this.is_all) {
-        parmas.is_all = this.is_all
-        // const size = this.pagination.page_size
-        // const allData = [...this.tableDataMap.keys()]
-        //   .filter(keyStr => JSON.parse(keyStr).page_size === size)
-        //   .map(keyStr => this.tableDataMap.get(keyStr))
-        //   .reduce((t, c) => [...t, ...c], [])
-        //   .map(item => item.goods_id)
-
-        // const allDataSet = new Set(allData)
-        // const multipleSelection = new Set(this.multipleSelection.map(item => item.goods_id))
-
-        // const difference = [...allDataSet].filter(item => !multipleSelection.has(item))
-        // parmas.goods_id_list = difference
-        // console.log(difference, 'difference')
+      if (!this.is_all) {
+        parmas.goods_id_list = JSON.stringify(this.multipleSelection.map(row => row.goods_id))
       }
       return parmas
     }
@@ -206,7 +193,6 @@ export default {
     // 一件全选时 数据请求初始化
     tableData: {
       handler: function (n) {
-        console.log(n, 'tableData')
         const tableDataMap = this.tableDataMap
         n.forEach(row => {
           const rowMap = tableDataMap.get(row.goods_id)

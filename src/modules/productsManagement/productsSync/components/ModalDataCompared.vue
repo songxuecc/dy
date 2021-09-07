@@ -14,8 +14,8 @@
             <el-image
               style="height:50px;max-width:50px;border-radius:2px;margin-right:14px"
               fit="contain"
-              :src="'https://img01.yzcdn.cn/upload_files/2017/06/19/Fme9JZz7T1rB8sSLnsnCk2gILNp_.png'"
-              :preview-src-list="['https://img01.yzcdn.cn/upload_files/2017/06/19/Fme9JZz7T1rB8sSLnsnCk2gILNp_.png']"
+              :src="rowData.image_url"
+              :preview-src-list="[rowData.image_url]"
               >
               <div slot="placeholder">
                   <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
@@ -25,22 +25,30 @@
               </div>
             </el-image>
           <div>
-            <p class="color-4e font-12 mb-5">移动互联网产品设计的核心要素有哪些？</p>
-            <p class="color-999 font-12">商品ID：371073012830918</p>
+            <p class="color-4e font-12 mb-5">{{rowData.goods_name}}</p>
+            <p class="color-999 font-12">商品ID： {{rowData.goods_id}}</p>
           </div>
           </div>
           <div class="right color-4e">
-            同步时间：2021-10-12 10:1
+            同步时间：{{rowData.sync_time}}
           </div>
       </div>
 
-      <el-table :data="tableData" style="width: 100%">
+      <el-table
+        :data="tableData"
+        style="width: 100%" >
         <el-table-empty slot="empty"/>
-        <el-table-column prop="date" label="日期" width="180" align="center">
+        <el-table-column prop="data_type" label="检测内容" width="180" align="center">
+          <template slot-scope="scope">
+              <span v-if="scope.row.data_type === 'title'">标题</span>
+              <span v-if="scope.row.data_type === 'stock'">库存</span>
+              <span v-if="scope.row.data_type === 'price'">价格</span>
+              <span v-if="scope.row.data_type === 'shelf'">上下架</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="180" align="center">
+        <el-table-column prop="old_data" label="原数据" align="center">
         </el-table-column>
-        <el-table-column prop="address" label="地址"> </el-table-column>
+        <el-table-column prop="new_data" label="现数据" align="center"> </el-table-column>
       </el-table>
     </div>
   </el-dialog>
@@ -55,33 +63,16 @@ export default {
   data () {
     return {
       visible: false,
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ]
+      tableData: [],
+      rowData: {}
     }
   },
   methods: {
-    open () {
+    open (rowData) {
       this.visible = true
+      console.log(rowData, 'rowData')
+      this.tableData = rowData.data_list
+      this.rowData = rowData
     }
   }
 }
@@ -91,6 +82,6 @@ export default {
   width: 725px;
   height: 50px;
   background: #EAEDFA;
-  padding: 12px 16px;
+  padding: 12px ;
 }
 </style>

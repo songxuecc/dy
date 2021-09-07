@@ -18,7 +18,6 @@ const model = modelExtend(
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
         await dispatch('query', { ...payload })
-        console.log(state, 'data-tableProductList')
       }
     },
     getters: {

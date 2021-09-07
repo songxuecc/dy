@@ -15,13 +15,7 @@
 
     <el-table :data="tableData" style="width: 100%" v-loading="loading">
       <el-table-empty slot="empty"/>
-      <el-table-column prop="task_title" label="计划名称" >
-        <template slot-scope="scope">
-          <div>
-            我是计划名称最多20个 字最多两行字最多两行
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column prop="task_title" label="计划名称" ></el-table-column>
       <el-table-column prop="sync_type" label="计划类型"  align="center" width="195">
         <template slot-scope="scope">
           <div>
