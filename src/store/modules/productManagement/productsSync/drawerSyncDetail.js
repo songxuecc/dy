@@ -10,7 +10,7 @@ const model = modelExtend(
     namespaced: true,
     state: () => ({
       pagination: {
-        page_size: 5,
+        page_size: 10,
         page_index: 1
       }
     }),

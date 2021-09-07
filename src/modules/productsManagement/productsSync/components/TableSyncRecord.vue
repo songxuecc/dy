@@ -14,6 +14,7 @@
       <el-button type="primary" size="medium" class="mb-10" @click="handleGo(undefined,2)">创建商品源同步计划</el-button>
 
     <el-table :data="tableData" style="width: 100%" v-loading="loading">
+      <el-table-empty slot="empty"/>
       <el-table-column prop="task_title" label="计划名称" >
         <template slot-scope="scope">
           <div>

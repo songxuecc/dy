@@ -10,9 +10,10 @@ const model = modelExtend(
     namespaced: true,
     state: () => ({
       pagination: {
-        page_size: 5,
+        page_size: 10,
         page_index: 1
-      }
+      },
+      tableDataMap: new Map()
     }),
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
@@ -21,6 +22,7 @@ const model = modelExtend(
       }
     },
     getters: {
+
     }
   })
 

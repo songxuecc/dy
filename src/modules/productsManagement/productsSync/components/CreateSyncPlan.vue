@@ -378,7 +378,7 @@ export default {
   },
   methods: {
     async init () {
-      const template = await servises.hhgjAPIs.getTemplate()
+      const template = await servises.getTemplate()
       // 库存
       this.form.config_json.current_stock_rate = template.step_stock_num_percentage
       // 标题
@@ -402,13 +402,12 @@ export default {
       this.$refs.form.validateField(['config_json.is_sync_shelf', 'config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])
     },
     goback: debounce(function () {
-      this.$emit('go', null, 3)
-      // this.$refs.form.validate((valid, object) => {
-      //   console.log(object, 'object')
-      //   if (valid) {
-      //     this.$emit('go')
-      //   }
-      // })
+      this.$refs.form.validate((valid, object) => {
+        console.log(object, 'object')
+        if (valid) {
+          this.$emit('go', null, 3)
+        }
+      })
       // 验证
       // const data = this.getForm()
       // servises.hhgjAPIs.productSourceSyncCreate(data=>{

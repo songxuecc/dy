@@ -1,9 +1,11 @@
 <!--  -->
 <template>
-  <div>
+  <div class="productsSync-TableProductList" ref="TableProductList">
     <Search  @filter="handleFilter" tipType="源同步"/>
     <div class="left pr-10 click mb-10 pl-20 pt-10 flex align-c">
-      <el-checkbox v-model="handleAllSelectionChange">一键全选所有商品</el-checkbox>
+      <el-checkbox v-model="is_all" @change="handleAllSelectionChange">
+        <span :class="[is_all?'color-primary':'']">一键全选所有商品</span>
+      </el-checkbox>
       <el-tooltip
         class="item"
         effect="dark"
@@ -19,8 +21,19 @@
       tooltip-effect="dark"
       style="width: 100%"
       @selection-change="handleSelectionChange"
+      highlight-current-row
+      :header-cell-class-name="getHeaderCellClassName"
+      @select-all="handleSelectionAll"
+      v-loading="loading"
+      row-key="goods_id"
     >
-      <el-table-column type="selection" width="55"> </el-table-column>
+      <el-table-empty slot="empty"/>
+      <el-table-column
+        type="selection"
+        width="55"
+        :selectable="isSelectionEnable"
+        :reserve-selection="true">
+      </el-table-column>
       <el-table-column label="图片" width="70" align="center" prop="id">
         <template slot-scope="scope">
           <el-image
@@ -101,13 +114,19 @@
       :total="total"
     >
     </el-pagination>
-    <div class="pb-20">
-      <el-button type="primary" plain style="width: 120px" @click="handleCancel"
-        >返回上一步</el-button
-      >
-      <el-button type="primary" style="width: 120px" @click="handleConfirm"
-        >完成创建{{multipleSelection.length}}</el-button
-      >
+    <div v-if="startFixed" style="height:102px;width:100%"></div>
+    <div
+      ref="startMigrateBtn"
+      :style="{'margin-right': startFixed ? `${scrollWidth + 40}px` : 0}"
+      :class="[startFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex' ,'justify-c'] ">
+      <div style="width:200px;margin-right:10px" v-if="startFixed"></div>
+      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;display:flex;" class="flex justify-c ">
+        <el-button type="primary" plain style="width: 120px" @click="handleCancel"
+          >返回上一步</el-button
+        >
+        <el-button type="primary" style="width: 120px" @click="handleConfirm"
+          >完成创建({{ is_all ? total : multipleSelection.length}})</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -115,6 +134,8 @@
 <script>
 import Search from './Search'
 import { mapActions, mapState } from 'vuex'
+import debounce from 'lodash/debounce'
+// import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   name: 'component_name',
@@ -125,7 +146,10 @@ export default {
   data () {
     return {
       multipleSelection: [],
-      checked: false
+      is_all: false,
+      currentRow: null,
+      startFixed: false,
+      tableDataMap: new Map()
     }
   },
   computed: {
@@ -137,10 +161,67 @@ export default {
       'total',
       'pagination',
       'filters'
-    ])
+    ]),
+    multipleSelectionId () {
+      let obj = {}
+      this.multipleSelection.forEach(item => {
+        obj[item.goods_id] = item
+      })
+      return obj
+    },
+    selectParmas () {
+      const parmas = {
+        is_all: false,
+        delete_goods_id_list: [],
+        goods_id_list: []
+      }
+      if (this.is_all) {
+        parmas.is_all = this.is_all
+        // const size = this.pagination.page_size
+        // const allData = [...this.tableDataMap.keys()]
+        //   .filter(keyStr => JSON.parse(keyStr).page_size === size)
+        //   .map(keyStr => this.tableDataMap.get(keyStr))
+        //   .reduce((t, c) => [...t, ...c], [])
+        //   .map(item => item.goods_id)
+
+        // const allDataSet = new Set(allData)
+        // const multipleSelection = new Set(this.multipleSelection.map(item => item.goods_id))
+
+        // const difference = [...allDataSet].filter(item => !multipleSelection.has(item))
+        // parmas.goods_id_list = difference
+        // console.log(difference, 'difference')
+      }
+      return parmas
+    }
   },
   created () {
     this.fetch()
+  },
+  mounted () {
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.addEventListener('scroll', this.scroll)
+    this.scroll()
+  },
+  watch: {
+    // 一件全选时 数据请求初始化
+    tableData: {
+      handler: function (n) {
+        console.log(n, 'tableData')
+        const tableDataMap = this.tableDataMap
+        n.forEach(row => {
+          const rowMap = tableDataMap.get(row.goods_id)
+          if (this.is_all) {
+            const hasSelected = rowMap && this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
+            if (!rowMap || (rowMap && !hasSelected)) {
+              this.$refs.multipleTable.toggleRowSelection(row)
+            }
+          }
+          tableDataMap.set(`${row.goods_id}`, row)
+        })
+        this.tableDataMap = tableDataMap
+      },
+      deep: true
+    }
   },
   methods: {
     ...mapActions('productManagement/productsSync/tableProductList', [
@@ -153,14 +234,82 @@ export default {
       this.$emit('goback')
     },
     handleConfirm () {
-      this.$emit('goback')
+      // this.$emit('go', null, 1)
+      console.log(this.selectParmas)
     },
-    handleAllSelectionChange () {
-
+    // 一件全选按钮回调
+    handleAllSelectionChange (val) {
+      if (val) {
+        const tableDataMap = this.tableDataMap
+        this.tableData.forEach(row => {
+          const rowMap = tableDataMap.get(`${row.goods_id}`)
+          const hasSelected = this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
+          if (!hasSelected) {
+            this.$refs.multipleTable.toggleRowSelection(row)
+          }
+        })
+      }
     },
     handleFilter (data) {
       this.setFilter(data)
-    }
+    },
+    // 表格多选禁用判断
+    isSelectionEnable () {
+      return !this.is_all
+    },
+    // 表格多选禁用表头样式
+    getHeaderCellClassName ({row, column, rowIndex, columnIndex}) {
+      if (columnIndex === 0 && this.is_all) return 'checkedRow'
+      return ''
+    },
+    // 一件全选时候 表格全选禁用
+    handleSelectionAll () {
+      if (this.is_all) return false
+    },
+    // 表格多选 选项修改回调事件
+    handleSelectionChange (val) {
+      console.log(val, 'handleSelectionChange')
+      this.multipleSelection = val
+    },
+    // 底部按钮滚动定位
+    scroll: debounce(function () {
+      // 判断是否有滚动条的方法
+      function hasScrolled (el, direction = 'vertical') {
+        if (direction === 'vertical') {
+          return el.scrollHeight > el.clientHeight
+        } else if (direction === 'horizontal') {
+          return el.scrollWidth > el.clientWidth
+        }
+      }
+      function getScrollbarWidth (el) {
+        el = el || document.body
+        var scrollDiv = document.createElement('div')
+        scrollDiv.style.cssText =
+          'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;'
+        el.appendChild(scrollDiv)
+        var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
+        el.removeChild(scrollDiv)
+        return scrollbarWidth
+      }
+      const scrollEl = document.querySelector('.page-component__scroll')
+      const isScroll = hasScrolled(scrollEl)
+      const TableProductList = this.$refs.TableProductList
+      if (isScroll && scrollEl && TableProductList) {
+        const scrollWidth = getScrollbarWidth(scrollEl)
+        this.scrollWidth = scrollWidth
+        const clientHeight = scrollEl.clientHeight
+        const rect = TableProductList.getBoundingClientRect()
+        const height = rect.height
+        const dist = 5
+        const disdance = height - clientHeight - dist
+        const scrollTop = scrollEl.scrollTop
+        if (scrollTop < disdance) {
+          this.startFixed = true
+        } else {
+          this.startFixed = false
+        }
+      }
+    }, 300)
   }
 }
 </script>
@@ -185,5 +334,53 @@ export default {
 .yushou {
   background: linear-gradient(180deg, #f9d6af 0%, #d9a779 100%);
   border-radius: 8px 0px 8px 0px;
+}
+</style>
+<style lang='less' scoped>
+//@import url(); 引入公共css类
+
+.start-migrate-btn-fadeIn {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  animation: fadeIn ease 0.3s;
+  margin: 0 40px;
+}
+
+.start-migrate-btn-fadeOut {
+  transition: none;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/deep/ .checkedRow {
+  .el-checkbox__inner {
+      background-color: #F9F9F9;
+      border-color: #E5E5E5;
+  }
+
+  .el-checkbox__inner::after {
+      border-color: #999;
+  }
 }
 </style>
