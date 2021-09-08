@@ -412,43 +412,50 @@ export default {
       if (this.isStartCapture) { // 当前有复制请求
         return
       }
-      let textUrls = ''
-      let limit = 1
-      let message = ''
-      textUrls = this.textCaptureShopUrls
-      message = '整店复制超过' + limit + '条限制'
-      let urls = textUrls.split('\n')
-      urls = urls.map(s => s.trim()).filter(s => s !== '')
-      if (urls.length === 0) {
-        this.$alert('复制链接未填写', '警告', {
-          confirmButtonText: '确定',
-          type: 'error',
-          callback: action => {
-          }
-        })
-        return
-      } else if (urls.length > limit) {
-        this.$alert(message, '警告', {
-          confirmButtonText: '确定',
-          type: 'error',
-          callback: action => {
-          }
-        })
-        return
-      }
-      this.capture({ urls, capture_type: 1 })
 
-      if (urls.every(url => url.indexOf('jinritemai') > -1)) {
-        this.getCaptureShopCompleteList({
-          push: this.$router.push.bind(this.$router)
-        })
-      }
+      Api.hhgjAPIs.captureIsExistShopCapture({
+        urls: JSON.stringify(['https://haohuo.jinritemai.com/views/shop/index?id=NPSBMz'])
+      })
 
-      if (urls.every(url => url.indexOf('youzan.com') > -1)) {
-        this.getCaptureShopCompleteList({
-          push: this.$router.push.bind(this.$router)
-        })
-      }
+      // let textUrls = ''
+      // let limit = 1
+      // let message = ''
+      // textUrls = this.textCaptureShopUrls
+      // message = '整店复制超过' + limit + '条限制'
+      // let urls = textUrls.split('\n')
+      // urls = urls.map(s => s.trim()).filter(s => s !== '')
+      // if (urls.length === 0) {
+      //   this.$alert('复制链接未填写', '警告', {
+      //     confirmButtonText: '确定',
+      //     type: 'error',
+      //     callback: action => {
+      //     }
+      //   })
+      // } else if (urls.length > limit) {
+      //   this.$alert(message, '警告', {
+      //     confirmButtonText: '确定',
+      //     type: 'error',
+      //     callback: action => {
+      //     }
+      //   })
+      // }
+
+      // this.request('captureIsExistShopCapture', {
+      //   urls: JSON.stringify(['https://haohuo.jinritemai.com/views/shop/index?id=NPSBMz'])
+      // })
+      // this.capture({ urls, capture_type: 1 })
+
+      // if (urls.every(url => url.indexOf('jinritemai') > -1)) {
+      //   this.getCaptureShopCompleteList({
+      //     push: this.$router.push.bind(this.$router)
+      //   })
+      // }
+
+      // if (urls.every(url => url.indexOf('youzan.com') > -1)) {
+      //   this.getCaptureShopCompleteList({
+      //     push: this.$router.push.bind(this.$router)
+      //   })
+      // }
       // Api.hhgjAPIs.getCaptureShopCompleteList()
     },
     // 绑定复制

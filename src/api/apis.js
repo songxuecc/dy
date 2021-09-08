@@ -421,9 +421,11 @@ const hhgjAPIs = {
     return api.actionCreateGet('/api/capture/shop/complete/list', params)
   },
   statisticsEventCreate: (params) => {
-    return api.actionCreatorPost('/api/statisticsEvent/create ', params)
+    return api.actionCreatorPost('/api/statisticsEvent/create', params)
+  },
+  captureIsExistShopCapture: (params) => {
+    return api.actionCreateGet('/api/capture/is_exist_shop_capture', params)
   }
-
 }
 
 export default {
