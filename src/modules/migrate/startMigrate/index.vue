@@ -456,14 +456,44 @@ export default {
       }, data => {
         if (data.result && data.capture_id) {
           console.log(data, 'data')
-          this.$confirm('检测到您之前复制过该店铺，是否查看上次复制记录？', '', {
-            showClose: false,
+          const h = this.$createElement
+
+          this.$confirm('', {
+            // showClose: false,
             confirmButtonText: '点击查看',
             cancelButtonText: '重新复制',
-            type: 'warning',
+            // type: 'warning',
+            // cancelButtonClass: 'startMigrate-cancelButtonClass',
+            // confirmButtonClass: 'startMigrate-confirmButtonClass',
+            // customClass: 'startMigrate-customClass'
+
+            message: h('div', null, [
+              h('div', {
+                class: 'center'
+              }, [
+                h('hh-icon', {
+                  props: {
+                    type: 'icontishi'
+                  },
+                  class: 'startMigrate-icon'
+                }),
+                h('span', {
+                  props: {
+                    type: 'icontishi'
+                  },
+                  class: 'startMigrate-title'
+                },
+                '整店抓取提示')
+              ]),
+              h('div', {
+                class: 'startMigrate-text'
+              }, '检测到您之前复制过该店铺，是否查看上次复制记录？')
+            ]),
+            customClass: 'startMigrate-customClass',
             cancelButtonClass: 'startMigrate-cancelButtonClass',
             confirmButtonClass: 'startMigrate-confirmButtonClass',
-            customClass: 'startMigrate-customClass'
+            showClose: false
+
           })
             .then(() => {
               this.handleTablemigrateHistory(data.capture_id)
@@ -911,40 +941,106 @@ export default {
 
 </style>
 <style lang="less">
-.startMigrate-cancelButtonClass{
-    padding: 10px;
-    font-size: 12px;
-    margin-right: 10px;
-    width: 100px;
+// .startMigrate-cancelButtonClass{
+//     padding: 10px;
+//     font-size: 12px;
+//     margin-right: 10px;
+//     width: 100px;
 
+// }
+
+// .startMigrate-confirmButtonClass{
+//     padding: 10px;
+//     font-size: 12px;
+//     width: 100px;
+// }
+
+// .startMigrate-customClass {
+//   padding-bottom: 25px;
+//   width: 483px;
+
+//   .el-message-box__btns {
+//     text-align: center;
+//   }
+//   .el-message-box__content {
+//     .el-message-box__message {
+//       padding-left: 0;
+//     }
+//     p {
+//       font-size: 18px;
+//       margin: 15px 0 10px;
+//       text-align: center;
+//     }
+//     .el-icon-warning {
+//       display: none;
+//     }
+//   }
+// }
+
+.startMigrate-cancelButtonClass{
+  font-size: 12px;
+  margin-right: 10px;
+  width: 120px;
+  padding: 12px;
 }
 
 .startMigrate-confirmButtonClass{
-    padding: 10px;
-    font-size: 12px;
-    width: 100px;
+  font-size: 12px;
+  width: 120px;
+  padding: 12px;
+}
+
+.startMigrate-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+.startMigrate-title {
+  width: 132px;
+  height: 30px;
+  font-size: 18px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #4E4E4E;
+  line-height: 30px;
+  margin-bottom: 15px;
+}
+
+.startMigrate-text {
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #4E4E4E;
+  line-height: 20px;
+  text-align: center;
+  padding-top: 30px;
+  margin-bottom: 10px;
 }
 
 .startMigrate-customClass {
-  padding-bottom: 25px;
-  width: 483px;
-
-  .el-message-box__btns {
-    text-align: center;
-  }
-  .el-message-box__content {
-    .el-message-box__message {
-      padding-left: 0;
+    padding-bottom: 30px;
+    .el-message-box__header {
+      padding-top: 5px;
     }
-    p {
-      font-size: 18px;
-      margin: 15px 0 10px;
+    .el-message-box__btns {
       text-align: center;
+      padding-top: 15px;
     }
-    .el-icon-warning {
-      display: none;
+    .el-message-box__content {
+      .el-message-box__message {
+        padding-left: 0;
+      }
+      p {
+        font-size: 18px;
+        margin: 15px 0 10px;
+        text-align: center;
+      }
+      .el-icon-warning {
+        display: none;
+      }
     }
-  }
 }
 
 </style>
