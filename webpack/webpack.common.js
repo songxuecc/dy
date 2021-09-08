@@ -149,7 +149,14 @@ const commonConfig = {
             }
           },
           {
-            loader: 'postcss-loader'
+            loader: 'postcss-loader',
+            options: {
+              indent: 'postcss',
+              plugins: (loader) => [
+                require('autoprefixer')() // 添加前缀
+              ],
+              sourceMap: false
+            }
           }
         ]
       },
@@ -172,7 +179,7 @@ const commonConfig = {
             options: {
               indent: 'postcss',
               plugins: (loader) => [
-                require('autoprefixer')()
+                require('autoprefixer')() // 添加前缀
               ],
               sourceMap: false
             }
