@@ -457,6 +457,7 @@ export default {
         if (data.result && data.capture_id) {
           console.log(data, 'data')
           this.$confirm('检测到您之前复制过该店铺，是否查看上次复制记录？', '', {
+            showClose: false,
             confirmButtonText: '点击查看',
             cancelButtonText: '重新复制',
             type: 'warning',

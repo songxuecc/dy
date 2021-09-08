@@ -375,6 +375,7 @@ export default {
     // 删除
     handleDelete (row) {
       this.$confirm('确认删除该商品?', '', {
+        showClose: false,
         confirmButtonText: '确认，删除',
         cancelButtonText: '点错了',
         type: 'warning',
