@@ -927,6 +927,8 @@ export default {
 
 .startMigrate-customClass {
   padding-bottom: 25px;
+  width: 483px;
+
   .el-message-box__btns {
     text-align: center;
   }
