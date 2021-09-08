@@ -982,25 +982,30 @@ export default {
   margin-right: 10px;
   width: 120px;
   padding: 12px;
+  border-color: #1D8FFF;
+  color: #1D8FFF;
+  font-size: 14px;
 }
 
 .startMigrate-confirmButtonClass{
   font-size: 12px;
   width: 120px;
   padding: 12px;
+  font-size: 14px;
+  background: #1D8FFF;
 }
 
 .startMigrate-icon {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  margin-right: 5px;
 }
 
 .startMigrate-title {
-  width: 132px;
   height: 30px;
-  font-size: 18px;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-size: 20px;
+  font-family: MicrosoftYaHei;
   font-weight: 500;
   color: #4E4E4E;
   line-height: 30px;
@@ -1010,23 +1015,23 @@ export default {
 .startMigrate-text {
   height: 20px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: MicrosoftYaHei;
   font-weight: 400;
   color: #4E4E4E;
   line-height: 20px;
   text-align: center;
-  padding-top: 30px;
+  padding-top: 15px;
   margin-bottom: 10px;
 }
 
 .startMigrate-customClass {
-    padding-bottom: 30px;
+    padding-bottom: 29px;
     .el-message-box__header {
-      padding-top: 5px;
+      padding-top: 11px;
     }
     .el-message-box__btns {
       text-align: center;
-      padding-top: 15px;
+      padding-top: 14px;
     }
     .el-message-box__content {
       .el-message-box__message {
