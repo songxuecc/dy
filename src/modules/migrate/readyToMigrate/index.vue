@@ -115,25 +115,22 @@
           </template>
         </product-list-view>
         <br>
-        <div v-if="isShopCapture" >
+        <div v-if="isShopCapture">
           <!-- 非抖音淘宝店铺的整店抓取分页 -->
           <el-pagination :disabled="getCaptureStatus !== 'finish'" v-show="loadingCnt == 0" v-if="![2002,2004,1002,1001].includes(capture.tp_id)"
             @current-change="handleCurrentChange" :current-page="pagination.index" :page-size="pagination.size"
             layout="total, prev, pager, next, jumper" :total="pagination.total">
           </el-pagination>
-
           <!-- 淘宝、天猫 店铺的整店抓取分页 -->
-          <el-pagination v-show="loadingCnt == 0" v-if="capture.tp_id === 1002 || capture.tp_id === 1001"
+          <el-pagination v-show="loadingCnt == 0" v-else-if="capture.tp_id === 1002 || capture.tp_id === 1001"
             @current-change="handleCurrentChangeTaobao" :current-page="pagination.index" :page-size="pagination.size"
             layout="total, prev, pager, next, jumper" :total="taoBaoPagination.total">
           </el-pagination>
-
           <!-- 自动抓取抖音店铺的分页 -->
           <el-pagination  v-show="loadingCnt == 0" v-else
             @current-change="handleCurrentChangeDy" :current-page="pagination.index" :page-size="pagination.size"
             layout="total, prev, pager, next, jumper" :total="getPageTotal">
           </el-pagination>
-
         </div>
         <el-pagination v-else v-show="loadingCnt == 0" @size-change="handleSizeChange"
           @current-change="handleCurrentChange" :current-page="pagination.index" :page-sizes="[10, 20, 50, 100]"

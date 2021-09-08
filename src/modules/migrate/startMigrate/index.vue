@@ -457,10 +457,9 @@ export default {
         if (data.result && data.capture_id) {
           console.log(data, 'data')
           const h = this.$createElement
-
           this.$confirm('', {
             // showClose: false,
-            confirmButtonText: '点击查看',
+            confirmButtonText: '查看上次复制记录',
             cancelButtonText: '重新复制',
             // type: 'warning',
             // cancelButtonClass: 'startMigrate-cancelButtonClass',
@@ -483,11 +482,14 @@ export default {
                   },
                   class: 'startMigrate-title'
                 },
-                '整店抓取提示')
+                '链接重复复制提示')
               ]),
               h('div', {
                 class: 'startMigrate-text'
-              }, '检测到您之前复制过该店铺，是否查看上次复制记录？')
+              }, [
+                h('div', null, `该链接于 ${data.capture_detail.create_time} 被您复制过。您希望`),
+                h('div', null, '系统帮您重新复制还是查看上次的复制记录？')
+              ])
             ]),
             customClass: 'startMigrate-customClass',
             cancelButtonClass: 'startMigrate-cancelButtonClass',
@@ -989,7 +991,7 @@ export default {
 
 .startMigrate-confirmButtonClass{
   font-size: 12px;
-  width: 120px;
+  width: 140px;
   padding: 12px;
   font-size: 14px;
   background: #1D8FFF;
@@ -1013,7 +1015,6 @@ export default {
 }
 
 .startMigrate-text {
-  height: 20px;
   font-size: 14px;
   font-family: MicrosoftYaHei;
   font-weight: 400;
