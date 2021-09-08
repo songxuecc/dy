@@ -67,10 +67,11 @@
             <el-form-item label="售后服务:"  prop="supply_7day_return">
                 <el-radio-group v-model="template.model.supply_7day_return">
                     <el-radio :label="1">支持7天无理由退换货</el-radio>
+                    <el-radio :label="2">支持(拆封后不支持)</el-radio>
                     <el-radio :label="0">不支持7天无理由退换货</el-radio>
 <!--                    <el-radio :label="2">支持（拆封后不支持）</el-radio>-->
                 </el-radio-group>
-                <div style="position: absolute;top: 15px;left: 192px;color: #E02020; font-size: 1px;color:#FA6400" v-if="!template.model.supply_7day_return">仅少数商品可选，一般商品不要选择此项</div>
+                <div style="position: absolute;top: 17px;left: 352px;color: #E02020; font-size: 1px;color:#FA6400" v-if="!template.model.supply_7day_return">仅少数商品可选，一般商品不要选择此项</div>
                 <el-link  :underline="false" style="margin-left: 130px; color: #1D8FFF; font-size: 1px;" @click="dySupplyImgVisible = !dySupplyImgVisible" v-if="!template.model.supply_7day_return">什么商品可以不支持7天无理由退换货</el-link>
                 <el-dialog :visible.sync="dySupplyImgVisible">
                   <el-image
