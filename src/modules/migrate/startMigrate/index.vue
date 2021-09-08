@@ -407,55 +407,74 @@ export default {
       }
       this.capture({ urls, capture_type: 0 })
     },
+    confirmShopsCapture (urls) {
+      this.capture({ urls, capture_type: 1 })
+
+      if (urls.every(url => url.indexOf('jinritemai') > -1)) {
+        this.getCaptureShopCompleteList({
+          push: this.$router.push.bind(this.$router)
+        })
+      }
+
+      if (urls.every(url => url.indexOf('youzan.com') > -1)) {
+        this.getCaptureShopCompleteList({
+          push: this.$router.push.bind(this.$router)
+        })
+      }
+    },
     // 整店复制
     onCaptureShops () {
       if (this.isStartCapture) { // 当前有复制请求
         return
       }
 
-      Api.hhgjAPIs.captureIsExistShopCapture({
-        urls: JSON.stringify(['https://haohuo.jinritemai.com/views/shop/index?id=NPSBMz'])
+      let textUrls = ''
+      let limit = 1
+      let message = ''
+      textUrls = this.textCaptureShopUrls
+      message = '整店复制超过' + limit + '条限制'
+      let urls = textUrls.split('\n')
+      urls = urls.map(s => s.trim()).filter(s => s !== '')
+      if (urls.length === 0) {
+        this.$alert('复制链接未填写', '警告', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+          }
+        })
+      } else if (urls.length > limit) {
+        this.$alert(message, '警告', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+          }
+        })
+      }
+      // 查询是否重复
+      this.request('captureIsExistShopCapture', {
+        urls: JSON.stringify(urls)
+      }, data => {
+        if (data.result && data.capture_id) {
+          console.log(data, 'data')
+          this.$confirm('检测到您之前复制过该店铺，是否查看上次复制记录？', '', {
+            confirmButtonText: '点击查看',
+            cancelButtonText: '重新复制',
+            type: 'warning',
+            cancelButtonClass: 'startMigrate-cancelButtonClass',
+            confirmButtonClass: 'startMigrate-confirmButtonClass',
+            customClass: 'startMigrate-customClass'
+          })
+            .then(() => {
+              this.handleTablemigrateHistory(data.capture_id)
+            })
+            .catch(action => {
+              this.confirmShopsCapture(urls)
+            })
+        } else {
+          this.confirmShopsCapture(urls)
+        }
       })
 
-      // let textUrls = ''
-      // let limit = 1
-      // let message = ''
-      // textUrls = this.textCaptureShopUrls
-      // message = '整店复制超过' + limit + '条限制'
-      // let urls = textUrls.split('\n')
-      // urls = urls.map(s => s.trim()).filter(s => s !== '')
-      // if (urls.length === 0) {
-      //   this.$alert('复制链接未填写', '警告', {
-      //     confirmButtonText: '确定',
-      //     type: 'error',
-      //     callback: action => {
-      //     }
-      //   })
-      // } else if (urls.length > limit) {
-      //   this.$alert(message, '警告', {
-      //     confirmButtonText: '确定',
-      //     type: 'error',
-      //     callback: action => {
-      //     }
-      //   })
-      // }
-
-      // this.request('captureIsExistShopCapture', {
-      //   urls: JSON.stringify(['https://haohuo.jinritemai.com/views/shop/index?id=NPSBMz'])
-      // })
-      // this.capture({ urls, capture_type: 1 })
-
-      // if (urls.every(url => url.indexOf('jinritemai') > -1)) {
-      //   this.getCaptureShopCompleteList({
-      //     push: this.$router.push.bind(this.$router)
-      //   })
-      // }
-
-      // if (urls.every(url => url.indexOf('youzan.com') > -1)) {
-      //   this.getCaptureShopCompleteList({
-      //     push: this.$router.push.bind(this.$router)
-      //   })
-      // }
       // Api.hhgjAPIs.getCaptureShopCompleteList()
     },
     // 绑定复制
@@ -888,5 +907,41 @@ export default {
     // position: absolute;
     // top:250px;
   }
+
+</style>
+<style lang="less">
+.startMigrate-cancelButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    margin-right: 10px;
+    width: 100px;
+
+}
+
+.startMigrate-confirmButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    width: 100px;
+}
+
+.startMigrate-customClass {
+  padding-bottom: 25px;
+  .el-message-box__btns {
+    text-align: center;
+  }
+  .el-message-box__content {
+    .el-message-box__message {
+      padding-left: 0;
+    }
+    p {
+      font-size: 18px;
+      margin: 15px 0 10px;
+      text-align: center;
+    }
+    .el-icon-warning {
+      display: none;
+    }
+  }
+}
 
 </style>
