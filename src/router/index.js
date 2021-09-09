@@ -287,77 +287,77 @@ const router = new Router({
         keepAlive: true,
         requiresAuth: true
       }
-    },
-    {
-      path: '/shopDecorate/wm/create/:water_mark_type/:water_mark_id',
-      name: 'WaterMaskCreate',
-      component: () => import(
-        /* webpackChunkName: `waterMaskCreate` */
-        /* webpackMode: "lazy" */
-        '@shopDecorate/waterMaskCreate'),
-      meta: {
-        requiresAuth: true,
-        keepAlive: true,
-        specialShow: true
-      }
-    },
-    {
-      path: '/shopDecorate/poster/dg',
-      name: 'PosterDg',
-      component: () => import(
-        /* webpackChunkName: `PosterDg` */
-        /* webpackMode: "lazy" */
-        '@shopDecorate/posterDg'),
-      meta: {
-        requiresAuth: true
-      },
-      children: [
-        {
-          path: 'list',
-          name: 'PosterDgList',
-          component: () => import(
-            /* webpackChunkName: `PosterDgList` */
-            /* webpackMode: "lazy" */
-            '@shopDecorate/waterMarkListView'),
-          meta: {
-            keepAlive: true
-          }
-        },
-        {
-          path: 'activity/create',
-          name: 'PosterDgActivityCreate',
-          component: () => import(
-            /* webpackChunkName: `PosterDgActivityCreate` */
-            /* webpackMode: "lazy" */
-            '@shopDecorate/waterMarkActivityCreateView'),
-          meta: {
-            keepAlive: true
-          }
-        },
-        {
-          path: 'activity',
-          name: 'PosterDgActivityList',
-          component: () => import(
-            /* webpackChunkName: `waterMarkActivityListView` */
-            /* webpackMode: "lazy" */
-            '@shopDecorate/waterMarkActivityListView'),
-          meta: {
-            keepAlive: true
-          }
-        },
-        {
-          path: 'activity/detail/:id',
-          name: 'PosterDgActivity',
-          component: () => import(
-            /* webpackChunkName: `waterMarkActivityView` */
-            /* webpackMode: "lazy" */
-            '@shopDecorate/waterMarkActivityView'),
-          meta: {
-            keepAlive: true
-          }
-        }
-      ]
     }
+    // {
+    //   path: '/shopDecorate/wm/create/:water_mark_type/:water_mark_id',
+    //   name: 'WaterMaskCreate',
+    //   component: () => import(
+    //     /* webpackChunkName: `waterMaskCreate` */
+    //     /* webpackMode: "lazy" */
+    //     '@shopDecorate/waterMaskCreate'),
+    //   meta: {
+    //     requiresAuth: true,
+    //     keepAlive: true,
+    //     specialShow: true
+    //   }
+    // },
+    // {
+    //   path: '/shopDecorate/poster/dg',
+    //   name: 'PosterDg',
+    //   component: () => import(
+    //     /* webpackChunkName: `PosterDg` */
+    //     /* webpackMode: "lazy" */
+    //     '@shopDecorate/posterDg'),
+    //   meta: {
+    //     requiresAuth: true
+    //   },
+    //   children: [
+    //     {
+    //       path: 'list',
+    //       name: 'PosterDgList',
+    //       component: () => import(
+    //         /* webpackChunkName: `PosterDgList` */
+    //         /* webpackMode: "lazy" */
+    //         '@shopDecorate/waterMarkListView'),
+    //       meta: {
+    //         keepAlive: true
+    //       }
+    //     },
+    //     {
+    //       path: 'activity/create',
+    //       name: 'PosterDgActivityCreate',
+    //       component: () => import(
+    //         /* webpackChunkName: `PosterDgActivityCreate` */
+    //         /* webpackMode: "lazy" */
+    //         '@shopDecorate/waterMarkActivityCreateView'),
+    //       meta: {
+    //         keepAlive: true
+    //       }
+    //     },
+    //     {
+    //       path: 'activity',
+    //       name: 'PosterDgActivityList',
+    //       component: () => import(
+    //         /* webpackChunkName: `waterMarkActivityListView` */
+    //         /* webpackMode: "lazy" */
+    //         '@shopDecorate/waterMarkActivityListView'),
+    //       meta: {
+    //         keepAlive: true
+    //       }
+    //     },
+    //     {
+    //       path: 'activity/detail/:id',
+    //       name: 'PosterDgActivity',
+    //       component: () => import(
+    //         /* webpackChunkName: `waterMarkActivityView` */
+    //         /* webpackMode: "lazy" */
+    //         '@shopDecorate/waterMarkActivityView'),
+    //       meta: {
+    //         keepAlive: true
+    //       }
+    //     }
+    //   ]
+    // }
   ]
 })
 
