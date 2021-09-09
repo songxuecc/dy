@@ -407,11 +407,27 @@ export default {
       }
       this.capture({ urls, capture_type: 0 })
     },
+    confirmShopsCapture (urls) {
+      this.capture({ urls, capture_type: 1 })
+
+      if (urls.every(url => url.indexOf('jinritemai') > -1)) {
+        this.getCaptureShopCompleteList({
+          push: this.$router.push.bind(this.$router)
+        })
+      }
+
+      if (urls.every(url => url.indexOf('youzan.com') > -1)) {
+        this.getCaptureShopCompleteList({
+          push: this.$router.push.bind(this.$router)
+        })
+      }
+    },
     // 整店复制
     onCaptureShops () {
       if (this.isStartCapture) { // 当前有复制请求
         return
       }
+
       let textUrls = ''
       let limit = 1
       let message = ''
@@ -426,7 +442,6 @@ export default {
           callback: action => {
           }
         })
-        return
       } else if (urls.length > limit) {
         this.$alert(message, '警告', {
           confirmButtonText: '确定',
@@ -434,21 +449,65 @@ export default {
           callback: action => {
           }
         })
-        return
       }
-      this.capture({ urls, capture_type: 1 })
+      // 查询是否重复
+      this.request('captureIsExistShopCapture', {
+        urls: JSON.stringify(urls)
+      }, data => {
+        if (data.result && data.capture_id) {
+          console.log(data, 'data')
+          const h = this.$createElement
+          this.$confirm('', {
+            // showClose: false,
+            confirmButtonText: '查看上次复制记录',
+            cancelButtonText: '重新复制',
+            // type: 'warning',
+            // cancelButtonClass: 'startMigrate-cancelButtonClass',
+            // confirmButtonClass: 'startMigrate-confirmButtonClass',
+            // customClass: 'startMigrate-customClass'
 
-      if (urls.every(url => url.indexOf('jinritemai') > -1)) {
-        this.getCaptureShopCompleteList({
-          push: this.$router.push.bind(this.$router)
-        })
-      }
+            message: h('div', null, [
+              h('div', {
+                class: 'center'
+              }, [
+                h('hh-icon', {
+                  props: {
+                    type: 'icontishi'
+                  },
+                  class: 'startMigrate-icon'
+                }),
+                h('span', {
+                  props: {
+                    type: 'icontishi'
+                  },
+                  class: 'startMigrate-title'
+                },
+                '链接重复复制提示')
+              ]),
+              h('div', {
+                class: 'startMigrate-text'
+              }, [
+                h('div', null, `该链接于 ${data.capture_detail.create_time} 被您复制过。您希望`),
+                h('div', null, '系统帮您重新复制还是查看上次的复制记录？')
+              ])
+            ]),
+            customClass: 'startMigrate-customClass',
+            cancelButtonClass: 'startMigrate-cancelButtonClass',
+            confirmButtonClass: 'startMigrate-confirmButtonClass',
+            showClose: false
 
-      if (urls.every(url => url.indexOf('youzan.com') > -1)) {
-        this.getCaptureShopCompleteList({
-          push: this.$router.push.bind(this.$router)
-        })
-      }
+          })
+            .then(() => {
+              this.handleTablemigrateHistory(data.capture_id)
+            })
+            .catch(action => {
+              this.confirmShopsCapture(urls)
+            })
+        } else {
+          this.confirmShopsCapture(urls)
+        }
+      })
+
       // Api.hhgjAPIs.getCaptureShopCompleteList()
     },
     // 绑定复制
@@ -881,5 +940,113 @@ export default {
     // position: absolute;
     // top:250px;
   }
+
+</style>
+<style lang="less">
+// .startMigrate-cancelButtonClass{
+//     padding: 10px;
+//     font-size: 12px;
+//     margin-right: 10px;
+//     width: 100px;
+
+// }
+
+// .startMigrate-confirmButtonClass{
+//     padding: 10px;
+//     font-size: 12px;
+//     width: 100px;
+// }
+
+// .startMigrate-customClass {
+//   padding-bottom: 25px;
+//   width: 483px;
+
+//   .el-message-box__btns {
+//     text-align: center;
+//   }
+//   .el-message-box__content {
+//     .el-message-box__message {
+//       padding-left: 0;
+//     }
+//     p {
+//       font-size: 18px;
+//       margin: 15px 0 10px;
+//       text-align: center;
+//     }
+//     .el-icon-warning {
+//       display: none;
+//     }
+//   }
+// }
+
+.startMigrate-cancelButtonClass{
+  font-size: 12px;
+  margin-right: 10px;
+  width: 120px;
+  padding: 12px;
+  border-color: #1D8FFF;
+  color: #1D8FFF;
+  font-size: 14px;
+}
+
+.startMigrate-confirmButtonClass{
+  font-size: 12px;
+  width: 140px;
+  padding: 12px;
+  font-size: 14px;
+  background: #1D8FFF;
+}
+
+.startMigrate-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+.startMigrate-title {
+  height: 30px;
+  font-size: 20px;
+  font-family: MicrosoftYaHei;
+  font-weight: 500;
+  color: #4E4E4E;
+  line-height: 30px;
+  margin-bottom: 15px;
+}
+
+.startMigrate-text {
+  font-size: 14px;
+  font-family: MicrosoftYaHei;
+  font-weight: 400;
+  color: #4E4E4E;
+  line-height: 20px;
+  text-align: center;
+  padding-top: 15px;
+  margin-bottom: 10px;
+}
+
+.startMigrate-customClass {
+    padding-bottom: 29px;
+    .el-message-box__header {
+      padding-top: 11px;
+    }
+    .el-message-box__btns {
+      text-align: center;
+      padding-top: 14px;
+    }
+    .el-message-box__content {
+      .el-message-box__message {
+        padding-left: 0;
+      }
+      p {
+        font-size: 18px;
+        margin: 15px 0 10px;
+        text-align: center;
+      }
+      .el-icon-warning {
+        display: none;
+      }
+    }
+}
 
 </style>

@@ -6,7 +6,8 @@
         <h1 class="color333 mb-10">相比于整店复制的优势？</h1>
         <p class="info">1、支持复制已下架商品</p>
         <p class="info">2、支持复制sku编码</p>
-        <p class="info mb-10">3、可实现店铺所有商品一键搬家，搬家效率<span class="color-primary ml-5">500%↑</span></p>
+        <p class="info">3、支持复制商品资质</p>
+        <p class="info mb-10">4、可实现店铺所有商品一键搬家，搬家效率<span class="color-primary ml-5">500%↑</span></p>
         <h1 class="color333 mb-10">如何进行绑定复制？</h1>
         <p class="info pointer">第1步：<span class="color-primary ml-5 underline" @click="gotoBindShop">去绑定店铺</span></p>
         <p class="info">第2步：若是将A店商品复制到B店，则登录B店铺（右上角的店铺名需是B店铺）</p>
