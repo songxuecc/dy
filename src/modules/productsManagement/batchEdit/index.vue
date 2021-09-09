@@ -134,7 +134,6 @@
                 <TableRemark ref="TableRemark" />
                 <AfterSalesService ref="AfterSalesService" v-if="editType === 15"/>
                 <TableAfterSalesService ref="TableAfterSalesService" v-if="editType === 15"/>
-
           </div>
           <div class="flex justify-c pb-20 mt-20">
               <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>

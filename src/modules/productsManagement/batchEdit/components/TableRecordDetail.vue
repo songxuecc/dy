@@ -6,6 +6,7 @@
     class="drawer"
     :with-header="false"
     :append-to-body="true"
+    v-if="drawer"
   >
     <div class="title center">
       {{ rowData.task_title }}修改详情
