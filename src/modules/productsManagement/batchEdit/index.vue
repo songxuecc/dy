@@ -18,7 +18,7 @@
             <div class="content left" >
                 <div style="min-height:120px;margin-top: 20px;">
                   <h1 class="flex">修改范围
-                    <span style="margin-left:5px;font-weight:normal" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后在进行下一步批量操作</span>
+                    <span style="margin-left:5px;font-weight:normal" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后再进行下一步批量操作</span>
                     <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
                       <hh-icon type="icontishi" ></hh-icon>
                       点我查看教程视频
@@ -132,6 +132,8 @@
                 <TableWeight ref="TableWeight" />
                 <Remark ref="Remark" v-if="editType === 14"/>
                 <TableRemark ref="TableRemark" />
+                <AfterSalesService ref="AfterSalesService" v-if="editType === 15"/>
+                <TableAfterSalesService ref="TableAfterSalesService" v-if="editType === 15"/>
           </div>
           <div class="flex justify-c pb-20 mt-20">
               <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
@@ -185,6 +187,7 @@ import SaleAndUnderlinedPrice from '@productsManagement/batchEdit/components/Sal
 import LimitCount from '@productsManagement/batchEdit/components/LimitCount'
 import Weight from '@productsManagement/batchEdit/components/Weight'
 import Remark from '@productsManagement/batchEdit/components/Remark'
+import AfterSalesService from '@productsManagement/batchEdit/components/AfterSalesService'
 
 import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
 import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
@@ -204,6 +207,7 @@ import TableSaleAndUnderlinedPrice from '@productsManagement/batchEdit/component
 import TableLimitCount from '@productsManagement/batchEdit/components/TableLimitCount'
 import TableWeight from '@productsManagement/batchEdit/components/TableWeight'
 import TableRemark from '@productsManagement/batchEdit/components/TableRemark'
+import TableAfterSalesService from '@productsManagement/batchEdit/components/TableAfterSalesService'
 
 export default {
   components: {
@@ -239,7 +243,9 @@ export default {
     TableWeight,
     Remark,
     TableRemark,
-    categorySelectView
+    categorySelectView,
+    AfterSalesService,
+    TableAfterSalesService
   },
   beforeRouteLeave (to, from, next) {
     this.save({
@@ -428,6 +434,16 @@ export default {
           tableRef: 'TableRemark',
           needExpand: false,
           hot: false
+        },
+        {
+          primary: 'iconshouhoufuwuxuanzhong',
+          info: 'iconshouhoufuwuweixuanzhong',
+          index: 15,
+          text: '售后服务',
+          ref: 'AfterSalesService',
+          tableRef: 'TableAfterSalesService',
+          needExpand: false,
+          hot: false
         }
       ],
       visibleSelectProduct: false
@@ -547,16 +563,18 @@ export default {
         goods_id_list: JSON.stringify([]),
         ext_json: JSON.stringify(this.getEditJson())
       }
-
-      await this.setFilterHhTaskProductOverview({
+      const result = await this.setFilterHhTaskProductOverview({
         filters
       })
-      this.save({previewDeleteGoodsIds: []})
       this.loading = false
-      const el = this.iconList.find(item => item.index === this.editType)
-      const tableRefName = el.tableRef
+      if (result) {
+        this.save({previewDeleteGoodsIds: []})
 
-      this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
+        const el = this.iconList.find(item => item.index === this.editType)
+        const tableRefName = el.tableRef
+
+        this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
+      }
     },
     async idProductList () {
       this.loading = true
@@ -607,18 +625,21 @@ export default {
           goods_id_list: JSON.stringify(goodsIdsSet.length ? goodsIdsSet : ''),
           ext_json: JSON.stringify(this.getEditJson())
         }
-        await this.setFilterHhTaskProductOverview({
+        const result = await this.setFilterHhTaskProductOverview({
           filters,
           pagination: {
             page_index: 1
           }
         })
-        this.save({previewDeleteGoodsIds: []})
         this.loading = false
-        const el = this.iconList.find(item => item.index === this.editType)
-        const tableRefName = el.tableRef
+        if (result) {
+          this.save({previewDeleteGoodsIds: []})
 
-        this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
+          const el = this.iconList.find(item => item.index === this.editType)
+          const tableRefName = el.tableRef
+
+          this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
+        }
       }
     },
     async continueIdProductList () {
@@ -640,15 +661,18 @@ export default {
         goods_id_list: JSON.stringify(unionSets.length ? unionSets : ''),
         ext_json: JSON.stringify(this.getEditJson())
       }
-      await this.setFilterHhTaskProductOverview({
+      const result = await this.setFilterHhTaskProductOverview({
         filters
       })
-      this.save({previewDeleteGoodsIds: []})
       this.loading = false
-      const el = this.iconList.find(item => item.index === this.editType)
-      const tableRefName = el.tableRef
+      if (result) {
+        this.save({previewDeleteGoodsIds: []})
 
-      this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
+        const el = this.iconList.find(item => item.index === this.editType)
+        const tableRefName = el.tableRef
+
+        this.$refs[tableRefName] && this.$refs[tableRefName].openVisible()
+      }
     },
     // 当按商品选择时 预览
     async previewProductList () {

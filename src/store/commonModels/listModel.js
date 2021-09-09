@@ -95,7 +95,12 @@ const listModel = (modelName = '') => {
           })
           return data
         } catch (err) {
-          this._vm.$message.error(`${err}`)
+          this._vm.$message({
+            message: `${err}`,
+            type: 'error',
+            duration: 0
+          })
+          return false
         }
       },
       async [fetchName] ({commit, state}, payload) {

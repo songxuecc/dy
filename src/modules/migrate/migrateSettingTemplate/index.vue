@@ -12,7 +12,7 @@
     <div class="common-bottom  flex justify-c">
         <el-button style="margin-right: 15px;width:120px" @click="goback"  plain type="primary">返回</el-button>
         <div>
-          <el-button type="primary" style="width:120px" @click="startMigrate">开始搬家</el-button>
+          <el-button type="primary" style="width:120px" @click="startMigrate" :disabled="isStartMigrate" :loading="isStartMigrate">开始搬家</el-button>
           <NewComer type="开始搬家" ref="newComer" >
             <div class="left">
               <div style="width:180px"  class="color-666 font-12">点击此处开始搬家</div>
@@ -243,6 +243,9 @@ export default {
        * 检测运费模版是否更新 更新=> 调用接口
        * 设置搬家parmas 搬家
        */
+      if (this.isStartMigrate) {
+        return false
+      }
       try {
         const validate = await this.validForms()
         if (!validate) {
