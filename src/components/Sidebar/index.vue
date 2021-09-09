@@ -40,9 +40,9 @@
             <el-menu-item index="/productsManagement/productExports" :disabled="!isAuth()">
               <span slot="title">导出商品<NewFeatureTips type="导出商品"/></span>
             </el-menu-item>
-           <el-menu-item index="/shopDecorate/poster/dg/list" :disabled="!isAuth()">
+           <!-- <el-menu-item index="/shopDecorate/poster/dg/list" :disabled="!isAuth()">
              <span slot="title">批量新增详情</span>
-           </el-menu-item>
+           </el-menu-item> -->
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
