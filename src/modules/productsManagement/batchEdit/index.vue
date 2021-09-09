@@ -18,7 +18,7 @@
             <div class="content left" >
                 <div style="min-height:120px;margin-top: 20px;">
                   <h1 class="flex">修改范围
-                    <span style="margin-left:5px;font-weight:normal" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后在进行下一步批量操作</span>
+                    <span style="margin-left:5px;font-weight:normal" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后再进行下一步批量操作</span>
                     <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
                       <hh-icon type="icontishi" ></hh-icon>
                       点我查看教程视频

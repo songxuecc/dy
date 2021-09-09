@@ -7,7 +7,7 @@
     label-position="right"
     label-width="100px"
   >
-    <el-form-item label="订单计数方式:">
+    <el-form-item label="售后服务:">
       <el-radio-group v-model="form.supply_7day_return">
         <el-radio :label="1">支持7天无理由退换货</el-radio>
         <el-radio :label="2">支持7天无理由退换货(拆封后不支持)</el-radio>
