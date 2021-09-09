@@ -57,7 +57,7 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
     },
     async setFilterHhTaskProductOverview ({commit, state, dispatch}, payload) {
       try {
-        await dispatch('hhTaskProductOverviewSetFilter', {
+        const result = await dispatch('hhTaskProductOverviewSetFilter', {
           apiName: 'hhTaskProductOverview',
           ...payload
         })
@@ -66,6 +66,7 @@ const model = assign(tableDataDetail, tableHhTaskPage, tableHhTaskProductPage, t
         commit('save', {
           hhTaskProductOverviewTableData
         })
+        return result
       } catch (err) {
         this._vm.$message({
           message: `${err}`,
