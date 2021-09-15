@@ -8,8 +8,8 @@
       style="margin-bottom: 10px"
     >
       <el-form-item label="导出类型">
+        <el-radio v-model="radio" :label="2">按商品状态导出</el-radio>
         <el-radio v-model="radio" :label="1">按商品编号导出</el-radio>
-        <el-radio v-model="radio" :label="2">导出全部商品</el-radio>
       </el-form-item>
       <el-form-item label="商品编号" v-if="radio === 1" class="relative">
         <el-input
@@ -24,9 +24,9 @@
       </el-form-item>
       <el-form-item label="出售状态" v-if="radio === 2">
         <el-radio-group v-model="resource">
+          <el-radio label="全部商品"></el-radio>
           <el-radio label="售卖中"></el-radio>
           <el-radio label="已下架"></el-radio>
-          <el-radio label="全部商品"></el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -110,7 +110,7 @@ export default {
       isIndeterminate3: true,
       goods_id_list: '',
       resource: '全部商品',
-      radio: 1,
+      radio: 2,
       size: 0,
       exportFieldList,
       recentProductExcelTime: '',
