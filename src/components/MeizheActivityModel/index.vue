@@ -24,22 +24,28 @@ export default {
       image,
       dialogTableVisible: false,
       loading: true,
-      open: false
+      open: false,
+      localStorageKey: 'hasShowMeizheActivityModel2'
     }
   },
   created () {
-    if (!this.isAuth) return false
-    const timeShow = moment(new Date()).isAfter('2021-08-15')
-    // 截止到8.15
-    if (timeShow) {
+    if (!this.isAuth) {
       return false
     }
-    const hasShow = localStorage.getItem('hasShowMeizheActivityModel')
+    const current = moment(new Date())
+    const timeShowIsAfter = moment(current).isAfter('2021-09-26')
+    const timeShowIsBefore = moment(current).isBefore('2021-09-20')
+    // 9月20~26
+    if (timeShowIsAfter || timeShowIsBefore) {
+      return false
+    }
+    localStorage.removeItem('hasShowMeizheActivityModel')
+    const hasShow = localStorage.getItem(this.localStorageKey)
     if (!hasShow) {
       Api.hhgjAPIs.is_new_migrate().then((data) => {
         if (data) {
           if (window._hmt) {
-            window._hmt.push(['_trackEvent', '美折', '展示', '新用户弹窗展示'])
+            window._hmt.push(['_trackEvent', '美折', '展示', '美折-送一年'])
           }
           this.dialogTableVisible = true
         }
@@ -67,9 +73,9 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '美折', '点击', '新用户弹窗点击'])
       }
-      localStorage.setItem('hasShowMeizheActivityModel', 1)
+      localStorage.setItem(this.localStorageKey, 1)
       if (this.open) {
-        const url = 'https://dx5.cn/YbqpPb'
+        const url = 'https://dx5.cn/YXEtBg'
         window.open(url)
       }
     }
