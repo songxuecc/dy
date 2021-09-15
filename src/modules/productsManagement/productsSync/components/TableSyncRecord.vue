@@ -13,7 +13,7 @@
       </div>
       <el-button type="primary" size="medium" class="mb-10" @click="handleGo(undefined,2)">创建商品源同步计划</el-button>
 
-    <el-table :data="tableData" style="width: 100%" v-loading="loading">
+    <el-table :data="tableData" style="width: 100%" v-loading="loading || loadingPost">
       <el-table-empty slot="empty"/>
       <el-table-column prop="task_title" label="计划名称" ></el-table-column>
       <el-table-column prop="sync_type" label="计划类型"  align="center" width="195">
@@ -86,6 +86,7 @@ export default {
   },
   data () {
     return {
+      loadingPost: false,
       status: {
         0: '未开始',
         1: '进行中',
@@ -128,7 +129,7 @@ export default {
     ...mapActions('productManagement/productsSync/tableProductList', {
       setFilter_tableProductList: 'setFilter'
     }),
-    onDelete () {
+    onDelete (row) {
       const h = this.$createElement
       this.$confirm('', {
         message: h('div', null, [
@@ -154,6 +155,20 @@ export default {
       })
         .then(_ => {
           console.log('00000')
+          const parmas = {
+            task_id: row.task_id
+          }
+          this.loadingPost = true
+          services.productSourceSyncDelete(parmas)
+            .then(data => {
+              this.fetch()
+            })
+            .catch(err => {
+              this.$message.error(`${err}`)
+            })
+            .finally(() => {
+              this.loadingPost = false
+            })
         })
         .catch(_ => {
           return false
@@ -193,7 +208,7 @@ export default {
         delete_goods_id_list: row.goods_query_params.delete_goods_id_list,
         is_all: row.goods_query_params.is_all
       }
-
+      this.loadingPost = true
       services.productSourceSyncDetailRun(parmas)
         .then(data => {
           this.$message.success('开始检测了！')
