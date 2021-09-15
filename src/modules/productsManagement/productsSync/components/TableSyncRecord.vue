@@ -204,7 +204,7 @@ export default {
         task_id: row.task_id,
         status: row.status,
         goods_id_list: row.goods_query_params.goods_id_list,
-        goods_name: row.goods_query_params.goods_name,
+        keyword: row.goods_query_params.keyword,
         delete_goods_id_list: row.goods_query_params.delete_goods_id_list,
         is_all: row.goods_query_params.is_all
       }
