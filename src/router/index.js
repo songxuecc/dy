@@ -42,6 +42,17 @@ const router = new Router({
       }
     },
     {
+      path: '/customerSetting/homePage',
+      name: 'homePage',
+      component: () => import(
+        /* webpackChunkName: `HomePage` */
+        /* webpackMode: "lazy" */
+        '@customerSetting/homePage'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/customerSetting/meizhe',
       component: () => import(
         /* webpackChunkName: `MeizheInfo` */
