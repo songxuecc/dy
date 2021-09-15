@@ -174,7 +174,7 @@ export default {
     },
     selectParmas () {
       const parmas = {
-        is_all: this.is_all,
+        is_all: Number(this.is_all),
         delete_goods_id_list: JSON.stringify([]),
         goods_id_list: JSON.stringify([])
       }
@@ -186,7 +186,7 @@ export default {
     }
   },
   created () {
-    this.fetch()
+    // this.fetch()
   },
   mounted () {
     const scrollEl = document.querySelector('.page-component__scroll')
@@ -224,12 +224,18 @@ export default {
       this.$emit('goback')
     },
     handleConfirm () {
-      // if(this.selectParmas.length > 200) {
-      //   return this.$message.error("商品最多200条！")
-      // }
-      const parmas = {...this.form, ...this.selectParmas, ...this.filters}
+      if (this.selectParmas.length > 200) {
+        return this.$message.error('商品最多200条！')
+      }
+      const form = this.form
+      const selectParmas = this.selectParmas
+      const filters = this.filters
+      console.log(form, 'form')
+      console.log(selectParmas, 'selectParmas')
+      console.log(filters, 'filters')
+      const parmas = {...form, ...selectParmas, ...filters}
       parmas.config_json = JSON.stringify(parmas.config_json)
-      console.log(parmas, 'parmas')
+      parmas.style = JSON.stringify({form, selectParmas, filters})
       this.loadingPost = true
       services.productSourceSyncCreate(parmas)
         .then(data => {

@@ -45,10 +45,10 @@
       </el-table-column>
       <el-table-column label="操作" width="310"   align="center">
          <template slot-scope="scope">
-          <a class="pramiry pointer " @click="onDelete(scope.row)" v-if="scope.row.sync_type === 1">开始检测</a>
-          <a class="pramiry pointer " @click="onDelete(scope.row)" v-else>开始检测修改</a>
+          <a class="pramiry pointer " @click="onStartSync(scope.row)" v-if="scope.row.sync_type === 1">开始检测</a>
+          <a class="pramiry pointer " @click="onStartSync(scope.row)" v-else>开始检测修改</a>
           <a class="pramiry pointer pl-5" @click="handleOpen(scope.row)" >检测详情</a>
-          <a class="pramiry pointer pl-5" @click="handleGo(scope.row,3)" >修改商品</a>
+          <a class="pramiry pointer pl-5" @click="handleChangeProduct(scope.row,3)" >修改商品</a>
           <a class="pramiry pointer pl-5" @click="handleGo(scope.row,2)" >编辑计划</a>
           <a class="fail pointer pl-5" @click="onDelete(scope.row)" >删除</a>
         </template>
@@ -72,9 +72,12 @@
 
 <script>
 import DrawerSyncDetail from './DrawerSyncDetail'
+import services from '@servises'
+
 import {
   mapActions,
-  mapState
+  mapState,
+  mapMutations
 } from 'vuex'
 export default {
   name: 'TableSyncRecord',
@@ -116,11 +119,15 @@ export default {
     })
   },
   methods: {
+    ...mapMutations('productManagement/productsSync/tableProductList', ['save']),
     ...mapActions('productManagement/productsSync/tableSyncRecord', [
       'fetch',
       'handleCurrentChange',
       'handleSizeChange'
     ]),
+    ...mapActions('productManagement/productsSync/tableProductList', {
+      setFilter_tableProductList: 'setFilter'
+    }),
     onDelete () {
       const h = this.$createElement
       this.$confirm('', {
@@ -162,6 +169,42 @@ export default {
     },
     handleGo (row, type) {
       this.$emit('go', row, type)
+    },
+    // 修改商品
+    handleChangeProduct (row, type) {
+      console.log(row, 'row')
+      // this.$emit('go', row, type)
+      const filters = row.goods_query_params
+      // const form = {
+      //   task_title:
+      // }
+      this.setFilter_tableProductList({filters})
+      this.$emit('go', row, type)
+    },
+    // 开始检测
+    onStartSync (row) {
+      console.log(row, 'row')
+
+      const parmas = {
+        task_id: row.task_id,
+        status: row.status,
+        goods_id_list: row.goods_query_params.goods_id_list,
+        goods_name: row.goods_query_params.goods_name,
+        delete_goods_id_list: row.goods_query_params.delete_goods_id_list,
+        is_all: row.goods_query_params.is_all
+      }
+
+      services.productSourceSyncDetailRun(parmas)
+        .then(data => {
+          this.$message.success('开始检测了！')
+          this.fetch()
+        })
+        .catch(err => {
+          this.$message.error(`${err}`)
+        })
+        .finally(() => {
+          this.loadingPost = false
+        })
     }
   }
 }

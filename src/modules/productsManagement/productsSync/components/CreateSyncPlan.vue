@@ -310,7 +310,7 @@
 
 <script>
 
-import {mapMutations} from 'vuex'
+import {mapMutations, mapActions} from 'vuex'
 import servises from '@/api/servises.js'
 // import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
@@ -378,6 +378,9 @@ export default {
     this.init()
   },
   methods: {
+    ...mapActions('productManagement/productsSync/tableProductList', [
+      'fetch'
+    ]),
     ...mapMutations('productManagement/productsSync/tableProductList', ['save']),
     async init () {
       const template = await servises.getTemplate()
@@ -409,10 +412,10 @@ export default {
     go: debounce(function () {
       this.$refs.form.validate((valid, object) => {
         if (valid) {
+          this.fetch()
+          this.save({form: this.form})
           this.$emit('go', null, 3)
           console.log(this.form, 'this.form')
-
-          this.save({form: this.form})
         }
       })
       // 验证
