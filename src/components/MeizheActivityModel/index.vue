@@ -45,7 +45,7 @@ export default {
       Api.hhgjAPIs.is_new_migrate().then((data) => {
         if (data) {
           if (window._hmt) {
-            window._hmt.push(['_trackEvent', '美折', '展示', '美折-送一年'])
+            window._hmt.push(['_trackEvent', '美折', '展示', '活动弹窗展示'])
           }
           this.dialogTableVisible = true
         }
@@ -71,7 +71,7 @@ export default {
     },
     closed () {
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '美折', '点击', '新用户弹窗点击'])
+        window._hmt.push(['_trackEvent', '美折', '点击', '活动按钮点击'])
       }
       localStorage.setItem(this.localStorageKey, 1)
       if (this.open) {
