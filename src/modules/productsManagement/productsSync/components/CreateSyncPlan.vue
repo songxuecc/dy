@@ -298,10 +298,10 @@
     </el-dialog>
 
     <div class="center btn">
-      <!-- <el-button @click="goback" plain type="primary" style="width: 120px"
+      <el-button @click="goback" plain type="primary" style="width: 120px"
         >取消</el-button
-      > -->
-      <el-button @click="goback" type="primary" style="width: 140px"
+      >
+      <el-button @click="go" type="primary" style="width: 140px"
         >下一步，添加商品</el-button
       >
     </div>
@@ -403,7 +403,10 @@ export default {
     validCheckContent () {
       this.$refs.form.validateField(['config_json.is_sync_shelf', 'config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])
     },
-    goback: debounce(function () {
+    goback () {
+      this.$emit('go', null, 1)
+    },
+    go: debounce(function () {
       this.$refs.form.validate((valid, object) => {
         if (valid) {
           this.$emit('go', null, 3)
