@@ -24,7 +24,7 @@
 
       <el-form-item label="配置内容" >
 
-        <el-form-item prop="config_json.is_sync_shelf">
+        <!-- <el-form-item prop="config_json.is_sync_shelf">
           <el-checkbox
             v-model="form.config_json.is_sync_shelf"
             name="type"
@@ -33,7 +33,7 @@
           >
             同步上下架
           </el-checkbox>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item prop="config_json.is_sync_stock">
           <el-checkbox
@@ -312,7 +312,7 @@
 
 import {mapMutations} from 'vuex'
 import servises from '@/api/servises.js'
-import utils from '@/common/utils'
+// import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
 
 export default {
@@ -322,8 +322,8 @@ export default {
   },
   data () {
     const checkContent = (rule, value, callback) => {
+      // !this.form.config_json.is_sync_shelf &&
       if (
-        !this.form.config_json.is_sync_shelf &&
         !this.form.config_json.is_sync_stock &&
         !this.form.config_json.is_sync_price &&
         !this.form.config_json.is_sync_title
@@ -359,9 +359,9 @@ export default {
         task_title: [
           { required: true, message: '请输入计划名称', trigger: ['blur', 'change'] }
         ],
-        'config_json.is_sync_shelf': [
-          { validator: checkContent, trigger: ['blur', 'change'] }
-        ],
+        // 'config_json.is_sync_shelf': [
+        //   { validator: checkContent, trigger: ['blur', 'change'] }
+        // ],
         'config_json.is_sync_stock': [
           { validator: checkContent, trigger: ['blur', 'change'] }
         ],
@@ -401,7 +401,7 @@ export default {
       this.form.config_json.is_sale_price_show_max = template.is_sale_price_show_max
     },
     validCheckContent () {
-      this.$refs.form.validateField(['config_json.is_sync_shelf', 'config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])
+      this.$refs.form.validateField(['config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])
     },
     goback () {
       this.$emit('go', null, 1)
@@ -411,6 +411,7 @@ export default {
         if (valid) {
           this.$emit('go', null, 3)
           console.log(this.form, 'this.form')
+
           this.save({form: this.form})
         }
       })

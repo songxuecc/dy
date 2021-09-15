@@ -24,7 +24,7 @@
       highlight-current-row
       :header-cell-class-name="getHeaderCellClassName"
       @select-all="handleSelectionAll"
-      v-loading="loading"
+      v-loading="loading || loadingPost"
       row-key="goods_id"
     >
       <el-table-empty slot="empty"/>
@@ -224,14 +224,25 @@ export default {
       this.$emit('goback')
     },
     handleConfirm () {
+      // if(this.selectParmas.length > 200) {
+      //   return this.$message.error("商品最多200条！")
+      // }
       const parmas = {...this.form, ...this.selectParmas, ...this.filters}
+      parmas.config_json = JSON.stringify(parmas.config_json)
       console.log(parmas, 'parmas')
       this.loadingPost = true
-      services.productSourceSyncCreate(parmas).then(data => {
-        // 创建成功
-        this.loadingPost = false
-        this.$message.success('success')
-      })
+      services.productSourceSyncCreate(parmas)
+        .then(data => {
+          // 创建成功
+          this.$message.success('创建成功')
+          this.$emit('go', null, 1)
+        })
+        .catch(err => {
+          this.$message.error(`${err}`)
+        })
+        .finally(() => {
+          this.loadingPost = false
+        })
     },
     // 一件全选按钮回调
     handleAllSelectionChange (val) {
