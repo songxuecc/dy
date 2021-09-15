@@ -124,7 +124,7 @@
         <el-button type="primary" plain style="width: 120px" @click="handleCancel"
           >返回上一步</el-button
         >
-        <el-button type="primary" style="width: 120px" @click="handleConfirm"
+        <el-button type="primary" style="width: 120px" @click="handleConfirm" :loading="loadingPost" :disabled="loadingPost"
           >完成创建({{ is_all ? total : multipleSelection.length}})</el-button>
       </div>
     </div>
@@ -150,7 +150,8 @@ export default {
       is_all: false,
       currentRow: null,
       startFixed: false,
-      tableDataMap: new Map()
+      tableDataMap: new Map(),
+      loadingPost: false
     }
   },
   computed: {
@@ -161,7 +162,8 @@ export default {
       'tableData',
       'total',
       'pagination',
-      'filters'
+      'filters',
+      'form'
     ]),
     multipleSelectionId () {
       let obj = {}
@@ -179,6 +181,7 @@ export default {
       if (!this.is_all) {
         parmas.goods_id_list = JSON.stringify(this.multipleSelection.map(row => row.goods_id))
       }
+
       return parmas
     }
   },
@@ -221,11 +224,13 @@ export default {
       this.$emit('goback')
     },
     handleConfirm () {
-      // this.$emit('go', null, 1)
-      console.log(this.selectParmas)
-      services.productSourceSyncCreate(this.selectParmas).then(data => {
+      const parmas = {...this.form, ...this.selectParmas, ...this.filters}
+      console.log(parmas, 'parmas')
+      this.loadingPost = true
+      services.productSourceSyncCreate(parmas).then(data => {
         // 创建成功
-        console.log('success')
+        this.loadingPost = false
+        this.$message.success('success')
       })
     },
     // 一件全选按钮回调
@@ -241,8 +246,8 @@ export default {
         })
       }
     },
-    handleFilter (data) {
-      this.setFilter(data)
+    handleFilter (filters) {
+      this.setFilter({filters})
     },
     // 表格多选禁用判断
     isSelectionEnable () {

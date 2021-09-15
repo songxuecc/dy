@@ -405,9 +405,9 @@ export default {
     },
     goback: debounce(function () {
       this.$refs.form.validate((valid, object) => {
-        console.log(object, 'object')
         if (valid) {
           this.$emit('go', null, 3)
+          console.log(this.form, 'this.form')
           this.save({form: this.form})
         }
       })
