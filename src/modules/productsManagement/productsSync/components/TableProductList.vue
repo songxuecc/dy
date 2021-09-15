@@ -133,6 +133,7 @@
 
 <script>
 import Search from './Search'
+import services from '@servises'
 import { mapActions, mapState } from 'vuex'
 import debounce from 'lodash/debounce'
 // import cloneDeep from 'lodash/cloneDeep'
@@ -222,6 +223,10 @@ export default {
     handleConfirm () {
       // this.$emit('go', null, 1)
       console.log(this.selectParmas)
+      services.productSourceSyncCreate(this.selectParmas).then(data => {
+        // 创建成功
+        console.log('success')
+      })
     },
     // 一件全选按钮回调
     handleAllSelectionChange (val) {

@@ -32,7 +32,7 @@
               <span>成功{{scope.row.success_nums}}</span>
               <span>失败{{scope.row.fail_nums}}</span>
             </div>
-            <div class="color-999 font-12">2021-08-25 22:42:58 完成检测</div>
+            <div class="color-999 font-12">{{ scope.row.last_sync_time }} 完成检测</div>
           </div>
         </template>
       </el-table-column>
@@ -108,7 +108,8 @@ export default {
       'tableData',
       'total',
       'pagination',
-      'filters'
+      'filters',
+      'form'
     ]),
     ...mapState({
       loading: state => state['@@loading'].effects['productManagement/productsSync/tableSyncRecord/query']
