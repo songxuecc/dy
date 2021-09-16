@@ -3,10 +3,12 @@
     <el-row class="tac">
       <div class="sideBar">
 
-        <div class="homePage" @click="goToHomePage">
-          <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
-          <span >首页</span>
-        </div>
+        <router-link  :to="{name: 'homePage'}" active-class="homePage-active">
+          <div class="homePage " >
+            <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
+            <span >首页</span>
+          </div>
+        </router-link>
 
         <el-menu
           :default-active='$route.path'
@@ -188,10 +190,18 @@ export default {
     padding-left: 40px;
     display: flex;
     align-items: center;
+
+    cursor: pointer;
     &:active {
-      color: #1D8FFF;
+      color: #000000;
     }
     &:hover {
+      color: #333333;
+    }
+  }
+
+  .homePage-active {
+    .homePage {
       color: #1D8FFF;
     }
   }

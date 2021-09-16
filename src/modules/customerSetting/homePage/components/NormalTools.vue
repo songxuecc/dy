@@ -96,7 +96,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .tools {
-    width: 644px;
+    // width: 644px;
     height: 131px;
     background: rgba(247, 248, 249, 0.8);
     border-radius: 20px;

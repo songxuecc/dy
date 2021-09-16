@@ -11,7 +11,9 @@
       </div>
       <div class="right">
           <!-- 点击续订 -->
+          <Renew />
           <!-- 消息通知 -->
+          <Notify />
           <!-- 联系客服 -->
           <!-- 软件教程 -->
           <!-- banner -->
@@ -38,6 +40,8 @@
 import NormalTools from './components/NormalTools'
 import MigrateProducts from './components/MigrateProducts'
 import ProductManagement from './components/ProductManagement'
+import Renew from './components/Renew'
+import Notify from './components/Notify'
 
 export default {
   data () {
@@ -61,7 +65,10 @@ export default {
   components: {
     NormalTools,
     MigrateProducts,
-    ProductManagement
+    ProductManagement,
+    Renew,
+    Notify
+
   },
   computed: {},
   watch: {},
@@ -83,11 +90,22 @@ export default {
 <style lang='less' scoped>
 //@import url(); 引入公共css类
 .homePage {
+  padding: 0  0 0 20px;
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 30px;
     /deep/ .el-divider {
       margin:0;
     }
     background: #fff;
     display: flex;
+    .left {
+      margin-right: 16px;
+      width: 60%;
+    }
+    .right {
+      width: 40%;
+    }
 
 }
 </style>
