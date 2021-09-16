@@ -210,17 +210,6 @@ export default {
       }
       this.tableDataMap = this.tableDataMapSearch
       this.multipleSelection = this.multipleSelectionSearch
-      console.log(this.tableDataMap, 'this.tableDataMap ')
-      // const tableDataMap = this.tableDataMap
-      // this.tableData.forEach(row => {
-      //   const rowMap = tableDataMap.get(`${row.goods_id}`)
-      //   const hasSelected = this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
-      //   if (!hasSelected) {
-      //     this.$refs.multipleTable.toggleRowSelection(row)
-      //   }
-      // })
-
-      console.log(this.originFilters, this.filters, 'originFilters')
     } else {
       // this.clearData()
     }
@@ -229,6 +218,22 @@ export default {
     const scrollEl = document.querySelector('.page-component__scroll')
     scrollEl.addEventListener('scroll', this.scroll)
     this.scroll()
+
+    const tableDataMap = this.tableDataMap
+    this.tableData.forEach(row => {
+      const rowMap = tableDataMap.get(row.goods_id)
+      if (this.is_all) {
+        const hasSelected = rowMap && this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
+        if (!rowMap || (rowMap && !hasSelected)) {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        }
+      } else {
+        const hasSelected = rowMap && this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
+        if (rowMap && hasSelected) {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        }
+      }
+    })
   },
   watch: {
     // 一件全选时 数据请求初始化
