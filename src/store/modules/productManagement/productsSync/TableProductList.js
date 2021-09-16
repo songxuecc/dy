@@ -14,7 +14,10 @@ const model = modelExtend(
         page_index: 1
       },
       selectParmas: undefined,
-      form: undefined
+      form: undefined,
+      originFilters: undefined,
+      filters: undefined,
+      task_id: undefined
     }),
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
@@ -25,7 +28,8 @@ const model = modelExtend(
           selectParmas: undefined,
           form: undefined,
           originFilters: undefined,
-          filters: undefined
+          filters: undefined,
+          task_id: undefined
         })
 
         console.log(state, 'state')

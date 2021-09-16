@@ -194,9 +194,17 @@ export default {
     }, 1000),
     // 修改商品
     handleEditPlan (row, type) {
+      console.log(row, 'row')
       const form = row.style.form
+      const selectParmas = row.style.selectParmas
+      const filters = row.style.filters
+      const originFilters = row.style.originFilters
       this.save({
-        form
+        form,
+        filters,
+        selectParmas,
+        originFilters,
+        task_id: row.task_id
       })
       this.$emit('go', row, type)
     },

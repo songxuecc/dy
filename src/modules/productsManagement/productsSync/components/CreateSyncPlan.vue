@@ -304,7 +304,7 @@
       <el-button @click="go" type="primary" style="width: 140px" v-if="!this.originForm"
         >下一步，添加商品</el-button
       >
-      <el-button @click="goback" type="primary" style="width: 140px" v-else
+      <el-button @click="updatePlan" type="primary" style="width: 140px" v-else :loading="loadingPost" :disabled="loadingPost"
         >确定修改模版</el-button
       >
     </div>
@@ -314,9 +314,9 @@
 <script>
 
 import {mapMutations, mapActions, mapState} from 'vuex'
-import servises from '@/api/servises.js'
 // import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
+import services from '@servises'
 
 export default {
   name: 'CreateSyncPlan',
@@ -336,6 +336,7 @@ export default {
 
     return {
       isShowSample: false,
+      loadingPost: false,
       form: {
         task_title: '',
         content: [],
@@ -382,6 +383,15 @@ export default {
     ...mapState('productManagement/productsSync/tableProductList', {
       originForm: state => {
         return state.form
+      },
+      task_id: state => {
+        return state.task_id
+      },
+      selectParmas: state => {
+        return state.selectParmas
+      },
+      filters: state => {
+        return state.filters
       }
     })
   },
@@ -396,7 +406,7 @@ export default {
         this.form = this.originForm
       } else {
         // 取模版旧数据
-        const template = await servises.getTemplate()
+        const template = await services.getTemplate()
         // 库存
         this.form.config_json.current_stock_rate = template.step_stock_num_percentage
         // 标题
@@ -419,6 +429,28 @@ export default {
     },
     validCheckContent () {
       this.$refs.form.validateField(['config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])
+    },
+    updatePlan () {
+      this.loadingPost = true
+      const parmas = {
+        style: JSON.stringify({
+          form: this.form,
+          selectParmas: this.selectParmas,
+          filters: this.filters
+        }),
+        task_id: this.task_id
+      }
+      services.productSourceSyncUpdate(parmas)
+        .then(data => {
+          this.$message.success('修改模版成功！')
+          this.$emit('go', null, 1)
+        })
+        .catch(err => {
+          this.$message.error(`${err}`)
+        })
+        .finally(() => {
+          this.loadingPost = false
+        })
     },
     goback () {
       this.$emit('go', null, 1)
