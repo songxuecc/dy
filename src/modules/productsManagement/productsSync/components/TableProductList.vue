@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="productsSync-TableProductList" ref="TableProductList">
-    <Search  @filter="handleFilter" tipType="源同步"/>
+    <Search  @filter="handleFilter" tipType="源同步" :originFilters="originFilters" />
     <div class="left pr-10 click mb-10 pl-20 pt-10 flex align-c">
       <el-checkbox v-model="is_all" @change="handleAllSelectionChange">
         <span :class="[is_all?'color-primary':'']">一键全选所有商品</span>
@@ -134,12 +134,11 @@
 <script>
 import Search from './Search'
 import services from '@servises'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 import debounce from 'lodash/debounce'
-// import cloneDeep from 'lodash/cloneDeep'
 
 export default {
-  name: 'component_name',
+  name: 'TableProductList',
   props: {},
   components: {
     Search
@@ -151,12 +150,21 @@ export default {
       currentRow: null,
       startFixed: false,
       tableDataMap: new Map(),
-      loadingPost: false
+      loadingPost: false,
+      originFilters: undefined
     }
   },
   computed: {
     ...mapState({
       loading: (state) => state['@@loading'].effects['productManagement/productsSync/tableProductList/query']
+    }),
+    ...mapState('productManagement/productsSync/tableProductList', {
+      selectParmasSearch: state => {
+        return state.selectParmas
+      },
+      originFiltersSearch: state => {
+        return state.originFilters
+      }
     }),
     ...mapState('productManagement/productsSync/tableProductList', [
       'tableData',
@@ -181,12 +189,22 @@ export default {
       if (!this.is_all) {
         parmas.goods_id_list = JSON.stringify(this.multipleSelection.map(row => row.goods_id))
       }
-
       return parmas
     }
   },
   created () {
-    // this.fetch()
+    // 进入列表 查询数据的初始化
+    if (this.selectParmasSearch) {
+      this.is_all = Boolean(this.selectParmasSearch.is_all)
+      this.goods_id_list = JSON.parse(this.selectParmasSearch.goods_id_list)
+      this.delete_goods_id_list = JSON.parse(this.selectParmasSearch.delete_goods_id_list)
+      this.originFilters = {
+        ...this.filters,
+        ...this.originFiltersSearch
+      }
+    } else {
+      this.clearData()
+    }
   },
   mounted () {
     const scrollEl = document.querySelector('.page-component__scroll')
@@ -214,13 +232,20 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('productManagement/productsSync/tableProductList', ['save']),
     ...mapActions('productManagement/productsSync/tableProductList', [
       'fetch',
       'handleCurrentChange',
       'handleSizeChange',
-      'setFilter'
+      'setFilter',
+      'clear'
     ]),
+    clearData () {
+      this.clear()
+      this.originFilters = undefined
+    },
     handleCancel () {
+      this.clearData()
       this.$emit('goback')
     },
     handleConfirm () {
@@ -230,17 +255,20 @@ export default {
       const form = this.form
       const selectParmas = this.selectParmas
       const filters = this.filters
+      const originFilters = this.originFilters
       console.log(form, 'form')
       console.log(selectParmas, 'selectParmas')
       console.log(filters, 'filters')
+      console.log(originFilters, 'originFilters')
       const parmas = {...form, ...selectParmas, ...filters}
       parmas.config_json = JSON.stringify(parmas.config_json)
-      parmas.style = JSON.stringify({form, selectParmas, filters})
+      parmas.style = JSON.stringify({form, selectParmas, filters, originFilters})
       this.loadingPost = true
       services.productSourceSyncCreate(parmas)
         .then(data => {
           // 创建成功
           this.$message.success('创建成功')
+          this.clearData()
           this.$emit('go', null, 1)
         })
         .catch(err => {
@@ -263,8 +291,11 @@ export default {
         })
       }
     },
-    handleFilter (filters) {
+    // 保存查询的初始化数据
+    handleFilter (filters, originFilters) {
       this.setFilter({filters})
+      console.log(originFilters, 'originFilters')
+      this.originFilters = originFilters
     },
     // 表格多选禁用判断
     isSelectionEnable () {
@@ -281,7 +312,7 @@ export default {
     },
     // 表格多选 选项修改回调事件
     handleSelectionChange (val) {
-      console.log(val, 'handleSelectionChange')
+      // console.log(val, 'handleSelectionChange')
       this.multipleSelection = val
     },
     // 底部按钮滚动定位

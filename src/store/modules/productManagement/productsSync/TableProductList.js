@@ -13,11 +13,22 @@ const model = modelExtend(
         page_size: 10,
         page_index: 1
       },
-      tableDataMap: new Map()
+      selectParmas: undefined,
+      form: undefined
     }),
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
         await dispatch('query', { ...payload })
+      },
+      clear ({commit, state, dispatch}, payload) {
+        commit('save', {
+          selectParmas: undefined,
+          form: undefined,
+          originFilters: undefined,
+          filters: undefined
+        })
+
+        console.log(state, 'state')
       }
     },
     getters: {

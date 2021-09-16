@@ -193,12 +193,16 @@ export default {
     // 修改商品
     handleChangeProduct (row, type) {
       console.log(row, 'row')
-      // this.$emit('go', row, type)
-      const filters = row.goods_query_params
-      // const form = {
-      //   task_title:
-      // }
+      const filters = row.style.filters
+      const form = row.style.form
+      const selectParmas = row.style.selectParmas
+      const originFilters = row.style.originFilters
       this.setFilter_tableProductList({filters})
+      this.save({
+        form,
+        selectParmas,
+        originFilters
+      })
       this.$emit('go', row, type)
     },
     // 开始检测

@@ -85,6 +85,7 @@ class BaseModelClass {
       mutations: {
         save (state, payload) {
           Object.assign(state, payload)
+          console.log(state, 'state')
         }
       },
       actions: {

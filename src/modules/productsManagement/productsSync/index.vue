@@ -3,8 +3,7 @@
   <div>
     <TableSyncRecord @go="handleGo"  v-if="step === 1"/>
     <CreateSyncPlan v-if="step === 2" @goback="goback" @go="handleGo"></CreateSyncPlan>
-    <TableProductList v-if="step === 3" @goback="goback" @go="handleGo"></TableProductList>
-
+    <TableProductList v-if="step === 3" @goback="goback" @go="handleGo" ref="TableProductList"></TableProductList>
   </div>
 </template>
 
@@ -38,7 +37,6 @@ export default {
     handleGo (row, type) {
       this.prevStep = this.step
       this.step = type
-
       console.log(this.step, 'this.step')
     },
     goback () {

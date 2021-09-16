@@ -216,9 +216,10 @@ export default {
   components: {
     categorySelectView
   },
-  name: 'component_name',
+  name: 'Search',
   props: {
-    tipType: String
+    tipType: String,
+    originFilters: Object
   },
   data () {
     return {
@@ -274,7 +275,6 @@ export default {
       ]
     }
   },
-
   computed: {
     statusOptions () {
       const options = []
@@ -285,6 +285,39 @@ export default {
       })
       return options
     }
+  },
+  created () {
+    // 查询初始化
+    if (this.originFilters) {
+      const form = this.originForm
+      if (this.originFilters.originCategorys) this.categorys = JSON.parse(this.originFilters.originCategorys)
+      if (this.originFilters.status) form.status = this.originFilters.originStatus
+      if (this.originFilters.goods_id_list) form.goods_id_list = this.originFilters.goods_id_list
+      if (this.originFilters.presell_type) form.presell_type = this.originFilters.presell_type
+      if (this.originFilters.captureStatus) form.captureStatus = this.originFilters.captureStatus
+      if (this.originFilters.tp_id) form.tp_id = this.originFilters.tp_id
+      if (this.originFilters.keyword) form.keyword = this.originFilters.keyword
+      if (this.originFilters.migrate_start_time && this.originFilters.migrate_end_time) {
+        form.captureTime = [this.originFilters.migrate_start_time, this.originFilters.migrate_end_time]
+      }
+      this.originForm = form
+      this.form = form
+    } else {
+      const o = {
+        status: '-',
+        presell_type: -1,
+        captureStatus: -1,
+        tp_id: -1,
+        goods_id_list: '',
+        captureTime: [],
+        keyword: ''
+      }
+      this.categorys = []
+      this.originForm = o
+      this.form = o
+    }
+
+    console.log(this.categorys, 'this.categorys')
   },
   methods: {
     // 查询
@@ -303,7 +336,6 @@ export default {
         status = parseInt(statusArray[0])
         checkStatus = parseInt(statusArray[1])
       }
-
       const data = {
         status: status,
         check_status: checkStatus,
@@ -321,8 +353,11 @@ export default {
           data.migrate_end_time = endTime
         }
       }
-      console.log(data)
-      this.$emit('filter', data)
+      const originFilters = {
+        originStatus: this.form.status,
+        originCategorys: JSON.stringify(this.categorys)
+      }
+      this.$emit('filter', data, originFilters)
     },
     clearCategory () {
       this.categorys = []
