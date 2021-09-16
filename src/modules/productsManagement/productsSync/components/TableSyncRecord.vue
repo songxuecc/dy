@@ -32,22 +32,26 @@
               <span>成功{{scope.row.success_nums}}</span>
               <span>失败{{scope.row.fail_nums}}</span>
             </div>
-            <div class="color-999 font-12">{{ scope.row.last_sync_time }} 完成检测</div>
+            <div class="color-999 font-12" v-if="scope.row.last_sync_time">{{ scope.row.last_sync_time }} 完成检测</div>
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="状态"   align="center" width="65">
         <template slot-scope="scope">
-          <div>
-            {{status[scope.row.status]}}
-          </div>
+          <el-link :underline="false" class="font-12 flex column justify-c align-c no-decoration" type="primary" v-if="scope.row.status === 1">
+            <span>进行中 <span v-if="scope.row.percent !== 100"> - {{scope.row.percent || 0}}%</span></span>
+            <el-progress :percentage="scope.row.percent" :show-text="false" style="width:80px" :stroke-width="10"></el-progress>
+          </el-link>
+          <el-link :underline="false" class="font-12 no-decoration" type="warning" v-if="scope.row.status === 2">已完成</el-link>
+          <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 3">失败</el-link>
+          <el-link :underline="false" class="font-12 no-decoration" type="info" v-if="scope.row.status === 0">未开始</el-link>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="310"   align="center">
          <template slot-scope="scope">
-          <a class="pramiry pointer " @click="onStartSync(scope.row)" v-if="scope.row.sync_type === 1">开始检测</a>
-          <a class="pramiry pointer " @click="onStartSync(scope.row)" v-else>开始检测修改</a>
-          <a class="pramiry pointer pl-5" @click="handleOpen(scope.row)" >检测详情</a>
+          <a class="pramiry pointer " @click="onStartSync(scope.row)" v-if="scope.row.sync_type === 1">开始检测修改</a>
+          <a class="pramiry pointer " @click="onStartSync(scope.row)" v-else>开始检测</a>
+          <a class="pramiry pointer pl-5" @click="handleDetail(scope.row)" >检测详情</a>
           <a class="pramiry pointer pl-5" @click="handleChangeProduct(scope.row,3)" >修改商品</a>
           <a class="pramiry pointer pl-5" @click="handleGo(scope.row,2)" >编辑计划</a>
           <a class="fail pointer pl-5" @click="onDelete(scope.row)" >删除</a>
@@ -73,6 +77,7 @@
 <script>
 import DrawerSyncDetail from './DrawerSyncDetail'
 import services from '@servises'
+import debounce from 'lodash/debounce'
 
 import {
   mapActions,
@@ -177,14 +182,14 @@ export default {
     handleCreateSyncPlan () {
       this.$emit('go')
     },
-    handleOpen (row) {
-      this.$nextTick(() => {
-        this.$refs.DrawerSyncDetail && this.$refs.DrawerSyncDetail.open(row)
-      })
-    },
     handleGo (row, type) {
       this.$emit('go', row, type)
     },
+    handleDetail: debounce(function (row) {
+      this.$nextTick(() => {
+        this.$refs.DrawerSyncDetail && this.$refs.DrawerSyncDetail.open(row)
+      })
+    }, 1000),
     // 修改商品
     handleChangeProduct (row, type) {
       console.log(row, 'row')
@@ -197,20 +202,21 @@ export default {
       this.$emit('go', row, type)
     },
     // 开始检测
-    onStartSync (row) {
+    onStartSync: debounce(function (row) {
       console.log(row, 'row')
-
+      const style = row.style
       const parmas = {
         task_id: row.task_id,
         status: row.status,
-        goods_id_list: row.goods_query_params.goods_id_list,
-        keyword: row.goods_query_params.keyword,
-        delete_goods_id_list: row.goods_query_params.delete_goods_id_list,
-        is_all: row.goods_query_params.is_all
+        goods_id_list: style.selectParmas.goods_id_list,
+        keyword: style.filters.keyword,
+        delete_goods_id_list: style.selectParmas.delete_goods_id_list,
+        is_all: style.selectParmas.is_all
       }
       this.loadingPost = true
       services.productSourceSyncDetailRun(parmas)
         .then(data => {
+          console.log(data, 'data')
           this.$message.success('开始检测了！')
           this.fetch()
         })
@@ -220,7 +226,7 @@ export default {
         .finally(() => {
           this.loadingPost = false
         })
-    }
+    }, 1000)
   }
 }
 </script>

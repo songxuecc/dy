@@ -21,11 +21,11 @@
             <el-form :model="filters" size="small" inline label-width="45px" label-position="left" class="ml-20">
               <el-form-item label="标题" >
                 <el-input
-                  v-model="filters.goods_name"
+                  v-model="filters.keyword"
                   style="width:350px"
                   placeholder="请填写标题"
                   clearable
-                  @clear="handleClear('goods_name')"
+                  @clear="handleClear('keyword')"
                  ></el-input>
               </el-form-item>
               <el-form-item label="商品ID" class="ml-20">
@@ -254,10 +254,18 @@ export default {
       this.rowData = rowData
       this.activeName = 2
       this.drawer = true
+      console.log(rowData, 'rowData')
+      const style = rowData.style
+      const filters = {
+        task_id: rowData.task_id || '',
+        status: rowData.status || '',
+        publish_status: rowData.publish_status || '',
+        keyword: style.filters.keyword || '',
+        goods_id_list: JSON.parse(style.selectParmas.goods_id_list) || []
+      }
+
       this.fetch({
-        filters: {
-          status: this.activeName
-        }
+        filters
       })
     },
     // 一件全选按钮回调
@@ -289,12 +297,11 @@ export default {
     },
     // 表格多选 选项修改回调事件
     handleSelectionChange (val) {
-      console.log(val, 'handleSelectionChange')
+      // console.log(val, 'handleSelectionChange')
       this.multipleSelection = val
     },
     filterHandler (value, row, column) {
       const status = value
-      console.log(value, 'value')
       this.setFilter({
         filters: {
           goods_name: this.filters.goods_name || '',
@@ -322,6 +329,7 @@ export default {
     handleChangeTabs () {
       this.setFilter({
         filters: {
+          ...this.filters,
           status: this.activeName
         }
       })

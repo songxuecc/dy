@@ -31,11 +31,13 @@ const model = modelExtend(
         if (!runingsIds.length || state.stopGetperprogress) return false
         try {
           const progressData = await servises.productSourceSyncProgressQuery({
-            id_list: JSON.stringify(runingsIds)
+            task_id_list: JSON.stringify(runingsIds)
           })
           const tableData = state.tableData.map(originItem => {
-            const progressItem = progressData.find(progressItem => progressItem.id === originItem.task_id)
+            const progressItem = progressData.find(progressItem => progressItem.task_id === originItem.task_id)
             if (progressItem) {
+              // 同步完成时间 替换 上一次同步完成时间
+              progressItem.last_sync_time = progressItem.sync_complete_time
               return {...originItem, ...progressItem}
             } else {
               return originItem
