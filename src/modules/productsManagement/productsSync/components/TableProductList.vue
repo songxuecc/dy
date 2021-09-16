@@ -164,6 +164,12 @@ export default {
       },
       originFiltersSearch: state => {
         return state.originFilters
+      },
+      tableDataMapSearch: state => {
+        return state.tableDataMap
+      },
+      multipleSelectionSearch: state => {
+        return state.multipleSelection
       }
     }),
     ...mapState('productManagement/productsSync/tableProductList', [
@@ -202,8 +208,21 @@ export default {
         ...this.filters,
         ...this.originFiltersSearch
       }
+      this.tableDataMap = this.tableDataMapSearch
+      this.multipleSelection = this.multipleSelectionSearch
+      console.log(this.tableDataMap, 'this.tableDataMap ')
+      // const tableDataMap = this.tableDataMap
+      // this.tableData.forEach(row => {
+      //   const rowMap = tableDataMap.get(`${row.goods_id}`)
+      //   const hasSelected = this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
+      //   if (!hasSelected) {
+      //     this.$refs.multipleTable.toggleRowSelection(row)
+      //   }
+      // })
+
+      console.log(this.originFilters, this.filters, 'originFilters')
     } else {
-      this.clearData()
+      // this.clearData()
     }
   },
   mounted () {
@@ -216,6 +235,7 @@ export default {
     tableData: {
       handler: function (n) {
         const tableDataMap = this.tableDataMap
+        console.log(tableDataMap, 'tableDataMap')
         n.forEach(row => {
           const rowMap = tableDataMap.get(row.goods_id)
           if (this.is_all) {
@@ -244,6 +264,15 @@ export default {
       this.clear()
       this.originFilters = undefined
     },
+    strMapToObj (strMap) {
+      let obj = Object.create(null)
+      for (let [k, v] of strMap) {
+        // We don’t escape the key '__proto__'
+        // which can cause problems on older engines
+        obj[k] = v
+      }
+      return obj
+    },
     handleCancel () {
       this.clearData()
       this.$emit('goback')
@@ -256,13 +285,18 @@ export default {
       const selectParmas = this.selectParmas
       const filters = this.filters
       const originFilters = this.originFilters
-      console.log(form, 'form')
-      console.log(selectParmas, 'selectParmas')
-      console.log(filters, 'filters')
-      console.log(originFilters, 'originFilters')
       const parmas = {...form, ...selectParmas, ...filters}
       parmas.config_json = JSON.stringify(parmas.config_json)
-      parmas.style = JSON.stringify({form, selectParmas, filters, originFilters})
+      const style = {
+        form,
+        selectParmas,
+        filters,
+        originFilters,
+        tableDataMap: this.strMapToObj(this.tableDataMap),
+        multipleSelection: this.multipleSelection
+      }
+      console.log(style, 'style')
+      parmas.style = JSON.stringify(style)
       this.loadingPost = true
       services.productSourceSyncCreate(parmas)
         .then(data => {

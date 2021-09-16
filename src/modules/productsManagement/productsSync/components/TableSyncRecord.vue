@@ -192,7 +192,7 @@ export default {
         this.$refs.DrawerSyncDetail && this.$refs.DrawerSyncDetail.open(row)
       })
     }, 1000),
-    // 修改商品
+    // 修改计划
     handleEditPlan (row, type) {
       console.log(row, 'row')
       const form = row.style.form
@@ -209,18 +209,34 @@ export default {
       this.$emit('go', row, type)
     },
     // 修改商品
-    handleChangeProduct (row, type) {
+    async handleChangeProduct (row, type) {
       const filters = row.style.filters
       const form = row.style.form
       const selectParmas = row.style.selectParmas
       const originFilters = row.style.originFilters
-      this.setFilter_tableProductList({filters})
-      this.save({
-        form,
-        selectParmas,
-        originFilters
+
+      function objToStrMap (obj) {
+        let strMap = new Map()
+        for (let k of Object.keys(obj)) {
+          strMap.set(k, obj[k])
+        }
+        return strMap
+      }
+
+      const tableDataMap = objToStrMap(row.style.tableDataMap)
+      const multipleSelection = row.style.multipleSelection
+      console.log(tableDataMap, row, 'tableDataMap')
+      this.setFilter_tableProductList({filters}).then(() => {
+        this.save({
+          form,
+          selectParmas,
+          originFilters,
+          filters,
+          tableDataMap,
+          multipleSelection
+        })
+        this.$emit('go', row, type)
       })
-      this.$emit('go', row, type)
     },
     // 开始检测
     onStartSync: debounce(function (row) {

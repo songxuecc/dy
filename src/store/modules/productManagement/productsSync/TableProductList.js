@@ -17,7 +17,9 @@ const model = modelExtend(
       form: undefined,
       originFilters: undefined,
       filters: undefined,
-      task_id: undefined
+      task_id: undefined,
+      multipleSelection: undefined,
+      tableDataMap: undefined
     }),
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
@@ -29,7 +31,9 @@ const model = modelExtend(
           form: undefined,
           originFilters: undefined,
           filters: undefined,
-          task_id: undefined
+          task_id: undefined,
+          multipleSelection: undefined,
+          tableDataMap: undefined
         })
 
         console.log(state, 'state')
