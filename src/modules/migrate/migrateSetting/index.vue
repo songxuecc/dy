@@ -306,6 +306,7 @@
     <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px"
         :disabled="shouldUpdate || loadingSettings">保存设置</el-button>
+      <el-link @click="gotoStartCopy" v-if="shouldUpdate || loadingSettings" :underline="false" type="primary" class="font-12 ml-5 " style="margin-top:25px">已设置，去复制商品。点击跳转开始复制页。</el-link>
     </div>
 
   </div>
@@ -329,7 +330,7 @@ export default {
   beforeRouteLeave (to, from, next) {
     // 导航离开该组件的对应路由时调用
     // 可以访问组件实例 `this`
-    if (this.shouldUpdate) {
+    if (this.shouldUpdate || this.loadingSettings) {
       next()
     } else {
       this.$confirm('您未保存，是否先保存再关闭？')
@@ -1172,6 +1173,11 @@ export default {
         return require('@/assets/images/chanmama.png')
       }
       return ''
+    },
+    gotoStartCopy () {
+      this.$router.push({
+        name: 'StartMigrate'
+      })
     }
   }
 }
