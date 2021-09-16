@@ -301,8 +301,11 @@
       <el-button @click="goback" plain type="primary" style="width: 120px"
         >取消</el-button
       >
-      <el-button @click="go" type="primary" style="width: 140px"
+      <el-button @click="go" type="primary" style="width: 140px" v-if="!this.originForm"
         >下一步，添加商品</el-button
+      >
+      <el-button @click="goback" type="primary" style="width: 140px" v-else
+        >确定修改模版</el-button
       >
     </div>
   </div>
@@ -310,16 +313,14 @@
 
 <script>
 
-import {mapMutations, mapActions} from 'vuex'
+import {mapMutations, mapActions, mapState} from 'vuex'
 import servises from '@/api/servises.js'
 // import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
 
 export default {
-  name: 'component_name',
-  props: {
-    msg: String
-  },
+  name: 'CreateSyncPlan',
+
   data () {
     const checkContent = (rule, value, callback) => {
       // !this.form.config_json.is_sync_shelf &&
@@ -377,31 +378,44 @@ export default {
   created () {
     this.init()
   },
+  computed: {
+    ...mapState('productManagement/productsSync/tableProductList', {
+      originForm: state => {
+        return state.form
+      }
+    })
+  },
   methods: {
     ...mapActions('productManagement/productsSync/tableProductList', [
       'fetch'
     ]),
     ...mapMutations('productManagement/productsSync/tableProductList', ['save']),
     async init () {
-      const template = await servises.getTemplate()
-      // 库存
-      this.form.config_json.current_stock_rate = template.step_stock_num_percentage
-      // 标题
-      this.form.config_json.is_open_ps = template.is_open_title_prefix_suffix
-      this.form.config_json.is_open_replace = template.is_open_title_replace
-      this.form.config_json.prefix = template.title_prefix
-      this.form.config_json.suffix = template.title_suffix
-      this.form.config_json.source_str = template.source_title_str
-      this.form.config_json.target_str = template.target_title_str
-      // sku
-      this.form.config_json.sku_price_diff = template.origin_price_diff
-      this.form.config_json.sku_price_rate = template.group_price_rate
-      this.form.config_json.out_price_diff = template.group_price_diff
-      // 划线价
-      this.form.config_json.market_price_rate = template.price_rate
-      this.form.config_json.market_price_diff = template.price_diff
-      // 售卖价
-      this.form.config_json.is_sale_price_show_max = template.is_sale_price_show_max
+      // 查询初始化
+      if (this.originForm) {
+        this.form = this.originForm
+      } else {
+        // 取模版旧数据
+        const template = await servises.getTemplate()
+        // 库存
+        this.form.config_json.current_stock_rate = template.step_stock_num_percentage
+        // 标题
+        this.form.config_json.is_open_ps = template.is_open_title_prefix_suffix
+        this.form.config_json.is_open_replace = template.is_open_title_replace
+        this.form.config_json.prefix = template.title_prefix
+        this.form.config_json.suffix = template.title_suffix
+        this.form.config_json.source_str = template.source_title_str
+        this.form.config_json.target_str = template.target_title_str
+        // sku
+        this.form.config_json.sku_price_diff = template.origin_price_diff
+        this.form.config_json.sku_price_rate = template.group_price_rate
+        this.form.config_json.out_price_diff = template.group_price_diff
+        // 划线价
+        this.form.config_json.market_price_rate = template.price_rate
+        this.form.config_json.market_price_diff = template.price_diff
+        // 售卖价
+        this.form.config_json.is_sale_price_show_max = template.is_sale_price_show_max
+      }
     },
     validCheckContent () {
       this.$refs.form.validateField(['config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])

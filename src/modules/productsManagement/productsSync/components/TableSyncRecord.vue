@@ -53,7 +53,7 @@
           <a class="pramiry pointer " @click="onStartSync(scope.row)" v-else>开始检测</a>
           <a class="pramiry pointer pl-5" @click="handleDetail(scope.row)" >检测详情</a>
           <a class="pramiry pointer pl-5" @click="handleChangeProduct(scope.row,3)" >修改商品</a>
-          <a class="pramiry pointer pl-5" @click="handleGo(scope.row,2)" >编辑计划</a>
+          <a class="pramiry pointer pl-5" @click="handleEditPlan(scope.row,2)" >编辑计划</a>
           <a class="fail pointer pl-5" @click="onDelete(scope.row)" >删除</a>
         </template>
       </el-table-column>
@@ -126,6 +126,7 @@ export default {
   },
   methods: {
     ...mapMutations('productManagement/productsSync/tableProductList', ['save']),
+    ...mapActions('productManagement/productsSync/tableProductList', ['clear']),
     ...mapActions('productManagement/productsSync/tableSyncRecord', [
       'fetch',
       'handleCurrentChange',
@@ -183,6 +184,7 @@ export default {
       this.$emit('go')
     },
     handleGo (row, type) {
+      this.clear()
       this.$emit('go', row, type)
     },
     handleDetail: debounce(function (row) {
@@ -191,8 +193,15 @@ export default {
       })
     }, 1000),
     // 修改商品
+    handleEditPlan (row, type) {
+      const form = row.style.form
+      this.save({
+        form
+      })
+      this.$emit('go', row, type)
+    },
+    // 修改商品
     handleChangeProduct (row, type) {
-      console.log(row, 'row')
       const filters = row.style.filters
       const form = row.style.form
       const selectParmas = row.style.selectParmas
