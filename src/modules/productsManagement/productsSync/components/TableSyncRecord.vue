@@ -237,7 +237,8 @@ export default {
           originFilters,
           filters,
           tableDataMap,
-          multipleSelection
+          multipleSelection,
+          task_id: row.task_id
         })
         this.$emit('go', row, type)
       })

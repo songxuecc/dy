@@ -170,6 +170,9 @@ export default {
       },
       multipleSelectionSearch: state => {
         return state.multipleSelection
+      },
+      task_id: state => {
+        return state.task_id
       }
     }),
     ...mapState('productManagement/productsSync/tableProductList', [
@@ -279,36 +282,48 @@ export default {
       if (this.selectParmas.length > 200) {
         return this.$message.error('商品最多200条！')
       }
-      const form = this.form
-      const selectParmas = this.selectParmas
-      const filters = this.filters
-      const originFilters = this.originFilters
-      const parmas = {...form, ...selectParmas, ...filters}
-      parmas.config_json = JSON.stringify(parmas.config_json)
+      const parmas = {}
       const style = {
-        form,
-        selectParmas,
-        filters,
-        originFilters,
+        form: this.form,
+        selectParmas: this.selectParmas,
+        filters: this.filters,
+        originFilters: this.originFilters,
         tableDataMap: this.strMapToObj(this.tableDataMap),
         multipleSelection: this.multipleSelection
       }
-      console.log(style, 'style')
       parmas.style = JSON.stringify(style)
       this.loadingPost = true
-      services.productSourceSyncCreate(parmas)
-        .then(data => {
+      // 判断是二次修改还是首次创建
+      if (this.selectParmasSearch) {
+        parmas.task_id = this.task_id
+        services.productSourceSyncUpdate(parmas)
+          .then(data => {
           // 创建成功
-          this.$message.success('创建成功')
-          this.clearData()
-          this.$emit('go', null, 1)
-        })
-        .catch(err => {
-          this.$message.error(`${err}`)
-        })
-        .finally(() => {
-          this.loadingPost = false
-        })
+            this.$message.success('修改成功！')
+            this.clearData()
+            this.$emit('go', null, 1)
+          })
+          .catch(err => {
+            this.$message.error(`${err}`)
+          })
+          .finally(() => {
+            this.loadingPost = false
+          })
+      } else {
+        services.productSourceSyncCreate(parmas)
+          .then(data => {
+          // 创建成功
+            this.$message.success('创建成功')
+            this.clearData()
+            this.$emit('go', null, 1)
+          })
+          .catch(err => {
+            this.$message.error(`${err}`)
+          })
+          .finally(() => {
+            this.loadingPost = false
+          })
+      }
     },
     // 一件全选按钮回调
     handleAllSelectionChange (val) {
