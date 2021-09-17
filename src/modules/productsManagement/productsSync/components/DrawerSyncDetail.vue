@@ -255,13 +255,10 @@ export default {
       this.activeName = 2
       this.drawer = true
       console.log(rowData, 'rowData')
-      const style = rowData.style
       const filters = {
         task_id: rowData.task_id || '',
         status: rowData.status || '',
-        publish_status: rowData.publish_status || '',
-        keyword: style.filters.keyword || '',
-        goods_id_list: JSON.parse(style.selectParmas.goods_id_list) || []
+        publish_status: rowData.publish_status || ''
       }
 
       this.fetch({
@@ -304,7 +301,7 @@ export default {
       const status = value
       this.setFilter({
         filters: {
-          goods_name: this.filters.goods_name || '',
+          keyword: this.filters.keyword || '',
           goods_id_list: this.filters.goods_id_list || '',
           publish_status: status,
           status: this.activeName
@@ -337,9 +334,10 @@ export default {
     handleSearch () {
       this.setFilter({
         filters: {
-          goods_name: this.filters.goods_name || '',
+          keyword: this.filters.keyword || '',
           goods_id_list: this.filters.goods_id_list || '',
-          status: this.activeName
+          status: this.activeName,
+          task_id: this.rowData.task_id || ''
         }
       })
     },
