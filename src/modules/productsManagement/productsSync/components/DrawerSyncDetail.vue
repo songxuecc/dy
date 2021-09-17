@@ -28,15 +28,34 @@
                   @clear="handleClear('keyword')"
                  ></el-input>
               </el-form-item>
-              <el-form-item label="商品ID" class="ml-20">
+              <!-- <el-form-item label="商品ID" class="ml-20">
                 <el-input
-                  clearable @clear="handleClear('goods_id_list')"
-                  v-model="filters.goods_id_list"
+                  clearable
+                  @clear="()=> goods_id_list === ''"
+                  v-model="goods_id_list"
                   class="mr-20"
                   style="width:250px"
                   placeholder="请填写商品ID"
                 ></el-input>
-              </el-form-item>
+              </el-form-item> -->
+
+               <el-form-item
+                  prop="region"
+                  class="product-id relative ml-20"
+                  style="width: 325px;"
+                  label="商品ID"
+                >
+                  <el-input
+                    type="textarea"
+                    autosize
+                    placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
+                    v-model="goods_id_list"
+                    style="width:235px"
+                    class="mb-10 textarea-id"
+                  >
+                  </el-input>
+                </el-form-item>
+
               <el-form-item  size="medium">
                 <el-button type="primary" @click="handleSearch"> 搜索</el-button>
               </el-form-item>
@@ -107,16 +126,18 @@
               <el-table-column prop="sync_content_list" label="检测变化情况" v-if="activeName !== 3"  width="380px" align="center">
                 <template slot-scope="scope">
                   <span v-for="(content,idx) in scope.row.sync_content_list" :key="idx">
-                    <span >标题<span :class="[content.title?'color-warning':'color-999','ml-5','mr-10']">{{content.title?'改变':'未改变'}}</span></span>
-                    <span >价格<span :class="[content.price?'color-warning':'color-999','ml-5','mr-10']">{{content.price?'改变':'未改变'}}</span></span>
-                    <span >上下架<span :class="[content.shelf?'color-warning':'color-999','ml-5','mr-10']">{{content.shelf?'改变':'未改变'}}</span></span>
+                    <span v-if="typeof content.title !== 'undefined'">标题<span :class="[content.title?'color-warning':'color-999','ml-5','mr-10']">{{content.title?'改变':'未改变'}}</span></span>
+                    <span v-if="typeof content.price !== 'undefined'">价格<span :class="[content.price?'color-warning':'color-999','ml-5','mr-10']">{{content.price?'改变':'未改变'}}</span></span>
+                    <span v-if="typeof content.shelf !== 'undefined'">上下架<span :class="[content.shelf?'color-warning':'color-999','ml-5','mr-10']">{{content.shelf?'改变':'未改变'}}</span></span><br/>
+                    <span v-if="typeof content.stock !== 'undefined'">库存<span :class="[content.stock?'color-warning':'color-999','ml-5','mr-10']">{{content.stock?'改变':'未改变'}}</span></span><br/>
                   </span>
                 </template>
               </el-table-column>
               <el-table-column
                 prop="publish_status"
                 label="修改结果"
-                v-if="activeName !== 3" align="center"
+                v-if="activeName !== 3"
+                align="center"
                 :filters="tableFilters"
                 :filter-method="filterHandler"
                 :filter-multiple="false"
@@ -131,10 +152,13 @@
                   <span class="color-4e" v-if="scope.row.publish_status === 4">抖音审核中</span>
                 </template>
               </el-table-column>
-               <el-table-column prop="sync_time" label="检测时间" v-if="activeName === 3" align="center">
-              </el-table-column>
-              <el-table-column prop="fail_reason" label="原因" v-if="activeName === 3" align="center">
-              </el-table-column>
+
+              <template v-if="activeName === 3" >
+                <el-table-column prop="sync_time" label="检测时间" align="center">
+                </el-table-column>
+                <el-table-column prop="fail_reason" label="原因"  align="center">
+                </el-table-column>
+              </template>
 
               <el-table-column :width="activeName !== 3 ? 200 : 100" label="操作" align="center">
                 <template slot-scope="scope">
@@ -191,6 +215,7 @@ export default {
       tableDataMap: new Map(),
       is_all: false,
       multipleSelection: [],
+      goods_id_list: '',
       tabs: [
         {
           id: 0,
@@ -249,7 +274,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions('productManagement/productsSync/drawerSyncDetail', ['fetch', 'setFilter']),
+    ...mapActions('productManagement/productsSync/drawerSyncDetail', [
+      'fetch',
+      'setFilter',
+      'handleCurrentChange',
+      'handleSizeChange'
+    ]),
     open (rowData) {
       this.rowData = rowData
       this.activeName = 2
@@ -301,10 +331,8 @@ export default {
       const status = value
       this.setFilter({
         filters: {
-          keyword: this.filters.keyword || '',
-          goods_id_list: this.filters.goods_id_list || '',
-          publish_status: status,
-          status: this.activeName
+          ...this.filters,
+          publish_status: status
         }
       })
     },
@@ -332,31 +360,39 @@ export default {
       })
     },
     handleSearch () {
+      const limit = 100
+      const goodsIds = this.goods_id_list.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const goodsIdsSet = [...new Set(goodsIds)]
+      if (goodsIdsSet.length > limit) {
+        this.loading = false
+        return this.$message.error(`搜索id不可以超过${limit}条！`)
+      }
+
       this.setFilter({
         filters: {
           keyword: this.filters.keyword || '',
-          goods_id_list: this.filters.goods_id_list || '',
+          goods_id_list: JSON.stringify(goodsIdsSet.length ? goodsIdsSet : ''),
           status: this.activeName,
           task_id: this.rowData.task_id || ''
         }
       })
     },
-    handleCurrentChange (pageIndex) {
-      if (this.loading) return
-      // this.fetchHhTaskProductPage({
-      //   pagination: {
-      //     page_index: pageIndex
-      //   }
-      // })
-    },
-    handleSizeChange (pageSize) {
-      // this.fetchHhTaskProductPage({
-      //   pagination: {
-      //     page_index: 1,
-      //     page_size: pageSize
-      //   }
-      // })
-    },
+    // handleCurrentChange (pageIndex) {
+    //   if (this.loading) return
+    //   // this.fetchHhTaskProductPage({
+    //   //   pagination: {
+    //   //     page_index: pageIndex
+    //   //   }
+    //   // })
+    // },
+    // handleSizeChange (pageSize) {
+    //   // this.fetchHhTaskProductPage({
+    //   //   pagination: {
+    //   //     page_index: 1,
+    //   //     page_size: pageSize
+    //   //   }
+    //   // })
+    // },
     close () {
       this.drawer = false
     },
@@ -425,6 +461,19 @@ export default {
   .el-checkbox__inner::after {
       border-color: #999;
   }
+}
+
+/deep/ .product-id {
+  .el-form-item__label {
+  padding-right: 0px;
+  margin-right: 0px;
+  flex-shrink: 0;
+
+  }
+}
+.textarea-id {
+  position: absolute;
+  z-index: 1;
 }
 </style>
 <style lang="less">

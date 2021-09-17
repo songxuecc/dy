@@ -492,5 +492,6 @@ export default {
 
 .textarea-id {
   position: absolute;
+  z-index: 1;
 }
 </style>
