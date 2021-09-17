@@ -208,8 +208,6 @@ export default {
         ...this.filters,
         ...this.originFiltersSearch
       }
-    } else {
-      // this.clearData()
     }
   },
   mounted () {
@@ -217,6 +215,7 @@ export default {
     scrollEl.addEventListener('scroll', this.scroll)
     this.scroll()
 
+    // 再次进入修改商品时候 默认选中回显
     if (this.selectParmasSearch && !this.is_all) {
       this.tableDataMap = this.tableDataMapSearch
       this.multipleSelection = this.multipleSelectionSearch
@@ -235,7 +234,6 @@ export default {
     tableData: {
       handler: function (n) {
         const tableDataMap = this.tableDataMap
-        console.log(tableDataMap, 'tableDataMap')
         n.forEach(row => {
           const rowMap = tableDataMap.get(row.goods_id)
           if (this.is_all) {
@@ -328,7 +326,6 @@ export default {
     // 保存查询的初始化数据
     handleFilter (filters, originFilters) {
       this.setFilter({filters})
-      console.log(originFilters, 'originFilters')
       this.originFilters = originFilters
     },
     // 表格多选禁用判断
