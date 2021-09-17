@@ -168,4 +168,11 @@ export default {
     padding-bottom: 6px;
     font-size: 12px;
 }
+
+/deep/ .el-dialog .el-dialog__header {
+    padding-top: 30px;
+    color: #4E4E4E;
+    margin-bottom: 0px;
+    font-weight: bold;
+}
 </style>
