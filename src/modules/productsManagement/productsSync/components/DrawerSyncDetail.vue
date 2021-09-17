@@ -6,6 +6,7 @@
       class="drawer left"
       :with-header="false"
       :append-to-body="false"
+      v-if="drawer"
   >
     <ModalDataCompared ref="ModalDataCompared" />
 
@@ -287,8 +288,7 @@ export default {
       console.log(rowData, 'rowData')
       const filters = {
         task_id: rowData.task_id || '',
-        status: rowData.status || '',
-        publish_status: rowData.publish_status || ''
+        status: rowData.status || ''
       }
 
       this.fetch({
@@ -354,8 +354,8 @@ export default {
     handleChangeTabs () {
       this.setFilter({
         filters: {
-          ...this.filters,
-          status: this.activeName
+          status: this.activeName,
+          task_id: this.rowData.task_id
         }
       })
     },
