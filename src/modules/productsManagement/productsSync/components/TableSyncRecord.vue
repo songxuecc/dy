@@ -199,33 +199,37 @@ export default {
       const selectParmas = row.style.selectParmas
       const filters = row.style.filters
       const originFilters = row.style.originFilters
+      const tableDataMap = this.objToStrMap(row.style.tableDataMap)
+      const multipleSelection = row.style.multipleSelection
+
       this.save({
         form,
-        filters,
         selectParmas,
         originFilters,
+        filters,
+        tableDataMap,
+        multipleSelection,
         task_id: row.task_id
       })
+
       this.$emit('go', row, type)
     },
-    // 修改商品
+    objToStrMap (obj) {
+      let strMap = new Map()
+      for (let k of Object.keys(obj)) {
+        strMap.set(k, obj[k])
+      }
+      return strMap
+    },
+    // 修改商品 我是一件全选
     async handleChangeProduct (row, type) {
       const filters = row.style.filters
       const form = row.style.form
       const selectParmas = row.style.selectParmas
       const originFilters = row.style.originFilters
 
-      function objToStrMap (obj) {
-        let strMap = new Map()
-        for (let k of Object.keys(obj)) {
-          strMap.set(k, obj[k])
-        }
-        return strMap
-      }
-
-      const tableDataMap = objToStrMap(row.style.tableDataMap)
+      const tableDataMap = this.objToStrMap(row.style.tableDataMap)
       const multipleSelection = row.style.multipleSelection
-      console.log(tableDataMap, row, 'tableDataMap')
       this.setFilter_tableProductList({filters}).then(() => {
         this.save({
           form,

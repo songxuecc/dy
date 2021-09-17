@@ -392,6 +392,12 @@ export default {
       },
       filters: state => {
         return state.filters
+      },
+      tableDataMap: state => {
+        return state.tableDataMap
+      },
+      multipleSelection: state => {
+        return state.multipleSelection
       }
     })
   },
@@ -430,13 +436,24 @@ export default {
     validCheckContent () {
       this.$refs.form.validateField(['config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])
     },
+    strMapToObj (strMap) {
+      let obj = Object.create(null)
+      for (let [k, v] of strMap) {
+        // We don’t escape the key '__proto__'
+        // which can cause problems on older engines
+        obj[k] = v
+      }
+      return obj
+    },
     updatePlan () {
       this.loadingPost = true
       const parmas = {
         style: JSON.stringify({
           form: this.form,
           selectParmas: this.selectParmas,
-          filters: this.filters
+          filters: this.filters,
+          multipleSelection: this.multipleSelection,
+          tableDataMap: this.strMapToObj(this.tableDataMap)
         }),
         task_id: this.task_id
       }

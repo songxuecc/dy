@@ -208,8 +208,6 @@ export default {
         ...this.filters,
         ...this.originFiltersSearch
       }
-      this.tableDataMap = this.tableDataMapSearch
-      this.multipleSelection = this.multipleSelectionSearch
     } else {
       // this.clearData()
     }
@@ -219,21 +217,18 @@ export default {
     scrollEl.addEventListener('scroll', this.scroll)
     this.scroll()
 
-    const tableDataMap = this.tableDataMap
-    this.tableData.forEach(row => {
-      const rowMap = tableDataMap.get(row.goods_id)
-      if (this.is_all) {
-        const hasSelected = rowMap && this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
-        if (!rowMap || (rowMap && !hasSelected)) {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        }
-      } else {
+    if (this.selectParmasSearch && !this.is_all) {
+      this.tableDataMap = this.tableDataMapSearch
+      this.multipleSelection = this.multipleSelectionSearch
+      const tableDataMap = this.tableDataMap
+      this.tableData.forEach(row => {
+        const rowMap = tableDataMap.get(row.goods_id)
         const hasSelected = rowMap && this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
         if (rowMap && hasSelected) {
           this.$refs.multipleTable.toggleRowSelection(row)
         }
-      }
-    })
+      })
+    }
   },
   watch: {
     // 一件全选时 数据请求初始化
