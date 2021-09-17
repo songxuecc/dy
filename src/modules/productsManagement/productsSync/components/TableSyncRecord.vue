@@ -191,7 +191,11 @@ export default {
       this.$nextTick(() => {
         this.$refs.DrawerSyncDetail && this.$refs.DrawerSyncDetail.open(row)
       })
-    }, 1000),
+    },
+    1000,
+    {
+      leading: true
+    }),
     // 修改计划
     handleEditPlan (row, type) {
       console.log(row, 'row')
@@ -243,7 +247,6 @@ export default {
     },
     // 开始检测
     onStartSync: debounce(function (row) {
-      console.log(row, 'row')
       const style = row.style
       const parmas = {
         task_id: row.task_id,
@@ -266,7 +269,11 @@ export default {
         .finally(() => {
           this.loadingPost = false
         })
-    }, 1000)
+    },
+    1000,
+    {
+      leading: true
+    })
   }
 }
 </script>

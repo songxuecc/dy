@@ -43,14 +43,26 @@ const model = modelExtend(
               return originItem
             }
           })
+
+          if (progressData.every(item => [2, 3].includes(item.status))) {
+            clearTimeout(state.getperprogressTimer)
+            commit('save', {
+              getperprogressTimer: null
+            })
+            this._vm.$message({
+              message: `全部检测完毕了！`,
+              type: 'success'
+            })
+          } else {
+            const getperprogressTimer = setTimeout(() => {
+              dispatch('getperprogress')
+            }, 2000)
+            commit('save', {
+              getperprogressTimer
+            })
+          }
           commit('save', {
             tableData
-          })
-          const getperprogressTimer = setTimeout(() => {
-            dispatch('getperprogress')
-          }, 2000)
-          commit('save', {
-            getperprogressTimer
           })
         } catch (err) {
           clearTimeout(state.getperprogressTimer)

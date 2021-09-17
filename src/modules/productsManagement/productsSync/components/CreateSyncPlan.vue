@@ -297,7 +297,7 @@
       <el-button @click="goback" plain type="primary" style="width: 120px"
         >取消</el-button
       >
-      <el-button @click="go" type="primary" style="width: 140px" v-if="!this.originForm"
+      <el-button @click="go" type="primary" style="width: 140px" v-if="prevStep == 3 ||  !originForm"
         >下一步，添加商品</el-button
       >
       <el-button @click="updatePlan" type="primary" style="width: 140px" v-else :loading="loadingPost" :disabled="loadingPost"
@@ -316,7 +316,9 @@ import services from '@servises'
 
 export default {
   name: 'CreateSyncPlan',
-
+  props: {
+    prevStep: Number
+  },
   data () {
     const checkContent = (rule, value, callback) => {
       // !this.form.config_json.is_sync_shelf &&
@@ -494,7 +496,11 @@ export default {
 
       // })
       // this.$emit('go')
-    }, 300),
+    },
+    300,
+    {
+      leading: true
+    }),
     toggleIsShowSample () {
       this.isShowSample = true
     }

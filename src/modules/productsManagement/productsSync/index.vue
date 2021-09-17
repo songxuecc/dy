@@ -2,8 +2,8 @@
 <template>
   <div>
     <TableSyncRecord @go="handleGo"  v-if="step === 1"/>
-    <CreateSyncPlan v-if="step === 2" @goback="goback" @go="handleGo"></CreateSyncPlan>
-    <TableProductList v-if="step === 3" @goback="goback" @go="handleGo" ref="TableProductList"></TableProductList>
+    <CreateSyncPlan v-if="step === 2" @goback="goback" @go="handleGo" :prevStep="prevStep"></CreateSyncPlan>
+    <TableProductList v-if="step === 3" @goback="goback" @go="handleGo" ref="TableProductList" :prevStep="prevStep"></TableProductList>
   </div>
 </template>
 

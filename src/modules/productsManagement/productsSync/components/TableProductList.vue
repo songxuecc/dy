@@ -139,7 +139,9 @@ import debounce from 'lodash/debounce'
 
 export default {
   name: 'TableProductList',
-  props: {},
+  props: {
+    prevStep: Number
+  },
   components: {
     Search
   },
@@ -272,8 +274,39 @@ export default {
       return obj
     },
     handleCancel () {
-      this.clearData()
-      this.$emit('goback')
+      const h = this.$createElement
+      this.$confirm('', {
+        message: h('div', null, [
+          h('div', {
+            class: 'center'
+          }, [
+            h('hh-icon', {
+              props: {
+                type: 'iconjinggao1'
+              },
+              class: 'TableSyncRecord-icon'
+            })
+          ]),
+          h('div', {
+            class: 'TableSyncRecord-text'
+          }, '返回后再次进入需要重新选择商品，是否返回?')
+        ]),
+        type: 'warning',
+        customClass: 'TableSyncRecord-customClass',
+        cancelButtonClass: 'TableSyncRecord-cancelButtonClass',
+        confirmButtonClass: 'TableSyncRecord-confirmButtonClass',
+        showClose: false
+      })
+        .then(_ => {
+          // 如果返回第二页 就
+          if (this.prevStep === 3) {
+            this.clearData()
+          }
+          this.$emit('goback')
+        })
+        .catch(_ => {
+          return false
+        })
     },
     handleConfirm () {
       if (this.selectParmas.length > 200) {
@@ -336,6 +369,7 @@ export default {
     },
     // 保存查询的初始化数据
     handleFilter (filters, originFilters) {
+      this.$refs.multipleTable && this.$refs.multipleTable.clearSelection()
       this.setFilter({filters})
       this.originFilters = originFilters
     },
@@ -469,5 +503,61 @@ export default {
   .el-checkbox__inner::after {
       border-color: #999;
   }
+}
+</style>
+<style lang="less">
+.TableSyncRecord-cancelButtonClass{
+  font-size: 12px;
+  margin-right: 10px;
+  width: 120px;
+  padding: 12px;
+}
+
+.TableSyncRecord-confirmButtonClass{
+  font-size: 12px;
+  width: 120px;
+  padding: 12px;
+}
+
+.TableSyncRecord-icon {
+  width: 50px;
+  height: 50px;
+  font-size: 50px;
+}
+
+.TableSyncRecord-text {
+  width: 364px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #4E4E4E;
+  line-height: 20px;
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.TableSyncRecord-customClass {
+    padding-bottom: 20px;
+    .el-message-box__header {
+      padding-top: 0;
+    }
+    .el-message-box__btns {
+      text-align: center;
+    }
+    .el-message-box__content {
+      .el-message-box__message {
+        padding-left: 0;
+      }
+      p {
+        font-size: 18px;
+        margin: 15px 0 10px;
+        text-align: center;
+      }
+      .el-icon-warning {
+        display: none;
+      }
+    }
 }
 </style>
