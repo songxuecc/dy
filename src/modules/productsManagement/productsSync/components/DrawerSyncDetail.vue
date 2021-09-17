@@ -1,12 +1,12 @@
 <!-- 详情 -->
 <template>
-    <el-drawer
-      :visible.sync="drawer"
-      size="80%"
-      class="drawer left"
-      :with-header="false"
-      :append-to-body="false"
-      v-if="drawer"
+  <el-drawer
+    :visible.sync="drawer"
+    size="80%"
+    class="drawer left"
+    :with-header="false"
+    :append-to-body="false"
+    v-if="drawer"
   >
     <ModalDataCompared ref="ModalDataCompared" />
 
@@ -19,15 +19,22 @@
           v-for="tab in tabs"
         >
           <div class="left">
-            <el-form :model="filters" size="small" inline label-width="45px" label-position="left" class="ml-20">
-              <el-form-item label="标题" >
+            <el-form
+              :model="filters"
+              size="small"
+              inline
+              label-width="45px"
+              label-position="left"
+              class="ml-20"
+            >
+              <el-form-item label="标题">
                 <el-input
                   v-model="filters.keyword"
-                  style="width:350px"
+                  style="width: 350px"
                   placeholder="请填写标题"
                   clearable
                   @clear="handleClear('keyword')"
-                 ></el-input>
+                ></el-input>
               </el-form-item>
               <!-- <el-form-item label="商品ID" class="ml-20">
                 <el-input
@@ -40,31 +47,35 @@
                 ></el-input>
               </el-form-item> -->
 
-               <el-form-item
-                  prop="region"
-                  class="product-id relative ml-20"
-                  style="width: 325px;"
-                  label="商品ID"
+              <el-form-item
+                prop="region"
+                class="product-id relative ml-20"
+                style="width: 325px"
+                label="商品ID"
+              >
+                <el-input
+                  type="textarea"
+                  autosize
+                  placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
+                  v-model="goods_id_list"
+                  style="width: 235px"
+                  class="mb-10 textarea-id"
                 >
-                  <el-input
-                    type="textarea"
-                    autosize
-                    placeholder="输入多个商品ID,以换行分隔，最多可输入5000个"
-                    v-model="goods_id_list"
-                    style="width:235px"
-                    class="mb-10 textarea-id"
-                  >
-                  </el-input>
-                </el-form-item>
+                </el-input>
+              </el-form-item>
 
-              <el-form-item  size="medium">
-                <el-button type="primary" @click="handleSearch"> 搜索</el-button>
+              <el-form-item size="medium">
+                <el-button type="primary" @click="handleSearch">
+                  搜索</el-button
+                >
               </el-form-item>
             </el-form>
 
             <div class="left pr-10 click mb-10 pl-20 pt-10 flex align-c">
               <el-checkbox v-model="is_all" @change="handleAllSelectionChange">
-                <span :class="[is_all?'color-primary':'']">一键全选所有商品</span>
+                <span :class="[is_all ? 'color-primary' : '']"
+                  >一键全选所有商品</span
+                >
               </el-checkbox>
               <el-tooltip
                 class="item"
@@ -78,7 +89,7 @@
 
             <el-table
               :data="tableData"
-              v-loading="loading"
+              v-loading="loading || loadingPost"
               row-key="goods_id"
               height="calc(100vh - 225px)"
               style="width: 100%; box-sizing: border-box"
@@ -93,22 +104,34 @@
                 type="selection"
                 width="55"
                 :selectable="isSelectionEnable"
-                :reserve-selection="true">
+                :reserve-selection="true"
+              >
               </el-table-column>
-              <el-table-column prop="task_title" label="商品信息" width="300px">
+              <el-table-column prop="task_title" label="商品信息">
                 <template slot-scope="scope">
                   <div class="flex">
-
                     <el-image
-                      style="height: 50px; max-width: 50px; border-radius: 2px;margin-right:20px"
+                      style="
+                        height: 50px;
+                        max-width: 50px;
+                        border-radius: 2px;
+                        margin-right: 20px;
+                      "
                       :src="scope.row.image_url"
                       fit="contain"
                       :preview-src-list="[scope.row.image_url]"
                     >
                       <div slot="placeholder">
-                        <hh-icon type="iconwuzhaopian" style="font-size: 50px" />
+                        <hh-icon
+                          type="iconwuzhaopian"
+                          style="font-size: 50px"
+                        />
                       </div>
-                      <div slot="error" class="flex align-c" style="height: 100%">
+                      <div
+                        slot="error"
+                        class="flex align-c"
+                        style="height: 100%"
+                      >
                         <hh-icon
                           type="icontupianjiazaishibai03"
                           style="font-size: 30px"
@@ -116,21 +139,83 @@
                       </div>
                     </el-image>
 
-                    <div >
-                      <div class="title color-4e font-13">{{scope.row.goods_name}}<hh-icon type="iconfuzhi " style="font-size:12px" class="pointer ml-5 mr-10" @click="copy(scope.row.goods_name,'商品名称 复制成功')"></hh-icon></div>
-                      <div class="id color-999 font-12"> 商品ID: {{scope.row.goods_id}}<hh-icon type="iconfuzhi " style="font-size:12px" class="pointer ml-5 mr-10" @click="copy(scope.row.goods_id,'商品ID 复制成功')"></hh-icon></div>
+                    <div>
+                      <div class="title color-4e font-13">
+                        {{ scope.row.goods_name
+                        }}<hh-icon
+                          type="iconfuzhi "
+                          style="font-size: 12px"
+                          class="pointer ml-5 mr-10"
+                          @click="
+                            copy(scope.row.goods_name, '商品名称 复制成功')
+                          "
+                        ></hh-icon>
+                      </div>
+                      <div class="id color-999 font-12">
+                        商品ID: {{ scope.row.goods_id
+                        }}<hh-icon
+                          type="iconfuzhi "
+                          style="font-size: 12px"
+                          class="pointer ml-5 mr-10"
+                          @click="copy(scope.row.goods_id, '商品ID 复制成功')"
+                        ></hh-icon>
+                      </div>
                     </div>
-
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="sync_content_list" label="检测变化情况" v-if="activeName !== 3"  width="380px" align="center">
+              <el-table-column
+                prop="sync_content_list"
+                label="检测变化情况"
+                v-if="activeName !== 3"
+                width="200"
+                align="center"
+              >
                 <template slot-scope="scope">
-                  <span v-for="(content,idx) in scope.row.sync_content_list" :key="idx">
-                    <span v-if="typeof content.title !== 'undefined'">标题<span :class="[content.title?'color-warning':'color-999','ml-5','mr-10']">{{content.title?'改变':'未改变'}}</span></span>
-                    <span v-if="typeof content.price !== 'undefined'">价格<span :class="[content.price?'color-warning':'color-999','ml-5','mr-10']">{{content.price?'改变':'未改变'}}</span></span>
-                    <span v-if="typeof content.shelf !== 'undefined'">上下架<span :class="[content.shelf?'color-warning':'color-999','ml-5','mr-10']">{{content.shelf?'改变':'未改变'}}</span></span><br/>
-                    <span v-if="typeof content.stock !== 'undefined'">库存<span :class="[content.stock?'color-warning':'color-999','ml-5','mr-10']">{{content.stock?'改变':'未改变'}}</span></span><br/>
+                  <span
+                    v-for="(content, idx) in scope.row.sync_content_list"
+                    :key="idx"
+                  >
+                    <span v-if="typeof content.title !== 'undefined'"
+                      >标题<span
+                        :class="[
+                          content.title ? 'color-warning' : 'color-999',
+                          'ml-5',
+                          'mr-10',
+                        ]"
+                        >{{ content.title ? '改变' : '未改变' }}</span
+                      ></span
+                    >
+                    <span v-if="typeof content.price !== 'undefined'"
+                      >价格<span
+                        :class="[
+                          content.price ? 'color-warning' : 'color-999',
+                          'ml-5',
+                          'mr-10',
+                        ]"
+                        >{{ content.price ? '改变' : '未改变' }}</span
+                      ></span
+                    >
+                    <span v-if="typeof content.shelf !== 'undefined'"
+                      >上下架<span
+                        :class="[
+                          content.shelf ? 'color-warning' : 'color-999',
+                          'ml-5',
+                          'mr-10',
+                        ]"
+                        >{{ content.shelf ? '改变' : '未改变' }}</span
+                      ></span
+                    ><br />
+                    <span v-if="typeof content.stock !== 'undefined'"
+                      >库存<span
+                        :class="[
+                          content.stock ? 'color-warning' : 'color-999',
+                          'ml-5',
+                          'mr-10',
+                        ]"
+                        >{{ content.stock ? '改变' : '未改变' }}</span
+                      ></span
+                    ><br />
                   </span>
                 </template>
               </el-table-column>
@@ -144,30 +229,63 @@
                 :filter-multiple="false"
                 filter-placement="bottom-end"
                 column-key="publish_status"
+                width="150"
               >
                 <template slot-scope="scope">
-                  <span class="color-4e" v-if="scope.row.publish_status === 0">未提交修改</span>
-                  <span class="color-4e" v-if="scope.row.publish_status === 1">修改中</span>
-                  <span class="color-4e" v-if="scope.row.publish_status === 2">成功</span>
-                  <span class="color-4e" v-if="scope.row.publish_status === 3">失败</span>
-                  <span class="color-4e" v-if="scope.row.publish_status === 4">抖音审核中</span>
+                  <span class="color-4e" v-if="scope.row.publish_status === 0"
+                    >未提交修改</span
+                  >
+                  <span class="color-4e" v-if="scope.row.publish_status === 1"
+                    >修改中</span
+                  >
+                  <span class="color-4e" v-if="scope.row.publish_status === 2"
+                    >修改成功</span
+                  >
+                  <span class="color-4e" v-if="scope.row.publish_status === 3"
+                    >修改失败</span
+                  >
+                  <span class="color-4e" v-if="scope.row.publish_status === 4"
+                    >抖音审核中</span
+                  >
                 </template>
               </el-table-column>
 
-              <template v-if="activeName === 3" >
-                <el-table-column prop="sync_time" label="检测时间" align="center">
+              <template v-if="activeName === 3">
+                <el-table-column
+                  prop="sync_time"
+                  label="检测时间"
+                  align="center"
+                >
                 </el-table-column>
-                <el-table-column prop="fail_reason" label="原因"  align="center">
+                <el-table-column prop="fail_reason" label="原因" align="center">
                 </el-table-column>
               </template>
 
-              <el-table-column :width="activeName !== 3 ? 200 : 100" label="操作" align="center">
+              <el-table-column
+                :width="activeName !== 3 ? 250 : 150"
+                label="操作"
+                align="center"
+              >
                 <template slot-scope="scope">
                   <!-- 发布抖音 -->
-                  <a class="pramiry pointer " @click="handleSync(scope.row)" v-if="activeName !== 3">提交修改</a>
-                  <a class="pramiry pointer pl-5" @click="handleDetail(scope.row)" v-if="activeName !== 3">查看详情</a>
+                  <a
+                    class="pramiry pointer"
+                    @click="handleSync(scope.row)"
+                    v-if="activeName !== 3"
+                    >提交修改</a
+                  >
+                  <a
+                    class="pramiry pointer pl-5"
+                    @click="handleDetail(scope.row)"
+                    v-if="activeName !== 3"
+                    >查看详情</a
+                  >
                   <!-- 开始检测商品(同步)  goods_id_list -->
-                  <a class="pramiry pointer pl-5" @click="handleRevert(scope.row)" >重新检测</a>
+                  <a
+                    class="pramiry pointer pl-5"
+                    @click="handleRevert(scope.row)"
+                    >重新检测</a
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -187,30 +305,57 @@
         </el-tab-pane>
       </el-tabs>
 
-      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;display:flex;" class="flex justify-c ">
-        <el-button type="primary" plain style="width:160px" @click="handleCancel"
-          >重新检测选中商品</el-button
+      <div
+        style="
+          box-sizing: border-box;
+          background: #ffffff;
+          flex: 1;
+          padding: 10px;
+          display: flex;
+        "
+        class="flex justify-c"
+      >
+        <el-button
+          type="primary"
+          plain
+          :style="{width: loadingPost ? '190px':'160px'}"
+          @click="handleReStartSync"
+          :loading="loadingPost"
+          :disabled="loadingPost"
+          >重新检测选中商品({{
+            is_all ? total : multipleSelection.length
+          }})</el-button
         >
-        <el-button type="primary" style="width: 160px" @click="handleConfirm"
-          >提交修改选中商品({{ is_all ? total : multipleSelection.length}})</el-button>
+        <el-button
+          type="primary"
+          :style="{width: loadingPost ? '190px':'160px'}"
+          @click="handlePublish"
+          :loading="loadingPost"
+          :disabled="loadingPost"
+          >提交修改选中商品({{
+            is_all ? total : multipleSelection.length
+          }})</el-button
+        >
       </div>
-
     </div>
   </el-drawer>
 </template>
 
 <script>
-import {mapActions, mapState} from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import ModalDataCompared from './ModalDataCompared'
+import services from '@servises'
+import debounce from 'lodash/debounce'
+
 export default {
   name: 'DrawerSyncDetail',
-  props: {
-  },
+  props: {},
   components: {
     ModalDataCompared
   },
   data () {
     return {
+      loadingPost: false,
       drawer: false,
       activeName: 2,
       tableDataMap: new Map(),
@@ -230,16 +375,15 @@ export default {
         }
       ],
       tableFilters: [
-        {value: 0, text: '修改中'},
-        {value: 1, text: '未提交修改'},
-        {value: 2, text: '修改成功'},
-        {value: 3, text: '修改失败'},
-        {value: 4, text: '抖音审核中'}
+        { value: 0, text: '修改中' },
+        { value: 1, text: '未提交修改' },
+        { value: 2, text: '修改成功' },
+        { value: 3, text: '修改失败' },
+        { value: 4, text: '抖音审核中' }
       ]
     }
   },
-  created () {
-  },
+  created () {},
 
   computed: {
     ...mapState('productManagement/productsSync/drawerSyncDetail', [
@@ -249,32 +393,34 @@ export default {
       'filters'
     ]),
     ...mapState({
-      loading: state => state['@@loading'].effects['productManagement/productsSync/drawerSyncDetail/query']
+      loading: (state) =>
+        state['@@loading'].effects[
+          'productManagement/productsSync/drawerSyncDetail/query'
+        ]
     })
   },
   watch: {
     // 一件全选时 数据请求初始化
     tableData: {
       handler: function (n) {
-        const tableDataMap = this.tableDataMap
-        n.forEach(row => {
-          const rowMap = tableDataMap.get(row.goods_id)
-          if (this.is_all) {
-            const hasSelected = rowMap && this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
-            if (!rowMap || (rowMap && !hasSelected)) {
-              console.log(this.$refs.multipleTableDetail, this.activeName, 'this.$refs.multipleTableDetail')
-              const index = this.tabs.find(item => this.activeName === item.name).id
+        n.forEach((row) => {
+          // 如果全选商品 没看到选择此商品 加入选择
+          if (this.is_all && !this.multipleSelection.includes(row.goods_id)) {
+            const index = this.tabs.find(
+              (item) => this.activeName === item.name
+            ).id
+            this.$refs.multipleTableDetail[index] &&
               this.$refs.multipleTableDetail[index].toggleRowSelection(row)
-            }
           }
-          tableDataMap.set(`${row.goods_id}`, row)
         })
-        this.tableDataMap = tableDataMap
       },
       deep: true
     }
   },
   methods: {
+    ...mapActions('productManagement/productsSync/tableSyncRecord', {
+      tableSyncRecord_fetch: 'fetch'
+    }),
     ...mapActions('productManagement/productsSync/drawerSyncDetail', [
       'fetch',
       'setFilter',
@@ -298,13 +444,14 @@ export default {
     // 一件全选按钮回调
     handleAllSelectionChange (val) {
       if (val) {
-        const tableDataMap = this.tableDataMap
-        this.tableData.forEach(row => {
-          const rowMap = tableDataMap.get(`${row.goods_id}`)
-          const hasSelected = this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
+        this.tableData.forEach((row) => {
+          const hasSelected = this.multipleSelection.includes(row.goods_id)
           if (!hasSelected) {
-            const index = this.tabs.find(item => this.activeName === item.name).id
-            this.$refs.multipleTableDetail[index].toggleRowSelection(row)
+            const index = this.tabs.find(
+              (item) => this.activeName === item.name
+            ).id
+            this.$refs.multipleTableDetail[index] &&
+              this.$refs.multipleTableDetail[index].toggleRowSelection(row)
           }
         })
       }
@@ -314,7 +461,7 @@ export default {
       return !this.is_all
     },
     // 表格多选禁用表头样式
-    getHeaderCellClassName ({row, column, rowIndex, columnIndex}) {
+    getHeaderCellClassName ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0 && this.is_all) return 'checkedRow'
       return ''
     },
@@ -324,8 +471,8 @@ export default {
     },
     // 表格多选 选项修改回调事件
     handleSelectionChange (val) {
-      // console.log(val, 'handleSelectionChange')
-      this.multipleSelection = val
+      val = val.map((item) => item.goods_id)
+      this.multipleSelection = [...new Set(val)]
     },
     filterHandler (value, row, column) {
       const status = value
@@ -337,17 +484,18 @@ export default {
       })
     },
     copy: async function (id, text) {
-      console.log(id, 'id')
       try {
         await this.$copyText(id)
         this.$message({
           message: text,
-          type: 'success'
+          type: 'success',
+          duration: 1000
         })
       } catch (err) {
         this.$message({
           message: err,
-          type: 'error'
+          type: 'error',
+          duration: 1000
         })
       }
     },
@@ -361,7 +509,10 @@ export default {
     },
     handleSearch () {
       const limit = 100
-      const goodsIds = this.goods_id_list.split(/[\s\n]/).filter(item => item).map(item => item.trim())
+      const goodsIds = this.goods_id_list
+        .split(/[\s\n]/)
+        .filter((item) => item)
+        .map((item) => item.trim())
       const goodsIdsSet = [...new Set(goodsIds)]
       if (goodsIdsSet.length > limit) {
         this.loading = false
@@ -377,22 +528,6 @@ export default {
         }
       })
     },
-    // handleCurrentChange (pageIndex) {
-    //   if (this.loading) return
-    //   // this.fetchHhTaskProductPage({
-    //   //   pagination: {
-    //   //     page_index: pageIndex
-    //   //   }
-    //   // })
-    // },
-    // handleSizeChange (pageSize) {
-    //   // this.fetchHhTaskProductPage({
-    //   //   pagination: {
-    //   //     page_index: 1,
-    //   //     page_size: pageSize
-    //   //   }
-    //   // })
-    // },
     close () {
       this.drawer = false
     },
@@ -408,24 +543,161 @@ export default {
     handleClear (key) {
       this.filters[key] = ''
     },
-    handleSync () {
-      console.log(this, 'this')
+
+    // 重新检测
+    handleReStartSync: debounce(
+      function (row) {
+        const parmas = {
+          task_id: this.rowData.task_id,
+          is_all: Number(this.is_all),
+          goods_id_list: this.filters.goods_id_list,
+          delete_goods_id_list: JSON.stringify([]),
+          keyword: this.filters.goods_keywordid_list,
+          status: this.filters.status
+        }
+        console.log(parmas, 'parmas')
+        this.loadingPost = true
+        services.productSourceSyncDetailRun(parmas)
+          .then(data => {
+            this.$message.success('开始检测了！')
+            this.tableSyncRecord_fetch()
+            this.close()
+          })
+          .catch(err => {
+            this.$message.error(`${err}`)
+          })
+          .finally(() => {
+            this.loadingPost = false
+          })
+      },
+      1000,
+      {
+        leading: true
+      }
+    ),
+    handlePublish: debounce(
+      function (row) {
+        const h = this.$createElement
+        this.$confirm('', {
+          message: h('div', null, [
+            h(
+              'div',
+              {
+                class: 'center'
+              },
+              [
+                h('hh-icon', {
+                  props: {
+                    type: 'iconjinggao1'
+                  },
+                  class: 'TableSyncRecord-icon'
+                })
+              ]
+            ),
+            h(
+              'div',
+              {
+                class: 'TableSyncRecord-text'
+              },
+              '您所选中的同步数据将更新到抖店，您确定要操作吗？?'
+            )
+          ]),
+          type: 'warning',
+          customClass: 'TableSyncRecord-customClass',
+          cancelButtonClass: 'TableSyncRecord-cancelButtonClass',
+          confirmButtonClass: 'TableSyncRecord-confirmButtonClass',
+          showClose: false
+        })
+          .then((_) => {
+            const parmas = {
+              task_id: this.rowData.task_id,
+              is_all: Number(this.is_all),
+              goods_id_list: this.filters.goods_id_list,
+              delete_goods_id_list: JSON.stringify([]),
+              keyword: this.filters.goods_keywordid_list,
+              status: this.filters.status
+            }
+            console.log(parmas, 'parmas')
+            this.loadingPost = true
+            services.productSourceSyncPublish(parmas)
+              .then(data => {
+                this.$message.success('发布抖音中....')
+                this.tableSyncRecord_fetch()
+                this.close()
+              })
+              .catch(err => {
+                this.$message.error(`${err}`)
+              })
+              .finally(() => {
+                this.loadingPost = false
+              })
+          })
+          .catch((_) => {
+            return false
+          })
+      },
+      1000,
+      {
+        leading: true
+      }
+    ),
+    // 单个重新检测
+    handleRevert: debounce(
+      function (row) {
+        const parmas = {
+          task_id: this.rowData.task_id,
+          is_all: 0,
+          goods_id_list: JSON.stringify([row.goods_id]),
+          delete_goods_id_list: JSON.stringify([]),
+          keyword: '',
+          status: this.filters.status
+        }
+        console.log(parmas, 'parmas')
+        this.loadingPost = true
+        services.productSourceSyncDetailRun(parmas)
+          .then(data => {
+            this.$message.success('开始检测了！')
+            this.tableSyncRecord_fetch()
+            this.close()
+          })
+          .catch(err => {
+            this.$message.error(`${err}`)
+          })
+          .finally(() => {
+            this.loadingPost = false
+          })
+      },
+      1000,
+      {
+        leading: true
+      }
+    ),
+    // 单个发布抖音
+    handleSync (row) {
       const h = this.$createElement
       this.$confirm('', {
         message: h('div', null, [
-          h('div', {
-            class: 'center'
-          }, [
-            h('hh-icon', {
-              props: {
-                type: 'iconjinggao1'
-              },
-              class: 'TableSyncRecord-icon'
-            })
-          ]),
-          h('div', {
-            class: 'TableSyncRecord-text'
-          }, '您所选中的同步数据将更新到抖店，您确定要操作吗？?')
+          h(
+            'div',
+            {
+              class: 'center'
+            },
+            [
+              h('hh-icon', {
+                props: {
+                  type: 'iconjinggao1'
+                },
+                class: 'TableSyncRecord-icon'
+              })
+            ]
+          ),
+          h(
+            'div',
+            {
+              class: 'TableSyncRecord-text'
+            },
+            '您所选中的同步数据将更新到抖店，您确定要操作吗？?'
+          )
         ]),
         type: 'warning',
         customClass: 'TableSyncRecord-customClass',
@@ -433,10 +705,31 @@ export default {
         confirmButtonClass: 'TableSyncRecord-confirmButtonClass',
         showClose: false
       })
-        .then(_ => {
-          console.log('00000')
+        .then((_) => {
+          const parmas = {
+            task_id: this.rowData.task_id,
+            is_all: 0,
+            goods_id_list: JSON.stringify([row.goods_id]),
+            delete_goods_id_list: JSON.stringify([]),
+            keyword: '',
+            status: this.filters.status
+          }
+          console.log(parmas, 'parmas')
+          this.loadingPost = true
+          services.productSourceSyncPublish(parmas)
+            .then(data => {
+              this.$message.success('发布抖音中....')
+              this.tableSyncRecord_fetch()
+              this.close()
+            })
+            .catch(err => {
+              this.$message.error(`${err}`)
+            })
+            .finally(() => {
+              this.loadingPost = false
+            })
         })
-        .catch(_ => {
+        .catch((_) => {
           return false
         })
     }
@@ -454,21 +747,20 @@ export default {
 }
 /deep/ .checkedRow {
   .el-checkbox__inner {
-      background-color: #F9F9F9;
-      border-color: #E5E5E5;
+    background-color: #f9f9f9;
+    border-color: #e5e5e5;
   }
 
   .el-checkbox__inner::after {
-      border-color: #999;
+    border-color: #999;
   }
 }
 
 /deep/ .product-id {
   .el-form-item__label {
-  padding-right: 0px;
-  margin-right: 0px;
-  flex-shrink: 0;
-
+    padding-right: 0px;
+    margin-right: 0px;
+    flex-shrink: 0;
   }
 }
 .textarea-id {
@@ -477,14 +769,14 @@ export default {
 }
 </style>
 <style lang="less">
-.TableSyncRecord-cancelButtonClass{
+.TableSyncRecord-cancelButtonClass {
   font-size: 12px;
   margin-right: 10px;
   width: 120px;
   padding: 12px;
 }
 
-.TableSyncRecord-confirmButtonClass{
+.TableSyncRecord-confirmButtonClass {
   font-size: 12px;
   width: 120px;
   padding: 12px;
@@ -502,7 +794,7 @@ export default {
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #4E4E4E;
+  color: #4e4e4e;
   line-height: 20px;
   text-align: center;
   margin-top: 16px;
@@ -510,26 +802,26 @@ export default {
 }
 
 .TableSyncRecord-customClass {
-    padding-bottom: 20px;
-    .el-message-box__header {
-      padding-top: 0;
+  padding-bottom: 20px;
+  .el-message-box__header {
+    padding-top: 0;
+  }
+  .el-message-box__btns {
+    text-align: center;
+  }
+  .el-message-box__content {
+    .el-message-box__message {
+      padding-left: 0;
     }
-    .el-message-box__btns {
+    p {
+      font-size: 18px;
+      margin: 15px 0 10px;
       text-align: center;
     }
-    .el-message-box__content {
-      .el-message-box__message {
-        padding-left: 0;
-      }
-      p {
-        font-size: 18px;
-        margin: 15px 0 10px;
-        text-align: center;
-      }
-      .el-icon-warning {
-        display: none;
-      }
+    .el-icon-warning {
+      display: none;
     }
+  }
 }
 
 .el-table-filter {
@@ -539,5 +831,4 @@ export default {
   font-size: 12px;
   height: 30px;
 }
-
 </style>

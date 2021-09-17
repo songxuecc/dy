@@ -4,11 +4,12 @@
     class="dialog-tight"
     title="同步数据修改详情对比"
     width="800px"
+    style="margin-top: -5vh"
     :visible.sync="visible"
     append-to-body
     center
   >
-    <div style="padding-bottom:120px">
+    <div style="padding-bottom:30px">
       <div class="title flex align-c">
           <div class="left flex align-c" style="margin-right:50px">
             <el-image
@@ -36,7 +37,11 @@
 
       <el-table
         :data="tableData"
-        style="width: 100%" >
+        :expand-row-keys="expands"
+        @expand-change="expandChange"
+        row-key="goods_id"
+        style="width: 100%"
+        >
         <el-table-empty slot="empty"/>
         <el-table-column prop="data_type" label="检测内容" width="180" align="center">
           <template slot-scope="scope">
@@ -46,9 +51,71 @@
               <span v-if="scope.row.data_type === 'shelf'">上下架</span>
           </template>
         </el-table-column>
-        <el-table-column prop="old_data" label="原数据" align="center">
+        <el-table-column prop="old_data" label="修改内容" align="center">
+
+            <template slot-scope="scope">
+              <span v-if="scope.row.data_type === 'stock'">
+                  <el-table
+                      style="width: 100%"
+                      max-height="250"
+                      :data="scope.row.change_sku_list"
+                      cell-class-name="expand-table-cell"
+                    >
+                      <el-table-column prop="spec_name" label="规格名称" />
+                      <el-table-column
+                        prop="old_stock"
+                        label="修改前"
+                        align="center"
+                        width="180"
+                      />
+                    <el-table-column
+                      prop="new_stock"
+                      label="修改后"
+                      align="center"
+                      width="180"
+                    />
+                  </el-table>
+              </span>
+              <span v-if="scope.row.data_type === 'price'">
+                  <el-table
+                      style="width: 100%"
+                      max-height="250"
+                      :data="scope.row.change_sku_list"
+                      cell-class-name="expand-table-cell"
+                    >
+                      <el-table-column prop="spec_name" label="规格名称" />
+                      <el-table-column
+                        prop="new_price"
+                        label="修改前"
+                        align="center"
+                        width="180"
+                      >
+                      <template slot-scope="scope">
+                        {{ (scope.row.old_price / 100).toFixed(2) }}
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      prop="old_price"
+                      label="修改后"
+                      align="center"
+                      width="180"
+                    >
+                      <template slot-scope="scope">
+                        {{ (scope.row.new_price / 100).toFixed(2) }}
+                      </template>
+                    </el-table-column>
+                  </el-table>
+              </span>
+
+              <div v-if="scope.row.data_type === 'title'">
+                <div class="flex" style="justify-content: space-around">
+                  <div>修改前: {{scope.row.new_data}}</div>
+                  <div>修改后: {{scope.row.old_data}}</div>
+                </div>
+              </div>
+            </template>
+
         </el-table-column>
-        <el-table-column prop="new_data" label="现数据" align="center"> </el-table-column>
       </el-table>
     </div>
   </el-dialog>
@@ -64,15 +131,22 @@ export default {
     return {
       visible: false,
       tableData: [],
-      rowData: {}
+      rowData: {},
+      expands: []
     }
   },
   methods: {
     open (rowData) {
       this.visible = true
       console.log(rowData, 'rowData')
-      this.tableData = rowData.data_list
+      this.tableData = rowData.ext_json.change_list
       this.rowData = rowData
+    },
+    confirm () {
+      this.expands = []
+    },
+    expandChange (row, expandedRows, expanded) {
+      this.expands = expandedRows.map((item) => item.goods_id)
     }
   }
 }
@@ -83,5 +157,15 @@ export default {
   height: 50px;
   background: #EAEDFA;
   padding: 12px ;
+}
+
+.sku {
+  width: 100px;
+}
+
+/deep/ .el-table td, .el-table th {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-size: 12px;
 }
 </style>
