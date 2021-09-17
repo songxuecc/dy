@@ -124,7 +124,7 @@
         <el-button type="primary" plain style="width: 120px" @click="handleCancel"
           >返回上一步</el-button
         >
-        <el-button type="primary" style="width: 120px" @click="handleConfirm" :loading="loadingPost" :disabled="loadingPost"
+        <el-button type="primary" :style="{width: loadingPost ? '150px':'120px'}" @click="handleConfirm" :loading="loadingPost" :disabled="loadingPost"
           >完成创建({{ is_all ? total : multipleSelection.length}})</el-button>
       </div>
     </div>
