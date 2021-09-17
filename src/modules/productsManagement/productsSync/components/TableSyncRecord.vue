@@ -247,14 +247,8 @@ export default {
     },
     // 开始检测
     onStartSync: debounce(function (row) {
-      const style = row.style
       const parmas = {
-        task_id: row.task_id,
-        status: row.status,
-        goods_id_list: style.selectParmas.goods_id_list,
-        keyword: style.filters.keyword,
-        delete_goods_id_list: style.selectParmas.delete_goods_id_list,
-        is_all: style.selectParmas.is_all
+        task_id: row.task_id
       }
       this.loadingPost = true
       services.productSourceSyncDetailRun(parmas)
