@@ -199,7 +199,6 @@ export default {
       const selectParmas = row.style.selectParmas
       const filters = row.style.filters
       const originFilters = row.style.originFilters
-      const tableDataMap = this.objToStrMap(row.style.tableDataMap)
       const multipleSelection = row.style.multipleSelection
 
       this.save({
@@ -207,7 +206,6 @@ export default {
         selectParmas,
         originFilters,
         filters,
-        tableDataMap,
         multipleSelection,
         task_id: row.task_id
       })
@@ -228,7 +226,8 @@ export default {
       const selectParmas = row.style.selectParmas
       const originFilters = row.style.originFilters
 
-      const tableDataMap = this.objToStrMap(row.style.tableDataMap)
+      console.log(row, 'row')
+
       const multipleSelection = row.style.multipleSelection
       this.setFilter_tableProductList({filters}).then(() => {
         this.save({
@@ -236,7 +235,6 @@ export default {
           selectParmas,
           originFilters,
           filters,
-          tableDataMap,
           multipleSelection,
           task_id: row.task_id
         })

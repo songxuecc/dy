@@ -165,9 +165,6 @@ export default {
       originFiltersSearch: state => {
         return state.originFilters
       },
-      tableDataMapSearch: state => {
-        return state.tableDataMap
-      },
       multipleSelectionSearch: state => {
         return state.multipleSelection
       },
@@ -182,21 +179,14 @@ export default {
       'filters',
       'form'
     ]),
-    multipleSelectionId () {
-      let obj = {}
-      this.multipleSelection.forEach(item => {
-        obj[item.goods_id] = item
-      })
-      return obj
-    },
     selectParmas () {
       const parmas = {
         is_all: Number(this.is_all),
-        delete_goods_id_list: JSON.stringify([]),
-        goods_id_list: JSON.stringify([])
+        delete_goods_id_list: [],
+        goods_id_list: []
       }
       if (!this.is_all) {
-        parmas.goods_id_list = JSON.stringify(this.multipleSelection.map(row => row.goods_id))
+        parmas.goods_id_list = this.multipleSelection
       }
       return parmas
     }
@@ -205,8 +195,12 @@ export default {
     // 进入列表 查询数据的初始化
     if (this.selectParmasSearch) {
       this.is_all = Boolean(this.selectParmasSearch.is_all)
-      this.goods_id_list = JSON.parse(this.selectParmasSearch.goods_id_list)
-      this.delete_goods_id_list = JSON.parse(this.selectParmasSearch.delete_goods_id_list)
+      if (this.is_all) {
+        this.handleAllSelectionChange(true)
+      }
+      this.goods_id_list = this.selectParmasSearch.goods_id_list
+      this.delete_goods_id_list = this.selectParmasSearch.delete_goods_id_list
+      // 处理初始化 筛选条件
       this.originFilters = {
         ...this.filters,
         ...this.originFiltersSearch
@@ -218,36 +212,39 @@ export default {
     scrollEl.addEventListener('scroll', this.scroll)
     this.scroll()
 
-    // 再次进入修改商品时候 默认选中回显
-    if (this.selectParmasSearch && !this.is_all) {
-      this.tableDataMap = this.tableDataMapSearch
-      this.multipleSelection = this.multipleSelectionSearch
-      const tableDataMap = this.tableDataMap
-      this.tableData.forEach(row => {
-        const rowMap = tableDataMap.get(row.goods_id)
-        const hasSelected = rowMap && this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
-        if (rowMap && hasSelected) {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        }
-      })
-    }
+    setTimeout(() => {
+      // 处理初始化 再次进入修改商品时候 非一件全选时 多选选中回显
+      if (this.selectParmasSearch && !this.is_all && this.multipleSelectionSearch.length) {
+        this.tableData.forEach(row => {
+          const isSelect = this.multipleSelectionSearch.includes(row.goods_id)
+          this.$nextTick(() => {
+            isSelect && this.$refs.multipleTable.toggleRowSelection(row, true)
+          })
+        })
+        services.getProductList({
+          goods_id_list: JSON.stringify(this.multipleSelectionSearch),
+          page_size: this.multipleSelectionSearch.length
+        }).then(data => {
+          data.items.forEach(row => {
+            const isSelect = this.multipleSelectionSearch.includes(row.goods_id)
+            this.$nextTick(() => {
+              isSelect && this.$refs.multipleTable && this.$refs.multipleTable.toggleRowSelection(row, true)
+            })
+          })
+        })
+      }
+    }, 300)
   },
   watch: {
     // 一件全选时 数据请求初始化
     tableData: {
       handler: function (n) {
-        const tableDataMap = this.tableDataMap
         n.forEach(row => {
-          const rowMap = tableDataMap.get(row.goods_id)
-          if (this.is_all) {
-            const hasSelected = rowMap && this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
-            if (!rowMap || (rowMap && !hasSelected)) {
-              this.$refs.multipleTable.toggleRowSelection(row)
-            }
+          // 如果全选商品 没看到选择此商品 加入选择
+          if (this.is_all && !this.multipleSelection.includes(row.goods_id)) {
+            this.$refs.multipleTable && this.$refs.multipleTable.toggleRowSelection(row)
           }
-          tableDataMap.set(`${row.goods_id}`, row)
         })
-        this.tableDataMap = tableDataMap
       },
       deep: true
     }
@@ -288,10 +285,11 @@ export default {
         selectParmas: this.selectParmas,
         filters: this.filters,
         originFilters: this.originFilters,
-        tableDataMap: this.strMapToObj(this.tableDataMap),
         multipleSelection: this.multipleSelection
       }
+
       parmas.style = JSON.stringify(style)
+      console.log(style, '提交数据style')
       this.loadingPost = true
       // 判断是二次修改还是首次创建
       if (this.selectParmasSearch) {
@@ -328,12 +326,10 @@ export default {
     // 一件全选按钮回调
     handleAllSelectionChange (val) {
       if (val) {
-        const tableDataMap = this.tableDataMap
         this.tableData.forEach(row => {
-          const rowMap = tableDataMap.get(`${row.goods_id}`)
-          const hasSelected = this.multipleSelection.map(item => item.goods_id).includes(rowMap.goods_id)
+          const hasSelected = this.multipleSelection.includes(row.goods_id)
           if (!hasSelected) {
-            this.$refs.multipleTable.toggleRowSelection(row)
+            this.$refs.multipleTable && this.$refs.multipleTable.toggleRowSelection(row)
           }
         })
       }
@@ -358,8 +354,9 @@ export default {
     },
     // 表格多选 选项修改回调事件
     handleSelectionChange (val) {
-      // console.log(val, 'handleSelectionChange')
-      this.multipleSelection = val
+      val = val.map(item => item.goods_id)
+      this.multipleSelection = [...new Set(val)]
+      console.log(this.multipleSelection, 'this.multipleSelection')
     },
     // 底部按钮滚动定位
     scroll: debounce(function () {

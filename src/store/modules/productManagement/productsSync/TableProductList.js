@@ -35,8 +35,6 @@ const model = modelExtend(
           multipleSelection: undefined,
           tableDataMap: undefined
         })
-
-        console.log(state, 'state')
       }
     },
     getters: {

@@ -290,16 +290,18 @@ export default {
     // 查询初始化
     if (this.originFilters) {
       const form = this.originForm
-      if (this.originFilters.originCategorys) this.categorys = JSON.parse(this.originFilters.originCategorys)
-      if (this.originFilters.status) form.status = this.originFilters.originStatus
-      if (this.originFilters.goods_id_list) form.goods_id_list = this.originFilters.goods_id_list
-      if (this.originFilters.presell_type) form.presell_type = this.originFilters.presell_type
-      if (this.originFilters.captureStatus) form.captureStatus = this.originFilters.captureStatus
-      if (this.originFilters.tp_id) form.tp_id = this.originFilters.tp_id
-      if (this.originFilters.keyword) form.keyword = this.originFilters.keyword
-      if (this.originFilters.migrate_start_time && this.originFilters.migrate_end_time) {
+      if (typeof this.originFilters.originCategorys !== 'undefined') this.categorys = JSON.parse(this.originFilters.originCategorys)
+      if (typeof this.originFilters.originStatus !== 'undefined') form.status = this.originFilters.originStatus
+      if (typeof this.originFilters.goods_id_list !== 'undefined') form.goods_id_list = this.originFilters.goods_id_list
+      if (typeof this.originFilters.presell_type !== 'undefined') form.presell_type = this.originFilters.presell_type
+      if (typeof this.originFilters.captureStatus !== 'undefined') form.captureStatus = this.originFilters.captureStatus
+      if (typeof this.originFilters.tp_id !== 'undefined') form.tp_id = this.originFilters.tp_id
+      if (typeof this.originFilters.keyword !== 'undefined') form.keyword = this.originFilters.keyword
+      if (typeof this.originFilters.migrate_start_time !== 'undefined' && typeof this.originFilters.migrate_end_time !== 'undefined') {
         form.captureTime = [this.originFilters.migrate_start_time, this.originFilters.migrate_end_time]
       }
+      console.log(this.originFilters, 'this.originFilters----')
+      console.log(form, 'form----')
       this.originForm = form
       this.form = form
     } else {
@@ -317,7 +319,7 @@ export default {
       this.form = o
     }
 
-    console.log(this.categorys, 'this.categorys')
+    console.log(this.form, 'this.form')
   },
   methods: {
     // 查询

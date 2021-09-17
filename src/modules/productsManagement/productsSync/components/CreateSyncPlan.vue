@@ -57,11 +57,11 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item style="margin-left: 40px" v-if="form.config_json.step_stock_sync_type === 2">
+        <el-form-item style="margin-left: 40px" v-if="form.config_json.step_stock_sync_type === 2" prop="config_json.current_stock_rate">
           <span class="font-12 color-4e">现货库存设置为原库存的</span>
           <el-input v-model="form.config_json.current_stock_rate" class="price-sku-input"></el-input>
           <span class="font-12 color-4e">%（原商品库存=现货库存+阶梯库存，
-            <span class="warning">{{'51%<=现货库存设置<=100%'}}</span>
+            <span class="warning">{{tip}}</span>
             ）</span>
         </el-form-item>
 
@@ -165,7 +165,6 @@
                   @clear="handleClear('config_json.prefix')"
                   placeholder="前缀"
                   v-model="form.config_json.prefix"
-                  @focus="handleCheck('config_json.prefix')"
                 ></el-input>
               </el-form-item>
 
@@ -181,7 +180,6 @@
                   @clear="handleClear('config_json.suffix')"
                   placeholder="后缀"
                   v-model="form.config_json.suffix"
-                  @focus="handleCheck('config_json.suffix')"
                 ></el-input>
               </el-form-item>
 
@@ -208,7 +206,6 @@
                   clearable
                   @clear="handleClear('config_json.source_str')"
                   v-model="form.config_json.source_str"
-                  @focus="handleCheck('config_json.source_str')"
                 ></el-input>
               </el-form-item>
               <el-form-item
@@ -222,7 +219,6 @@
                   clearable
                   @clear="handleClear('config_json.target_str')"
                   v-model="form.config_json.target_str"
-                  @focus="handleCheck('config_json.target_str')"
                 ></el-input>
               </el-form-item>
 
@@ -314,7 +310,7 @@
 <script>
 
 import {mapMutations, mapActions, mapState} from 'vuex'
-// import utils from '@/common/utils'
+import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
 import services from '@servises'
 
@@ -334,27 +330,48 @@ export default {
       callback()
     }
 
+    const validatePass = (rule, value, callback) => {
+      if (this.form.config_json.step_stock_sync_type === 2) {
+        if (!utils.isNumber(value) || (utils.isNumber(value) && value % 1) || (utils.isNumber(value) && value < 51)) {
+          console.log(value, 'value')
+          callback(new Error('必须大于等于51, 小于等于100，且为整数'))
+        } else {
+          callback()
+        }
+      } else {
+        callback()
+      }
+    }
+
     return {
       isShowSample: false,
       loadingPost: false,
+      tip: '51% <= 现货库存设置 <= 100%',
       form: {
         task_title: '',
         content: [],
         sync_type: 1,
         config_json: {
           cut_type_list: ['is_cut_brackets'],
-          step_stock_sync_type: 1,
-          price_sync_type: 1,
           title_sync_type: 1,
-          is_open_replace: true,
-          is_open_ps: true,
-          is_max_discount_price: 0,
+          is_sync_stock: true,
+          step_stock_sync_type: 1,
+          current_stock_rate: 51,
+          is_sync_price: true,
+          price_sync_type: 1,
           sku_price_diff: 0,
           sku_price_rate: 100,
           out_price_diff: 0,
+          is_max_discount_price: 0,
           market_price_rate: 100,
           market_price_diff: 0,
-          title_cut_type: 3
+          title_cut_type: 3,
+          prefix: '',
+          suffix: '',
+          is_open_ps: '',
+          source_str: '',
+          target_str: '',
+          is_open_replace: true
         }
       },
       rules: {
@@ -372,6 +389,9 @@ export default {
         ],
         'config_json.is_sync_title': [
           { validator: checkContent, trigger: ['blur', 'change'] }
+        ],
+        'config_json.current_stock_rate': [
+          { validator: validatePass, trigger: ['blur', 'change'] }
         ]
       }
     }
@@ -392,9 +412,6 @@ export default {
       },
       filters: state => {
         return state.filters
-      },
-      tableDataMap: state => {
-        return state.tableDataMap
       },
       multipleSelection: state => {
         return state.multipleSelection
@@ -436,15 +453,6 @@ export default {
     validCheckContent () {
       this.$refs.form.validateField(['config_json.is_sync_stock', 'config_json.is_sync_price', 'config_json.is_sync_title'])
     },
-    strMapToObj (strMap) {
-      let obj = Object.create(null)
-      for (let [k, v] of strMap) {
-        // We don’t escape the key '__proto__'
-        // which can cause problems on older engines
-        obj[k] = v
-      }
-      return obj
-    },
     updatePlan () {
       this.loadingPost = true
       const parmas = {
@@ -452,8 +460,7 @@ export default {
           form: this.form,
           selectParmas: this.selectParmas,
           filters: this.filters,
-          multipleSelection: this.multipleSelection,
-          tableDataMap: this.strMapToObj(this.tableDataMap)
+          multipleSelection: this.multipleSelection
         }),
         task_id: this.task_id
       }

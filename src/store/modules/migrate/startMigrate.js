@@ -39,7 +39,6 @@ export default assign(tableData, {
           data.forEach(item => {
             const handleClick = (e, captureId) => {
               e.preventDefault()
-              console.log(payload, 'payload')
               payload.push && captureId && payload.push({
                 path: '/migrate/productList',
                 query: {

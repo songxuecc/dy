@@ -85,7 +85,6 @@ class BaseModelClass {
       mutations: {
         save (state, payload) {
           Object.assign(state, payload)
-          console.log(state, 'state')
         }
       },
       actions: {
@@ -95,7 +94,6 @@ class BaseModelClass {
         }, payload) {
           const {pagination = state.pagination, filters = {}} = payload || {}
 
-          console.log(payload, 'payload')
           // 保存初始化的pagination
           if (self.isFitsrFetch) {
             self.originPagination = state.pagination
