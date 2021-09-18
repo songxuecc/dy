@@ -328,7 +328,7 @@
           :style="{width: loadingPost ? '190px':'160px'}"
           @click="handleReStartSync"
           :loading="loadingPost"
-          :disabled="loadingPost"
+          :disabled="!(is_all ? total : multipleSelection.length) || loadingPost"
           >重新检测选中商品
           <span v-if="is_all ? total : multipleSelection.length">({{is_all ? total : multipleSelection.length}})</span>
         </el-button>
@@ -337,7 +337,8 @@
           :style="{width: loadingPost ? '190px':'160px'}"
           @click="handlePublish"
           :loading="loadingPost"
-          :disabled="loadingPost"
+          :disabled="!(is_all ? total : multipleSelection.length) || loadingPost"
+          v-if="activeName === 2"
           >提交修改选中商品
           <span v-if="is_all ? total : multipleSelection.length">({{is_all ? total : multipleSelection.length}})</span>
         </el-button >
@@ -555,6 +556,10 @@ export default {
     // 重新检测
     handleReStartSync: debounce(
       function (row) {
+        const select = this.is_all ? this.total : this.multipleSelection.length
+        if (!select) {
+          return false
+        }
         const parmas = {
           task_id: this.rowData.task_id,
           is_all: Number(this.is_all),
@@ -585,6 +590,10 @@ export default {
     ),
     handlePublish: debounce(
       function (row) {
+        const select = this.is_all ? this.total : this.multipleSelection.length
+        if (!select) {
+          return false
+        }
         const h = this.$createElement
         this.$confirm('', {
           message: h('div', null, [
