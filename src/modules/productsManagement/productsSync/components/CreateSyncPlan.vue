@@ -420,6 +420,9 @@ export default {
       },
       multipleSelection: state => {
         return state.multipleSelection
+      },
+      originFilters: state => {
+        return state.originFilters
       }
     })
   },
@@ -465,7 +468,8 @@ export default {
           form: this.form,
           selectParmas: this.selectParmas,
           filters: this.filters,
-          multipleSelection: this.multipleSelection
+          multipleSelection: this.multipleSelection,
+          originFilters: this.originFilters
         }),
         task_id: this.task_id
       }

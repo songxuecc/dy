@@ -219,7 +219,8 @@ export default {
   name: 'Search',
   props: {
     tipType: String,
-    originFilters: Object
+    originFilters: Object,
+    filters: Object
   },
   data () {
     return {
@@ -288,20 +289,20 @@ export default {
   },
   created () {
     // 查询初始化
+    const form = this.originForm
+    if (typeof this.filters.goods_id_list !== 'undefined') form.goods_id_list = this.filters.goods_id_list
+    if (typeof this.filters.presell_type !== 'undefined') form.presell_type = this.filters.presell_type
+    if (typeof this.filters.captureStatus !== 'undefined') form.captureStatus = this.filters.captureStatus
+    if (typeof this.filters.tp_id !== 'undefined') form.tp_id = this.filters.tp_id
+    if (typeof this.filters.keyword !== 'undefined') form.keyword = this.filters.keyword
+    if (typeof this.filters.migrate_start_time !== 'undefined' && typeof this.filters.migrate_end_time !== 'undefined') {
+      form.captureTime = [this.filters.migrate_start_time, this.filters.migrate_end_time]
+    }
+
     if (this.originFilters) {
-      const form = this.originForm
       if (typeof this.originFilters.originCategorys !== 'undefined') this.categorys = JSON.parse(this.originFilters.originCategorys)
+      if (typeof this.originFilters.originGoodsIds !== 'undefined') this.goods_ids = this.originFilters.originGoodsIds
       if (typeof this.originFilters.originStatus !== 'undefined') form.status = this.originFilters.originStatus
-      if (typeof this.originFilters.goods_id_list !== 'undefined') form.goods_id_list = this.originFilters.goods_id_list
-      if (typeof this.originFilters.presell_type !== 'undefined') form.presell_type = this.originFilters.presell_type
-      if (typeof this.originFilters.captureStatus !== 'undefined') form.captureStatus = this.originFilters.captureStatus
-      if (typeof this.originFilters.tp_id !== 'undefined') form.tp_id = this.originFilters.tp_id
-      if (typeof this.originFilters.keyword !== 'undefined') form.keyword = this.originFilters.keyword
-      if (typeof this.originFilters.migrate_start_time !== 'undefined' && typeof this.originFilters.migrate_end_time !== 'undefined') {
-        form.captureTime = [this.originFilters.migrate_start_time, this.originFilters.migrate_end_time]
-      }
-      console.log(this.originFilters, 'this.originFilters----')
-      console.log(form, 'form----')
       this.originForm = form
       this.form = form
     } else {
@@ -357,7 +358,9 @@ export default {
       }
       const originFilters = {
         originStatus: this.form.status,
-        originCategorys: JSON.stringify(this.categorys)
+        originCategorys: JSON.stringify(this.categorys),
+        originGoodsIds: this.goods_ids
+
       }
       this.$emit('filter', data, originFilters)
     },

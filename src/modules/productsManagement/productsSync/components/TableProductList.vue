@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="productsSync-TableProductList" ref="TableProductList">
-    <Search  @filter="handleFilter" tipType="源同步" :originFilters="originFilters" />
+    <Search  @filter="handleFilter" tipType="源同步" :originFilters="originFilters" :filters="filters" />
     <div class="left pr-10 click mb-10 pl-20 pt-10 flex align-c">
       <el-checkbox v-model="is_all" @change="handleAllSelectionChange">
         <span :class="[is_all?'color-primary':'']">一键全选所有商品</span>
@@ -227,26 +227,26 @@ export default {
       this.goods_id_list = this.selectParmasSearch.goods_id_list
       this.delete_goods_id_list = this.selectParmasSearch.delete_goods_id_list
       // 处理初始化 筛选条件
-      this.originFilters = {
-        ...this.filters,
-        ...this.originFiltersSearch
-      }
+      // this.originFilters = {
+      //   ...this.filters,
+      //   ...this.originFiltersSearch
+      // }
+      this.originFilters = this.originFiltersSearch
+      // this.originFilters = this.originFiltersSearch
     }
   },
   mounted () {
-    const scrollEl = document.querySelector('.page-component__scroll')
-    scrollEl.addEventListener('scroll', this.scroll)
-    this.scroll()
-
-    setTimeout(() => {
+    if (this.selectParmasSearch && !this.is_all && this.multipleSelectionSearch.length) {
+      setTimeout(() => {
       // 处理初始化 再次进入修改商品时候 非一件全选时 多选选中回显
-      if (this.selectParmasSearch && !this.is_all && this.multipleSelectionSearch.length) {
         this.tableData.forEach((row, idx) => {
           const isSelect = this.multipleSelectionSearch.includes(row.goods_id)
           this.$nextTick(() => {
             isSelect && this.$refs.multipleTable.toggleRowSelection(row, true)
           })
         })
+        console.log('loadingSelected')
+
         services.getProductList({
           goods_id_list: JSON.stringify(this.multipleSelectionSearch),
           page_size: this.multipleSelectionSearch.length
@@ -258,9 +258,25 @@ export default {
             })
           })
           this.loadingSelected = false
+
+          this.scroll()
+          this.bindScroll()
         })
-      }
-    }, 600)
+      }, 600)
+    } else {
+      this.loadingSelected = false
+      this.scroll()
+      this.bindScroll()
+    }
+  },
+  activated () {
+    this.bindScroll()
+  },
+  deactivated () {
+    this.unBindScroll()
+  },
+  beforeDestroy () {
+    this.unBindScroll()
   },
   watch: {
     // 一件全选时 数据请求初始化
@@ -332,8 +348,13 @@ export default {
       //   })
     },
     handleConfirm () {
-      if (this.selectParmas.length > 200) {
+      const selecteds = this.is_all ? this.total : this.multipleSelection.length
+      if (selecteds > 200) {
         return this.$message.error('商品最多200条！')
+      }
+
+      if (!selecteds) {
+        return this.$message.error('请选择商品')
       }
       const parmas = {}
       const style = {
@@ -435,6 +456,14 @@ export default {
         })
       }
     },
+    bindScroll () {
+      const scrollEl = document.querySelector('.page-component__scroll')
+      scrollEl.addEventListener('scroll', this.scroll)
+    },
+    unBindScroll () {
+      const scrollEl = document.querySelector('.page-component__scroll')
+      scrollEl && scrollEl.removeEventListener('scroll', this.scroll)
+    },
     // 底部按钮滚动定位
     scroll: debounce(function () {
       // 判断是否有滚动条的方法
@@ -458,6 +487,7 @@ export default {
       const scrollEl = document.querySelector('.page-component__scroll')
       const isScroll = hasScrolled(scrollEl)
       const TableProductList = this.$refs.TableProductList
+
       if (isScroll && scrollEl && TableProductList) {
         const scrollWidth = getScrollbarWidth(scrollEl)
         this.scrollWidth = scrollWidth
@@ -467,6 +497,7 @@ export default {
         const dist = 5
         const disdance = height - clientHeight - dist
         const scrollTop = scrollEl.scrollTop
+
         if (scrollTop < disdance) {
           this.startFixed = true
         } else {
