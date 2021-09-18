@@ -435,7 +435,7 @@ const hhgjAPIs = {
     return api.actionCreatorPost('/api/product/source/sync/run', params)
   },
   productSourceSyncPublish: (params) => {
-    return api.actionCreatorPost('/api/product/source/sync/publish', params)
+    return api.actionCreatorPost('/api/product/source/sync/publish/run', params)
   },
   productSourceSyncUpdate: (params) => {
     return api.actionCreatorPost('/api/product/source/sync/update', params)
