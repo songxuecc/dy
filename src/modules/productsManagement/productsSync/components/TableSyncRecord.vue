@@ -225,7 +225,10 @@ export default {
     },
     // 修改商品 我是一件全选
     async handleChangeProduct (row, type) {
-      const filters = row.style.filters
+      const filters = {
+        ...row.style.filters,
+        capture_status: 1
+      }
       const form = row.style.form
       const selectParmas = row.style.selectParmas
       const originFilters = row.style.originFilters

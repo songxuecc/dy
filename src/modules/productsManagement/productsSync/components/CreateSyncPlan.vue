@@ -487,7 +487,11 @@ export default {
     go: debounce(function () {
       this.$refs.form.validate((valid, object) => {
         if (valid) {
-          this.fetch()
+          this.fetch({
+            filters: {
+              capture_status: 1
+            }
+          })
           this.save({form: this.form})
           this.$emit('go', null, 3)
           console.log(this.form, 'this.form')

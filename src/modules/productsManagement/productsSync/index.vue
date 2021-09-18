@@ -26,6 +26,10 @@ export default {
   },
   mounted () {
   },
+  activated () {
+    this.step = 1
+    this.prevStep = 3
+  },
   updated () { },
   components: {
     TableSyncRecord,

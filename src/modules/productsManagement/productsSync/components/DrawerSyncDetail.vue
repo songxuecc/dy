@@ -329,20 +329,18 @@
           @click="handleReStartSync"
           :loading="loadingPost"
           :disabled="loadingPost"
-          >重新检测选中商品({{
-            is_all ? total : multipleSelection.length
-          }})</el-button
-        >
+          >重新检测选中商品
+          <span v-if="is_all ? total : multipleSelection.length">({{is_all ? total : multipleSelection.length}})</span>
+        </el-button>
         <el-button
           type="primary"
           :style="{width: loadingPost ? '190px':'160px'}"
           @click="handlePublish"
           :loading="loadingPost"
           :disabled="loadingPost"
-          >提交修改选中商品({{
-            is_all ? total : multipleSelection.length
-          }})</el-button
-        >
+          >提交修改选中商品
+          <span v-if="is_all ? total : multipleSelection.length">({{is_all ? total : multipleSelection.length}})</span>
+        </el-button >
       </div>
     </div>
   </el-drawer>
@@ -609,7 +607,7 @@ export default {
               {
                 class: 'TableSyncRecord-text'
               },
-              '您所选中的同步数据将更新到抖店，您确定要操作吗？?'
+              '商品将按照检测结果进行修改，确定要操作？'
             )
           ]),
           type: 'warning',
@@ -706,7 +704,7 @@ export default {
             {
               class: 'TableSyncRecord-text'
             },
-            '您所选中的同步数据将更新到抖店，您确定要操作吗？?'
+            '商品将按照检测结果进行修改，确定要操作？'
           )
         ]),
         type: 'warning',

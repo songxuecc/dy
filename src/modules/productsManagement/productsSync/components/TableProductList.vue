@@ -146,7 +146,9 @@
           >返回上一步</el-button
         >
         <el-button type="primary" :style="{width: loadingPost ? '150px':'120px'}" @click="handleConfirm" :loading="loadingPost" :disabled="loadingPost"
-          >完成创建({{ is_all ? total : multipleSelection.length}})</el-button>
+          >完成创建
+          <span v-if="is_all ? total : multipleSelection.length">({{is_all ? total : multipleSelection.length}})</span>
+        </el-button>
       </div>
     </div>
   </div>
@@ -275,7 +277,6 @@ export default {
   methods: {
     ...mapMutations('productManagement/productsSync/tableProductList', ['save']),
     ...mapActions('productManagement/productsSync/tableProductList', [
-      'fetch',
       'handleCurrentChange',
       'handleSizeChange',
       'setFilter',
@@ -296,6 +297,14 @@ export default {
     },
     handleCancel () {
       const h = this.$createElement
+      const select = this.is_all ? this.total : this.multipleSelection.length
+      if (!select) {
+        if (this.prevStep === 3) {
+          this.clearData()
+        }
+        this.$emit('goback')
+        return false
+      }
       this.$confirm('', {
         message: h('div', null, [
           h('div', {
@@ -391,6 +400,10 @@ export default {
     // 保存查询的初始化数据
     handleFilter (filters, originFilters) {
       this.$refs.multipleTable && this.$refs.multipleTable.clearSelection()
+      filters = {
+        ...filters,
+        capture_status: 1
+      }
       this.setFilter({filters})
       this.originFilters = originFilters
     },

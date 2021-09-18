@@ -2,7 +2,7 @@
 <template>
   <el-dialog
     class="dialog-tight"
-    title="同步数据修改详情对比"
+    title="检测数据对比详情"
     width="800px"
     style="margin-top: -5vh"
     :visible.sync="visible"
@@ -31,7 +31,7 @@
           </div>
           </div>
           <div class="right color-4e">
-            同步时间：{{rowData.sync_time}}
+            检测时间：{{rowData.sync_time}}
           </div>
       </div>
 
@@ -51,7 +51,7 @@
               <span v-if="scope.row.data_type === 'shelf'">上下架</span>
           </template>
         </el-table-column>
-        <el-table-column prop="old_data" label="修改内容" align="center">
+        <el-table-column prop="old_data" label="检测结果" align="center">
 
             <template slot-scope="scope">
               <span v-if="scope.row.data_type === 'stock'">
@@ -64,13 +64,13 @@
                       <el-table-column prop="spec_name" label="规格名称" />
                       <el-table-column
                         prop="old_stock"
-                        label="修改前"
+                        label="原数据"
                         align="center"
                         width="180"
                       />
                     <el-table-column
                       prop="new_stock"
-                      label="修改后"
+                      label="现数据"
                       align="center"
                       width="180"
                     />
@@ -86,7 +86,7 @@
                       <el-table-column prop="spec_name" label="规格名称" />
                       <el-table-column
                         prop="new_price"
-                        label="修改前"
+                        label="原数据"
                         align="center"
                         width="180"
                       >
@@ -96,7 +96,7 @@
                     </el-table-column>
                     <el-table-column
                       prop="old_price"
-                      label="修改后"
+                      label="现数据"
                       align="center"
                       width="180"
                     >
@@ -109,8 +109,8 @@
 
               <div v-if="scope.row.data_type === 'title'">
                 <div class="flex" style="justify-content: space-around">
-                  <div>修改前: {{scope.row.new_data}}</div>
-                  <div>修改后: {{scope.row.old_data}}</div>
+                  <div>原数据: {{scope.row.new_data}}</div>
+                  <div>现数据: {{scope.row.old_data}}</div>
                 </div>
               </div>
             </template>
