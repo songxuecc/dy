@@ -36,17 +36,6 @@
                   @clear="handleClear('keyword')"
                 ></el-input>
               </el-form-item>
-              <!-- <el-form-item label="商品ID" class="ml-20">
-                <el-input
-                  clearable
-                  @clear="()=> goods_id_list === ''"
-                  v-model="goods_id_list"
-                  class="mr-20"
-                  style="width:250px"
-                  placeholder="请填写商品ID"
-                ></el-input>
-              </el-form-item> -->
-
               <el-form-item
                 prop="region"
                 class="product-id relative ml-20"
@@ -91,7 +80,7 @@
               :data="tableData"
               v-loading="loading || loadingPost"
               row-key="goods_id"
-              height="calc(100vh - 225px)"
+              height="calc(100vh - 245px)"
               style="width: 100%; box-sizing: border-box"
               @selection-change="handleSelectionChange"
               highlight-current-row

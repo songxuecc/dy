@@ -47,11 +47,11 @@
           <el-link :underline="false" class="font-12 no-decoration" type="info" v-if="scope.row.status === 0">未开始</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="310"   align="center">
+      <el-table-column label="操作" width="310"  align="center">
          <template slot-scope="scope">
-          <a class="pramiry pointer " @click="onStartSync(scope.row)" v-if="scope.row.sync_type === 1">开始检测修改</a>
-          <a class="pramiry pointer " @click="onStartSync(scope.row)" v-else>开始检测</a>
-          <a class="pramiry pointer pl-5" @click="handleDetail(scope.row)" >检测详情</a>
+          <a class="pramiry pointer" @click="onStartSync(scope.row)" v-if="scope.row.sync_type === 1">开始检测修改</a>
+          <a class="pramiry pointer" @click="onStartSync(scope.row)" v-else>开始检测</a>
+          <a class="pl-5" :class="scope.row.status !== 0 ? 'disbaled pointer' : 'pramiry'" @click="handleDetail(scope.row)"> 检测详情</a>
           <a class="pramiry pointer pl-5" @click="handleChangeProduct(scope.row,3)" >修改商品</a>
           <a class="pramiry pointer pl-5" @click="handleEditPlan(scope.row,2)" >编辑计划</a>
           <a class="fail pointer pl-5" @click="onDelete(scope.row)" >删除</a>
@@ -292,6 +292,10 @@ export default {
       margin-left: 17px;
     }
   }
+}
+
+.disbaled {
+  color: #999999;
 }
 </style>
 <style lang="less">
