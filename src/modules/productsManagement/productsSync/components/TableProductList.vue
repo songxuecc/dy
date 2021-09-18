@@ -24,7 +24,7 @@
       highlight-current-row
       :header-cell-class-name="getHeaderCellClassName"
       @select-all="handleSelectionAll"
-      v-loading="loading || loadingPost"
+      v-loading="loading || loadingPost || loadingSelected"
       row-key="goods_id"
     >
       <el-table-empty slot="empty"/>
@@ -219,6 +219,7 @@ export default {
   created () {
     // 进入列表 查询数据的初始化
     if (this.selectParmasSearch) {
+      this.loadingSelected = true
       this.is_all = Boolean(this.selectParmasSearch.is_all)
       if (this.is_all) {
         this.handleAllSelectionChange(true)
@@ -240,7 +241,7 @@ export default {
     setTimeout(() => {
       // 处理初始化 再次进入修改商品时候 非一件全选时 多选选中回显
       if (this.selectParmasSearch && !this.is_all && this.multipleSelectionSearch.length) {
-        this.tableData.forEach(row => {
+        this.tableData.forEach((row, idx) => {
           const isSelect = this.multipleSelectionSearch.includes(row.goods_id)
           this.$nextTick(() => {
             isSelect && this.$refs.multipleTable.toggleRowSelection(row, true)
@@ -250,15 +251,16 @@ export default {
           goods_id_list: JSON.stringify(this.multipleSelectionSearch),
           page_size: this.multipleSelectionSearch.length
         }).then(data => {
-          data.items.forEach(row => {
+          data.items.forEach((row, idx) => {
             const isSelect = this.multipleSelectionSearch.includes(row.goods_id)
             this.$nextTick(() => {
               isSelect && this.$refs.multipleTable && this.$refs.multipleTable.toggleRowSelection(row, true)
             })
           })
+          this.loadingSelected = false
         })
       }
-    }, 300)
+    }, 600)
   },
   watch: {
     // 一件全选时 数据请求初始化
@@ -286,57 +288,48 @@ export default {
       this.clear()
       this.originFilters = undefined
     },
-    strMapToObj (strMap) {
-      let obj = Object.create(null)
-      for (let [k, v] of strMap) {
-        // We don’t escape the key '__proto__'
-        // which can cause problems on older engines
-        obj[k] = v
-      }
-      return obj
-    },
     handleCancel () {
-      const h = this.$createElement
-      const select = this.is_all ? this.total : this.multipleSelection.length
-      if (!select) {
-        if (this.prevStep === 3) {
-          this.clearData()
-        }
-        this.$emit('goback')
-        return false
+      // const h = this.$createElement
+      // const select = this.is_all ? this.total : this.multipleSelection.length
+      // if (!select) {
+      if (this.prevStep === 3) {
+        this.clearData()
       }
-      this.$confirm('', {
-        message: h('div', null, [
-          h('div', {
-            class: 'center'
-          }, [
-            h('hh-icon', {
-              props: {
-                type: 'iconjinggao1'
-              },
-              class: 'TableSyncRecord-icon'
-            })
-          ]),
-          h('div', {
-            class: 'TableSyncRecord-text'
-          }, '返回后再次进入需要重新选择商品，是否返回?')
-        ]),
-        type: 'warning',
-        customClass: 'TableSyncRecord-customClass',
-        cancelButtonClass: 'TableSyncRecord-cancelButtonClass',
-        confirmButtonClass: 'TableSyncRecord-confirmButtonClass',
-        showClose: false
-      })
-        .then(_ => {
-          // 如果返回第二页 就
-          if (this.prevStep === 3) {
-            this.clearData()
-          }
-          this.$emit('goback')
-        })
-        .catch(_ => {
-          return false
-        })
+      this.$emit('goback')
+      return false
+      // }
+      // this.$confirm('', {
+      //   message: h('div', null, [
+      //     h('div', {
+      //       class: 'center'
+      //     }, [
+      //       h('hh-icon', {
+      //         props: {
+      //           type: 'iconjinggao1'
+      //         },
+      //         class: 'TableSyncRecord-icon'
+      //       })
+      //     ]),
+      //     h('div', {
+      //       class: 'TableSyncRecord-text'
+      //     }, '返回后再次进入需要重新选择商品，是否返回?')
+      //   ]),
+      //   type: 'warning',
+      //   customClass: 'TableSyncRecord-customClass',
+      //   cancelButtonClass: 'TableSyncRecord-cancelButtonClass',
+      //   confirmButtonClass: 'TableSyncRecord-confirmButtonClass',
+      //   showClose: false
+      // })
+      //   .then(_ => {
+      //     // 如果返回第二页 就
+      //     if (this.prevStep === 3) {
+      //       this.clearData()
+      //     }
+      //     this.$emit('goback')
+      //   })
+      //   .catch(_ => {
+      //     return false
+      //   })
     },
     handleConfirm () {
       if (this.selectParmas.length > 200) {
