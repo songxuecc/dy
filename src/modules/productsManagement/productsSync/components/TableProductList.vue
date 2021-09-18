@@ -57,7 +57,8 @@
 
       <el-table-column label="标题" width="">
         <template slot-scope="scope">
-          <el-link
+          <span>
+            <el-link
             :underline="false"
             :href="
               'https://haohuo.jinritemai.com/views/product/detail?id=' +
@@ -65,10 +66,30 @@
             "
             target="_blank"
           >
-            {{ scope.row.goods_name }} </el-link
-          ><br />
+            {{ scope.row.goods_name }}
+            </el-link>
+            <hh-icon
+              type="iconfuzhi "
+              style="font-size: 12px"
+              class="pointer "
+              @click="
+                copy(scope.row.goods_name, '商品名称 复制成功')
+              "
+            ></hh-icon>
+
+          </span>
+          <br />
           <div class="font-12 flex align-c color-999" style="margin-top: 3px">
-            <span>商品ID: {{ scope.row.goods_id }}</span>
+            <span>商品ID: {{ scope.row.goods_id }}
+                <hh-icon
+                  type="iconfuzhi "
+                  style="font-size: 12px"
+                  class="pointer "
+                  @click="
+                    copy(scope.row.goods_id, '商品ID 复制成功')
+                  "
+                ></hh-icon>
+              </span>
             <span
               class="ml-10 mr-10 presell_type jieti"
               v-if="scope.row.presell_type === 2"
@@ -391,6 +412,22 @@ export default {
       val = val.map(item => item.goods_id)
       this.multipleSelection = [...new Set(val)]
       console.log(this.multipleSelection, 'this.multipleSelection')
+    },
+    copy: async function (id, text) {
+      try {
+        await this.$copyText(id)
+        this.$message({
+          message: text,
+          type: 'success',
+          duration: 1000
+        })
+      } catch (err) {
+        this.$message({
+          message: err,
+          type: 'error',
+          duration: 1000
+        })
+      }
     },
     // 底部按钮滚动定位
     scroll: debounce(function () {

@@ -166,6 +166,13 @@ class BaseModelClass {
             filters,
             pagination: self.originPagination
           })
+        },
+        clearFilters ({
+          commit
+        }, payload) {
+          commit('save', {
+            filters: {}
+          })
         }
       }
     })

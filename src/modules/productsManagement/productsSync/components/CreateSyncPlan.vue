@@ -8,9 +8,11 @@
       <el-form-item label="计划名称" size="small" prop="task_title">
         <el-input
           v-model="form.task_title"
-          style="width: 345px"
+          style="width: 365px"
           maxlength="20"
           show-word-limit
+          clearable
+          @clear=" ()=> form.task_title = ''"
           placeholder="请输入计划名称"
         ></el-input>
       </el-form-item>
@@ -313,6 +315,7 @@ import {mapMutations, mapActions, mapState} from 'vuex'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
 import services from '@servises'
+import moment from 'moment'
 
 export default {
   name: 'CreateSyncPlan',
@@ -350,7 +353,7 @@ export default {
       loadingPost: false,
       tip: '51% <= 现货库存设置 <= 100%',
       form: {
-        task_title: '',
+        task_title: `商品源同步计划${moment().format('YYYY-MM-DD')}`,
         content: [],
         sync_type: 1,
         config_json: {

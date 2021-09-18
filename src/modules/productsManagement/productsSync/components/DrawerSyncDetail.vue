@@ -76,208 +76,226 @@
               </el-tooltip>
             </div>
 
-            <el-table
-              :data="tableData"
-              v-loading="loading || loadingPost"
-              row-key="goods_id"
-              height="calc(100vh - 245px)"
-              style="width: 100%; box-sizing: border-box"
-              @selection-change="handleSelectionChange"
-              highlight-current-row
-              :header-cell-class-name="getHeaderCellClassName"
-              @select-all="handleSelectionAll"
-              ref="multipleTableDetail"
-            >
-              <el-table-empty slot="empty" />
-              <el-table-column
-                type="selection"
-                width="55"
-                :selectable="isSelectionEnable"
-                :reserve-selection="true"
+            <div style="height:calc(100vh - 245px)" v-loading="loading || loadingPost">
+              <el-table
+                :data="tableData"
+                v-if="!loading"
+                row-key="goods_id"
+                height="calc(100vh - 245px)"
+                style="width: 100%; box-sizing: border-box"
+                @selection-change="handleSelectionChange"
+                highlight-current-row
+                :header-cell-class-name="getHeaderCellClassName"
+                @select-all="handleSelectionAll"
+                ref="multipleTableDetail"
+                :class="activeName === 3 && 'noFilter'"
               >
-              </el-table-column>
-              <el-table-column prop="task_title" label="商品信息">
-                <template slot-scope="scope">
-                  <div class="flex">
-                    <el-image
-                      style="
-                        height: 50px;
-                        max-width: 50px;
-                        border-radius: 2px;
-                        margin-right: 20px;
-                      "
-                      :src="scope.row.image_url"
-                      fit="contain"
-                      :preview-src-list="[scope.row.image_url]"
-                    >
-                      <div slot="placeholder">
-                        <hh-icon
-                          type="iconwuzhaopian"
-                          style="font-size: 50px"
-                        />
-                      </div>
-                      <div
-                        slot="error"
-                        class="flex align-c"
-                        style="height: 100%"
+                <el-table-empty slot="empty" />
+                <el-table-column
+                  type="selection"
+                  width="55"
+                  :selectable="isSelectionEnable"
+                  :reserve-selection="true"
+                >
+                </el-table-column>
+                <el-table-column prop="task_title" label="商品信息">
+                  <template slot-scope="scope">
+                    <div class="flex">
+                      <el-image
+                        style="
+                          height: 50px;
+                          max-width: 50px;
+                          border-radius: 2px;
+                          margin-right: 20px;
+                        "
+                        :src="scope.row.image_url"
+                        fit="contain"
+                        :preview-src-list="[scope.row.image_url]"
                       >
-                        <hh-icon
-                          type="icontupianjiazaishibai03"
-                          style="font-size: 30px"
-                        />
-                      </div>
-                    </el-image>
+                        <div slot="placeholder">
+                          <hh-icon
+                            type="iconwuzhaopian"
+                            style="font-size: 50px"
+                          />
+                        </div>
+                        <div
+                          slot="error"
+                          class="flex align-c"
+                          style="height: 100%"
+                        >
+                          <hh-icon
+                            type="icontupianjiazaishibai03"
+                            style="font-size: 30px"
+                          />
+                        </div>
+                      </el-image>
 
-                    <div>
-                      <div class="title color-4e font-13">
-                        {{ scope.row.goods_name
-                        }}<hh-icon
-                          type="iconfuzhi "
-                          style="font-size: 12px"
-                          class="pointer ml-5 mr-10"
-                          @click="
-                            copy(scope.row.goods_name, '商品名称 复制成功')
-                          "
-                        ></hh-icon>
-                      </div>
-                      <div class="id color-999 font-12">
-                        商品ID: {{ scope.row.goods_id
-                        }}<hh-icon
-                          type="iconfuzhi "
-                          style="font-size: 12px"
-                          class="pointer ml-5 mr-10"
-                          @click="copy(scope.row.goods_id, '商品ID 复制成功')"
-                        ></hh-icon>
+                      <div>
+                        <div class="title color-4e font-13">
+                          {{ scope.row.goods_name
+                          }}<hh-icon
+                            type="iconfuzhi "
+                            style="font-size: 12px"
+                            class="pointer ml-5 mr-10"
+                            @click="
+                              copy(scope.row.goods_name, '商品名称 复制成功')
+                            "
+                          ></hh-icon>
+                        </div>
+                        <div class="id color-999 font-12">
+                          商品ID: {{ scope.row.goods_id
+                          }}<hh-icon
+                            type="iconfuzhi "
+                            style="font-size: 12px"
+                            class="pointer ml-5 mr-10"
+                            @click="copy(scope.row.goods_id, '商品ID 复制成功')"
+                          ></hh-icon>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="sync_content_list"
-                label="检测变化情况"
-                v-if="activeName !== 3"
-                width="200"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <span
-                    v-for="(content, idx) in scope.row.sync_content_list"
-                    :key="idx"
-                  >
-                    <span v-if="typeof content.title !== 'undefined'"
-                      >标题<span
-                        :class="[
-                          content.title ? 'color-warning' : 'color-999',
-                          'ml-5',
-                          'mr-10',
-                        ]"
-                        >{{ content.title ? '改变' : '未改变' }}</span
-                      ></span
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="sync_content_list"
+                  label="检测变化情况"
+                  v-if="activeName !== 3"
+                  width="200"
+                  align="center"
+                >
+                  <template slot-scope="scope">
+                    <div
+                      v-for="(content, idx) in scope.row.sync_content_list"
+                      :key="idx"
                     >
-                    <span v-if="typeof content.price !== 'undefined'"
-                      >价格<span
-                        :class="[
-                          content.price ? 'color-warning' : 'color-999',
-                          'ml-5',
-                          'mr-10',
-                        ]"
-                        >{{ content.price ? '改变' : '未改变' }}</span
-                      ></span
-                    >
-                    <span v-if="typeof content.shelf !== 'undefined'"
-                      >上下架<span
-                        :class="[
-                          content.shelf ? 'color-warning' : 'color-999',
-                          'ml-5',
-                          'mr-10',
-                        ]"
-                        >{{ content.shelf ? '改变' : '未改变' }}</span
-                      ></span
-                    ><br />
-                    <span v-if="typeof content.stock !== 'undefined'"
-                      >库存<span
-                        :class="[
-                          content.stock ? 'color-warning' : 'color-999',
-                          'ml-5',
-                          'mr-10',
-                        ]"
-                        >{{ content.stock ? '改变' : '未改变' }}</span
-                      ></span
-                    ><br />
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="publish_status"
-                label="修改结果"
-                v-if="activeName !== 3"
-                align="center"
-                :filters="tableFilters"
-                :filter-method="filterHandler"
-                :filter-multiple="false"
-                filter-placement="bottom-end"
-                column-key="publish_status"
-                width="150"
-              >
-                <template slot-scope="scope">
-                  <span class="color-4e" v-if="scope.row.publish_status === 0"
-                    >未提交修改</span
-                  >
-                  <span class="color-4e" v-if="scope.row.publish_status === 1"
-                    >修改中</span
-                  >
-                  <span class="color-4e" v-if="scope.row.publish_status === 2"
-                    >修改成功</span
-                  >
-                  <span class="color-4e" v-if="scope.row.publish_status === 3"
-                    >修改失败</span
-                  >
-                  <span class="color-4e" v-if="scope.row.publish_status === 4"
-                    >抖音审核中</span
-                  >
-                </template>
-              </el-table-column>
+                      <span v-if="typeof content.title !== 'undefined'" >
+                        <span style="width:50px;display:inline-block;text-align: right;">标题</span>
+                        <span
+                          :class="[
+                            content.title ? 'color-warning' : 'color-999',
+                            'ml-5',
+                            'mr-10',
+                          ]"
+                          style="width:50px;display:inline-block;text-align: left;"
+                          >
+                            {{ content.title ? '改变' : '未改变' }}
+                          </span>
+                      </span>
 
-              <template v-if="activeName === 3">
+                      <span v-if="typeof content.price !== 'undefined'">
+                        <span style="width:50px;display:inline-block;text-align: right;">价格</span>
+                        <span
+                          :class="[
+                            content.price ? 'color-warning' : 'color-999',
+                            'ml-5',
+                            'mr-10',
+                          ]"
+                          style="width:50px;display:inline-block;text-align: left;"
+                          >
+                            {{ content.price ? '改变' : '未改变' }}
+                          </span>
+                      </span>
+
+                      <span v-if="typeof content.shelf !== 'undefined'">
+                        <span style="width:50px;display:inline-block;text-align: right;">上下架</span>
+                        <span
+                          :class="[
+                            content.shelf ? 'color-warning' : 'color-999',
+                            'ml-5',
+                            'mr-10',
+                          ]"
+                          style="width:50px;display:inline-block;text-align: left;"
+                          >
+                            {{ content.shelf ? '改变' : '未改变' }}
+                          </span>
+                      </span>
+
+                      <span v-if="typeof content.stock !== 'undefined'">
+                        <span style="width:50px;display:inline-block;text-align: right;">库存</span>
+                        <span
+                          :class="[
+                            content.stock ? 'color-warning' : 'color-999',
+                            'ml-5',
+                            'mr-10',
+                          ]"
+                          style="width:50px;display:inline-block;text-align: left;"
+                          >
+                            {{ content.stock ? '改变' : '未改变' }}
+                          </span>
+                      </span>
+
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="publish_status"
+                  label="修改结果"
+                  v-if="activeName !== 3"
+                  align="center"
+                  :filters="tableFilters"
+                  :filter-method="filterHandler"
+                  :filter-multiple="false"
+                  filter-placement="bottom-end"
+                  column-key="publish_status"
+                  width="150"
+                >
+                  <template slot-scope="scope">
+                    <span class="color-4e" v-if="scope.row.publish_status === 0"
+                      >未提交修改</span
+                    >
+                    <span class="color-4e" v-if="scope.row.publish_status === 1"
+                      >修改中</span
+                    >
+                    <span class="color-4e" v-if="scope.row.publish_status === 2"
+                      >修改成功</span
+                    >
+                    <span class="color-4e" v-if="scope.row.publish_status === 3"
+                      >修改失败</span
+                    >
+                    <span class="color-4e" v-if="scope.row.publish_status === 4"
+                      >抖音审核中</span
+                    >
+                  </template>
+                </el-table-column>
+
                 <el-table-column
                   prop="sync_time"
                   label="检测时间"
                   align="center"
+                  v-if="activeName === 3"
                 >
                 </el-table-column>
-                <el-table-column prop="fail_reason" label="原因" align="center">
+                <el-table-column prop="fail_reason" label="原因" align="center" v-if="activeName === 3">
                 </el-table-column>
-              </template>
 
-              <el-table-column
-                :width="activeName !== 3 ? 250 : 150"
-                label="操作"
-                align="center"
-              >
-                <template slot-scope="scope">
-                  <!-- 发布抖音 -->
-                  <a
-                    class="pramiry pointer"
-                    @click="handleSync(scope.row)"
-                    v-if="activeName !== 3"
-                    >提交修改</a
-                  >
-                  <a
-                    class="pramiry pointer pl-5"
-                    @click="handleDetail(scope.row)"
-                    v-if="activeName !== 3"
-                    >查看详情</a
-                  >
-                  <!-- 开始检测商品(同步)  goods_id_list -->
-                  <a
-                    class="pramiry pointer pl-5"
-                    @click="handleRevert(scope.row)"
-                    >重新检测</a
-                  >
-                </template>
-              </el-table-column>
-            </el-table>
+                <el-table-column
+                  :width="activeName !== 3 ? 250 : 150"
+                  label="操作"
+                  align="center"
+                >
+                  <template slot-scope="scope">
+                    <!-- 发布抖音 -->
+                    <a
+                      class="pramiry pointer"
+                      @click="handleSync(scope.row)"
+                      v-if="activeName !== 3"
+                      >提交修改</a
+                    >
+                    <a
+                      class="pramiry pointer pl-5"
+                      @click="handleDetail(scope.row)"
+                      v-if="activeName !== 3"
+                      >查看详情</a
+                    >
+                    <!-- 开始检测商品(同步)  goods_id_list -->
+                    <a
+                      class="pramiry pointer pl-5"
+                      @click="handleRevert(scope.row)"
+                      >重新检测</a
+                    >
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
 
             <el-pagination
               background
@@ -414,7 +432,8 @@ export default {
       'fetch',
       'setFilter',
       'handleCurrentChange',
-      'handleSizeChange'
+      'handleSizeChange',
+      'clearFilters'
     ]),
     open (rowData) {
       this.rowData = rowData
@@ -519,6 +538,8 @@ export default {
     },
     close () {
       this.drawer = false
+      this.clearFilters()
+      this.goods_id_list = ''
     },
     handleView (index, product) {
       window.open(
@@ -726,6 +747,12 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
+/deep/ .noFilter {
+  .el-table__column-filter-trigger {
+    display: none;
+  }
+}
 /deep/ .el-form-item__label {
   padding-right: 0px;
   margin-right: 0px;
