@@ -236,7 +236,7 @@
                   :filter-multiple="false"
                   filter-placement="bottom-end"
                   column-key="publish_status"
-                  width="150"
+                  width="250"
                 >
                   <template slot-scope="scope">
                     <span class="color-4e" v-if="scope.row.publish_status === 0"
@@ -249,7 +249,7 @@
                       >修改成功</span
                     >
                     <span class="color-4e" v-if="scope.row.publish_status === 3"
-                      >修改失败</span
+                      >{{scope.row.fail_reason}}</span
                     >
                     <span class="color-4e" v-if="scope.row.publish_status === 4"
                       >抖音审核中</span
