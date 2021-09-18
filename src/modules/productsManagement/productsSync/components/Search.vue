@@ -303,7 +303,6 @@ export default {
       if (typeof this.originFilters.originCategorys !== 'undefined') this.categorys = JSON.parse(this.originFilters.originCategorys)
       if (typeof this.originFilters.originGoodsIds !== 'undefined') this.goods_ids = this.originFilters.originGoodsIds
       if (typeof this.originFilters.originStatus !== 'undefined') form.status = this.originFilters.originStatus
-      this.originForm = form
       this.form = form
     } else {
       const o = {
@@ -316,10 +315,8 @@ export default {
         keyword: ''
       }
       this.categorys = []
-      this.originForm = o
       this.form = o
     }
-
     console.log(this.form, 'this.form')
   },
   methods: {
@@ -413,8 +410,16 @@ export default {
       ref && ref.close && ref.close()
     },
     handleClear (key) {
-      this.form[key] = this.originForm[key]
-      console.log(this.form, 'this.form')
+      const o = {
+        status: '-',
+        presell_type: -1,
+        captureStatus: -1,
+        tp_id: -1,
+        goods_id_list: '',
+        captureTime: [],
+        keyword: ''
+      }
+      this.form[key] = o[key]
     },
     getIcon (name) {
       if (name === '淘宝') {

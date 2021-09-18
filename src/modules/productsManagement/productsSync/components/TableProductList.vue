@@ -232,7 +232,8 @@ export default {
       //   ...this.originFiltersSearch
       // }
       this.originFilters = this.originFiltersSearch
-      // this.originFilters = this.originFiltersSearch
+      console.log(this.originFiltersSearch)
+      console.log(this.filters, 'filters')
     }
   },
   mounted () {
