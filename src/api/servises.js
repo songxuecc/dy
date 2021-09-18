@@ -413,16 +413,34 @@ const hhgjAPIs = {
     return api.actionCreateGet('/api/capture/shop/complete/list', params)
   },
   statisticsEventCreate: (params) => {
-    return api.actionCreatorPost('/api/statisticsEvent/create', params)
+    return api.actionCreatorPost('/api/statisticsEvent/create ', params)
   },
-  captureIsExistShopCapture: (params) => {
-    return api.actionCreateGet('/api/capture/is_exist_shop_capture', params)
+  // 商品源同步
+  productSourceSyncCreate: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/create', params)
+  },
+  productSourceSyncPage: (params) => {
+    return api.actionCreateGet('/api/product/source/sync/page', params)
+  },
+  productSourceSyncDelete: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/delete', params)
   },
   productSourceSyncDetailPage: (params) => {
-    return api.actionCreatorPost('/api/product/source/sync/detail/page', params)
+    return api.actionCreateGet('/api/product/source/sync/detail/page', params)
+  },
+  productSourceSyncProgressQuery: (params) => {
+    return api.actionCreateGet('/api/product/source/sync/progress/query', params)
+  },
+  productSourceSyncDetailRun: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/run', params)
+  },
+  productSourceSyncPublish: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/publish', params)
+  },
+  productSourceSyncUpdate: (params) => {
+    return api.actionCreatorPost('/api/product/source/sync/update', params)
   }
+
 }
 
-export default {
-  hhgjAPIs
-}
+export default hhgjAPIs
