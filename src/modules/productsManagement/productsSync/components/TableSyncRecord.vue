@@ -10,9 +10,15 @@
               </span>
             </div>
             <p>当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。避免因货源方的信息变化造成损失。</p>
-      </div>
-      <el-button type="primary" size="medium" class="mb-10" @click="handleGo(undefined,2)">创建商品源同步计划</el-button>
 
+      </div>
+      <div class="flex align-c mb-10">
+        <el-button type="primary" size="medium" @click="handleGo(undefined,2)">创建商品源同步计划</el-button>
+        <span class="fail ml-5 mt-5">商品源同步操作前，
+          <a :class="[getSyncing?'color-999 ':' bold','underline pointer bold font-12']" @click="handleSyncProducts">{{getSyncButtonText}}</a>
+          <span >&nbsp;最近同步时间 {{ getSyncStatus.last_sync_time }} </span>
+        ，待商品同步完成后再进行操作</span>
+      </div>
     <el-table :data="tableData" style="width: 100%" v-loading="loading || loadingPost">
       <el-table-empty slot="empty"/>
       <el-table-column prop="task_title" label="计划名称" ></el-table-column>
@@ -82,7 +88,8 @@ import debounce from 'lodash/debounce'
 import {
   mapActions,
   mapState,
-  mapMutations
+  mapMutations,
+  mapGetters
 } from 'vuex'
 export default {
   name: 'TableSyncRecord',
@@ -113,6 +120,7 @@ export default {
     DrawerSyncDetail
   },
   computed: {
+    ...mapGetters(['getSyncStatus', 'getIsAuth', 'getSyncing', 'getSyncButtonText']),
     ...mapState('productManagement/productsSync/tableSyncRecord', [
       'tableData',
       'total',
@@ -120,6 +128,16 @@ export default {
       'filters',
       'form'
     ]),
+    ...mapState('productManagement/productsSync/tableSyncRecord', [
+      'tableData',
+      'total',
+      'pagination',
+      'filters',
+      'form'
+    ]),
+    // ...mapState([
+    //   'syncButtonText'
+    // ]),
     ...mapState({
       loading: state => state['@@loading'].effects['productManagement/productsSync/tableSyncRecord/query']
     })
@@ -135,6 +153,7 @@ export default {
     ...mapActions('productManagement/productsSync/tableProductList', {
       setFilter_tableProductList: 'setFilter'
     }),
+    ...mapActions(['handleSyncProducts']),
     onDelete (row) {
       const h = this.$createElement
       this.$confirm('', {

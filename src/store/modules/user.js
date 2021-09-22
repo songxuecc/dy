@@ -3,6 +3,7 @@ import Api from '@/api/apis'
 import * as types from '../types'
 import moment from 'moment'
 import utils from '@/common/utils'
+import common from '@/common/common.js'
 
 const state = {
   name: localStorage.getItem('owner_name') || '',
@@ -19,6 +20,8 @@ const state = {
     status: '',
     last_sync_time: ''
   },
+  isSyncing: false,
+  syncButtonText: '同步后台商品',
   haveSyncedOrder: false,
   syncOrderStatus: {
     last_sync_order_time: ''
@@ -61,6 +64,8 @@ const getters = {
   getLeftDays: state => state.leftDays,
   getFakeToken: state => state.fakeToken,
   getSyncStatus: state => state.syncStatus,
+  getSyncing: state => state.isSyncing,
+  getSyncButtonText: state => state.syncButtonText,
   getSyncOrderStatus: state => state.syncOrderStatus,
   getCurrentSubsc: state => state.currentSubsc,
   getExportFields: state => state.exportFields,
@@ -70,6 +75,41 @@ const getters = {
 }
 
 const actions = {
+  refreshSyncButtonText ({commit, state}, payload) {
+    let val = payload.syncStatus
+    let syncButtonText = ''
+    if (val.status === 'ready') {
+      syncButtonText = '正在准备同步...'
+    } else if (val.status === 'running') {
+      syncButtonText = '同步中...(' + val.cur + '/' + val.total + ')'
+    } else {
+      syncButtonText = '同步后台商品'
+    }
+    console.log(syncButtonText, 'syncButtonText')
+    commit('save', {
+      syncButtonText
+    })
+  },
+  // 同步商品
+  handleSyncProducts  ({commit, state, dispatch}, payload) {
+    console.log('handleSyncProducts-----')
+    let isAuth = state.isAuth
+    let isSyncing = state.isSyncing
+
+    console.log(isAuth, 'isAuth')
+    console.log(isSyncing, 'isSyncing')
+    if (!isAuth || isSyncing) return false
+    isSyncing = true
+    let syncButtonText = '正在准备同步...'
+    dispatch('requestSyncProducts', {
+      sync_type: common.SyncType['all'],
+      operation_type: 1
+    })
+    console.log(syncButtonText, 'syncButtonText')
+    commit('save', {
+      syncButtonText
+    })
+  },
   requestToken ({commit, state}, params) {
     let promise = new Promise(function (resolve, reject) {
       Api.hhgjAPIs.getAccessToken(params).then(data => {
@@ -152,6 +192,7 @@ const actions = {
     return promise
   },
   requestSyncProducts ({commit, state, dispatch}, params) {
+    console.log(params, 'params')
     let promise = new Promise(function (resolve, reject) {
       Api.hhgjAPIs.syncProducts(params).then(data => {
         if (data !== null) {
@@ -193,9 +234,16 @@ const actions = {
     })
     return promise
   },
-  updateSyncStatus ({commit, state}) {
+  updateSyncStatus ({commit, dispatch}) {
     Api.hhgjAPIs.getSyncStatus({}).then(data => {
+      const isSyncing = (data.status !== 'complete' && data.status !== 'error')
+      commit('save', {
+        isSyncing
+      })
       commit(types.SET_SYNC_STATUS, data)
+      dispatch('refreshSyncButtonText', {
+        syncStatus: data
+      })
     })
   },
   setExportFields ({commit, state}, data) {
@@ -235,6 +283,9 @@ const actions = {
 }
 
 const mutations = {
+  save (state, payload) {
+    Object.assign(state, payload)
+  },
   [ types.SET_USER ] (state, data) {
     if (data.token) {
       localStorage.setItem('token', data.token)

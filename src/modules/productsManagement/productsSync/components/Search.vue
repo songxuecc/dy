@@ -290,13 +290,16 @@ export default {
   created () {
     // 查询初始化
     const form = this.originForm
-    if (typeof this.filters.goods_id_list !== 'undefined') form.goods_id_list = this.filters.goods_id_list
-    if (typeof this.filters.presell_type !== 'undefined') form.presell_type = this.filters.presell_type
-    if (typeof this.filters.captureStatus !== 'undefined') form.captureStatus = this.filters.captureStatus
-    if (typeof this.filters.tp_id !== 'undefined') form.tp_id = this.filters.tp_id
-    if (typeof this.filters.keyword !== 'undefined') form.keyword = this.filters.keyword
-    if (typeof this.filters.migrate_start_time !== 'undefined' && typeof this.filters.migrate_end_time !== 'undefined') {
-      form.captureTime = [this.filters.migrate_start_time, this.filters.migrate_end_time]
+
+    if (this.filters) {
+      if (typeof this.filters.goods_id_list !== 'undefined') form.goods_id_list = this.filters.goods_id_list
+      if (typeof this.filters.presell_type !== 'undefined') form.presell_type = this.filters.presell_type
+      if (typeof this.filters.captureStatus !== 'undefined') form.captureStatus = this.filters.captureStatus
+      if (typeof this.filters.tp_id !== 'undefined') form.tp_id = this.filters.tp_id
+      if (typeof this.filters.keyword !== 'undefined') form.keyword = this.filters.keyword
+      if (typeof this.filters.migrate_start_time !== 'undefined' && typeof this.filters.migrate_end_time !== 'undefined') {
+        form.captureTime = [this.filters.migrate_start_time, this.filters.migrate_end_time]
+      }
     }
 
     if (this.originFilters) {

@@ -104,6 +104,7 @@
                       <el-image
                         style="
                           height: 50px;
+                          width: 50px;
                           max-width: 50px;
                           border-radius: 2px;
                           margin-right: 20px;
@@ -115,17 +116,17 @@
                         <div slot="placeholder">
                           <hh-icon
                             type="iconwuzhaopian"
-                            style="font-size: 50px"
+                            style="font-size: 50px;"
                           />
                         </div>
                         <div
                           slot="error"
                           class="flex align-c"
-                          style="height: 100%"
+                          style="height: 100%;width: 50px;"
                         >
                           <hh-icon
                             type="icontupianjiazaishibai03"
-                            style="font-size: 30px"
+                            style="font-size: 30px;width: 50px;"
                           />
                         </div>
                       </el-image>
@@ -260,11 +261,15 @@
                 <el-table-column
                   prop="sync_time"
                   label="检测时间"
+                  width="150"
                   align="center"
                   v-if="activeName === 3"
                 >
                 </el-table-column>
                 <el-table-column prop="fail_reason" label="原因" align="center" v-if="activeName === 3">
+                    <template slot-scope="scope">
+                      {{scope.row.fail_reason|| '建议重新检测'}}
+                  </template>
                 </el-table-column>
 
                 <el-table-column

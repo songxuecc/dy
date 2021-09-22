@@ -306,7 +306,7 @@
     <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px"
         :disabled="shouldUpdate || loadingSettings">保存设置</el-button>
-      <el-link @click="gotoStartCopy" v-if="shouldUpdate || loadingSettings" :underline="false" type="primary" class="font-12 ml-5 " style="margin-top:25px">已设置，去复制商品。点击跳转开始复制页。</el-link>
+      <el-link @click="gotoStartCopy" v-if="shouldUpdate || loadingSettings" :underline="false" type="primary" class="font-12 ml-5 " style="margin-top:25px">已设置，去复制商品</el-link>
     </div>
 
   </div>

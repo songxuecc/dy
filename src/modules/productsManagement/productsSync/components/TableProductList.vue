@@ -27,7 +27,9 @@
       v-loading="loading || loadingPost || loadingSelected"
       row-key="goods_id"
     >
-      <el-table-empty slot="empty"/>
+      <el-table-empty slot="empty">
+        <div class="primary underline" style="font-size:16px" @click="gotoStartMigrate">您还没有通过虎虎上架商品，您可以先进行上货</div>
+      </el-table-empty>
       <el-table-column
         type="selection"
         width="55"
@@ -464,6 +466,11 @@ export default {
     unBindScroll () {
       const scrollEl = document.querySelector('.page-component__scroll')
       scrollEl && scrollEl.removeEventListener('scroll', this.scroll)
+    },
+    gotoStartMigrate () {
+      this.$router.push({
+        name: 'StartMigrate'
+      })
     },
     // 底部按钮滚动定位
     scroll: debounce(function () {
