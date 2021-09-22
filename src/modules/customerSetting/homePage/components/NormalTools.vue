@@ -95,6 +95,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
 .tools {
     // width: 644px;
     height: 131px;

@@ -26,8 +26,8 @@
           <hh-icon type="iconlianxikefu" class="mr-5 font-20"></hh-icon>
           <span class="kefu">联系客服</span>
         </div>
-        <div class="mt-5">方式1:微信扫码添加人工客服</div>
-        <div class="mt-5">方式2:拨打电话 12345678</div>
+        <div class="mt-5 fangshi">方式1:微信扫码添加人工客服</div>
+        <div class="mt-5 fangshi">方式2:拨打电话 12345678</div>
       </div>
       <div class="right">
         <img :src="require('../images/qrcode.png')" alt="" />
@@ -36,18 +36,18 @@
 
     <div class="jiaohceng">
       <div class="left">
-        <div class="flex mb-5">
+        <div class="flex ">
           <hh-icon type="iconruanjianjiaocheng" class="mr-5 font-20"></hh-icon>
-          <span class="kefu">软件教程 <span class="click">查看全部?</span></span>
+          <span class="kefu">软件教程 <span class="click font-12">查看全部?</span></span>
         </div>
         <div class="flex">
             <div class="mt-5 mr-20 ">
-                <div class="click mb-5">01新手必读:多商品复制教程</div>
-                <div class="click">02如何批量修改商品?</div>
+                <div class="click font-12 mb-5 l-14">01新手必读:多商品复制教程</div>
+                <div class="click font-12 l-14">02如何批量修改商品?</div>
             </div>
             <div class="mt-5">
-                <div  class="click mb-5">03如何获取抖音复制链接?</div>
-                <div  class="click">04怎么获取整店复制链接?</div>
+                <div  class="click font-12 mb-5 l-14">03如何获取抖音复制链接?</div>
+                <div  class="click font-12 l-14" >04怎么获取整店复制链接?</div>
             </div>
         </div>
       </div>
@@ -120,6 +120,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
+.Notify {
+  width: 356px;
+}
 .tip {
   height: 28px;
   font-size: 20px;
@@ -196,6 +200,7 @@ export default {
   border: 1px solid rgba(50, 119, 255, 0.5);
   margin-bottom: 16px;
   justify-content: space-between;
+  align-items: center;
   .left {
     .kefu {
       font-size: 16px;
@@ -207,27 +212,38 @@ export default {
     }
   }
   .right {
-    width: 68px;
+    width: 74px;
     display: flex;
-    align-items: center;
+
     img {
-      width: 68px;
-      height: 68px;
+      width: 74px;
+      height: 74px;
     }
+  }
+
+  .fangshi {
+    font-weight: normal;
+    color: #6A6E80;
+    line-height: 16px;
+    font-size: 12px;
   }
 }
 
 .jiaohceng {
   display: flex;
   box-sizing: border-box;
-  padding: 12px 25px 0 27px;
-
-  width: 100%;
+  padding-top: 3px;
   aspect-ratio: 356/89;
   background: #ffffff;
   box-shadow: 0px 3px 4px 0px rgba(30, 30, 30, 0.05);
   border-radius: 20px;
-
   border: 1px dashed #dbdbdb;
+  .left {
+    margin:auto;
+    .l-14{
+  line-height: 16px;
+
+    }
+  }
 }
 </style>

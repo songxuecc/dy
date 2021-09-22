@@ -68,13 +68,28 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
+// .pxMixin() {
+//   @functions: ~`(function() {
+//     var clientWidth = '(100vw - 200px) / 1079 * ';
+//     function convert(size) {
+//       return typeof size === 'string' ?
+//         size.replace('px', '') : (size + '');
+//     }
+//     this.rem =  function(size) {
+//       return 'calc(' + clientWidth + convert(size) + ')';
+//     }
+//   })()`;
+// }
+// .pxMixin();
+
 .title {
   height: 28px;
   font-size: 20px;
   font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
   font-weight: normal;
   color: #6a6e80;
-  line-height: 28px;
+  line-height:  28px;
   margin-bottom: 9px;
 }
 .MigrateProducts {
@@ -138,14 +153,14 @@ export default {
         justify-content: flex-end;
         align-items: center;
           .btn {
-        width: 26px;
-        height: 26px;
-        background: rgba(50, 119, 255, 0.5);
-        border-radius: 13px;
-        font-size: 26px;
-        margin-left: 4px;
-        margin-right: 20px;
-      }
+            width: 26px;
+            height: 26px;
+            background: rgba(50, 119, 255, 0.5);
+            border-radius: 13px;
+            font-size: 26px;
+            margin-left: 4px;
+            margin-right: 20px;
+          }
       }
 
     }

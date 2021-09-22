@@ -14,52 +14,24 @@
           <Renew />
           <!-- 消息通知 -->
           <Notify />
-          <!-- 联系客服 -->
           <!-- 软件教程 -->
-          <!-- banner -->
+          <Banner />
       </div>
   </div>
 </template>
 
 <script>
-// import allProduct from './images/allProduct.png'
-// import baseSettings from './images/baseSettings.png'
-// import batchEdit from './images/batchEdit.png'
-// import bindCopy from './images/bindCopy.png'
-// import excelCopy from './images/excelCopy.png'
-// import exportProduct from './images/exportProduct.png'
-// import ImportProduct from './images/ImportProduct.png'
-// import migrateList from './images/migrateList.png'
-// import productCollection from './images/productCollection.png'
-// import prosuctsCopy from './images/prosuctsCopy.png'
-// import seniorVersion from './images/seniorVersion.png'
-// import shopsCopy from './images/shopsCopy.png'
-// import trialVersion from './images/trialVersion.png'
-// import wechat from './images/wechat.png'
 
 import NormalTools from './components/NormalTools'
 import MigrateProducts from './components/MigrateProducts'
 import ProductManagement from './components/ProductManagement'
 import Renew from './components/Renew'
 import Notify from './components/Notify'
+import Banner from './components/Banner'
 
 export default {
   data () {
     return {
-      // allProduct,
-      // baseSettings,
-      // batchEdit,
-      // bindCopy,
-      // excelCopy,
-      // exportProduct,
-      // ImportProduct,
-      // migrateList,
-      // productCollection,
-      // prosuctsCopy,
-      // seniorVersion,
-      // shopsCopy,
-      // trialVersion,
-      // wechat
     }
   },
   components: {
@@ -67,7 +39,8 @@ export default {
     MigrateProducts,
     ProductManagement,
     Renew,
-    Notify
+    Notify,
+    Banner
 
   },
   computed: {},
@@ -89,11 +62,27 @@ export default {
 
 <style lang='less' scoped>
 //@import url(); 引入公共css类
+
+// .pxMixin() {
+//   @functions: ~`(function() {
+//     var clientWidth = '(100vw - 200px) / 1079 * ';
+//     function convert(size) {
+//       return typeof size === 'string' ?
+//         size.replace('px', '') : (size + '');
+//     }
+//     this.px =  function(size) {
+//       return 'calc(' + clientWidth + convert(size) + ')';
+//     }
+//   })()`;
+// }
+// .pxMixin();
+
 .homePage {
-  padding: 0  0 0 20px;
-  width: 100%;
+  padding: 8px  0 0 20px;
+  width: 1079px;
   box-sizing: border-box;
   padding-bottom: 30px;
+  margin:auto;
     /deep/ .el-divider {
       margin:0;
     }
@@ -101,10 +90,10 @@ export default {
     display: flex;
     .left {
       margin-right: 16px;
-      width: 60%;
+      width: 644px;
     }
     .right {
-      width: 40%;
+      width: 356px;
     }
 
 }
