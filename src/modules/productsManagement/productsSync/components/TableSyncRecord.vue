@@ -25,8 +25,8 @@
       <el-table-column prop="style" label="计划内容" width="150">
         <template slot-scope="scope">
           <div>
-            {{scope.row.style.form.config_json.is_sync_price ? '价格、':''}}
-            {{scope.row.style.form.config_json.is_sync_stock ? '库存、':''}}
+            {{scope.row.style.form.config_json.is_sync_price ? '价格':''}}
+            {{scope.row.style.form.config_json.is_sync_stock ? '库存':''}}
             {{scope.row.style.form.config_json.is_sync_title ? '标题':''}}
           </div>
         </template>
