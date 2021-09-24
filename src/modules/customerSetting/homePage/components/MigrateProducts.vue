@@ -7,8 +7,8 @@
         搬家上货<span class="douzaiyong">90%商家都在用</span>
       </div>
 
-      <div class="hoverDiv">
-        <div class="step one"  @click="go({name:'MigrateSetting'},'搬家上货-第一步')">第一步 基本设置 <span class="xinshou">新手请从这里开始操作</span></div>
+      <div class="hoverDiv" @click="go({name:'MigrateSetting'},'搬家上货-第一步')">
+        <div class="step one"  >第一步 基本设置 <span class="xinshou">新手请从这里开始操作</span></div>
         <div class="flex justify-b tip">
           <span class="text">完成基本设置填写，后续操作更方便</span>
           <span class="edit">
@@ -17,8 +17,8 @@
         </div>
       </div>
 
-      <div class="hoverDiv">
-        <div class="step two" @click="go({name:'StartMigrate',params:{activeName:'single'}},'辅助功能-第二步')">第二步 设置完成 复制商品</div>
+      <div class="hoverDiv" @click="go({name:'StartMigrate',params:{activeName:'single'}},'辅助功能-第二步')">
+        <div class="step two" >第二步 设置完成 复制商品</div>
         <div class="flex justify-b tip">
           <span class="text">支持4种复制方式，请按需选择</span>
           <span class="edit">

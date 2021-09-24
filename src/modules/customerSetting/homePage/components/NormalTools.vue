@@ -2,7 +2,7 @@
 <template>
     <div class="tools">
         <div class="title"><hh-icon type="iconchangyonggongju"></hh-icon> 常用工具</div>
-        <div class="flex" style="padding-left:0;justify-content:space-between">
+        <div class="flex" style="padding-left:3px;justify-content:space-between">
             <div class="content" @click="go({name:'StartMigrate',params:{activeName:'single'}},'多商品复制')">
                 <div>
                     <img :src="prosuctsCopy" alt="多商品复制">
@@ -130,8 +130,8 @@ export default {
         cursor: pointer;
         img {
             width: 44px;
-            padding-right: 27px;
-            padding-left: 27px;
+            padding-right: 25px;
+            padding-left: 25px;
             margin-bottom: 5px;
         }
         div {
