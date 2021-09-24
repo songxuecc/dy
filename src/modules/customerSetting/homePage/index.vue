@@ -83,6 +83,7 @@ export default {
   box-sizing: border-box;
   padding-bottom: 30px;
   margin:auto;
+
     /deep/ .el-divider {
       margin:0;
     }

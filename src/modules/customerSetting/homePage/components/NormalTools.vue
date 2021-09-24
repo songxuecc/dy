@@ -1,53 +1,53 @@
 <!-- 常用工具 -->
 <template>
     <div class="tools">
-        <div class="title"><hh-icon type="iconchangyonggongju" class="mr-5"></hh-icon> 常用工具</div>
-        <div class="flex">
-            <div class="content">
+        <div class="title"><hh-icon type="iconchangyonggongju"></hh-icon> 常用工具</div>
+        <div class="flex" style="padding-left:3px">
+            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'single'}},'多商品复制')">
                 <div>
                     <img :src="prosuctsCopy" alt="多商品复制">
-                    <el-divider direction="vertical"></el-divider>
+                    <el-divider direction="vertical" style="height:30px"></el-divider>
                 </div>
-                <div>多商品复制</div>
+                <div class="tip">多商品复制</div>
             </div>
 
-            <div class="content">
+            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'shop'}},'整店复制')">
                 <div>
                     <img :src="allProduct" alt="整店复制">
-                    <el-divider direction="vertical"></el-divider>
+                    <el-divider direction="vertical" style="height:30px"></el-divider>
                 </div>
-                <div>整店复制</div>
+                <div class="tip">整店复制</div>
             </div>
 
-            <div class="content">
+            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'file'}},'导入复制')">
                 <div>
                     <img :src="excelCopy" alt="导入复制">
-                    <el-divider direction="vertical"></el-divider>
+                    <el-divider direction="vertical" style="height:30px"></el-divider>
                 </div>
-                <div>导入复制</div>
+                <div class="tip">导入复制</div>
             </div>
 
-            <div class="content">
+            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'bindCopy'}},'多商品复制')">
                 <div>
                     <img :src="bindCopy" alt="绑定复制">
-                    <el-divider direction="vertical"></el-divider>
+                    <el-divider direction="vertical" style="height:30px"></el-divider>
                 </div>
-                <div>绑定复制</div>
+                <div class="tip">绑定复制</div>
             </div>
 
-            <div class="content">
+            <div class="content" @click="go({name:'ProductList'},'搬家列表')">
                 <div>
                     <img :src="migrateList" alt="搬家列表">
-                    <el-divider direction="vertical"></el-divider>
+                    <el-divider direction="vertical" style="height:30px"></el-divider>
                 </div>
-                <div>搬家列表</div>
+                <div class="tip">搬家列表</div>
             </div>
 
-            <div class="content">
+            <div class="content" @click="go({name:'MigrateSetting'},'基本设置')">
                 <div>
                     <img :src="baseSettings" alt="基本设置">
                 </div>
-                <div>基本设置</div>
+                <div class="tip">基本设置</div>
             </div>
         </div>
     </div>
@@ -72,7 +72,6 @@ import wechat from '../images/wechat.png'
 export default {
   name: 'NormalTools',
   props: {
-    msg: String
   },
   data () {
     return {
@@ -91,11 +90,22 @@ export default {
       trialVersion,
       wechat
     }
+  },
+  methods: {
+    go (options, name) {
+      this.$router.push(options)
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '主页', '点击', `常用工具-${name}`])
+      }
+    }
   }
 }
 </script>
 <style lang="less" scoped>
-
+/deep/ .el-divider{
+    height: 30px;
+    background: #EBEBEB;
+}
 .tools {
     // width: 644px;
     height: 131px;
@@ -106,7 +116,7 @@ export default {
     .title {
         height: 28px;
         font-size: 20px;
-        font-family: FZLTZHK--GBK1-0, FZLTZHK--GBK1;
+        font-family: Microsoft YaHei;
         font-weight: normal;
         color: #6A6E80;
         line-height: 28px;
@@ -127,6 +137,11 @@ export default {
         div {
             color:@icon-info-color;
             font-size: 12px;
+        }
+
+        .tip {
+            line-height: 16px;
+            font-family: Microsoft YaHei;
         }
         &:hover {
             div {
