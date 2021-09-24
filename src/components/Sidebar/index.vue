@@ -84,6 +84,12 @@
            <!-- <el-menu-item index="/shopDecorate/poster/dg/list" :disabled="!isAuth()">
              <span slot="title">批量新增详情</span>
            </el-menu-item> -->
+           <el-menu-item index="/productsManagement/productsSync" :disabled="!isAuth()">
+             <div slot="title">
+                <hh-icon type="iconshangpinyuantongbuweixuanzhong1" style="font-size:16px; margin-right:4px"></hh-icon>
+                <span class="">商品源同步</span>
+              </div>
+           </el-menu-item>
           </el-submenu>
           <el-submenu index="3">
              <template slot="title">
