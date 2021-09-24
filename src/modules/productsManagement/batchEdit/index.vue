@@ -18,7 +18,11 @@
             <div class="content left" >
                 <div style="min-height:120px;margin-top: 20px;">
                   <h1 class="flex">修改范围
-                    <span style="margin-left:5px;font-weight:normal" class="fail">批量操作前请先点击软件右上角，同步后台商品按钮，商品同步完成后再进行下一步批量操作</span>
+                    <span style="margin-left:5px;font-weight:normal" class="fail">批量操作前,
+                      <a :class="[getSyncing?'color-999 ':'pointer ','underline  pointer bold font-12']" @click="handleSyncProducts">{{getSyncButtonText}}</a>
+                      <span >&nbsp;最近同步时间 {{ getSyncStatus.last_sync_time }} </span>
+                       ，待商品同步完成后再进行操作
+                    </span>
                     <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
                       <hh-icon type="icontishi" ></hh-icon>
                       点我查看教程视频
@@ -167,7 +171,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import common from '@/common/common.js'
 import Api from '@/api/apis'
 import debounce from 'lodash/debounce'
@@ -450,6 +454,8 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['getSyncStatus', 'getIsAuth', 'getSyncing', 'getSyncButtonText']),
+
     ...mapState('productManagement/batchEdit', ['jobs', 'clearSelectId']),
     statusOptions () {
       const options = []
@@ -488,6 +494,7 @@ export default {
   mounted () {},
   updated () {},
   methods: {
+    ...mapActions(['handleSyncProducts']),
     ...mapActions('productManagement/batchEdit', [
       'setFilterHhTaskProductOverview',
       'fetchHhTaskPage',

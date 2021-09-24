@@ -121,7 +121,7 @@ export default {
           this.startMigrateBtnFixed = false
         }
       }
-    }, 30),
+    }, 300),
     beforeunloadFn (e) {
       if (this.msgError) return false
       if (!this.template.isDiff() && Object.entries(this.dicCustomPrices).length === 0) {
