@@ -40,9 +40,9 @@
           popper-class="popper-class-Notify"
           trigger="hover">
           <div>
-             <img :src="require('../images/qrcode.png')" alt="" class="big-img"/>
+             <img :src="require('@/assets/images/wxpic.jpg')" alt="" class="big-img"/>
           </div>
-          <img :src="require('../images/qrcode.png')" alt="" class="img pointer" slot="reference"/>
+          <img :src="require('@/assets/images/wxpic.jpg')" alt="" class="img pointer" slot="reference"/>
         </el-popover>
       </div>
     </div>
