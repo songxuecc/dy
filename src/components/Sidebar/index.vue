@@ -3,7 +3,7 @@
     <el-row class="tac">
       <div class="sideBar">
 
-        <router-link  :to="{name: 'homePage'}" active-class="homePage-active">
+        <router-link  :to="{name: 'homePage'}" active-class="homePage-active" exact>
           <div class="homePage " >
             <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
             <span >首页</span>
