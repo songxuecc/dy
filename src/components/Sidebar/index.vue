@@ -63,7 +63,7 @@
               </div>
             </el-menu-item>
 
-            <el-menu-item index="/productsManagement/batchEdit/title" :disabled="!isAuth()">
+            <el-menu-item index="/productsManagement/batchEdit" :disabled="!isAuth()">
               <div slot="title">
                 <hh-icon type="iconpiliangchuliweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">批量处理<NewFeatureTips type="批量处理新版本-售卖价"/></span>
