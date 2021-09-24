@@ -539,19 +539,20 @@ border-radius: 8px 0px 8px 0px;
     height: 100%;
     box-sizing: border-box;
     padding:10px 10px 10px 10px;
-}
 
-.el-drawer__header {
-  margin-bottom: 0;
-  padding:5px;
-  color: #000;
-  text-align: left;
-  font-size: 14px;
-  font-weight: bold;
-}
+    .el-drawer__header {
+      margin-bottom: 0;
+      padding:5px;
+      color: #000;
+      text-align: left;
+      font-size: 14px;
+      font-weight: bold;
+    }
 
-.el-drawer__wrapper {
-  z-index: 99999 !important;
+    .el-drawer__wrapper {
+      z-index: 99999 !important;
+    }
+
 }
 
 </style>
