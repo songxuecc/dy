@@ -252,7 +252,7 @@ const router = new Router({
       }
     },
     {
-      path: '/productsManagement/batchEdit/:tab',
+      path: '/productsManagement/batchEdit',
       name: 'BatchEdit',
       component: () => import(
         /* webpackChunkName: `BatchEdit` */
