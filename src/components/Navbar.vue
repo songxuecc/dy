@@ -267,7 +267,7 @@ export default {
     },
     goInfo () {
       this.$router.push({
-        path: '/info'
+        name: 'info'
       })
     },
     goToServiceMarket () {
