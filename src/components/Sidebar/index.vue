@@ -58,14 +58,14 @@
             </template>
             <el-menu-item index="/productsManagement/allProducts" :disabled="!isAuth()">
               <div slot="title" class="flex align-c">
-                <hh-icon type="iconquanbushangpinweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
+                <hh-icon type="iconquanbushangpinxuanzhong1" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">全部商品</span>
               </div>
             </el-menu-item>
 
             <el-menu-item index="/productsManagement/batchEdit" :disabled="!isAuth()">
               <div slot="title" class="flex align-c">
-                <hh-icon type="iconpiliangchuliweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
+                <hh-icon type="iconpiliangchulixuanzhong2" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">批量处理<NewFeatureTips type="批量处理新版本-售卖价"/></span>
               </div>
             </el-menu-item>
