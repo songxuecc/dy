@@ -21,8 +21,8 @@
       </div>
     <el-table :data="tableData" style="width: 100%" v-loading="loading || loadingPost">
       <el-table-empty slot="empty"/>
-      <el-table-column prop="task_title" label="计划名称" ></el-table-column>
-      <el-table-column prop="style" label="计划内容" width="150">
+      <el-table-column prop="task_title" label="计划名称"></el-table-column>
+      <el-table-column prop="style" label="计划内容" width="105">
         <template slot-scope="scope">
           <div>
             {{scope.row.style.form.config_json.is_sync_price ? '价格':''}}
@@ -31,7 +31,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="sync_type" label="计划类型"  align="center" width="195">
+      <el-table-column prop="sync_type" label="计划类型"  align="center" width="145">
         <template slot-scope="scope">
           <div>
             {{sync_type[scope.row.sync_type || 2]}}
@@ -40,7 +40,7 @@
       </el-table-column>
       <el-table-column prop="total_nums" label="商品数" align="center" width="65">
       </el-table-column>
-      <el-table-column   label="检测结果" align="center" width="195">
+      <el-table-column   label="检测结果" align="center"  width="185">
         <template slot-scope="scope">
           <div>
             <div class="color-4e font-13 mb-5">
@@ -51,18 +51,25 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态"   align="center" width="65">
+      <el-table-column prop="status" label="状态"   align="center" width="95">
         <template slot-scope="scope">
-          <el-link :underline="false" class="font-12 flex column justify-c align-c no-decoration" type="primary" v-if="scope.row.status === 1">
+          <el-link :underline="false" class="font-12 flex column justify-c align-c no-decoration" type="warning" v-if="scope.row.status === 1">
             <span>进行中 <span v-if="scope.row.percent !== 100"> - {{scope.row.percent || 0}}%</span></span>
-            <el-progress :percentage="scope.row.percent" :show-text="false" style="width:80px" :stroke-width="10"></el-progress>
+            <el-progress :percentage="scope.row.percent" :show-text="false" style="width:64px" :stroke-width="10"></el-progress>
           </el-link>
-          <el-link :underline="false" class="font-12 no-decoration" type="warning" v-if="scope.row.status === 2">已完成</el-link>
+          <el-link :underline="false" class="font-12" type="primary" v-if="scope.row.status === 2 && scope.row.sync_type !== 1" @click="handleDetail(scope.row)">
+            <div>检测完成</div>
+            <div>提交修改</div>
+          </el-link>
+          <el-link :underline="false" class="font-12" type="primary" v-if="scope.row.status === 2 && scope.row.sync_type === 1" @click="handleDetail(scope.row)">
+            <div>检测完成</div>
+            <div>查看修改结果</div>
+          </el-link>
           <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 3">失败</el-link>
           <el-link :underline="false" class="font-12 no-decoration" type="info" v-if="scope.row.status === 0">未开始</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="310"  align="center">
+      <el-table-column label="操作" width="300"  align="center">
          <template slot-scope="scope">
           <a class="pramiry pointer" @click="onStartSync(scope.row)" v-if="scope.row.sync_type === 1">开始检测修改</a>
           <a class="pramiry pointer" @click="onStartSync(scope.row)" v-else style="padding-left:22px">开始检测</a>
@@ -216,6 +223,7 @@ export default {
       this.$emit('go', row, type)
     },
     handleDetail: debounce(function (row) {
+      if (row.status === 0) return false
       this.$nextTick(() => {
         this.$refs.DrawerSyncDetail && this.$refs.DrawerSyncDetail.open(row)
       })
@@ -327,6 +335,7 @@ export default {
 
 .disbaled {
   color: #999999;
+  cursor: no-drop;
 }
 </style>
 <style lang="less">
