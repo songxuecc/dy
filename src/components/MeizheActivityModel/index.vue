@@ -33,8 +33,9 @@ export default {
       return false
     }
     const current = moment(new Date())
-    const timeShowIsAfter = moment(current).isAfter('2021-09-26')
+    const timeShowIsAfter = moment(current).isAfter('2021-09-27')
     const timeShowIsBefore = moment(current).isBefore('2021-09-20')
+
     // 9月20~26
     if (timeShowIsAfter || timeShowIsBefore) {
       return false
