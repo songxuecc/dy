@@ -117,7 +117,7 @@ export default {
         height: 28px;
         font-size: 20px;
         font-family: Microsoft YaHei;
-        font-weight: normal;
+        font-weight: bold;
         color: #6A6E80;
         line-height: 28px;
         margin-bottom: 9px;

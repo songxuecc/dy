@@ -35,8 +35,8 @@
       </div>
 
       <div class="collect" @click="go({name:'ProductionCollection'},'辅助功能-商品采集')">
-        <div class="mb-5 name">
-          <hh-icon type="iconshangpincaiji" style="font-size:20px;margin-right:5px"></hh-icon>
+        <div class="mb-5 name bold"  style="color:#6A6E80">
+          <hh-icon type="iconshangpincaiji" style="font-size:20px;margin-right:5px;"></hh-icon>
           商品采集
         </div>
         <p>系统将您需要的商品链接一键采集，无需手动复制链接</p>
@@ -45,8 +45,8 @@
         </div>
       </div>
       <div class="collect mt-10" @click="go({name:'ShopsBand'},'辅助功能-绑定店铺')">
-        <div class="mb-5 name">
-          <hh-icon type="iconbangdingdianpuguanli" style="font-size:20px;margin-right:5px"></hh-icon>
+        <div class="mb-5 name bold" style="color:#6A6E80">
+          <hh-icon type="iconbangdingdianpuguanli" style="font-size:20px;margin-right:5px;"></hh-icon>
           绑定店铺管理
         </div>
         <p>多店铺卖家必备：多店铺商品任意复制、一次复制多店同时上货</p>
@@ -100,8 +100,8 @@ export default {
   height: 28px;
   font-size: 20px;
   font-family: MicrosoftYaHei;
-  font-weight: normal;
-  color: #6a6e80;
+  font-weight: bold;
+  color: #6A6E80;
   line-height:  28px;
   margin-bottom: 9px;
   display: flex;
@@ -141,7 +141,7 @@ export default {
       font-size: 16px;
       font-family: MicrosoftYaHei;
       font-weight: normal;
-      color: #6a6e80;
+      color: #6A6E80;
       line-height: 22px;
       margin-left: 20px;
     }
