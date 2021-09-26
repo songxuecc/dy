@@ -24,28 +24,28 @@
             </template>
 
             <el-menu-item index="/migrate/startMigrate" :disabled="!isAuth()">
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaishifuzhixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">开始复制</span>
               </div>
             </el-menu-item>
 
             <el-menu-item index="/migrate/productList" :disabled="!isAuth()" >
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="iconbanjialiebiaoxuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">搬家列表</span>
               </div>
             </el-menu-item>
 
             <el-menu-item index="/migrate/migrateSetting" :disabled="!isAuth()">
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="iconjibenshezhixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">基本设置</span>
               </div>
             </el-menu-item>
 
             <el-menu-item index="/migrate/productionCollection" :disabled="!isAuth()">
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="iconshangpincaijiweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">商品采集</span>
               </div>
@@ -57,26 +57,26 @@
               <div class="" style="padding-left:40px">商品管理</div>
             </template>
             <el-menu-item index="/productsManagement/allProducts" :disabled="!isAuth()">
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="iconquanbushangpinweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">全部商品</span>
               </div>
             </el-menu-item>
 
             <el-menu-item index="/productsManagement/batchEdit" :disabled="!isAuth()">
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="iconpiliangchuliweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">批量处理<NewFeatureTips type="批量处理新版本-售卖价"/></span>
               </div>
             </el-menu-item>
             <el-menu-item index="/productsManagement/skuImport" :disabled="!isAuth()">
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="icondaorubiaogexiugaixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">导入表格修改</span>
               </div>
             </el-menu-item>
             <el-menu-item index="/productsManagement/productExports" :disabled="!isAuth()">
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="icondaochushangpinxuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">导出商品<NewFeatureTips type="导出商品"/></span>
               </div>
@@ -85,7 +85,7 @@
              <span slot="title">批量新增详情</span>
            </el-menu-item> -->
            <el-menu-item index="/productsManagement/productsSync" :disabled="!isAuth()">
-             <div slot="title">
+             <div slot="title" class="flex align-c">
                 <hh-icon type="iconshangpinyuantongbuweixuanzhong1" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">商品源同步</span>
               </div>
@@ -96,7 +96,7 @@
               <div class="" style="padding-left:40px">更多功能</div>
             </template>
             <el-menu-item index="" @click="openPdd" >
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="iconhuhubanjiaweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">虎虎搬家（拼多多）</span>
               </div>
@@ -108,7 +108,7 @@
 <!--              <span slot="title">打单发货</span>-->
 <!--            </el-menu-item>-->
             <el-menu-item index="" @click="openMeiZhe">
-              <div slot="title">
+              <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">开店必备工具</span>
               </div>
@@ -199,16 +199,18 @@ export default {
 
     cursor: pointer;
     &:active {
-      color: #000000;
+      color: #333333;
+      text-decoration: underline;
     }
     &:hover {
       color: #333333;
+      text-decoration: underline;
     }
   }
 
   .homePage-active {
     .homePage {
-      color: #1D8FFF;
+      color: #3277FF;
     }
   }
 </style>
