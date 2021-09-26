@@ -105,9 +105,9 @@
               </el-form-item>
 
               <el-form-item
-                style="display: inline-block"
+                style="display: inline-block;"
                 label="售卖价"
-                class="mr-20"
+                class="mr-20 shoumaijia"
               >
                 <el-radio-group v-model="form.config_json.is_max_discount_price">
                   <el-radio :label="0" style="width: 40px">最低价</el-radio>
@@ -534,6 +534,8 @@ export default {
   font-family: MicrosoftYaHei;
   color: #4e4e4e;
   line-height: 19px;
+  display: flex;
+  align-items: center;
 }
 .price-sku-input {
   display: inline;
@@ -580,5 +582,11 @@ export default {
 
 .btn {
   margin-top: 40px;
+}
+
+.shoumaijia {
+  /deep/ .el-form-item__label{
+    font-size: 14px;
+  }
 }
 </style>
