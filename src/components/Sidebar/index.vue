@@ -46,7 +46,7 @@
 
             <el-menu-item index="/migrate/productionCollection" :disabled="!isAuth()">
               <div slot="title" class="flex align-c">
-                <hh-icon type="iconshangpincaijiweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
+                <hh-icon type="iconshangpincaijixuanzhong1" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">商品采集</span>
               </div>
             </el-menu-item>
