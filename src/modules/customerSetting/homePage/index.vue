@@ -79,7 +79,7 @@ export default {
 
 .homePage {
   padding: 8px  0 0 20px;
-  width: 1079px;
+  // width: 1079px;
   box-sizing: border-box;
   padding-bottom: 30px;
   margin:auto;
@@ -91,10 +91,12 @@ export default {
     display: flex;
     .left {
       margin-right: 16px;
-      width: 644px;
+      // width: 644px;
+      flex: 1;
     }
     .right {
       width: 356px;
+
     }
 
 }

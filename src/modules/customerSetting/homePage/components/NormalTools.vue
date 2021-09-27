@@ -2,11 +2,11 @@
 <template>
     <div class="tools">
         <div class="title"><hh-icon type="iconchangyonggongju"></hh-icon> 常用工具</div>
-        <div class="flex" style="padding-left:3px;justify-content:space-between">
+        <div class="flex" style="padding-left:3px;justify-content: space-around;flex-shrink: 0;height:65px;overflow:hidden;flex-wrap:wrap" >
             <div class="content" @click="go({name:'StartMigrate',params:{activeName:'single'}},'多商品复制')">
                 <div>
                     <img :src="prosuctsCopy" alt="多商品复制">
-                    <el-divider direction="vertical" style="height:30px"></el-divider>
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
                 </div>
                 <div class="tip">多商品复制</div>
             </div>
@@ -14,7 +14,7 @@
             <div class="content" @click="go({name:'StartMigrate',params:{activeName:'shop'}},'整店复制')">
                 <div>
                     <img :src="allProduct" alt="整店复制">
-                    <el-divider direction="vertical" style="height:30px"></el-divider>
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
                 </div>
                 <div class="tip">整店复制</div>
             </div>
@@ -22,7 +22,7 @@
             <div class="content" @click="go({name:'StartMigrate',params:{activeName:'file'}},'导入复制')">
                 <div>
                     <img :src="excelCopy" alt="导入复制">
-                    <el-divider direction="vertical" style="height:30px"></el-divider>
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
                 </div>
                 <div class="tip">导入复制</div>
             </div>
@@ -30,7 +30,7 @@
             <div class="content" @click="go({name:'StartMigrate',params:{activeName:'bindCopy'}},'多商品复制')">
                 <div>
                     <img :src="bindCopy" alt="绑定复制">
-                    <el-divider direction="vertical" style="height:30px"></el-divider>
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
                 </div>
                 <div class="tip">绑定复制</div>
             </div>
@@ -38,7 +38,7 @@
             <div class="content" @click="go({name:'ProductList'},'搬家列表')">
                 <div>
                     <img :src="migrateList" alt="搬家列表">
-                    <el-divider direction="vertical" style="height:30px"></el-divider>
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
                 </div>
                 <div class="tip">搬家列表</div>
             </div>
@@ -49,6 +49,63 @@
                 </div>
                 <div class="tip">基本设置</div>
             </div>
+
+             <div class="content" @click="go({name:'StartMigrate',params:{activeName:'single'}},'多商品复制')">
+                <div>
+                    <img :src="prosuctsCopy" alt="多商品复制">
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
+                </div>
+                <div class="tip">多商品复制1</div>
+            </div>
+
+            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'shop'}},'整店复制')">
+                <div>
+                    <img :src="allProduct" alt="整店复制">
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
+                </div>
+                <div class="tip">整店复制1</div>
+            </div>
+
+            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'file'}},'导入复制')">
+                <div>
+                    <img :src="excelCopy" alt="导入复制">
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
+                </div>
+                <div class="tip">导入复制1</div>
+            </div>
+
+            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'bindCopy'}},'多商品复制')">
+                <div>
+                    <img :src="bindCopy" alt="绑定复制">
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
+                </div>
+                <div class="tip">绑定复制1</div>
+            </div>
+
+            <div class="content" @click="go({name:'ProductList'},'搬家列表')">
+                <div>
+                    <img :src="migrateList" alt="搬家列表">
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
+                </div>
+                <div class="tip">搬家列表1</div>
+            </div>
+
+            <div class="content" @click="go({name:'MigrateSetting'},'基本设置')">
+                <div>
+                    <img :src="baseSettings" alt="基本设置">
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
+                </div>
+                <div class="tip">基本设置1</div>
+            </div>
+
+             <div class="content" @click="go({name:'MigrateSetting'},'基本设置')">
+                <div>
+                    <img :src="baseSettings" alt="基本设置">
+                    <!-- <el-divider direction="vertical" style="height:30px"></el-divider> -->
+                </div>
+                <div class="tip">基本设置2</div>
+            </div>
+
         </div>
     </div>
 </template>

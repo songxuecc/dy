@@ -126,7 +126,7 @@ export default {
   margin: 16px 0;
 
   .products {
-    width: 370px;
+    // width: 370px;
     height: 310px;
     background: rgba(247, 248, 249, 0.8);
     border-radius: 20px;
@@ -136,6 +136,7 @@ export default {
     background-image: url('../images/migrateProducts.png');
     background-size: 100% 100%;
     background-position-y: -3px;
+    flex: 0.5;
     .step {
       height: 22px;
       font-size: 16px;
@@ -214,19 +215,21 @@ export default {
   }
 
   .function {
-    width: 258px;
+    // width: 258px;
     height: 309px;
     background: rgba(247, 248, 249, 0.8);
     border-radius: 20px;
     padding: 16px;
     box-sizing: border-box;
+    flex: 0.5;
 
     .collect {
-      width: 222px;
+      // width: 222px;
       background: #ffffff;
       border-radius: 20px;
       padding: 12px 18px;
       box-sizing: border-box;
+      height:114px;
       cursor: pointer;
 
       .name {
