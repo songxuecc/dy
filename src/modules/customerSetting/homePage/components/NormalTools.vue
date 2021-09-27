@@ -210,4 +210,38 @@ export default {
     }
 
 }
+
+// @media screen and (min-width:1000px) and (max-width: 1200px){
+//    .tools .content img {
+//        padding-left: 35px;
+//        padding-right: 35px;
+//    }
+// }
+
+/*当页面宽度大于1000px且小于1200px的时候执行，1000-1200*/
+@media screen and (min-width:1000px) and (max-width: 1200px){
+    // body{
+    //     font-size:16px
+    // }
+}
+/*当页面宽度大于1280px且小于1366px的时候执行,1280-1366*/
+@media screen and (min-width:1280px) and (max-width: 1366px){
+    // body{
+    //     font-size:18px
+    // }
+}
+/*当页面宽度大于1440px且小于1600px的时候执行,1440-1600*/
+@media screen and (min-width:1440px) and (max-width:1600px){
+//        .tools .content img {
+//        padding-left: 45px;
+//        padding-right: 45px;
+//    }
+}
+/*当页面宽度大于1680px且小于1920px的时候执行,1680-1920*/
+@media screen and (min-width:1680px) and (max-width:1920px){
+    .tools .content img {
+       padding-left: 40px;
+       padding-right: 40px;
+   }
+}
 </style>

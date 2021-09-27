@@ -6,7 +6,7 @@
       </div>
 
       <div class="flex" style="justify-content: space-around;flex-shrink: 0;height:238px;overflow:hidden;flex-wrap:wrap">
-        <div class="color-767989 item"  @click="go({name:'BatchEdit'},'商品管理-批量处理')">
+        <div class="color-767989 item number-1"  @click="go({name:'BatchEdit'},'商品管理-批量处理')">
             <div class="icon-content">
               <hh-icon type="iconpiliangchulixuanzhong1" class="icon"></hh-icon>
               <img :src="hot" class="hot ml-5"></img>
@@ -235,5 +235,15 @@ export default {
 }
 
 .opacity {
+}
+
+/*当页面宽度大于1680px且小于1920px的时候执行,1680-1920*/
+@media screen and (min-width:1680px) and (max-width:1920px){
+  .item {
+       margin-right: 38px;
+   }
+   .number-1 {
+     margin-left: 20px;
+   }
 }
 </style>
