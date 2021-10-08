@@ -9,7 +9,6 @@
     v-if="drawer"
   >
     <ModalDataCompared ref="ModalDataCompared" />
-
     <div class="pl-30 pr-30">
       <el-tabs v-model="activeName" @tab-click="handleChangeTabs">
         <el-tab-pane
@@ -229,35 +228,41 @@
                 </el-table-column>
                 <el-table-column
                   prop="publish_status"
-                  label="修改结果"
                   v-if="activeName !== 3"
                   align="center"
-                  :filters="tableFilters"
-                  :filter-method="filterHandler"
-                  :filter-multiple="false"
-                  filter-placement="bottom-end"
-                  column-key="publish_status"
                   width="250"
                 >
-                  <template slot-scope="scope">
-                    <span class="color-4e" v-if="scope.row.publish_status === 0"
-                      >未提交修改</span
-                    >
-                    <span class="color-4e" v-if="scope.row.publish_status === 1"
-                      >修改中</span
-                    >
-                    <span class="color-4e" v-if="scope.row.publish_status === 2"
-                      >修改成功</span
-                    >
-                    <span class="color-4e" v-if="scope.row.publish_status === 3"
-                      >{{scope.row.fail_reason}}</span
-                    >
-                    <span class="color-4e" v-if="scope.row.publish_status === 4"
-                      >抖音审核中</span
-                    >
-                  </template>
-                </el-table-column>
-
+                <template slot="header" slot-scope="scope">
+                  <el-dropdown @command="handleCommand" class="DrawerSyncDetail-filter">
+                    <span class="pointer font-12">修改结果 <i class="el-icon-arrow-down el-icon--right"></i> </span>
+                    <el-dropdown-menu slot="dropdown" class="DrawerSyncDetail-filter ">
+                    <el-dropdown-item :command="-1">全部</el-dropdown-item>
+                    <el-dropdown-item :command="1">修改中</el-dropdown-item>
+                    <el-dropdown-item :command="0">未提交修改</el-dropdown-item>
+                    <el-dropdown-item :command="2">修改成功</el-dropdown-item>
+                    <el-dropdown-item :command="3">修改失败</el-dropdown-item>
+                    <el-dropdown-item :command="4">抖音审核中</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+                </template>
+                <template slot-scope="scope">
+                  <span class="color-4e" v-if="scope.row.publish_status === 0"
+                    >未提交修改</span
+                  >
+                  <span class="color-4e" v-if="scope.row.publish_status === 1"
+                    >修改中</span
+                  >
+                  <span class="color-4e" v-if="scope.row.publish_status === 2"
+                    >修改成功</span
+                  >
+                  <span class="color-4e" v-if="scope.row.publish_status === 3"
+                    >{{scope.row.fail_reason}}</span
+                  >
+                  <span class="color-4e" v-if="scope.row.publish_status === 4"
+                    >抖音审核中</span
+                  >
+                </template>
+              </el-table-column>
                 <el-table-column
                   prop="sync_time"
                   label="检测时间"
@@ -282,7 +287,7 @@
                     <a
                       class="pramiry pointer"
                       @click="handleSync(scope.row)"
-                      v-if="activeName !== 3"
+                      v-if="activeName !== 3 && rowData.sync_type === 2"
                       >提交修改</a
                     >
                     <a
@@ -394,7 +399,8 @@ export default {
       ]
     }
   },
-  created () {},
+  created () {
+  },
 
   computed: {
     ...mapState('productManagement/productsSync/drawerSyncDetail', [
@@ -442,13 +448,16 @@ export default {
     open (rowData) {
       this.rowData = rowData
       this.activeName = 2
+      this.multipleSelection = []
+      this.clearFilters()
+      this.goods_id_list = ''
+      this.is_all = ''
       this.drawer = true
       console.log(rowData, 'rowData')
       const filters = {
         task_id: rowData.task_id || '',
         status: rowData.status || ''
       }
-
       this.fetch({
         filters
       })
@@ -486,8 +495,7 @@ export default {
       val = val.map((item) => item.goods_id)
       this.multipleSelection = [...new Set(val)]
     },
-    filterHandler (value, row, column) {
-      const status = value
+    handleCommand: debounce(function (status) {
       this.setFilter({
         filters: {
           ...this.filters,
@@ -495,6 +503,10 @@ export default {
         }
       })
     },
+    100,
+    {
+      leading: true
+    }),
     copy: async function (id, text) {
       try {
         await this.$copyText(id)
@@ -511,7 +523,7 @@ export default {
         })
       }
     },
-    handleChangeTabs () {
+    handleChangeTabs: debounce(function () {
       this.setFilter({
         filters: {
           status: this.activeName,
@@ -519,6 +531,10 @@ export default {
         }
       })
     },
+    100,
+    {
+      leading: true
+    }),
     handleSearch () {
       const limit = 100
       const goodsIds = this.goods_id_list
@@ -541,9 +557,11 @@ export default {
       })
     },
     close () {
-      this.drawer = false
+      this.multipleSelection = []
       this.clearFilters()
       this.goods_id_list = ''
+      this.is_all = ''
+      this.drawer = false
     },
     handleView (index, product) {
       window.open(
@@ -795,6 +813,12 @@ export default {
   position: absolute;
   z-index: 1;
 }
+
+/deep/ .el-table-filter__list-item {
+  font-size: 12px;
+  height: 30px;
+}
+
 </style>
 <style lang="less">
 .TableSyncRecord-cancelButtonClass {
@@ -851,12 +875,11 @@ export default {
     }
   }
 }
-
-.el-table-filter {
+.DrawerSyncDetail-filter {
   text-align: left;
-}
-.el-table-filter__list-item {
-  font-size: 12px;
-  height: 30px;
+  .el-dropdown-menu__item  {
+    font-size: 12px;
+    height: 30px;
+  }
 }
 </style>
