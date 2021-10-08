@@ -41,7 +41,7 @@ export default {
   margin-top: 10px;
   width: 100%;
   height: 185px;
-  background: #d8d8d8;
+  background: rgba(247, 248, 249, 0.8);
   border-radius: 25px;
   overflow: hidden;
 }

@@ -193,7 +193,7 @@ export default {
     border: 1px solid #F2F2F2;
   }
   .text {
-    height: 60px;
+    height: 58px;
     overflow: hidden;
     padding-left: 0;
     line-height: 16px;
