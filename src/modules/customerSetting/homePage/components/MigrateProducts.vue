@@ -39,17 +39,17 @@
           <hh-icon type="iconshangpincaiji" style="font-size:20px;margin-right:5px;"></hh-icon>
           商品采集
         </div>
-        <p>系统将您需要的商品链接一键采集，无需手动复制链接</p>
+        <p>系统将您需要的商品链接一键导出生成excel表格，帮您摆脱手动复制链接的烦恼</p>
         <div class="right edit">
           去操作 <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
         </div>
       </div>
-      <div class="collect mt-10" @click="go({name:'ShopsBand'},'辅助功能-绑定店铺')">
+      <div class="collect" @click="go({name:'ShopsBand'},'辅助功能-绑定店铺')" style="margin-top:15px">
         <div class="mb-5 name bold" style="color:#6A6E80">
           <hh-icon type="iconbangdingdianpuguanli" style="font-size:20px;margin-right:5px;"></hh-icon>
           绑定店铺管理
         </div>
-        <p>多店铺卖家必备：多店铺商品任意复制、一次复制多店同时上货</p>
+        <p>多店铺卖家必备功能，支持多店铺之间商品相互同步，支持一次复制多店同时上货</p>
         <div class="right edit">
           去操作 <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
         </div>
@@ -124,10 +124,10 @@ export default {
 }
 .MigrateProducts {
   margin: 16px 0;
-
+  height: 283px;
   .products {
     // width: 370px;
-    height: 310px;
+    // height: 310px;
     background: rgba(247, 248, 249, 0.8);
     border-radius: 20px;
     margin-right: 16px;
@@ -156,7 +156,7 @@ export default {
       }
     }
     .one {
-      margin-top: 52px;
+      margin-top: 32px;
       .xinshou {
         transform: scale(0.8);
         display: inline-block;
@@ -216,7 +216,7 @@ export default {
 
   .function {
     // width: 258px;
-    height: 309px;
+    // height: 309px;
     background: rgba(247, 248, 249, 0.8);
     border-radius: 20px;
     padding: 16px;
@@ -229,7 +229,7 @@ export default {
       border-radius: 20px;
       padding: 12px 18px;
       box-sizing: border-box;
-      height:114px;
+      height:97px;
       cursor: pointer;
 
       .name {
@@ -237,7 +237,7 @@ export default {
         align-items: center;
       }
       p {
-        height: 36px;
+        height: 20px;
         font-size: 12px;
         font-family: MicrosoftYaHei;
         font-weight: normal;

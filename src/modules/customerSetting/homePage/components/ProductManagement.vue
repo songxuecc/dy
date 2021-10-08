@@ -5,7 +5,7 @@
         <hh-icon type="iconshangpinguanli1" ></hh-icon> 商品管理
       </div>
 
-      <div class="flex" style="justify-content: space-around;flex-shrink: 0;height:238px;overflow:hidden;flex-wrap:wrap">
+      <div class="flex" style="justify-content: space-around;flex-shrink: 0;height:200px;overflow:hidden;flex-wrap:wrap">
         <div class="color-767989 item number-1"  @click="go({name:'BatchEdit'},'商品管理-批量处理')">
             <div class="icon-content">
               <hh-icon type="iconpiliangchulixuanzhong1" class="icon"></hh-icon>
@@ -15,7 +15,7 @@
             <ul class="text">
               <li class="font-12">批量上下架</li>
               <li class="font-12">批量删除商品</li>
-              <li class="font-12">批量改标题、库存价格、发货模式…</li>
+              <li class="font-12">批量改标题…</li>
             </ul>
             <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
         </div>
@@ -64,7 +64,7 @@
             </div>
             <h1 class="font-14 mb-5">商品源同步</h1>
             <ul class="text">
-              <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
+              <li class="font-12">当货源方的价格、库存等信息发生变化时，系统将检测变化并修改。</li>
             </ul>
             <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
         </div>
@@ -160,7 +160,7 @@ export default {
   background: rgba(247, 248, 249, 0.8);
   border-radius: 20px;
   box-sizing: border-box;
-  padding: 20px 26px;
+  padding: 16px 26px;
 }
 
 .icon {
@@ -182,22 +182,29 @@ export default {
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.05);
   border-radius: 20px;
   padding: 16px;
+  padding-bottom: 11px;
   box-sizing: border-box;
   margin-right: 18px;
   opacity: 0.6;
   cursor: pointer;
+  margin-bottom: 10px;
   border: 1px solid rgba(50, 119, 255, 0.3);
   &:hover{
     border: 1px solid #F2F2F2;
   }
   .text {
-    height: 97px;
+    height: 60px;
     overflow: hidden;
     padding-left: 0;
     line-height: 16px;
     margin:0;
     li {
       display: inline-flex;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:3;
       &::before {
         content: "\02022";
         margin-left: -20rpx;
@@ -234,16 +241,19 @@ export default {
     }
 }
 
-.opacity {
+@media screen and (min-width:1680px) and (max-width:1920px){
+  .item {
+    width: 165px;
+  }
 }
 
 /*当页面宽度大于1680px且小于1920px的时候执行,1680-1920*/
-@media screen and (min-width:1680px) and (max-width:1920px){
-  .item {
-       margin-right: 38px;
-   }
-   .number-1 {
-     margin-left: 20px;
-   }
-}
+// @media screen and (min-width:1680px) and (max-width:1920px){
+//   .item {
+//        margin-right: 38px;
+//    }
+//    .number-1 {
+//      margin-left: 20px;
+//    }
+// }
 </style>
