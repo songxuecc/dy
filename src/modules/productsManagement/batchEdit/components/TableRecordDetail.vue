@@ -294,7 +294,11 @@ export default {
           page_index: 1
         }
       })
-    }, 100)
+    },
+    100,
+    {
+      leading: true
+    })
   },
   methods: {
     ...mapActions('productManagement/batchEdit', ['fetchHhTaskProductPage']),
