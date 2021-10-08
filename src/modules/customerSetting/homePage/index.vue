@@ -1,6 +1,6 @@
 <!-- 我的页面 -->
 <template>
-  <div class='homePage'>
+  <div class='homePage' v-loading="loading">
       <div class="left">
           <!-- 常用工具 -->
           <NormalTools />
@@ -28,6 +28,7 @@ import ProductManagement from './components/ProductManagement'
 import Renew from './components/Renew'
 import Notify from './components/Notify'
 import Banner from './components/Banner'
+import { mapState } from 'vuex'
 
 export default {
   data () {
@@ -41,9 +42,12 @@ export default {
     Renew,
     Notify,
     Banner
-
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      loading: state => state['@@loading'].effects['requestUserInfo']
+    })
+  },
   watch: {},
   created () {
 
@@ -91,13 +95,18 @@ export default {
     display: flex;
     .left {
       margin-right: 16px;
-      // width: 644px;
       flex: 1;
     }
     .right {
       width: 356px;
-
     }
+}
 
+@media screen and (min-width:1680px) and (max-width:1920px){
+  .homePage {
+    .right {
+        width: 446px;
+      }
+  }
 }
 </style>

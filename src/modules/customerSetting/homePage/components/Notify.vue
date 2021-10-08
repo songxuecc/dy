@@ -12,7 +12,7 @@
       ref="seamlessScroll"
     >
       <ul class="item" >
-        <li v-for="(item, index) in listData" :key="index" >
+        <li v-for="(item, index) in listData" :key="index" class="flex " style="width:100%;jusity-content:space-between">
           <span class="title">
             <hh-icon :type="item.is_read ? 'iconlaoxiaoxi':'iconxinxiaoxi'" class="icon"></hh-icon>
             <span class="text" >{{ item.title }}</span>
@@ -161,7 +161,7 @@ export default {
 <style lang="less" scoped>
 
 .Notify {
-  width: 356px;
+  // width: 356px;
 }
 .tip {
   height: 28px;
@@ -174,8 +174,9 @@ export default {
 }
 
 .warp {
-  width: 356px;
-  height: 224px;
+  // width: 356px;
+  width:100%;
+  height: 190px;
   background: rgba(247, 248, 249, 0.8);
   border-radius: 20px;
   box-sizing: border-box;
@@ -183,11 +184,19 @@ export default {
   overflow: hidden;
 
 }
+
+// @media screen and (min-width:1680px) and (max-width:1920px){
+//   .scroll {
+//     width: 354px;
+//   }
+// }
+
 .scroll {
   overflow: hidden;
-  width: 322px;
+  width: calc(100% - 34px);
   margin: 10px 14px 10px 20px;
-  height: 204px;
+  height: 170px;
+  box-sizing: border-box;
 
   ul {
     list-style: none;
@@ -210,6 +219,7 @@ export default {
         overflow: hidden;
         text-align: left;
       }
+
       .text {
         display: inline-block;
         text-overflow: ellipsis;
@@ -246,7 +256,7 @@ export default {
   padding: 11px 25px 11px 27px;
 
   width: 100%;
-  aspect-ratio: 356/89;
+  height: 89px;
   background: #ffffff;
   box-shadow: 0px 3px 4px 0px rgba(30, 30, 30, 0.05);
   border-radius: 20px;
@@ -285,15 +295,15 @@ export default {
 .jiaohceng {
   display: flex;
   box-sizing: border-box;
-  padding-top: 3px;
-  aspect-ratio: 356/89;
+  padding-top: 12px;
+  height: 89px;
   background: #ffffff;
   box-shadow: 0px 3px 4px 0px rgba(30, 30, 30, 0.05);
   border-radius: 20px;
   border: 1px dashed #dbdbdb;
-  padding-left: 13px;
+  padding-left: 28px;
   .left {
-    margin:auto;
+    // margin:auto;
     .l-14{
       line-height: 16px;
     }

@@ -2,18 +2,14 @@
 <template>
   <div class="Banner">
     <el-carousel height="185px">
-      <el-carousel-item v-for="item in items" :key="item">
-        <h3 class="small">
-            <img :src="item" alt="" style="width:100%;height:100%">
-        </h3>
+      <el-carousel-item v-for="(item,index) in items" :key="index">
+        <div :class="`img${index}`" style="width:100%;height:100%" class="pointer" @click="item"></div>
       </el-carousel-item>
     </el-carousel>
   </div>
 </template>
 
 <script>
-import banner1 from '../images/banner1.png'
-import banner2 from '../images/banner2.png'
 export default {
   name: 'banner',
   props: {
@@ -22,9 +18,20 @@ export default {
   data () {
     return {
       items: [
-        banner1,
-        banner2
+        this.gotoOrder,
+        this.gotoSync
       ]
+    }
+  },
+  methods: {
+    gotoOrder () {
+      window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
+    },
+    gotoSync () {
+      this.$router.push({name: 'ProductSync'})
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '主页', '点击', `banner-ProductSync`])
+      }
     }
   }
 }
@@ -32,10 +39,10 @@ export default {
 <style lang="less" scoped>
 .Banner {
   margin-top: 10px;
-  width: 356px;
+  width: 100%;
   height: 185px;
   background: #d8d8d8;
-  border-radius: 18px;
+  border-radius: 25px;
   overflow: hidden;
 }
 
@@ -62,10 +69,31 @@ export default {
   .is-active {
     border-color: transparent;
     .el-carousel__button {
-    border-color: transparent !important;
-
+      border-color: transparent !important;
       background: #ffffff;
     }
   }
+}
+
+.img0 {
+ background-image: url('../images/banner1.png');
+ background-size: cover;
+}
+
+.img1 {
+  background-image: url('../images/banner2.png');
+  background-size: cover;
+}
+
+@media screen and (min-width:1680px) and (max-width:1920px){
+  .img0 {
+    background-image: url('../images/banner1-1680.png');
+    background-size: cover;
+    }
+
+    .img1 {
+      background-image: url('../images/banner2-1680.png');
+      background-size: cover;
+    }
 }
 </style>

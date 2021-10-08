@@ -1,16 +1,15 @@
 <!-- 续订 -->
 <template>
-    <div v-if="subsc && subsc.item_name">
-      <div class="Renew" :class="[subsc.item_name === '高级版' ? 'gaoji':'shiyong']" >
-      <div class="left">
+    <div class="Renew" v-if="subsc && subsc.item_name" :class="[subsc.item_name === '高级版' ? 'gaoji':'shiyong']" >
+        <div class="left">
+          <div class="name bold" style="margin-top:3px;color:#fff">{{subsc.item_name}}</div>
           <div class="daoqi"> {{subsc.deadline.substring(0,10) || '-'}}到期 还剩  {{leftDays || '-'}}天</div>
           <div v-for="order in subsc.order_list" :key="order.order_id" v-if="subsc.order_list.length" class="banben" >
             {{order.start_time}}~{{order.end_time}}&nbsp;&nbsp;{{order.sku_spec || '-'}}
           </div>
       </div>
-        <div class="btn">
-          <div @click="goToOrder">点击续订</div>
-        </div>
+      <div class="btn">
+        <div @click="goToOrder">点击续订</div>
       </div>
     </div>
 </template>
@@ -63,19 +62,17 @@ export default {
 </script>
 <style lang="less" scoped>
 .Renew {
-    width: 100%;
     background-size: 100% 100%;
     width: 100%;
     height: auto;
-    aspect-ratio: 356/90;
     margin-bottom: 20px;
-    display: flex;
+    height: 90px;
     cursor: pointer;
+    display: flex;
 }
 
 .gaoji {
     background-image: url('../images/seniorVersion.png');
-
     .daoqi {
       height: 19px;
       font-size: 14px;
@@ -83,7 +80,7 @@ export default {
       font-weight: bold;
       color: #E29E35;
       line-height: 19px;
-      padding-top: 27px;
+      padding-top: 10px;
     }
     .banben {
       height: 30px;
@@ -97,7 +94,6 @@ export default {
 
 .shiyong {
     background-image: url('../images/tryVersion.png');
-
     .daoqi {
       height: 19px;
       font-size: 14px;
@@ -148,4 +144,20 @@ export default {
       }
     }
   }
+
+  @media screen and (min-width:1680px) and (max-width:1920px){
+  .gaoji {
+    background-image: url('../images/seniorVersion-1680.png');
+  }
+  .shiyong {
+    background-image: url('../images/tryVersion-1680.png');
+  }
+
+  .btn {
+    width: 74px;
+    div {
+    width: 46px;
+    }
+  }
+}
 </style>
