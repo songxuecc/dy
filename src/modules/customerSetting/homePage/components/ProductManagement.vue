@@ -5,8 +5,8 @@
         <hh-icon type="iconshangpinguanli1" ></hh-icon> 商品管理
       </div>
 
-      <div class="flex">
-        <div class="color-767989 item"  @click="go({name:'BatchEdit'},'商品管理-批量处理')">
+      <div class="flex" style="justify-content: space-around;flex-shrink: 0;height:238px;overflow:hidden;flex-wrap:wrap">
+        <div class="color-767989 item number-1"  @click="go({name:'BatchEdit'},'商品管理-批量处理')">
             <div class="icon-content">
               <hh-icon type="iconpiliangchulixuanzhong1" class="icon"></hh-icon>
               <img :src="hot" class="hot ml-5"></img>
@@ -51,6 +51,65 @@
               <!-- <img :src="hot" class="hot ml-5"></img> -->
             </div>
             <h1 class="font-14 mb-5">商品源同步</h1>
+            <ul class="text">
+              <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
+            </ul>
+            <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
+        </div>
+
+        <div class="color-767989 item" @click="go({name:'ProductSync'},'商品管理-商品源同步')">
+            <div class="icon-content">
+              <hh-icon type="iconshangpinyuantongbuxuanzhong" class="icon"></hh-icon>
+              <!-- <img :src="hot" class="hot ml-5"></img> -->
+            </div>
+            <h1 class="font-14 mb-5">商品源同步</h1>
+            <ul class="text">
+              <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
+            </ul>
+            <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
+        </div>
+
+        <div class="color-767989 item" @click="go({name:'ProductSync'},'商品管理-商品源同步')">
+            <div class="icon-content">
+              <hh-icon type="iconshangpinyuantongbuxuanzhong" class="icon"></hh-icon>
+              <!-- <img :src="hot" class="hot ml-5"></img> -->
+            </div>
+            <h1 class="font-14 mb-5">商品源同步1</h1>
+            <ul class="text">
+              <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
+            </ul>
+            <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
+        </div>
+
+        <div class="color-767989 item" @click="go({name:'ProductSync'},'商品管理-商品源同步')">
+            <div class="icon-content">
+              <hh-icon type="iconshangpinyuantongbuxuanzhong" class="icon"></hh-icon>
+              <!-- <img :src="hot" class="hot ml-5"></img> -->
+            </div>
+            <h1 class="font-14 mb-5">商品源同步2</h1>
+            <ul class="text">
+              <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
+            </ul>
+            <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
+        </div>
+
+        <div class="color-767989 item" @click="go({name:'ProductSync'},'商品管理-商品源同步')">
+            <div class="icon-content">
+              <hh-icon type="iconshangpinyuantongbuxuanzhong" class="icon"></hh-icon>
+              <!-- <img :src="hot" class="hot ml-5"></img> -->
+            </div>
+            <h1 class="font-14 mb-5">商品源同步3</h1>
+            <ul class="text">
+              <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
+            </ul>
+            <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
+        </div>
+        <div class="color-767989 item" @click="go({name:'ProductSync'},'商品管理-商品源同步')">
+            <div class="icon-content">
+              <hh-icon type="iconshangpinyuantongbuxuanzhong" class="icon"></hh-icon>
+              <!-- <img :src="hot" class="hot ml-5"></img> -->
+            </div>
+            <h1 class="font-14 mb-5">商品源同步4</h1>
             <ul class="text">
               <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
             </ul>
@@ -176,5 +235,15 @@ export default {
 }
 
 .opacity {
+}
+
+/*当页面宽度大于1680px且小于1920px的时候执行,1680-1920*/
+@media screen and (min-width:1680px) and (max-width:1920px){
+  .item {
+       margin-right: 38px;
+   }
+   .number-1 {
+     margin-left: 20px;
+   }
 }
 </style>
