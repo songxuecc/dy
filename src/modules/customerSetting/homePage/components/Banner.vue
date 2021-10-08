@@ -28,9 +28,9 @@ export default {
       window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
     },
     gotoSync () {
-      this.$router.push({name: 'ProductSync'})
+      this.$router.push({name: 'ProductsSync'})
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '主页', '点击', `banner-ProductSync`])
+        window._hmt.push(['_trackEvent', '主页', '点击', `banner-ProductsSync`])
       }
     }
   }
