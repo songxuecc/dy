@@ -229,7 +229,7 @@ export default {
     return {
       pickerOptions: {
         disabledDate (time) {
-          return time.getTime() < moment('2021-10-08')
+          return time.getTime() < moment('2021-10-09')
         }
       },
       categorys: [],
