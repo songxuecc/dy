@@ -5,9 +5,9 @@
             <div>
               <hh-icon type="icontishi" ></hh-icon>
               什么是商品源同步？
-              <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
+              <!-- <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
                 点我查看教程视频
-              </span>
+              </span> -->
             </div>
             <p>当货源方的价格、库存、标题信息发生变化时，系统将检测变化并做出修改。避免因货源方的信息变化造成损失。</p>
 
