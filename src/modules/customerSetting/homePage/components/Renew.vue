@@ -101,7 +101,7 @@ export default {
       font-weight: bold;
       color: #636DBA;
       line-height: 19px;
-      padding-top: 27px;
+      padding-top: 10px;
     }
     .banben {
       height: 30px;
