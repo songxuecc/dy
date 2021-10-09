@@ -3,12 +3,23 @@
     <el-row class="tac">
       <div class="sideBar">
 
-        <router-link  :to="{name: 'homePage'}" active-class="homePage-active" exact>
+        <!-- <router-link  :to="{name: 'homePage'}" active-class="homePage-active" exact>
           <div class="homePage " >
             <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
             <span >首页</span>
           </div>
-        </router-link>
+        </router-link> -->
+
+        <router-link
+            :to="{name: 'homePage'}"
+            custom
+            v-slot="{ href, route, navigate, isActive, isExactActive }"
+          >
+            <div :class="[isExactActive && 'homePage-active',isActive && 'homePage-active']" class="homePage ">
+              <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
+              <span :href="href" @click="gotoHomePage($event)">首页</span>
+            </div>
+          </router-link>
 
         <el-menu
           :default-active='$route.path'
@@ -18,7 +29,6 @@
           @close="handleClose"
           @open="handleOpen">
           <el-submenu index="1">
-
             <template slot="title">
               <div class="" style="padding-left:40px">搬家上货</div>
             </template>
@@ -159,6 +169,7 @@ export default {
       window.open('https://www.meideng.net/product?from=dyhhbjzs')
     },
     goToHomePage () {
+      if (!this.isAuth()) return false
       this.$router.push({
         name: 'homePage'
       })
@@ -209,8 +220,6 @@ export default {
   }
 
   .homePage-active {
-    .homePage {
-      color: #3277FF;
-    }
+    color: #3277FF;
   }
 </style>

@@ -36,11 +36,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'homePage',
-      component: () => import(
-        /* webpackChunkName: `HomePage` */
-        /* webpackMode: "lazy" */
-        '@customerSetting/homePage'),
+      component: AppInfo,
       meta: {
         keepAlive: true
       }
@@ -49,6 +45,17 @@ const router = new Router({
       path: '/appInfo',
       name: 'info',
       component: AppInfo,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/homePage',
+      name: 'homePage',
+      component: () => import(
+        /* webpackChunkName: `HomePage` */
+        /* webpackMode: "lazy" */
+        '@customerSetting/homePage'),
       meta: {
         keepAlive: true
       }
