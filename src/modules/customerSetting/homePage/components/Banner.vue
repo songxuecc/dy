@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     gotoOrder () {
-      window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
+      window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=866&from=fuwu_market_home')
     },
     gotoSync () {
       this.$router.push({name: 'ProductsSync'})

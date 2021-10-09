@@ -16,7 +16,8 @@ export default {
   computed: {
     ...mapGetters({
       token: 'getToken'
-    })
+    }),
+    ...mapGetters(['getUserId'])
   },
   created () {
     localStorage.setItem('is_auth', false)
@@ -62,9 +63,15 @@ export default {
       this.requestToken(params).then(data => {
         this.message = '授权成功'
         if (from === '') {
-          this.$router.push({
-            path: '/migrate/startMigrate'
-          })
+          if (this.getUserId % 2) {
+            this.$router.push({
+              name: 'StartMigrate'
+            })
+          } else {
+            this.$router.push({
+              name: 'HomePage'
+            })
+          }
         } else {
           this.$router.push({
             name: from

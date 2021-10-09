@@ -2,14 +2,16 @@
   <div style="background:#ffffff; padding: 10px 0;min-height:100%;box-sizing:border-box;z-index: 1;position: relative;">
     <el-row class="tac">
       <div class="sideBar">
-
-        <router-link  :to="{name: 'homePage'}" active-class="homePage-active" exact>
-          <div class="homePage " >
-            <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
-            <span >首页</span>
-          </div>
-        </router-link>
-
+        <router-link
+            :to="{name: 'HomePage'}"
+            custom
+            v-slot="{ href, route, isActive, isExactActive }"
+          >
+            <div :class="[isExactActive && 'homePage-active',isActive && 'homePage-active']" class="homePage " @click="gotoHomePage">
+              <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
+              <span  >首页</span>
+            </div>
+          </router-link>
         <el-menu
           :default-active='$route.path'
           router
@@ -18,7 +20,6 @@
           @close="handleClose"
           @open="handleOpen">
           <el-submenu index="1">
-
             <template slot="title">
               <div class="" style="padding-left:40px">搬家上货</div>
             </template>
@@ -158,9 +159,10 @@ export default {
     openMeiZhe () {
       window.open('https://www.meideng.net/product?from=dyhhbjzs')
     },
-    goToHomePage () {
+    gotoHomePage () {
+      if (!this.isAuth()) return false
       this.$router.push({
-        name: 'homePage'
+        name: 'HomePage'
       })
     },
     handleOpen (index) {
@@ -209,8 +211,6 @@ export default {
   }
 
   .homePage-active {
-    .homePage {
-      color: #3277FF;
-    }
+    color: #3277FF;
   }
 </style>
