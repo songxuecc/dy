@@ -109,6 +109,8 @@
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
           clearable
+          :picker-options="pickerOptions"
+          :default-time="['2021-10-09 11:53:01']"
         >
         </el-date-picker>
       </el-form-item>
@@ -211,6 +213,7 @@
 <script>
 import common from '@/common/common.js'
 import categorySelectView from '@/components/CategorySelectView'
+import moment from 'moment'
 
 export default {
   components: {
@@ -224,6 +227,11 @@ export default {
   },
   data () {
     return {
+      pickerOptions: {
+        disabledDate (time) {
+          return time.getTime() < moment('2021-10-08')
+        }
+      },
       categorys: [],
       categoryActiveIdx: -1,
       l: false,
@@ -356,6 +364,11 @@ export default {
           data.migrate_end_time = endTime
         }
       }
+
+      if (!data.migrate_start_time || moment(data.migrate_start_time).isBefore('2021-10-09 11:53:01')) {
+        data.migrate_start_time = '2021-10-09 11:53:01'
+      }
+
       const originFilters = {
         originStatus: this.form.status,
         originCategorys: JSON.stringify(this.categorys),

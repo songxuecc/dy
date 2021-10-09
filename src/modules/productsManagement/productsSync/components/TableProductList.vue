@@ -4,7 +4,7 @@
     <Search  @filter="handleFilter" tipType="源同步" :originFilters="originFilters" :filters="filters" />
     <div class="left pr-10 click mb-10 pl-20 pt-10 flex align-c">
       <el-checkbox v-model="is_all" @change="handleAllSelectionChange">
-        <span :class="[is_all?'color-primary':'']">一键全选所有商品</span>
+        <span :class="[is_all?'color-primary':'']">一键全选所有商品</span> <span class="font-12 warning">仅能选择2021.10.9后搬家上线的商品</span>
       </el-checkbox>
       <el-tooltip
         class="item"

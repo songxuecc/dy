@@ -4,7 +4,7 @@
     <div class="alert">
             <div>
               <hh-icon type="icontishi" ></hh-icon>
-              什么是商品源同步？
+              什么是商品源同步？ <span class="font-12 warning">仅能选择2021.10.9后搬家上线的商品</span>
               <!-- <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
                 点我查看教程视频
               </span> -->
