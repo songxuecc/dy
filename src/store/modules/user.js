@@ -356,6 +356,7 @@ const mutations = {
         goods_assess_notify: data.goods_assess_notify,
         expire_notify: data.expire_notify,
         is_newcomer: data.is_newcomer,
+        total_left_days: data.total_left_days,
         order_list: data.order_list.map(item => {
           item.start_time = moment(item.start_time).format('YYYY-MM-DD')
           item.end_time = moment(item.end_time).format('YYYY-MM-DD')

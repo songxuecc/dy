@@ -418,7 +418,8 @@ export default {
   }
   .aside {
     text-align: left;
-    margin-right: 10px;
+    // margin-right: 10px;
+    border-right: 1px solid #F2F2F2;
   }
 
   .aside .aside-bar {
