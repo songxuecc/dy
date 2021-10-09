@@ -45,7 +45,7 @@
             <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
         </div>
 
-        <div class="color-767989 item" @click="go({name:'ProductSync'},'商品管理-商品源同步')">
+        <div class="color-767989 item" @click="go({name:'ProductsSync'},'商品管理-商品源同步')">
             <div class="icon-content">
               <hh-icon type="iconshangpinyuantongbuxuanzhong" class="icon"></hh-icon>
               <!-- <img :src="hot" class="hot ml-5"></img> -->
