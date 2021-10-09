@@ -60,7 +60,9 @@ const commonConfig = {
       '@customerSetting': path.join(__dirname, '..', 'src/modules/customerSetting'),
       '@migrate': path.join(__dirname, '..', 'src/modules/migrate'),
       '@moreFeatures': path.join(__dirname, '..', 'src/modules/moreFeatures'),
-      '@shopDecorate': path.join(__dirname, '..', 'src/modules/shopDecorate')
+      '@shopDecorate': path.join(__dirname, '..', 'src/modules/shopDecorate'),
+      '@commonModels': path.join(__dirname, '..', 'src/store/commonModels'),
+      '@servises': path.join(__dirname, '..', 'src/api/servises.js')
     }
   },
   plugins: [
@@ -147,7 +149,14 @@ const commonConfig = {
             }
           },
           {
-            loader: 'postcss-loader'
+            loader: 'postcss-loader',
+            options: {
+              indent: 'postcss',
+              plugins: (loader) => [
+                require('autoprefixer')() // 添加前缀
+              ],
+              sourceMap: false
+            }
           }
         ]
       },
@@ -170,7 +179,7 @@ const commonConfig = {
             options: {
               indent: 'postcss',
               plugins: (loader) => [
-                require('autoprefixer')()
+                require('autoprefixer')() // 添加前缀
               ],
               sourceMap: false
             }
