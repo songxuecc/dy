@@ -145,7 +145,7 @@
       ref="startMigrateBtn" v-if="!loadingCnt"
       :style="{'margin-right': startMigrateBtnFixed ? `${scrollWidth + 40}px` : 0}">
       <div style="width:200px;" v-if="startMigrateBtnFixed"></div>
-      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;">
+      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;margin-left:1px;">
         <div>
           <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
             <span style="line-height:21px">下一步: 修改价格</span>

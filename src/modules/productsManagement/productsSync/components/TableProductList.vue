@@ -143,7 +143,7 @@
       :style="{'margin-right': startFixed ? `${scrollWidth + 40}px` : 0}"
       :class="[startFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex' ,'justify-c'] ">
       <div style="width:200px;margin-right:10px" v-if="startFixed"></div>
-      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;display:flex;" class="flex justify-c ">
+      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;margin-left:1px;display:flex;" class="flex justify-c ">
         <el-button type="primary" plain style="width: 120px" @click="handleCancel"
           >返回上一步</el-button
         >

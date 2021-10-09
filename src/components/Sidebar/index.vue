@@ -2,10 +2,12 @@
   <div style="background:#ffffff; padding: 10px 0;min-height:100%;box-sizing:border-box;z-index: 1;position: relative;">
     <el-row class="tac">
       <div class="sideBar">
+        <!-- 新旧首页 灰度 -->
         <router-link
             :to="{name: 'HomePage'}"
             custom
             v-slot="{ href, route, isActive, isExactActive }"
+            v-if="!getUserId % 2"
           >
             <div :class="[isExactActive && 'homePage-active',isActive && 'homePage-active']" class="homePage " @click="gotoHomePage">
               <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
@@ -139,6 +141,9 @@ export default {
     setTimeout(() => {
       this.$emit('open', this.currentActiveSubMenu)
     }, 300)
+  },
+  computed: {
+    ...mapGetters(['getUserId'])
   },
   methods: {
     ...mapGetters({

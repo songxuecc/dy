@@ -2,13 +2,15 @@
 <template lang="html">
     <div class="navbar" id="navBar">
         <div class="navbar-content">
-          <div class="main-inner ">
+          <div class="main-inner clearfix">
             <div class="nav-title" @click="goInfo">
-              <img src="@/assets/icon/logo.png" alt="虎虎搬家助手">
+              <img src="@/assets/icon/logo-test.png" alt="虎虎搬家助手">
+              <hh-icon type="icondouyinban" style="font-size:42px;position:absolute;margin-left:4px;top:12px" />
             </div>
             <div class="nav-right">
+              <img v-if="shopName" src="@/assets/images/efficientAndStable.gif" alt="高效稳定" @click="onEfficientAndStable" class="efficientAndStable" />
               <!-- 用户使用天数 -->
-              <!-- <div v-if="shopName">
+              <div v-if="shopName">
                  <el-tooltip v-if="subsc.order_list.length">
                   <div slot="content" >
                     <p v-for="order in subsc.order_list" :key="order.order_id"  class="left font-12">
@@ -16,7 +18,7 @@
                     </p>
                   </div>
                   <div @click="goToOrder()" class="flex align-c" >
-                    <div class="flex column mr-5 ">
+                    <div class="flex column color-fff mr-5 ">
                       <p v-for="order in subsc.order_list" :key="order.order_id" class="font-12"  v-if="subsc.order_list.length">
                         {{order.sku_spec || '-'}} 剩 {{order.left_days || '-'}} 天
                       </p>
@@ -25,16 +27,10 @@
                   </div>
                 </el-tooltip>
                 <img @click="goToOrder()" style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" v-else/>
-              </div> -->
+              </div>
               <!-- 充值升级 -->
-              <div v-if="shopName" class="syncProduct pointer " @click="paidRecharge" :disabled="isSyncing">
-                  <div class="flex align-c ">
-                    <hh-icon type="iconchongzhishengji" style="font-size:15px;margin-right:2px"/>
-                    <div class="relative" style="height:60px;line-height:60px">
-                      充值升级
-                      <div class="active-bar"></div>
-                    </div>
-                  </div>
+              <div v-if="shopName" class="syncProduct pointer" @click="paidRecharge" :disabled="isSyncing">
+                  <p style="display:flex;align-items:center"><hh-icon type="iconchongzhi1" style="font-size:15px;margin-right:2px"/>充值升级</p>
                 </div>
               <!-- 同步商品 & 绑定店铺 -->
               <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
@@ -44,23 +40,11 @@
                   <div> 最近同步时间 {{ syncStatus.last_sync_time }} </div>
                 </template>
                 <div class="syncProduct" @click="handleSyncProducts" :disabled="isSyncing">
-                  <div class="flex align-c" >
-                    <hh-icon type="icontongbuhoutaishangpin" style="font-size:15px;margin-right:2px"/>
-                    <div class="relative" style="height:60px;line-height:60px">
-                      {{syncButtonText}}
-                      <div class="active-bar"></div>
-                    </div>
-                  </div>
+                  <p style="display:flex;align-items:center"><hh-icon type="icontongbushangpin2" style="font-size:20px;"/>{{syncButtonText}}</p>
                 </div>
               </el-tooltip>
               <div v-if="shopName" class="manageShops" @click="manageShops">
-                 <div class="flex align-c ">
-                    <hh-icon type="iconbangdingdianpuguanli1" style="font-size:15px;margin-right:2px"/>
-                    <div class="relative" style="height:60px;line-height:60px">
-                      绑定店铺管理
-                      <div class="active-bar"></div>
-                    </div>
-                  </div>
+                <p style="display:flex;align-items:center"><hh-icon type="iconduodianpuguanli2" style="font-size:20px;"/>绑定店铺管理</p>
               </div>
               <!-- 退出 & 登录-->
               <el-menu v-if="shopName" class="el-menu-demo" mode="horizontal" @select="handleSelect">
@@ -268,7 +252,7 @@ export default {
     },
     goInfo () {
       this.$router.push({
-        name: 'info'
+        path: '/info'
       })
     },
     goToServiceMarket () {
@@ -328,7 +312,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .navbar {
-  background: @navbar-bg;
+  background: @navbar-bg_single;
   /deep/ .el-menu .el-menu--popup {
     color: blue !important;
     min-width: 130px;
@@ -336,26 +320,27 @@ export default {
   /deep/ .el-menu {
     .el-menu-item {
       &:hover {
-        color: @navbar-font-primary-color;
+        background-color: @color-light-blue;
       }
     }
     .el-submenu__title {
-      color: @navbar-font-info-color;
-      border-bottom: 2px solid @navbar-font-info-color;
-      background: @navbar-bg;
+      color: #ffffff;
+      border-bottom: 2px solid #ffffff;
+      background: @navbar-bg_single;
       padding: 0 8px;
       i {
-        color: @navbar-font-info-color;
+        color: #ffffff;
       }
       &:hover {
-        color: @navbar-font-primary-color;
+        background: #409eff;
+        color: #ffffff;
         i {
-          color: @navbar-font-primary-color;
+          color: @color-light-blue;
         }
       }
     }
     .el-icon-arrow-down:before {
-      color: @navbar-font-info-color !important;
+      color: #ffffff !important;
     }
   }
   /deep/ .el-menu.el-menu--horizontal {
@@ -369,29 +354,26 @@ export default {
     min-width: 130px !important;
   }
   .navbar-content {
-    color: @navbar-font-info-color;
+    color: @color-white;
     height: 60px;
-    box-sizing: border-box;
-    border: 1px solid #F2F2F2;
     .nav-title {
       float: left;
-      padding: 14px 4px 12px 20px;
-      padding-left: 80px;
+      padding: 12px 0 12px 20px;
       position: relative;
       cursor: pointer;
       img {
-        height: 32px;
+        height: 36px;
       }
     }
     .nav-right {
       position: absolute;
       right: 30px;
-      height: 58px;
+      height: 60px;
       display: flex;
       align-items: flex-start;
       align-items: center;
       color: #333333;
-      background: @navbar-bg;
+      // background: @navbar-bg_single;
       .efficientAndStable {
         cursor: pointer;
         height: 36px;
@@ -434,7 +416,7 @@ export default {
     }
 
     .main-inner {
-      background: @navbar-bg;
+      background: @navbar-bg_single;
       height: 100%;
     }
     .nav-right .dialog-footer .el-button {
@@ -442,6 +424,47 @@ export default {
       width: auto;
       padding: 10px;
     }
+  }
+}
+
+.menu-content {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+  line-height: 60px;
+  li {
+    border: 0;
+    padding: 0 8px;
+    display: block;
+    float: left;
+    cursor: pointer;
+    color: #ffffff;
+    background: @navbar-bg_single;
+  }
+  li:hover {
+    color: @color-light-blue;
+  }
+}
+.more-shop-order-dialog {
+  line-height: normal;
+}
+.more-shop-order {
+  text-indent: 26px;
+  p {
+    font-size: 16px;
+    line-height: 30px;
+    padding: 20px 0;
+  }
+  em {
+    color: red;
+    font-weight: bold;
+  }
+  span {
+    font-size: 12px;
+    line-height: 24px;
+    color: #666666;
   }
 }
 
@@ -460,7 +483,7 @@ export default {
 }
 
 .manageShops {
-  color: @navbar-font-info-color;
+  color: white;
   transition: all 0.3s;
   padding: 0 8px;
   align-items: center;
@@ -472,23 +495,12 @@ export default {
     padding-top: 2px;
   }
   &:hover {
-    color: @navbar-font-primary-color;
-    .active-bar {
-        position: absolute;
-        bottom: 2px;
-        left: 0;
-        height: 2px;
-        background-color: #1D8FFF;
-        z-index: 1;
-        transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-        transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), -webkit-transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-        list-style: none;
-        width: 100%;
-    }
+    background: #409eff;
+    color: #ffffff;
   }
 }
 .syncProduct {
-  color: @navbar-font-info-color;
+  color: white;
   transition: all 0.3s;
   padding: 0 8px;
   align-items: center;
@@ -499,21 +511,8 @@ export default {
     padding-top: 2px;
   }
   &:hover {
-    color: @navbar-font-primary-color;
-    .active-bar {
-        position: absolute;
-        bottom: 2px;
-        left: 0;
-        height: 2px;
-        background-color: #1D8FFF;
-        z-index: 1;
-        transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-        transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), -webkit-transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-        list-style: none;
-        width: 100%;
-    }
-
+    background: #409eff;
+    color: #ffffff;
   }
 }
-
 </style>
