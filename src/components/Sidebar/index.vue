@@ -2,25 +2,16 @@
   <div style="background:#ffffff; padding: 10px 0;min-height:100%;box-sizing:border-box;z-index: 1;position: relative;">
     <el-row class="tac">
       <div class="sideBar">
-
-        <!-- <router-link  :to="{name: 'homePage'}" active-class="homePage-active" exact>
-          <div class="homePage " >
-            <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
-            <span >首页</span>
-          </div>
-        </router-link> -->
-
         <router-link
-            :to="{name: 'homePage'}"
+            :to="{name: 'HomePage'}"
             custom
-            v-slot="{ href, route, navigate, isActive, isExactActive }"
+            v-slot="{ href, route, isActive, isExactActive }"
           >
-            <div :class="[isExactActive && 'homePage-active',isActive && 'homePage-active']" class="homePage ">
+            <div :class="[isExactActive && 'homePage-active',isActive && 'homePage-active']" class="homePage " @click="gotoHomePage">
               <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
-              <span :href="href" @click="gotoHomePage($event)">首页</span>
+              <span  >首页</span>
             </div>
           </router-link>
-
         <el-menu
           :default-active='$route.path'
           router
@@ -168,10 +159,10 @@ export default {
     openMeiZhe () {
       window.open('https://www.meideng.net/product?from=dyhhbjzs')
     },
-    goToHomePage () {
+    gotoHomePage () {
       if (!this.isAuth()) return false
       this.$router.push({
-        name: 'homePage'
+        name: 'HomePage'
       })
     },
     handleOpen (index) {

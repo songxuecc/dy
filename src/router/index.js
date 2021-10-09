@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
 // 个人设置
 import CustomerService from '@customerSetting/customerService'
 // import shopsBand from '@customerSetting/shopsBand'
@@ -29,9 +29,17 @@ import System from '@customerSetting/system/monitor'
 // import WodaInfo from '@moreFeatures/wodaInfo'
 
 // 店铺装修 shopDecorate
-Vue.use(Router)
+Vue.use(VueRouter)
 
-const router = new Router({
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch((err) => {
+    console.log(err, 'err')
+    return err
+  })
+}
+
+const router = new VueRouter({
   mode: 'history',
   routes: [
     {
@@ -51,13 +59,14 @@ const router = new Router({
     },
     {
       path: '/homePage',
-      name: 'homePage',
+      name: 'HomePage',
       component: () => import(
         /* webpackChunkName: `HomePage` */
         /* webpackMode: "lazy" */
         '@customerSetting/homePage'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        requiresAuth: true
       }
     },
     // {

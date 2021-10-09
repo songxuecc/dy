@@ -14,7 +14,6 @@
                                 <el-option v-for="item in isSyncOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                             </el-select>
                         </el-form-item>
-
                         <el-form-item style="margin-right:0;margin-bottom:0">
                           <el-button type="primary" size="medium" @click="handleFilterChange">
                             <hh-icon type="iconsousuo1" style="font-size:16px"></hh-icon>
