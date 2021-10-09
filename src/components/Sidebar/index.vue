@@ -2,6 +2,7 @@
   <div style="background:#ffffff; padding: 10px 0;min-height:100%;box-sizing:border-box;z-index: 1;position: relative;">
     <el-row class="tac">
       <div class="sideBar">
+        <!-- 新旧首页 灰度 -->
         <router-link
             :to="{name: 'HomePage'}"
             custom

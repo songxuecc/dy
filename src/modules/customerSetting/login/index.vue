@@ -63,6 +63,7 @@ export default {
       this.requestToken(params).then(data => {
         this.message = '授权成功'
         if (from === '') {
+          // <!-- 新旧首页 灰度 -->
           if (this.getUserId % 2) {
             this.$router.push({
               name: 'StartMigrate'
