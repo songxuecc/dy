@@ -6,6 +6,7 @@
             :to="{name: 'HomePage'}"
             custom
             v-slot="{ href, route, isActive, isExactActive }"
+            v-if="!getUserId % 2"
           >
             <div :class="[isExactActive && 'homePage-active',isActive && 'homePage-active']" class="homePage " @click="gotoHomePage">
               <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
@@ -139,6 +140,9 @@ export default {
     setTimeout(() => {
       this.$emit('open', this.currentActiveSubMenu)
     }, 300)
+  },
+  computed: {
+    ...mapGetters(['getUserId'])
   },
   methods: {
     ...mapGetters({
