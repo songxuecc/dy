@@ -11,7 +11,7 @@
       :style="{'margin-right': startMigrateBtnFixed ? `${scrollWidth + 40}px` : 0}"
       :class="[startMigrateBtnFixed ? 'start-migrate-btn-fadeIn':'start-migrate-btn-fadeOut' ,'flex' ,'justify-c'] ">
       <div style="width:200px;" v-if="startMigrateBtnFixed"></div>
-      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;display:flex;" class="flex justify-c ">
+      <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;margin-left:1px;display:flex;" class="flex justify-c ">
         <el-button style="margin-right: 15px;" @click="showError" :disabled="!msgError" type="warning" plain :loading="loadingData" :style="!msgError || loadingData ?'background: #ccc;color: #666;border: 1px solid #ccc;':''">查看错误价格</el-button>
         <el-button style="margin-right: 15px; width:120px" @click="goback" :disabled="loadingData" plain
           type="primary" :loading="loadingData">返回</el-button>
