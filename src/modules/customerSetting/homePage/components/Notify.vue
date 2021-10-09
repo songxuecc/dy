@@ -17,7 +17,7 @@
             <hh-icon :type="item.is_read ? 'iconlaoxiaoxi':'iconxinxiaoxi'" class="icon"></hh-icon>
             <span class="text" >{{ item.title }}</span>
           </span>
-          <span class="btn" :data-index="index">去体验</span>
+          <span class="btn" :data-index="index" v-if="item.btn_link">去体验</span>
         </li>
       </ul>
     </vue-seamless-scroll>
@@ -94,7 +94,7 @@ export default {
   },
   created () {
     this.requestNotification().then(data => {
-      this.listData = data.list.map(item => {
+      this.listData = data.list.filter(item => item.is_show).map(item => {
         return ({
           ...item,
           data: item.start_time.substr(0, 10)
@@ -108,7 +108,7 @@ export default {
     ]),
     getrequestNotification () {
       this.requestNotification().then(data => {
-        this.listData = data.list.map(item => {
+        this.listData = data.list.filter(item => item.is_show).map(item => {
           return ({
             ...item,
             data: item.start_time.substr(0, 10)
@@ -139,10 +139,12 @@ export default {
           this.hideRedCircle(notification)
           this.$refs.seamlessScroll.reset()
           this.getrequestNotification()
-          if (notification.is_new_window === 1) {
-            window.open(notification.btn_link)
-          } else {
-            window.location.href = notification.btn_link
+          if (notification.btn_link) {
+            if (notification.is_new_window === 1) {
+              window.open(notification.btn_link)
+            } else {
+              window.location.href = notification.btn_link
+            }
           }
         })
       }
