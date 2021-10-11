@@ -8,6 +8,7 @@
             :error="item.required && item.value === ''"
             :show-message="item.name !== '品牌'"
             :inline-message="true"
+            :class="[!['text','select'].includes(item.type)?'checkbox-form-item':'']"
             label-style="font-size:12px">
             <div style="diplay:flex">
              <span slot="label" style="width:120px;display:inline-block;text-align:right;padding-right:4px">
@@ -20,10 +21,10 @@
                 @clear="handleClear(item.name)"
                 @change="handleChange($event,item.name)"
                 size="small"
-                :style="{width: item.name !== '品牌' ? '300px' : '190px'}"
+                :style="{width: item.name !== '品牌' ? '400px' : '190px'}"
                 :placeholder="`请选择${item.name}`"
                 v-model="model[item.name]"
-                v-if="item.options.length || item.name === '品牌'"
+                v-if="(item.options.length || item.name === '品牌') && item.type === 'select' "
                 :default-first-option="true">
                 <el-option
                     v-for="(option,index) in item.options"
@@ -32,17 +33,39 @@
                     :value="option.value">
                 </el-option>
             </el-select>
+
             <!-- 除去品牌 属性可选值列表，为空时需要手动填写 -->
             <el-input
                 clearable
                 @clear="handleClear(item.name)"
                 @change="handleChange($event,item.name)"
                 size="small"
-                style="width:300px;"
+                style="width:400px;"
                 :placeholder="`请输入${item.name}`"
                 v-model="model[item.name]"
-                v-else
+                v-else-if="item.type === 'text'"
               />
+
+              <el-checkbox-group
+                @change="handleCheckboxChange($event,item.name)"
+                size="small"
+                :style="{width: item.name !== '品牌' ? '400px' : '190px',display:'inline-block'}"
+                :placeholder="`请选择${item.name}`"
+                v-model="item.tp_value"
+                v-else>
+                  <el-checkbox
+                      class="checkbox"
+                      v-for="(option,index) in item.options"
+                      :key="index"
+                      :label="option.value"
+                      :value="option.value">
+                      <el-tooltip :content="option.name" class="item" effect="dark" placement="top-start" v-if="option.name.length > 6">
+                            <span>{{option.name}}</span>
+                      </el-tooltip>
+                      <span v-else>{{option.name}}</span>
+                  </el-checkbox>
+            </el-checkbox-group>
+
             <span>
               <span v-if="item.name === '品牌'" style="">
                   <el-button type="text" @click="reloadBrandList" ><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
@@ -56,6 +79,7 @@
                     批量修改同分类商品
                   </el-checkbox>
               </span>
+
               <el-checkbox
                 v-if="item.name !== '品牌'"
                 border
@@ -121,7 +145,8 @@ export default {
     return {
       model: {},
       validation: {},
-      selected: {}
+      selected: {},
+      checkList: []
     }
   },
   computed: {
@@ -157,6 +182,8 @@ export default {
         const model = (productModel || []).reduce((target, current) => {
           const key = current.name
           let value = current.tp_value
+
+          console.log(value, 'value')
           // 如果有全选到应用
           if (propertyBatchMapSelect && propertyBatchMapSelect[key] && propertyBatchMapSelect[key].checked) {
             const checkCatId = propertyBatchMapSelect[key].catId
@@ -236,6 +263,17 @@ export default {
       this.$emit('change', newAttributeJson)
       this.$emit('applyPropertiesToSelection', false, name, '')
     },
+    handleCheckboxChange (value, name) {
+      const newModal = Object.assign(this.model, {[name]: value})
+      const newAttributeJson = (this.productModel || [])
+        .map(item => {
+          const tpValue = newModal[item.name] || ''
+          return {...item, tp_value: tpValue}
+        })
+      console.log(newAttributeJson, 'newAttributeJson')
+      this.$emit('change', newAttributeJson)
+      this.$emit('applyPropertiesToSelection', false, name, '')
+    },
     applyPropertiesToSelection (value, name) {
       this.closeNewComer()
       const propertyValue = this.model[name]
@@ -278,5 +316,27 @@ export default {
 .batch {
   margin-left: 4px;
 }
+/deep/ .checkbox {
+  width: 115px;
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  // overflow: hidden;
+  // white-space: nowrap;
+  // text-overflow: ellipsis;
 
+  .el-checkbox__label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 95px;
+  }
+}
+
+.checkbox-form-item {
+  /deep/ .el-form-item__content{
+
+    line-height: 20px;
+  }
+}
 </style>
