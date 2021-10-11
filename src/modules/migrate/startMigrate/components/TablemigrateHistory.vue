@@ -7,7 +7,7 @@
       style="padding: 0"
       v-loading="loading"
     >
-      <el-table-column prop="shop_name" label="店铺名称">
+      <el-table-column prop="shop_name" label="店铺名称 (点击名称跳转原店铺)">
         <template slot-scope="scope">
           <el-link
             :href="scope.row.url"
