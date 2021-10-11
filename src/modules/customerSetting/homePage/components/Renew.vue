@@ -36,7 +36,6 @@ export default {
       syncStatus: 'getSyncStatus'
     }),
     leftDays () {
-      console.log(this.subsc, 'this.subsc')
       if (this.subsc.total_left_days === '') {
         return '-'
       }

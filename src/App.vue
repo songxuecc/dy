@@ -1,11 +1,11 @@
 <template>
-    <div id="app">
+    <div id="app" >
         <good-assess-dialog></good-assess-dialog>
         <expire-notify-dialog></expire-notify-dialog>
         <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
           <!-- 新旧首页 灰度 -->
-          <nav-bar-old v-if="this.getUserId % 2"></nav-bar-old>
-          <nav-bar v-else></nav-bar>
+          <nav-bar-old v-if="!(userId % 2)" ></nav-bar-old>
+          <nav-bar v-else ></nav-bar>
           <div class="full-screen">
             <div class="header-notice">
               <div class="main-inner clearfix">
@@ -88,7 +88,7 @@ import navBarOld from '@/components/NavbarOld'
 import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
 
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 import moment from 'moment'
 import common from '@/common/common.js'
 import commonUtils from '@/common/commonUtils.js'
@@ -143,7 +143,12 @@ export default {
     MeizheActivityModel
   },
   computed: {
+    ...mapState({
+      loading: state => (state['@@loading'].effects['requestToken'] || state['@@loading'].effects['fakeUser'] || state['@@loading'].effects['requestUserInfo'])
+    }),
     ...mapGetters({
+      getShopName: 'getShopName',
+      userId: 'getUserId',
       isAuth: 'getIsAuth',
       orderTimes: 'getOrderTimes',
       leftDays: 'getLeftDays',
@@ -153,7 +158,6 @@ export default {
       isShowFloatView: 'isShowFloatView',
       currentSubsc: 'getCurrentSubsc'
     }),
-    ...mapGetters(['getUserId']),
     unreadNotiNum () {
       let dicIgnore = {}
       for (let i in this.ignoreNotiList) {
@@ -222,21 +226,6 @@ export default {
         }
       }
     }
-  },
-  created () {
-    this.getChannelInfo()
-    window.onClickNotiLink = this.onClickNotiLink
-  },
-  mounted () {
-    // const huhutitle = document.querySelector('.huhutitle')
-    // const huhutitleTip = document.querySelector('.huhutitle-tip')
-    // huhutitle.addEventListener('mouseover', () => {
-    //   this.huhutitleHover = true
-    // })
-
-    // huhutitle.addEventListener('mouseleave', () => {
-    //   this.huhutitleHover = false
-    // })
   },
   methods: {
     ...mapActions([
