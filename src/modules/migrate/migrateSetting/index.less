@@ -29,26 +29,49 @@
       padding-bottom: 20px;
     }
   }
+
+  /deep/ .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
+    margin-bottom: 0;
+  }
+  /deep/ .el-checkbox {
+    color: #606266;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+    margin-right: 5px;
+  }
+  
+  /deep/ .el-checkbox__label {
+    display: inline-block;
+    /* padding-left: 10px; */
+    line-height: 19px;
+    font-size: 12px;
+    padding-left: 2px;
+    // color: #999999;
+  
+  }
+  /deep/ .switch-icon {
+    width: 13px;
+  }
+  
+  /deep/ .el-form-item__label {
+    width: 128px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 12px;
+  }
+  
+  /deep/ .el-form-item__content {
+    flex: 1
+  }
+  
+  
+  /deep/ .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+    padding-left: 20px !important;
+  }
 }
 
-/deep/ .el-checkbox {
-  color: #606266;
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  user-select: none;
-  margin-right: 5px;
-}
-
-/deep/ .el-checkbox__label {
-  display: inline-block;
-  /* padding-left: 10px; */
-  line-height: 19px;
-  font-size: 12px;
-  padding-left: 2px;
-  // color: #999999;
-
-}
 
 .migrateProductsFilter {
   /deep/ .el-form-item__content {
@@ -56,23 +79,6 @@
     font-size: 12px;
   }
 }
-
-
-/deep/ .switch-icon {
-  width: 13px;
-}
-
-/deep/ .el-form-item__label {
-  width: 128px;
-  text-align: left;
-  font-weight: bold;
-  font-size: 12px;
-}
-
-/deep/ .el-form-item__content {
-  flex: 1
-}
-
 
 .migrateSetting {
   position: relative;
@@ -110,6 +116,3 @@
   height: 40px;
 }
 
-/deep/ .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-    padding-left: 20px !important;
-}

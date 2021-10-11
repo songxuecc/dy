@@ -11,7 +11,7 @@
     <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': '30px'}" class="migrateSettingForm">
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini" :model="$data">
         <!-- 类目 -->
-        <el-form-item required label="类目统一为:" style="max-width:379px;margin-bottom: 20px;" class="migrateSetting-category">
+        <el-form-item required label="类目统一为:" style="max-width:379px;padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-category">
           <div class="flex align-c " style="height:28px">
             <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
               type="text">点击选择类目</el-button>
@@ -27,7 +27,7 @@
             </div>
           </div>
         </el-form-item>
-        <el-form-item style="margin-bottom: 20px;" class="migrateSetting-category">
+        <el-form-item style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-categoryMatch">
           <span slot="label" style="display:inline">
             <div>淘宝\天猫\拼多多</div>
             <div>商品类目匹配:</div>
@@ -46,13 +46,13 @@
               <el-switch v-model="category.is_open" class="ml-5 mr-10" @change="changeCategoryOpen(category)"/>
               <span class="primary" @click="deleteCategory(category)" >删除</span>
             </div>
-            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 && !categoryVisible" @click="categoryVisible = true">点击展开类目匹配</span>
-            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 &&  categoryVisible" @click="categoryVisible = false">点击合并类目匹配</span>
+            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 && !categoryVisible" @click="toggleCategoryVisible">点击展开类目匹配</span>
+            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 &&  categoryVisible" @click="toggleCategoryVisible">点击合并类目匹配</span>
             <div v-if="!categoryMap.length">无，可以在 搬家列表-基本信息 中设置</div>
           </div>
         </el-form-item>
         <!-- 品牌 -->
-        <el-form-item required label="品牌统一为:" style="margin-bottom: 20px;" class="migrateSetting-brand">
+        <el-form-item required label="品牌统一为:" style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-brand">
           <el-select v-model="default_brand_id" placeholder="默认无品牌设置" style="width:280px;margin-right:12px"
             clearable @clear="clear">
             <el-option label="默认无品牌" :value="0"></el-option>
@@ -64,7 +64,7 @@
           </el-button>
         </el-form-item>
         <!-- 商家推荐语 -->
-        <el-form-item required label="推荐语统一为:"  style="margin-bottom: 20px;" class="flex migrateSetting-recommend" >
+        <el-form-item required label="推荐语统一为:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-recommend" >
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <el-form-item style="display:inline;margin-bottom:0" prop="default_recommend_remark"  class="mr-5">
                 <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="default_recommend_remark" style="width: 650px;" class="ml-5" placeholder="请填写商家推荐语设置" clearable @clear="handleClear('default_recommend_remark')"></el-input>
@@ -75,7 +75,7 @@
           </div>
         </el-form-item>
         <!-- 属性设置 -->
-        <el-form-item required label="属性设置:"  style="margin-bottom: 20px;" class="flex migrateSetting-attribute" >
+        <el-form-item required label="属性设置:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-attribute" >
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p class="font-12">
               必填属性未填写时，若需输入属性值，则默认填写值为<el-input v-model="default_attr_value" style="width: 280px;" class="ml-5" placeholder="类目属性默认值设置"  clearable @clear="handleClear('default_attr_value')"></el-input>
@@ -111,7 +111,7 @@
           </div>
         </el-form-item>
         <!-- 库存 -->
-        <el-form-item required label="SKU库存:"  style="margin-bottom: 20px;" class="flex migrateSetting-stock" >
+        <el-form-item required label="SKU库存:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-stock" >
             <p class="mb-10 flex align-c mb-10">
               <span class="font-12 mr-5">SKU库存最高值为</span>
               <span class="font-12">（若超过该值，系统会自动调为最高值）</span>
@@ -134,15 +134,15 @@
             </p>
         </el-form-item>
 
-        <el-form-item required  label="SKU编码:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-code">
+        <el-form-item required  label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c migrateSetting-code">
             <p class="font-12">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
         </el-form-item>
 
-        <!-- <el-form-item required label="SKU规格:"  style="margin-bottom: 20px;" class="flex align-c migrateSetting-spec">
+        <!-- <el-form-item required label="SKU规格:"  style="padding-bottom: 20px;" class="flex align-c migrateSetting-spec">
             <p class="font-12">SKU规格值超过20个自动截断<el-switch class="ml-5" v-model="is_cut_sku_spec" /></p>
         </el-form-item> -->
 
-        <el-form-item required label="详情图:"  style="margin-bottom: 20px;" class="flex migrateSetting-detail" >
+        <el-form-item required label="详情图:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-detail" >
             <p class="font-12 mb-10 mt-5">轮播图+详情图+规格图片超过50张自动删除详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
             <p class="font-12 mb-10">删除详情首图<el-switch class="ml-5" v-model="is_cut_detail_first" /></p>
             <p class="font-12 mb-10">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
@@ -192,14 +192,14 @@
             </p>
         </el-form-item>
 
-        <el-form-item required label="轮播图:"  style="margin-bottom: 20px;" class="flex migrateSetting-banner" >
+        <el-form-item required label="轮播图:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-banner" >
             <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
             <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
             <p class="font-12 mb-10">删除轮播尾图<el-switch class="ml-5" v-model="is_cut_banner_last" /></p>
             <p class="font-12"><span style="margin-right: 5px">随机打乱轮播图顺序 (首图不变位置</span><el-checkbox v-model="is_keep_main_banner"></el-checkbox>)<el-switch class="ml-5" v-model="is_mix_banner" /></p>
         </el-form-item>
 
-        <el-form-item required label="标题:"  style="margin-bottom: 20px;" class="flex migrateSetting-title" >
+        <el-form-item required label="标题:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-title" >
 
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p style="margin-right:10px">
@@ -242,7 +242,7 @@
 
         </el-form-item>
 
-        <el-form-item required label="重复搬家设置"  class="flex migrateProductsFilter migrateSetting-choose" style="height:25px;margin-bottom: 20px;">
+        <el-form-item required label="重复搬家设置"  class="flex migrateProductsFilter migrateSetting-choose" style="padding-bottom: 20px;box-sizing: border-box">
           <!-- <el-checkbox-group v-model="able_migrate_status_list" class="flex ml-5">
             <el-checkbox :label="common.productStatus.WAIT_ONLINE">待上线</el-checkbox>
             <el-checkbox :label="common.productStatus.FAILED">失败</el-checkbox>
@@ -250,10 +250,10 @@
             <el-checkbox :label="common.productStatus.ONLINE">已上线</el-checkbox>
             <el-checkbox :label="common.productStatus.SAVE_DRAFT">保存草稿箱</el-checkbox>
           </el-checkbox-group>；其余状态商品会自动过滤 -->
-          <p class="font-12" style="line-height:30px">已上线、草稿箱商品支持再次搬家<el-switch class="ml-5" v-model="is_able_migrate_status_list" @change="handleIsAbleMigrateStatusList" /></p>
+          <p class="font-12" >已上线、草稿箱商品支持再次搬家<el-switch class="ml-5" v-model="is_able_migrate_status_list" @change="handleIsAbleMigrateStatusList" /></p>
         </el-form-item>
 
-        <el-form-item required label="违规信息:"  style="margin-bottom: 20px;" class="flex migrateSetting-rule" >
+        <el-form-item required label="违规信息:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-rule" >
             <div>
               <span style="font-size: 12px;"><span style="color: red;">*</span>商品标题、SKU规格名违规词自动删除</span>
               <el-switch v-model="is_cut_black_word" />
@@ -350,6 +350,7 @@ export default {
       categoryVisible: false,
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
+        { label: '类目匹配', className: '.migrateSetting-categoryMatch' },
         { label: '品牌', className: '.migrateSetting-brand' },
         { label: '商家推荐语', className: '.migrateSetting-recommend' },
         { label: '属性设置', className: '.migrateSetting-attribute' },
@@ -477,37 +478,10 @@ export default {
     this.scrollWidth = scrollWidth
   },
   mounted () {
-    const tab = this.tabs
-    let maxPaddingBottom = 0
-    const height =
-      document.documentElement.offsetHeight || document.body.offSetHeight
-    const nextTab = tab.map((item, index) => {
-      const className = item.className
-      const el = document.querySelector(className)
-      // if (el) {
-      const rect = el.getBoundingClientRect()
-      // 移动的距离 是滚动距离
-      // pt的距离是 整个盒子可见部分
-      const top = rect.top
-      const elHeight = rect.height
-      const dist = 130
-      if (tab.length - 1 === index) {
-        maxPaddingBottom = height - elHeight - 130 - 80
-      }
-      return {
-        ...item,
-        scrollTop: top - dist,
-        top
-      }
-      // }
-    })
-    this.tabs = nextTab
+    this.setScrollTop()
     this.bindScroll()
-
-    this.$nextTick(() => {
-      this.mBottom = `${maxPaddingBottom}px`
-    })
   },
+
   beforeMount () {
     this.unBindScroll()
   },
@@ -660,6 +634,60 @@ export default {
     }
   },
   methods: {
+    toggleCategoryVisible () {
+      this.categoryVisible = !this.categoryVisible
+      this.$nextTick(() => {
+        this.setScrollTop()
+      })
+    },
+    setScrollTop () {
+      const tab = this.tabs
+      let maxPaddingBottom = 0
+      const height =
+      document.documentElement.offsetHeight || document.body.offSetHeight
+      let previous = 0
+      let current = previous
+      const nextTab = tab.map((item, index) => {
+        const className = item.className
+        const el = document.querySelector(className)
+        const rect = el.getBoundingClientRect()
+      // 移动的距离 是滚动距离
+      // pt的距离是 整个盒子可见部分
+        const top = rect.top
+        const elHeight = rect.height
+        const dist = 120
+        if (tab.length - 1 === index) {
+          maxPaddingBottom = height - elHeight - dist
+        }
+        const result = {
+          ...item,
+          scrollTop: previous + current,
+          top
+        }
+        previous = previous + current
+        current = elHeight
+        return result
+      })
+      this.tabs = nextTab
+      this.$nextTick(() => {
+        this.mBottom = `${maxPaddingBottom}px`
+      })
+    },
+    tabClick (index) {
+      this.unBindScroll()
+      const n = this.activeTab
+      const tabsHeight = 0
+      const scrollTop = this.tabs[n].scrollTop + tabsHeight
+      this.$nextTick(() => {
+        const elScroll = document.querySelector('.page-component__scroll')
+        elScroll.scrollTo({
+          top: scrollTop,
+          left: 0,
+          behavior: 'smooth'
+        })
+        this.bindScroll()
+      })
+    },
     handleAvatarSuccessFirst (res, file) {
       this.detail_first_image_url = res.data.url
     },
@@ -690,8 +718,9 @@ export default {
     scroll: debounce(function (e) {
       const scrollTop = e.target.scrollTop
       let active = 0
+      const dist = 10
       this.tabs.forEach((item, index) => {
-        if (scrollTop >= item.scrollTop) {
+        if ((scrollTop + dist) >= item.scrollTop) {
           active = index
         }
       })
@@ -778,7 +807,7 @@ export default {
         this.imageBlackWords = imgBlackWords.customer
         this.customerImageBlackWords = imgBlackWords.customer
         this.defaultImageBlackWords = imgBlackWords.default
-
+        this.setScrollTop()
         this.loadingSettings = false
       } catch (error) {
         this.$message.error(`${error}`)
@@ -847,8 +876,6 @@ export default {
         window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
       }
       const product = this.getFormatSettings()
-      console.log(product, 'product')
-
       this.$refs.template.validate(async (valid) => {
         if (valid) {
           let productParams = {
@@ -1046,6 +1073,7 @@ export default {
             is_open: Boolean(item.is_open)
           }
         })
+        this.setScrollTop()
         this.loadingCategoryMap = false
       } catch (err) {
         this.loadingCategoryMap = false
@@ -1067,20 +1095,6 @@ export default {
     },
     clear () {
       this.default_brand_id = 0
-    },
-    tabClick (index) {
-      this.unBindScroll()
-      const n = this.activeTab
-      const scrollTop = this.tabs[n].scrollTop
-      this.$nextTick(() => {
-        const elScroll = document.querySelector('.page-component__scroll')
-        elScroll.scrollTo({
-          top: scrollTop,
-          left: 0,
-          behavior: 'smooth'
-        })
-        this.bindScroll()
-      })
     },
     handleIsUseMaxSkuStock (value) {
       if (value && this.is_use_default_sku_stock) {
@@ -1114,7 +1128,6 @@ export default {
     },
     changeCategory (category) {
       this.changeCategorydata = category
-      console.log(this.changeCategorydata)
       this.visvileCategory = true
       this.changeCategoryVisible = true
     },
