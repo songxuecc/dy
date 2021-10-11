@@ -7,7 +7,7 @@
             :to="{name: 'HomePage'}"
             custom
             v-slot="{ href, route, isActive, isExactActive }"
-            v-if="!getUserId % 2"
+            v-if="((userId % 2) && isAuth())"
           >
             <div :class="[isExactActive && 'homePage-active',isActive && 'homePage-active']" class="homePage " @click="gotoHomePage">
               <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />
@@ -142,9 +142,6 @@ export default {
       this.$emit('open', this.currentActiveSubMenu)
     }, 300)
   },
-  computed: {
-    ...mapGetters(['getUserId'])
-  },
   methods: {
     ...mapGetters({
       isAuth: 'getIsAuth',
@@ -189,7 +186,10 @@ export default {
   computed: {
     subscItemLevelMap () {
       return common.subscItemLevelMap
-    }
+    },
+    ...mapGetters({
+      userId: 'getUserId'
+    })
   }
 }
 </script>

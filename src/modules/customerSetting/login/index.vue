@@ -15,9 +15,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      token: 'getToken'
-    }),
-    ...mapGetters(['getUserId'])
+      token: 'getToken',
+      userId: 'getUserId'
+    })
   },
   created () {
     localStorage.setItem('is_auth', false)
@@ -64,13 +64,15 @@ export default {
         this.message = '授权成功'
         if (from === '') {
           // <!-- 新旧首页 灰度 -->
-          if (this.getUserId % 2) {
+          let userId = localStorage.getItem('user_id')
+          console.log(userId, data, 'userId-授权成功')
+          if (userId % 2) {
             this.$router.push({
-              name: 'StartMigrate'
+              name: 'HomePage'
             })
           } else {
             this.$router.push({
-              name: 'HomePage'
+              name: 'StartMigrate'
             })
           }
         } else {
