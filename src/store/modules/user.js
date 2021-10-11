@@ -9,6 +9,7 @@ const state = {
   name: localStorage.getItem('owner_name') || '',
   ownerId: localStorage.getItem('owner_id') || '',
   shopName: localStorage.getItem('shop_name') || '',
+  userId: localStorage.getItem('user_id') || '',
   loginNum: localStorage.getItem('login_num') || 0,
   token: localStorage.getItem('token') || '',
   fakeToken: localStorage.getItem('fake_token') || false,
@@ -44,6 +45,7 @@ const state = {
 const getters = {
   getName: state => state.name,
   getShopName: state => state.shopName,
+  getUserInfo: state => state.userInfo,
   getUserId: state => state.userId,
   getToken: state => state.token,
   getTokenHeaders: state => {
@@ -92,12 +94,8 @@ const actions = {
   },
   // 同步商品
   handleSyncProducts  ({commit, state, dispatch}, payload) {
-    console.log('handleSyncProducts-----')
     let isAuth = state.isAuth
     let isSyncing = state.isSyncing
-
-    console.log(isAuth, 'isAuth')
-    console.log(isSyncing, 'isSyncing')
     if (!isAuth || isSyncing) return false
     isSyncing = true
     let syncButtonText = '正在准备同步...'
@@ -287,6 +285,7 @@ const mutations = {
     Object.assign(state, payload)
   },
   [ types.SET_USER ] (state, data) {
+    state.userInfo = data
     if (data.token) {
       localStorage.setItem('token', data.token)
       state.token = data.token
@@ -310,6 +309,7 @@ const mutations = {
     if (data.user_id) {
       localStorage.setItem('user_id', data.user_id)
       state.userId = data.user_id
+      state.user_id = data.user_id
     }
     if (data.login_num) {
       localStorage.setItem('login_num', data.login_num)
@@ -326,6 +326,8 @@ const mutations = {
       localStorage.setItem('fake_token', data.fake_token)
       state.fakeToken = data.fake_token
     }
+
+    console.log(state, 'state')
   },
   [ types.LOGOUT ] (state) {
     localStorage.removeItem('token')
