@@ -1,4 +1,5 @@
 export const cityOptions1 = [
+  '主图',
   '商品ID',
   '商品链接',
   '来源链接',
@@ -28,6 +29,9 @@ export const cityOptions2 = [
 ]
 
 export const exportFieldList = {
+  '主图': {
+    name: '主图', key: 'pic'
+  },
   '商品ID': {
     name: '商品ID', key: 'goods_id'
   },
