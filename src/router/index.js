@@ -256,6 +256,18 @@ const router = new VueRouter({
       }
     },
     {
+      path: '/productsManagement/combination',
+      name: 'Combination',
+      component: () => import(
+        /* webpackChunkName: `AllProducts` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/combination'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
       path: '/productsManagement/productExports',
       name: 'ProductExports',
       component: () => import(

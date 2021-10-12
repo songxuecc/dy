@@ -953,7 +953,7 @@ export default {
         this.$router.push({
           path: '/migrate/productList',
           query: params
-        })
+        }).catch(() => {})
         this.reload()
       } else if (this.capture.status === 3) {
         let self = this
@@ -966,7 +966,7 @@ export default {
             self.$router.push({
               path: '/migrate/productList',
               query: params
-            })
+            }).catch(() => {})
             self.reload()
           }
         )

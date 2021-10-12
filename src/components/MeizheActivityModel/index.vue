@@ -23,7 +23,7 @@ export default {
     return {
       image,
       dialogTableVisible: false,
-      loading: true,
+      loading: false,
       open: false,
       localStorageKey: 'hasShowMeizheActivityModel2'
     }
@@ -34,7 +34,7 @@ export default {
     }
     const current = moment(new Date())
     const timeShowIsAfter = moment(current).isAfter('2021-09-27')
-    const timeShowIsBefore = moment(current).isBefore('2021-09-20')
+    const timeShowIsBefore = moment(current).isBefore('2021-10-20')
 
     // 9月20~26
     if (timeShowIsAfter || timeShowIsBefore) {
@@ -71,11 +71,11 @@ export default {
       this.dialogTableVisible = false
     },
     closed () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '美折', '点击', '活动按钮点击'])
-      }
       localStorage.setItem(this.localStorageKey, 1)
       if (this.open) {
+        if (window._hmt) {
+          window._hmt.push(['_trackEvent', '美折', '点击', '活动按钮点击'])
+        }
         const url = 'https://dx5.cn/YXEtBg'
         window.open(url)
       }
