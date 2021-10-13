@@ -2,8 +2,8 @@
 <template>
     <div class="card">
         <h1>服务与资质</h1>
-        <el-form-item class="item" label="运费模版:" prop="cost_template_id">
-            <el-select v-model="cost_template_id" placeholder="请选择" size="small" @change="check" style="width:150px">
+        <el-form-item class="item" label="运费模版:" prop="freight_id" required>
+            <el-select v-model="freight_id" placeholder="请选择" size="small" @change="check" style="width:295px;">
                 <el-option
                 :label="template_name"
                 :value="id"
@@ -14,44 +14,33 @@
             <el-button type="text" @click="open()">添加运费模版</el-button>
         </el-form-item>
 
-        <el-form-item class="item" label="售后服务:"  prop="supply_7day_return">
-            <el-radio-group v-model="supply_7day_return">
-                <el-radio :label="1">支持7天无理由退换货</el-radio>
-                <el-radio :label="2">支持7天无理由退换货(拆封后不支持)</el-radio>
-                <el-radio :label="0">不支持7天无理由退换货</el-radio>
-<!--                    <el-radio :label="2">支持（拆封后不支持）</el-radio>-->
+        <el-form-item class="item supply_7day_return" label="售后服务:"  prop="supply_7day_return">
+            <el-radio-group v-model="supply_7day_return" style="flex:1">
+                <el-radio style="display:block" :label="1">7天无理由退换货,类目商品须支持【7天无理由退换货】服务</el-radio>
+                <el-radio style="display:block" :label="2">支持7天无理由退换货(拆封后不支持)</el-radio>
+                <el-radio style="display:block" :label="0">不支持7天无理由退换货</el-radio>
             </el-radio-group>
-            <!-- <div style="position: absolute;top: 17px;left: 352px;color: #E02020; font-size: 1px;color:#FA6400" v-if="!supply_7day_return">仅少数商品可选，一般商品不要选择此项</div>
-            <el-link  :underline="false" style="margin-left: 130px; color: #1D8FFF; font-size: 1px;" @click="dySupplyImgVisible = !dySupplyImgVisible" v-if="!supply_7day_return">什么商品可以不支持7天无理由退换货</el-link>
-            <el-dialog :visible.sync="dySupplyImgVisible">
-                <el-image
-                :src="dySupplyImg"
-                fit="fit">
-                </el-image>
-            </el-dialog> -->
-
+            <span class="primary" style="margin-right:20px" v-hh-open="'https://school.jinritemai.com/doudian/web/article/109931'">点击了解售后期规则</span>
         </el-form-item>
 
          <el-form-item class="item" label="客服电话:" prop="mobile" >
-            <el-input v-model="mobile"  class="input-num" @input="check" style="width:150px"></el-input>
+            <el-input v-model="mobile"  class="input-num" style="width:295px;" placeholder="请填写"></el-input>
         </el-form-item>
 
-        <el-form-item class="item"  label="商家备注">
-            <el-input type="textarea" :autosize="{ minRows: 4}" placeholder="请输入内容" v-model="remark" style="width:590px"></el-input>
+        <el-form-item class="item"  label="商家备注:">
+            <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="remark"  placeholder="请填写" clearable @clear="handleClear('default_recommend_remark')"></el-input>
         </el-form-item>
     </div>
 </template>
 
 <script>
 export default {
-  name: 'component_name',
-  props: {
-    msg: String
-  },
+  name: 'Service',
   data () {
     return {
       dySupplyImg: 'https://img.pddpic.com/mms-material-img/2021-04-21/091fb3a4-fa82-49eb-9821-229aaa330567.png.a.jpeg',
-      dySupplyImgVisible: false
+      dySupplyImgVisible: false,
+      freight_id: ''
     }
   }
 }
@@ -73,5 +62,11 @@ export default {
         font-size: 16px;
         margin-bottom: 20px;
         font-family: yahei;
+    }
+
+    .supply_7day_return {
+      /deep/ .el-form-item__content{
+        display: flex;
+      }
     }
 </style>

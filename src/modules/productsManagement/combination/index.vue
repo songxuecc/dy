@@ -10,7 +10,7 @@
       <BasicInfo class="content combination-basicInfo" />
 
       <!-- 规格 -->
-      <TableSepcify class="content combination-specify "/>
+      <TableSepcify class="content combination-specify " @refresh="refresh"/>
 
       <!-- 类目价格 -->
       <Price class="content combination-price "/>
@@ -21,6 +21,10 @@
       <!-- 服务与资质 -->
       <Service class="content combination-service" />
 
+      <div class="flex justify-c align-c" ref="btn">
+        <el-button type="primary" plain style="width:120px"  @click="handleCancle">保存草稿箱</el-button>
+        <el-button type="primary" style="width:120px"  @click="handleClose">发布商品</el-button>
+      </div>
     </el-form>
   </div>
 </template>
@@ -74,6 +78,9 @@ export default {
     BasicInfo
   },
   methods: {
+    refresh () {
+      this.setScrollTop()
+    },
     setScrollTop: debounce(function () {
       this.$nextTick(() => {
         const tab = this.tabs
@@ -88,18 +95,18 @@ export default {
           const rect = el.getBoundingClientRect()
           const top = rect.top
           const elHeight = rect.height
+          const marginBottom = index ? 16 : 0
           const dist = 120
           if (tab.length - 1 === index) {
             maxPaddingBottom = height - elHeight - dist
           }
           const result = {
             ...item,
-            scrollTop: previous + current,
+            scrollTop: previous + current + marginBottom,
             top
           }
-          previous = previous + current
+          previous = previous + current + marginBottom
           current = elHeight
-          console.log(previous, elHeight, 'previous')
           return result
         })
         this.tabs = nextTab
@@ -130,9 +137,11 @@ export default {
       this.activeTab = active.toString()
     },
     handleClick (index) {
+      this.unBindScroll()
       const n = this.activeTab
       const tabsHeight = 0
-      const scrollTop = this.tabs[n].scrollTop + tabsHeight
+      const marginBottom = 0
+      const scrollTop = this.tabs[n].scrollTop + tabsHeight + marginBottom * n
       this.$nextTick(() => {
         const elScroll = document.querySelector('.page-component__scroll')
         elScroll.scrollTo({

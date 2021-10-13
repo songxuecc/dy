@@ -3,12 +3,11 @@
     <div class="card">
         <h1>基础信息</h1>
         <el-form-item required label="商品标题:" class="item">
-          <el-input :maxlength="30" :minlength="8" show-word-limit  v-model="default_recommend_remark"  placeholder="请填写" clearable @clear="handleClear('default_recommend_remark')"></el-input>
+          <el-input :maxlength="30" :minlength="8" show-word-limit  v-model="goods_name"  placeholder="请填写" clearable @clear="handleClear('goods_name')"></el-input>
         </el-form-item>
         <el-form-item  label="推荐语:"  >
             <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="default_recommend_remark"  placeholder="请填写商家推荐语设置,限8-50个汉字" clearable @clear="handleClear('default_recommend_remark')"></el-input>
         </el-form-item>
-
     </div>
 </template>
 
@@ -20,6 +19,13 @@ export default {
   },
   data () {
     return {
+      goods_name: '',
+      default_recommend_remark: ''
+    }
+  },
+  methods: {
+    handleClear (key) {
+      this[key] = ''
     }
   }
 }

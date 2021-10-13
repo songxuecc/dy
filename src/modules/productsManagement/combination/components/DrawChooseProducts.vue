@@ -27,6 +27,7 @@
                   row-key="goods_id"
                   ref="table"
                   :header-cell-style="getHeaderCellStyle"
+                  @row-click="toggleRowExpansion"
                   :cell-style="getCellStyle">
                   <el-table-empty slot="empty"/>
                   <el-table-column type="expand">
@@ -35,7 +36,7 @@
                         <el-radio :label="0"  :key="0">
                           不选择
                         </el-radio>
-                        <el-radio :label="`${props.row.goods_id}-${sku.sku_id}`" v-for="sku in props.row.sku_list" :key="`${props.row.goods_id}-${sku.sku_id}`">
+                        <el-radio :label="`${props.row.goods_id}-${sku.sku_id}-${index}`" v-for="(sku,index) in props.row.sku_list" :key="`${props.row.goods_id}-${sku.sku_id}-${index}`">
                           <div style="flex:1">{{sku.spec_detail_names}}</div>
                           <div style="width:90px;padding:0 0;text-align:center">{{(sku.price / 100).toFixed(2)}}</div>
                           <div style="width:90px;padding:0 0;text-align:center">{{sku.quantity}}</div>
@@ -49,8 +50,8 @@
                     align="center"
                     width="50">
                     <template slot-scope="scope">
-                      <div class="add pointer" @click="toggleRowExpansion(scope.row)" v-if="!scope.row.add"><i class="el-icon-plus " ></i></div>
-                      <div class="add pointer" @click="toggleRowExpansion(scope.row)" v-else><i class="el-icon-minus " ></i></div>
+                      <div class="add pointer"  v-if="!scope.row.add"><i class="el-icon-plus " ></i></div>
+                      <div class="add pointer"  v-else><i class="el-icon-minus " ></i></div>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -195,7 +196,11 @@ export default {
       this.$set(row, 'add', !row.add)
     },
     handleClose () {
+      if (!this.hasChoosedProducts.length) {
+        return this.$message.error('请选择商品')
+      }
       this.$emit('submit', this.hasChoosedProducts)
+      console.log(this.hasChoosedProducts, 'this.hasChoosedProducts')
       this.drawer = false
       this.save({
         tableData: []
@@ -208,6 +213,12 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+/deep/ .el-table tr:hover {
+  .add {
+    color: @color-primary;
+    border: 1px solid @color-primary;
+  }
+}
 .add {
   border: 1px solid #cdcdcd;
   width: 14px;
@@ -245,6 +256,7 @@ export default {
   display: flex;
   justify-content: space-between;
   flex:1;
+  color:#000;
 
 }
 /deep/ .el-table__expanded-cell {

@@ -439,6 +439,12 @@ const hhgjAPIs = {
   },
   productSourceSyncUpdate: (params) => {
     return api.actionCreatorPost('/api/product/source/sync/update', params)
+  },
+  thirdpartDyGoodsBundleCreate: (params) => {
+    return api.actionCreatorPost('/api/thirdpart/dy/goods/bundle/create', params)
+  },
+  thirdpartDyGoodsBundleUpdate: (params) => {
+    return api.actionCreatorPost('/api/thirdpart/dy/goods/bundle/update', params)
   }
 
 }
