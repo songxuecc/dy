@@ -51,7 +51,7 @@
       <div class="left">
         <div class="flex ">
           <hh-icon type="iconruanjianjiaocheng" class="mr-5 font-20"></hh-icon>
-          <span class="kefu">软件教程 <span class="click font-12" style="color:#3277FF" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'" >查看全部</span></span>
+          <span class="kefu">软件教程 <span class="click font-12" style="color:#3277FF" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u'" >查看全部</span></span>
         </div>
         <div class="flex">
             <div class="mt-5 mr-20 ">
