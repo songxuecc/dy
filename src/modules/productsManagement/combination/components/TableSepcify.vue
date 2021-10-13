@@ -1,6 +1,7 @@
 <!--  -->
 <template>
     <div class="card left">
+      <el-form ref="form" size="mini" label-width="100px">
         <div  v-for="(item) in bundle_list" :key="item.id" class="">
             <h1 class="flex align-c justify-b" >
               <span>规格{{bundle_list.length>1 ? item.id:''}}</span>
@@ -8,9 +9,8 @@
             </h1>
             <el-form-item required label="组合商品:" class="item">
             <el-table
-                :data="item.tableData"
+                :data="item.sku_list"
                 style="width: 100%;border:1px solid #E5E5E5;border-radius:4px 4px 0 0;border-bottom:0;">
-                <!-- <el-table-empty slot="empty"/> -->
                 <el-table-column
                     prop="date"
                     label="选择规格">
@@ -115,7 +115,7 @@
                     :max="99999999"
                     v-model="item.price"
                     class="price"
-                    :disabled="!item.tableData.length"
+                    :disabled="!item.sku_list.length"
                 >
                     <template slot="append">元</template>
                 </el-input>
@@ -135,9 +135,10 @@
                 >
                 </el-input>
             </el-form-item>
-
         </div>
         <el-button type="primary" plain size="medium" icon="el-icon-plus" style="margin-left:100px" @click="add">添加规格</el-button>
+      </el-form>
+
       <DrawChooseProducts  ref="DrawChooseProducts" @submit="addProducts" />
     </div>
 </template>
@@ -156,7 +157,7 @@ export default {
       activeSpecifiedActive: undefined,
       bundle_list: [{
         id: 1,
-        tableData: [],
+        sku_list: [],
         spec_detail_name1: '',
         stock_num: '',
         price: '',
@@ -170,7 +171,7 @@ export default {
     add () {
       const defaultData = {
         id: this.bundle_list.length + 1,
-        tableData: [],
+        sku_list: [],
         spec_detail_name1: '',
         stock_num: '',
         price: '',
@@ -188,13 +189,13 @@ export default {
       this.$refs.DrawChooseProducts.open()
       this.activeSpecifiedActive = item
     },
-    getOriPrice (tableData) {
-      return tableData.reduce((t, c) => {
+    getOriPrice (skuList) {
+      return skuList.reduce((t, c) => {
         return t + c.ori_price
       }, 0)
     },
-    getStockNum (tableData) {
-      return Math.min(...tableData.map((item) => {
+    getStockNum (skuList) {
+      return Math.min(...skuList.map((item) => {
         return parseFloat(item.stock_num / item.combo_num)
       }))
     },
@@ -202,8 +203,6 @@ export default {
       // 有相同商品 是否替换
       // 无相同商品 直接加入
       const index = this.activeSpecifiedActive.id
-      const tableData = this.activeSpecifiedActive.tableData
-
       data = data.map(item => {
         const index = item.choosedSkuId.split('-')[2]
         const sku = item.sku_list[index]
@@ -219,14 +218,13 @@ export default {
       })
       // 组合原价
       // 最终价格
-      const activeTableData = [...tableData, ...data]
-      const oriPrice = this.getOriPrice(activeTableData)
-      const stockNum = this.getStockNum(activeTableData)
-      console.log(oriPrice)
-      console.log(stockNum)
+      const skuList = this.activeSpecifiedActive.sku_list
+      const activeSkuList = [...skuList, ...data]
+      const oriPrice = this.getOriPrice(activeSkuList)
+      const stockNum = this.getStockNum(activeSkuList)
       this.activeSpecifiedActive.stock_num = stockNum
       this.activeSpecifiedActive.ori_price = oriPrice
-      this.activeSpecifiedActive.tableData = activeTableData
+      this.activeSpecifiedActive.sku_list = activeSkuList
       this.$set(this.bundle_list, index - 1, this.activeSpecifiedActive)
       this.activeSpecifiedActive = undefined
       this.save({
@@ -235,9 +233,9 @@ export default {
       this.$emit('refresh')
     },
     deleteProducts (productRow, specify) {
-      const tableData = specify.tableData.filter(item => item.tp_id !== productRow.tp_id)
+      const skuList = specify.sku_list.filter(item => item.tp_id !== productRow.tp_id)
       const index = specify.id
-      specify.tableData = tableData
+      specify.sku_list = skuList
       this.$set(this.bundle_list, index - 1, specify)
     },
     deleteSpecify (id) {
@@ -272,6 +270,12 @@ export default {
         .catch(_ => {
           return false
         })
+    },
+    getForm () {
+      return new Promise((resolve, reject) => {
+        console.log(this.bundle_list, 'this.bundle_list')
+        resolve({bundle_list: this.bundle_list})
+      })
     }
   }
 }

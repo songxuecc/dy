@@ -17,21 +17,16 @@ const model = modelExtend(
     getters: {
       categoryOptions: state => {
         const tableDatas = (state.bundle_list || []).reduce((target, item) => {
-          return [...target, ...item.tableData]
+          return [...target, ...item.sku_list]
         }, [])
-        console.log(tableDatas, 'tableDatas')
-        const a = (tableDatas || []).map(tableData => {
-          console.log(tableData, 'tableData')
+        return (tableDatas || []).map(tableData => {
           return ({
             category_leaf_id: tableData.category_leaf_id,
             category_show: tableData.category_show,
             product_id: tableData.tp_id
           })
         })
-        console.log(a, state.bundle_list, 'a')
-        return a
       }
     }
   })
-console.log(model, 'model')
 export default model

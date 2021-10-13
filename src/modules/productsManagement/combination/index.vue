@@ -1,31 +1,31 @@
 <!-- 组合商品 -->
 <template>
-  <div class='combination left'>
+  <div class='combination left relative'>
     <el-tabs v-model="activeTab" @tab-click="handleClick" class="tabs">
       <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
     </el-tabs>
 
-    <el-form ref="template" :rules="rules" size="mini" :model="$data" label-width="100px" class="form" :style="{'padding-bottom': mBottom}">
+    <div  class="form" :style="{'padding-bottom': mBottom}">
       <!-- 基础信息 -->
-      <BasicInfo class="content combination-basicInfo" />
+      <BasicInfo class="content combination-basicInfo" ref="BasicInfo"/>
 
       <!-- 规格 -->
-      <TableSepcify class="content combination-specify " @refresh="refresh"/>
+      <TableSepcify class="content combination-specify " @refresh="refresh" ref="TableSepcify"/>
 
       <!-- 类目价格 -->
-      <Price class="content combination-price "/>
+      <Price class="content combination-price " ref="Price"/>
 
       <!-- 支付设置 -->
-      <PaySet class="content combination-paySet" />
+      <PaySet class="content combination-paySet" ref="PaySet"/>
 
       <!-- 服务与资质 -->
-      <Service class="content combination-service" />
+      <ServiceComponent class="content combination-service" ref="Service"/>
 
-      <div class="flex justify-c align-c" ref="btn">
+      <div class="flex justify-c align-c btn" ref="btn">
         <el-button type="primary" plain style="width:120px"  @click="handleCancle">保存草稿箱</el-button>
         <el-button type="primary" style="width:120px"  @click="handleClose">发布商品</el-button>
       </div>
-    </el-form>
+    </div>
   </div>
 </template>
 
@@ -34,8 +34,9 @@ import debounce from 'lodash/debounce'
 import TableSepcify from './components/TableSepcify'
 import Price from './components/Price'
 import PaySet from './components/PaySet'
-import Service from './components/Service'
+import ServiceComponent from './components/Service'
 import BasicInfo from './components/BasicInfo'
+import servises from '@servises'
 
 export default {
   data () {
@@ -74,7 +75,7 @@ export default {
     TableSepcify,
     Price,
     PaySet,
-    Service,
+    ServiceComponent,
     BasicInfo
   },
   methods: {
@@ -150,6 +151,46 @@ export default {
           behavior: 'smooth'
         })
       })
+    },
+    async handleClose () {
+      const basicInfoPromise = this.$refs.BasicInfo.getForm()
+      const pricePromise = this.$refs.Price.getForm()
+      const paySetPromise = this.$refs.PaySet.getForm()
+      const servicePromise = this.$refs.Service.getForm()
+      const TableSepcifyPromise = this.$refs.TableSepcify.getForm()
+      // todo 修改规格数量和价格时候 组合价格库存变动的逻辑
+      Promise.all([ basicInfoPromise, pricePromise, paySetPromise, servicePromise, TableSepcifyPromise ])
+        .then(([basicInfoData, priceData, paySetData, serviceData, TableSepcifyData]) => {
+          const parmas = {
+            ...basicInfoData,
+            ...priceData,
+            ...paySetData,
+            ...serviceData,
+            ...TableSepcifyData
+          }
+          console.log(parmas, 'parmas')
+          servises.thirdpartDyGoodsBundleCreate({parmas}).then(data => {
+
+          })
+        // const
+        }).catch((err) => {
+          console.log(err)
+          let isError = document.getElementsByClassName('is-error')
+          this.$message.error('请按提示修改错误')
+          if (isError && isError[0]) {
+            this.$nextTick(() => {
+              isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+                block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+                behavior: 'smooth'
+              })
+            })
+          }
+        }).finally(() => {
+
+        })
     }
   }
 }
