@@ -12,7 +12,7 @@
                 :data="item.sku_list"
                 style="width: 100%;border:1px solid #E5E5E5;border-radius:4px 4px 0 0;border-bottom:0;">
                 <el-table-column
-                    prop="date"
+                    prop="image_url"
                     label="选择规格">
                     <template slot-scope="scope">
                       <div class="flex align-c">
@@ -42,7 +42,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="name"
+                    prop="ori_price"
                     label="单价"
                     align="center"
                     width="100">
@@ -51,7 +51,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="address"
+                    prop="combo_num"
                     align="center"
                     label="数量"
                     width="90">
@@ -65,7 +65,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="name"
+                    prop="stock_num"
                     label="库存"
                     align="center"
                     width="90">
@@ -79,7 +79,6 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="address"
                     label="关联库存"
                     align="center"
                     width="90">
@@ -89,7 +88,6 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="address"
                     label="操作"
                     align="center"
                     width="90">
@@ -103,7 +101,7 @@
                 </div>
             </el-form-item>
             <el-form-item  label="组合名称:"   class="item"  :prop="`[${index}].spec_detail_name1`">
-                <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="item.spec_detail_name1"  placeholder="请填写商家推荐语设置,限8-50个汉字" clearable @clear="handleClear(item,'spec_detail_name1')"></el-input>
+                <el-input :maxlength="30" show-word-limit  v-model="item.spec_detail_name1"  placeholder="请填写组合名称,限30个汉字" clearable @clear="handleClear(item,'spec_detail_name1')"></el-input>
             </el-form-item>
 
             <el-form-item  label="组合原价:" class="item">
@@ -173,38 +171,39 @@ export default {
       const priceRules = {}
       const skuRules = {}
 
-      // const validatePass = (rule, value, callback) => {
-      //   console.log(value, 'value')
-      //   callback()
-      // }
+      const checkWordsLength = (rule, value, callback) => {
+        if (value && utils.getStrRealLength(value) > 30) {
+          return callback(new Error('组合名称最多可以填写30个字符！'))
+        } else {
+          callback()
+        }
+      }
+
       this.bundle_list.forEach((item, index) => {
         const key = `[${index}].sku_list`
         skuRules[key] = [
           { required: true, message: '请选择商品', trigger: ['blur', 'change'] }
-          // { validator: validatePass, trigger: ['blur', 'change'] }
         ]
       })
 
       this.bundle_list.forEach((item, index) => {
         const key = `[${index}].spec_detail_name1`
         nameRules[key] = [
-          { required: true, message: '请填写组合名称', trigger: 'change' }
+          { required: true, message: '请填写组合名称', trigger: 'change' },
+          { validator: checkWordsLength, trigger: 'change' }
         ]
       })
 
       this.bundle_list.forEach((item, index) => {
         const key = `[${index}].price`
         priceRules[key] = [
-          { required: true, message: '请填写组合名称', trigger: 'change' }
+          { required: true, message: '请填写最终价格', trigger: 'change' }
         ]
       })
       return {
         ...skuRules,
         ...nameRules,
-        ...priceRules,
-        price: [
-          { required: true, message: '请填写最终价格', trigger: 'change' }
-        ]
+        ...priceRules
       }
     }
   },

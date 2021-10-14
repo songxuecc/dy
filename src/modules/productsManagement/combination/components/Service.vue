@@ -29,8 +29,8 @@
                 <el-input v-model="form.mobile"  class="input-num" style="width:295px;" placeholder="请填写"></el-input>
             </el-form-item>
 
-            <el-form-item class="item"  label="商家备注:">
-                <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="form.remark"  placeholder="请填写" clearable @clear="handleClear('default_recommend_remark')"></el-input>
+            <el-form-item class="item"  label="商家备注:" prop="remark" >
+                <el-input :maxlength="50"  show-word-limit  v-model="form.remark"  placeholder="请填写" clearable @clear="handleClear('default_recommend_remark')"></el-input>
             </el-form-item>
         </el-form>
 
@@ -39,10 +39,19 @@
 
 <script>
 import servises from '@servises'
+import utils from '@/common/utils'
 
 export default {
   name: 'Service',
   data () {
+    const checkWordsLength = (rule, value, callback) => {
+      if (value && utils.getStrRealLength(value) > 50) {
+        return callback(new Error('商家备注最多可以填写50个字符！'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       dySupplyImg: 'https://img.pddpic.com/mms-material-img/2021-04-21/091fb3a4-fa82-49eb-9821-229aaa330567.png.a.jpeg',
       dySupplyImgVisible: false,
@@ -53,6 +62,9 @@ export default {
         ],
         mobile: [
           { required: true, message: '请填写客服电话', trigger: 'blur' }
+        ],
+        remark: [
+          { validator: checkWordsLength, trigger: 'change' }
         ]
       },
       form: {
