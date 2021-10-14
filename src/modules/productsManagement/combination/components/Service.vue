@@ -46,7 +46,7 @@ export default {
   name: 'Service',
   data () {
     const checkWordsLength = (rule, value, callback) => {
-      if (value && utils.getStrRealLength(value) > 50) {
+      if (value && utils.getDyStrRealLength(value) > 50) {
         return callback(new Error('商家备注最多可以填写50个字符！'))
       } else {
         callback()

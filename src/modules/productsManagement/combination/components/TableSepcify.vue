@@ -172,7 +172,7 @@ export default {
       const skuRules = {}
 
       const checkWordsLength = (rule, value, callback) => {
-        if (value && utils.getStrRealLength(value) > 30) {
+        if (value && utils.getDyStrRealLength(value) > 30) {
           return callback(new Error('组合名称最多可以填写30个字符！'))
         } else {
           callback()

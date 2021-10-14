@@ -23,8 +23,8 @@ export default {
   data () {
     const checkDefaultRecommendRremark = (rule, value, callback) => {
       if (
-        (value && utils.getStrRealLength(value) < 8) ||
-        (value && utils.getStrRealLength(value) > 50)
+        (value && utils.getDyStrRealLength(value) < 8) ||
+        (value && utils.getDyStrRealLength(value) > 50)
       ) {
         return callback(new Error('商家推荐语只可以填写8-50个字符！'))
       } else {
@@ -34,7 +34,7 @@ export default {
 
     const checkWordsLength = (rule, value, callback) => {
       if (
-        value && utils.getStrRealLength(value) > 30
+        value && utils.getDyStrRealLength(value) > 30
       ) {
         return callback(new Error('商品标题最多可以填写30个字符！'))
       } else {

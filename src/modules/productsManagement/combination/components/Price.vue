@@ -136,7 +136,7 @@ export default {
         delivery_delay_day: 9999,
         presell_delay: 2
       },
-      product_format: undefined,
+      attribution_list: undefined,
       pickerOptions: {
         disabledDate: (time) => {
           const value = moment(time)
@@ -181,12 +181,12 @@ export default {
       'categoryOptions'
     ]),
     propertiesChooseText () {
-      if (!this.product_format) return ''
+      if (!this.attribution_list) return ''
       let requireTotal = 0
       let requireNumber = 0
       let chooseTotal = 0
       let chooseNumber = 0
-      const properties = this.product_format.properties
+      const properties = this.attribution_list.properties
 
       properties.forEach((item) => {
         if (item.required) {
@@ -248,16 +248,16 @@ export default {
           name: item.name,
           value: item.tp_value
         }))
-      this.product_format = data
+      this.attribution_list = data
       console.log(data, 'data')
     },
     getForm () {
       return new Promise((resolve, reject) => {
         this.$refs.form.validate((valid, object) => {
-          if (this.form.category_id && this.product_format && this.product_format.properties) {
+          if (this.form.category_id && this.attribution_list && this.attribution_list.properties) {
             const form = {
               ...this.form,
-              attribution_list: JSON.stringify(this.product_format.properties),
+              attribution_list: JSON.stringify(this.attribution_list.properties),
               discount_price: utils.yuanToFen(this.form.discount_price),
               market_price: utils.yuanToFen(this.form.market_price)
             }

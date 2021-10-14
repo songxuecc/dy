@@ -19,13 +19,17 @@ const model = modelExtend(
         const tableDatas = (state.bundle_list || []).reduce((target, item) => {
           return [...target, ...item.sku_list]
         }, [])
-        return (tableDatas || []).map(tableData => {
-          return ({
-            category_leaf_id: tableData.category_leaf_id,
-            category_show: tableData.category_show,
-            product_id: tableData.tp_id
-          })
+        const arr = [];
+        (tableDatas || []).forEach(tableData => {
+          if (arr.every(item => item.category_show !== tableData.category_show)) {
+            arr.push({
+              category_leaf_id: tableData.category_leaf_id,
+              category_show: tableData.category_show,
+              product_id: tableData.tp_id
+            })
+          }
         })
+        return arr
       }
     }
   })
