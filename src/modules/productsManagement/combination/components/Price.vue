@@ -3,13 +3,13 @@
     <div class="card">
         <h1>类目价格</h1>
          <el-form ref="form" size="mini" :model="form" label-width="100px" :rules="rules">
-            <el-form-item  label="组合商品类目:" class="item" prop="category_id">
-              <el-select v-model="form.category_id" @change="chooseProperties" placeholder="选择商品后可选择类目,请选择组合商品类目" style="width:295px;margin-right:12px" :disabled="!categoryOptions.length">
+            <el-form-item  label="组合商品类目:" class="item" prop="category_id" v-loading="loading">
+              <el-select v-model="form.category_id" @change="chooseProperties" @blur="chooseProperties(form.category_id)" placeholder="选择商品后可选择类目,请选择组合商品类目" style="width:295px;margin-right:12px" :disabled="!categoryOptions.length">
                 <el-option :label="option.category_show" :value="option.category_leaf_id" v-for="option in categoryOptions" :key="option.product_id" class="left dropdown">{{option.category_show}}</el-option>
               </el-select>
             </el-form-item>
 
-            <el-form-item label="类目属性:" class="item">
+            <el-form-item label="类目属性:" class="item" v-loading="loading">
               <span
                   class="underline-hover pointer font-12 primary"
                   v-if="form.category_id && propertiesChooseText"
@@ -126,6 +126,7 @@ export default {
 
     return {
       visible: false,
+      loading: false,
       form: {
         category_id: '',
         presell_type: 0,
@@ -211,12 +212,14 @@ export default {
           name: option.category_show,
           id
         }
+        this.loading = true
         const data = {}
         // 如果这次请求和上次请求的id相同 则不请求
         if (data.preCategoryId && data.preCategoryId === id) {
           this.visible = !this.visible
           this.$nextTick(() => {
             this.$refs.Properties && this.$refs.Properties.init(data)
+            this.loading = false
           })
           return false
         }
@@ -229,8 +232,10 @@ export default {
         this.visible = !this.visible
         this.$nextTick(() => {
           this.$refs.Properties && this.$refs.Properties.init(data)
+          this.loading = false
         })
       } else {
+        this.loading = false
         return this.$message.warning('请选择分类')
       }
     },
