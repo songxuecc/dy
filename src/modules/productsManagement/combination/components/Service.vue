@@ -6,6 +6,7 @@
             <el-form-item class="item" label="运费模版:" prop="freight_id" >
                 <el-select v-model="form.freight_id" placeholder="请选择" size="small" @change="check" style="width:295px;">
                     <el-option
+                      class="left dropdown"
                       v-for="item in costTemplateList"
                       :key="item.value"
                       :label="item.name"
@@ -84,13 +85,14 @@ export default {
     },
     async getCostTemplateList () {
       const data = await servises.getCostTemplateList()
+      const costTemplateList = []
       data.List.forEach(item => {
-        this.costTemplateList = []
-        this.costTemplateList.push({
+        costTemplateList.push({
           value: item.template.id,
           name: item.template.template_name
         })
       })
+      this.costTemplateList = costTemplateList
     },
     getForm () {
       return new Promise((resolve, reject) => {
@@ -130,5 +132,11 @@ export default {
       /deep/ .el-form-item__content{
         display: flex;
       }
+    }
+    .dropdown {
+      height: 25px;
+      line-height: 25px;
+      font-size: 12px;
+      padding: 0 10px;
     }
 </style>

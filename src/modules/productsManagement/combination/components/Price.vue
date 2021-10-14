@@ -5,7 +5,7 @@
          <el-form ref="form" size="mini" :model="form" label-width="100px" :rules="rules">
             <el-form-item  label="组合商品类目:" class="item" prop="category_id">
               <el-select v-model="form.category_id" @change="chooseProperties" placeholder="选择商品后可选择类目,请选择组合商品类目" style="width:295px;margin-right:12px" :disabled="!categoryOptions.length">
-                <el-option :label="option.category_show" :value="option.category_leaf_id" v-for="option in categoryOptions" :key="option.product_id">{{option.category_show}}</el-option>
+                <el-option :label="option.category_show" :value="option.category_leaf_id" v-for="option in categoryOptions" :key="option.product_id" class="left dropdown">{{option.category_show}}</el-option>
               </el-select>
             </el-form-item>
 
@@ -276,7 +276,12 @@ export default {
         }
 
       }
-
+  .dropdown {
+      height: 25px;
+      line-height: 25px;
+      font-size: 12px;
+      padding: 0 10px;
+    }
     .item {
         padding-bottom: 10px;
         box-sizing: border-box;

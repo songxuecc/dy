@@ -115,7 +115,7 @@
                 layout="slot,total, sizes, prev, pager, next, jumper"
                 :total="total"
               >
-                <span  class="mr-10 warning" v-if="hasChoosedProducts.length">已选择 {{hasChoosedProducts.length}} 条</span>
+                <span  class="mr-10 warning" v-if="hasChoosedProducts.length">已选择 {{hasChoosedProducts.length}} / 5 条</span>
               </el-pagination>
 
               <div class="flex justify-c align-c" ref="btn">
@@ -199,6 +199,10 @@ export default {
     handleClose () {
       if (!this.hasChoosedProducts.length) {
         return this.$message.error('请选择商品')
+      }
+
+      if (this.hasChoosedProducts.length > 5) {
+        return this.$message.error('最多5个商品')
       }
       this.$emit('submit', this.hasChoosedProducts)
       console.log(this.hasChoosedProducts, 'this.hasChoosedProducts')

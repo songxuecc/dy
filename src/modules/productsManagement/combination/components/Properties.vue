@@ -41,7 +41,7 @@
             :clearable="true"
             @clear="handleClear(property.id)"
           >
-            <el-option :label="option.name" :value="option.value" v-for="(option,idx) in property.options" :key="idx">
+            <el-option :label="option.name" :value="option.value" v-for="(option,idx) in property.options" :key="idx" class="left dropdown">
                 {{option.name}}
             </el-option>
           </el-select>
@@ -169,17 +169,23 @@ export default {
       height:32px;
       width: 170px;
     }
+    .dropdown {
+      height: 25px;
+      line-height: 25px;
+      font-size: 12px;
+      padding: 0 10px;
+    }
 </style>
 <style lang="less">
 .select-popper-properties {
-  .el-select-dropdown__item {
-      text-align: left;
-      padding: 6px 8px 6px 12px;
-      font-size: 14px;
-      line-height: 20px;
-      font-weight: 400;
-      height:32px;
-    }
+  // .el-select-dropdown__item {
+  //     text-align: left;
+  //     padding: 6px 8px 6px 12px;
+  //     font-size: 14px;
+  //     line-height: 20px;
+  //     font-weight: 400;
+  //     height:32px;
+  //   }
     .el-input__inner {
       padding: 0 4px;
     }

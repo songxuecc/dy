@@ -121,7 +121,7 @@
             </el-form-item>
 
             <el-form-item  label="组合库存:" class="item">
-                <span> {{item.stock_num || '0'}}</span>
+                <span> {{item.sku_list.length ? item.stock_num || '0' : '-'}}</span>
             </el-form-item>
 
             <el-form-item  label="商品编码:"  class="item" >
@@ -243,6 +243,10 @@ export default {
     addProducts (data) {
       // 有相同商品 是否替换
       // 无相同商品 直接加入
+
+      if (this.activeSpecifiedActive.sku_list.length + data.length > 5) {
+        return this.$message.warning('最多关联5个商品')
+      }
       const index = this.activeSpecifiedActive.id
       data = data.map(item => {
         const index = item.choosedSkuId.split('-')[2]
@@ -343,20 +347,21 @@ export default {
       return new Promise((resolve, reject) => {
         this.$refs.form.validate((valid, object) => {
           if (valid) {
+            const bundleList = cloneDeep(this.bundle_list)
             const arr = [];
-            (this.bundle_list || []).forEach(product => {
+            (bundleList || []).forEach(product => {
               (product.sku_list || []).forEach(sku => {
                 arr.push(sku.image_url)
               })
             })
 
-            this.bundle_list.forEach(item => {
+            bundleList.forEach(item => {
               item.price = utils.yuanToFen(item.price)
             })
 
             if (arr.length) {
               resolve({
-                bundle_list: JSON.stringify(this.bundle_list),
+                bundle_list: JSON.stringify(bundleList),
                 banner_json: JSON.stringify(arr.slice(0, 5)),
                 desc_json: JSON.stringify(arr)
               })

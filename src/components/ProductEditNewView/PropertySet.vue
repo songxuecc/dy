@@ -183,7 +183,6 @@ export default {
           const key = current.name
           let value = current.tp_value
 
-          console.log(value, 'value')
           // 如果有全选到应用
           if (propertyBatchMapSelect && propertyBatchMapSelect[key] && propertyBatchMapSelect[key].checked) {
             const checkCatId = propertyBatchMapSelect[key].catId

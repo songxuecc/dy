@@ -22,8 +22,8 @@
       <ServiceComponent class="content combination-service" ref="Service"/>
 
       <div class="flex justify-c align-c btn" ref="btn">
-        <el-button type="primary" plain style="width:120px"  @click="handleCancle(0)">保存草稿箱</el-button>
-        <el-button type="primary" style="width:120px"  @click="handleClose(1)">发布商品</el-button>
+        <el-button type="primary" plain style="width:120px"  @click="handleCancle(0)" :loading="loading" :disabled="loading">保存草稿箱</el-button>
+        <el-button type="primary" style="width:120px"  @click="handleClose(1)" :loading="loading" :disabled="loading">发布商品</el-button>
       </div>
     </div>
   </div>
@@ -42,6 +42,7 @@ export default {
   data () {
     return {
       activeTab: '',
+      loading: false,
       tabs: [
         { label: '基础信息', className: '.combination-basicInfo' },
         { label: '规格', className: '.combination-specify' },
@@ -158,6 +159,8 @@ export default {
       const paySetPromise = this.$refs.PaySet.getForm()
       const servicePromise = this.$refs.Service.getForm()
       const TableSepcifyPromise = this.$refs.TableSepcify.getForm()
+      this.loading = true
+      console.log(this.loading, 'this.loading = true')
       Promise.all([ basicInfoPromise, pricePromise, paySetPromise, servicePromise, TableSepcifyPromise ])
         .then(([basicInfoData, priceData, paySetData, serviceData, TableSepcifyData]) => {
           const parmas = {
@@ -169,6 +172,7 @@ export default {
             commit: commitType
           }
           servises.thirdpartDyGoodsBundleCreate(parmas).then(data => {
+            this.loading = false
             this.$confirm('创建成功，是否去抖店后台查看?', '', {
               showClose: false,
               confirmButtonText: '确认，去抖店',
@@ -178,16 +182,21 @@ export default {
               confirmButtonClass: 'combination-confirmButtonClass',
               customClass: 'combination-customClass'
             }).then(() => {
-              window.open('https://fxg.jinritemai.com/ffa/g/list')
+              console.log(data, 'data')
+              const productId = data.product_id
+              window.open(`https://fxg.jinritemai.com/ffa/g/create?product_id=${productId}`)
             }).catch(() => {
             })
           })
             .catch(err => {
               this.$message.error(`${err}`)
+              this.loading = false
+            }).finally(() => {
+
             })
         }).catch((err) => {
           console.log(err)
-
+          this.loading = false
           let isError = document.getElementsByClassName('is-error')
           this.$message.error('请按提示修改错误')
           if (isError && isError[0]) {
@@ -201,8 +210,6 @@ export default {
               })
             })
           }
-        }).finally(() => {
-
         })
     }
   }
