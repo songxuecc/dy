@@ -59,7 +59,6 @@ const listModel = (modelName = '') => {
         commit('save', nextState)
       },
       async [setFilterName] ({commit, state}, payload) {
-        console.log(Api, 'Api.hhgjAPIs2222')
         const {pagination, filters} = payload || {}
         const apiName = payload.apiName
         try {

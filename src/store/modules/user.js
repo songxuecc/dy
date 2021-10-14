@@ -190,7 +190,6 @@ const actions = {
     return promise
   },
   requestSyncProducts ({commit, state, dispatch}, params) {
-    console.log(params, 'params')
     let promise = new Promise(function (resolve, reject) {
       Api.hhgjAPIs.syncProducts(params).then(data => {
         if (data !== null) {

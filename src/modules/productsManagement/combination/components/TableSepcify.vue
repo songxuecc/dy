@@ -1,13 +1,13 @@
 <!--  -->
 <template>
     <div class="card left">
-      <el-form ref="form" size="mini" label-width="100px">
-        <div  v-for="(item) in bundle_list" :key="item.id" class="">
+      <el-form ref="form" size="mini" label-width="100px" :rules="rules" :model="bundle_list">
+        <div  v-for="(item,index) in bundle_list" :key="item.id" class="">
             <h1 class="flex align-c justify-b" >
               <span>规格{{bundle_list.length>1 ? item.id:''}}</span>
               <span class="pointer delete" @click="deleteSpecify(item.id)" v-if="bundle_list.length > 1"><hh-icon type="iconshanchu1"></hh-icon></span>
             </h1>
-            <el-form-item required label="组合商品:" class="item">
+            <el-form-item  label="组合商品:" class="item" :prop="`[${index}].sku_list`">
             <el-table
                 :data="item.sku_list"
                 style="width: 100%;border:1px solid #E5E5E5;border-radius:4px 4px 0 0;border-bottom:0;">
@@ -32,7 +32,8 @@
                           </el-image>
                         </div>
                         <el-input
-                            v-model="scope.row.short_name"
+                            @input="handleInputShortName($event,scope.row,index,'short_name')"
+                            :value="scope.row.short_name"
                             class="price"
                             type="textarea"
                         >
@@ -56,8 +57,8 @@
                     width="90">
                     <template slot-scope="scope">
                       <el-input
-                          :max="99999999"
-                          v-model="scope.row.combo_num"
+                          @input="handleInputComboNum($event,scope.row,index)"
+                          :value="scope.row.combo_num"
                           class="price"
                       >
                       </el-input>
@@ -101,7 +102,7 @@
                   <el-button type="text"  icon="el-icon-plus" @click="open(item)" style="padding-left:10px">选择商品</el-button>
                 </div>
             </el-form-item>
-            <el-form-item  label="组合名称:"   class="item" required>
+            <el-form-item  label="组合名称:"   class="item"  :prop="`[${index}].spec_detail_name1`">
                 <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="item.spec_detail_name1"  placeholder="请填写商家推荐语设置,限8-50个汉字" clearable @clear="handleClear(item,'spec_detail_name1')"></el-input>
             </el-form-item>
 
@@ -109,7 +110,7 @@
                <span> {{item.ori_price ? `¥${(item.ori_price / 100).toFixed(2) }` : '-'}}</span>
             </el-form-item>
 
-             <el-form-item  label="最终价格:"  class="item" required>
+             <el-form-item  label="最终价格:"  class="item"  :prop="`[${index}].price`">
                 <el-input
                     style="width: 295px"
                     :max="99999999"
@@ -122,7 +123,7 @@
             </el-form-item>
 
             <el-form-item  label="组合库存:" class="item">
-                <span> {{item.stock_num || '-'}}</span>
+                <span> {{item.stock_num || '0'}}</span>
             </el-form-item>
 
             <el-form-item  label="商品编码:"  class="item" >
@@ -146,7 +147,8 @@
 <script>
 import DrawChooseProducts from './DrawChooseProducts'
 import { mapMutations } from 'vuex'
-
+import utils from '@/common/utils'
+import cloneDeep from 'lodash/cloneDeep'
 export default {
   name: 'TableSepcify',
   components: {
@@ -163,7 +165,47 @@ export default {
         price: '',
         code: ''
       }]
+    }
+  },
+  computed: {
+    rules () {
+      const nameRules = {}
+      const priceRules = {}
+      const skuRules = {}
 
+      // const validatePass = (rule, value, callback) => {
+      //   console.log(value, 'value')
+      //   callback()
+      // }
+      this.bundle_list.forEach((item, index) => {
+        const key = `[${index}].sku_list`
+        skuRules[key] = [
+          { required: true, message: '请选择商品', trigger: ['blur', 'change'] }
+          // { validator: validatePass, trigger: ['blur', 'change'] }
+        ]
+      })
+
+      this.bundle_list.forEach((item, index) => {
+        const key = `[${index}].spec_detail_name1`
+        nameRules[key] = [
+          { required: true, message: '请填写组合名称', trigger: 'change' }
+        ]
+      })
+
+      this.bundle_list.forEach((item, index) => {
+        const key = `[${index}].price`
+        priceRules[key] = [
+          { required: true, message: '请填写组合名称', trigger: 'change' }
+        ]
+      })
+      return {
+        ...skuRules,
+        ...nameRules,
+        ...priceRules,
+        price: [
+          { required: true, message: '请填写最终价格', trigger: 'change' }
+        ]
+      }
     }
   },
   methods: {
@@ -191,12 +233,12 @@ export default {
     },
     getOriPrice (skuList) {
       return skuList.reduce((t, c) => {
-        return t + c.ori_price
+        return t + c.ori_price * c.combo_num
       }, 0)
     },
     getStockNum (skuList) {
       return Math.min(...skuList.map((item) => {
-        return parseFloat(item.stock_num / item.combo_num)
+        return Math.floor(item.stock_num / item.combo_num)
       }))
     },
     addProducts (data) {
@@ -206,7 +248,7 @@ export default {
       data = data.map(item => {
         const index = item.choosedSkuId.split('-')[2]
         const sku = item.sku_list[index]
-        item.sub_product_id = item.tp_id
+        item.sub_product_id = item.goods_id
         item.sub_sku_id = sku.sku_id
         item.combo_num = 1
         item.short_name = `${item.goods_name}-${sku.spec_detail_names}`
@@ -216,8 +258,7 @@ export default {
         item.stock_num = sku.quantity
         return item
       })
-      // 组合原价
-      // 最终价格
+      // 组合原价 组合库存
       const skuList = this.activeSpecifiedActive.sku_list
       const activeSkuList = [...skuList, ...data]
       const oriPrice = this.getOriPrice(activeSkuList)
@@ -233,7 +274,7 @@ export default {
       this.$emit('refresh')
     },
     deleteProducts (productRow, specify) {
-      const skuList = specify.sku_list.filter(item => item.tp_id !== productRow.tp_id)
+      const skuList = specify.sku_list.filter(item => item.sub_product_id !== productRow.sub_product_id)
       const index = specify.id
       specify.sku_list = skuList
       this.$set(this.bundle_list, index - 1, specify)
@@ -271,10 +312,66 @@ export default {
           return false
         })
     },
+    handleInputShortName (value, row, index) {
+      const data = this.bundle_list[index]
+      data.sku_list.forEach(item => {
+        if (item.sub_sku_id === row.sub_sku_id) {
+          item.short_name = value
+        }
+      })
+      const bundleList = this.bundle_list
+      bundleList[index] = data
+      this.bundle_list = cloneDeep(bundleList)
+    },
+    handleInputComboNum (value, row, index) {
+      const data = cloneDeep(this.bundle_list[index])
+      data.sku_list.forEach(item => {
+        if (item.sub_sku_id === row.sub_sku_id) {
+          item.combo_num = value
+        }
+      })
+      // 组合原价 组合库存
+      const oriPrice = this.getOriPrice(data.sku_list)
+      const stockNum = this.getStockNum(data.sku_list)
+      console.log(oriPrice, 'oriPrice')
+      data.stock_num = stockNum
+      data.ori_price = oriPrice
+      const bundleList = this.bundle_list
+      bundleList[index] = data
+      this.bundle_list = cloneDeep(bundleList)
+    },
     getForm () {
       return new Promise((resolve, reject) => {
-        console.log(this.bundle_list, 'this.bundle_list')
-        resolve({bundle_list: this.bundle_list})
+        this.$refs.form.validate((valid, object) => {
+          if (valid) {
+            const arr = [];
+            (this.bundle_list || []).forEach(product => {
+              (product.sku_list || []).forEach(sku => {
+                arr.push(sku.image_url)
+              })
+            })
+
+            this.bundle_list.forEach(item => {
+              item.price = utils.yuanToFen(item.price)
+            })
+
+            if (arr.length) {
+              resolve({
+                bundle_list: JSON.stringify(this.bundle_list),
+                banner_json: JSON.stringify(arr.slice(0, 5)),
+                desc_json: JSON.stringify(arr)
+              })
+            } else {
+              const e = {
+                'product': 'no product'
+              }
+              reject(e)
+            }
+          } else {
+            const e = object
+            reject(e)
+          }
+        })
       })
     }
   }

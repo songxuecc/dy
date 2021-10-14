@@ -50,6 +50,9 @@ export default {
       rules: {
         freight_id: [
           { required: true, message: '请选择运费模版', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请填写客服电话', trigger: 'blur' }
         ]
       },
       form: {

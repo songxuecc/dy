@@ -18,7 +18,7 @@
               <span
                   class="underline-hover pointer font-12 warning"
                   v-else
-                  @click="chooseProperties"
+                  @click="chooseProperties(form.category_id)"
                   >选择类目后可选择属性，请选择组合商品类目属性</span
                 >
             </el-form-item>
@@ -149,13 +149,15 @@ export default {
           { required: true, message: '请选择组合商品类目，先选择商品即可选择类目', trigger: ['blur', 'change'] }
         ],
         market_price: [
+          { required: true, message: '请选择划线价', trigger: ['blur', 'change'] },
           { validator: validatePass, trigger: ['blur', 'change'] }
         ],
         discount_price: [
+          { required: true, message: '请输入售卖价', trigger: ['blur', 'change'] },
           { validator: validatePass, trigger: ['blur', 'change'] }
         ],
         presell_type: [
-          { required: true, message: '请选择发货模式', trigger: ['blur', 'change'] }
+          { required: true, message: '请输入发货模式', trigger: ['blur', 'change'] }
         ],
         delivery_delay_day: [
           { required: true, message: '请输入发货时间', trigger: ['blur', 'change'] }
@@ -235,6 +237,12 @@ export default {
 
     handleClose (data, idx) {
       this.visible = !this.visible
+      data.properties = data.properties
+        .filter(item => item.tp_value)
+        .map(item => ({
+          name: item.name,
+          value: item.tp_value
+        }))
       this.product_format = data
       console.log(data, 'data')
     },
@@ -244,7 +252,9 @@ export default {
           if (this.form.category_id && this.product_format && this.product_format.properties) {
             const form = {
               ...this.form,
-              attribution_list: this.product_format.properties
+              attribution_list: JSON.stringify(this.product_format.properties),
+              discount_price: utils.yuanToFen(this.form.discount_price),
+              market_price: utils.yuanToFen(this.form.market_price)
             }
             resolve(form)
           } else {

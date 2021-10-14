@@ -22,8 +22,8 @@
       <ServiceComponent class="content combination-service" ref="Service"/>
 
       <div class="flex justify-c align-c btn" ref="btn">
-        <el-button type="primary" plain style="width:120px"  @click="handleCancle">保存草稿箱</el-button>
-        <el-button type="primary" style="width:120px"  @click="handleClose">发布商品</el-button>
+        <el-button type="primary" plain style="width:120px"  @click="handleCancle(0)">保存草稿箱</el-button>
+        <el-button type="primary" style="width:120px"  @click="handleClose(1)">发布商品</el-button>
       </div>
     </div>
   </div>
@@ -152,13 +152,12 @@ export default {
         })
       })
     },
-    async handleClose () {
+    async handleClose (commitType) {
       const basicInfoPromise = this.$refs.BasicInfo.getForm()
       const pricePromise = this.$refs.Price.getForm()
       const paySetPromise = this.$refs.PaySet.getForm()
       const servicePromise = this.$refs.Service.getForm()
       const TableSepcifyPromise = this.$refs.TableSepcify.getForm()
-      // todo 修改规格数量和价格时候 组合价格库存变动的逻辑
       Promise.all([ basicInfoPromise, pricePromise, paySetPromise, servicePromise, TableSepcifyPromise ])
         .then(([basicInfoData, priceData, paySetData, serviceData, TableSepcifyData]) => {
           const parmas = {
@@ -166,15 +165,29 @@ export default {
             ...priceData,
             ...paySetData,
             ...serviceData,
-            ...TableSepcifyData
+            ...TableSepcifyData,
+            commit: commitType
           }
-          console.log(parmas, 'parmas')
-          servises.thirdpartDyGoodsBundleCreate({parmas}).then(data => {
-
+          servises.thirdpartDyGoodsBundleCreate(parmas).then(data => {
+            this.$confirm('创建成功，是否去抖店后台查看?', '', {
+              showClose: false,
+              confirmButtonText: '确认，去抖店',
+              cancelButtonText: '不，留在虎虎',
+              type: 'warning',
+              cancelButtonClass: 'combination-cancelButtonClass',
+              confirmButtonClass: 'combination-confirmButtonClass',
+              customClass: 'combination-customClass'
+            }).then(() => {
+              window.open('https://fxg.jinritemai.com/ffa/g/list')
+            }).catch(() => {
+            })
           })
-        // const
+            .catch(err => {
+              this.$message.error(`${err}`)
+            })
         }).catch((err) => {
           console.log(err)
+
           let isError = document.getElementsByClassName('is-error')
           this.$message.error('请按提示修改错误')
           if (isError && isError[0]) {
@@ -198,4 +211,41 @@ export default {
 
 <style lang='less' scoped>
     @import '~./index.less';
+</style>
+
+<style lang="less">
+.combination-cancelButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    margin-right: 10px;
+    width: 100px;
+
+}
+
+.combination-confirmButtonClass{
+    padding: 10px;
+    font-size: 12px;
+    width: 100px;
+}
+
+.combination-customClass {
+  padding-bottom: 25px;
+  .el-message-box__btns {
+    text-align: center;
+  }
+  .el-message-box__content {
+    .el-message-box__message {
+      padding-left: 0;
+    }
+    p {
+      font-size: 18px;
+      margin: 15px 0 10px;
+      text-align: center;
+    }
+    .el-icon-warning {
+      display: none;
+    }
+  }
+}
+
 </style>

@@ -31,12 +31,18 @@ import System from '@customerSetting/system/monitor'
 // 店铺装修 shopDecorate
 Vue.use(VueRouter)
 
+// https://developpaper.com/explanation-and-solution-of-uncaught-in-promise-navigationduplicated-avoided-redundant-navigation-to-current-location-xxx-at-createroutererror/
 const originalPush = VueRouter.prototype.push
-VueRouter.prototype.push = function push (location) {
-  return originalPush.call(this, location).catch((err) => {
-    console.log(err, 'err')
-    return err
-  })
+const originalReplace = VueRouter.prototype.replace
+// push
+VueRouter.prototype.push = function push (location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
+// replace
+VueRouter.prototype.replace = function push (location, onResolve, onReject) {
+  if (onResolve || onReject) return originalReplace.call(this, location, onResolve, onReject)
+  return originalReplace.call(this, location).catch(err => err)
 }
 
 const router = new VueRouter({

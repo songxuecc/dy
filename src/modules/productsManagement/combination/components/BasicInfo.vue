@@ -3,7 +3,7 @@
     <div class="card BasicInfo">
         <h1>基础信息</h1>
         <el-form ref="form" size="mini" :model="$data" label-width="100px" :rules="rules">
-          <el-form-item required label="商品标题:" class="item" prop="goods_name">
+          <el-form-item  label="商品标题:" class="item" prop="goods_name">
             <el-input :maxlength="30" :minlength="8" show-word-limit  v-model="goods_name"  placeholder="请填写" clearable @clear="handleClear('goods_name')"></el-input>
           </el-form-item>
           <el-form-item  label="推荐语:"  >
@@ -14,21 +14,24 @@
 </template>
 
 <script>
-// import utils from '@/common/utils'
-
+import utils from '@/common/utils'
 export default {
   name: 'component_name',
   props: {
     msg: String
   },
   data () {
-    // const validateWeight = (rule, value, callback) => {
-    //   if ((value && !utils.isNumber(value))) {
-    //     callback(new Error('请填写数字'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
+    const checkDefaultRecommendRremark = (rule, value, callback) => {
+      if (
+        (value && utils.getStrRealLength(value) < 8) ||
+        (value && utils.getStrRealLength(value) > 50)
+      ) {
+        return callback(new Error('商家推荐语只可以填写8-50个字符！'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       form: {
         goods_name: '',
@@ -37,11 +40,11 @@ export default {
       goods_name: '',
       default_recommend_remark: '',
       rules: {
-        // weight: [
-        //   { validator: validateWeight, trigger: ['focus', 'blur', 'change'] }
-        // ],
         goods_name: [
           { required: true, message: '请填写商品标题', trigger: 'change' }
+        ],
+        default_recommend_remark: [
+          { validator: checkDefaultRecommendRremark, trigger: 'change' }
         ]
       }
     }

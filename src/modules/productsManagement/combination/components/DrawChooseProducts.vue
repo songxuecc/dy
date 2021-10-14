@@ -10,9 +10,9 @@
             <div style="">
             <!-- 搜索 -->
             <div ref="form">
-              <el-form  :model="form" label-width="60px" :inline="true" size="small" label-position="left" class="left ml-20 mt-20">
+              <el-form  :model="filters" label-width="60px" :inline="true" size="small" label-position="left" class="left ml-20 mt-20">
                 <el-form-item label="商品名称" >
-                  <el-input v-model="form.keyword" class="w-200"></el-input>
+                  <el-input v-model="filters.keyword" class="w-400"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="onSubmit" size="medium" class="ml-10" :loading="loading" :disabled="loading">搜索</el-button>
@@ -154,8 +154,7 @@ export default {
       'tableData',
       'total',
       'pagination',
-      'filters',
-      'form'
+      'filters'
     ]),
     hasChoosedProducts () {
       return this.tableData.filter(item => item.choosedSkuId)
@@ -188,7 +187,9 @@ export default {
       }
     },
     onSubmit () {
-      // this.getData()
+      this.setFilter({
+        filters: this.filters
+      })
     },
     toggleRowExpansion (row) {
       const add = row.add || false
@@ -203,7 +204,8 @@ export default {
       console.log(this.hasChoosedProducts, 'this.hasChoosedProducts')
       this.drawer = false
       this.save({
-        tableData: []
+        tableData: [],
+        filters: {}
       })
     },
     handleCancle () {
@@ -264,6 +266,9 @@ export default {
   padding-top: 6px;
   padding-bottom: 6px;
 
+}
+.w-400 {
+  width: 400px;
 }
 
 </style>

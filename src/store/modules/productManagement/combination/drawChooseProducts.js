@@ -12,29 +12,11 @@ const model = modelExtend(
       pagination: {
         page_size: 10,
         page_index: 1
-      },
-      selectParmas: undefined,
-      form: undefined,
-      originFilters: undefined,
-      filters: undefined,
-      task_id: undefined,
-      multipleSelection: undefined,
-      tableDataMap: undefined
+      }
     }),
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
         await dispatch('query', { ...payload })
-      },
-      clear ({commit, state, dispatch}, payload) {
-        commit('save', {
-          selectParmas: undefined,
-          form: undefined,
-          originFilters: undefined,
-          filters: undefined,
-          task_id: undefined,
-          multipleSelection: undefined,
-          tableDataMap: undefined
-        })
       }
     },
     getters: {
