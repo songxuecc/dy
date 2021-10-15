@@ -22,7 +22,8 @@ const state = {
     last_sync_time: ''
   },
   isSyncing: false,
-  syncButtonText: '同步后台商品',
+  syncButtonText: '',
+  syncButtonStatus: '',
   haveSyncedOrder: false,
   syncOrderStatus: {
     last_sync_order_time: ''
@@ -66,6 +67,7 @@ const getters = {
   getLeftDays: state => state.leftDays,
   getFakeToken: state => state.fakeToken,
   getSyncStatus: state => state.syncStatus,
+  getSyncButtonStatus: state => state.syncButtonStatus,
   getSyncing: state => state.isSyncing,
   getSyncButtonText: state => state.syncButtonText,
   getSyncOrderStatus: state => state.syncOrderStatus,
@@ -79,17 +81,18 @@ const getters = {
 const actions = {
   refreshSyncButtonText ({commit, state}, payload) {
     let val = payload.syncStatus
-    let syncButtonText = ''
+    let syncButtonText = '同步后台商品'
+    console.log(val.status, 'val.status')
     if (val.status === 'ready') {
-      syncButtonText = '正在准备同步...'
+      syncButtonText = '正在准备同步后台商品...'
     } else if (val.status === 'running') {
-      syncButtonText = '同步中...(' + val.cur + '/' + val.total + ')'
+      syncButtonText = val.cur + '/' + val.total
     } else {
-      syncButtonText = '同步后台商品'
+      syncButtonText = val.last_sync_time
     }
-    console.log(syncButtonText, 'syncButtonText')
     commit('save', {
-      syncButtonText
+      syncButtonText,
+      syncButtonStatus: val.status
     })
   },
   // 同步商品
@@ -98,14 +101,14 @@ const actions = {
     let isSyncing = state.isSyncing
     if (!isAuth || isSyncing) return false
     isSyncing = true
-    let syncButtonText = '正在准备同步...'
+    let syncButtonText = '正在准备同步后台商品...'
     dispatch('requestSyncProducts', {
       sync_type: common.SyncType['all'],
       operation_type: 1
     })
-    console.log(syncButtonText, 'syncButtonText')
     commit('save', {
-      syncButtonText
+      syncButtonText,
+      syncButtonStatus: 'ready'
     })
   },
   requestToken ({commit, state}, params) {
@@ -163,6 +166,9 @@ const actions = {
         }
         if (data.sync_status) {
           commit(types.SET_SYNC_STATUS, data.sync_status)
+          dispatch('refreshSyncButtonText', {
+            syncStatus: data.sync_status
+          })
         }
         if (data.sync_order_status) {
           commit(types.SET_SYNC_ORDER_STATUS, data.sync_order_status)
