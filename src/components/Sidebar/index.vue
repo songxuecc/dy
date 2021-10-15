@@ -93,6 +93,12 @@
                 <span class="">商品源同步</span>
               </div>
            </el-menu-item>
+           <el-menu-item index="/productsManagement/combination" :disabled="!isAuth()">
+             <div slot="title" class="flex align-c">
+                <hh-icon type="iconzuheshangpinxuanzhong1" style="font-size:16px; margin-right:4px"></hh-icon>
+                <span class="">组合商品</span>
+              </div>
+           </el-menu-item>
           </el-submenu>
           <el-submenu index="3">
              <template slot="title">
@@ -149,7 +155,7 @@ export default {
     }),
     handleSelect (key, keyPath) {
       if (key === '/migrate/productList') {
-        this.reload()
+        // this.reload()
       }
     },
     openHelp () {

@@ -22,7 +22,7 @@ export default {
         this.message = '切换成功'
         this.$router.push({
           path: '/migrate/productList'
-        })
+        }).catch(() => {})
       }, e => {
         this.message = '切换失败，请重新尝试'
         this.$message.error(e.message)

@@ -637,7 +637,7 @@ export default {
             query: {
               captureId: captureId
             }
-          })
+          }).catch(() => {})
           if (this.userBindList.length) {
             this.$refs.modelCopyForm && this.$refs.modelCopyForm.resetFields && this.$refs.modelCopyForm.resetFields()
           }
@@ -710,7 +710,7 @@ export default {
           query: {
             captureId: captureId
           }
-        })
+        }).catch(() => {})
       }
     },
     uploadChange: function (file, fileList) {
@@ -814,7 +814,7 @@ export default {
         query: {
           captureId: captureId
         }
-      })
+      }).catch(() => {})
       // this.textCaptureShopUrls = url
     },
     async handleSyncProducts (id) {

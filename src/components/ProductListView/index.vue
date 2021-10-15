@@ -606,7 +606,7 @@ export default {
           self.$router.push({
             path: '/migrate/productList',
             query: params
-          })
+          }).catch(() => {})
           self.reload()
         })
       } else if ([3, 4, 8].includes(product.status)) {
@@ -659,7 +659,7 @@ export default {
         self.$router.push({
           path: '/migrate/productList',
           query: params
-        })
+        }).catch(() => {})
         self.reload()
       })
     },

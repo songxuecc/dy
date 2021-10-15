@@ -1,6 +1,7 @@
 import skuImport from './skuImport'
 import batchEdit from './batchEdit'
 import productsSync from './productsSync'
+import combination from './combination'
 
 const modules = {
   productManagement: {
@@ -8,7 +9,8 @@ const modules = {
     modules: {
       skuImport,
       batchEdit,
-      ...productsSync
+      ...productsSync,
+      ...combination
     }
   }
 }

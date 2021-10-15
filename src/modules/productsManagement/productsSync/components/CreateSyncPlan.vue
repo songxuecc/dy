@@ -338,7 +338,6 @@ export default {
     const validatePass = (rule, value, callback) => {
       if (this.form.config_json.step_stock_sync_type === 2) {
         if (!utils.isNumber(value) || (utils.isNumber(value) && value % 1) || (utils.isNumber(value) && value < 51)) {
-          console.log(value, 'value')
           callback(new Error('必须大于等于51, 小于等于100，且为整数'))
         } else {
           callback()

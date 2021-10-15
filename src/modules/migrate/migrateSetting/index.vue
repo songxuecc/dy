@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="migrateSetting">
 
-    <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}" class="tab" @tab-click="tabClick" ref="tab">
+    <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" class="tab" @tab-click="tabClick" ref="tab">
       <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
     </el-tabs>
     <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
@@ -303,7 +303,7 @@
       <div class="color-danger">注：价格、运费模版、发货模式等重要信息的填写是在商品复制后再填写。这里不用设置哦～</div>
     </div>
 
-    <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 290}px)`}">
+    <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}">
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px"
         :disabled="shouldUpdate || loadingSettings">保存设置</el-button>
       <el-link @click="gotoStartCopy" v-if="shouldUpdate || loadingSettings" :underline="false" type="primary" class="font-12 ml-5 " style="margin-top:25px">已设置，去复制商品</el-link>
@@ -462,7 +462,6 @@ export default {
   },
   created () {
     this.getSetting()
-
     function getScrollbarWidth (el) {
       el = el || document.body
       var scrollDiv = document.createElement('div')
@@ -640,39 +639,46 @@ export default {
         this.setScrollTop()
       })
     },
-    setScrollTop () {
+    setScrollTop: debounce(function () {
       const tab = this.tabs
       let maxPaddingBottom = 0
       const height =
       document.documentElement.offsetHeight || document.body.offSetHeight
       let previous = 0
       let current = previous
+      let hasEl = true
       const nextTab = tab.map((item, index) => {
         const className = item.className
         const el = document.querySelector(className)
-        const rect = el.getBoundingClientRect()
+        if (el) {
+          const rect = el.getBoundingClientRect()
       // 移动的距离 是滚动距离
       // pt的距离是 整个盒子可见部分
-        const top = rect.top
-        const elHeight = rect.height
-        const dist = 120
-        if (tab.length - 1 === index) {
-          maxPaddingBottom = height - elHeight - dist
+          const top = rect.top
+          const elHeight = rect.height
+          const dist = 120
+          if (tab.length - 1 === index) {
+            maxPaddingBottom = height - elHeight - dist
+          }
+          const result = {
+            ...item,
+            scrollTop: previous + current,
+            top
+          }
+          previous = previous + current
+          current = elHeight
+          return result
+        } else {
+          hasEl = false
         }
-        const result = {
-          ...item,
-          scrollTop: previous + current,
-          top
-        }
-        previous = previous + current
-        current = elHeight
-        return result
       })
-      this.tabs = nextTab
-      this.$nextTick(() => {
-        this.mBottom = `${maxPaddingBottom}px`
-      })
-    },
+      if (hasEl) {
+        this.tabs = nextTab
+        this.$nextTick(() => {
+          this.mBottom = `${maxPaddingBottom}px`
+        })
+      }
+    }, 300),
     tabClick (index) {
       this.unBindScroll()
       const n = this.activeTab
@@ -807,8 +813,11 @@ export default {
         this.imageBlackWords = imgBlackWords.customer
         this.customerImageBlackWords = imgBlackWords.customer
         this.defaultImageBlackWords = imgBlackWords.default
-        this.setScrollTop()
         this.loadingSettings = false
+
+        this.$nextTick(() => {
+          this.setScrollTop()
+        })
       } catch (error) {
         this.$message.error(`${error}`)
       }
