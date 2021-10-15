@@ -12,7 +12,7 @@
             <div ref="form">
               <el-form  :model="filters" label-width="60px" :inline="true" size="small" label-position="left" class="left ml-20 mt-20">
                 <el-form-item label="商品名称" >
-                  <el-input v-model="filters.keyword" class="w-400"></el-input>
+                  <el-input v-model="filters.keyword" class="w-400" clearable @clear="handleClear"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="onSubmit" size="medium" class="ml-10" :loading="loading" :disabled="loading">搜索</el-button>
@@ -169,8 +169,16 @@ export default {
       'setFilter',
       'clear'
     ]),
+    handleClear () {
+      this.filters.keyword = ''
+    },
     open () {
-      this.fetch()
+      this.fetch({
+        filters: {
+          status: 0,
+          check_status: 3
+        }
+      })
       this.drawer = true
     },
     getHeaderCellStyle ({row, column, rowIndex, columnIndex}) {
@@ -188,7 +196,11 @@ export default {
     },
     onSubmit () {
       this.setFilter({
-        filters: this.filters
+        filters: {
+          status: 0,
+          check_status: 3,
+          ...this.filters
+        }
       })
     },
     toggleRowExpansion (row) {
