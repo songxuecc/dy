@@ -1385,11 +1385,11 @@ export default {
             })
           })
           this.migrateProductList = migrateProductList
-          // if (this.productStatusSyncTimer === null) {
-          //   this.productStatusSyncTimer = setTimeout(function () {
-          //     self.getTPProductByIds()
-          //   }, 3000)
-          // }
+          if (this.productStatusSyncTimer === null) {
+            this.productStatusSyncTimer = setTimeout(function () {
+              self.getTPProductByIds()
+            }, 3000)
+          }
         },
         undefined,
         true
