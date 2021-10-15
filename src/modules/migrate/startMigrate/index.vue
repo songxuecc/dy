@@ -837,7 +837,7 @@ export default {
         this.syncText = ''
         clearTimeout(this.syncTimer)
         this.syncTimer = null
-        this.$message.success('同步成功！')
+        this.$message.success('选中店铺商品已同步成功！')
         this.getUserBindList()
       } else {
         if (data.status === 'ready') {
