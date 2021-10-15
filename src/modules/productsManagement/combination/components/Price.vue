@@ -3,14 +3,17 @@
     <div class="card">
         <h1>类目价格</h1>
          <el-form ref="form" size="mini" :model="form" label-width="100px" :rules="rules">
-            <el-form-item  label="组合商品类目:" class="item" prop="category_id" v-loading="loading">
+            <el-form-item  label="组合商品类目:" class="item" prop="category_id">
               <el-select v-model="form.category_id" @change="chooseProperties" @blur="chooseProperties(form.category_id)" placeholder="选择商品后可选择类目,请选择组合商品类目" style="width:295px;margin-right:12px" :disabled="!categoryOptions.length">
                 <el-option :label="option.category_show" :value="option.category_leaf_id" v-for="option in categoryOptions" :key="option.product_id" class="left dropdown">{{option.category_show}}</el-option>
               </el-select>
+              <i class="el-icon-loading" v-if="loading"></i>
             </el-form-item>
 
-            <el-form-item label="类目属性:" class="item" v-loading="loading">
-              <span
+            <el-form-item label="类目属性:" class="item" >
+              <i class="el-icon-loading" v-if="loading"></i>
+              <span v-else>
+                <span
                   class="underline-hover pointer font-12 primary"
                   v-if="form.category_id && propertiesChooseText"
                   @click="chooseProperties(form.category_id)"
@@ -21,6 +24,7 @@
                   @click="chooseProperties(form.category_id)"
                   >选择类目后可选择属性，请选择组合商品类目属性</span
                 >
+              </span>
             </el-form-item>
 
             <el-form-item label="发货模式:" class="item" prop="presell_type">
