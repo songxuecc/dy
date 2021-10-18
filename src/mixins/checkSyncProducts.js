@@ -24,22 +24,15 @@ const mixins = (type) => ({
       const pre = moment(syncProductsType.showTime)
       this.hide = syncProductsType.hide || false
       const current = moment(new Date())
-      // const diff = syncProductsType.showTime ? current.diff(pre, 'hours') > 24 : true
-      const diff = syncProductsType.showTime ? current.diff(pre, 'seconds') > 30 : true // 测试
+      const diff = syncProductsType.showTime ? current.diff(pre, 'hours') > 24 : true
+      // const diff = syncProductsType.showTime ? current.diff(pre, 'seconds') > 30 : true // 测试
       if (!this.hide && diff) {
         const h = this.$createElement
         this.$confirm('', {
           message: h('div', null, [
             h('div', {
-              class: 'center'
-            }, [
-              h('hh-icon', {
-                props: {
-                  type: 'iconjinggao1'
-                },
-                class: 'checkSyncProducts-icon'
-              })
-            ]),
+              class: 'checkSyncProducts-header'
+            }, '同步后台商品提醒'),
             h('div', {
               class: 'checkSyncProducts-text left'
             }, '在使用该功能前请先同步后台商品（将抖店后台商品信息更新至软件内），若已同步可忽视本提醒。'),
@@ -62,8 +55,8 @@ const mixins = (type) => ({
           cancelButtonClass: 'checkSyncProducts-cancelButtonClass',
           confirmButtonClass: 'checkSyncProducts-confirmButtonClass',
           cancelButtonText: '先不同步',
-          confirmButtonText: '开始同步后台商品',
-          showClose: false,
+          confirmButtonText: '开始同步',
+          showClose: true,
           closeOnClickModal: false
         })
           .then(_ => {

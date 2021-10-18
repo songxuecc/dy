@@ -1,4 +1,42 @@
-.checkSyncProducts-cancelButtonClass{
+.checkSyncProducts-customClass {
+  padding-bottom: 20px;
+  width: 500px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  padding-bottom: 30px;
+
+  .el-message-box__header {
+    padding-top: 0;
+  }
+
+  .el-message-box__btns {
+    text-align: center;
+    padding-top: 0;
+  }
+
+  .el-message-box__content {
+    padding-top: 18px;
+    .el-message-box__message {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 15px 0 10px;
+      text-align: center;
+    }
+
+    .el-icon-warning {
+      display: none;
+    }
+  }
+
+  .el-message-box__headerbtn {
+    z-index: 1;
+  }
+
+  .checkSyncProducts-cancelButtonClass {
     font-size: 12px;
     margin-right: 10px;
     width: 120px;
@@ -7,66 +45,84 @@
     color: #1D8FFF;
     font-size: 14px;
   }
-  
-  .checkSyncProducts-confirmButtonClass{
+
+  .checkSyncProducts-confirmButtonClass {
     font-size: 12px;
-    width: 140px;
+    width: 120px;
     padding: 12px;
     font-size: 14px;
     background: #1D8FFF;
   }
-  
+
   .checkSyncProducts-icon {
     width: 50px;
     height: 50px;
     font-size: 50px;
   }
-  
+
   .checkSyncProducts-text {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
-    color: #4E4E4E;
     line-height: 20px;
     text-align: center;
-    text-align: left;
-    margin-top: 16px;
+    margin:auto;
+    margin-top: 30px;
+    width: 391px;
+    font-size: 14px;
+    color: #4E4E4E;
+    line-height: 21px;
   }
-  
+
   .checkSyncProducts-checkbox {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #4E4E4E;
     line-height: 20px;
     text-align: center;
     text-align: left;
-    margin-top: 16px;
+    margin:auto;
+    margin-top: 14px;
     margin-bottom: 20px;
+    width: 391px;
+    display: block;
+    font-size: 12px;
+    line-height: 16px;
+
+
     .el-checkbox__label {
       font-size: 14px;
     }
   }
-  .checkSyncProducts-customClass {
-      padding-bottom: 20px;
-      .el-message-box__header {
-        padding-top: 0;
-      }
-      .el-message-box__btns {
-        text-align: center;
-      }
-      .el-message-box__content {
-        .el-message-box__message {
-          padding-left: 0;
-          padding-right: 0;
-        }
-        p {
-          font-size: 18px;
-          margin: 15px 0 10px;
-          text-align: center;
-        }
-        .el-icon-warning {
-          display: none;
-        }
-      }
+
+  .checkSyncProducts-header {
+    height: 30px;
+    font-size: 22px;
+    color: #4E4E4E;
+    line-height: 30px;
+    text-align: center;
+    font-weight: bold;
   }
+
+  .el-message-box__headerbtn {
+    .el-icon-close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      height: 24px;
+      width: 24px;
+      line-height: 24px;
+      font-size: 17px;
+      border-radius: 50%;
+      color: #fff;
+      background: #d4d4d4;
+      text-align: center;
+      font-weight: bolder;
+      z-index: 1999;
+    }
+    &:focus .el-dialog__close,
+    &:hover .el-dialog__close {
+      color: #fff;
+    }
+  }
+
+}
