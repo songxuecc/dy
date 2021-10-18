@@ -24,8 +24,8 @@ const mixins = (type) => ({
       const pre = moment(syncProductsType.showTime)
       this.hide = syncProductsType.hide || false
       const current = moment(new Date())
-      const diff = syncProductsType.showTime ? current.diff(pre, 'hours') > 24 : true
-      // const diff = syncProductsType.showTime ? current.diff(pre, 'seconds') > 10 : true //测试
+      // const diff = syncProductsType.showTime ? current.diff(pre, 'hours') > 24 : true
+      const diff = syncProductsType.showTime ? current.diff(pre, 'seconds') > 30 : true // 测试
       if (!this.hide && diff) {
         const h = this.$createElement
         this.$confirm('', {
