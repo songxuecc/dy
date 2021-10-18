@@ -14,10 +14,15 @@
       </div>
       <div class="flex align-c mb-10">
         <el-button type="primary" size="medium" @click="handleGo(undefined,2)">创建商品源同步计划</el-button>
-        <span class="fail ml-5 mt-5">商品源同步操作前，
-          <a :class="[getSyncing?'color-999 ':' bold','underline pointer bold font-12']" @click="handleSyncProducts">{{getSyncButtonText}}</a>
-          <span >&nbsp;最近同步时间 {{ getSyncStatus.last_sync_time }} </span>
-        ，待商品同步完成后再进行操作</span>
+        <span style="margin-left:5px;font-weight:normal" class="syncProducts flex align-c">
+          <span v-if="getSyncButtonStatus === 'ready'"><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先同步后台商品，正在准备同步后台商品... <i class="el-icon-loading"></i></span>
+          <span v-else-if="getSyncButtonStatus === 'running'"><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先同步后台商品，正在同步后台商品...<span class="bold">{{getSyncButtonText}}</span> <i class="el-icon-loading"></i></span>
+          <span v-else><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先<span class="underline pointer" @click="handleSyncProducts">同步后台商品</span>（最近同步时间：<span class="bold">{{getSyncButtonText}}</span>），待商品更新至最新再操作</span>
+        </span>
+        <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
+          <hh-icon type="icontishi" ></hh-icon>
+          点我查看教程视频
+        </span>
       </div>
     <el-table :data="tableData" style="width: 100%" v-loading="loading || loadingPost">
       <el-table-empty slot="empty"/>
@@ -136,7 +141,7 @@ export default {
     DrawerSyncDetail
   },
   computed: {
-    ...mapGetters(['getSyncStatus', 'getIsAuth', 'getSyncing', 'getSyncButtonText']),
+    ...mapGetters(['getSyncStatus', 'getIsAuth', 'getSyncing', 'getSyncButtonText', 'getSyncButtonStatus']),
     ...mapState('productManagement/productsSync/tableSyncRecord', [
       'tableData',
       'total',
@@ -337,6 +342,15 @@ export default {
   color: #999999;
   cursor: no-drop;
 }
+.syncProducts {
+    height: 30px;
+    background: #EAEDFA;
+    border-radius: 15px;
+    line-height: 30px;
+    font-size: 12px;
+    color: #999999;
+    padding: 0 12px;
+  }
 </style>
 <style lang="less">
 .TableSyncRecord-cancelButtonClass{
@@ -344,12 +358,17 @@ export default {
   margin-right: 10px;
   width: 120px;
   padding: 12px;
+  border-color: #1D8FFF;
+  color: #1D8FFF;
+  font-size: 14px;
 }
 
 .TableSyncRecord-confirmButtonClass{
   font-size: 12px;
-  width: 120px;
+  width: 140px;
   padding: 12px;
+  font-size: 14px;
+  background: #1D8FFF;
 }
 
 .TableSyncRecord-icon {

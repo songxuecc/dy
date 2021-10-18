@@ -5,7 +5,13 @@
   <Search />
   <h1 class="left mb-10 mt-10">导入修改文件</h1>
   <UploadFile />
-  <h1 class="left mb-10  mt-10">修改记录列表</h1>
+  <h1 class="left mb-10  mt-10 flex align-c">修改记录列表
+    <span style="margin-left:5px;font-weight:normal" class="syncProducts flex align-c">
+      <span v-if="getSyncButtonStatus === 'ready'"><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先同步后台商品，正在准备同步后台商品... <i class="el-icon-loading"></i></span>
+      <span v-else-if="getSyncButtonStatus === 'running'"><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先同步后台商品，正在同步后台商品...<span class="bold">{{getSyncButtonText}}</span> <i class="el-icon-loading"></i></span>
+      <span v-else><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先<span class="underline pointer" @click="handleSyncProducts">同步后台商品</span>（最近同步时间：<span class="bold">{{getSyncButtonText}}</span>），待商品更新至最新再操作</span>
+    </span>
+  </h1>
   <TableUploadFileRecord @onDetail="onDetail" ref="tableUploadFileRecord"/>
   <el-drawer
     :title="title"
@@ -24,17 +30,19 @@
 </template>
 
 <script>
-import {createNamespacedHelpers, mapActions, mapState} from 'vuex'
+import {createNamespacedHelpers, mapActions, mapState, mapGetters} from 'vuex'
 import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'
 import Search from './Search'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 const {
   mapMutations
 } = createNamespacedHelpers('productManagement/skuImport')
 
 export default {
+  mixins: [checkSyncProducts('skuImport')],
   data () {
     return {
       activeName: 'byTitle',
@@ -53,6 +61,8 @@ export default {
   },
   computed: {
     ...mapState('productManagement/skuImport', ['productSkuExcelFilters']),
+    ...mapGetters(['getSyncStatus', 'getIsAuth', 'getSyncing', 'getSyncButtonText', 'getSyncButtonStatus']),
+
     title () {
       if (this.productSkuExcelFilters.file_type === 2 || this.productSkuExcelFilters.file_type === 3) return '商品修改详情'
       return 'sku修改详情'
@@ -61,6 +71,7 @@ export default {
   updated () { },
   methods: {
     ...mapMutations(['save']),
+    ...mapActions(['handleSyncProducts']),
     ...mapActions([
       'setIsShowFloatView'
     ]),
@@ -97,6 +108,15 @@ export default {
 </style>
 
 <style lang='less' scoped>
+.syncProducts {
+    height: 30px;
+    background: #EAEDFA;
+    border-radius: 15px;
+    line-height: 30px;
+    font-size: 12px;
+    color: #999999;
+    padding: 0 12px;
+  }
 //@import url(); 引入公共css类
 .closeBtn {
   position: fixed;

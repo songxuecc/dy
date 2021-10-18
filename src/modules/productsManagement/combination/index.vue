@@ -37,12 +37,15 @@ import PaySet from './components/PaySet'
 import ServiceComponent from './components/Service'
 import BasicInfo from './components/BasicInfo'
 import servises from '@servises'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
+  mixins: [checkSyncProducts('combination')],
   data () {
     return {
       activeTab: '',
       loading: false,
+      checked: false,
       tabs: [
         { label: '基础信息', className: '.combination-basicInfo' },
         { label: '规格', className: '.combination-specify' },
@@ -56,7 +59,6 @@ export default {
   computed: {},
   watch: {},
   created () {
-
   },
   mounted () {
     this.setScrollTop()
@@ -80,6 +82,7 @@ export default {
     BasicInfo
   },
   methods: {
+
     refresh () {
       this.setScrollTop()
     },
@@ -218,41 +221,4 @@ export default {
 
 <style lang='less' scoped>
     @import '~./index.less';
-</style>
-
-<style lang="less">
-.combination-cancelButtonClass{
-    padding: 10px;
-    font-size: 12px;
-    margin-right: 10px;
-    width: 100px;
-
-}
-
-.combination-confirmButtonClass{
-    padding: 10px;
-    font-size: 12px;
-    width: 100px;
-}
-
-.combination-customClass {
-  padding-bottom: 25px;
-  .el-message-box__btns {
-    text-align: center;
-  }
-  .el-message-box__content {
-    .el-message-box__message {
-      padding-left: 0;
-    }
-    p {
-      font-size: 18px;
-      margin: 15px 0 10px;
-      text-align: center;
-    }
-    .el-icon-warning {
-      display: none;
-    }
-  }
-}
-
 </style>

@@ -11,8 +11,10 @@
 import TableSyncRecord from './components/TableSyncRecord'
 import CreateSyncPlan from './components/CreateSyncPlan'
 import TableProductList from './components/TableProductList'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
+  mixins: [checkSyncProducts('productsSync')],
   data () {
     return {
       step: 1,
