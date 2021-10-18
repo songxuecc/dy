@@ -37,13 +37,15 @@ import PaySet from './components/PaySet'
 import ServiceComponent from './components/Service'
 import BasicInfo from './components/BasicInfo'
 import servises from '@servises'
-import moment from 'moment'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
+  mixins: [checkSyncProducts('combination')],
   data () {
     return {
       activeTab: '',
       loading: false,
+      checked: false,
       tabs: [
         { label: '基础信息', className: '.combination-basicInfo' },
         { label: '规格', className: '.combination-specify' },
@@ -57,45 +59,6 @@ export default {
   computed: {},
   watch: {},
   created () {
-    const pre = moment(localStorage.getItem('combination-syncProductsTime') || new Date())
-    const current = moment(new Date())
-    const diff = current.diff(pre, 'hours')
-
-    // if (diff > 24) {
-    if (!diff) {
-      const h = this.$createElement
-      this.$confirm('', {
-        message: h('div', null, [
-          h('div', {
-            class: 'center'
-          }, [
-            h('hh-icon', {
-              props: {
-                type: 'iconjinggao1'
-              },
-              class: 'TableSepcify-icon'
-            })
-          ]),
-          h('div', {
-            class: 'TableSepcify-text'
-          }, '在使用该功能前请先同步后台商品（将抖店后台商品信息更新至软件内），若已同步可忽视本提醒。'),
-          h('div', {
-            class: 'TableSepcify-text'
-          }, '在使用该功能前请先同步后台商品（将抖店后台商品信息更新至软件内），若已同步可忽视本提醒。')
-        ]),
-        type: 'warning',
-        customClass: 'TableSepcify-customClass',
-        cancelButtonClass: 'TableSepcify-cancelButtonClass',
-        confirmButtonClass: 'TableSepcify-confirmButtonClass',
-        showClose: false
-      })
-        .then(_ => {
-        })
-        .catch(_ => {
-          return false
-        })
-    }
-    console.log(diff)
   },
   mounted () {
     this.setScrollTop()
@@ -119,6 +82,7 @@ export default {
     BasicInfo
   },
   methods: {
+
     refresh () {
       this.setScrollTop()
     },
@@ -257,103 +221,4 @@ export default {
 
 <style lang='less' scoped>
     @import '~./index.less';
-</style>
-
-<style lang="less">
-.combination-cancelButtonClass{
-    padding: 10px;
-    font-size: 12px;
-    margin-right: 10px;
-    width: 100px;
-
-}
-
-.combination-confirmButtonClass{
-    padding: 10px;
-    font-size: 12px;
-    width: 100px;
-}
-
-.combination-customClass {
-  padding-bottom: 25px;
-  .el-message-box__btns {
-    text-align: center;
-  }
-  .el-message-box__content {
-    .el-message-box__message {
-      padding-left: 0;
-    }
-    p {
-      font-size: 18px;
-      margin: 15px 0 10px;
-      text-align: center;
-    }
-    .el-icon-warning {
-      display: none;
-    }
-  }
-}
-
-</style>
-
-<style lang="less">
-.TableSepcify-cancelButtonClass{
-  font-size: 12px;
-  margin-right: 10px;
-  width: 120px;
-  padding: 12px;
-  border-color: #1D8FFF;
-  color: #1D8FFF;
-  font-size: 14px;
-}
-
-.TableSepcify-confirmButtonClass{
-  font-size: 12px;
-  width: 140px;
-  padding: 12px;
-  font-size: 14px;
-  background: #1D8FFF;
-}
-
-.TableSepcify-icon {
-  width: 50px;
-  height: 50px;
-  font-size: 50px;
-}
-
-.TableSepcify-text {
-  width: 364px;
-  height: 20px;
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #4E4E4E;
-  line-height: 20px;
-  text-align: center;
-  margin-top: 16px;
-  margin-bottom: 20px;
-}
-
-.TableSepcify-customClass {
-    padding-bottom: 20px;
-    .el-message-box__header {
-      padding-top: 0;
-    }
-    .el-message-box__btns {
-      text-align: center;
-    }
-    .el-message-box__content {
-      .el-message-box__message {
-        padding-left: 0;
-      }
-      p {
-        font-size: 18px;
-        margin: 15px 0 10px;
-        text-align: center;
-      }
-      .el-icon-warning {
-        display: none;
-      }
-    }
-}
 </style>

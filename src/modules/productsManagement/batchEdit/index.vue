@@ -213,8 +213,10 @@ import TableLimitCount from '@productsManagement/batchEdit/components/TableLimit
 import TableWeight from '@productsManagement/batchEdit/components/TableWeight'
 import TableRemark from '@productsManagement/batchEdit/components/TableRemark'
 import TableAfterSalesService from '@productsManagement/batchEdit/components/TableAfterSalesService'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
+  mixins: [checkSyncProducts('batchEdit')],
   components: {
     Title,
     Shelves,

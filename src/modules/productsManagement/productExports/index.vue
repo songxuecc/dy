@@ -109,8 +109,10 @@ import { cityOptions1, cityOptions2, exportFieldList, status } from './options'
 import Api from '@/api/apis'
 import utils from '@/common/utils.js'
 import { mapActions, mapGetters } from 'vuex'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
+  mixins: [checkSyncProducts('productExports')],
   data () {
     return {
       checkAll1: false,

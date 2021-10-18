@@ -35,12 +35,14 @@ import UploadFile from './UploadFile'
 import TableUploadFileRecord from './TableUploadFileRecord'
 import DetailSkuEdit from './DetailSkuEdit'
 import Search from './Search'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 const {
   mapMutations
 } = createNamespacedHelpers('productManagement/skuImport')
 
 export default {
+  mixins: [checkSyncProducts('skuImport')],
   data () {
     return {
       activeName: 'byTitle',

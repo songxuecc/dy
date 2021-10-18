@@ -196,9 +196,13 @@ import productOptimizeView from '@/components/ProductOptimizeView.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
-  mixins: [request],
+  mixins: [
+    request,
+    checkSyncProducts('productsManagement')
+  ],
   props: {
     dyProductList: Array,
     isProductEnableEdit: {
