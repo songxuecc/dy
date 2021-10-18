@@ -593,12 +593,17 @@ export default {
   margin-right: 10px;
   width: 120px;
   padding: 12px;
+  border-color: #1D8FFF;
+  color: #1D8FFF;
+  font-size: 14px;
 }
 
 .TableSyncRecord-confirmButtonClass{
   font-size: 12px;
-  width: 120px;
+  width: 140px;
   padding: 12px;
+  font-size: 14px;
+  background: #1D8FFF;
 }
 
 .TableSyncRecord-icon {
