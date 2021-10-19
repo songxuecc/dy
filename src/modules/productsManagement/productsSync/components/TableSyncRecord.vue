@@ -292,7 +292,8 @@ export default {
     // 开始检测
     onStartSync: debounce(function (row) {
       const parmas = {
-        task_id: row.task_id
+        task_id: row.task_id,
+        from: 'index'
       }
       this.loadingPost = true
       services.productSourceSyncDetailRun(parmas)
