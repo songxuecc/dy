@@ -27,7 +27,7 @@
             </el-table-column>
             <el-table-column type="selection" class-name="ProductEditNewView-select">
             </el-table-column>
-            <el-table-column label="图片" width="80" align="center">
+            <el-table-column label="图片" width="80" align="center" class-name="ProductEditNewView-img">
                 <template slot-scope="scope">
                   <el-badge class="item" :value="Object.values(scope.row.check_error_msg_static).map(item => item.num).reduce((total, num) => total + num)"
                             v-if="scope.row.check_error_msg_static && Object.keys(scope.row.check_error_msg_static).length > 0">
@@ -132,12 +132,14 @@
                   </el-tooltip>
                   </span>
 
-                  <SkuSelect
+                  <SkuTable @change="handleSkuTable" ref="SkuTable"/>
+
+                  <!-- <SkuSelect
                     :specifications="specifications"
-                    @change="onSkuSelectChange"/>
+                    @change="onSkuSelectChange"/> -->
                             <!-- :span-method="objectSpanMethod" -->
 
-                  <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
+                  <!-- <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
                             :cell-class-name="cellClassName"
                             row-class-name="rowClass"
                             :span-method="objectSpanMethod"
@@ -160,9 +162,7 @@
                                               <el-checkbox v-model="ele.checked" @change="onSkuFilter" style="margin-right: 0">
                                                 <span v-if="specifications.length === 1">{{ele.value}}</span>
                                                 <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
-                                                          :class="['input-text-left']">
-                                                  <!-- <span slot="append" class="hint">{{ ele.value.length }} / 18</span> -->
-                                                </el-input>
+                                                          :class="['input-text-left']">  </el-input>
                                               </el-checkbox>
                                               <el-button v-if="item.specificationValueList.length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
                                                          @click="onDeleteSku(item.id,vid)"
@@ -177,12 +177,7 @@
                           </template>
                           <template slot-scope="scope" >
                             <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;" v-if="scope.row.property_list[index]">{{scope.row.property_list[index].value}}</span>
-                            <!-- <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;"
-                            v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
-                            <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
-                                      :class="['input-text-left']"> -->
-                              <!-- <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span> -->
-                            <!-- </el-input> -->
+
                           </template>
                       </el-table-column>
                       <el-table-column key="2" width="130">
@@ -193,10 +188,6 @@
     justify-content: center;"> <hh-icon type="iconbianji" style="font-size:12px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
                           </template>
                           <template slot-scope="scope">
-                              <!-- <el-toolTip :content="scope.row.quantityBorder ? '只可以输入0-1000000的数字':''" effect="dark" placement="top">
-                                <el-input v-model.number="scope.row.quantity" size="mini" type="textarea"  class="my-textarea" :class="[scope.row.quantityBorder ?'red':'']"
-                              @input="getStyle($event,scope.row,'quantityBorder','quantity')"></el-input>
-                              </el-toolTip> -->
 
                               <el-tooltip effect="light" placement="top" v-if="scope.row.quantityBorder" popper-class="ProductEditNewView-popper-class">
                                   <div slot="content" >
@@ -227,7 +218,7 @@
                                   <div slot="content" >
                                     <ul style="padding: 0; margin: 0;" class="fail">只可以输入0.01-9999999.99 的数字,最多保留2位小数</ul>
                                   </div>
-                                  <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
+                                  <el-input @input="setPromp" v-model="scope.row.promo_price" :value="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
                               </el-tooltip>
                               <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini"  type="textarea"  class="my-textarea"></el-input>
                           </template>
@@ -259,7 +250,6 @@
                                 :preview-src-list="[scope.row.img]">
                               </el-image>
                             </div>
-
                           </template>
                       </el-table-column>
                       <el-table-column key="7" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
@@ -267,7 +257,7 @@
                             <el-button size="mini" @click="onDeleteSingleSku(scope.$index)" type="danger" plain>删除</el-button>
                         </template>
                       </el-table-column>
-                  </el-table>
+                  </el-table> -->
                   <div class="common-bottom">
                 </div>
               </el-tab-pane>
@@ -527,6 +517,8 @@ import PropertySet from './PropertySet.vue'
 import SkuSelect from './SkuSelect.vue'
 import PictureQualification from './PictureQualification.vue'
 import xorWith from 'lodash/xorWith'
+
+import SkuTable from './SkuTable'
 export default {
   inject: ['reload'],
   mixins: [request, skuHandlerProductNewEdit],
@@ -535,7 +527,8 @@ export default {
     picturesUploadView,
     PropertySet,
     SkuSelect,
-    PictureQualification
+    PictureQualification,
+    SkuTable
   },
   props: {
     belongType: {
@@ -553,7 +546,7 @@ export default {
       batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList', 'sku_json'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -704,6 +697,8 @@ export default {
     },
     onSkuSelectChange (specifications) {
       this.$set(this, 'specifications', specifications)
+      console.log(specifications, 'specifications')
+      console.log(this.skuShowList, 'this.skuShowList')
       this.handleSpecifications(specifications)
       this.product.model.skuShowList = this.skuShowList
       this.product.model.specifications = specifications
@@ -728,7 +723,8 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications'
+          'skuMap', 'skuShowList', 'sku_json',
+          'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -747,6 +743,7 @@ export default {
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         this.skuShowList = this.product.model.skuShowList
+        this.skuJson = this.product.model.sku_json
         this.specifications = this.product.model.specifications
         this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
         // this.$refs['bannerPicListView'].curPictureList = this.product.model.bannerPicUrlList
@@ -829,8 +826,11 @@ export default {
         this.descPicUrlList = data.desc_json
         this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
-        this.initSku(data.sku_json, data.tp_id)
-        this.updateIsSingleSku()
+
+        // this.initSku(data.sku_json, data.tp_id)
+        // this.updateIsSingleSku()
+        // sku 数据
+        this.product.assign({sku_json: data.sku_json})
         this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
         this.product.assign({bannerPicUrlList: data.banner_json})
         this.product.assign({descPicUrlList: data.desc_json})
@@ -857,8 +857,12 @@ export default {
         this.sortSkuKeys = this.product.model.sortSkuKeys
         this.specifications = this.product.model.specifications
         this.qualityList = this.product.model.quality_list
+        // this.skuJson = this.product.model.sku_json
+
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
+        this.$refs.SkuTable && this.$refs.SkuTable.init(this.product.model.sku_json)
+        console.log('sku 数据')
 
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
@@ -1721,6 +1725,9 @@ export default {
         this.stockEditError = false
       }
     },
+    setPromp (number, row, borderKey, key) {
+      // this.$set(row,'promo_price',)
+    },
     getPriceStyle (number, row, borderKey, key) {
       if (number > 9999999.99 || number < 0.01) {
         this.$set(row, borderKey, true)
@@ -1744,6 +1751,10 @@ export default {
     },
     handlePictureQualificationChange (data) {
       Object.assign(this.product.model, {quality_list: data})
+    },
+
+    handleSkuTable (data) {
+      console.log(data, 'handleSkuTable')
     },
     objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
       const end = this.specifications.length + 3
@@ -1837,35 +1848,40 @@ export default {
 /deep/ .ProductEditNewView-select{
   text-align: center;
 }
+/deep/  .ProductEditNewView-img {
+  .cell {
+    text-overflow: clip;
+  }
+}
   /deep/ .el-tabs__content {
     height: 100%;
     overflow-y: auto;
   }
-  /deep/ .el-table__body tr.current-row>td {
-    background-color: rgb(179, 216, 255);
-  }
-  /deep/ .cell {
-    overflow: unset;
-    height: 100%;
-    width: 100%;
-    padding: 0 !important;
-    line-height: 16px;
-  }
-  /deep/ .cell-tight {
-    .cell {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-  /deep/ .rowClass {
+  // /deep/ .el-table__body tr.current-row>td {
+  //   background-color: rgb(179, 216, 255);
+  // }
+  // /deep/ .cell {
+  //   overflow: unset;
+  //   height: 100%;
+  //   width: 100%;
+  //   padding: 0 !important;
+  //   line-height: 16px;
+  // }
+  // /deep/ .cell-tight {
+  //   .cell {
+  //     display: flex;
+  //     justify-content: center;
+  //     align-items: center;
+  //   }
+  // }
+  // /deep/ .rowClass {
 
-    td {
-      padding: 0;
-      height: 59px;
-    }
+  //   td {
+  //     padding: 0;
+  //     height: 59px;
+  //   }
 
-  }
+  // }
   .preview {
     position: relative;
     width: 50px;
