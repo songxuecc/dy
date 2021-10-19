@@ -86,12 +86,12 @@ export default {
 }
 
 @media screen and (min-width:1680px) and (max-width:1920px){
-  .img0 {
-    background-image: url('../images/banner1-1680.png');
-    background-size: cover;
-    }
+  // .img0 {
+  //   background-image: url('../images/banner1-1680.png');
+  //   background-size: cover;
+  //   }
 
-    .img1 {
+    .img0 {
       background-image: url('../images/banner2-1680.png');
       background-size: cover;
     }
