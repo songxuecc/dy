@@ -72,7 +72,9 @@
                         <p  v-if="!syncText" v-loading="syncLoading" @click="handleSyncProducts(target_user_id)">
                           <span class="fail"><hh-icon type="iconjingshi1"></hh-icon>复制前需进行店铺数据同步，</span> <span class="primary">点击开始同步</span>
                         </p>
-                        <p class="primary" v-if="syncText" v-loading="syncLoading"  :style="syncText && syncText.includes('同步中')? '':''">{{syncText}}</p>
+                        <p class="primary" v-if="syncText" v-loading="syncLoading"  :style="syncText && syncText.includes('同步中')? '':''">{{syncText}}
+                          <span v-if="syncText === '同步中'"><i class="el-icon-loading"></i></span>
+                        </p>
                       </div>
                   </div>
                 </div>
@@ -221,7 +223,7 @@ export default {
       this.syncText = ''
       clearTimeout(this.syncTimer)
       this.syncTimer = null
-      this.getSyncStatus(this.target_user_id)
+      // this.getSyncStatus(this.target_user_id)
     }
 
     // 点击其他区域时, 隐藏店铺复制的 列表记录
@@ -296,7 +298,7 @@ export default {
         this.syncText = ''
         clearTimeout(this.syncTimer)
         this.syncTimer = null
-        this.getSyncStatus(newVal)
+        // this.getSyncStatus(newVal)
         const bandShopTip = this.userBindList.find(item => this.target_user_id === item.user_id)
         this.bandShopTip = bandShopTip
         const children = (bandShopTip.first_category_list || []).map(item => {
@@ -832,7 +834,6 @@ export default {
         target_user_id: id
       })
       this.syncLoading = false
-      console.log(data.status, id, data.status === 'complete', 'data.status')
       if (data.status === 'complete') {
         this.syncText = ''
         clearTimeout(this.syncTimer)
