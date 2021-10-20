@@ -1,10 +1,9 @@
 <!--  -->
 <template>
     <div class="SkuTable">
-
-    <div @click="getForm">kjhkjhkj</div>
     <SkuSelect
-        :specifications="specifications"
+        ref="SkuSelect"
+        :specifications="spec_list"
         @change="onSkuSelectChange"/>
         <el-form :rules="rules" ref="form" :model="tableData" size="small">
             <el-table
@@ -12,58 +11,70 @@
             :span-method="spanMethod"
             cell-class-name="cell-class-name"
             style="width: 100%">
+            <el-table-empty slot="empty"/>
             <el-table-column
                 v-for="(spec, index) in  spec_list"
+                fixed
                 :key="index"
-                prop="date"
                 :label="spec.name"
-                width="180">
+                width="150">
                 <template slot-scope="scope">
                     <span >{{getRowData(scope.row,index)}}</span>
                 </template>
             </el-table-column>
             <el-table-column
-                prop="name"
+                prop="quantity"
                 label="总库存"
-                width="180">
+                width="130">
                 <template slot-scope="scope">
                     <el-form-item  :prop="`[${scope.row.index}].quantity`">
-                        <el-input v-model="scope.row.quantity" placeholder="请输入内容"></el-input>
+                        <el-input v-model="scope.row.quantity" placeholder="请输入"></el-input>
                     </el-form-item>
                 </template>
             </el-table-column>
             <el-table-column
                 prop="address"
-                label="价格">
+                label="价格"
+                width="130">
                 <template slot-scope="scope">
-                    <!-- <div class="relative"> -->
                     <el-form-item  class="relative" :prop="`[${scope.row.index}].price`">
                         <span class="unit">¥</span>
-                        <el-input class="price" v-model="scope.row.price" placeholder="请输入内容"></el-input>
+                        <el-input class="price" v-model="scope.row.price" placeholder="请输入"></el-input>
                     </el-form-item>
                 </template>
             </el-table-column>
             <el-table-column
                 prop="address"
-                label="商品编码">
+                label="商品编码"
+                >
                 <template slot-scope="scope">
                     <el-form-item  :prop="`[${scope.row.index}].code`">
-                        <el-input v-model="scope.row.code" placeholder="请输入内容"></el-input>
+                        <el-input v-model="scope.row.code" placeholder="请输入"></el-input>
                     </el-form-item>
                 </template>
             </el-table-column>
             <el-table-column
                 prop="address"
-                label="预览图">
+                label="预览图"
+                width="90"
+                align="center" >
                 <template slot-scope="scope">
-                    <div class="preview" style="padding:4px" v-if="scope.row.img">
-                        <el-image
+                    <div class="preview imgWrapper" style="padding:4px" v-if="scope.row.img">
+                      <el-popover
+                        placement="left"
+                        width="270"
+                        trigger="hover">
+                        <img :src="scope.row.img" style="width: 250px;"/>
+                        <div
+                          slot="reference">
+                          <el-image
                             slot="reference"
                             style="width: 40px; height: 40px"
                             class="pointer"
-                            :src="scope.row.img"
-                            :preview-src-list="[scope.row.img]">
-                            </el-image>
+                            :src="scope.row.img">
+                          </el-image>
+                        </div>
+                        </el-popover>
                     </div>
                 </template>
             </el-table-column>
@@ -74,11 +85,14 @@
 
 <script>
 import utils from '@/common/utils'
-
+import SkuSelect from './SkuSelect'
 export default {
   name: 'component_name',
   props: {
     sku_json: Object
+  },
+  components: {
+    SkuSelect
   },
   data () {
     return {
@@ -95,7 +109,8 @@ export default {
       this.tableData.forEach((item, index) => {
         const key = `[${index}].price`
         priceRules[key] = [
-          { required: true, message: '请选择商品', trigger: ['blur', 'change'] }
+          { required: true, message: '请输入价格', trigger: ['blur', 'change'] }
+          // { required: true, message: '请输入0.01到9999999.99的数字，最多保留2位小数', trigger: ['blur', 'change'] }
         ]
       })
       return {
@@ -108,45 +123,54 @@ export default {
       this.spec_list = skuJson.spec_list
       this.spec_price_list = skuJson.spec_price_list
       const tableData = []
-      const specData = this.initTableData(skuJson.spec_list)
+      const specData = this.initTableData(this.spec_list)
+      console.log(specData)
+      console.log(skuJson.spec_list)
+      let recordFirstPrice = false
       specData.forEach((spec, index) => {
         let matchSpecData = {}
-        skuJson.spec_price_list.forEach((data) => {
+        this.spec_price_list.forEach((data, index) => {
           const dataSet = new Set(data.spec_detail_id_list)
           const specSet = new Set(spec)
-          const minus = [...dataSet].filter(x => !specSet.has(x))
-          if (!minus.length) {
+          const isEqual = [...dataSet].every(x => specSet.has(x))
+          if (isEqual) {
             matchSpecData = data
+            matchSpecData.price = utils.fenToYuan(matchSpecData.price)
+            if (!recordFirstPrice) {
+              recordFirstPrice = matchSpecData.price
+            }
+          } else {
+            // 当用户抓取的商品缺少sku时，库存=0，价格取第一个sku价格（库存既然是0了所以价格是多少不重要，只要不是0就行）。从而解决价格=0的问题
+            matchSpecData.price = recordFirstPrice
+            matchSpecData.quantity = 0
           }
         })
-        matchSpecData.price = utils.fenToYuan(matchSpecData.price)
+
         matchSpecData.index = index
         tableData.push(matchSpecData)
       })
       this.tableData = tableData
       this.originTableData = tableData
+      console.log(tableData, 'tableData')
+      this.$nextTick(() => {
+        this.$refs.SkuSelect && this.$refs.SkuSelect.init(skuJson.spec_list)
+      })
     },
     initTableData (list) {
-        // 获取阶乘后拼接完整的规格列表
+      // 获取阶乘后拼接完整的规格列表
       let specList = [...list]
-      let index = 0
-      let result = []
+      let result = [[]]
       while (specList.length) {
-        const current = specList.pop()
-        let originSpecs = []
-        current.value_list.forEach((item) => {
-          if (!index) {
-            originSpecs.push([item.spec_detail_id])
-          } else {
-            result.forEach(specs => {
-              const nextSpecs = [...specs]
-              nextSpecs.push(item.spec_detail_id)
-              originSpecs.push(nextSpecs)
-            })
-          }
+        const currentData = specList.shift()
+        let originResult = []
+        result.forEach((r = []) => {
+          currentData.value_list.forEach(spec => {
+            const nextSpecs = [...r]
+            nextSpecs.push(spec.spec_detail_id)
+            originResult.push(nextSpecs)
+          })
         })
-        index++
-        result = originSpecs
+        result = originResult
       }
       return result
     },
@@ -159,13 +183,43 @@ export default {
       const specList = this.spec_list
       let text = ''
       specList.forEach(spec => {
-        spec.value_list.forEach(value => {
-          if (value.spec_detail_id === row.spec_detail_id_list[index]) {
+        (spec.value_list || []).forEach(value => {
+          if (row.spec_detail_id_list && row.spec_detail_id_list[index] && value.spec_detail_id === row.spec_detail_id_list[index]) {
             text = value.name
           }
         })
       })
       return text
+    },
+    // 格式化数据
+    onSkuSelectChange (specifications, type) {
+      // 当用户删除sku时，剩下的sku原本是多少价格、库存就展示多少价格、库存；
+      // 当用户修改sku名称时，价格不变；
+      // 当用户新增sku时，价格、库存为空，用户点击【保存编辑】需toast提示用户填写价格、库存，若不填写则无法保存
+      const specData = this.initTableData(specifications)
+      const tableData = []
+      specData.forEach((spec, index) => {
+        let matchSpecData = {}
+        this.tableData.forEach((data) => {
+          const dataSet = new Set(data.spec_detail_id_list)
+          const specSet = new Set(spec)
+          // 元数据内规格包含 新的规格 获取原始数据
+          const minus = [...dataSet].filter(x => !specSet.has(x))
+          if (!minus.length) {
+            matchSpecData = data
+          }
+        })
+        // 将元数据规格更新为新的规格
+        matchSpecData.spec_detail_id_list = spec
+        matchSpecData.price = typeof matchSpecData.price !== 'undefined' ? matchSpecData.price : ''
+        matchSpecData.quantity = typeof matchSpecData.quantity !== 'undefined' ? matchSpecData.quantity : ''
+        matchSpecData.index = index
+        tableData.push(matchSpecData)
+      })
+      this.$nextTick(() => {
+        this.tableData = tableData
+        this.spec_list = specifications
+      })
     },
     spanMethod ({ row, column, rowIndex, columnIndex }) {
       const end = this.spec_list.length + 3
@@ -248,12 +302,6 @@ export default {
         rowspan: 1,
         colspan: 1
       }
-    },
-    onSkuSelectChange (specifications) {
-      this.$set(this, 'specifications', specifications)
-      this.handleSpecifications(specifications)
-      this.product.model.skuShowList = this.skuShowList
-      this.product.model.specifications = specifications
     }
   }
 }
