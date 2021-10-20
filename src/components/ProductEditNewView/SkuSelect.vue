@@ -1,7 +1,7 @@
 <!--  -->
 <template>
-  <div>
-    <el-form size="mini" :inline="true" :rules="rules" :model="specifications">
+  <div >
+    <el-form size="mini" :inline="true" :rules="rules" :model="specifications" style="padding-left:15px">
     <div
       class="left"
       style="
@@ -9,7 +9,7 @@
         padding: 16px 12px;
         margin-right: 30px;
         border-radius: 4px;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
       "
       v-for="(specification, index) in specifications"
       :key="specification.spec_id"
@@ -197,7 +197,7 @@
       </div>
     </div>
 
-    <div class="left mt-10 mb-10" v-if="showAddSpecifications">
+    <div class="left mb-10" v-if="showAddSpecifications">
       <el-button
         type="primary"
         icon="el-icon-plus"

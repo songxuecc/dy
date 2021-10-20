@@ -1,11 +1,49 @@
 <!--  -->
 <template>
-    <div class="SkuTable">
+    <div class="SkuTable left">
+    <h1 class="mb-10">商品规格</h1>
     <SkuSelect
-        ref="SkuSelect"
-        :specifications="spec_list"
-        @change="onSkuSelectChange"/>
-        <el-form :rules="rules" ref="form" :model="tableData" size="small">
+      ref="SkuSelect"
+      :specifications="spec_list"
+      @change="onSkuSelectChange"/>
+    <h1 class="mb-10" style="margin-top:20px">批量设置</h1>
+    <el-form class="mb-10 flex wrap" style="padding-left:15px" size="small" :model="batchEditForm">
+      <el-form-item>
+        <el-select
+          v-model="batchEditForm[spec.spec_id]"
+          placeholder="请选择"
+          v-for="(spec, index) in  spec_list"
+          :key="index"
+          style="width:130px"
+          class="mr-5">
+          <el-option
+            :label="`全部${spec.name}`"
+            :value="-1">
+          </el-option>
+          <el-option
+            v-for="item in spec.value_list"
+            :key="item.spec_detail_id"
+            :label="item.name"
+            :value="item.spec_detail_id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.price" placeholder="价格"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.quantity" placeholder="库存"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.code" placeholder="编码"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="medeium" type="primary" plain style="width:80px;height:32px;padding:0" @click="handleBatchEdit">设置</el-button>
+      </el-form-item>
+
+    </el-form>
+    <h1 class="mb-10" style="margin-top:20px">价格与库存</h1>
+        <el-form :rules="rules" ref="form" :model="tableData" size="small" style="padding-left:15px">
             <el-table
             :data="tableData"
             :span-method="spanMethod"
@@ -99,7 +137,10 @@ export default {
       specifications: [],
       spec_list: [],
       spec_price_list: [],
-      tableData: []
+      tableData: [],
+      batchEditForm: {
+
+      }
     }
   },
   computed: {
@@ -220,6 +261,10 @@ export default {
         this.tableData = tableData
         this.spec_list = specifications
       })
+    },
+    // 批量设置
+    handleBatchEdit () {
+      console.log(this.batchEditForm, '批量设置')
     },
     spanMethod ({ row, column, rowIndex, columnIndex }) {
       const end = this.spec_list.length + 3
