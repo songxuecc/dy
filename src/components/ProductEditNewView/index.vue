@@ -699,10 +699,28 @@ export default {
         this.descPicUrlList = data.desc_json
         this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
+
         // 价格转换
         data.sku_json.spec_price_list.forEach(item => {
           item.promo_price = utils.fenToYuan(item.promo_price)
         })
+        // 默认规格初始化
+        if (!data.sku_json.spec_list.length) {
+          const defaultValue = {
+            name: '默认名',
+            spec_id: 'default',
+            value_list: [
+              {
+                name: '默认值',
+                spec_detail_id: 'default:1'
+              }
+            ]
+          }
+          data.sku_json.spec_list = [defaultValue]
+          data.sku_json.spec_price_list.forEach(item => {
+            item.spec_detail_id_list = ['default:1']
+          })
+        }
         // sku 数据
         this.product.assign({sku_json: data.sku_json})
         this.product.assign({bannerPicUrlList: data.banner_json})
@@ -1536,7 +1554,6 @@ export default {
       }
     },
     handleSelectionChange (selection) {
-      console.log('handleSelectionChange', 'handleSelectionChange')
       this.selectedProductIds = []
       for (let i in selection) {
         this.selectedProductIds.push(selection[i].tp_product_id)

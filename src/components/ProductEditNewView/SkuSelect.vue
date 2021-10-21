@@ -27,6 +27,7 @@
             </el-form-item>
               <el-checkbox
                 v-model="specification.addSkuImage"
+                @change="handleChangeAddImage($event,specification)"
                 size="mini"
                 v-if="index === 0"
                 >添加规格图片
@@ -484,14 +485,15 @@ export default {
         })
         .catch(() => {})
     },
+    handleChangeAddImage (value) {
+      this.$emit('change', this.specifications, 'edit')
+    },
     handleChangeSpecificationValues (value) {
-      console.log(value, 'handleChangeSpecifications')
       // 规格值不能重复'
       if (value) this.$emit('change', this.specifications, 'edit')
     },
     // 修改规格
     handleChangeSpecifications (value, specification) {
-      console.log('handleChangeSpecifications')
       // 规格值不能重复'
       if (specification.value_list.length) this.$emit('change', this.specifications, 'edit')
     },
