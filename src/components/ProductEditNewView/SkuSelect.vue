@@ -19,7 +19,11 @@
         <div class="flex justify-b mb-16 ">
           <span style="line-height:29px">
             <el-form-item  :prop="`[${index}].name`">
-              <el-input v-model="specification.name" style="width:200px" placeholder="请填写规格名字"></el-input>
+              <el-input
+                v-model="specification.name"
+                style="width:200px"
+                placeholder="请填写规格名字"
+                @input="handleChangeSpecifications($event,specification)"></el-input>
             </el-form-item>
               <el-checkbox
                 v-model="specification.addSkuImage"
@@ -38,7 +42,7 @@
         </div>
 
         <div class="flex justify-b mb-5">
-          <span>规格值(已选7)</span>
+          <span>规格值(已选{{specification.value_list.length}})</span>
           <span
               :class="[ true > 1 ? 'color-primary' : 'color-767989', 'font-12', 'pointer', ]"
               @click="handleSortAddSpecificationValue(index, specification)"
@@ -62,6 +66,7 @@
                 <el-form-item :prop="`[${index}].value_list[${idx}].name`">
                   <el-input
                     v-model="specificationValue.name"
+                    @input="handleChangeSpecificationValues"
                     size="mini"
                     placeholder="请填写规格值"
                   ></el-input>
@@ -123,7 +128,7 @@
                       width="270"
                       popper-class="SkuSelect-popper-class"
                       trigger="hover">
-                      <img :src="specificationValue.image" style="width: 250px;"/>
+                      <img :src="specificationValue.image" style="width: 270px;"/>
                       <div
                         slot="reference"
                           :class="[
@@ -166,34 +171,6 @@
             @change="handleAddSpecificationValue($event, index, specification)"
           ></el-input>
         </div>
-
-        <!-- <div style="margin-top: 10px" v-if="specification.name">
-          <el-input
-            v-model="specification.addSpecificationValue"
-            size="mini"
-            placeholder="请输入内容"
-            style="width: 200px; margin-right: 10px"
-          ></el-input>
-          <span
-            @click="handleAddSpecificationValue($event, index, specification)"
-            :class="[
-              specification.addSpecificationValue
-                ? 'color-primary'
-                : 'color-767989',
-              'font-12',
-              'pointer',
-            ]"
-            >添加</span
-          >
-          <el-divider direction="vertical"></el-divider>
-          <span
-              :class="[ true > 1 ? 'color-primary' : 'color-767989', 'font-12', 'pointer', ]"
-              @click="handleSortAddSpecificationValue($event, index, specification)"
-            >
-            <hh-icon type="iconpaixu"></hh-icon>
-            排序
-          </span>
-        </div> -->
       </div>
     </div>
 
@@ -379,6 +356,9 @@ export default {
       this.specifications = cloneDeep(specifications).map(specification => {
         specification.value_list.forEach((value, index) => {
           value.order = index
+          if (value.image) {
+            specification.addSkuImage = true
+          }
         })
         return specification
       })
@@ -418,8 +398,6 @@ export default {
       }
       row.value_list.push(newOption)
       row.addSpecificationValue = ''
-      // row.spec_id = specId
-      // row.id = `id-${shortid.generate()}`
       this.$set(this.specifications, index, row)
       this.$emit('change', this.specifications, 'add')
     },
@@ -505,6 +483,17 @@ export default {
           })
         })
         .catch(() => {})
+    },
+    handleChangeSpecificationValues (value) {
+      console.log(value, 'handleChangeSpecifications')
+      // 规格值不能重复'
+      if (value) this.$emit('change', this.specifications, 'edit')
+    },
+    // 修改规格
+    handleChangeSpecifications (value, specification) {
+      console.log('handleChangeSpecifications')
+      // 规格值不能重复'
+      if (specification.value_list.length) this.$emit('change', this.specifications, 'edit')
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'

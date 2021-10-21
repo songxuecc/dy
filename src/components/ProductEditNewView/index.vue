@@ -745,7 +745,7 @@ export default {
             })
           }
         })
-
+        console.log(this.product.originModel, 'this.product.originModel')
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }

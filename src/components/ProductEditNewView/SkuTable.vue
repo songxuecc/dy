@@ -17,7 +17,7 @@
           style="width:130px"
           class="mr-5">
           <el-option
-            :label="`全部${spec.name}`"
+            :label="`全部-${spec.name}`"
             :value="-1">
           </el-option>
           <el-option
@@ -102,12 +102,12 @@
                         placement="left"
                         width="270"
                         trigger="hover">
-                        <img :src="scope.row.img" style="width: 250px;"/>
+                        <img :src="scope.row.img" style="width: 270px;"/>
                         <div
                           slot="reference">
                           <el-image
                             slot="reference"
-                            style="width: 40px; height: 40px"
+                            style="width: 60px; height: 60px"
                             class="pointer"
                             :src="scope.row.img">
                           </el-image>
@@ -140,7 +140,9 @@ export default {
       tableData: [],
       spec_price_list: [],
       batchEditForm: {
-
+        promo_price: '',
+        quantity: '',
+        code: ''
       }
     }
   },
@@ -170,6 +172,11 @@ export default {
   },
   methods: {
     init (skuJson) {
+      // 批量修改表单初始化
+      this.batchEditForm.promo_price = ''
+      this.batchEditForm.quantity = ''
+      this.batchEditForm.code = ''
+
       this.spec_list = cloneDeep(skuJson.spec_list)
       this.spec_price_list = cloneDeep(skuJson.spec_price_list)
       const tableData = []
@@ -181,7 +188,7 @@ export default {
           const dataSet = new Set(data.spec_detail_id_list)
           const specSet = new Set(spec)
           const isEqual = [...dataSet].every(x => specSet.has(x))
-          if (isEqual) {
+          if (data.spec_detail_id_list.length && isEqual) {
             matchSpecData = data
             matchSpecData.promo_price = matchSpecData.promo_price
             if (!recordFirstPrice) {
@@ -193,12 +200,12 @@ export default {
             matchSpecData.quantity = 0
           }
         })
-
         matchSpecData.index = index
+        matchSpecData.spec_detail_id_list = spec
         tableData.push(matchSpecData)
       })
-      this.tableData = tableData
-      this.originTableData = tableData
+      this.tableData = cloneDeep(tableData)
+      this.originTableData = cloneDeep(tableData)
       this.$nextTick(() => {
         this.$refs.SkuSelect && this.$refs.SkuSelect.init(skuJson.spec_list)
       })
@@ -214,15 +221,17 @@ export default {
       let result = [[]]
       while (specList.length) {
         const currentData = specList.shift()
-        let originResult = []
-        result.forEach((r = []) => {
-          currentData.value_list.forEach(spec => {
-            const nextSpecs = [...r]
-            nextSpecs.push(spec.spec_detail_id)
-            originResult.push(nextSpecs)
+        if (currentData.value_list.length) {
+          let originResult = []
+          result.forEach((r = []) => {
+            currentData.value_list.forEach(spec => {
+              const nextSpecs = [...r]
+              nextSpecs.push(spec.spec_detail_id)
+              originResult.push(nextSpecs)
+            })
           })
-        })
-        result = originResult
+          result = originResult
+        }
       }
       return result
     },
@@ -250,7 +259,8 @@ export default {
       // 当用户修改sku名称时，价格不变；
       // 当用户新增sku时，价格、库存为空，用户点击【保存编辑】需toast提示用户填写价格、库存，若不填写则无法保存
       const specData = this.initTableData(specifications)
-      const tableData = []
+      let tableData = []
+      // 匹配当前编辑列表数据价格
       specData.forEach((spec, index) => {
         let matchSpecData = {}
         this.tableData.forEach((data) => {
@@ -265,14 +275,48 @@ export default {
         // 将元数据规格更新为新的规格
         if (!matchSpecData.code) matchSpecData.code = ''
         if (!matchSpecData.img) matchSpecData.img = ''
-        if (!matchSpecData.price) matchSpecData.price = ''
+        if (!matchSpecData.promo_price) matchSpecData.promo_price = ''
         if (!matchSpecData.sku_id) matchSpecData.sku_id = ''
         matchSpecData.spec_detail_id_list = spec
         matchSpecData.promo_price = typeof matchSpecData.promo_price !== 'undefined' ? matchSpecData.promo_price : ''
         matchSpecData.quantity = typeof matchSpecData.quantity !== 'undefined' ? matchSpecData.quantity : ''
+        matchSpecData.price = typeof matchSpecData.price !== 'undefined' ? matchSpecData.price : ''
         matchSpecData.index = index
         tableData.push(matchSpecData)
       })
+      // 如果没价格就匹配=初始化价格
+      tableData = tableData.map((t, index) => {
+        this.originTableData.forEach((data) => {
+          const dataSet = new Set(data.spec_detail_id_list)
+          const specSet = new Set(t.spec_detail_id_list)
+          // 元数据内规格包含 新的规格 获取原始数据
+          const conclude = [...specSet].every(x => dataSet.has(x))
+          if (conclude && !t.promo_price && data.promo_price) {
+            data.spec_detail_id_list = t.spec_detail_id_list
+            t = data
+          }
+        })
+        return t
+      })
+
+      // 图片
+      if (specifications.every(item => !item.addSkuImage)) {
+        tableData = tableData.map(item => {
+          item.img = ''
+          return item
+        })
+      } else {
+        const valueList = specifications.find(item => item.addSkuImage).value_list
+        tableData = tableData.map(data => {
+          valueList.forEach(value => {
+            if (data.spec_detail_id_list.includes(value.spec_detail_id)) {
+              data.img = value.image
+            }
+          })
+          return data
+        })
+      }
+
       this.$nextTick(() => {
         this.tableData = tableData
         this.spec_list = specifications
