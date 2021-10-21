@@ -29,7 +29,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.price" placeholder="价格"></el-input>
+        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.promo_price" placeholder="价格"></el-input>
       </el-form-item>
       <el-form-item>
         <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.quantity" placeholder="库存"></el-input>
@@ -42,7 +42,7 @@
       </el-form-item>
 
     </el-form>
-    <h1 class="mb-10" style="margin-top:20px">价格与库存</h1>
+    <h1 class="mb-10" style="margin-top:10px">价格与库存</h1>
         <el-form :rules="rules" ref="form" :model="tableData" size="small" style="padding-left:15px">
             <el-table
             :data="tableData"
@@ -75,9 +75,9 @@
                 label="价格"
                 width="130">
                 <template slot-scope="scope">
-                    <el-form-item  class="relative" :prop="`[${scope.row.index}].price`">
+                    <el-form-item  class="relative" :prop="`[${scope.row.index}].promo_price`">
                         <span class="unit">¥</span>
-                        <el-input class="price" v-model="scope.row.price" placeholder="请输入"></el-input>
+                        <el-input class="price" v-model="scope.row.promo_price" placeholder="请输入"></el-input>
                     </el-form-item>
                 </template>
             </el-table-column>
@@ -122,8 +122,10 @@
 </template>
 
 <script>
-import utils from '@/common/utils'
 import SkuSelect from './SkuSelect'
+import omit from 'lodash/omit'
+import cloneDeep from 'lodash/cloneDeep'
+
 export default {
   name: 'component_name',
   props: {
@@ -134,21 +136,28 @@ export default {
   },
   data () {
     return {
-      specifications: [],
       spec_list: [],
-      spec_price_list: [],
       tableData: [],
+      spec_price_list: [],
       batchEditForm: {
 
+      }
+    }
+  },
+  watch: {
+    spec_list (n) {
+      if (n) {
+        n.forEach(item => {
+          this.batchEditForm[item.spec_id] = -1
+        })
       }
     }
   },
   computed: {
     rules () {
       const priceRules = {}
-
       this.tableData.forEach((item, index) => {
-        const key = `[${index}].price`
+        const key = `[${index}].promo_price`
         priceRules[key] = [
           { required: true, message: '请输入价格', trigger: ['blur', 'change'] }
           // { required: true, message: '请输入0.01到9999999.99的数字，最多保留2位小数', trigger: ['blur', 'change'] }
@@ -161,12 +170,10 @@ export default {
   },
   methods: {
     init (skuJson) {
-      this.spec_list = skuJson.spec_list
-      this.spec_price_list = skuJson.spec_price_list
+      this.spec_list = cloneDeep(skuJson.spec_list)
+      this.spec_price_list = cloneDeep(skuJson.spec_price_list)
       const tableData = []
       const specData = this.initTableData(this.spec_list)
-      console.log(specData)
-      console.log(skuJson.spec_list)
       let recordFirstPrice = false
       specData.forEach((spec, index) => {
         let matchSpecData = {}
@@ -176,13 +183,13 @@ export default {
           const isEqual = [...dataSet].every(x => specSet.has(x))
           if (isEqual) {
             matchSpecData = data
-            matchSpecData.price = utils.fenToYuan(matchSpecData.price)
+            matchSpecData.promo_price = matchSpecData.promo_price
             if (!recordFirstPrice) {
-              recordFirstPrice = matchSpecData.price
+              recordFirstPrice = matchSpecData.promo_price
             }
           } else {
             // 当用户抓取的商品缺少sku时，库存=0，价格取第一个sku价格（库存既然是0了所以价格是多少不重要，只要不是0就行）。从而解决价格=0的问题
-            matchSpecData.price = recordFirstPrice
+            matchSpecData.promo_price = recordFirstPrice
             matchSpecData.quantity = 0
           }
         })
@@ -192,10 +199,14 @@ export default {
       })
       this.tableData = tableData
       this.originTableData = tableData
-      console.log(tableData, 'tableData')
       this.$nextTick(() => {
         this.$refs.SkuSelect && this.$refs.SkuSelect.init(skuJson.spec_list)
       })
+      this.$emit('change', this.tableData, this.spec_list)
+      return {
+        tableData,
+        spec_list: this.spec_list
+      }
     },
     initTableData (list) {
       // 获取阶乘后拼接完整的规格列表
@@ -216,9 +227,10 @@ export default {
       return result
     },
     getForm () {
-      this.$refs.form.validate((valid, object) => {
-        console.log(valid, object)
-      })
+      // this.$refs.form.validate((valid, object) => {
+      //   console.log(valid, object)
+      // })
+      return this.$data
     },
     getRowData (row, index) {
       const specList = this.spec_list
@@ -251,8 +263,12 @@ export default {
           }
         })
         // 将元数据规格更新为新的规格
+        if (!matchSpecData.code) matchSpecData.code = ''
+        if (!matchSpecData.img) matchSpecData.img = ''
+        if (!matchSpecData.price) matchSpecData.price = ''
+        if (!matchSpecData.sku_id) matchSpecData.sku_id = ''
         matchSpecData.spec_detail_id_list = spec
-        matchSpecData.price = typeof matchSpecData.price !== 'undefined' ? matchSpecData.price : ''
+        matchSpecData.promo_price = typeof matchSpecData.promo_price !== 'undefined' ? matchSpecData.promo_price : ''
         matchSpecData.quantity = typeof matchSpecData.quantity !== 'undefined' ? matchSpecData.quantity : ''
         matchSpecData.index = index
         tableData.push(matchSpecData)
@@ -260,11 +276,27 @@ export default {
       this.$nextTick(() => {
         this.tableData = tableData
         this.spec_list = specifications
+        this.$emit('change', this.tableData, this.spec_list)
       })
     },
     // 批量设置
     handleBatchEdit () {
       console.log(this.batchEditForm, '批量设置')
+      const specArrays = omit(this.batchEditForm, ['promo_price', 'quantity', 'code'])
+      const specValues = (Object.values(specArrays) || []).filter(item => Number(item) !== -1)
+      this.tableData = this.tableData.map(data => {
+        const dataSet = new Set(data.spec_detail_id_list)
+        const specSet = new Set(specValues)
+        const concludes = [...specSet].every(x => dataSet.has(x))
+        if (concludes) {
+          if (this.batchEditForm.promo_price) data.promo_price = this.batchEditForm.promo_price
+          if (this.batchEditForm.quantity) data.quantity = this.batchEditForm.quantity
+          if (this.batchEditForm.code) data.code = this.batchEditForm.code
+        }
+        return data
+      })
+      this.$message.success('设置成功')
+      this.$emit('change', this.tableData, this.spec_list)
     },
     spanMethod ({ row, column, rowIndex, columnIndex }) {
       const end = this.spec_list.length + 3
@@ -371,7 +403,7 @@ export default {
         line-height: 32px;
         font-size: 14px;
     }
-    .price {
+    .promo_price {
         /deep/ .el-input__inner{
             padding-left: 20px;
         }

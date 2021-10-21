@@ -19,7 +19,7 @@
         <div class="flex justify-b mb-16 ">
           <span style="line-height:29px">
             <el-form-item  :prop="`[${index}].name`">
-              <el-input v-model="specification.name" style="width:200px"></el-input>
+              <el-input v-model="specification.name" style="width:200px" placeholder="请填写规格名字"></el-input>
             </el-form-item>
               <el-checkbox
                 v-model="specification.addSkuImage"
@@ -63,7 +63,7 @@
                   <el-input
                     v-model="specificationValue.name"
                     size="mini"
-                    placeholder="请输入内容"
+                    placeholder="请填写规格值"
                   ></el-input>
                 </el-form-item>
                 <hh-icon
@@ -376,7 +376,7 @@ export default {
   },
   methods: {
     init (specifications) {
-      this.specifications = specifications.map(specification => {
+      this.specifications = cloneDeep(specifications).map(specification => {
         specification.value_list.forEach((value, index) => {
           value.order = index
         })
@@ -414,9 +414,6 @@ export default {
         image: '',
         name: value,
         spec_detail_id: `${specId}:${skuValueKey}`,
-        skuKey: specId,
-        skuValueKey: skuValueKey,
-        edit: true,
         order: row.value_list.length
       }
       row.value_list.push(newOption)

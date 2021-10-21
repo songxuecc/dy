@@ -131,133 +131,8 @@
                       <el-badge :value="product.model.check_error_msg_static['1'].num"></el-badge>
                   </el-tooltip>
                   </span>
-
+                  <!-- sku编辑 -->
                   <SkuTable @change="handleSkuTable" ref="SkuTable"/>
-
-                  <!-- <SkuSelect
-                    :specifications="specifications"
-                    @change="onSkuSelectChange"/> -->
-                            <!-- :span-method="objectSpanMethod" -->
-
-                  <!-- <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
-                            :cell-class-name="cellClassName"
-                            row-class-name="rowClass"
-                            :span-method="objectSpanMethod"
-                            row-key="keys"
-                  >
-                    <el-table-empty slot="empty"/>
-                      <el-table-column v-for="(item, index) in getSpecifications(specifications)" :key="index+':'+item.id">
-                          <template slot="header" slot-scope="scope">
-                              <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.specificationName }}</span>
-                              <el-dropdown v-if="skuPropertyValueMap[item.spec_id] && specifications.length > 1"
-                                           style="line-height:0px; padding-left: 0px; cursor:pointer; vertical-align: middle;"
-                                           trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
-                              >
-                                  <span class="el-dropdown-link" style="color:#909399">
-                                    ({{item.specificationValueList.length}})<hh-icon type="iconbianji" style="font-size:12px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
-                                  </span>
-                                  <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
-                                      <el-dropdown-item v-for="(ele, vid) in item.specificationValueList" :key="vid">
-                                          <div style="display:flex">
-                                              <el-checkbox v-model="ele.checked" @change="onSkuFilter" style="margin-right: 0">
-                                                <span v-if="specifications.length === 1">{{ele.value}}</span>
-                                                <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
-                                                          :class="['input-text-left']">  </el-input>
-                                              </el-checkbox>
-                                              <el-button v-if="item.specificationValueList.length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
-                                                         @click="onDeleteSku(item.id,vid)"
-                                              > 删除 </el-button>
-                                          </div>
-                                      </el-dropdown-item>
-                                  </el-dropdown-menu>
-                              </el-dropdown>
-                              <el-button v-if="item.filter" size="small" type="text" class="table-header-btn" @click="cancelSkuFilter(item.id)">
-                                  取消筛选
-                              </el-button>
-                          </template>
-                          <template slot-scope="scope" >
-                            <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;" v-if="scope.row.property_list[index]">{{scope.row.property_list[index].value}}</span>
-
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="2" width="130">
-                          <template slot="header" slot-scope="scope">
-                              <span>总库存</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0display: inline-flex;
-    align-items: center;
-    justify-content: center;"> <hh-icon type="iconbianji" style="font-size:12px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
-                          </template>
-                          <template slot-scope="scope">
-
-                              <el-tooltip effect="light" placement="top" v-if="scope.row.quantityBorder" popper-class="ProductEditNewView-popper-class">
-                                  <div slot="content" >
-                                    <ul style="padding: 0; margin: 0;" class="fail">只可以输入0-1000000的数字</ul>
-                                  </div>
-                                  <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
-                              </el-tooltip>
-                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini"  type="textarea"  class="my-textarea"></el-input>
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="4" width="130">
-                          <template slot="header" slot-scope="scope">
-                              <span>价格</span>
-                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true" style="padding:0">
-                              <hh-icon type="iconbianji" style="font-size:12px" />
-                              <span style="color:#999999;font-size:12px;">修改</span>
-                            </el-button>
-                              <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
-                                  <div slot="content">
-                                    <ul style="padding: 0; margin: 0;margin-bottom:5px">其他平台SKU价格，请在上传抖音时设置价格</ul>
-                                    <ul style="padding: 0; margin: 0;">请设置为初始价格，并非价格公示计算的价格</ul>
-                                  </div>
-                                  <i class="el-icon-question"></i>
-                              </el-tooltip>
-                          </template>
-                          <template slot-scope="scope">
-                             <el-tooltip effect="light" placement="top" v-if="scope.row.promo_priceBorder" popper-class="ProductEditNewView-popper-class">
-                                  <div slot="content" >
-                                    <ul style="padding: 0; margin: 0;" class="fail">只可以输入0.01-9999999.99 的数字,最多保留2位小数</ul>
-                                  </div>
-                                  <el-input @input="setPromp" v-model="scope.row.promo_price" :value="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
-                              </el-tooltip>
-                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini"  type="textarea"  class="my-textarea"></el-input>
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="5" width="150">
-                          <template slot="header" slot-scope="scope">
-                            <div class="center">
-                              <span @click="toggleVisibleSkuImport" >商品编码</span>
-                            <el-button type="text" class="table-header-btn" @click="dialogCodeVisible=true" style="padding:0display: inline-flex;align-items: center;justify-content: center;">
-                              <hh-icon type="iconbianji" style="font-size:12px" />
-                              <span style="color:#999999;font-size:12px;">修改</span>
-                            </el-button>
-                            <br/>
-                            <span class="info pointer" @click="toggleVisibleSkuImport"><i class="el-icon-question" style="color:red"></i>无法抓取</span>
-                            </div>
-                          </template>
-                          <template slot-scope="scope">
-                              <el-input v-model="scope.row.code" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
-                          <template slot-scope="scope">
-                            <div class="preview" style="padding:4px" v-if="scope.row.img">
-                              <el-image
-                                slot="reference"
-                                style="width: 40px; height: 40px"
-                                class="pointer"
-                                :src="scope.row.img"
-                                :preview-src-list="[scope.row.img]">
-                              </el-image>
-                            </div>
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="7" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
-                        <template slot-scope="scope">
-                            <el-button size="mini" @click="onDeleteSingleSku(scope.$index)" type="danger" plain>删除</el-button>
-                        </template>
-                      </el-table-column>
-                  </el-table> -->
                   <div class="common-bottom">
                 </div>
               </el-tab-pane>
@@ -517,7 +392,7 @@ import PropertySet from './PropertySet.vue'
 import SkuSelect from './SkuSelect.vue'
 import PictureQualification from './PictureQualification.vue'
 import xorWith from 'lodash/xorWith'
-
+import omit from 'lodash/omit'
 import SkuTable from './SkuTable'
 export default {
   inject: ['reload'],
@@ -546,7 +421,7 @@ export default {
       batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList', 'sku_json'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'sku_json'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -592,18 +467,18 @@ export default {
       forceUpdatePropertySet: 0,
       skuPropertyList: [],
       // 属性设置
-      specifications: [
-        {
-          specificationName: '',
-          newSpecificationName: '',
-          addSkuImage: false,
-          skuSelectCheckList: [],
-          addSpecificationValue: '',
-          specificationValueList: [],
-          specificationNameVisible: false,
-          date: new Date()
-        }
-      ],
+      // specifications: [
+      //   {
+      //     specificationName: '',
+      //     newSpecificationName: '',
+      //     addSkuImage: false,
+      //     skuSelectCheckList: [],
+      //     addSpecificationValue: '',
+      //     specificationValueList: [],
+      //     specificationNameVisible: false,
+      //     date: new Date()
+      //   }
+      // ],
       priceEditError: false,
       stockEditError: false
     }
@@ -617,6 +492,7 @@ export default {
         if (!this.productDic[val.model.tp_product_id]) {
           return
         }
+        console.log(val.isDiff())
         if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id] || this.checkQualityList(val)) {
           this.productDic[val.model.tp_product_id].isEdit = true
         } else {
@@ -657,12 +533,6 @@ export default {
           { validator: checkDefaultRecommendRremark, trigger: 'change' }
         ]
       }
-    },
-    disabledAddSkuImage () {
-      // 没有一个sku设置 返回true
-      // 有sku设置 且有一个sku内已经设置图片 返回true
-      // 有sku 且没有一个sku内有图片 返回false
-      return true
     }
   },
   mounted () {
@@ -686,22 +556,8 @@ export default {
         const list = (item.quality_attachments || []).map(i => i.url)
         const originList = (originQualityList[index].quality_attachments).map(i => i.url)
         const section = xorWith(originList, list)
-        // console.log(section, originList, list, product, 'section')
         return section.length
       })
-    },
-    getSpecifications (specifications) {
-      return specifications.filter(item => {
-        return item.specificationValueList.some(v => v.checked)
-      })
-    },
-    onSkuSelectChange (specifications) {
-      this.$set(this, 'specifications', specifications)
-      console.log(specifications, 'specifications')
-      console.log(this.skuShowList, 'this.skuShowList')
-      this.handleSpecifications(specifications)
-      this.product.model.skuShowList = this.skuShowList
-      this.product.model.specifications = specifications
     },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
@@ -723,9 +579,10 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'sku_json',
-          'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications'
+          'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark',
+          'sku_json'
         ])
+        console.log(this.product, '00000')
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
           title: tpProduct.title,
@@ -742,9 +599,22 @@ export default {
         this.product = this.products[tpProduct.tp_product_id]
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
-        this.skuShowList = this.product.model.skuShowList
+        // sku数据初始化
         this.skuJson = this.product.model.sku_json
-        this.specifications = this.product.model.specifications
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        Object.assign(this.product.originModel, {
+          sku_json: {
+            ...this.product.model.sku_json,
+            spec_price_list: originModel.tableData.map(item => omit(item, ['index'])),
+            spec_list: originModel.spec_list.map(item => {
+              return {
+                ...item,
+                value_list: item.value_list.map(i => omit(i, ['order']))
+              }
+            })
+          }
+        })
+
         this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
         // this.$refs['bannerPicListView'].curPictureList = this.product.model.bannerPicUrlList
         this.descPicUrlList = [...this.product.model.descPicUrlList]
@@ -753,6 +623,8 @@ export default {
         this.qualityList = [...this.product.model.quality_list]
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
+
+        console.log('8888--------')
       }
     },
     handleProductSelect (val, old) {
@@ -813,6 +685,7 @@ export default {
       })
     },
     updateProperty (tpProductId) {
+      console.log(tpProductId, 'tpProductId-updateProperty')
       this.isLoading = true
       const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
@@ -826,19 +699,18 @@ export default {
         this.descPicUrlList = data.desc_json
         this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
-
-        // this.initSku(data.sku_json, data.tp_id)
-        // this.updateIsSingleSku()
+        // 价格转换
+        data.sku_json.spec_price_list.forEach(item => {
+          item.promo_price = utils.fenToYuan(item.promo_price)
+        })
         // sku 数据
         this.product.assign({sku_json: data.sku_json})
-        this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
         this.product.assign({bannerPicUrlList: data.banner_json})
         this.product.assign({descPicUrlList: data.desc_json})
         this.product.assign({recommend_remark: data.recommend_remark})
         this.product.assign({skuPropertyList: [...this.skuPropertyList]})
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
         this.product.assign({sortSkuKeys: this.sortSkuKeys})
-        this.product.assign({specifications: this.specifications})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
         this.product.assign({quality_list: [...this.qualityList]})
@@ -853,16 +725,26 @@ export default {
         }
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
-        this.skuShowList = this.product.model.skuShowList
         this.sortSkuKeys = this.product.model.sortSkuKeys
-        this.specifications = this.product.model.specifications
         this.qualityList = this.product.model.quality_list
-        // this.skuJson = this.product.model.sku_json
 
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
-        this.$refs.SkuTable && this.$refs.SkuTable.init(this.product.model.sku_json)
-        console.log('sku 数据')
+        // sku数据初始化
+        this.skuJson = this.product.model.sku_json
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        Object.assign(this.product.originModel, {
+          sku_json: {
+            ...this.product.model.sku_json,
+            spec_price_list: originModel.tableData.map(item => omit(item, ['index'])),
+            spec_list: originModel.spec_list.map(item => {
+              return {
+                ...item,
+                value_list: item.value_list.map(i => omit(i, ['order']))
+              }
+            })
+          }
+        })
 
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
@@ -929,34 +811,22 @@ export default {
     },
     handleBatchQuantity () {
       this.batchEditQuantity()
-      this.product.model.skuShowList = this.skuShowList
+      // this.product.model.skuShowList = this.skuShowList
       this.dialogQuantityVisible = false
     },
     handleBatchPromoPrice () {
       this.batchEditPromoPrice()
-      this.product.model.skuShowList = this.skuShowList
+      // this.product.model.skuShowList = this.skuShowList
       this.dialogPromoPriceVisible = false
     },
     handleBatchCode () {
       this.batchEditCode(this.batchCodeInput)
-      this.product.model.skuShowList = this.skuShowList
+      // this.product.model.skuShowList = this.skuShowList
       this.dialogCodeVisible = false
     },
     handlePropertyNameChange (pid, vid, ele) {
       this.updateNameOfSkuPropertyValueMap(pid, vid, ele['value'])
     },
-    // isSkuNameWarn (skuName, idx) {
-    //   let cnt = 0
-    //   for (let key in this.skuPropertyValueMap[idx]) {
-    //     if (this.skuPropertyValueMap[idx][key]['value'].trim() === skuName.trim()) {
-    //       cnt += 1
-    //     }
-    //   }
-    //   if (cnt > 1) {
-    //     return true
-    //   }
-    //   return skuName.length > 18
-    // },
     reloadBrandList () {
       this.loadingBrandList = true
       this.request('getShopBrandList', {}, data => {
@@ -1016,7 +886,7 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
-
+      // return false
       let error = ''
       this.productList.forEach(item => {
         let tpProductId = item.tp_product_id
@@ -1030,21 +900,21 @@ export default {
             }
           }
           // 检验价格 & 库存
-          const skuShowList = product.model.skuShowList
-          if (!skuShowList.length) error = 'sku为空，请设置sku'
-          skuShowList
-            .filter(sku => sku.quantity)
-            .forEach(sku => {
-              this.getPriceStyle(sku.promo_price, sku, 'promo_priceBorder', 'promo_price')
-              this.getPriceStyle(sku.quantity, sku, 'quantityBorder', 'quantity')
-              if (sku.quantity > 1000000 || sku.quantity < 0) {
-                console.log(sku, 'sku')
-                error = 'sku库存必填，且只可以输入0-1000000的数字'
-              }
-              if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
-                error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
-              }
-            })
+          // const skuShowList = product.model.skuShowList
+          // if (!skuShowList.length) error = 'sku为空，请设置sku'
+          // skuShowList
+          //   .filter(sku => sku.quantity)
+          //   .forEach(sku => {
+          //     this.getPriceStyle(sku.promo_price, sku, 'promo_priceBorder', 'promo_price')
+          //     this.getPriceStyle(sku.quantity, sku, 'quantityBorder', 'quantity')
+          //     if (sku.quantity > 1000000 || sku.quantity < 0) {
+          //       console.log(sku, 'sku')
+          //       error = 'sku库存必填，且只可以输入0-1000000的数字'
+          //     }
+          //     if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
+          //       error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+          //     }
+          //   })
         }
       })
       if (error) {
@@ -1069,7 +939,7 @@ export default {
         if (propertySetValid) {
         // 没有修改分类时不用传参数
           this.productEditSavingPercent = 0
-          this.isProductEditSaving = true
+          // this.isProductEditSaving = true
           this.saveProducts()
         }
       } catch (err) {
@@ -1089,6 +959,7 @@ export default {
         return this.$message.error(err)
       }
     },
+    // 存储数据
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
       let tpProductList = []
       let tpProductIdList = []
@@ -1104,7 +975,36 @@ export default {
             if (brand) {
               brandId = brand.tp_value
             }
-            const specifications = (product.model.specifications || []).filter(item => item.specificationName && item.specificationValueList && item.specificationValueList.length)
+            // 拼接sku属性数据
+            const skuJson = product.model.sku_json
+            // sku规格数据
+            const specifications = skuJson.spec_list.map(specification => {
+              const obj = {
+                spec_id: specification.spec_id,
+                specificationName: specification.name,
+                specificationValueList: specification.value_list.map(item => ({
+                  checked: true,
+                  skuKey: item.spec_detail_id.split(':')[0],
+                  skuValueKey: item.spec_detail_id.split(':')[1],
+                  image: item.image,
+                  value: item.name
+                }))
+              }
+              return obj
+            })
+            // sku价格列表数据
+            const skuList = skuJson.spec_price_list.map(spec => {
+              return {
+                code: spec.code,
+                price: spec.price,
+                promo_price: utils.yuanToFen(spec.promo_price),
+                sku_id: spec.sku_id,
+                quantity: spec.quantity,
+                img: spec.img,
+                specDetailIds: spec.spec_detail_id_list
+              }
+            })
+            console.log(skuList, specifications, 'specifications')
             let productParams = {
               tp_product_id: product.model.tp_product_id,
               category_id: product.model.cat_id,
@@ -1115,14 +1015,7 @@ export default {
                 // 属性设置数据
                 attribute_json: product.model.attrList,
                 desc_text: product.model.description,
-                sku_list: product.model.skuShowList
-                  .map(item => {
-                    return {
-                      ...item,
-                      price: utils.yuanToFen(item.price),
-                      promo_price: utils.yuanToFen(item.promo_price)
-                    }
-                  }),
+                sku_list: skuList,
                 spec_list: specifications,
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
@@ -1330,8 +1223,9 @@ export default {
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.qualityList = this.product.model.quality_list
-      this.skuShowList = this.product.model.skuShowList
-      this.specifications = this.product.model.specifications
+      this.skuJson = this.product.model.sku_json
+      this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+      // this.specifications = this.product.model.specifications
       this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
       this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
     },
@@ -1344,7 +1238,7 @@ export default {
       this.productList = []
       this.products = {}
       this.skuPropertyList = []
-      this.skuShowList = []
+      this.skuJson = []
       this.productTitleDic = {}
       this.productRemoveFirstBannerDic = {}
       this.productBrandDic = {}
@@ -1642,6 +1536,7 @@ export default {
       }
     },
     handleSelectionChange (selection) {
+      console.log('handleSelectionChange', 'handleSelectionChange')
       this.selectedProductIds = []
       for (let i in selection) {
         this.selectedProductIds.push(selection[i].tp_product_id)
@@ -1752,95 +1647,21 @@ export default {
     handlePictureQualificationChange (data) {
       Object.assign(this.product.model, {quality_list: data})
     },
-
-    handleSkuTable (data) {
-      console.log(data, 'handleSkuTable')
-    },
-    objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
-      const end = this.specifications.length + 3
-      if (this.isLoading) return false
-      const arr = []
-      this.specifications.map(item => {
-        const skuLength = item.specificationValueList.filter(item => item.checked).length
-        arr.push(skuLength || 1)
-      })
-
-      if (arr.length === 3) {
-        const columnIndex0 = arr[1] * arr[2]
-        const columnIndex1 = arr[2]
-        if (columnIndex === 0) {
-          if (rowIndex % columnIndex0 === 0) {
-            return {
-              rowspan: columnIndex0,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
+    handleSkuTable (tableData, specList) {
+      this.product.model.sku_json = {
+        sku_map: this.product.model.sku_json.sku_map,
+        sku_property_map: this.product.model.sku_json.sku_property_map,
+        sku_property_value_map: this.product.model.sku_json.sku_property_value_map,
+        spec_price_list: tableData.map(item => omit(item, ['index'])),
+        spec_list: specList.map(item => {
+          return {
+            ...omit(item, ['addSpecificationValue']),
+            value_list: item.value_list.map(i => omit(i, ['order']))
           }
-        } else if (columnIndex === 1) {
-          if (rowIndex % columnIndex1 === 0) {
-            return {
-              rowspan: columnIndex1,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
-          }
-        } else if (columnIndex === end) {
-          if (rowIndex % columnIndex0 === 0) {
-            return {
-              rowspan: columnIndex0,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
-          }
-        }
+        })
       }
-      if (arr.length === 2) {
-        const columnIndex0 = arr[1]
-        if (columnIndex === 0) {
-          if (rowIndex % columnIndex0 === 0) {
-            return {
-              rowspan: columnIndex0,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
-          }
-        } else if (columnIndex === end) {
-          if (rowIndex % columnIndex0 === 0) {
-            return {
-              rowspan: columnIndex0,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
-          }
-        }
-      }
-
-      return {
-        rowspan: 1,
-        colspan: 1
-      }
+      console.log(this.product.model.sku_json, 'this.product.model.sku_json ')
     }
-
   }
 }
 </script>
