@@ -709,6 +709,7 @@ export default {
           const defaultValue = {
             name: '默认名',
             spec_id: 'default',
+            image: '',
             value_list: [
               {
                 name: '默认值',
@@ -719,6 +720,7 @@ export default {
           data.sku_json.spec_list = [defaultValue]
           data.sku_json.spec_price_list.forEach(item => {
             item.spec_detail_id_list = ['default:1']
+            item.img = ''
           })
         }
         // sku 数据
@@ -917,6 +919,7 @@ export default {
               error = '商家推荐语只可以填写8-50个字符！'
             }
           }
+
           // 检验价格 & 库存
           // const skuShowList = product.model.skuShowList
           // if (!skuShowList.length) error = 'sku为空，请设置sku'
@@ -1004,8 +1007,8 @@ export default {
                   checked: true,
                   skuKey: item.spec_detail_id.split(':')[0],
                   skuValueKey: item.spec_detail_id.split(':')[1],
-                  image: item.image,
-                  value: item.name
+                  image: item.image || '',
+                  value: item.name || ''
                 }))
               }
               return obj
