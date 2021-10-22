@@ -33,26 +33,13 @@
                     :value="option.value">
                 </el-option>
             </el-select>
-
-            <!-- 除去品牌 属性可选值列表，为空时需要手动填写 -->
-            <el-input
-                clearable
-                @clear="handleClear(item.name)"
-                @change="handleChange($event,item.name)"
-                size="small"
-                style="width:400px;"
-                :placeholder="`请输入${item.name}`"
-                v-model="model[item.name]"
-                v-else-if="item.type === 'text'"
-              />
-
-              <el-checkbox-group
+            <el-checkbox-group
                 @change="handleCheckboxChange($event,item.name)"
                 size="small"
                 :style="{width: item.name !== '品牌' ? '400px' : '190px',display:'inline-block'}"
                 :placeholder="`请选择${item.name}`"
                 v-model="item.tp_value"
-                v-else>
+                v-else-if="item.type === 'multi_select'">
                   <el-checkbox
                       class="checkbox"
                       v-for="(option,index) in item.options"
@@ -65,6 +52,16 @@
                       <span v-else>{{option.name}}</span>
                   </el-checkbox>
             </el-checkbox-group>
+            <el-input
+                clearable
+                @clear="handleClear(item.name)"
+                @change="handleChange($event,item.name)"
+                size="small"
+                style="width:400px;"
+                :placeholder="`请输入${item.name}`"
+                v-model="model[item.name]"
+                v-else
+              />
 
             <span>
               <span v-if="item.name === '品牌'" style="">
