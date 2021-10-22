@@ -1,5 +1,5 @@
 <template lang="html">
-  <div style="height: 100%" >
+  <div style="height: 100%" class="ProductEditNewView">
     <el-row :gutter="20" style="height: 100%">
       <el-col :span="7" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
         <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
@@ -27,13 +27,13 @@
             </el-table-column>
             <el-table-column type="selection" class-name="ProductEditNewView-select">
             </el-table-column>
-            <el-table-column label="图片" width="80" align="center" class-name="ProductEditNewView-img">
+            <el-table-column label="图片" width="100" align="center" class-name="ProductEditNewView-img">
                 <template slot-scope="scope">
                   <el-badge class="item" :value="Object.values(scope.row.check_error_msg_static).map(item => item.num).reduce((total, num) => total + num)"
                             v-if="scope.row.check_error_msg_static && Object.keys(scope.row.check_error_msg_static).length > 0">
                     <img style="height:60px; max-width: 60px;" :src="scope.row.thumbnail">
                   </el-badge>
-                  <img v-else style="height:60px" :src="scope.row.thumbnail">
+                    <img v-else style="height:60px" :src="scope.row.thumbnail">
                   <div v-if="scope.row.isEdit" style="height: 20px; width: 100%; background-color: #fecf23; bottom: 0; left: 0; position: absolute;" >已编辑</div>
                 </template>
             </el-table-column>
@@ -1701,11 +1701,11 @@ export default {
 /deep/  .ProductEditNewView-img {
   .cell {
     text-overflow: clip;
+    overflow-y: auto;
   }
 }
   /deep/ .el-tabs__content {
     height: 100%;
-    overflow-y: auto;
   }
   // /deep/ .el-table__body tr.current-row>td {
   //   background-color: rgb(179, 216, 255);
@@ -1825,18 +1825,9 @@ export default {
     }
 
   }
-
-  /deep/ .red {
+  .ProductEditNewView {
+    /deep/ .red {
     border: 1px solid red;
-    // textarea:active {
-    //   border: 1px solid red;
-    // }
-    // textarea:hover {
-    //   border: 1px solid red;
-    // }
-    // textarea:focus {
-    //   border: 1px solid red;
-    // }
   }
 
     /deep/ .el-table--enable-row-hover .el-table__body tr:hover > td {
@@ -1852,6 +1843,14 @@ export default {
     /deep/ .dialog-tight-category {
       z-index: 9999 !important;
     }
+    /deep/ .el-badge__content.is-fixed{
+      top: 10px;
+      right: 20px;
+    }
+    /deep/ .el-badge{
+      padding:10px;
+    }
+  }
 
 </style>
 
