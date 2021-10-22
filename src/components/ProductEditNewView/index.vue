@@ -492,7 +492,6 @@ export default {
         if (!this.productDic[val.model.tp_product_id]) {
           return
         }
-        console.log(val.isDiff())
         if (val.isDiff() || this.attrApplyCatMap[val.model.cat_id] || this.checkQualityList(val)) {
           this.productDic[val.model.tp_product_id].isEdit = true
         } else {
