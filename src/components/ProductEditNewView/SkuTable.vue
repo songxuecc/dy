@@ -72,8 +72,18 @@
             </el-table-column>
             <el-table-column
                 prop="address"
-                label="价格"
                 width="130">
+                <template slot="header" slot-scope="scope">
+                    <span>货源方原价</span>
+                    <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
+                        <div slot="content">
+                          <ul style="padding: 0; margin: 0;margin-bottom:5px;text-align:left" class="left">此处为货源方的原价,如果要进行调价不用在此处修改</ul>
+                          <ul style="padding: 0; margin: 0;text-align:left" class="left">您可以在下一步统一进行价格调整</ul>
+                        </div>
+                        <i class="el-icon-question"></i>
+                    </el-tooltip>
+                </template>
+
                 <template slot-scope="scope">
                     <el-form-item  class="relative" :prop="`[${scope.row.index}].promo_price`">
                         <span class="unit">¥</span>
