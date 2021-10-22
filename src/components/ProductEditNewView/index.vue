@@ -150,7 +150,7 @@
                       <el-badge :value="product.model.check_error_msg_static['2'].num" ></el-badge>
                   </el-tooltip>
                   </span>
-                  <div style="overflow: auto;">
+                  <div >
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
                       <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList">
                       </pictures-upload-view>
@@ -172,7 +172,7 @@
                       <el-badge :value="product.model.check_error_msg_static['3'].num" ></el-badge>
                   </el-tooltip>
                   </span>
-                  <div style="overflow: auto;">
+                  <div >
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
                       <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="45" :pictureUrlList="descPicUrlList">
                       </pictures-upload-view>
@@ -1704,9 +1704,10 @@ export default {
     overflow-y: auto;
   }
 }
-  /deep/ .el-tabs__content {
-    height: 100%;
-  }
+/deep/ .el-tabs__content {
+  height: 100%;
+  overflow-y: auto;
+}
   // /deep/ .el-table__body tr.current-row>td {
   //   background-color: rgb(179, 216, 255);
   // }
@@ -1825,7 +1826,6 @@ export default {
     }
 
   }
-  .ProductEditNewView {
     /deep/ .red {
     border: 1px solid red;
   }
@@ -1843,14 +1843,16 @@ export default {
     /deep/ .dialog-tight-category {
       z-index: 9999 !important;
     }
-    /deep/ .el-badge__content.is-fixed{
-      top: 10px;
-      right: 20px;
+
+  /deep/ .ProductEditNewView-img{
+      .el-badge__content.is-fixed{
+        top: 10px;
+        right: 20px;
+      }
+      .el-badge{
+        padding:10px;
+      }
     }
-    /deep/ .el-badge{
-      padding:10px;
-    }
-  }
 
 </style>
 
