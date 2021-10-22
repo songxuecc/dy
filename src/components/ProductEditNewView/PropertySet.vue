@@ -33,26 +33,13 @@
                     :value="option.value">
                 </el-option>
             </el-select>
-
-            <!-- 除去品牌 属性可选值列表，为空时需要手动填写 -->
-            <el-input
-                clearable
-                @clear="handleClear(item.name)"
-                @change="handleChange($event,item.name)"
-                size="small"
-                style="width:400px;"
-                :placeholder="`请输入${item.name}`"
-                v-model="model[item.name]"
-                v-else-if="item.type === 'text'"
-              />
-
-              <el-checkbox-group
+            <el-checkbox-group
                 @change="handleCheckboxChange($event,item.name)"
                 size="small"
                 :style="{width: item.name !== '品牌' ? '400px' : '190px',display:'inline-block'}"
                 :placeholder="`请选择${item.name}`"
-                v-model="item.tp_value"
-                v-else>
+                v-model="model[item.name]"
+                v-else-if="item.type === 'multi_select'">
                   <el-checkbox
                       class="checkbox"
                       v-for="(option,index) in item.options"
@@ -65,6 +52,16 @@
                       <span v-else>{{option.name}}</span>
                   </el-checkbox>
             </el-checkbox-group>
+            <el-input
+                clearable
+                @clear="handleClear(item.name)"
+                @change="handleChange($event,item.name)"
+                size="small"
+                style="width:400px;"
+                :placeholder="`请输入${item.name}`"
+                v-model="model[item.name]"
+                v-else
+              />
 
             <span>
               <span v-if="item.name === '品牌'" style="">
@@ -182,6 +179,11 @@ export default {
         const model = (productModel || []).reduce((target, current) => {
           const key = current.name
           let value = current.tp_value
+          if (current.type === 'multi_select') {
+            if (!Array.isArray(value)) {
+              value = []
+            }
+          }
 
           // 如果有全选到应用
           if (propertyBatchMapSelect && propertyBatchMapSelect[key] && propertyBatchMapSelect[key].checked) {
@@ -192,6 +194,7 @@ export default {
           }
           return {...target, [key]: value}
         }, {})
+        console.log(model, 'model')
         this.model = model
         if (propertyBatchMapSelect && Object.keys(propertyBatchMapSelect).length) {
           const selected = Object.keys(propertyBatchMapSelect).reduce((target, key) => {
@@ -263,6 +266,7 @@ export default {
       this.$emit('applyPropertiesToSelection', false, name, '')
     },
     handleCheckboxChange (value, name) {
+      console.log(value, 'value')
       const newModal = Object.assign(this.model, {[name]: value})
       const newAttributeJson = (this.productModel || [])
         .map(item => {
