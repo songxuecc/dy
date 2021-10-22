@@ -429,10 +429,12 @@ export default {
           return data
         })
       }
+      this.tableData = cloneDeep(tableData)
+      this.spec_list = cloneDeep(specifications)
+      this.$emit('change', this.tableData, this.spec_list)
       this.$nextTick(() => {
-        this.tableData = tableData
-        this.spec_list = specifications
-        this.$emit('change', this.tableData, this.spec_list)
+        this.$refs.form.validate((valid, object) => {
+        })
       })
     },
     // sku抓取
