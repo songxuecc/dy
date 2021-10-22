@@ -416,7 +416,6 @@ export default {
     handleSortAddSpecificationValue (index, row) {
       this.dragList = row.value_list
       this.activeIndex = index
-      console.log(this.dragList, '‘自定义')
       this.dialogVisible = true
     },
     // 修改规格

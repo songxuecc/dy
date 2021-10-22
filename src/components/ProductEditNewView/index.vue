@@ -581,7 +581,6 @@ export default {
           'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark',
           'sku_json'
         ])
-        console.log(this.product, '00000')
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
           title: tpProduct.title,
@@ -761,7 +760,6 @@ export default {
             })
           }
         })
-        console.log(this.product.originModel, 'this.product.originModel')
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }
@@ -1032,7 +1030,6 @@ export default {
                 specDetailIds: spec.spec_detail_id_list
               }
             })
-            console.log(skuList, specifications, 'specifications')
             let productParams = {
               tp_product_id: product.model.tp_product_id,
               category_id: product.model.cat_id,
@@ -1688,7 +1685,6 @@ export default {
           }
         })
       }
-      console.log(this.product.model.sku_json, 'this.product.model.sku_json ')
     }
   }
 }
