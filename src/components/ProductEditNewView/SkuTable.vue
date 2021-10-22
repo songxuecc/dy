@@ -95,6 +95,14 @@
                 prop="address"
                 label="商品编码"
                 >
+                 <template slot="header" slot-scope="scope">
+                  <div class="center">
+                    <span @click="toggleVisibleSkuImport" >商品编码</span>
+                    <el-tooltip content="点击查看抓取方法" effect="dark" placement="top">
+                      <span class="pointer" @click="toggleVisibleSkuImport"><i class="el-icon-question"></i></span>
+                    </el-tooltip>
+                  </div>
+                </template>
                 <template slot-scope="scope">
                     <el-form-item  :prop="`[${scope.row.index}].code`">
                         <el-input v-model="scope.row.code" placeholder="请输入"></el-input>
@@ -128,6 +136,18 @@
             </el-table-column>
             </el-table>
         </el-form>
+        <el-dialog :visible.sync="visibleSkuImport" width="30%"
+          :append-to-body="true" v-hh-modal>
+          <div slot="title" class="center" style="font-size: large;text-align:center">提示</div>
+          <div style="text-align:center">
+            <p>因商品编码属于商家后台的字段，故无法获取。</p>
+            <p>您可在搬家上线成功后在【导入修改】中导入"规格名称-</p>
+            <p>sku编码"对应表格进行修改。</p>
+            <div class="flex  justify-c align-c skuImportDialoag">
+              <img :src="skuImport"  style="width:176px;"/>
+            </div>
+          </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -135,6 +155,7 @@
 import SkuSelect from './SkuSelect'
 import omit from 'lodash/omit'
 import cloneDeep from 'lodash/cloneDeep'
+import skuImport from '@/assets/images/sku_import.png'
 
 export default {
   name: 'component_name',
@@ -153,7 +174,9 @@ export default {
         promo_price: '',
         quantity: '',
         code: ''
-      }
+      },
+      skuImport,
+      visibleSkuImport: false
     }
   },
   watch: {
@@ -332,6 +355,10 @@ export default {
         this.spec_list = specifications
         this.$emit('change', this.tableData, this.spec_list)
       })
+    },
+    // sku抓取
+    toggleVisibleSkuImport: function () {
+      this.visibleSkuImport = !this.visibleSkuImport
     },
     // 批量设置
     handleBatchEdit () {
