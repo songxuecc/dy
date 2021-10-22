@@ -38,14 +38,14 @@
             v-if="specifications.length > 1"
             type="iconshanchu1"
             style="line-height:29px"
-            class="font-14 pointer">
+            class="font-14 pointer hover-light">
           </hh-icon>
         </div>
 
         <div class="flex justify-b mb-5">
           <span>规格值(已选{{specification.value_list.length}})</span>
           <span
-              :class="[ true > 1 ? 'color-primary' : 'color-767989', 'font-12', 'pointer', ]"
+              :class="[ true > 1 ? 'color-primary' : 'color-767989', 'font-12', 'pointer', 'hover-light']"
               @click="handleSortAddSpecificationValue(index, specification)"
             >
             <hh-icon type="iconpaixu"></hh-icon>
@@ -74,8 +74,8 @@
                 </el-form-item>
                 <hh-icon
                   type="iconshanchu1"
-                  class="pointer"
-                  style="font-size: 11px"
+                  class="pointer hover-light"
+                  style="font-size: 12px"
                   @click="
                     handleDeleteSingleSku(idx,index,specification.value_list)
                   "
@@ -576,7 +576,11 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '~./SkuSelect.less';
-
+.hover-light {
+  &:hover {
+    color: @color-primary;
+  }
+}
 </style>
 <style lang="less">
 .skuAddSelect {
