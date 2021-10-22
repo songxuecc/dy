@@ -1,5 +1,5 @@
 <template lang="html">
-  <div style="height: 100%" >
+  <div style="height: 100%" class="ProductEditNewView">
     <el-row :gutter="20" style="height: 100%">
       <el-col :span="7" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
         <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
@@ -27,13 +27,13 @@
             </el-table-column>
             <el-table-column type="selection" class-name="ProductEditNewView-select">
             </el-table-column>
-            <el-table-column label="图片" width="80" align="center">
+            <el-table-column label="图片" width="100" align="center" class-name="ProductEditNewView-img">
                 <template slot-scope="scope">
                   <el-badge class="item" :value="Object.values(scope.row.check_error_msg_static).map(item => item.num).reduce((total, num) => total + num)"
                             v-if="scope.row.check_error_msg_static && Object.keys(scope.row.check_error_msg_static).length > 0">
                     <img style="height:60px; max-width: 60px;" :src="scope.row.thumbnail">
                   </el-badge>
-                  <img v-else style="height:60px" :src="scope.row.thumbnail">
+                    <img v-else style="height:60px" :src="scope.row.thumbnail">
                   <div v-if="scope.row.isEdit" style="height: 20px; width: 100%; background-color: #fecf23; bottom: 0; left: 0; position: absolute;" >已编辑</div>
                 </template>
             </el-table-column>
@@ -131,143 +131,8 @@
                       <el-badge :value="product.model.check_error_msg_static['1'].num"></el-badge>
                   </el-tooltip>
                   </span>
-
-                  <SkuSelect
-                    :specifications="specifications"
-                    @change="onSkuSelectChange"/>
-                            <!-- :span-method="objectSpanMethod" -->
-
-                  <el-table :data="skuRealShowList" border style="width: 100%" :header-cell-style="cellStyle" class="setting-content"
-                            :cell-class-name="cellClassName"
-                            row-class-name="rowClass"
-                            :span-method="objectSpanMethod"
-                            row-key="keys"
-                  >
-                    <el-table-empty slot="empty"/>
-                      <el-table-column v-for="(item, index) in getSpecifications(specifications)" :key="index+':'+item.id">
-                          <template slot="header" slot-scope="scope">
-                              <span :style="{color: (item.filter ? '#409EFF' : '#909399')}">{{ item.specificationName }}</span>
-                              <el-dropdown v-if="skuPropertyValueMap[item.spec_id] && specifications.length > 1"
-                                           style="line-height:0px; padding-left: 0px; cursor:pointer; vertical-align: middle;"
-                                           trigger="click" :hide-on-click="false"  placement="bottom" :ref="'sku-property-'+item.id"
-                              >
-                                  <span class="el-dropdown-link" style="color:#909399">
-                                    ({{item.specificationValueList.length}})<hh-icon type="iconbianji" style="font-size:12px;margin-left:4px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span>
-                                  </span>
-                                  <el-dropdown-menu slot="dropdown" style="max-height: 250px; overflow: auto; overflow-x:hidden;">
-                                      <el-dropdown-item v-for="(ele, vid) in item.specificationValueList" :key="vid">
-                                          <div style="display:flex">
-                                              <el-checkbox v-model="ele.checked" @change="onSkuFilter" style="margin-right: 0">
-                                                <span v-if="specifications.length === 1">{{ele.value}}</span>
-                                                <el-input style="width:340px" v-else v-model="ele.value" size="mini" @input="handlePropertyNameChange(item.id, vid, ele)"
-                                                          :class="['input-text-left']">
-                                                  <!-- <span slot="append" class="hint">{{ ele.value.length }} / 18</span> -->
-                                                </el-input>
-                                              </el-checkbox>
-                                              <el-button v-if="item.specificationValueList.length > 1" size="mini" type="text" style="color:#F56C6C;margin-left:auto;padding-left: 10px"
-                                                         @click="onDeleteSku(item.id,vid)"
-                                              > 删除 </el-button>
-                                          </div>
-                                      </el-dropdown-item>
-                                  </el-dropdown-menu>
-                              </el-dropdown>
-                              <el-button v-if="item.filter" size="small" type="text" class="table-header-btn" @click="cancelSkuFilter(item.id)">
-                                  取消筛选
-                              </el-button>
-                          </template>
-                          <template slot-scope="scope" >
-                            <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;" v-if="scope.row.property_list[index]">{{scope.row.property_list[index].value}}</span>
-                            <!-- <span style="display: block;width: 100%;height: 100%;box-sizing: border-box;padding:10px;"
-                            v-if="(skuPropertyList.length === 1 && skuPropertyList[0].id === 0) || skuPropertyList.length > 1">{{scope.row.property_list[index].name}}</span>
-                            <el-input v-else v-model="scope.row.property_list[index].name" size="mini"
-                                      :class="['input-text-left']"> -->
-                              <!-- <span slot="append" class="hint">{{ scope.row.property_list[index].name.length }} / 18</span> -->
-                            <!-- </el-input> -->
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="2" width="130">
-                          <template slot="header" slot-scope="scope">
-                              <span>总库存</span>
-                              <el-button type="text" class="table-header-btn" @click="dialogQuantityVisible=true" style="padding:0display: inline-flex;
-    align-items: center;
-    justify-content: center;"> <hh-icon type="iconbianji" style="font-size:12px" /> <span style="color:#999999;font-size:12px;font-family:Arial">修改</span></el-button>
-                          </template>
-                          <template slot-scope="scope">
-                              <!-- <el-toolTip :content="scope.row.quantityBorder ? '只可以输入0-1000000的数字':''" effect="dark" placement="top">
-                                <el-input v-model.number="scope.row.quantity" size="mini" type="textarea"  class="my-textarea" :class="[scope.row.quantityBorder ?'red':'']"
-                              @input="getStyle($event,scope.row,'quantityBorder','quantity')"></el-input>
-                              </el-toolTip> -->
-
-                              <el-tooltip effect="light" placement="top" v-if="scope.row.quantityBorder" popper-class="ProductEditNewView-popper-class">
-                                  <div slot="content" >
-                                    <ul style="padding: 0; margin: 0;" class="fail">只可以输入0-1000000的数字</ul>
-                                  </div>
-                                  <el-input @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini" :class="[scope.row.quantityBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
-                              </el-tooltip>
-                              <el-input v-if="!scope.row.quantityBorder" @input="getPriceStyle($event,scope.row,'quantityBorder','quantity')" v-model="scope.row.quantity" size="mini"  type="textarea"  class="my-textarea"></el-input>
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="4" width="130">
-                          <template slot="header" slot-scope="scope">
-                              <span>价格</span>
-                            <el-button type="text" class="table-header-btn" @click="dialogPromoPriceVisible=true" style="padding:0">
-                              <hh-icon type="iconbianji" style="font-size:12px" />
-                              <span style="color:#999999;font-size:12px;">修改</span>
-                            </el-button>
-                              <el-tooltip manua="true" class="item" effect="dark" placement="top" style="vertical-align: middle">
-                                  <div slot="content">
-                                    <ul style="padding: 0; margin: 0;margin-bottom:5px">其他平台SKU价格，请在上传抖音时设置价格</ul>
-                                    <ul style="padding: 0; margin: 0;">请设置为初始价格，并非价格公示计算的价格</ul>
-                                  </div>
-                                  <i class="el-icon-question"></i>
-                              </el-tooltip>
-                          </template>
-                          <template slot-scope="scope">
-                             <el-tooltip effect="light" placement="top" v-if="scope.row.promo_priceBorder" popper-class="ProductEditNewView-popper-class">
-                                  <div slot="content" >
-                                    <ul style="padding: 0; margin: 0;" class="fail">只可以输入0.01-9999999.99 的数字,最多保留2位小数</ul>
-                                  </div>
-                                  <el-input @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini" :class="[scope.row.promo_priceBorder ?'red  is-error':'']" type="textarea"  class="my-textarea"></el-input>
-                              </el-tooltip>
-                              <el-input v-if="!scope.row.promo_priceBorder" @input="getPriceStyle($event,scope.row,'promo_priceBorder','promo_price')" v-model="scope.row.promo_price" size="mini"  type="textarea"  class="my-textarea"></el-input>
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="5" width="150">
-                          <template slot="header" slot-scope="scope">
-                            <div class="center">
-                              <span @click="toggleVisibleSkuImport" >商品编码</span>
-                            <el-button type="text" class="table-header-btn" @click="dialogCodeVisible=true" style="padding:0display: inline-flex;align-items: center;justify-content: center;">
-                              <hh-icon type="iconbianji" style="font-size:12px" />
-                              <span style="color:#999999;font-size:12px;">修改</span>
-                            </el-button>
-                            <br/>
-                            <span class="info pointer" @click="toggleVisibleSkuImport"><i class="el-icon-question" style="color:red"></i>无法抓取</span>
-                            </div>
-                          </template>
-                          <template slot-scope="scope">
-                              <el-input v-model="scope.row.code" size="mini" :class="['input-text-left']" type="textarea"  class="my-textarea"></el-input>
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="6" label="预览图" width="100" align="center" class-name="cell-tight">
-                          <template slot-scope="scope">
-                            <div class="preview" style="padding:4px" v-if="scope.row.img">
-                              <el-image
-                                slot="reference"
-                                style="width: 40px; height: 40px"
-                                class="pointer"
-                                :src="scope.row.img"
-                                :preview-src-list="[scope.row.img]">
-                              </el-image>
-                            </div>
-
-                          </template>
-                      </el-table-column>
-                      <el-table-column key="7" v-if="skuPropertyList.length === 1 && skuRealShowList.length > 1" label="操作" width="80">
-                        <template slot-scope="scope">
-                            <el-button size="mini" @click="onDeleteSingleSku(scope.$index)" type="danger" plain>删除</el-button>
-                        </template>
-                      </el-table-column>
-                  </el-table>
+                  <!-- sku编辑 -->
+                  <SkuTable @change="handleSkuTable" ref="SkuTable"/>
                   <div class="common-bottom">
                 </div>
               </el-tab-pane>
@@ -285,7 +150,7 @@
                       <el-badge :value="product.model.check_error_msg_static['2'].num" ></el-badge>
                   </el-tooltip>
                   </span>
-                  <div style="overflow: auto;">
+                  <div >
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
                       <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList">
                       </pictures-upload-view>
@@ -307,7 +172,7 @@
                       <el-badge :value="product.model.check_error_msg_static['3'].num" ></el-badge>
                   </el-tooltip>
                   </span>
-                  <div style="overflow: auto;">
+                  <div >
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
                       <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="45" :pictureUrlList="descPicUrlList">
                       </pictures-upload-view>
@@ -527,6 +392,8 @@ import PropertySet from './PropertySet.vue'
 import SkuSelect from './SkuSelect.vue'
 import PictureQualification from './PictureQualification.vue'
 import xorWith from 'lodash/xorWith'
+import omit from 'lodash/omit'
+import SkuTable from './SkuTable'
 export default {
   inject: ['reload'],
   mixins: [request, skuHandlerProductNewEdit],
@@ -535,7 +402,8 @@ export default {
     picturesUploadView,
     PropertySet,
     SkuSelect,
-    PictureQualification
+    PictureQualification,
+    SkuTable
   },
   props: {
     belongType: {
@@ -553,7 +421,7 @@ export default {
       batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'specifications', 'skuShowList'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'sku_json'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -599,18 +467,18 @@ export default {
       forceUpdatePropertySet: 0,
       skuPropertyList: [],
       // 属性设置
-      specifications: [
-        {
-          specificationName: '',
-          newSpecificationName: '',
-          addSkuImage: false,
-          skuSelectCheckList: [],
-          addSpecificationValue: '',
-          specificationValueList: [],
-          specificationNameVisible: false,
-          date: new Date()
-        }
-      ],
+      // specifications: [
+      //   {
+      //     specificationName: '',
+      //     newSpecificationName: '',
+      //     addSkuImage: false,
+      //     skuSelectCheckList: [],
+      //     addSpecificationValue: '',
+      //     specificationValueList: [],
+      //     specificationNameVisible: false,
+      //     date: new Date()
+      //   }
+      // ],
       priceEditError: false,
       stockEditError: false
     }
@@ -664,12 +532,6 @@ export default {
           { validator: checkDefaultRecommendRremark, trigger: 'change' }
         ]
       }
-    },
-    disabledAddSkuImage () {
-      // 没有一个sku设置 返回true
-      // 有sku设置 且有一个sku内已经设置图片 返回true
-      // 有sku 且没有一个sku内有图片 返回false
-      return true
     }
   },
   mounted () {
@@ -693,20 +555,8 @@ export default {
         const list = (item.quality_attachments || []).map(i => i.url)
         const originList = (originQualityList[index].quality_attachments).map(i => i.url)
         const section = xorWith(originList, list)
-        // console.log(section, originList, list, product, 'section')
         return section.length
       })
-    },
-    getSpecifications (specifications) {
-      return specifications.filter(item => {
-        return item.specificationValueList.some(v => v.checked)
-      })
-    },
-    onSkuSelectChange (specifications) {
-      this.$set(this, 'specifications', specifications)
-      this.handleSpecifications(specifications)
-      this.product.model.skuShowList = this.skuShowList
-      this.product.model.specifications = specifications
     },
     initList (tpProduct, tpProductList = []) {
       this.setIsShowFloatView(false)
@@ -728,8 +578,10 @@ export default {
       if (!(tpProduct.tp_product_id in this.products)) {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
-          'skuMap', 'skuShowList', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark', 'specifications'
+          'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark',
+          'sku_json'
         ])
+        console.log(this.product, '00000')
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
           title: tpProduct.title,
@@ -746,8 +598,22 @@ export default {
         this.product = this.products[tpProduct.tp_product_id]
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
-        this.skuShowList = this.product.model.skuShowList
-        this.specifications = this.product.model.specifications
+        // sku数据初始化
+        this.skuJson = this.product.model.sku_json
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        Object.assign(this.product.originModel, {
+          sku_json: {
+            ...this.product.model.sku_json,
+            spec_price_list: originModel.tableData.map(item => omit(item, ['index'])),
+            spec_list: originModel.spec_list.map(item => {
+              return {
+                ...item,
+                value_list: item.value_list.map(i => omit(i, ['order']))
+              }
+            })
+          }
+        })
+
         this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
         // this.$refs['bannerPicListView'].curPictureList = this.product.model.bannerPicUrlList
         this.descPicUrlList = [...this.product.model.descPicUrlList]
@@ -829,16 +695,38 @@ export default {
         this.descPicUrlList = data.desc_json
         this.shopBrandList = data.shop_brand_list
         this.product.assign({description: data.desc_text})
-        this.initSku(data.sku_json, data.tp_id)
-        this.updateIsSingleSku()
-        this.product.assign({skuMap: this.getSkuUploadObj().sku_map})
+
+        // 价格转换
+        data.sku_json.spec_price_list.forEach(item => {
+          item.promo_price = utils.fenToYuan(item.promo_price)
+        })
+        // 默认规格初始化
+        if (!data.sku_json.spec_list.length) {
+          const defaultValue = {
+            name: '默认名',
+            spec_id: 'default',
+            image: '',
+            value_list: [
+              {
+                name: '默认值',
+                spec_detail_id: 'default:1'
+              }
+            ]
+          }
+          data.sku_json.spec_list = [defaultValue]
+          data.sku_json.spec_price_list.forEach(item => {
+            item.spec_detail_id_list = ['default:1']
+            item.img = ''
+          })
+        }
+        // sku 数据
+        this.product.assign({sku_json: data.sku_json})
         this.product.assign({bannerPicUrlList: data.banner_json})
         this.product.assign({descPicUrlList: data.desc_json})
         this.product.assign({recommend_remark: data.recommend_remark})
         this.product.assign({skuPropertyList: [...this.skuPropertyList]})
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
         this.product.assign({sortSkuKeys: this.sortSkuKeys})
-        this.product.assign({specifications: this.specifications})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
         this.product.assign({quality_list: [...this.qualityList]})
@@ -853,13 +741,27 @@ export default {
         }
         this.skuPropertyList = this.product.model.skuPropertyList
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
-        this.skuShowList = this.product.model.skuShowList
         this.sortSkuKeys = this.product.model.sortSkuKeys
-        this.specifications = this.product.model.specifications
         this.qualityList = this.product.model.quality_list
+
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
-
+        // sku数据初始化
+        this.skuJson = this.product.model.sku_json
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        Object.assign(this.product.originModel, {
+          sku_json: {
+            ...this.product.model.sku_json,
+            spec_price_list: originModel.tableData.map(item => omit(item, ['index'])),
+            spec_list: originModel.spec_list.map(item => {
+              return {
+                ...item,
+                value_list: item.value_list.map(i => omit(i, ['order']))
+              }
+            })
+          }
+        })
+        console.log(this.product.originModel, 'this.product.originModel')
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }
@@ -925,34 +827,22 @@ export default {
     },
     handleBatchQuantity () {
       this.batchEditQuantity()
-      this.product.model.skuShowList = this.skuShowList
+      // this.product.model.skuShowList = this.skuShowList
       this.dialogQuantityVisible = false
     },
     handleBatchPromoPrice () {
       this.batchEditPromoPrice()
-      this.product.model.skuShowList = this.skuShowList
+      // this.product.model.skuShowList = this.skuShowList
       this.dialogPromoPriceVisible = false
     },
     handleBatchCode () {
       this.batchEditCode(this.batchCodeInput)
-      this.product.model.skuShowList = this.skuShowList
+      // this.product.model.skuShowList = this.skuShowList
       this.dialogCodeVisible = false
     },
     handlePropertyNameChange (pid, vid, ele) {
       this.updateNameOfSkuPropertyValueMap(pid, vid, ele['value'])
     },
-    // isSkuNameWarn (skuName, idx) {
-    //   let cnt = 0
-    //   for (let key in this.skuPropertyValueMap[idx]) {
-    //     if (this.skuPropertyValueMap[idx][key]['value'].trim() === skuName.trim()) {
-    //       cnt += 1
-    //     }
-    //   }
-    //   if (cnt > 1) {
-    //     return true
-    //   }
-    //   return skuName.length > 18
-    // },
     reloadBrandList () {
       this.loadingBrandList = true
       this.request('getShopBrandList', {}, data => {
@@ -1012,8 +902,9 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
-
       let error = ''
+      let errorSkuProduct = false
+      let errorSkuMessage = false
       this.productList.forEach(item => {
         let tpProductId = item.tp_product_id
         if (tpProductId in this.products) {
@@ -1026,39 +917,50 @@ export default {
             }
           }
           // 检验价格 & 库存
-          const skuShowList = product.model.skuShowList
-          if (!skuShowList.length) error = 'sku为空，请设置sku'
-          skuShowList
-            .filter(sku => sku.quantity)
+          const skuList = product.model.sku_json.spec_price_list
+          if (!skuList.length) errorSkuMessage = 'sku为空，请设置sku'
+          skuList
             .forEach(sku => {
-              this.getPriceStyle(sku.promo_price, sku, 'promo_priceBorder', 'promo_price')
-              this.getPriceStyle(sku.quantity, sku, 'quantityBorder', 'quantity')
-              if (sku.quantity > 1000000 || sku.quantity < 0) {
-                console.log(sku, 'sku')
-                error = 'sku库存必填，且只可以输入0-1000000的数字'
-              }
-              if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
-                error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+              if (!errorSkuProduct) {
+                if (!utils.isNumber(sku.quantity) || sku.quantity > 1000000 || sku.quantity < 0 || (utils.isNumber(sku.quantity) && sku.quantity % 1)) {
+                  errorSkuMessage = 'sku库存必填，且只可以输入0-1000000的整数数字'
+                  errorSkuProduct = item
+                // 表单验证
+                } else if (!utils.isNumber(sku.promo_price) || sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
+                  errorSkuMessage = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+                  errorSkuProduct = item
+                }
               }
             })
         }
       })
       if (error) {
+        this.activityTab = 'info'
+        return this.$message.error(error)
+      }
+      if (errorSkuProduct && errorSkuMessage) {
+        // 展示错误提示
         this.activityTab = 'sku'
+        // 设置当前行高亮
+        this.$refs.productList.setCurrentRow(errorSkuProduct)
+        // 获取当前行数据
+        this.setProduct(errorSkuProduct)
+
         this.$nextTick(() => {
-          let isError = document.getElementsByClassName('is-error')
-          console.log(isError, 'isError')
-          if (isError && isError[0]) {
-            isError[0].scrollIntoView({
+          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
+            let isError = document.getElementsByClassName('is-error')
+            if (isError && isError[0]) {
+              isError[0].scrollIntoView({
                 // 滚动到指定节点
                 // 值有start,center,end，nearest，当前显示在视图区域中间
-              block: 'center',
+                block: 'center',
                 // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-              behavior: 'smooth'
-            })
-          }
+                behavior: 'smooth'
+              })
+            }
+          })
         })
-        return this.$message.error(error)
+        return this.$message.error(errorSkuMessage)
       }
       try {
         const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
@@ -1085,6 +987,7 @@ export default {
         return this.$message.error(err)
       }
     },
+    // 存储数据
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
       let tpProductList = []
       let tpProductIdList = []
@@ -1100,7 +1003,36 @@ export default {
             if (brand) {
               brandId = brand.tp_value
             }
-            const specifications = (product.model.specifications || []).filter(item => item.specificationName && item.specificationValueList && item.specificationValueList.length)
+            // 拼接sku属性数据
+            const skuJson = product.model.sku_json
+            // sku规格数据
+            const specifications = skuJson.spec_list.map(specification => {
+              const obj = {
+                spec_id: specification.spec_id,
+                specificationName: specification.name,
+                specificationValueList: specification.value_list.map(item => ({
+                  checked: true,
+                  skuKey: item.spec_detail_id.split(':')[0],
+                  skuValueKey: item.spec_detail_id.split(':')[1],
+                  image: item.image || '',
+                  value: item.name || ''
+                }))
+              }
+              return obj
+            })
+            // sku价格列表数据
+            const skuList = skuJson.spec_price_list.map(spec => {
+              return {
+                code: spec.code,
+                price: spec.price,
+                promo_price: utils.yuanToFen(spec.promo_price),
+                sku_id: spec.sku_id,
+                quantity: spec.quantity,
+                img: spec.img,
+                specDetailIds: spec.spec_detail_id_list
+              }
+            })
+            console.log(skuList, specifications, 'specifications')
             let productParams = {
               tp_product_id: product.model.tp_product_id,
               category_id: product.model.cat_id,
@@ -1111,14 +1043,7 @@ export default {
                 // 属性设置数据
                 attribute_json: product.model.attrList,
                 desc_text: product.model.description,
-                sku_list: product.model.skuShowList
-                  .map(item => {
-                    return {
-                      ...item,
-                      price: utils.yuanToFen(item.price),
-                      promo_price: utils.yuanToFen(item.promo_price)
-                    }
-                  }),
+                sku_list: skuList,
                 spec_list: specifications,
                 banner_json: product.model.bannerPicUrlList.map(val => val['url']),
                 desc_json: product.model.descPicUrlList.map(val => val['url']),
@@ -1326,8 +1251,9 @@ export default {
       this.skuPropertyList = this.product.model.skuPropertyList
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.qualityList = this.product.model.quality_list
-      this.skuShowList = this.product.model.skuShowList
-      this.specifications = this.product.model.specifications
+      this.skuJson = this.product.model.sku_json
+      this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+      // this.specifications = this.product.model.specifications
       this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
       this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
     },
@@ -1340,7 +1266,7 @@ export default {
       this.productList = []
       this.products = {}
       this.skuPropertyList = []
-      this.skuShowList = []
+      this.skuJson = []
       this.productTitleDic = {}
       this.productRemoveFirstBannerDic = {}
       this.productBrandDic = {}
@@ -1721,6 +1647,9 @@ export default {
         this.stockEditError = false
       }
     },
+    setPromp (number, row, borderKey, key) {
+      // this.$set(row,'promo_price',)
+    },
     getPriceStyle (number, row, borderKey, key) {
       if (number > 9999999.99 || number < 0.01) {
         this.$set(row, borderKey, true)
@@ -1745,91 +1674,22 @@ export default {
     handlePictureQualificationChange (data) {
       Object.assign(this.product.model, {quality_list: data})
     },
-    objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
-      const end = this.specifications.length + 3
-      if (this.isLoading) return false
-      const arr = []
-      this.specifications.map(item => {
-        const skuLength = item.specificationValueList.filter(item => item.checked).length
-        arr.push(skuLength || 1)
-      })
-
-      if (arr.length === 3) {
-        const columnIndex0 = arr[1] * arr[2]
-        const columnIndex1 = arr[2]
-        if (columnIndex === 0) {
-          if (rowIndex % columnIndex0 === 0) {
-            return {
-              rowspan: columnIndex0,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
+    handleSkuTable (tableData, specList) {
+      this.product.model.sku_json = {
+        sku_map: this.product.model.sku_json.sku_map,
+        sku_property_map: this.product.model.sku_json.sku_property_map,
+        sku_property_value_map: this.product.model.sku_json.sku_property_value_map,
+        // 过滤没有价格和库存的商品sku
+        spec_price_list: tableData.map(item => omit(item, ['index'])),
+        spec_list: specList.map(item => {
+          return {
+            ...omit(item, ['addSpecificationValue']),
+            value_list: item.value_list.map(i => omit(i, ['order']))
           }
-        } else if (columnIndex === 1) {
-          if (rowIndex % columnIndex1 === 0) {
-            return {
-              rowspan: columnIndex1,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
-          }
-        } else if (columnIndex === end) {
-          if (rowIndex % columnIndex0 === 0) {
-            return {
-              rowspan: columnIndex0,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
-          }
-        }
+        })
       }
-      if (arr.length === 2) {
-        const columnIndex0 = arr[1]
-        if (columnIndex === 0) {
-          if (rowIndex % columnIndex0 === 0) {
-            return {
-              rowspan: columnIndex0,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
-          }
-        } else if (columnIndex === end) {
-          if (rowIndex % columnIndex0 === 0) {
-            return {
-              rowspan: columnIndex0,
-              colspan: 1
-            }
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            }
-          }
-        }
-      }
-
-      return {
-        rowspan: 1,
-        colspan: 1
-      }
+      console.log(this.product.model.sku_json, 'this.product.model.sku_json ')
     }
-
   }
 }
 </script>
@@ -1837,35 +1697,41 @@ export default {
 /deep/ .ProductEditNewView-select{
   text-align: center;
 }
-  /deep/ .el-tabs__content {
-    height: 100%;
+/deep/  .ProductEditNewView-img {
+  .cell {
+    text-overflow: clip;
     overflow-y: auto;
   }
-  /deep/ .el-table__body tr.current-row>td {
-    background-color: rgb(179, 216, 255);
-  }
-  /deep/ .cell {
-    overflow: unset;
-    height: 100%;
-    width: 100%;
-    padding: 0 !important;
-    line-height: 16px;
-  }
-  /deep/ .cell-tight {
-    .cell {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-  /deep/ .rowClass {
+}
+/deep/ .el-tabs__content {
+  height: 100%;
+  overflow-y: auto;
+}
+  // /deep/ .el-table__body tr.current-row>td {
+  //   background-color: rgb(179, 216, 255);
+  // }
+  // /deep/ .cell {
+  //   overflow: unset;
+  //   height: 100%;
+  //   width: 100%;
+  //   padding: 0 !important;
+  //   line-height: 16px;
+  // }
+  // /deep/ .cell-tight {
+  //   .cell {
+  //     display: flex;
+  //     justify-content: center;
+  //     align-items: center;
+  //   }
+  // }
+  // /deep/ .rowClass {
 
-    td {
-      padding: 0;
-      height: 59px;
-    }
+  //   td {
+  //     padding: 0;
+  //     height: 59px;
+  //   }
 
-  }
+  // }
   .preview {
     position: relative;
     width: 50px;
@@ -1959,18 +1825,8 @@ export default {
     }
 
   }
-
-  /deep/ .red {
+    /deep/ .red {
     border: 1px solid red;
-    // textarea:active {
-    //   border: 1px solid red;
-    // }
-    // textarea:hover {
-    //   border: 1px solid red;
-    // }
-    // textarea:focus {
-    //   border: 1px solid red;
-    // }
   }
 
     /deep/ .el-table--enable-row-hover .el-table__body tr:hover > td {
@@ -1985,6 +1841,16 @@ export default {
 
     /deep/ .dialog-tight-category {
       z-index: 9999 !important;
+    }
+
+  /deep/ .ProductEditNewView-img{
+      .el-badge__content.is-fixed{
+        top: 10px;
+        right: 20px;
+      }
+      .el-badge{
+        padding:10px;
+      }
     }
 
 </style>

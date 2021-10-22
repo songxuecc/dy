@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <div>
+  <div >
+    <el-form size="mini" :inline="true" :rules="rules" :model="specifications" style="padding-left:15px">
     <div
       class="left"
       style="
@@ -8,320 +9,173 @@
         padding: 16px 12px;
         margin-right: 30px;
         border-radius: 4px;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
       "
       v-for="(specification, index) in specifications"
       :key="specification.spec_id"
     >
       <div>
         <!-- 规格名 -->
-        <div class="left mb-10">
-          <div class="skuText flex justify-b">
-            <span>规格名</span>
-            <span
-              class="font-12 pointer"
-              v-if="specifications.length > 1"
-              @click="deleteSpecifications(index)"
-            >
-              <hh-icon type="iconshanchu1" class="font-12"></hh-icon>
-              删除</span
-            >
-          </div>
+        <div class="flex justify-b mb-16 ">
+          <span style="line-height:29px">
+            <el-form-item  :prop="`[${index}].name`">
+              <el-input
+                v-model="specification.name"
+                style="width:200px"
+                placeholder="请填写规格名字"
+                @input="handleChangeSpecifications($event,specification)"></el-input>
+            </el-form-item>
+              <el-checkbox
+                v-model="specification.addSkuImage"
+                @change="handleChangeAddImage($event,specification)"
+                size="mini"
+                v-if="index === 0"
+                >添加规格图片
+              </el-checkbox>
+          </span>
+          <hh-icon
+            @click="deleteSpecifications(index)"
+            v-if="specifications.length > 1"
+            type="iconshanchu1"
+            style="line-height:29px"
+            class="font-14 pointer hover-light">
+          </hh-icon>
+        </div>
 
-          <el-select
-            size="mini"
-            style="width: 170px; margin-right: 10px"
-            :value="specification.specificationName"
-            popper-class="skuAddSelect"
-            filterable
-            @change="
-              handleSpecificationNameChange($event, index, specification)
-            "
-          >
-            <el-option
-              v-for="item in specificationNameOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+        <div class="flex justify-b mb-5">
+          <span>规格值(已选{{specification.value_list.length}})</span>
+          <span
+              :class="[ true > 1 ? 'color-primary' : 'color-767989', 'font-12', 'pointer', 'hover-light']"
+              @click="handleSortAddSpecificationValue(index, specification)"
             >
-            </el-option>
-            <el-option style="height: 40px; padding: 0; line-height: 40px">
-              <div
-                v-if="!specification.specificationNameVisible"
-                @click.stop="specification.specificationNameVisible = true"
-                style="padding-left: 12px"
-                class="color-primary pointer"
-              >
-                新建规格名
-              </div>
-              <div
-                v-if="specification.specificationNameVisible"
-                style="padding-left: 2px; padding-right: 4px"
-              >
-                <el-input
-                  :value="specification.newSpecificationName"
-                  @click.native="handleNewSpecificationNameClick"
-                  @input="
-                    changeNewSpecificationName($event, index, specification)
-                  "
-                  @focus.stop=""
-                  size="mini"
-                  placeholder="请输入内容"
-                  style="width: 130px"
-                ></el-input>
-                <hh-icon
-                  type="iconduigou"
-                  class="fail"
-                  style="color: green; margin-left: 2px; font-size: 11px"
-                  @click.native="
-                    addNewSpecificationName($event, index, specification)
-                  "
-                ></hh-icon>
-                <hh-icon
-                  type="iconguanbi1"
-                  class="fail"
-                  style="color: #e02020; margin-left: 2px; font-size: 11px"
-                  @click.native="
-                    cancelNewSpecificationName($event, index, specification)
-                  "
-                ></hh-icon>
-              </div>
-            </el-option>
-            <!-- 规格名搜索为空时 -->
-            <div slot="empty" class="left">
-              <div
-                class="center"
-                style="
-                  height: 60px;
-                  line-height: 60px;
-                  padding-left: 12px;
-                  color: #999999;
-                "
-              >
-                暂无数据
-              </div>
-            </div>
-          </el-select>
-          <el-checkbox
-            v-model="specification.addSkuImage"
-            size="mini"
-            v-if="index === 0"
-            >添加规格图片
-          </el-checkbox>
+            <hh-icon type="iconpaixu"></hh-icon>
+            自定义排序
+          </span>
         </div>
-        <!-- 规格值 -->
-        <div class="selectedLength" v-if="specification.specificationName">
-          规格值<span class="index_count"
-            >(已选{{ specification.skuSelectCheckList.length }}个)</span
-          >
-          <span class="fail">不勾选规格值，就等于删除该规格</span>
-        </div>
-        <el-checkbox-group
-          v-if="specification.specificationName"
-          v-model="specification.skuSelectCheckList"
-          class="flex mb-15 wrap"
-          @change="handleSkuSelectCheckListChange($event, index, specification)"
-        >
+
+        <!-- 规格值列表 -->
+        <div class="flex wrap">
           <div
-            class="preview"
             v-for="(
               specificationValue, idx
-            ) in specification.specificationValueList"
+            ) in specification.value_list"
             :key="specificationValue.skuString"
-            style="flex: 0 0 25%; max-width: 25%; margin-bottom: 8px"
+            style="flex: 0 0 25%; max-width: 25%;"
+            class="mb-10"
           >
-            <el-checkbox
-              :label="specificationValue.checkedValue"
-              :value="specificationValue.checkedValue"
-              class="relative"
-              style="
-                display: inline-flex;
-                align-items: center;
-                margin-bottom: 5px;
-                width: 100%;
-              "
-            >
-						<el-tooltip :content="specificationValue.value" :disabled="specificationValue.value && specificationValue.value.length < 20" placement="top">
-              <span v-if="specificationValue.edit" class="skuValue">
-                  {{ specificationValue.value }}
-                <!-- {{ specificationValue.value }} -->
+              <div class="flex align-c">
+                <el-form-item :prop="`[${index}].value_list[${idx}].name`">
+                  <el-input
+                    v-model="specificationValue.name"
+                    @input="handleChangeSpecificationValues"
+                    size="mini"
+                    placeholder="请填写规格值"
+                  ></el-input>
+                </el-form-item>
                 <hh-icon
-                  type="iconbianji"
-                  class="font-12 pointer iconbianji-primary"
-                  @click.native.prevent="
-                    editSpecificationValue(
-                      $event,
-                      idx,
-                      specification,
+                  type="iconshanchu1"
+                  class="pointer hover-light"
+                  style="font-size: 12px"
+                  @click="
+                    handleDeleteSingleSku(idx,index,specification.value_list)
+                  "
+                ></hh-icon>
+              </div>
+
+            <!-- 图片上传 -->
+            <div v-if="specification.addSkuImage" class="mt-15">
+              <el-upload
+                v-if="!specificationValue.image"
+                slot="reference"
+                :class="[
+                  'skuSelect-el-upload--picture-card ',
+                  'hover-skuSelect-el-upload--picture-card'
+                ]"
+                :show-file-list="false"
+                :on-success="
+                  (response, file, fileList) =>
+                    handleUploadSuccess(
+                      response,
+                      file,
+                      fileList,
                       specificationValue
                     )
-                  "
-                ></hh-icon
-              ></span>
-              <span v-if="!specificationValue.edit">
-                <el-input
-                  :value="specificationValue.value"
-                  size="mini"
-                  placeholder="请输入内容"
-                  style="width: 136px"
-                  ref="inputs"
-                  @input="
-                    changeSpecificationValue(
-                      $event,
-                      idx,
-                      specificationValue,
-                      specification,
-                      index
-                    )
-                  "
-                ></el-input>
-                <hh-icon
-                  type="iconduigou"
-                  class="fail ml-5"
-                  style="color: green; font-size: 11px"
-                  @click.native.prevent="
-                    setSpecificationValue($event, idx, specificationValue)
-                  "
-                ></hh-icon>
-                <hh-icon
-                  type="iconguanbi1"
-                  class="fail ml-5"
-                  style="color: #e02020; font-size: 11px"
-                  @click.native.prevent="
-                    cancelSpecificationValue($event, idx, specificationValue)
-                  "
-                ></hh-icon>
-              </span>
-                </el-tooltip>
-            </el-checkbox>
-            <el-upload
-              v-if="specification.addSkuImage && !specificationValue.image"
-              slot="reference"
-              :class="[
-                'skuSelect-el-upload--picture-card ',
-                'hover-skuSelect-el-upload--picture-card'
-              ]"
-              :show-file-list="false"
-              :on-success="
-                (response, file, fileList) =>
-                  handleUploadSuccess(
-                    response,
-                    file,
-                    fileList,
-                    specificationValue
-                  )
-              "
-              :on-error="handleUploadError"
-              :before-upload="handleBeforeUpload"
-              action="/api/image/create"
-              :headers="getTokenHeaders"
-              :data="{ belong_type: belongType }"
-              :multiple="false"
-            >
-              <span class="flex column align-c justify-c">
-                <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
-                <span class="uploader-text">(0/1)</span>
-              </span>
-            </el-upload>
-
-            <div
-              v-if="specification.addSkuImage && specificationValue.image"
-              :class="[
-                'skuSelect-el-upload--picture-card ',
-              ]"
-            >
-
-              <div class="imgWrapper" >
-                  <el-image
-                    :src="specificationValue.image"
-                    class="avatar"
-                    :ref="`img${specificationValue.skuString}-${idx}`"
-                    :preview-src-list="[specificationValue.image]"
-                  />
-                  <el-popover
-                placement="left"
-                width="270"
-                popper-class="SkuSelect-popper-class"
-                trigger="hover">
-                <img :src="specificationValue.image" style="width: 250px;"/>
-                <div
-                slot="reference"
-                  :class="[
-                    'mask',
-                    'flex',
-                    'justify-b',
-                    'align-c'
-                  ]"
-                >
-
-                  <hh-icon
-                    type="iconxiazai1"
-                    style="font-size: 15px;"
-                    class="iconshanchu1"
-                    @click="downloadIamge(specificationValue.image,`${specification.specificationName}-${specificationValue.value}-${idx}`)"
-                  />
-                  <hh-icon
-                    type="iconreview"
-                    style="font-size: 15px"
-                    class="iconreview"
-                    @click="previewImage(specificationValue,`img${specificationValue.skuString}-${idx}`)"
-                  />
-                  <hh-icon
-                    type="iconshanchu1"
-                    style="font-size: 13px;"
-                    class="iconshanchu1"
-                    @click="deleteImage(
-                      idx,
-                      specificationValue,
-                      specification,
-                      index
-                    )"
-                  />
+                "
+                :on-error="handleUploadError"
+                :before-upload="handleBeforeUpload"
+                action="/api/image/create"
+                :headers="getTokenHeaders"
+                :data="{ belong_type: belongType }"
+                :multiple="false"
+              >
+                <span class="flex column align-c justify-c">
+                  <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
+                  <span class="uploader-text">(0/1)</span>
+                </span>
+              </el-upload>
+              <div
+                v-else
+                :class="['skuSelect-el-upload--picture-card ']"
+              >
+                <div class="imgWrapper" >
+                    <el-image
+                      :src="specificationValue.image"
+                      class="avatar"
+                      :ref="`img${specificationValue.skuString}-${idx}`"
+                      :preview-src-list="[specificationValue.image]"
+                    />
+                    <el-popover
+                      placement="left"
+                      width="270"
+                      popper-class="SkuSelect-popper-class"
+                      trigger="hover">
+                      <img :src="specificationValue.image" style="width: 270px;"/>
+                      <div
+                        slot="reference"
+                          :class="[
+                            'mask',
+                            'flex',
+                            'justify-b',
+                            'align-c'
+                          ]"
+                      >
+                        <hh-icon
+                          type="iconxiazai1"
+                          style="font-size: 15px;"
+                          class="iconshanchu1"
+                          @click="downloadIamge(specificationValue.image,`${specification.name}-${specificationValue.name}-${idx}`)"
+                        />
+                        <hh-icon
+                          type="iconshanchu1"
+                          style="font-size: 13px;"
+                          class="iconshanchu1"
+                          @click="deleteImage(
+                            idx,
+                            specificationValue,
+                            specification,
+                            index
+                          )"
+                        />
+                      </div>
+                    </el-popover>
                 </div>
-              </el-popover>
-
               </div>
             </div>
-
           </div>
-        </el-checkbox-group>
-        <div style="margin-top: 10px" v-if="specification.specificationName">
+
           <el-input
-            v-model="specification.addSpecificationValue"
             size="mini"
-            placeholder="请输入内容"
-            style="width: 170px; margin-right: 10px"
+            placeholder="输入新的sku规格值"
+            style="width:150px"
+            class="mb-10"
+            v-model="specification.addSpecificationValue"
+            @change="handleAddSpecificationValue($event, index, specification)"
           ></el-input>
-          <span
-            @click="handleAddSpecificationValue($event, index, specification)"
-            :class="[
-              specification.addSpecificationValue
-                ? 'color-primary'
-                : 'color-767989',
-              'font-12',
-              'pointer',
-            ]"
-            >添加</span
-          >
-          <el-divider direction="vertical"></el-divider>
-          <span
-            :class="[
-              specification.skuSelectCheckList.length > 1
-                ? 'color-primary'
-                : 'color-767989',
-              'font-12',
-              'pointer',
-            ]"
-            @click="
-              handleSortAddSpecificationValue($event, index, specification)
-            "
-            >自定义排序</span
-          >
         </div>
       </div>
     </div>
 
-    <div class="left mt-10 mb-10" v-if="showAddSpecifications">
+    <div class="left mb-10" v-if="showAddSpecifications">
       <el-button
         type="primary"
         icon="el-icon-plus"
@@ -336,14 +190,13 @@
       title="自定义排序"
       :visible.sync="dialogVisible"
       width="30%"
-      :before-close="handleClose"
       custom-class="skuSelect-dialog"
       :modal="false"
     >
       <div class="left sortDesc">
         <span class="sortName">{{
           specifications && specifications[activeIndex]
-            ? specifications[activeIndex].specificationName
+            ? specifications[activeIndex].name
             : ''
         }}</span
         ><span class="sortDescInfo">请拖动规格值进行排序</span>
@@ -361,8 +214,8 @@
           <span
             class="sortItem list-group-item"
             v-for="specificationValue in dragList"
-            :key="specificationValue.skuString"
-            >{{ specificationValue.value }}</span
+            :key="specificationValue.name"
+            >{{ specificationValue.name }}</span
           >
         </transition-group>
       </draggable>
@@ -385,6 +238,8 @@
         </div>
       </span>
     </el-dialog>
+    </el-form>
+
   </div>
 </template>
 
@@ -392,6 +247,7 @@
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import shortid from 'shortid'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   name: 'SkuSelect',
@@ -401,20 +257,20 @@ export default {
       type: Number,
       default: 0
     },
-    specifications: {
-      type: Array,
-      default: [
-        {
-          specificationName: '',
-          newSpecificationName: '',
-          addSkuImage: false,
-          skuSelectCheckList: [],
-          addSpecificationValue: '',
-          specificationValueList: [],
-          specificationNameVisible: false
-        }
-      ]
-    },
+    // specifications: {
+    //   type: Array,
+    //   default: [
+    //     {
+    //       specificationName: '',
+    //       newSpecificationName: '',
+    //       addSkuImage: false,
+    //       skuSelectCheckList: [],
+    //       addSpecificationValue: '',
+    //       value_list: [],
+    //       specificationNameVisible: false
+    //     }
+    //   ]
+    // },
     skuPropertyValueMap: Object
   },
   components: {
@@ -423,23 +279,61 @@ export default {
   data () {
     return {
       dialogVisible: false,
-      specificationNameOptions: [],
       activeIndex: 0,
       drag: false,
-      dragList: []
-    }
-  },
-  watch: {
-    specifications (n) {
-      const nextSpecificationNames = n.map(item => item.specificationName)
-      const specificationNames = this.specificationNameOptions.map(item => item.value)
-      this.specificationNameOptions = [...new Set([...nextSpecificationNames, ...specificationNames])].filter(item => item).map(item => ({
-        value: item,
-        label: item
-      }))
+      dragList: [],
+      specifications: []
     }
   },
   computed: {
+    rules () {
+      const nameRules = {}
+      const specificationValueRules = {}
+      // 规格名
+      const validateName = index => (rule, value, callback) => {
+        const nameList = this.specifications
+          .filter((item, idx) => idx !== index)
+          .map(item => item.name)
+        if (!value) {
+          callback(new Error('请输入规格名称'))
+        } else if (value && nameList.includes(value)) {
+          callback(new Error('规格名称重复！'))
+        } else {
+          callback()
+        }
+      }
+      this.specifications.forEach((item, index) => {
+        const key = `[${index}].name`
+        nameRules[key] = [
+          { validator: validateName(index), trigger: ['focus', 'blur', 'change'] }
+        ]
+      })
+      // 规格值
+      const validateSpecificationValue = (index, idx) => (rule, value, callback) => {
+        const valueList = this.specifications[index].value_list
+          .filter((item, count) => idx !== count)
+          .map(item => item.name)
+        if (!value) {
+          callback(new Error('请输入规格值'))
+        } else if (value && valueList.includes(value)) {
+          callback(new Error('规格值重复！'))
+        } else {
+          callback()
+        }
+      }
+      this.specifications.forEach((specification, index) => {
+        specification.value_list.forEach((list, idx) => {
+          const key = `[${index}].value_list[${idx}].name`
+          specificationValueRules[key] = [
+            { validator: validateSpecificationValue(index, idx), trigger: ['focus', 'blur', 'change'] }
+          ]
+        })
+      })
+      return {
+        ...nameRules,
+        ...specificationValueRules
+      }
+    },
     dragOptions () {
       return {
         animation: 200,
@@ -453,75 +347,44 @@ export default {
       return (
         this.specifications.length < 3 &&
         this.specifications.some(
-          (specification) => specification.specificationName
+          (specification) => specification.name
         )
       )
     }
   },
   methods: {
-    getDisabledAddSkuImage () {
-      return this.specifications.some((specification) => {
-        return (
-          specification &&
-          (specification.specificationValueList || []).some(
-            (specificationValue) =>
-              specificationValue && specificationValue.image
-          )
-        )
+    init (specifications) {
+      this.specifications = cloneDeep(specifications).map(specification => {
+        specification.value_list.forEach((value, index) => {
+          value.order = index
+          if (value.image) {
+            specification.addSkuImage = true
+          }
+        })
+        return specification
       })
-    },
-    handleNewSpecificationNameClick (e) {
-      e.stopPropagation()
-    },
-    changeNewSpecificationName (e, index, row) {
-      row.newSpecificationName = e
-    },
-    cancelNewSpecificationName (e, index, row) {
-      e.stopPropagation()
-      row.specificationNameVisible = false
-    },
-    addNewSpecificationName (e, index, row) {
-      e.stopPropagation()
-      // 该规格名已经存在，请勿重复创建
-      if (
-        this.specificationNameOptions.find(
-          (item) => item.label === row.newSpecificationName
-        )
-      ) {
-        return this.$message.warning('该规格名已经存在，请勿重复创建')
-      }
-      const newOption = {
-        value: row.newSpecificationName,
-        label: row.newSpecificationName
-      }
-      this.specificationNameOptions = [
-        newOption,
-        ...this.specificationNameOptions
-      ]
-      row.newSpecificationName = ''
-      row.specificationNameVisible = false
     },
     // 规格名字添加
     handleSpecificationNameChange (value, index) {
       const specificationNames = this.specifications.map(
-        (item) => item.specificationName
+        (item) => item.name
       )
       if (specificationNames.includes(value)) {
         return this.$message.error('规格名不能重复')
       }
-      this.specifications[index].specificationName = value
+      this.specifications[index].name = value
       this.$nextTick(() => {
-        this.$emit('change', this.specifications)
+        this.$emit('change', this.specifications, 'add')
       })
     },
     // 添加规格值
-    handleAddSpecificationValue (e, index, row) {
-      if (!row.addSpecificationValue) {
+    handleAddSpecificationValue (value, index, row) {
+      if (!value) {
         return false
       }
       if (
-        row.specificationValueList.find(
-          (item) => item.value === row.addSpecificationValue
+        row.value_list.find(
+          (item) => item.name === value
         )
       ) {
         return this.$message.warning('规格值不能重复')
@@ -530,68 +393,31 @@ export default {
       const skuValueKey = `skuString-${shortid.generate()}`
       const newOption = {
         image: '',
-        value: row.addSpecificationValue,
-        skuKey: specId,
-        skuValueKey: skuValueKey,
-        skuString: `${specId}:${skuValueKey}`,
-        originValue: row.addSpecificationValue,
-        sourceValue: row.addSpecificationValue,
-        checkedValue: row.addSpecificationValue,
-        edit: true,
-        editBtnVisible: false,
-        order: row.specificationValueList.length,
-        checked: true,
-        maskShow: false
+        name: value,
+        spec_detail_id: `${specId}:${skuValueKey}`,
+        order: row.value_list.length
       }
-      this.$nextTick(() => {
-        row.specificationValueList.push(newOption)
-        row.skuSelectCheckList = row.specificationValueList
-          .filter((item) => item.checked)
-          .map((item) => item.checkedValue)
-        row.addSpecificationValue = ''
-        row.spec_id = specId
-        row.id = `id-${shortid.generate()}`
-        this.$emit('change', this.specifications)
-      })
+      row.value_list.push(newOption)
+      row.addSpecificationValue = ''
+      this.$set(this.specifications, index, row)
+      this.$emit('change', this.specifications, 'add')
     },
-    // 增加单个sku
-    handleSkuSelectCheckListChange (list, index, row) {
-      row.specificationValueList = row.specificationValueList.map((item) => {
-        if (list.includes(item.sourceValue)) {
-          return { ...item, checked: true }
-        } else {
-          return { ...item, checked: false }
-        }
-      })
-      this.$nextTick(() => {
-        this.$emit('change', this.specifications)
-      })
+    // 删除单个sku
+    handleDeleteSingleSku (idx, index, list) {
+      // 如果删除 整个规格为空 则返回数据 this.specifications - 1
+      list.splice(idx, 1)
+      let specifications = [...this.specifications]
+      if (!list.length) {
+        specifications.splice(index, index + 1)
+      }
+      this.$emit('change', specifications, 'delete')
     },
     // 排序
-    handleSortAddSpecificationValue (e, index, row) {
-      if (row.skuSelectCheckList && row.skuSelectCheckList.length > 1) {
-        this.dialogVisible = true
-        this.dragList = row.specificationValueList.filter(
-          (item) => item.checked
-        )
-        this.activeIndex = index
-      }
-      this.$nextTick(() => {
-        this.$emit('change', this.specifications)
-      })
-    },
-    editSpecificationValue (e, index, row, specificationValue) {
-      specificationValue.edit = false
-    },
-    cancelSpecificationValue (e, index, row) {
-      e.stopPropagation()
-      row.value = row.originValue
-      row.edit = true
-    },
-    setSpecificationValue (e, index, row) {
-      e.stopPropagation()
-      row.originValue = row.value
-      row.edit = true
+    handleSortAddSpecificationValue (index, row) {
+      this.dragList = row.value_list
+      this.activeIndex = index
+      console.log(this.dragList, '‘自定义')
+      this.dialogVisible = true
     },
     // 修改规格
     changeSpecificationValue (value, idx, row, specification, index) {
@@ -600,48 +426,34 @@ export default {
       }
       const specifications = this.specifications.map((item, i) => {
         if (i === index) {
-          item.specificationValueList[idx].value = value
+          item.value_list[idx].value = value
         }
         return item
       })
       this.$nextTick(() => {
         this.$set(row, 'value', value)
-        this.$emit('change', specifications)
+        this.$emit('change', specifications, 'edit')
       })
     },
-    mouseoverSpecificationValue (e, index, row) {
-      e.stopPropagation()
-      row.editBtnVisible = true
-    },
-    mouseoutSpecificationValue (e, index, row) {
-      e.stopPropagation()
-      row.editBtnVisible = false
-    },
+    // 重置 排序
     resetSort () {
       this.dragList = this.dragList.sort((a, b) => a.order - b.order)
     },
+    // 排序
     sort () {
-      const activeSpecifications = this.specifications[this.activeIndex]
-      const checkedList = this.dragList.map((item, index) => {
-        return { ...item, order: index + 1 }
-      })
-      const noCheckedList = activeSpecifications.specificationValueList
-        .filter((item) => !item.checked)
-        .map((item, index) => {
-          return { ...item, order: index + checkedList.length }
-        })
-      activeSpecifications.specificationValueList = [
-        ...checkedList,
-        ...noCheckedList
-      ]
+      const nextspecifications = cloneDeep(this.specifications)
+      nextspecifications[this.activeIndex].value_list = this.dragList.map((item, index) => ({ ...item, order: index }))
+      this.specifications = nextspecifications
+      this.$emit('change', nextspecifications, 'edit')
       this.dialogVisible = false
-      this.$nextTick(() => {
-        this.$emit('change', this.specifications)
-      })
+      this.activeIndex = 0
+      this.dragList = []
     },
+    // 取消 排序
     cancelSort () {
       this.dialogVisible = false
     },
+    // 添加规格
     addSpecifications () {
       this.specifications = [
         ...this.specifications,
@@ -651,13 +463,14 @@ export default {
           addSkuImage: false,
           skuSelectCheckList: [],
           addSpecificationValue: '',
-          specificationValueList: [],
+          value_list: [],
           specificationNameVisible: false,
           spec_id: shortid.generate(),
           id: `id-${shortid.generate()}`
         }
       ]
     },
+    // 删除规格
     deleteSpecifications (index) {
       this.$confirm('确定删除该规格么？', '', {
         confirmButtonText: '删除',
@@ -667,10 +480,22 @@ export default {
         .then(() => {
           this.specifications.splice(index, 1)
           this.$nextTick(() => {
-            this.$emit('change', this.specifications)
+            this.$emit('change', this.specifications, 'delete')
           })
         })
         .catch(() => {})
+    },
+    handleChangeAddImage (value) {
+      this.$emit('change', this.specifications, 'edit')
+    },
+    handleChangeSpecificationValues (value) {
+      // 规格值不能重复'
+      if (value) this.$emit('change', this.specifications, 'edit')
+    },
+    // 修改规格
+    handleChangeSpecifications (value, specification) {
+      // 规格值不能重复'
+      if (specification.value_list.length) this.$emit('change', this.specifications, 'edit')
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
@@ -704,7 +529,7 @@ export default {
         return
       }
       this.$set(row, 'image', response.data.url)
-      this.$emit('change', this.specifications)
+      this.$emit('change', this.specifications, 'edit')
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
@@ -713,13 +538,13 @@ export default {
     deleteImage (idx, specificationValue, specification, index) {
       const specifications = this.specifications.map((item, i) => {
         if (i === index) {
-          item.specificationValueList[idx].image = ''
+          item.value_list[idx].image = ''
         }
         return item
       })
       this.$nextTick(() => {
         this.$set(specificationValue, 'image', '')
-        this.$emit('change', specifications)
+        this.$emit('change', specifications, 'edit')
       })
     },
     previewImage (item, refName) {
@@ -727,7 +552,7 @@ export default {
         this.$refs[refName][0].clickHandler()
       }
     },
-    downloadIamge (imgsrc, name) { // 下载图片地址和图片名
+    downloadIamge (imgsrc, name) {
       var image = new Image()
         // 解决跨域 Canvas 污染问题
       image.setAttribute('crossOrigin', 'anonymous')
@@ -745,40 +570,17 @@ export default {
         a.dispatchEvent(event) // 触发a的单击事件
       }
       image.src = imgsrc
-    },
-    // 更新单个sku维度信息
-    handleChangeSingleSku () {
-      this.$emit('onChangeSingleSku')
-    },
-    // 排序单个sku
-    handleSortSingleSku () {
-      this.$emit('onSortSingleSku')
-    },
-    // 增加单个sku
-    handleAddSingleSku () {
-      this.$emit('onAddSingleSku')
-    },
-    // 删除单个sku维度
-    handleDeleteSingleSku () {
-      this.$emit('onDeleteSingleSku')
-    },
-    // 删除整个sku维度
-    handleDeleteSku () {
-      this.$emit('onDeleteSku')
-    },
-    // 增加一个维度的sku
-    handleAddSku () {
-      this.$emit('onAddSku')
-    },
-    // 选中单个sku
-    handleCheckedSkuFilter () {
-      this.$emit('onCheckedSkuFilter')
     }
   }
 }
 </script>
 <style lang="less" scoped>
 @import '~./SkuSelect.less';
+.hover-light {
+  &:hover {
+    color: @color-primary;
+  }
+}
 </style>
 <style lang="less">
 .skuAddSelect {
