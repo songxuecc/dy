@@ -43,7 +43,7 @@
 
     </el-form>
     <h1 class="mb-10" style="margin-top:10px">价格与库存</h1>
-        <el-form :rules="rules" ref="form" :model="tableData" size="small" style="padding-left:15px">
+        <el-form ref="form" :rules="rules" :model="tableData" size="small" style="padding-left:15px">
             <el-table
             :data="tableData"
             :span-method="spanMethod"
@@ -194,8 +194,7 @@ export default {
       const priceRules = {}
       const quantityRules = {}
       const validatePrice = (rule, value, callback) => {
-        console.log(value, 'value')
-        if (!value || !utils.isNumber(value)) {
+        if (!utils.isNumber(value)) {
           callback(new Error('sku价格必填,请填写数字'))
         } else if ((value > 9999999.99 || value < 0.01)) {
           callback(new Error('sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'))
@@ -211,25 +210,19 @@ export default {
         ]
       })
 
-      const validateQuantity = row => (rule, value, callback) => {
-        if (typeof row.promo_price !== 'number') {
-          callback(new Error('sku库存请填写数字'))
+      const validateQuantity = (rule, value, callback) => {
+        if (!utils.isNumber(value)) {
+          callback(new Error('sku库存必填'))
+        } else if (value && (value > 1000000 || value < 0)) {
+          callback(new Error('sku库存必填，且只可以输入0-1000000的数字'))
         } else {
-          if (row.promo_price) {
-            if (value && (value > 1000000 || value < 0)) {
-              callback(new Error('sku库存必填，且只可以输入0-1000000的数字'))
-            } else {
-              callback()
-            }
-          } else {
-            callback()
-          }
+          callback()
         }
       }
       this.tableData.forEach((item, index) => {
         const key = `[${index}].quantity`
         quantityRules[key] = [
-          { validator: validateQuantity(item), trigger: ['blur', 'change'] }
+          { validator: validateQuantity, trigger: ['blur', 'change'] }
         ]
       })
 
@@ -318,23 +311,7 @@ export default {
     },
     validForm () {
       this.$refs.form.validate((valid, object) => {
-        console.log(valid, object)
-        if (!valid) {
-          this.$nextTick(() => {
-            let isError = document.getElementsByClassName('is-error')
-            if (isError && isError[0]) {
-              isError[0].scrollIntoView({
-                // 滚动到指定节点
-                // 值有start,center,end，nearest，当前显示在视图区域中间
-                block: 'center',
-                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-                behavior: 'smooth'
-              })
-            }
-          })
-        }
       })
-      return this.$data
     },
     getRowData (row, index) {
       const specList = this.spec_list
@@ -420,7 +397,6 @@ export default {
         this.tableData = tableData
         this.spec_list = specifications
         this.$emit('change', this.tableData, this.spec_list)
-        this.validForm()
       })
     },
     // sku抓取
@@ -429,7 +405,6 @@ export default {
     },
     // 批量设置
     handleBatchEdit () {
-      console.log(this.batchEditForm, '批量设置')
       const specArrays = omit(this.batchEditForm, ['promo_price', 'quantity', 'code'])
       const specValues = (Object.values(specArrays) || []).filter(item => Number(item) !== -1)
       this.tableData = this.tableData.map(data => {

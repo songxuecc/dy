@@ -683,7 +683,6 @@ export default {
       })
     },
     updateProperty (tpProductId) {
-      console.log(tpProductId, 'tpProductId-updateProperty')
       this.isLoading = true
       const catId = this.product.originModel.cat_id !== this.product.model.cat_id ? this.product.model.cat_id : -1
       let params = { tp_product_id: tpProductId, cat_id: catId }
@@ -904,8 +903,9 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
-      // return false
       let error = ''
+      let errorSkuProduct = false
+      let errorSkuMessage = false
       this.productList.forEach(item => {
         let tpProductId = item.tp_product_id
         if (tpProductId in this.products) {
@@ -919,42 +919,57 @@ export default {
           }
           // 检验价格 & 库存
           const skuList = product.model.sku_json.spec_price_list
-          if (!skuList.length) error = 'sku为空，请设置sku'
+          if (!skuList.length) errorSkuMessage = 'sku为空，请设置sku'
           skuList
-            .filter(sku => sku.quantity)
-            .filter(sku => sku.promo_price)
             .forEach(sku => {
-              if (sku.quantity > 1000000 || sku.quantity < 0) {
-                error = 'sku库存必填，且只可以输入0-1000000的数字'
-              }
-              if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
-                error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+              if (!errorSkuProduct) {
+                if (!utils.isNumber(sku.quantity) || sku.quantity > 1000000 || sku.quantity < 0) {
+                  errorSkuMessage = 'sku库存必填，且只可以输入0-1000000的数字'
+
+                  errorSkuProduct = item
+                // 表单验证
+                } else if (!utils.isNumber(sku.promo_price) || sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
+                  errorSkuMessage = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+                  errorSkuProduct = item
+                }
               }
             })
         }
       })
       if (error) {
+        this.activityTab = 'info'
+        return this.$message.error(error)
+      }
+      if (errorSkuProduct && errorSkuMessage) {
+        // 展示错误提示
         this.activityTab = 'sku'
+        // 设置当前行高亮
+        this.$refs.productList.setCurrentRow(errorSkuProduct)
+        // 获取当前行数据
+        this.setProduct(errorSkuProduct)
+
         this.$nextTick(() => {
-          let isError = document.getElementsByClassName('is-error')
-          if (isError && isError[0]) {
-            isError[0].scrollIntoView({
+          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
+            let isError = document.getElementsByClassName('is-error')
+            if (isError && isError[0]) {
+              isError[0].scrollIntoView({
                 // 滚动到指定节点
                 // 值有start,center,end，nearest，当前显示在视图区域中间
-              block: 'center',
+                block: 'center',
                 // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-              behavior: 'smooth'
-            })
-          }
+                behavior: 'smooth'
+              })
+            }
+          })
         })
-        return this.$message.error(error)
+        return this.$message.error(errorSkuMessage)
       }
       try {
         const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
         if (propertySetValid) {
         // 没有修改分类时不用传参数
           this.productEditSavingPercent = 0
-          // this.isProductEditSaving = true
+          this.isProductEditSaving = true
           this.saveProducts()
         }
       } catch (err) {
@@ -1667,7 +1682,7 @@ export default {
         sku_property_map: this.product.model.sku_json.sku_property_map,
         sku_property_value_map: this.product.model.sku_json.sku_property_value_map,
         // 过滤没有价格和库存的商品sku
-        spec_price_list: tableData.map(item => omit(item, ['index'])).filter(item => item.quantity && item.promo_price),
+        spec_price_list: tableData.map(item => omit(item, ['index'])),
         spec_list: specList.map(item => {
           return {
             ...omit(item, ['addSpecificationValue']),
