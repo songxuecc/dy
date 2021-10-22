@@ -623,8 +623,6 @@ export default {
         this.qualityList = [...this.product.model.quality_list]
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
-
-        console.log('8888--------')
       }
     },
     handleProductSelect (val, old) {
@@ -919,30 +917,26 @@ export default {
               error = '商家推荐语只可以填写8-50个字符！'
             }
           }
-
           // 检验价格 & 库存
-          // const skuShowList = product.model.skuShowList
-          // if (!skuShowList.length) error = 'sku为空，请设置sku'
-          // skuShowList
-          //   .filter(sku => sku.quantity)
-          //   .forEach(sku => {
-          //     this.getPriceStyle(sku.promo_price, sku, 'promo_priceBorder', 'promo_price')
-          //     this.getPriceStyle(sku.quantity, sku, 'quantityBorder', 'quantity')
-          //     if (sku.quantity > 1000000 || sku.quantity < 0) {
-          //       console.log(sku, 'sku')
-          //       error = 'sku库存必填，且只可以输入0-1000000的数字'
-          //     }
-          //     if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
-          //       error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
-          //     }
-          //   })
+          const skuList = product.model.sku_json.spec_price_list
+          if (!skuList.length) error = 'sku为空，请设置sku'
+          skuList
+            .filter(sku => sku.quantity)
+            .filter(sku => sku.promo_price)
+            .forEach(sku => {
+              if (sku.quantity > 1000000 || sku.quantity < 0) {
+                error = 'sku库存必填，且只可以输入0-1000000的数字'
+              }
+              if (sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
+                error = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+              }
+            })
         }
       })
       if (error) {
         this.activityTab = 'sku'
         this.$nextTick(() => {
           let isError = document.getElementsByClassName('is-error')
-          console.log(isError, 'isError')
           if (isError && isError[0]) {
             isError[0].scrollIntoView({
                 // 滚动到指定节点
@@ -1672,7 +1666,8 @@ export default {
         sku_map: this.product.model.sku_json.sku_map,
         sku_property_map: this.product.model.sku_json.sku_property_map,
         sku_property_value_map: this.product.model.sku_json.sku_property_value_map,
-        spec_price_list: tableData.map(item => omit(item, ['index'])),
+        // 过滤没有价格和库存的商品sku
+        spec_price_list: tableData.map(item => omit(item, ['index'])).filter(item => item.quantity && item.promo_price),
         spec_list: specList.map(item => {
           return {
             ...omit(item, ['addSpecificationValue']),

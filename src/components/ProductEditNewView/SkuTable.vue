@@ -1,7 +1,7 @@
 <!--  -->
 <template>
     <div class="SkuTable left">
-    <h1 class="mb-10">商品规格</h1>
+    <h1 class="mb-10">商品规格 <span class="warning"><hh-icon type="icontishi" ></hh-icon>注意：每次编辑完价格后商品单独保存，以免数据丢失！</span></h1>
     <SkuSelect
       ref="SkuSelect"
       :specifications="spec_list"
@@ -66,7 +66,7 @@
                 width="130">
                 <template slot-scope="scope">
                     <el-form-item  :prop="`[${scope.row.index}].quantity`">
-                        <el-input v-model="scope.row.quantity" placeholder="请输入"></el-input>
+                        <el-input v-model="scope.row.quantity" placeholder="请输入" @input="handleEdit"></el-input>
                     </el-form-item>
                 </template>
             </el-table-column>
@@ -87,7 +87,7 @@
                 <template slot-scope="scope">
                     <el-form-item  class="relative" :prop="`[${scope.row.index}].promo_price`">
                         <span class="unit">¥</span>
-                        <el-input class="price" v-model="scope.row.promo_price" placeholder="请输入"></el-input>
+                        <el-input class="price" v-model="scope.row.promo_price" placeholder="请输入" @input="handleEdit"></el-input>
                     </el-form-item>
                 </template>
             </el-table-column>
@@ -105,7 +105,7 @@
                 </template>
                 <template slot-scope="scope">
                     <el-form-item  :prop="`[${scope.row.index}].code`">
-                        <el-input v-model="scope.row.code" placeholder="请输入"></el-input>
+                        <el-input v-model="scope.row.code" placeholder="请输入" @input="handleEdit"></el-input>
                     </el-form-item>
                 </template>
             </el-table-column>
@@ -156,6 +156,7 @@ import SkuSelect from './SkuSelect'
 import omit from 'lodash/omit'
 import cloneDeep from 'lodash/cloneDeep'
 import skuImport from '@/assets/images/sku_import.png'
+import utils from '@/common/utils'
 
 export default {
   name: 'component_name',
@@ -191,15 +192,50 @@ export default {
   computed: {
     rules () {
       const priceRules = {}
+      const quantityRules = {}
+      const validatePrice = (rule, value, callback) => {
+        console.log(value, 'value')
+        if (!value || !utils.isNumber(value)) {
+          callback(new Error('sku价格必填,请填写数字'))
+        } else if ((value > 9999999.99 || value < 0.01)) {
+          callback(new Error('sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'))
+        } else {
+          callback()
+        }
+      }
+
       this.tableData.forEach((item, index) => {
         const key = `[${index}].promo_price`
         priceRules[key] = [
-          { required: true, message: '请输入价格', trigger: ['blur', 'change'] }
-          // { required: true, message: '请输入0.01到9999999.99的数字，最多保留2位小数', trigger: ['blur', 'change'] }
+          { validator: validatePrice, trigger: ['blur', 'change'] }
         ]
       })
+
+      const validateQuantity = row => (rule, value, callback) => {
+        if (typeof row.promo_price !== 'number') {
+          callback(new Error('sku库存请填写数字'))
+        } else {
+          if (row.promo_price) {
+            if (value && (value > 1000000 || value < 0)) {
+              callback(new Error('sku库存必填，且只可以输入0-1000000的数字'))
+            } else {
+              callback()
+            }
+          } else {
+            callback()
+          }
+        }
+      }
+      this.tableData.forEach((item, index) => {
+        const key = `[${index}].quantity`
+        quantityRules[key] = [
+          { validator: validateQuantity(item), trigger: ['blur', 'change'] }
+        ]
+      })
+
       return {
-        ...priceRules
+        ...priceRules,
+        ...quantityRules
       }
     }
   },
@@ -227,12 +263,24 @@ export default {
             if (!recordFirstPrice) {
               recordFirstPrice = matchSpecData.promo_price
             }
-          } else {
-            // 当用户抓取的商品缺少sku时，库存=0，价格取第一个sku价格（库存既然是0了所以价格是多少不重要，只要不是0就行）。从而解决价格=0的问题
-            matchSpecData.promo_price = recordFirstPrice
-            matchSpecData.quantity = 0
           }
+          // else {
+          //   matchSpecData.promo_price = 0
+          //   matchSpecData.quantity = 0
+          // }
         })
+
+        // 当用户抓取的商品缺少sku时，库存=0，价格取第一个sku价格（库存既然是0了所以价格是多少不重要，只要不是0就行）。从而解决价格=0的问题
+        const noMatchspecsPrice = this.spec_price_list.every(data => {
+          const dataSet = new Set(data.spec_detail_id_list)
+          const specSet = new Set(spec)
+          const noMatch = [...specSet].every(x => !dataSet.has(x))
+          return noMatch
+        })
+        if (noMatchspecsPrice) {
+          matchSpecData.promo_price = recordFirstPrice
+          matchSpecData.quantity = 0
+        }
         matchSpecData.index = index
         matchSpecData.spec_detail_id_list = spec
         tableData.push(matchSpecData)
@@ -268,10 +316,24 @@ export default {
       }
       return result
     },
-    getForm () {
-      // this.$refs.form.validate((valid, object) => {
-      //   console.log(valid, object)
-      // })
+    validForm () {
+      this.$refs.form.validate((valid, object) => {
+        console.log(valid, object)
+        if (!valid) {
+          this.$nextTick(() => {
+            let isError = document.getElementsByClassName('is-error')
+            if (isError && isError[0]) {
+              isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+                block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+                behavior: 'smooth'
+              })
+            }
+          })
+        }
+      })
       return this.$data
     },
     getRowData (row, index) {
@@ -285,6 +347,11 @@ export default {
         })
       })
       return text
+    },
+    handleEdit () {
+      this.$nextTick(() => {
+        this.$emit('change', this.tableData, this.spec_list)
+      })
     },
     // 格式化数据
     onSkuSelectChange (specifications, type) {
@@ -349,11 +416,11 @@ export default {
           return data
         })
       }
-
       this.$nextTick(() => {
         this.tableData = tableData
         this.spec_list = specifications
         this.$emit('change', this.tableData, this.spec_list)
+        this.validForm()
       })
     },
     // sku抓取
