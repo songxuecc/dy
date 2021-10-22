@@ -1,7 +1,7 @@
 <!--  -->
 <template>
     <div class="card left">
-      <el-form ref="form" size="mini" label-width="100px" :rules="rules" :model="bundle_list">
+      <el-form ref="form" size="mini" label-width="100px" :rules="rules" :model="bundle_list" >
         <div  v-for="(item,index) in bundle_list" :key="item.id" class="">
             <h1 class="flex align-c justify-b" >
               <span>规格{{bundle_list.length>1 ? item.id:''}}</span>
@@ -101,7 +101,7 @@
                 </div>
             </el-form-item>
             <el-form-item  label="组合名称:"   class="item"  :prop="`[${index}].spec_detail_name1`">
-                <el-input :maxlength="30" show-word-limit  v-model="item.spec_detail_name1"  placeholder="请填写组合名称,限30个汉字" clearable @clear="handleClear(item,'spec_detail_name1')"></el-input>
+                <el-input  :maxlength="30" show-word-limit  v-model="item.spec_detail_name1"  placeholder="请填写组合名称,限30个汉字" clearable @clear="handleClear(item,'spec_detail_name1')"></el-input>
             </el-form-item>
 
             <el-form-item  label="组合原价:" class="item">
