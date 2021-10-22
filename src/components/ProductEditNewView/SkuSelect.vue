@@ -165,7 +165,7 @@
 
           <el-input
             size="mini"
-            placeholder="请输入内容"
+            placeholder="输入新的sku规格值"
             style="width:150px"
             class="mb-10"
             v-model="specification.addSpecificationValue"

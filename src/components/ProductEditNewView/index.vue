@@ -922,9 +922,8 @@ export default {
           skuList
             .forEach(sku => {
               if (!errorSkuProduct) {
-                if (!utils.isNumber(sku.quantity) || sku.quantity > 1000000 || sku.quantity < 0) {
-                  errorSkuMessage = 'sku库存必填，且只可以输入0-1000000的数字'
-
+                if (!utils.isNumber(sku.quantity) || sku.quantity > 1000000 || sku.quantity < 0 || (utils.isNumber(sku.quantity) && sku.quantity % 1)) {
+                  errorSkuMessage = 'sku库存必填，且只可以输入0-1000000的整数数字'
                   errorSkuProduct = item
                 // 表单验证
                 } else if (!utils.isNumber(sku.promo_price) || sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {

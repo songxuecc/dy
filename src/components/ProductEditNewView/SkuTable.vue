@@ -6,8 +6,8 @@
       ref="SkuSelect"
       :specifications="spec_list"
       @change="onSkuSelectChange"/>
-    <h1 class="mb-10" style="margin-top:20px">批量设置</h1>
-    <el-form class="mb-10 flex wrap" style="padding-left:15px" size="small" :model="batchEditForm">
+    <h1 class="mb-10" style="margin-top:20px">批量设置 <span class="warning"><hh-icon type="icontishi" ></hh-icon>空为不修改</span></h1>
+    <el-form class="mb-10 flex wrap" style="padding-left:15px" size="small" ref="batchEditForm" :model="batchEditForm" :rules="rulesBatchEditForm">
       <el-form-item>
         <el-select
           v-model="batchEditForm[spec.spec_id]"
@@ -28,11 +28,11 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.promo_price" placeholder="价格"></el-input>
-      </el-form-item>
-      <el-form-item>
+      <el-form-item prop="quantity">
         <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.quantity" placeholder="库存"></el-input>
+      </el-form-item>
+      <el-form-item prop="promo_price">
+        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.promo_price" placeholder="货源方原价"></el-input>
       </el-form-item>
       <el-form-item>
         <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.code" placeholder="编码"></el-input>
@@ -42,7 +42,7 @@
       </el-form-item>
 
     </el-form>
-    <h1 class="mb-10" style="margin-top:10px">价格与库存</h1>
+    <h1 class="mb-10" style="margin-top:10px">货源方原价与库存</h1>
         <el-form ref="form" :rules="rules" :model="tableData" size="small" style="padding-left:15px">
             <el-table
             :data="tableData"
@@ -167,6 +167,34 @@ export default {
     SkuSelect
   },
   data () {
+    const validateQuantity = (rule, value, callback) => {
+      if (value) {
+        if (!utils.isNumber(value)) {
+          callback(new Error('0-1000000'))
+        } else if (utils.isNumber(value) && value % 1) {
+          callback(new Error('必须为整数'))
+        } else if (value && (value > 1000000 || value < 0)) {
+          callback(new Error('0-1000000'))
+        } else {
+          callback()
+        }
+      } else {
+        callback()
+      }
+    }
+    const validatePrice = (rule, value, callback) => {
+      if (value) {
+        if (!utils.isNumber(value)) {
+          callback(new Error('0.01-9999999.99'))
+        } else if ((value > 9999999.99 || value < 0.01)) {
+          callback(new Error('0.01-9999999.99'))
+        } else {
+          callback()
+        }
+      } else {
+        callback()
+      }
+    }
     return {
       spec_list: [],
       tableData: [],
@@ -177,15 +205,25 @@ export default {
         code: ''
       },
       skuImport,
-      visibleSkuImport: false
+      visibleSkuImport: false,
+      rulesBatchEditForm: {
+        promo_price: [
+          { validator: validatePrice, trigger: ['change'] }
+        ],
+        quantity: [
+          { validator: validateQuantity, trigger: ['change'] }
+        ]
+      }
     }
   },
   watch: {
     spec_list (n) {
       if (n) {
-        n.forEach(item => {
-          this.batchEditForm[item.spec_id] = -1
+        const batchEditForm = {}
+        this.spec_list.forEach(spec => {
+          batchEditForm[spec.spec_id] = -1
         })
+        this.batchEditForm = cloneDeep(batchEditForm)
       }
     }
   },
@@ -195,9 +233,9 @@ export default {
       const quantityRules = {}
       const validatePrice = (rule, value, callback) => {
         if (!utils.isNumber(value)) {
-          callback(new Error('sku价格必填,请填写数字'))
+          callback(new Error('0.01-9999999.99'))
         } else if ((value > 9999999.99 || value < 0.01)) {
-          callback(new Error('sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'))
+          callback(new Error('0.01-9999999.99'))
         } else {
           callback()
         }
@@ -212,9 +250,11 @@ export default {
 
       const validateQuantity = (rule, value, callback) => {
         if (!utils.isNumber(value)) {
-          callback(new Error('sku库存必填'))
+          callback(new Error('0-1000000'))
+        } else if (utils.isNumber(value) && value % 1) {
+          callback(new Error('必须为整数'))
         } else if (value && (value > 1000000 || value < 0)) {
-          callback(new Error('sku库存必填，且只可以输入0-1000000的数字'))
+          callback(new Error('0-1000000'))
         } else {
           callback()
         }
@@ -235,10 +275,6 @@ export default {
   methods: {
     init (skuJson) {
       // 批量修改表单初始化
-      this.batchEditForm.promo_price = ''
-      this.batchEditForm.quantity = ''
-      this.batchEditForm.code = ''
-
       this.spec_list = cloneDeep(skuJson.spec_list)
       this.spec_price_list = cloneDeep(skuJson.spec_price_list)
       const tableData = []
@@ -405,21 +441,25 @@ export default {
     },
     // 批量设置
     handleBatchEdit () {
-      const specArrays = omit(this.batchEditForm, ['promo_price', 'quantity', 'code'])
-      const specValues = (Object.values(specArrays) || []).filter(item => Number(item) !== -1)
-      this.tableData = this.tableData.map(data => {
-        const dataSet = new Set(data.spec_detail_id_list)
-        const specSet = new Set(specValues)
-        const concludes = [...specSet].every(x => dataSet.has(x))
-        if (concludes) {
-          if (this.batchEditForm.promo_price) data.promo_price = this.batchEditForm.promo_price
-          if (this.batchEditForm.quantity) data.quantity = this.batchEditForm.quantity
-          if (this.batchEditForm.code) data.code = this.batchEditForm.code
+      this.$refs.batchEditForm.validate((valid, object) => {
+        if (valid) {
+          const specArrays = omit(this.batchEditForm, ['promo_price', 'quantity', 'code'])
+          const specValues = (Object.values(specArrays) || []).filter(item => Number(item) !== -1)
+          this.tableData = this.tableData.map(data => {
+            const dataSet = new Set(data.spec_detail_id_list)
+            const specSet = new Set(specValues)
+            const concludes = [...specSet].every(x => dataSet.has(x))
+            if (concludes) {
+              if (this.batchEditForm.promo_price) data.promo_price = this.batchEditForm.promo_price
+              if (this.batchEditForm.quantity) data.quantity = this.batchEditForm.quantity
+              if (this.batchEditForm.code) data.code = this.batchEditForm.code
+            }
+            return data
+          })
+          this.$message.success('设置成功')
+          this.$emit('change', this.tableData, this.spec_list)
         }
-        return data
       })
-      this.$message.success('设置成功')
-      this.$emit('change', this.tableData, this.spec_list)
     },
     spanMethod ({ row, column, rowIndex, columnIndex }) {
       const end = this.spec_list.length + 3
