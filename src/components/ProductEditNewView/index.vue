@@ -987,115 +987,120 @@ export default {
     },
     // 存储数据
     saveProducts (catId = -1, updateCategoryTPProductIds = []) {
-      let tpProductList = []
-      let tpProductIdList = []
-      const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
-      for (let i in this.productList) {
-        let tpProductId = this.productList[i].tp_product_id
-        if (this.products[tpProductId] && (this.products[tpProductId].isDiff() || this.checkQualityList(this.products[tpProductId]))) {
-          if (tpProductId in this.products) {
-            let product = this.products[tpProductId]
+      try {
+        let tpProductList = []
+        let tpProductIdList = []
+        const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
+        for (let i in this.productList) {
+          let tpProductId = this.productList[i].tp_product_id
+          if (this.products[tpProductId] && (this.products[tpProductId].isDiff() || this.checkQualityList(this.products[tpProductId]))) {
+            if (tpProductId in this.products) {
+              let product = this.products[tpProductId]
             // 品牌和属性内的品牌是同一个值
-            let brandId = 0
-            const brand = (product.model.attrList || []).find(item => item.name === '品牌')
-            if (brand) {
-              brandId = brand.tp_value
-            }
+              let brandId = 0
+              const brand = (product.model.attrList || []).find(item => item.name === '品牌')
+              if (brand) {
+                brandId = brand.tp_value
+              }
             // 拼接sku属性数据
-            const skuJson = product.model.sku_json
+              const skuJson = product.model.sku_json
             // sku规格数据
-            const specifications = skuJson.spec_list.map(specification => {
-              const obj = {
-                spec_id: specification.spec_id,
-                specificationName: specification.name,
-                specificationValueList: specification.value_list.map(item => ({
-                  checked: true,
-                  skuKey: item.spec_detail_id.split(':')[0],
-                  skuValueKey: item.spec_detail_id.split(':')[1],
-                  image: item.image || '',
-                  value: item.name || ''
-                }))
-              }
-              return obj
-            })
+              const specifications = skuJson.spec_list.map(specification => {
+                const obj = {
+                  spec_id: specification.spec_id,
+                  specificationName: specification.name,
+                  specificationValueList: specification.value_list.map(item => ({
+                    checked: true,
+                    skuKey: item.spec_detail_id.split(':')[0],
+                    skuValueKey: item.spec_detail_id.split(':')[1],
+                    image: item.image || '',
+                    value: item.name || ''
+                  }))
+                }
+                return obj
+              })
             // sku价格列表数据
-            const skuList = skuJson.spec_price_list.map(spec => {
-              return {
-                code: spec.code,
-                price: spec.price,
-                promo_price: utils.yuanToFen(spec.promo_price),
-                sku_id: spec.sku_id,
-                quantity: spec.quantity,
-                img: spec.img,
-                specDetailIds: spec.spec_detail_id_list
-              }
-            })
-            let productParams = {
-              tp_product_id: product.model.tp_product_id,
-              category_id: product.model.cat_id,
-              title: product.model.title,
-              price: utils.yuanToFen(product.model.price),
-              tp_outer_iid: product.model.outer_id,
-              tp_property_json: {
+              const skuList = skuJson.spec_price_list.map(spec => {
+                return {
+                  code: spec.code,
+                  price: spec.price,
+                  promo_price: utils.yuanToFen(spec.promo_price),
+                  sku_id: spec.sku_id || '',
+                  quantity: spec.quantity || 0,
+                  img: spec.img || '',
+                  specDetailIds: spec.spec_detail_id_list
+                }
+              })
+              let productParams = {
+                tp_product_id: product.model.tp_product_id,
+                category_id: product.model.cat_id,
+                title: product.model.title,
+                price: utils.yuanToFen(product.model.price),
+                tp_outer_iid: product.model.outer_id,
+                tp_property_json: {
                 // 属性设置数据
-                attribute_json: product.model.attrList,
-                desc_text: product.model.description,
-                sku_list: skuList,
-                spec_list: specifications,
-                banner_json: product.model.bannerPicUrlList.map(val => val['url']),
-                desc_json: product.model.descPicUrlList.map(val => val['url']),
-                brand_id: brandId,
-                recommend_remark: product.model.recommend_remark,
-                quality_list: product.model.quality_list || []
+                  attribute_json: product.model.attrList,
+                  desc_text: product.model.description,
+                  sku_list: skuList,
+                  spec_list: specifications,
+                  banner_json: product.model.bannerPicUrlList.map(val => val['url']),
+                  desc_json: product.model.descPicUrlList.map(val => val['url']),
+                  brand_id: brandId,
+                  recommend_remark: product.model.recommend_remark,
+                  quality_list: product.model.quality_list || []
+                }
               }
+              console.log(productParams, 'productParams')
+              tpProductList.push(productParams)
             }
-            console.log(productParams, 'productParams')
-            tpProductList.push(productParams)
-          }
-        } else {
-          let productParams = {
-            tp_product_id: this.productList[i].tp_product_id,
-            category_id: this.productList[i].category_id,
-            title: this.productList[i].title,
-            price: utils.yuanToFen(this.productList[i].price),
-            tp_outer_iid: this.productList[i].tp_outer_iid,
-            tp_property_json: {}
-          }
-          let isChange = false
-          if (this.productList[i].title !== this.productTitleDic[tpProductId]) {
-            productParams['title'] = this.productTitleDic[this.productList[i].tp_product_id]
-            isChange = true
-          }
-          if (this.productRemoveFirstBannerDic[tpProductId] && !this.products[tpProductId]) {
-            productParams['tp_property_json'].remove_first_banner = true
-            isChange = true
-          }
-          if (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId]) {
-            productParams['tp_property_json'].brand_id = this.productBrandDic[tpProductId] || 0
-            isChange = true
-          }
-          if (this.productRemoveLastDescDic[tpProductId] && !this.products[tpProductId]) {
-            productParams['tp_property_json'].remove_last_desc = true
-            isChange = true
-          }
+          } else {
+            let productParams = {
+              tp_product_id: this.productList[i].tp_product_id,
+              category_id: this.productList[i].category_id,
+              title: this.productList[i].title,
+              price: utils.yuanToFen(this.productList[i].price),
+              tp_outer_iid: this.productList[i].tp_outer_iid,
+              tp_property_json: {}
+            }
+            let isChange = false
+            if (this.productList[i].title !== this.productTitleDic[tpProductId]) {
+              productParams['title'] = this.productTitleDic[this.productList[i].tp_product_id]
+              isChange = true
+            }
+            if (this.productRemoveFirstBannerDic[tpProductId] && !this.products[tpProductId]) {
+              productParams['tp_property_json'].remove_first_banner = true
+              isChange = true
+            }
+            if (this.productBrandDic.hasOwnProperty(tpProductId) && !this.products[tpProductId]) {
+              productParams['tp_property_json'].brand_id = this.productBrandDic[tpProductId] || 0
+              isChange = true
+            }
+            if (this.productRemoveLastDescDic[tpProductId] && !this.products[tpProductId]) {
+              productParams['tp_property_json'].remove_last_desc = true
+              isChange = true
+            }
 
-          if (isChange) {
-            tpProductList.push(productParams)
+            if (isChange) {
+              tpProductList.push(productParams)
+            }
+          }
+          const categoryId = this.productList[i].category_id
+          const selectedProductIds = this.selectedProductIds
+        // 处理批量修改属性的商品
+          if (propertyBatchCatIdMap.get(categoryId) && selectedProductIds.includes(tpProductId)) {
+            tpProductIdList.push(tpProductId)
           }
         }
-        const categoryId = this.productList[i].category_id
-        const selectedProductIds = this.selectedProductIds
-        // 处理批量修改属性的商品
-        if (propertyBatchCatIdMap.get(categoryId) && selectedProductIds.includes(tpProductId)) {
-          tpProductIdList.push(tpProductId)
-        }
+        let attrApplyCatMap = {}
+        const entries = [...propertyBatchCatIdMap.entries()]
+        entries.forEach(([key, value]) => {
+          attrApplyCatMap[key] = value
+        })
+        this.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, attrApplyCatMap, 0, 0, catId, updateCategoryTPProductIds)
+      } catch (err) {
+        console.log(err)
+        return this.$message.error(`${err}`)
       }
-      let attrApplyCatMap = {}
-      const entries = [...propertyBatchCatIdMap.entries()]
-      entries.forEach(([key, value]) => {
-        attrApplyCatMap[key] = value
-      })
-      this.requestBatchUpdateTPProduct(tpProductList, tpProductIdList, attrApplyCatMap, 0, 0, catId, updateCategoryTPProductIds)
     },
     requestBatchUpdateTPProduct (tpProductList, tpProductIdList, attrApplyCatMap, tpProductListIdx, tpProductIdListIdx, catId, updateCategoryTPProductIds) {
       let tpProductListSlice = []
@@ -1685,6 +1690,7 @@ export default {
           }
         })
       }
+      console.log(this.product.model.sku_json.spec_price_list, 'this.product.model.sku_json.spec_price_list')
     }
   }
 }

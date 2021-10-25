@@ -279,6 +279,7 @@ export default {
       this.spec_price_list = cloneDeep(skuJson.spec_price_list)
       const tableData = []
       const specData = this.initTableData(this.spec_list)
+      let recordFirstPromoPrice = false
       let recordFirstPrice = false
       specData.forEach((spec, index) => {
         let matchSpecData = {}
@@ -289,8 +290,9 @@ export default {
           if (data.spec_detail_id_list.length && isEqual) {
             matchSpecData = data
             matchSpecData.promo_price = matchSpecData.promo_price
-            if (!recordFirstPrice) {
-              recordFirstPrice = matchSpecData.promo_price
+            if (!recordFirstPromoPrice && matchSpecData.promo_price) {
+              recordFirstPromoPrice = matchSpecData.promo_price
+              recordFirstPrice = matchSpecData.price
             }
           }
         })
@@ -303,10 +305,16 @@ export default {
           return noMatch
         })
         if (noMatchspecsPrice) {
-          matchSpecData.promo_price = recordFirstPrice
-          matchSpecData.quantity = 0
-          matchSpecData.code = ''
+          matchSpecData.promo_price = recordFirstPromoPrice
         }
+        // 数据初始化默认值
+        if (!matchSpecData.code) matchSpecData.code = ''
+        if (!matchSpecData.price) matchSpecData.price = recordFirstPrice
+        if (!matchSpecData.sku_id) matchSpecData.sku_id = ''
+        if (!matchSpecData.img) matchSpecData.img = ''
+        if (!matchSpecData.quantity) matchSpecData.quantity = 0
+        if (!matchSpecData.promo_price) matchSpecData.promo_price = ''
+
         matchSpecData.index = index
         matchSpecData.spec_detail_id_list = spec
         tableData.push(matchSpecData)
@@ -391,7 +399,6 @@ export default {
         matchSpecData.promo_price = typeof matchSpecData.promo_price !== 'undefined' ? matchSpecData.promo_price : ''
         matchSpecData.quantity = typeof matchSpecData.quantity !== 'undefined' ? matchSpecData.quantity : ''
         matchSpecData.price = typeof matchSpecData.price !== 'undefined' ? matchSpecData.price : ''
-        matchSpecData.code = matchSpecData.code || ''
         matchSpecData.index = index
         tableData.push(matchSpecData)
       })
