@@ -293,10 +293,6 @@ export default {
               recordFirstPrice = matchSpecData.promo_price
             }
           }
-          // else {
-          //   matchSpecData.promo_price = 0
-          //   matchSpecData.quantity = 0
-          // }
         })
 
         // 当用户抓取的商品缺少sku时，库存=0，价格取第一个sku价格（库存既然是0了所以价格是多少不重要，只要不是0就行）。从而解决价格=0的问题
@@ -309,6 +305,7 @@ export default {
         if (noMatchspecsPrice) {
           matchSpecData.promo_price = recordFirstPrice
           matchSpecData.quantity = 0
+          matchSpecData.code = ''
         }
         matchSpecData.index = index
         matchSpecData.spec_detail_id_list = spec
@@ -394,6 +391,7 @@ export default {
         matchSpecData.promo_price = typeof matchSpecData.promo_price !== 'undefined' ? matchSpecData.promo_price : ''
         matchSpecData.quantity = typeof matchSpecData.quantity !== 'undefined' ? matchSpecData.quantity : ''
         matchSpecData.price = typeof matchSpecData.price !== 'undefined' ? matchSpecData.price : ''
+        matchSpecData.code = matchSpecData.code || ''
         matchSpecData.index = index
         tableData.push(matchSpecData)
       })
