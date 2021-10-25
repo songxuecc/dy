@@ -7,7 +7,7 @@
             :to="{name: 'HomePage'}"
             custom
             v-slot="{ href, route, isActive, isExactActive }"
-            v-if="((userId % 2) && isAuth())"
+            v-if="isAuth()"
           >
             <div :class="[isExactActive && 'homePage-active',isActive && 'homePage-active']" class="homePage " @click="gotoHomePage">
               <hh-icon type="iconshouyeweixuanzhong" style="font-size:16px; margin-right:4px" />

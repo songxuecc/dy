@@ -4,8 +4,8 @@
         <expire-notify-dialog></expire-notify-dialog>
         <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
           <!-- 新旧首页 灰度 -->
-          <nav-bar-old v-if="!(userId % 2)" ></nav-bar-old>
-          <nav-bar v-else ></nav-bar>
+          <!-- <nav-bar-old v-if="!(userId % 2)" ></nav-bar-old> -->
+          <nav-bar ></nav-bar>
           <div class="full-screen">
             <div class="header-notice">
               <div class="main-inner clearfix">
@@ -84,7 +84,6 @@ import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import NotificationListView from '@/components/NotificationListView.vue'
 import MeizheActivityModel from '@/components/MeizheActivityModel'
 import navBar from '@/components/Navbar'
-import navBarOld from '@/components/NavbarOld'
 import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
 
@@ -132,7 +131,6 @@ export default {
     }
   },
   components: {
-    navBarOld,
     navBar,
     sideBar,
     FlexFoot,

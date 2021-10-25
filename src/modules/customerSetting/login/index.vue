@@ -64,17 +64,9 @@ export default {
         this.message = '授权成功'
         if (from === '') {
           // <!-- 新旧首页 灰度 -->
-          let userId = localStorage.getItem('user_id')
-          console.log(userId, data, 'userId-授权成功')
-          if (userId % 2) {
-            this.$router.push({
-              name: 'HomePage'
-            })
-          } else {
-            this.$router.push({
-              name: 'StartMigrate'
-            })
-          }
+          this.$router.push({
+            name: 'HomePage'
+          })
         } else {
           this.$router.push({
             name: from
