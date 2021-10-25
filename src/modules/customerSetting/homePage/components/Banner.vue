@@ -18,14 +18,17 @@ export default {
   data () {
     return {
       items: [
-        // this.gotoOrder,
-        this.gotoSync
+        this.gotoSync,
+        this.gotoMeizhe
       ]
     }
   },
   methods: {
     gotoOrder () {
       window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=866&from=fuwu_market_home')
+    },
+    gotoMeizhe () {
+      window.open('https://dx5.cn/454S1A')
     },
     gotoSync () {
       this.$router.push({name: 'ProductsSync'})
@@ -75,24 +78,22 @@ export default {
   }
 }
 
-//.img0 {
-// background-image: url('../images/banner1.png');
-// background-size: cover;
-//}
-
 .img0 {
   background-image: url('../images/banner2.png');
   background-size: cover;
 }
+.img1 {
+  background-image: url('../images/meizhe-banner.png');
+  background-size: cover;
+}
 
 @media screen and (min-width:1680px) and (max-width:1920px){
-  // .img0 {
-  //   background-image: url('../images/banner1-1680.png');
-  //   background-size: cover;
-  //   }
-
     .img0 {
       background-image: url('../images/banner2-1680.png');
+      background-size: cover;
+    }
+    .img1 {
+      background-image: url('../images/meizhe-banner-1680.png');
       background-size: cover;
     }
 }
