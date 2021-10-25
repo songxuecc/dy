@@ -6,7 +6,7 @@
       ref="SkuSelect"
       :specifications="spec_list"
       @change="onSkuSelectChange"/>
-    <h1 class="mb-10" style="margin-top:20px">批量设置 <span class="warning"><hh-icon type="icontishi" ></hh-icon>空为不修改</span></h1>
+    <h1 class="mb-10" style="margin-top:20px">{{'批量设置 - 价格、库存、编码'}} </h1>
     <el-form class="mb-10 flex wrap" style="padding-left:15px" size="small" ref="batchEditForm" :model="batchEditForm" :rules="rulesBatchEditForm">
       <el-form-item>
         <el-select
@@ -29,16 +29,23 @@
         </el-select>
       </el-form-item>
       <el-form-item prop="quantity">
-        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.quantity" placeholder="库存"></el-input>
+        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.quantity" placeholder="批量改库存"></el-input>
       </el-form-item>
       <el-form-item prop="promo_price">
-        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.promo_price" placeholder="货源方原价"></el-input>
+        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.promo_price" placeholder="批量改货源方原价"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.code" placeholder="编码"></el-input>
+        <el-input  class="mr-5" style="width:130px" v-model="batchEditForm.code" placeholder="批量改编码"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button size="medeium" type="primary" plain style="width:80px;height:32px;padding:0" @click="handleBatchEdit">设置</el-button>
+          <el-button size="medeium" type="primary" plain style="width:130px;height:32px;padding:0;margin-right:5px" @click="handleBatchEdit">批量设置</el-button>
+      </el-form-item>
+
+      <el-form-item>
+          <el-button size="medeium" type="success" plain style="width:130px;height:32px;padding:0" @click="handleBatchEditStock">
+            <hh-icon type="iconcangkukucun"></hh-icon> 统一增减库存</el-button>
+          <el-button size="medeium" type="warning" plain style="width:130px;height:32px;padding:0;margin-left:3px" @click="handleBatchEditPrice">
+            <hh-icon type="iconjiagebaohu"></hh-icon> 统一增减价格</el-button>
       </el-form-item>
 
     </el-form>
@@ -55,7 +62,7 @@
                 fixed
                 :key="index"
                 :label="spec.name"
-                width="150">
+                width="120">
                 <template slot-scope="scope">
                     <span >{{getRowData(scope.row,index)}}</span>
                 </template>
@@ -148,6 +155,81 @@
             </div>
           </div>
         </el-dialog>
+        <el-dialog title="批量修改库存" width="400px" :visible.sync="dialogQuantityVisible" center :append-to-body="true" v-hh-modal>
+            <div>
+                <el-radio v-model="stockModel.radio" label="1">
+                    <span style="display:inline-block; width:100px">统一库存为</span>
+                    <el-input v-model="stockModel.textStock" size="mini" style="width:100px"
+                              @focus="stockModel.radio='1'"
+                    ></el-input>
+                </el-radio><br>
+                <el-radio v-model="stockModel.radio" label="2">
+                    <span style="display:inline-block; width:100px">每个SKU库存加</span>
+                    <el-input v-model="stockModel.textStockAdd" size="mini" style="width:100px"
+                              @focus="stockModel.radio='2'"
+                    ></el-input>
+                </el-radio><br>
+                <el-radio v-model="stockModel.radio" label="3">
+                    <span style="display:inline-block; width:100px">每个SKU库存减</span>
+                    <el-input v-model="stockModel.textStockSub" size="mini" style="width:100px"
+                              @focus="stockModel.radio='3'"
+                    ></el-input>
+                    <span class="explain">&nbsp; 小于 0 设为 0</span>
+                </el-radio>
+                <div style="text-align: center; padding-top: 20px">
+                    <el-button @click="dialogQuantityVisible = false" style="width:100px">取消</el-button>
+                    <el-button type="primary" @click="handleBatchQuantity" style="width:100px">确定</el-button>
+                </div>
+            </div>
+        </el-dialog>
+        <el-dialog title="批量修改价格" width="500px" :visible.sync="dialogPromoPriceVisible" center :append-to-body="true" v-hh-modal>
+            <div>
+                <div class="fail center mb-5">此价格为初始价格，并非价格公示计算的价格</div>
+                <div class="fail center mb-10">真实的售卖价请在后续价格页面设置</div>
+                <el-radio v-model="priceModel.radio" label="1">
+                    <span style="display:inline-block; width:150px">统一价格为</span>
+                    <el-input v-model="priceModel.textPrice" size="mini" style="width:150px"
+                              @focus="setRadio('1')"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                </el-radio><br>
+                <el-radio v-model="priceModel.radio" label="2">
+                    <span style="display:inline-block; width:150px">每个SKU价格加数字：</span>
+                    <el-input v-model="priceModel.textPriceAdd" size="mini" style="width:150px"
+                              @focus="priceModel.radio='2'"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                </el-radio><br>
+                <el-radio v-model="priceModel.radio" label="3">
+                    <span style="display:inline-block; width:150px">每个SKU价格减数字：</span>
+                    <el-input v-model="priceModel.textPriceSub" size="mini" style="width:150px"
+                              @focus="priceModel.radio='3'"
+                    ></el-input>
+                    <span style="display:inline-block;">元</span>
+                    <span class="explain">&nbsp; 小于 0 设为 0</span>
+                </el-radio>
+                <el-radio v-model="priceModel.radio" label="4">
+                    <span style="display:inline-block; width:150px">每个SKU价格加百分比：</span>
+                    <el-input v-model="priceModel.textPricePercentAdd" size="mini" style="width:150px"
+                              @focus="priceModel.radio='4'"
+                    ></el-input>
+                    <span style="display:inline-block;">%</span>
+                </el-radio>
+                <el-radio v-model="priceModel.radio" label="5">
+                    <span style="display:inline-block; width:150px">每个SKU价格减百分比：</span>
+                    <el-input v-model="priceModel.textPricePercentSub" size="mini" style="width:150px"
+                              @focus="priceModel.radio='5'"
+                    ></el-input>
+                    <span style="display:inline-block;">%</span>
+                    <span class="explain">&nbsp; 小于 0 设为 0</span>
+                </el-radio>
+                <div style="text-align: center; padding-top: 20px">
+                    <el-button @click="dialogPromoPriceVisible = false"  style="width:100px">取消</el-button>
+                    <el-button type="primary" @click="handleBatchPromoPrice"  style="width:100px">确定</el-button>
+                </div>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -196,6 +278,22 @@ export default {
       }
     }
     return {
+      priceModel: {
+        radio: '1',
+        textPrice: '',
+        textPriceAdd: '',
+        textPriceSub: '',
+        textPricePercentAdd: '',
+        textPricePercentSub: ''
+      },
+      stockModel: {
+        radio: '1',
+        textStockAdd: '',
+        textStockSub: '',
+        textStock: ''
+      },
+      dialogPromoPriceVisible: false,
+      dialogQuantityVisible: false,
       spec_list: [],
       tableData: [],
       spec_price_list: [],
@@ -467,6 +565,66 @@ export default {
           this.$emit('change', this.tableData, this.spec_list)
         }
       })
+    },
+    handleBatchQuantity () {
+      this.tableData = this.tableData.map(sku => {
+        if (parseInt(this.stockModel.radio) === 1 && utils.isNumber(this.stockModel.textStock)) {
+          sku.quantity = parseInt(this.stockModel.textStock)
+        } else if (parseInt(this.stockModel.radio) === 2 && utils.isNumber(this.stockModel.textStockAdd)) {
+          sku.quantity = parseInt(sku.quantity) + parseInt(this.stockModel.textStockAdd)
+        } else if (parseInt(this.stockModel.radio) === 3 && utils.isNumber(this.stockModel.textStockSub)) {
+          sku.quantity = Math.max(parseInt(sku.quantity) - parseInt(this.stockModel.textStockSub), 0)
+        }
+        return sku
+      })
+
+      this.dialogQuantityVisible = false
+      this.priceModel = {
+        radio: '1',
+        textStockAdd: '',
+        textStockSub: '',
+        textStock: ''
+      }
+      this.$message.success('设置成功')
+      this.$emit('change', this.tableData, this.spec_list)
+    },
+    setRadio (radio) {
+      this.priceModel.radio = radio
+    },
+    handleBatchPromoPrice () {
+      this.tableData = this.tableData.map(sku => {
+        if (parseInt(this.priceModel.radio) === 1 && utils.isNumber(this.priceModel.textPrice)) {
+          sku.promo_price = parseFloat(this.priceModel.textPrice)
+        } else if (parseInt(this.priceModel.radio) === 2 && utils.isNumber(this.priceModel.textPriceAdd)) {
+          sku.promo_price = parseFloat(sku.promo_price || 0) + parseFloat(this.priceModel.textPriceAdd)
+        } else if (parseInt(this.priceModel.radio) === 3 && utils.isNumber(this.priceModel.textPriceSub)) {
+          sku.promo_price = parseFloat(sku.promo_price || 0) - parseFloat(this.priceModel.textPriceSub)
+        } else if (parseInt(this.priceModel.radio) === 4 && utils.isNumber(this.priceModel.textPricePercentAdd)) {
+          sku.promo_price = parseFloat(sku.promo_price || 0) * (1 + parseFloat(this.priceModel.textPricePercentAdd) / 100)
+        } else if (parseInt(this.priceModel.radio) === 5 && utils.isNumber(this.priceModel.textPricePercentSub)) {
+          sku.promo_price = parseFloat(sku.promo_price || 0) * (1 - parseFloat(this.priceModel.textPricePercentSub) / 100)
+        }
+        sku.promo_price = Math.max(sku.promo_price, 0)
+        sku.promo_price = Math.round(sku.promo_price * 100) / 100
+        return sku
+      })
+      this.dialogPromoPriceVisible = false
+      this.priceModel = {
+        radio: '1',
+        textPrice: '',
+        textPriceAdd: '',
+        textPriceSub: '',
+        textPricePercentAdd: '',
+        textPricePercentSub: ''
+      }
+      this.$message.success('设置成功')
+      this.$emit('change', this.tableData, this.spec_list)
+    },
+    handleBatchEditStock () {
+      this.dialogQuantityVisible = true
+    },
+    handleBatchEditPrice () {
+      this.dialogPromoPriceVisible = true
     },
     spanMethod ({ row, column, rowIndex, columnIndex }) {
       const end = this.spec_list.length + 3

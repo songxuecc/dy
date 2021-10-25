@@ -1690,7 +1690,7 @@ export default {
           }
         })
       }
-      console.log(this.product.model.sku_json.spec_price_list, 'this.product.model.sku_json.spec_price_list')
+      // console.log(this.product.model.sku_json.spec_price_list, 'this.product.model.sku_json.spec_price_list')
     }
   }
 }
