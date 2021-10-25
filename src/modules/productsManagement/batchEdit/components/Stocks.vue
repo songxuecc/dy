@@ -215,7 +215,7 @@ export default {
       this.form[attribute] = ''
     },
     handleBlur (e, attribute) {
-      this.form[attribute] = parseInt(e.target.value) ? parseInt(e.target.value) : ''
+      this.form[attribute] = parseInt(e.target.value) ? parseInt(e.target.value) : 0
     },
     getForm () {
       if (!this.form.stock_type) {
@@ -224,7 +224,7 @@ export default {
       }
       return {
         stock_type: this.form.stock_type,
-        stock_value: this.form[`stock_value_${this.form.stock_type}`]
+        stock_value: this.form[`stock_value_${this.form.stock_type}`] || 0
       }
     }
   }
