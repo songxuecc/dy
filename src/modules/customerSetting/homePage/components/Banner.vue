@@ -19,7 +19,9 @@ export default {
     return {
       items: [
         this.gotoSync,
-        this.gotoMeizhe
+        this.gotoMeizhe,
+        this.gotoMeizheShouhou
+
       ]
     }
   },
@@ -29,6 +31,9 @@ export default {
     },
     gotoMeizhe () {
       window.open('https://dx5.cn/454S1A')
+    },
+    gotoMeizheShouhou () {
+      window.open('https://fuwu.jinritemai.com/detail?service_id=19772')
     },
     gotoSync () {
       this.$router.push({name: 'ProductsSync'})
@@ -83,7 +88,11 @@ export default {
   background-size: cover;
 }
 .img1 {
-  background-image: url('../images/meizhe-banner.png');
+  background-image: url('../images/meizhe-duanxin.png');
+  background-size: cover;
+}
+.img2 {
+  background-image: url('../images/meizhe-shouhou.png');
   background-size: cover;
 }
 
@@ -93,7 +102,11 @@ export default {
       background-size: cover;
     }
     .img1 {
-      background-image: url('../images/meizhe-banner-1680.png');
+      background-image: url('../images/meizhe-duanxin-1680.png');
+      background-size: cover;
+    }
+    .img2 {
+      background-image: url('../images/meizhe-shouhou-1680.png');
       background-size: cover;
     }
 }
