@@ -36,7 +36,7 @@
             style="font-size:26px;" />
       <div :class="['column-name text', flexFootIndex === 3 ? 'text-in' : '']">意见</div>
     </div>
-    <div
+    <!-- <div
         :class="['float-button',isDragging ?'move':'']"
         @click="openNotificationBox"
         v-if="flexFootVisible"
@@ -48,7 +48,7 @@
             :type="flexFootIndex === 4 ? 'icontongzhibarhover':'icontongzhibar'"
             style="font-size:26px;" />
       <div :class="['column-name text', flexFootIndex === 4 ? 'text-in' : '']">通知</div>
-    </div>
+    </div> -->
     <div
         :class="['float-button collect-button',isDragging ?'move':'']"
         @click="addToFavorite"
