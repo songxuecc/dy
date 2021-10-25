@@ -445,6 +445,27 @@ const hhgjAPIs = {
   },
   thirdpartDyGoodsBundleUpdate: (params) => {
     return api.actionCreatorPost('/api/thirdpart/dy/goods/bundle/update', params)
+  },
+  productAutoShelfPage: (params) => {
+    return api.actionCreateGet('/api/product/auto_shelf/page', params)
+  },
+  productAutoShelfCreate: (params) => {
+    return api.actionCreatorPost('/api/product/auto_shelf/create', params)
+  },
+  productAutoShelfUpdate: (params) => {
+    return api.actionCreatorPost('/api/product/auto_shelf/update', params)
+  },
+  productAutoShelfDelete: (params) => {
+    return api.actionCreatorPost('/api/product/auto_shelf/delete', params)
+  },
+  productAutoShelfDetail: (params) => {
+    return api.actionCreatorPost('/api/product/auto_shelf/detail', params)
+  },
+  productAutoShelfOpen: (params) => {
+    return api.actionCreatorPost('/api/product/auto_shelf/open', params)
+  },
+  productAutoShelfClose: (params) => {
+    return api.actionCreatorPost('/api/product/auto_shelf/close', params)
   }
 
 }

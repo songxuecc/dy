@@ -297,7 +297,6 @@ const router = new VueRouter({
         requiresAuth: true
       }
     },
-
     {
       path: '/productsManagement/skuImport',
       name: 'SkuImport',
@@ -305,6 +304,54 @@ const router = new VueRouter({
         /* webpackChunkName: `SkuImport` */
         /* webpackMode: "lazy" */
         '@productsManagement/skuImport'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/productsManagement/cycleProductsSelf/chooseProducts',
+      name: 'cycleProductsSelf_ChooseProducts',
+      component: () => import(
+        /* webpackChunkName: `SkuImport` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/cycleProductsSelf/chooseProducts'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/productsManagement/cycleProductsSelf/createPlan',
+      name: 'cycleProductsSelf_CreatePlan',
+      component: () => import(
+        /* webpackChunkName: `SkuImport` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/cycleProductsSelf/createPlan'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/productsManagement/cycleProductsSelf/planDetail',
+      name: 'cycleProductsSelf_PlanDetail',
+      component: () => import(
+        /* webpackChunkName: `SkuImport` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/cycleProductsSelf/planDetail'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/productsManagement/cycleProductsSelf/planList',
+      name: 'cycleProductsSelf_PlanList',
+      component: () => import(
+        /* webpackChunkName: `SkuImport` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/cycleProductsSelf/planList'),
       meta: {
         keepAlive: true,
         requiresAuth: true
