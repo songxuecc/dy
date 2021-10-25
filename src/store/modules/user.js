@@ -331,8 +331,6 @@ const mutations = {
       localStorage.setItem('fake_token', data.fake_token)
       state.fakeToken = data.fake_token
     }
-
-    console.log(state, 'state')
   },
   [ types.LOGOUT ] (state) {
     localStorage.removeItem('token')

@@ -194,7 +194,6 @@ export default {
           }
           return {...target, [key]: value}
         }, {})
-        console.log(model, 'model')
         this.model = model
         if (propertyBatchMapSelect && Object.keys(propertyBatchMapSelect).length) {
           const selected = Object.keys(propertyBatchMapSelect).reduce((target, key) => {
