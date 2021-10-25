@@ -6,7 +6,7 @@
       ref="SkuSelect"
       :specifications="spec_list"
       @change="onSkuSelectChange"/>
-    <h1 class="mb-10" style="margin-top:20px">{{'批量设置 - 价格、库存、编码'}} </h1>
+    <h1 class="mb-10" style="margin-top:20px">{{'批量设置 - 价格、库存、编码'}}  <span class="warning"><hh-icon type="icontishi" ></hh-icon>可对指定规格批量设置哦</span></h1>
     <el-form class="mb-10 flex wrap" style="padding-left:15px" size="small" ref="batchEditForm" :model="batchEditForm" :rules="rulesBatchEditForm">
       <el-form-item>
         <el-select
