@@ -99,7 +99,8 @@ export default {
         task_name: `定时上下架计划: ${moment().format('YYYY-MM-DD')}`,
         task_type: 1,
         on_shelf_time: '',
-        off_shelf_time: ''
+        off_shelf_time: '',
+        repeat_count: 0
       },
       rules: {
         task_name: [
@@ -119,7 +120,7 @@ export default {
     this.init()
   },
   computed: {
-    ...mapState('productManagement/productsSync/tableProductList', {
+    ...mapState('productManagement/cycleProductsSelf/chooseProducts', {
       originForm: state => {
         return state.form
       },
@@ -141,10 +142,10 @@ export default {
     })
   },
   methods: {
-    ...mapActions('productManagement/productsSync/tableProductList', [
+    ...mapActions('productManagement/cycleProductsSelf/chooseProducts', [
       'fetch'
     ]),
-    ...mapMutations('productManagement/productsSync/tableProductList', ['save']),
+    ...mapMutations('productManagement/cycleProductsSelf/chooseProducts', ['save']),
     async init () {
       // 查询初始化
       // this.form = this.originForm
@@ -152,15 +153,7 @@ export default {
     goback () {
       this.$router.back()
     },
-    // 选择商品
-    chooseProducts () {
-      this.save({
-        form: this.form
-      })
-      this.$router.push({
-        name: 'cycleProductsSelf_ChooseProducts'
-      })
-    },
+
     updatePlan () {
       this.loadingPost = true
       const parmas = this.form
@@ -176,16 +169,15 @@ export default {
           this.loadingPost = false
         })
     },
-    go: debounce(function () {
+    // 选择商品
+    chooseProducts: debounce(function () {
       this.$refs.form.validate((valid, object) => {
         if (valid) {
-          this.fetch({
-            filters: {
-              capture_status: 1
-            }
-          })
+          this.fetch()
           this.save({form: this.form})
-          this.$emit('go', null, 3)
+          this.$router.push({
+            name: 'cycleProductsSelf_ChooseProducts'
+          })
           console.log(this.form, 'this.form')
         }
       })

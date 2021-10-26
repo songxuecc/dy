@@ -183,9 +183,9 @@ export default {
   },
   computed: {
     ...mapState({
-      loading: (state) => state['@@loading'].effects['productManagement/productsSync/tableProductList/query']
+      loading: (state) => state['@@loading'].effects['productManagement/cycleProductsSelf/chooseProducts/query']
     }),
-    ...mapState('productManagement/productsSync/tableProductList', {
+    ...mapState('productManagement/cycleProductsSelf/chooseProducts', {
       selectParmasSearch: state => {
         return state.selectParmas
       },
@@ -199,7 +199,7 @@ export default {
         return state.task_id
       }
     }),
-    ...mapState('productManagement/productsSync/tableProductList', [
+    ...mapState('productManagement/cycleProductsSelf/chooseProducts', [
       'tableData',
       'total',
       'pagination',
@@ -319,27 +319,39 @@ export default {
       if (!selecteds) {
         return this.$message.error('请选择商品')
       }
-      const parmas = {}
-      const style = {
-        form: this.form,
-        selectParmas: this.selectParmas,
-        filters: this.filters,
-        originFilters: this.originFilters,
-        multipleSelection: this.multipleSelection
+
+      console.log(this.multipleSelection, 'multipleSelection')
+      const goodsQueryParams = {
+        ...this.filters,
+        check_status: -1,
+        status: -1,
+        presell_type: -1,
+        is_capture: -1,
+        category_leaf_id_list: [],
+        goods_id_list: this.multipleSelection
+      }
+      const parmas = {
+        task_name: this.form.task_name,
+        task_type: this.form.task_type,
+        off_shelf_time: this.form.off_shelf_time,
+        on_shelf_time: this.form.on_shelf_time,
+        repeat_count: this.form.repeat_count,
+        goods_query_params: JSON.stringify(goodsQueryParams)
       }
 
-      parmas.style = JSON.stringify(style)
-      console.log(style, '提交数据style')
+      console.log(parmas, '提交数据parmas')
       this.loadingPost = true
       // 判断是二次修改还是首次创建
       if (this.selectParmasSearch) {
         parmas.task_id = this.task_id
-        services.productSourceSyncUpdate(parmas)
+        services.productAutoShelfUpdate(parmas)
           .then(data => {
           // 创建成功
             this.$message.success('修改成功！')
             this.clearData()
-            this.$emit('go', null, 1)
+            this.$router.push({
+              name: 'cycleProductsSelf_PlanList'
+            })
           })
           .catch(err => {
             this.$message.error(`${err}`)
@@ -348,12 +360,14 @@ export default {
             this.loadingPost = false
           })
       } else {
-        services.productSourceSyncCreate(parmas)
+        services.productAutoShelfCreate(parmas)
           .then(data => {
           // 创建成功
             this.$message.success('创建成功')
             this.clearData()
-            this.$emit('go', null, 1)
+            this.$router.push({
+              name: 'cycleProductsSelf_PlanList'
+            })
           })
           .catch(err => {
             this.$message.error(`${err}`)

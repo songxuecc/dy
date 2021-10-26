@@ -26,16 +26,7 @@
       </div>
     <el-table :data="tableData" style="width: 100%" v-loading="loading || loadingPost">
       <el-table-empty slot="empty"/>
-      <el-table-column prop="task_title" label="计划名称"></el-table-column>
-      <el-table-column prop="style" label="计划内容" width="105">
-        <template slot-scope="scope">
-          <div>
-            <!-- {{scope.row.style.form.config_json.is_sync_price ? '价格':''}}
-            {{scope.row.style.form.config_json.is_sync_stock ? '库存':''}}
-            {{scope.row.style.form.config_json.is_sync_title ? '标题':''}} -->
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column prop="task_name" label="计划名称"></el-table-column>
       <el-table-column prop="sync_type" label="计划类型"  align="center" width="145">
         <template slot-scope="scope">
           <div>
@@ -43,50 +34,44 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="total_nums" label="商品数" align="center" width="65">
-      </el-table-column>
-      <el-table-column   label="检测结果" align="center"  width="185">
+      <el-table-column prop="task_name" label="上下架时间" align="center">
         <template slot-scope="scope">
-          <div>
-            <div class="color-4e font-13 mb-5">
-              <span>成功{{scope.row.success_nums}}</span>
-              <span>失败{{scope.row.fail_nums}}</span>
-            </div>
-            <div class="color-999 font-12" v-if="scope.row.last_sync_time">{{ scope.row.last_sync_time }} 完成检测</div>
-          </div>
+          <div v-if="scope.row.on_shelf_time">上架{{scope.row.on_shelf_time}}</div>
+          <div v-if="scope.row.off_shelf_time">上架{{scope.row.off_shelf_time}}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态"   align="center" width="95">
+
+      <el-table-column prop="expected_goods_nums" label="预计上下架商品数" align="center" width="125"></el-table-column>
+      <el-table-column prop="expected_goods_nums" label="实际上下架商品数" align="center" width="125">
         <template slot-scope="scope">
+          <div v-if="scope.row.expected_goods_nums">上架{{scope.row.expected_goods_nums}}</div>
+          <div v-if="scope.row.on_shelf_goods_nums">上架{{scope.row.on_shelf_goods_nums}}</div>
+        </template>
+      </el-table-column>
+
+       <el-table-column prop="status" label="状态"   align="center" width="95">
+        <template slot-scope="scope">
+          <el-link :underline="false" class="font-12 no-decoration" type="info" v-if="scope.row.status === 0">未开始</el-link>
           <el-link :underline="false" class="font-12 flex column justify-c align-c no-decoration" type="warning" v-if="scope.row.status === 1">
             <span>进行中 <span v-if="scope.row.percent !== 100"> - {{scope.row.percent || 0}}%</span></span>
             <el-progress :percentage="scope.row.percent" :show-text="false" style="width:64px" :stroke-width="10"></el-progress>
           </el-link>
-          <el-link :underline="false" class="font-12" type="primary" v-if="scope.row.status === 2 && scope.row.sync_type !== 1" @click="handleDetail(scope.row)">
-            <div>检测完成</div>
-            <div>提交修改</div>
-          </el-link>
-          <el-link :underline="false" class="font-12" type="primary" v-if="scope.row.status === 2 && scope.row.sync_type === 1" @click="handleDetail(scope.row)">
-            <div>检测完成</div>
-            <div>查看修改结果</div>
-          </el-link>
-          <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 3">失败</el-link>
-          <el-link :underline="false" class="font-12 no-decoration" type="info" v-if="scope.row.status === 0">未开始</el-link>
+          <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 2">失败</el-link>
+          <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 3">已终止</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="300"  align="center">
+
+      <el-table-column label="操作" width="150"  align="center">
          <template slot-scope="scope">
-          <a class="pramiry pointer" @click="onStartSync(scope.row)" v-if="scope.row.sync_type === 1">开始检测修改</a>
-          <a class="pramiry pointer" @click="onStartSync(scope.row)" v-else style="padding-left:22px">开始检测</a>
-          <a class="pl-5" :class="scope.row.status === 0 ? 'disbaled' : 'pramiry pointer'" @click="handleDetail(scope.row)">检测详情</a>
-          <!-- <a class="pramiry pointer pl-5" @click="handleChangeProduct(scope.row,3)" >修改商品</a> -->
-          <a class="pramiry pointer pl-5" @click="handleEditPlan(scope.row,2)" >编辑计划</a>
-          <a class="fail pointer pl-5" @click="onDelete(scope.row)" >删除</a>
+          <a class="pramiry pointer pl-5" @click="handleEditPlan(scope.row,2)" v-if="scope.row.status === 0">编辑计划</a>
+          <a class="pramiry pointer pl-5" @click="handleDetail(scope.row)" v-if="scope.row.status === 1 || scope.row.status === 3">查看详情</a>
+          <a class="pramiry pointer pl-5" @click="handleEditPlan(scope.row,2)" v-if="scope.row.status === 3">恢复计划</a>
+          <a class="fail pointer pl-5" @click="onDelete(scope.row)" v-if="scope.row.status === 0 || scope.row.status === 1">终止计划</a>
+          <a class="fail pointer pl-5" @click="onDelete(scope.row)" v-if="scope.row.status === 2 || scope.row.status === 3">删除计划</a>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- <DrawerSyncDetail ref="DrawerSyncDetail" /> -->
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"

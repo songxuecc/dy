@@ -313,7 +313,7 @@ const router = new VueRouter({
       path: '/productsManagement/cycleProductsSelf/chooseProducts',
       name: 'cycleProductsSelf_ChooseProducts',
       component: () => import(
-        /* webpackChunkName: `SkuImport` */
+        /* webpackChunkName: `ChooseProducts'` */
         /* webpackMode: "lazy" */
         '@productsManagement/cycleProductsSelf/chooseProducts'),
       meta: {
@@ -325,7 +325,7 @@ const router = new VueRouter({
       path: '/productsManagement/cycleProductsSelf/createPlan',
       name: 'cycleProductsSelf_CreatePlan',
       component: () => import(
-        /* webpackChunkName: `SkuImport` */
+        /* webpackChunkName: `CreatePlan` */
         /* webpackMode: "lazy" */
         '@productsManagement/cycleProductsSelf/createPlan'),
       meta: {
@@ -337,7 +337,7 @@ const router = new VueRouter({
       path: '/productsManagement/cycleProductsSelf/planDetail',
       name: 'cycleProductsSelf_PlanDetail',
       component: () => import(
-        /* webpackChunkName: `SkuImport` */
+        /* webpackChunkName: `PlanDetail` */
         /* webpackMode: "lazy" */
         '@productsManagement/cycleProductsSelf/planDetail'),
       meta: {
@@ -349,7 +349,7 @@ const router = new VueRouter({
       path: '/productsManagement/cycleProductsSelf/planList',
       name: 'cycleProductsSelf_PlanList',
       component: () => import(
-        /* webpackChunkName: `SkuImport` */
+        /* webpackChunkName: `PlanList` */
         /* webpackMode: "lazy" */
         '@productsManagement/cycleProductsSelf/planList'),
       meta: {
