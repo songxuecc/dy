@@ -10,6 +10,7 @@
       class="scroll"
       :class-option="classOption"
       ref="seamlessScroll"
+      :key="key"
     >
       <ul class="item" >
         <li v-for="(item, index) in listData" :key="index" class="flex " style="width:100%;jusity-content:space-between">
@@ -79,6 +80,15 @@ export default {
   props: {
     msg: String
   },
+  data () {
+    return {
+      key: new Date(),
+      classOption: {
+        step: 0.7
+      },
+      listData: []
+    }
+  },
   components: {
     vueSeamlessScroll
   },
@@ -146,16 +156,9 @@ export default {
               window.location.href = notification.btn_link
             }
           }
+          this.key = new Date()
         })
       }
-    }
-  },
-  data () {
-    return {
-      classOption: {
-        step: 0.7
-      },
-      listData: []
     }
   }
 }
@@ -213,20 +216,15 @@ export default {
       .title {
         display: inline-flex;
         width: 254px;
-        max-height: 16px;
         font-size: 12px;
         font-family: MicrosoftYaqiHeiLight;
         color: #6a6e80;
         line-height: 16px;
-        overflow: hidden;
         text-align: left;
       }
 
       .text {
-        display: inline-block;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+        display: block;
         width: 220px;
       }
 
@@ -249,6 +247,24 @@ export default {
         }
       }
     }
+
+    @media screen and (min-width:1680px) and (max-width:1920px){
+      .title {
+        display: inline-flex;
+        width: 324px !important;
+        font-size: 12px;
+        font-family: MicrosoftYaqiHeiLight;
+        color: #6a6e80;
+        line-height: 16px;
+        text-align: left;
+      }
+
+          .text {
+            display: block;
+            width: 290px !important;
+          }
+      }
+
   }
 }
 
