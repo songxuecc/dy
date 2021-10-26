@@ -84,7 +84,7 @@ export default {
     return {
       key: new Date(),
       classOption: {
-        step: 0.7
+        step: 0.01
       },
       listData: []
     }
@@ -233,6 +233,7 @@ export default {
         line-height: 16px;
         display: inline-block;
         margin-top: 1px;
+        height:16px;
       }
 
       .btn {
