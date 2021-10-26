@@ -233,6 +233,7 @@ export default {
         line-height: 16px;
         display: inline-block;
         margin-top: 1px;
+        height:16px;
       }
 
       .btn {
