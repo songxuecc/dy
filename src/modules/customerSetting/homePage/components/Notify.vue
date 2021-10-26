@@ -84,7 +84,7 @@ export default {
     return {
       key: new Date(),
       classOption: {
-        step: 0.01
+        step: 0.7
       },
       listData: []
     }
