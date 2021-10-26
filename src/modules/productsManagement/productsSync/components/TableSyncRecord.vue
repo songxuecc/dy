@@ -5,9 +5,6 @@
             <div>
               <hh-icon type="icontishi" ></hh-icon>
               什么是商品源同步？ <span class="font-12 warning">仅能选择2021.10.9后搬家上线的商品</span>
-              <!-- <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
-                点我查看教程视频
-              </span> -->
             </div>
             <p>当货源方的价格、库存、标题信息发生变化时，系统将检测变化并做出修改。避免因货源方的信息变化造成损失。</p>
 
@@ -19,7 +16,7 @@
           <span v-else-if="getSyncButtonStatus === 'running'"><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先同步后台商品，正在同步后台商品...<span class="bold">{{getSyncButtonText}}</span> <i class="el-icon-loading"></i></span>
           <span v-else><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先<span class="underline pointer" @click="handleSyncProducts">同步后台商品</span>（最近同步时间：<span class="bold">{{getSyncButtonText}}</span>），待商品更新至最新再操作</span>
         </span>
-        <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
+        <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/rnezxr'">
           <hh-icon type="icontishi" ></hh-icon>
           点我查看教程视频
         </span>
