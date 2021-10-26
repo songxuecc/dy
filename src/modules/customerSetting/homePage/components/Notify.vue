@@ -94,7 +94,7 @@ export default {
   },
   created () {
     this.requestNotification().then(data => {
-      this.listData = data.list.filter(item => item.is_show).map(item => {
+      this.listData = data.list.filter(item => item.type !== -1).map(item => {
         return ({
           ...item,
           data: item.start_time.substr(0, 10)
@@ -108,7 +108,7 @@ export default {
     ]),
     getrequestNotification () {
       this.requestNotification().then(data => {
-        this.listData = data.list.filter(item => item.is_show).map(item => {
+        this.listData = data.list.filter(item => item.type !== -1).map(item => {
           return ({
             ...item,
             data: item.start_time.substr(0, 10)
