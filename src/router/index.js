@@ -253,7 +253,7 @@ const router = new VueRouter({
       path: '/productsManagement/productsSync',
       name: 'ProductsSync',
       component: () => import(
-        /* webpackChunkName: `AllProducts` */
+        /* webpackChunkName: `ProductsSync` */
         /* webpackMode: "lazy" */
         '@productsManagement/productsSync'),
       meta: {
@@ -265,7 +265,7 @@ const router = new VueRouter({
       path: '/productsManagement/combination',
       name: 'Combination',
       component: () => import(
-        /* webpackChunkName: `AllProducts` */
+        /* webpackChunkName: `Combination` */
         /* webpackMode: "lazy" */
         '@productsManagement/combination'),
       meta: {
