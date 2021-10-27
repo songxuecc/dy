@@ -1,7 +1,7 @@
 <!-- 创建计划 -->
 <template>
   <div class="left" style="padding-left: 10px">
-    <p class="title">创建计划</p>
+    <p class="title">{{isEdit ? '编辑':'创建'}}计划</p>
     <el-divider></el-divider>
 
     <el-form ref="form" :model="form" label-width="120px" :rules="rules" size="medium">
@@ -22,12 +22,11 @@
           <el-radio :label="2">仅上架</el-radio>
           <el-radio :label="3">先下架后上架，仅1次</el-radio>
           <el-radio :label="4">先上架后下架，仅1次</el-radio>
-          <br/>
           <el-radio :label="5">先下架后上架，每日循环</el-radio>
           <el-radio :label="6">先上架后下架，每日循环</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="上架时间" v-if="[2,3,4,5,6].includes(form.task_type)">
+      <el-form-item label="上架时间" v-if="[2,4].includes(form.task_type)">
         <el-date-picker
           v-model="form.on_shelf_time"
           type="datetime"
@@ -37,7 +36,7 @@
           :picker-options="pickerOptions">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="下架时间" v-if="[1,3,4,5,6].includes(form.task_type)">
+      <el-form-item label="下架时间" v-if="[1,4].includes(form.task_type)">
         <el-date-picker
           v-model="form.off_shelf_time"
           type="datetime"
@@ -47,35 +46,120 @@
           :picker-options="pickerOptions">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="第一次上架开始时间" v-if="[5,6].includes(form.task_type)">
-        <el-date-picker
-          v-model="form.on_shelf_time"
-          type="datetime"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          placeholder="选择日期时间"
-          align="right"
-          :picker-options="pickerOptions">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="第一次下架开始时间" v-if="[5,6].includes(form.task_type)">
-        <el-date-picker
-          v-model="form.off_shelf_time"
-          type="datetime"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          placeholder="选择日期时间"
-          align="right"
-          :picker-options="pickerOptions">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="循环次数" v-if="[5,6].includes(form.task_type)">
-        <el-input v-model="form.repeat_count" placeholder="填写1-X的正整数, 如填写100则重复操作100次" style="width:308px"></el-input>
-      </el-form-item>
-    </el-form>
 
+      <div v-if="[3].includes(form.task_type)">
+         <el-form-item label="下架时间">
+          <el-date-picker
+            v-model="form.off_shelf_time"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择日期时间"
+            align="right"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="上架时间" >
+          <el-date-picker
+            v-model="form.on_shelf_time"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择日期时间"
+            align="right"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+        </el-form-item>
+      </div>
+
+      <div v-if="[5].includes(form.task_type)">
+        <el-form-item label="下架时间">
+          <el-date-picker
+            v-model="form.off_shelf_time"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择日期时间"
+            align="right"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="上架时间" v-if="form.off_shelf_time">
+          <el-date-picker
+            v-model="form.on_shelf_time"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择日期时间"
+            align="right"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="第一次下架开始时间"  v-if="form.off_shelf_time">
+          <el-date-picker
+            v-model="form.off_shelf_time"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择日期时间"
+            align="right"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="第一次上架开始时间"  v-if="form.off_shelf_time">
+          <el-date-picker
+            v-model="form.on_shelf_time"
+            type="year"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择日期时间"
+            align="right"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="循环次数"  v-if="form.off_shelf_time">
+          <el-input v-model="form.repeat_count" placeholder="填写1-X的正整数, 如填写100则重复操作100次" style="width:308px"></el-input>
+        </el-form-item>
+      </div>
+
+      <div v-if="[6].includes(form.task_type)">
+         <el-form-item label="上架时间">
+          <el-time-picker
+            v-model="form.on_shelf_time_hours"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择上架时间"
+            align="right"
+            :picker-options="pickerOptions">
+          </el-time-picker>
+        </el-form-item>
+        <el-form-item label="下架时间" v-if="form.on_shelf_time_hours">
+          <el-time-picker
+            v-model="form.off_shelf_time_hours"
+            @blur="onChangeOffShelfTime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择下架时间">
+          </el-time-picker>
+          <span class="color-warning ml-5">{{getOffShelfTimeText}}</span>
+        </el-form-item>
+        <el-form-item label="第一次上架开始时间" v-if="form.on_shelf_time_hours">
+          <el-date-picker
+            v-model="form.on_shelf_time_day"
+            type="date"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择第一次上架开始时间"
+            align="right"
+            default-time="12:00:00"
+            :picker-options="pickerOptions"
+            @blur="handleChangeOnShelfTime">
+          </el-date-picker>
+          <span class="ml-5">{{form.on_shelf_time_hours.substring(10,19)}}</span>
+        </el-form-item>
+        <el-form-item label="第一次下架开始时间" v-if="form.on_shelf_time_hours">
+          {{getOffShelfTime}}
+        </el-form-item>
+        <el-form-item label="循环次数" v-if="form.on_shelf_time_hours">
+          <el-input v-model="form.repeat_count" placeholder="填写1-X的正整数, 如填写100则重复操作100次" style="width:365px"></el-input>
+        </el-form-item>
+      </div>
+    </el-form>
     <div class="center btn">
       <el-button @click="goback" plain type="primary" style="width: 120px">取消</el-button>
-      <el-button @click="chooseProducts" type="primary" style="width: 140px">下一步，选择商品</el-button>
-      <!-- <el-button @click="updatePlan" type="primary" style="width: 140px" :loading="loadingPost" :disabled="loadingPost">确定修改模版</el-button> -->
+      <el-button @click="chooseProducts" type="primary" style="width: 140px" v-if="!isEdit">下一步，选择商品</el-button>
+      <el-button @click="updatePlan" type="primary" style="width: 140px" :loading="loadingPost" :disabled="loadingPost" v-if="isEdit">确定修改模版</el-button>
     </div>
   </div>
 </template>
@@ -93,14 +177,18 @@ export default {
   },
   data () {
     return {
+      isEdit: false,
       isShowSample: false,
       loadingPost: false,
+      moment,
       form: {
         task_name: `定时上下架计划: ${moment().format('YYYY-MM-DD')}`,
-        task_type: 1,
+        task_type: 6,
         on_shelf_time: '',
         off_shelf_time: '',
-        repeat_count: 0
+        repeat_count: '',
+        on_shelf_time_day: '',
+        on_shelf_time_hours: ''
       },
       rules: {
         task_name: [
@@ -119,27 +207,39 @@ export default {
   created () {
     this.init()
   },
+  activated () {
+    this.init()
+  },
   computed: {
     ...mapState('productManagement/cycleProductsSelf/chooseProducts', {
-      originForm: state => {
-        return state.form
-      },
-      task_id: state => {
-        return state.task_id
-      },
-      selectParmas: state => {
-        return state.selectParmas
-      },
-      filters: state => {
-        return state.filters
-      },
-      multipleSelection: state => {
-        return state.multipleSelection
-      },
-      originFilters: state => {
-        return state.originFilters
+    }),
+    getF () {
+      if (!this.form.on_shelf_time_hours) return ''
+      return moment(this.form.on_shelf_time_hours).add(86399, 'seconds').format('yyyy-MM-dd HH:mm:ss').substring(10, 19)
+    },
+    getOffShelfTime () {
+      const a = moment(this.form.off_shelf_time_hours)
+      const b = moment(this.form.on_shelf_time_hours)
+      const isBefore = a.isBefore(b)
+      if (isBefore && this.form.on_shelf_time_hours && this.form.on_shelf_time_day) {
+        const days = moment(this.form.on_shelf_time_day).add({days: 1}).format('YYYY-MM-DD HH:mm:ss').substring(0, 10)
+        const hours = this.form.off_shelf_time_hours.substring(10, 19)
+        return `${days}${hours}`
+      } else if (!isBefore && this.form.on_shelf_time_hours && this.form.on_shelf_time_day) {
+        const days = moment(this.form.on_shelf_time_day).add({days: 0}).format('YYYY-MM-DD HH:mm:ss').substring(0, 10)
+        const hours = this.form.off_shelf_time_hours.substring(10, 19)
+        return `${days}${hours}`
       }
-    })
+      return '请选择第一次上架开始时间'
+    },
+    getOffShelfTimeText () {
+      const a = moment(this.form.off_shelf_time_hours)
+      const b = moment(this.form.on_shelf_time_hours)
+      const isBefore = a.isBefore(b)
+      if (isBefore && this.form.on_shelf_time_hours) return '次日'
+      if (this.form.off_shelf_time_hours) return '当日'
+      return ''
+    }
   },
   methods: {
     ...mapActions('productManagement/cycleProductsSelf/chooseProducts', [
@@ -148,16 +248,51 @@ export default {
     ...mapMutations('productManagement/cycleProductsSelf/chooseProducts', ['save']),
     async init () {
       // 查询初始化
-      // this.form = this.originForm
+      const taskId = this.$route.query.task_id
+      if (taskId) {
+        this.form = {
+          task_id: taskId,
+          ...this.form,
+          ...this.$route.params
+        }
+        this.isEdit = true
+      } else {
+        this.isEdit = false
+      }
+    },
+    getFormdata () {
+      if (this.form.task_type === 6) {
+        return {
+          task_name: this.form.task_name,
+          task_type: this.form.task_type,
+          off_shelf_time: this.getOffShelfTime,
+          on_shelf_time: `${this.form.on_shelf_time_day.substring(0, 10)}${this.form.on_shelf_time_hours.substring(10, 19)}`,
+          repeat_count: this.form.repeat_count
+        }
+      }
+
+      if ([1, 2, 3, 4].includes(this.form.task_type)) {
+        return this.form
+      }
+    },
+    onChangeOffShelfTime () {
+      const a = moment(this.form.off_shelf_time_hours).format('yyyy-MM-dd HH:mm:ss')
+      const b = moment(this.form.on_shelf_time_hours).format('yyyy-MM-dd HH:mm:ss')
+      console.log(a, b)
+      if (a === b) {
+        this.$message.warning('不可以选择同一时间')
+      }
     },
     goback () {
       this.$router.back()
     },
-
+    // 更新
     updatePlan () {
       this.loadingPost = true
-      const parmas = this.form
-      services.productAutoShelfUpdate(parmas)
+      const taskId = this.$route.query.task_id
+      const params = this.getFormdata()
+      console.log(params)
+      services.productAutoShelfUpdate({...params, task_id: taskId})
         .then(data => {
           this.$message.success('修改模版成功！')
           this.goback()
@@ -171,14 +306,15 @@ export default {
     },
     // 选择商品
     chooseProducts: debounce(function () {
+      const params = this.getFormdata()
+      console.log(params, 'params')
       this.$refs.form.validate((valid, object) => {
         if (valid) {
           this.fetch()
-          this.save({form: this.form})
+          this.save({form: params})
           this.$router.push({
             name: 'cycleProductsSelf_ChooseProducts'
           })
-          console.log(this.form, 'this.form')
         }
       })
     },

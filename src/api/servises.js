@@ -459,7 +459,7 @@ const hhgjAPIs = {
     return api.actionCreatorPost('/api/product/auto_shelf/delete', params)
   },
   productAutoShelfDetail: (params) => {
-    return api.actionCreatorPost('/api/product/auto_shelf/detail', params)
+    return api.actionCreateGet('/api/product/auto_shelf/detail', params)
   },
   productAutoShelfOpen: (params) => {
     return api.actionCreatorPost('/api/product/auto_shelf/open', params)

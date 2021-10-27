@@ -21,7 +21,7 @@ const model = modelExtend(
           stopGetperprogress: false,
           getperprogressTimer: null
         })
-        dispatch('getperprogress')
+        // dispatch('getperprogress')
       },
       async getperprogress ({commit, state, dispatch}) {
         clearTimeout(state.getperprogressTimer)

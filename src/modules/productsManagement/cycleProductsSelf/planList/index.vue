@@ -4,12 +4,12 @@
     <div class="alert">
             <div>
               <hh-icon type="icontishi" ></hh-icon>
-              什么是商品源同步？ <span class="font-12 warning">仅能选择2021.10.9后搬家上线的商品</span>
-              <!-- <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
+              什么是定时上下架？
+              <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
                 点我查看教程视频
-              </span> -->
+              </span>
             </div>
-            <p>当货源方的价格、库存、标题信息发生变化时，系统将检测变化并做出修改。避免因货源方的信息变化造成损失。</p>
+            <p>提前设置上下架类型及上下架时间，系统会根据你的设置按时进行上下架操作</p>
 
       </div>
       <div class="flex align-c mb-10">
@@ -27,47 +27,46 @@
     <el-table :data="tableData" style="width: 100%" v-loading="loading || loadingPost">
       <el-table-empty slot="empty"/>
       <el-table-column prop="task_name" label="计划名称"></el-table-column>
-      <el-table-column prop="sync_type" label="计划类型"  align="center" width="145">
+      <el-table-column prop="task_type_str" label="计划类型"  align="center" width="145">
         <template slot-scope="scope">
           <div>
-            {{sync_type[scope.row.sync_type || 2]}}
+            {{scope.row.task_type_str}}
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="task_name" label="上下架时间" align="center">
         <template slot-scope="scope">
-          <div v-if="scope.row.on_shelf_time">上架{{scope.row.on_shelf_time}}</div>
-          <div v-if="scope.row.off_shelf_time">上架{{scope.row.off_shelf_time}}</div>
+          <div v-if="scope.row.on_shelf_time">上架: {{scope.row.on_shelf_time}}</div>
+          <div v-if="scope.row.off_shelf_time">下架: {{scope.row.off_shelf_time}}</div>
         </template>
       </el-table-column>
 
       <el-table-column prop="expected_goods_nums" label="预计上下架商品数" align="center" width="125"></el-table-column>
       <el-table-column prop="expected_goods_nums" label="实际上下架商品数" align="center" width="125">
         <template slot-scope="scope">
-          <div v-if="scope.row.expected_goods_nums">上架{{scope.row.expected_goods_nums}}</div>
-          <div v-if="scope.row.on_shelf_goods_nums">上架{{scope.row.on_shelf_goods_nums}}</div>
+          <div v-if="scope.row.on_shelf_goods_nums">上架: {{scope.row.on_shelf_goods_nums}}</div>
+          <div v-if="scope.row.off_shelf_goods_nums">下架: {{scope.row.off_shelf_goods_nums}}</div>
+          <div v-if="[5,6].includes(scope.row.task_type) && [1,2].includes(scope.row.status)" @click="handleDetailShelfProducts(scope.row)" class="primary">点击查看</div>
+          <div v-else>-</div>
         </template>
       </el-table-column>
 
        <el-table-column prop="status" label="状态"   align="center" width="95">
         <template slot-scope="scope">
           <el-link :underline="false" class="font-12 no-decoration" type="info" v-if="scope.row.status === 0">未开始</el-link>
-          <el-link :underline="false" class="font-12 flex column justify-c align-c no-decoration" type="warning" v-if="scope.row.status === 1">
-            <span>进行中 <span v-if="scope.row.percent !== 100"> - {{scope.row.percent || 0}}%</span></span>
-            <el-progress :percentage="scope.row.percent" :show-text="false" style="width:64px" :stroke-width="10"></el-progress>
-          </el-link>
-          <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 2">失败</el-link>
+          <el-link :underline="false" class="font-12 no-decoration" type="warning" v-if="scope.row.status === 1">进行中</el-link>
+          <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 2">已结束</el-link>
           <el-link :underline="false" class="font-12 no-decoration" type="danger" v-if="scope.row.status === 3">已终止</el-link>
         </template>
       </el-table-column>
 
       <el-table-column label="操作" width="150"  align="center">
          <template slot-scope="scope">
-          <a class="pramiry pointer pl-5" @click="handleEditPlan(scope.row,2)" v-if="scope.row.status === 0">编辑计划</a>
-          <a class="pramiry pointer pl-5" @click="handleDetail(scope.row)" v-if="scope.row.status === 1 || scope.row.status === 3">查看详情</a>
-          <a class="pramiry pointer pl-5" @click="handleEditPlan(scope.row,2)" v-if="scope.row.status === 3">恢复计划</a>
-          <a class="fail pointer pl-5" @click="onDelete(scope.row)" v-if="scope.row.status === 0 || scope.row.status === 1">终止计划</a>
-          <a class="fail pointer pl-5" @click="onDelete(scope.row)" v-if="scope.row.status === 2 || scope.row.status === 3">删除计划</a>
+          <a class="pramiry pointer pl-5" @click="onEditPlan(scope.row,2)" v-if="scope.row.status === 0">编辑计划</a>
+          <a class="pramiry pointer pl-5" @click="onDetail(scope.row)" v-if="[1,2].includes(scope.row.status)">查看详情</a>
+          <a class="pramiry pointer pl-5" @click="onOpenPlan(scope.row)" v-if="scope.row.status === 3">恢复计划</a>
+          <a class="fail pointer pl-5" @click="onClose(scope.row)" v-if="[0,1].includes(scope.row.status)">终止计划</a>
+          <a class="fail pointer pl-5" @click="onDelete(scope.row)" v-if="[2,3].includes(scope.row.status)">删除计划</a>
         </template>
       </el-table-column>
     </el-table>
@@ -82,6 +81,28 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+
+    <el-dialog
+      title="实际上下架商品数"
+      :visible.sync="visible"
+      width="500px"
+      :append-to-body="true"
+    >
+       <div class="left cycleProductsSelf-planList-dialog" v-for="(item,index) in activeDetailShelfProductsData.sub_task_list" :key="index">
+        <h1>第一次循环</h1>
+        <div class="c">
+          <div class="width-170">
+            <div class="text mb-4">上架时间：{{item.on_shelf_time}}</div>
+            <div class="text">实际上架商品数：{{item.on_shelf_nums}}</div>
+          </div>
+          <el-divider direction="vertical" style="height:32px"></el-divider>
+          <div class="pl-40">
+            <div class="text mb-4">下架时间：{{item.off_shelf_time}}</div>
+            <div class="text">实际下架商品数：{{item.off_shelf_time}}</div>
+          </div>
+        </div>
+        </div>
+    </el-dialog>
 
   </div>
 </template>
@@ -100,28 +121,21 @@ import {
 export default {
   name: 'planList',
   props: {
-    msg: String
   },
   data () {
     return {
+      visible: false,
       loadingPost: false,
-      status: {
-        0: '未开始',
-        1: '进行中',
-        2: '已完成',
-        3: '失败'
-      },
-      sync_type: {
-        1: '检测变化并提交修改',
-        2: '仅检测变化，需人工提交修改'
-      }
+      activeDetailShelfProductsData: {}
     }
   },
   created () {
     this.fetch()
-    console.log(this.pagination)
   },
   watch: {
+  },
+  activated () {
+    this.fetch()
   },
   components: {
     // DrawerSyncDetail
@@ -156,6 +170,66 @@ export default {
         name: 'cycleProductsSelf_CreatePlan'
       })
     },
+    onOpenPlan (row) {
+      this.loadingPost = true
+      const parmas = {
+        task_id: row.task_id
+      }
+      services.productAutoShelfOpen(parmas)
+        .then(data => {
+          this.fetch()
+          this.loadingPost = false
+        })
+        .catch(err => {
+          this.$message.error(`${err}`)
+          this.loadingPost = false
+        })
+    },
+    onClose (row) {
+      const h = this.$createElement
+      this.$confirm('', {
+        message: h('div', null, [
+          h('div', {
+            class: 'center'
+          }, [
+            h('hh-icon', {
+              props: {
+                type: 'iconjinggao1'
+              },
+              class: 'planList-icon'
+            })
+          ]),
+          h('div', {
+            class: 'planList-text'
+          }, '确认终止该计划？终止后系统将不再执行任何操作?')
+        ]),
+        type: 'warning',
+        confirmButtonText: '确认终止',
+        cancelButtonText: '点错了',
+        customClass: 'planList-customClass',
+        cancelButtonClass: 'planList-cancelButtonClass',
+        confirmButtonClass: 'planList-confirmButtonClass',
+        showClose: false
+      })
+        .then(_ => {
+          const parmas = {
+            task_id: row.task_id
+          }
+          this.loadingPost = true
+          services.productAutoShelfClose(parmas)
+            .then(data => {
+              this.fetch()
+              this.loadingPost = false
+            })
+            .catch(err => {
+              this.$message.error(`${err}`)
+              this.loadingPost = false
+            })
+        })
+        .catch(_ => {
+          return false
+        })
+    },
     onDelete (row) {
       const h = this.$createElement
       this.$confirm('', {
@@ -186,7 +260,7 @@ export default {
             task_id: row.task_id
           }
           this.loadingPost = true
-          services.productSourceSyncDelete(parmas)
+          services.productAutoShelfDelete(parmas)
             .then(data => {
               this.fetch()
             })
@@ -208,10 +282,12 @@ export default {
       this.clear()
       this.$emit('go', row, type)
     },
-    handleDetail: debounce(function (row) {
-      if (row.status === 0) return false
-      this.$nextTick(() => {
-        this.$refs.DrawerSyncDetail && this.$refs.DrawerSyncDetail.open(row)
+    onDetail: debounce(function (row) {
+      this.$router.push({
+        name: 'cycleProductsSelf_PlanDetail',
+        query: {
+          task_id: row.task_id
+        }
       })
     },
     1000,
@@ -219,24 +295,29 @@ export default {
       leading: true
     }),
     // 修改计划
-    handleEditPlan (row, type) {
-      console.log(row, 'row')
-      const form = row.style.form
-      const selectParmas = row.style.selectParmas
-      const filters = row.style.filters
-      const originFilters = row.style.originFilters
-      const multipleSelection = row.style.multipleSelection
-
-      this.save({
-        form,
-        selectParmas,
-        originFilters,
-        filters,
-        multipleSelection,
-        task_id: row.task_id
+    onEditPlan (row) {
+      this.$router.push({
+        name: 'cycleProductsSelf_CreatePlan',
+        query: {
+          task_id: row.task_id
+        },
+        params: {
+          task_name: row.task_name || '',
+          task_type: row.task_type,
+          off_shelf_time: row.off_shelf_time || '',
+          on_shelf_time: row.on_shelf_time || '',
+          repeat_count: row.repeat_count || 0
+        }
       })
-
-      this.$emit('go', row, type)
+    },
+    // 点击查看
+    handleDetailShelfProducts (row) {
+      services.productAutoShelfDetail({task_id: row.task_id})
+        .then((data) => {
+          console.log(data, 'data')
+          this.activeDetailShelfProductsData = data
+          this.visible = true
+        })
     },
     objToStrMap (obj) {
       let strMap = new Map()
@@ -254,9 +335,6 @@ export default {
       const form = row.style.form
       const selectParmas = row.style.selectParmas
       const originFilters = row.style.originFilters
-
-      console.log(row, 'row')
-
       const multipleSelection = row.style.multipleSelection
       this.setFilter_tableProductList({filters}).then(() => {
         this.save({
@@ -393,5 +471,45 @@ export default {
         display: none;
       }
     }
+}
+
+.cycleProductsSelf-planList-dialog {
+  h1 {
+    height: 19px;
+    font-size: 14px;
+    font-family: MicrosoftYaHei;
+    color: #4E4E4E;
+    line-height: 19px;
+  }
+  .c {
+    height: 60px;
+    background: #EAEDFA;
+    align-items: center;
+    display: flex;
+    margin-top: 8px;
+    padding: 0 30px;
+    justify-content: space-between;
+  }
+  .text {
+    height: 16px;
+    font-size: 12px;
+    font-family: MicrosoftYaHei;
+    color: #4E4E4E;
+    line-height: 16px;
+    width: 170px;
+  }
+  .mb-4 {
+    margin-bottom: 4px;
+  }
+  .width-170 {
+    width: 170px;
+    box-sizing: border-box;
+  }
+  .pl-40 {
+  }
+  .el-divider--vertical {
+    height: 32px;
+    margin:0;
+  }
 }
 </style>
