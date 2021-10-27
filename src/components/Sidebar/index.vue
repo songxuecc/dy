@@ -119,7 +119,7 @@
             <el-menu-item index="" @click="openMeiZhe">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
-                <span class="">开店必备工具</span>
+                <span class="">美折·短信CRM</span>
               </div>
             </el-menu-item>
           </el-submenu>
@@ -165,7 +165,7 @@ export default {
       window.open('https://pdd.huhuguanjia.com/?from=douyin')
     },
     openMeiZhe () {
-      window.open('https://www.meideng.net/product?from=dyhhbjzs')
+      window.open('https://dx5.cn/45Uosn')
     },
     gotoHomePage () {
       if (!this.isAuth()) return false
