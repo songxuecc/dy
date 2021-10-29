@@ -20,7 +20,6 @@
       :data="tableData"
       tooltip-effect="dark"
       style="width: 100%"
-      @selection-change="handleSelectionChange"
       @select="handleSelection"
       highlight-current-row
       :header-cell-class-name="getHeaderCellClassName"
@@ -33,8 +32,7 @@
       </el-table-empty>
       <el-table-column
         type="selection"
-        width="55"/>
-      <!-- :reserve-selection="true"> -->
+        width="55" >
       </el-table-column>
       <el-table-column label="图片" width="70" align="center" prop="id">
         <template slot-scope="scope">
@@ -149,7 +147,7 @@
         >
         <el-button type="primary" :style="{width: loadingPost ? '150px':'120px'}" @click="handleConfirm" :loading="loadingPost" :disabled="loadingPost"
           >完成创建
-          <span v-if="is_all ? total : multipleSelection.length">({{is_all ? total : multipleSelection.length}})</span>
+          <span v-if="all">({{all}})</span>
         </el-button>
       </div>
     </div>
@@ -174,22 +172,41 @@ export default {
     return {
       multipleSelection: [],
       is_all: false,
-      currentRow: null,
       startFixed: false,
       loadingPost: false,
       originFilters: undefined,
-      deleteGoodsIds: [],
-      multipleSelectionMap: new Map()
+      multipleSelectionMap: new Map(),
+      all: 0
     }
+  },
+  created () {
+    this.fetch()
+    this.is_all = false
+    this.all = false
+    this.multipleSelectionMap = new Map()
+  },
+  mounted () {
+    this.scroll()
+    this.bindScroll()
+  },
+  activated () {
+    this.scroll()
+    this.bindScroll()
+    this.is_all = false
+    this.all = false
+    this.multipleSelectionMap = new Map()
+  },
+  deactivated () {
+    this.unBindScroll()
+  },
+  beforeDestroy () {
+    this.unBindScroll()
   },
   computed: {
     ...mapState({
       loading: (state) => state['@@loading'].effects['productManagement/cycleProductsSelf/chooseProducts/query']
     }),
     ...mapState('productManagement/cycleProductsSelf/chooseProducts', {
-      selectParmasSearch: state => {
-        return state.selectParmas
-      },
       originFiltersSearch: state => {
         return state.originFilters
       },
@@ -211,77 +228,7 @@ export default {
       return this.tableData.map(item => {
         return this.multipleSelectionMap.get(item.goods_id)
       })
-    },
-    selectParmas () {
-      const parmas = {
-        is_all: Number(this.is_all),
-        delete_goods_id_list: [],
-        goods_id_list: []
-      }
-      if (!this.is_all) {
-        parmas.goods_id_list = this.multipleSelection
-      }
-      return parmas
     }
-  },
-  created () {
-    // 进入列表 查询数据的初始化
-    // if (this.selectParmasSearch) {
-    //   this.loadingSelected = true
-    //   this.is_all = Boolean(this.selectParmasSearch.is_all)
-    //   if (this.is_all) {
-    //     this.handleAllSelectionChange(true)
-    //   }
-    //   this.goods_id_list = this.selectParmasSearch.goods_id_list
-    //   this.delete_goods_id_list = this.selectParmasSearch.delete_goods_id_list
-    //   this.originFilters = this.originFiltersSearch
-    // }
-    this.fetch()
-  },
-  mounted () {
-    // if (this.selectParmasSearch && !this.is_all && this.multipleSelectionSearch.length) {
-    //   setTimeout(() => {
-    //   // 处理初始化 再次进入修改商品时候 非一件全选时 多选选中回显
-    //     this.tableData.forEach((row, idx) => {
-    //       const isSelect = this.multipleSelectionSearch.includes(row.goods_id)
-    //       this.$nextTick(() => {
-    //         isSelect && this.$refs.multipleTable.toggleRowSelection(row, true)
-    //       })
-    //     })
-    //     console.log('loadingSelected')
-
-    //     services.getProductList({
-    //       goods_id_list: JSON.stringify(this.multipleSelectionSearch),
-    //       page_size: this.multipleSelectionSearch.length
-    //     }).then(data => {
-    //       data.items.forEach((row, idx) => {
-    //         const isSelect = this.multipleSelectionSearch.includes(row.goods_id)
-    //         this.$nextTick(() => {
-    //           isSelect && this.$refs.multipleTable && this.$refs.multipleTable.toggleRowSelection(row, true)
-    //         })
-    //       })
-    //       this.loadingSelected = false
-
-    //       this.scroll()
-    //       this.bindScroll()
-    //     })
-    //   }, 600)
-    // } else {
-    //   this.loadingSelected = false
-    //   this.scroll()
-    //   this.bindScroll()
-    // }
-    this.scroll()
-    this.bindScroll()
-  },
-  activated () {
-    this.bindScroll()
-  },
-  deactivated () {
-    this.unBindScroll()
-  },
-  beforeDestroy () {
-    this.unBindScroll()
   },
   watch: {
     // 一件全选时 数据请求初始化
@@ -291,12 +238,12 @@ export default {
           if (this.multipleSelectionMap.get(row.goods_id) && this.multipleSelectionMap.get(row.goods_id).handleSelection) {
             return
           }
-          console.log(row.selectAll, 'row.selectAll')
+          const oldData = this.multipleSelectionMap.get(row.goods_id)
           this.multipleSelectionMap.set(
             row.goods_id,
             {
               ...row,
-              checked: this.is_all
+              checked: oldData && oldData.checked ? oldData.checked : this.is_all
             }
           )
         })
@@ -322,16 +269,16 @@ export default {
       this.$router.back()
     },
     handleConfirm () {
-      const selecteds = this.is_all ? this.total : this.multipleSelection.length
-      if (selecteds > 200) {
+      if (this.all > 200) {
         return this.$message.error('商品最多200条！')
       }
-
-      if (!selecteds) {
+      if (!this.all) {
         return this.$message.error('请选择商品')
       }
 
-      console.log(this.multipleSelection, 'multipleSelection')
+      const deleteGoodsIdList = ([...this.multipleSelectionMap.values()]).filter(row => !row.checked).map(row => row.goods_id)
+      const goodsIdList = ([...this.multipleSelectionMap.values()]).filter(row => row.checked).map(row => row.goods_id)
+
       const goodsQueryParams = {
         ...this.filters,
         check_status: -1,
@@ -339,14 +286,16 @@ export default {
         presell_type: -1,
         is_capture: -1,
         category_leaf_id_list: [],
-        goods_id_list: this.multipleSelection
+        goods_id_list: goodsIdList,
+        is_all: Number(this.is_all),
+        delete_goods_id_list: deleteGoodsIdList
       }
+
+      console.log(goodsQueryParams, 'goodsQueryParams')
       const parmas = {
         ...this.form,
         goods_query_params: JSON.stringify(goodsQueryParams)
       }
-
-      console.log(parmas, '提交数据parmas')
       this.loadingPost = true
       // 判断是二次修改还是首次创建
       if (this.selectParmasSearch) {
@@ -356,8 +305,10 @@ export default {
           // 创建成功
             this.$message.success('修改成功！')
             this.clearData()
-            this.$router.push({
-              name: 'cycleProductsSelf_PlanList'
+            this.$nextTick(() => {
+              this.$router.push({
+                name: 'cycleProductsSelf_PlanList'
+              })
             })
           })
           .catch(err => {
@@ -384,13 +335,15 @@ export default {
           })
       }
     },
-
     // 保存查询的初始化数据
     handleFilter (filters, originFilters) {
       this.$refs.multipleTable && this.$refs.multipleTable.clearSelection()
       filters = {
         ...filters
       }
+      this.is_all = false
+      this.all = false
+      this.multipleSelectionMap = new Map()
       this.setFilter({filters})
       this.originFilters = originFilters
     },
@@ -433,6 +386,15 @@ export default {
           this.$refs.multipleTable && this.$refs.multipleTable.toggleRowSelection(row, checked)
         })
       })
+      this.all = this.getSelect()
+    },
+    getSelect () {
+      if (this.is_all) {
+        const minute = ([...this.multipleSelectionMap.values()]).filter(row => !row.checked).length
+        return this.total - minute
+      } else {
+        return ([...this.multipleSelectionMap.values()]).filter(row => row.checked).length
+      }
     },
     handleSelection (selection, row, value) {
       const preSelect = this.tableData.filter(row => this.multipleSelectionMap.get(row.goods_id).checked)
@@ -454,11 +416,8 @@ export default {
     // 一件全选时候 表格全选禁用
     handleSelectionAll (selection) {
       if (this.is_all) return false
-      console.log(selection, 'selection')
-
       const preSelect = this.tableData.filter(row => this.multipleSelectionMap.get(row.goods_id).checked)
       if (preSelect.length > selection.length) {
-        console.log('少')
         this.tableData.forEach(row => {
           this.multipleSelectionMap.set(row.goods_id, {
             ...row,
@@ -467,7 +426,6 @@ export default {
           })
         })
       } else {
-        console.log('多')
         this.tableData.forEach(row => {
           this.multipleSelectionMap.set(row.goods_id, {
             ...row,
@@ -477,32 +435,6 @@ export default {
         })
       }
       this.toggleRowSelection()
-    },
-    // 表格多选 选项修改回调事件
-    handleSelectionChange (val) {
-      console.log(val, 'handleSelectionChange')
-    //   const preMultipleSelection = this.multipleSelection
-    //   const currentMultipleSelectionIDs = val.map(item => item.goods_id)
-    //   const currentMultipleSelectionIDsSet = [...new Set(currentMultipleSelectionIDs)]
-    //   const preMultipleSelectionIDs = preMultipleSelection.map(item => item.goods_id)
-    //   const preMultipleSelectionIDsSet = new Set(preMultipleSelectionIDs)
-    //   const currentMultipleSelection = currentMultipleSelectionIDsSet.map(id => {
-    //     const item = val.find(item => item.goods_id === id)
-    //     return item
-    //   })
-    //   if (preMultipleSelection.length > currentMultipleSelection.length) {
-    //     this.multipleSelection = currentMultipleSelection
-    //     const deleteGoodsIds = preMultipleSelectionIDs.filter(item => !new Set(currentMultipleSelectionIDs).has(item))
-    //     // 变少 增加到delete_goods_ids
-    //     this.deleteGoodsIds = [...this.deleteGoodsIds, ...deleteGoodsIds]
-    //     console.log(this.deleteGoodsIds, deleteGoodsIds, '变少', 'this.deleteGoodsIds')
-    //   } else {
-    //     this.multipleSelection = currentMultipleSelection
-    //     const deleteGoodsIds = (this.deleteGoodsIds || []).filter(item => preMultipleSelectionIDsSet.has(item))
-    //     // 变多 从delete_goods_ids剔除
-    //     this.deleteGoodsIds = deleteGoodsIds
-    //     console.log(this.deleteGoodsIds, deleteGoodsIds, '变多', 'this.deleteGoodsIds')
-    //   }
     },
     copy: async function (id, text) {
       try {
