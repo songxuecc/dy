@@ -119,7 +119,9 @@
             <el-menu-item index="" @click="openMeiZhe">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
-                <span class="">美折·短信CRM</span>
+                <span class="relative">美折·短信CRM
+                  <span  class="badge bold">送一年</span>
+                </span>
               </div>
             </el-menu-item>
           </el-submenu>
@@ -223,5 +225,22 @@ export default {
 
   .homePage-active {
     color: #3277FF;
+  }
+
+ .badge{
+    position:absolute;
+    right:-28px;
+    top:-2px;
+    font-size:12px;
+    transform:scale(0.7);
+    background:#dc4041;
+    border-radius:5px;
+    height:20px;
+    min-width:20px;
+    box-sizing:border-box;
+    line-height:16px;
+    padding:2px 4px !important;
+    color:#fff;
+    text-align:center;
   }
 </style>
