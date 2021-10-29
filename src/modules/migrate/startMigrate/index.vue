@@ -370,6 +370,11 @@ export default {
         }
       })
       this.userBindList = [...bandShopsMap.values()]
+
+      if (this.target_user_id) {
+        const bandShopTip = this.userBindList.find(item => this.target_user_id === item.user_id)
+        this.bandShopTip = bandShopTip
+      }
     },
 
     changeCaptureUrl () {
