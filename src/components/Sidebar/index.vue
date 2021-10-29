@@ -124,6 +124,14 @@
                 </span>
               </div>
             </el-menu-item>
+            <el-menu-item index="" @click="openMeiZheSHouhou">
+              <div slot="title" class="flex align-c">
+                <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
+                <span class="relative">售后管家
+                  <span  class="badge2 bold">提效10倍</span>
+                </span>
+              </div>
+            </el-menu-item>
           </el-submenu>
         </el-menu>
       </div>
@@ -168,6 +176,9 @@ export default {
     },
     openMeiZhe () {
       window.open('https://dx5.cn/45Uosn')
+    },
+    openMeiZheSHouhou () {
+      window.open('https://dx5.cn/45TC4j')
     },
     gotoHomePage () {
       if (!this.isAuth()) return false
@@ -230,7 +241,23 @@ export default {
  .badge{
     position:absolute;
     right:-28px;
-    top:-2px;
+    top:0px;
+    font-size:12px;
+    transform:scale(0.7);
+    background:#dc4041;
+    border-radius:5px;
+    height:20px;
+    min-width:20px;
+    box-sizing:border-box;
+    line-height:16px;
+    padding:2px 4px !important;
+    color:#fff;
+    text-align:center;
+  }
+  .badge2{
+    position:absolute;
+    right:-40px;
+    top:0px;
     font-size:12px;
     transform:scale(0.7);
     background:#dc4041;
