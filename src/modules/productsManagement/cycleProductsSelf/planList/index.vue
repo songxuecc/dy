@@ -132,8 +132,6 @@ export default {
   created () {
     this.fetch()
   },
-  watch: {
-  },
   activated () {
     this.fetch()
   },
@@ -255,7 +253,6 @@ export default {
         showClose: false
       })
         .then(_ => {
-          console.log('00000')
           const parmas = {
             task_id: row.task_id
           }
@@ -301,13 +298,7 @@ export default {
         query: {
           task_id: row.task_id
         },
-        params: {
-          task_name: row.task_name || '',
-          task_type: row.task_type,
-          off_shelf_time: row.off_shelf_time || '',
-          on_shelf_time: row.on_shelf_time || '',
-          repeat_count: row.repeat_count || 0
-        }
+        params: row.ext
       })
     },
     // 点击查看

@@ -72,46 +72,40 @@
 
       <div v-if="[5].includes(form.task_type)">
         <el-form-item label="下架时间">
-          <el-date-picker
-            v-model="form.off_shelf_time"
-            type="datetime"
+         <el-time-picker
+            v-model="form.first_shelf_time_hours"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间"
+            placeholder="选择下架时间"
             align="right"
             :picker-options="pickerOptions">
-          </el-date-picker>
+          </el-time-picker>
         </el-form-item>
-        <el-form-item label="上架时间" v-if="form.off_shelf_time">
-          <el-date-picker
-            v-model="form.on_shelf_time"
-            type="datetime"
+        <el-form-item label="上架时间" v-if="form.first_shelf_time_hours">
+           <el-time-picker
+            v-model="form.second_shelf_time_hours"
+            @blur="onChangeOffShelfTime"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间"
-            align="right"
-            :picker-options="pickerOptions">
-          </el-date-picker>
+            placeholder="选择上架时间">
+          </el-time-picker>
+          <span class="color-warning ml-5">{{getFirstShelfTimeText}}</span>
         </el-form-item>
-        <el-form-item label="第一次下架开始时间"  v-if="form.off_shelf_time">
+        <el-form-item label="第一次下架开始时间"  v-if="form.first_shelf_time_hours">
           <el-date-picker
-            v-model="form.off_shelf_time"
-            type="datetime"
+            v-model="form.first_shelf_time_day"
+            type="date"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间"
+            placeholder="选择第一次下架开始时间"
             align="right"
-            :picker-options="pickerOptions">
+            default-time="12:00:00"
+            :picker-options="pickerOptions"
+            @blur="handleChangeOnShelfTime">
           </el-date-picker>
+          <span class="ml-5">{{form.first_shelf_time_hours.substring(10,19)}}</span>
         </el-form-item>
-        <el-form-item label="第一次上架开始时间"  v-if="form.off_shelf_time">
-          <el-date-picker
-            v-model="form.on_shelf_time"
-            type="year"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间"
-            align="right"
-            :picker-options="pickerOptions">
-          </el-date-picker>
+        <el-form-item label="第一次上架开始时间"  v-if="form.first_shelf_time_hours">
+           {{getSecondShelfTime}}
         </el-form-item>
-        <el-form-item label="循环次数"  v-if="form.off_shelf_time">
+        <el-form-item label="循环次数"  v-if="form.first_shelf_time_hours">
           <el-input v-model="form.repeat_count" placeholder="填写1-X的正整数, 如填写100则重复操作100次" style="width:308px"></el-input>
         </el-form-item>
       </div>
@@ -119,25 +113,25 @@
       <div v-if="[6].includes(form.task_type)">
          <el-form-item label="上架时间">
           <el-time-picker
-            v-model="form.on_shelf_time_hours"
+            v-model="form.first_shelf_time_hours"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择上架时间"
             align="right"
             :picker-options="pickerOptions">
           </el-time-picker>
         </el-form-item>
-        <el-form-item label="下架时间" v-if="form.on_shelf_time_hours">
+        <el-form-item label="下架时间" v-if="form.first_shelf_time_hours">
           <el-time-picker
-            v-model="form.off_shelf_time_hours"
+            v-model="form.second_shelf_time_hours"
             @blur="onChangeOffShelfTime"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择下架时间">
           </el-time-picker>
-          <span class="color-warning ml-5">{{getOffShelfTimeText}}</span>
+          <span class="color-warning ml-5">{{getFirstShelfTimeText}}</span>
         </el-form-item>
-        <el-form-item label="第一次上架开始时间" v-if="form.on_shelf_time_hours">
+        <el-form-item label="第一次上架开始时间" v-if="form.first_shelf_time_hours">
           <el-date-picker
-            v-model="form.on_shelf_time_day"
+            v-model="form.first_shelf_time_day"
             type="date"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择第一次上架开始时间"
@@ -146,12 +140,12 @@
             :picker-options="pickerOptions"
             @blur="handleChangeOnShelfTime">
           </el-date-picker>
-          <span class="ml-5">{{form.on_shelf_time_hours.substring(10,19)}}</span>
+          <span class="ml-5">{{form.first_shelf_time_hours.substring(10,19)}}</span>
         </el-form-item>
-        <el-form-item label="第一次下架开始时间" v-if="form.on_shelf_time_hours">
-          {{getOffShelfTime}}
+        <el-form-item label="第一次下架开始时间" v-if="form.first_shelf_time_hours">
+          {{getSecondShelfTime}}
         </el-form-item>
-        <el-form-item label="循环次数" v-if="form.on_shelf_time_hours">
+        <el-form-item label="循环次数" v-if="form.first_shelf_time_hours">
           <el-input v-model="form.repeat_count" placeholder="填写1-X的正整数, 如填写100则重复操作100次" style="width:365px"></el-input>
         </el-form-item>
       </div>
@@ -183,12 +177,12 @@ export default {
       moment,
       form: {
         task_name: `定时上下架计划: ${moment().format('YYYY-MM-DD')}`,
-        task_type: 6,
+        task_type: 1,
         on_shelf_time: '',
         off_shelf_time: '',
         repeat_count: '',
-        on_shelf_time_day: '',
-        on_shelf_time_hours: ''
+        first_shelf_time_day: '',
+        first_shelf_time_hours: ''
       },
       rules: {
         task_name: [
@@ -214,30 +208,30 @@ export default {
     ...mapState('productManagement/cycleProductsSelf/chooseProducts', {
     }),
     getF () {
-      if (!this.form.on_shelf_time_hours) return ''
-      return moment(this.form.on_shelf_time_hours).add(86399, 'seconds').format('yyyy-MM-dd HH:mm:ss').substring(10, 19)
+      if (!this.form.first_shelf_time_hours) return ''
+      return moment(this.form.first_shelf_time_hours).add(86399, 'seconds').format('yyyy-MM-dd HH:mm:ss').substring(10, 19)
     },
-    getOffShelfTime () {
-      const a = moment(this.form.off_shelf_time_hours)
-      const b = moment(this.form.on_shelf_time_hours)
+    getSecondShelfTime () {
+      const a = moment(this.form.second_shelf_time_hours)
+      const b = moment(this.form.first_shelf_time_hours)
       const isBefore = a.isBefore(b)
-      if (isBefore && this.form.on_shelf_time_hours && this.form.on_shelf_time_day) {
-        const days = moment(this.form.on_shelf_time_day).add({days: 1}).format('YYYY-MM-DD HH:mm:ss').substring(0, 10)
-        const hours = this.form.off_shelf_time_hours.substring(10, 19)
+      if (isBefore && this.form.first_shelf_time_hours && this.form.first_shelf_time_day) {
+        const days = moment(this.form.first_shelf_time_day).add({days: 1}).format('YYYY-MM-DD HH:mm:ss').substring(0, 10)
+        const hours = this.form.second_shelf_time_hours.substring(10, 19)
         return `${days}${hours}`
-      } else if (!isBefore && this.form.on_shelf_time_hours && this.form.on_shelf_time_day) {
-        const days = moment(this.form.on_shelf_time_day).add({days: 0}).format('YYYY-MM-DD HH:mm:ss').substring(0, 10)
-        const hours = this.form.off_shelf_time_hours.substring(10, 19)
+      } else if (!isBefore && this.form.first_shelf_time_hours && this.form.first_shelf_time_day) {
+        const days = moment(this.form.first_shelf_time_day).add({days: 0}).format('YYYY-MM-DD HH:mm:ss').substring(0, 10)
+        const hours = this.form.second_shelf_time_hours.substring(10, 19)
         return `${days}${hours}`
       }
       return '请选择第一次上架开始时间'
     },
-    getOffShelfTimeText () {
-      const a = moment(this.form.off_shelf_time_hours)
-      const b = moment(this.form.on_shelf_time_hours)
+    getFirstShelfTimeText () {
+      const a = moment(this.form.second_shelf_time_hours)
+      const b = moment(this.form.first_shelf_time_hours)
       const isBefore = a.isBefore(b)
-      if (isBefore && this.form.on_shelf_time_hours) return '次日'
-      if (this.form.off_shelf_time_hours) return '当日'
+      if (isBefore && this.form.first_shelf_time_hours) return '次日'
+      if (this.form.second_shelf_time_hours) return '当日'
       return ''
     }
   },
@@ -258,26 +252,36 @@ export default {
         this.isEdit = true
       } else {
         this.isEdit = false
+        this.form = {
+          task_name: `定时上下架计划: ${moment().format('YYYY-MM-DD')}`,
+          task_type: 1,
+          on_shelf_time: '',
+          off_shelf_time: '',
+          repeat_count: '',
+          first_shelf_time_day: '',
+          first_shelf_time_hours: ''
+        }
       }
     },
     getFormdata () {
-      if (this.form.task_type === 6) {
+      if ([5, 6].includes(this.form.task_type)) {
         return {
           task_name: this.form.task_name,
           task_type: this.form.task_type,
-          off_shelf_time: this.getOffShelfTime,
-          on_shelf_time: `${this.form.on_shelf_time_day.substring(0, 10)}${this.form.on_shelf_time_hours.substring(10, 19)}`,
-          repeat_count: this.form.repeat_count
+          off_shelf_time: this.getSecondShelfTime,
+          on_shelf_time: `${this.form.first_shelf_time_day.substring(0, 10)}${this.form.first_shelf_time_hours.substring(10, 19)}`,
+          repeat_count: this.form.repeat_count,
+          ext: JSON.stringify(this.form)
         }
       }
 
       if ([1, 2, 3, 4].includes(this.form.task_type)) {
-        return this.form
+        return {...this.form, ext: JSON.stringify(this.form)}
       }
     },
     onChangeOffShelfTime () {
-      const a = moment(this.form.off_shelf_time_hours).format('yyyy-MM-dd HH:mm:ss')
-      const b = moment(this.form.on_shelf_time_hours).format('yyyy-MM-dd HH:mm:ss')
+      const a = moment(this.form.second_shelf_time_hours).format('yyyy-MM-dd HH:mm:ss')
+      const b = moment(this.form.first_shelf_time_hours).format('yyyy-MM-dd HH:mm:ss')
       console.log(a, b)
       if (a === b) {
         this.$message.warning('不可以选择同一时间')

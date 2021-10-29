@@ -45,24 +45,6 @@
           </el-option>
         </el-select>
       </el-form-item>
-
-      <!-- <el-form-item style="width: 325px" label="是否抓取" prop="region">
-        <el-select
-          v-model="form.captureStatus"
-          placeholder="请选择是否抓取"
-          class="w-235 mb-10"
-        >
-          <el-option
-            class="left dropdown"
-            v-for="item in captureStatusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
-      </el-form-item> -->
-
       <el-form-item style="width: 325px" label="抓取平台" prop="region">
         <el-select
           v-model="form.tp_id"
