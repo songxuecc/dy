@@ -178,7 +178,7 @@ export default {
       window.open('https://dx5.cn/45Uosn')
     },
     openMeiZheSHouhou () {
-      window.open('https://dx5.cn/45TC4j')
+      window.open('https://dx5.cn/45TC4R')
     },
     gotoHomePage () {
       if (!this.isAuth()) return false
