@@ -139,10 +139,7 @@
               <el-table-column
                 prop="old_data"
                 label="修改前"
-                v-if="
-                  [1, 2, 3, 4, 5].includes(rowData.task_sub_type) &&
-                  rowData.task_sub_type !== 10
-                "
+                v-if="[1, 2, 3, 4, 5].includes(rowData.task_sub_type)"
                 align="center"
               >
               </el-table-column>
@@ -177,7 +174,7 @@
               <el-table-column
                 prop="new_data"
                 label="修改后"
-                v-if="rowData.task_sub_type !== 10"
+                v-if="![10, 16].includes(rowData.task_sub_type)"
                 align="center"
               >
               </el-table-column>
@@ -185,7 +182,7 @@
               <el-table-column
                 prop="new_data"
                 label="修改后"
-                v-else-if="rowData.task_sub_type === 10"
+                v-else-if="[10].includes(rowData.task_sub_type)"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -208,6 +205,22 @@
                   </div>
                 </template>
               </el-table-column>
+              <!-- 详情首尾图 -->
+              <el-table-column
+                prop="new_data"
+                label="修改后"
+                v-else-if="[16].includes(rowData.task_sub_type)"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <HhImage :src="scope.row.img_url" style="height:50px;max-width:65px"/>
+                  <div v-if="!scope.row.is_add"> 已删除</div>
+                  <div v-if="scope.row.is_add"> 已新增至
+                    <span v-if="index > 0">正数</span>
+                    <span v-if="index < 0">倒数</span>第{{index}}张</div>
+                </template>
+              </el-table-column>
+
               <el-table-column
                 prop="fail_reason"
                 label="失败理由"

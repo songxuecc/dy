@@ -160,7 +160,7 @@
             </p>
             <p class="font-12" style="display: flex;align-items: center;">批量增加详情首图
             <el-upload
-              class="avatar-uploader"
+              class="migrateSetting-avatar-uploader"
               action="/api/image/create"
               :headers="getTokenHeaders"
               :data="getImageFirstData"
@@ -175,7 +175,7 @@
             </p>
             <p class="font-12" style="display: flex;align-items: center;">批量增加详情尾图
               <el-upload
-                class="avatar-uploader"
+                class="migrateSetting-avatar-uploader"
                 action="/api/image/create"
                 :headers="getTokenHeaders"
                 :data="getImageLastData"
@@ -1207,18 +1207,17 @@ export default {
 <style lang="less" scoped>
 @import '~./index.less';
 </style>
-<style>
-  .avatar-uploader {
+<style lang="less">
+  .migrateSetting-avatar-uploader {
     margin-left: 10px;
-  }
-  .avatar-uploader .el-upload {
+    .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
   }
-  .avatar-uploader .el-upload:hover {
+  .el-upload:hover {
     border-color: #409EFF;
   }
   .avatar-uploader-icon {
@@ -1238,4 +1237,5 @@ export default {
     display: block;
   }
 
+  }
 </style>
