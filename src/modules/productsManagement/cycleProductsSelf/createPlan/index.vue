@@ -315,6 +315,7 @@ export default {
     chooseProducts: debounce(function () {
       const params = this.getFormdata()
       console.log(params, 'params')
+      // todo 各种情况的数据校验
       if (params.repeat_count && params.repeat_count > 30) {
         return this.$message.error('循环次数不可以大于30')
       }
