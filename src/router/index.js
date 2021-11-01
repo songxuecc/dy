@@ -356,6 +356,10 @@ const router = new VueRouter({
         keepAlive: true,
         requiresAuth: true
       }
+    },
+    {
+      path: '*',
+      redirect: '/homePage'
     }
     // {
     //   path: '/shopDecorate/wm/create/:water_mark_type/:water_mark_id',
