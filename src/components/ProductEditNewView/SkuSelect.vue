@@ -31,6 +31,7 @@
                 size="mini"
                 v-if="index === 0"
                 >添加规格图片
+                <span class="warning">(若为用户自定义上传的图片，系统仅能保存7天，请尽快上传该商品到抖音!)</span>
               </el-checkbox>
           </span>
           <hh-icon
