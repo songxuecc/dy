@@ -225,12 +225,7 @@ export default {
           this.carouselIndex = carouselIndex
           this.shelf = data.sub_task_list[carouselIndex]
           this.status = 0
-          this.fetch({
-            filters: {
-              parent_id: taskId,
-              status: 0
-            }
-          })
+
           if (data.task_type === 1) {
             this.shelfRadio = this.shelf.off_shelf_task_id
           } else if (data.task_type === 2) {
@@ -240,6 +235,12 @@ export default {
           } else if ([4, 6].includes(data.task_type)) {
             this.shelfRadio = this.shelf.on_shelf_task_id
           }
+          this.fetch({
+            filters: {
+              parent_id: this.shelfRadio,
+              status: 0
+            }
+          })
         }
       })
     },
@@ -275,7 +276,6 @@ export default {
           parent_id: val
         }
       })
-      console.log(val, 'val')
       this.status = 0
     },
     changeSubTask (idx) {
