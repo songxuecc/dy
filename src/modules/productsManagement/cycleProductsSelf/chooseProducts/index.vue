@@ -22,7 +22,6 @@
       style="width: 100%"
       @select="handleSelection"
       highlight-current-row
-      :header-cell-class-name="getHeaderCellClassName"
       @select-all="handleSelectionAll"
       v-loading="loading || loadingPost || loadingSelected"
       row-key="goods_id"
@@ -310,9 +309,15 @@ export default {
                 name: 'cycleProductsSelf_PlanList'
               })
             })
+            this.save({
+              form: {}
+            })
           })
           .catch(err => {
             this.$message.error(`${err}`)
+            this.save({
+              form: {}
+            })
           })
           .finally(() => {
             this.loadingPost = false
@@ -326,9 +331,15 @@ export default {
             this.$router.push({
               name: 'cycleProductsSelf_PlanList'
             })
+            this.save({
+              form: {}
+            })
           })
           .catch(err => {
             this.$message.error(`${err}`)
+            this.save({
+              form: {}
+            })
           })
           .finally(() => {
             this.loadingPost = false
@@ -351,12 +362,6 @@ export default {
     isSelectionEnable () {
       return !this.is_all
     },
-    // 表格多选禁用表头样式
-    getHeaderCellClassName ({row, column, rowIndex, columnIndex}) {
-      if (columnIndex === 0 && this.is_all) return 'checkedRow'
-      return ''
-    },
-
     // 一件全选按钮回调
     handleAllSelectionChange (checked) {
       if (checked) {
@@ -415,14 +420,13 @@ export default {
     },
     // 一件全选时候 表格全选禁用
     handleSelectionAll (selection) {
-      if (this.is_all) return false
       const preSelect = this.tableData.filter(row => this.multipleSelectionMap.get(row.goods_id).checked)
       if (preSelect.length > selection.length) {
         this.tableData.forEach(row => {
           this.multipleSelectionMap.set(row.goods_id, {
             ...row,
             checked: false,
-            selectAll: false
+            handleSelection: true
           })
         })
       } else {
@@ -430,7 +434,7 @@ export default {
           this.multipleSelectionMap.set(row.goods_id, {
             ...row,
             checked: true,
-            selectAll: true
+            handleSelection: true
           })
         })
       }

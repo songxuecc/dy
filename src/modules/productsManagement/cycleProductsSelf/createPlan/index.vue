@@ -206,11 +206,10 @@ export default {
   },
   computed: {
     ...mapState('productManagement/cycleProductsSelf/chooseProducts', {
+      originForm: state => {
+        return state.form
+      }
     }),
-    getF () {
-      if (!this.form.first_shelf_time_hours) return ''
-      return moment(this.form.first_shelf_time_hours).add(86399, 'seconds').format('yyyy-MM-dd HH:mm:ss').substring(10, 19)
-    },
     getSecondShelfTime () {
       const a = moment(this.form.second_shelf_time_hours)
       const b = moment(this.form.first_shelf_time_hours)
@@ -252,14 +251,18 @@ export default {
         this.isEdit = true
       } else {
         this.isEdit = false
-        this.form = {
-          task_name: `定时上下架计划: ${moment().format('YYYY-MM-DD')}`,
-          task_type: 1,
-          on_shelf_time: '',
-          off_shelf_time: '',
-          repeat_count: '',
-          first_shelf_time_day: '',
-          first_shelf_time_hours: ''
+        if (this.originForm && this.originForm.ext) {
+          this.form = JSON.parse(this.originForm.ext)
+        } else {
+          this.form = {
+            task_name: `定时上下架计划: ${moment().format('YYYY-MM-DD')}`,
+            task_type: 1,
+            on_shelf_time: '',
+            off_shelf_time: '',
+            repeat_count: '',
+            first_shelf_time_day: '',
+            first_shelf_time_hours: ''
+          }
         }
       }
     },
