@@ -23,7 +23,8 @@ const model = modelExtend(
     }),
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
-        await dispatch('query', { ...payload })
+        const data = await dispatch('query', { ...payload })
+        console.log(data, 'data')
       },
       clear ({commit, state, dispatch}, payload) {
         commit('save', {

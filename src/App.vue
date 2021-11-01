@@ -500,7 +500,7 @@ export default {
     }
     /deep/ .el-alert__closebtn.is-customed {
       font-size: 12px;
-      top: 5px
+      top: 0px
     }
 }
 
