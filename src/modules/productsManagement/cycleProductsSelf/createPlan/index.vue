@@ -1,6 +1,6 @@
 <!-- 创建计划 -->
 <template>
-  <div class="left" style="padding-left: 10px">
+  <div class="left createPlan" style="padding-left: 10px">
     <p class="title">{{isEdit ? '编辑':'创建'}}计划</p>
     <el-divider></el-divider>
 
@@ -28,20 +28,22 @@
       </el-form-item>
       <el-form-item label="上架时间" v-if="[2,4].includes(form.task_type)">
         <el-date-picker
+          class="createPlan-picker"
           v-model="form.on_shelf_time"
           type="datetime"
           value-format="yyyy-MM-dd HH:mm:ss"
-          placeholder="选择日期时间"
+          :placeholder="[4].includes(form.task_type) ? '选择日期时间':'上架时间至少要晚于当前时间5分钟'"
           align="right"
           :picker-options="pickerOptions">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="下架时间" v-if="[1,4].includes(form.task_type)">
         <el-date-picker
+           class="createPlan-picker"
           v-model="form.off_shelf_time"
           type="datetime"
           value-format="yyyy-MM-dd HH:mm:ss"
-          placeholder="选择日期时间"
+          :placeholder="[4].includes(form.task_type) ? '选择日期时间':'下架时间需晚于上架时间5分钟'"
           align="right"
           :picker-options="pickerOptions">
         </el-date-picker>
@@ -50,20 +52,22 @@
       <div v-if="[3].includes(form.task_type)">
          <el-form-item label="下架时间">
           <el-date-picker
+             class="createPlan-picker"
             v-model="form.off_shelf_time"
             type="datetime"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间"
+            placeholder="下架时间至少要晚于当前时间5分钟"
             align="right"
             :picker-options="pickerOptions">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="上架时间" >
           <el-date-picker
+             class="createPlan-picker"
             v-model="form.on_shelf_time"
             type="datetime"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间"
+            placeholder="上架时间需晚于下架时间5分钟"
             align="right"
             :picker-options="pickerOptions">
           </el-date-picker>
@@ -73,24 +77,27 @@
       <div v-if="[5].includes(form.task_type)">
         <el-form-item label="下架时间">
          <el-time-picker
+          class="createPlan-picker"
             v-model="form.first_shelf_time_hours"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择下架时间"
+            placeholder="下架时间至少要晚于当前时间5分钟"
             align="right"
             :picker-options="pickerOptions">
           </el-time-picker>
         </el-form-item>
         <el-form-item label="上架时间" v-if="form.first_shelf_time_hours">
            <el-time-picker
+            class="createPlan-picker"
             v-model="form.second_shelf_time_hours"
             @blur="onChangeOffShelfTime"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择上架时间">
+            placeholder="上架时间需晚于下架时间5分钟">
           </el-time-picker>
           <span class="color-warning ml-5">{{getFirstShelfTimeText}}</span>
         </el-form-item>
         <el-form-item label="第一次下架开始时间"  v-if="form.first_shelf_time_hours">
           <el-date-picker
+             class="createPlan-picker"
             v-model="form.first_shelf_time_day"
             type="date"
             value-format="yyyy-MM-dd HH:mm:ss"
@@ -113,24 +120,27 @@
       <div v-if="[6].includes(form.task_type)">
          <el-form-item label="上架时间">
           <el-time-picker
+            class="createPlan-picker"
             v-model="form.first_shelf_time_hours"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择上架时间"
+            placeholder="上架时间至少要晚于当前时间5分钟"
             align="right"
             :picker-options="pickerOptions">
           </el-time-picker>
         </el-form-item>
         <el-form-item label="下架时间" v-if="form.first_shelf_time_hours">
           <el-time-picker
+            class="createPlan-picker"
             v-model="form.second_shelf_time_hours"
             @blur="onChangeOffShelfTime"
             value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择下架时间">
+            placeholder="下架时间需晚于上架时间5分钟">
           </el-time-picker>
           <span class="color-warning ml-5">{{getFirstShelfTimeText}}</span>
         </el-form-item>
         <el-form-item label="第一次上架开始时间" v-if="form.first_shelf_time_hours">
           <el-date-picker
+            class="createPlan-picker"
             v-model="form.first_shelf_time_day"
             type="date"
             value-format="yyyy-MM-dd HH:mm:ss"
@@ -315,10 +325,23 @@ export default {
     chooseProducts: debounce(function () {
       const params = this.getFormdata()
       console.log(params, 'params')
-      // todo 各种情况的数据校验
       if (params.repeat_count && params.repeat_count > 30) {
         return this.$message.error('循环次数不可以大于30')
       }
+      const now = moment(new Date())
+      const offShelfTime = moment(params.off_shelf_time)
+      const onShelfTime = moment(params.on_shelf_time)
+
+      if (params.task_type === 3 || params.task_type === 5) {
+        if (offShelfTime.diff(now, 'minute') < 5 || onShelfTime.diff(offShelfTime, 'minute') < 5) {
+          return this.$message.error('上架时间至少要晚于当前时间5分钟 或 下架时间需晚于上架时间5分钟')
+        }
+      } else if (params.task_type === 4 || params.task_type === 6) {
+        if (onShelfTime.diff(now, 'minute') < 5 || offShelfTime.diff(onShelfTime, 'minute') < 5) {
+          return this.$message.error('下架时间至少要晚于当前时间5分钟 或 上架时间需晚于下架时间5分钟')
+        }
+      }
+
       this.$refs.form.validate((valid, object) => {
         if (valid) {
           this.fetch()
@@ -407,4 +430,10 @@ export default {
     font-size: 14px;
   }
 }
+.createPlan{
+  /deep/ .createPlan-picker{
+    width: 250px;
+  }
+}
+
 </style>
