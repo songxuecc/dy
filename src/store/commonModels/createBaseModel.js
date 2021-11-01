@@ -115,7 +115,6 @@ class BaseModelClass {
             const nextFilters = filters
             const nextTotal = formatData.total
             const nextTableData = formatData.tableData
-
             commit('save', {
               pagination,
               filters: nextFilters,
