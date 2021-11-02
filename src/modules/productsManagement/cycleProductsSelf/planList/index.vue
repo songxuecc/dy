@@ -137,7 +137,7 @@ export default {
     }
   },
   created () {
-    this.fetch()
+    // this.fetch()
   },
   activated () {
     this.fetch()
