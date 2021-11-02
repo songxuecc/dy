@@ -277,6 +277,17 @@ export default {
       }
     },
     getFormdata () {
+      if ([5].includes(this.form.task_type)) {
+        return {
+          task_name: this.form.task_name,
+          task_type: this.form.task_type,
+          on_shelf_time: this.getSecondShelfTime,
+          off_shelf_time: `${this.form.first_shelf_time_day.substring(0, 10)}${this.form.first_shelf_time_hours.substring(10, 19)}`,
+          repeat_count: this.form.repeat_count,
+          ext: JSON.stringify(this.form)
+        }
+      }
+
       if ([5, 6].includes(this.form.task_type)) {
         return {
           task_name: this.form.task_name,
@@ -332,13 +343,15 @@ export default {
       const offShelfTime = moment(params.off_shelf_time)
       const onShelfTime = moment(params.on_shelf_time)
 
+      console.log(offShelfTime.diff(now, 'minute') < 5)
+      console.log(onShelfTime.diff(offShelfTime, 'minute') < 5)
       if (params.task_type === 3 || params.task_type === 5) {
         if (offShelfTime.diff(now, 'minute') < 5 || onShelfTime.diff(offShelfTime, 'minute') < 5) {
-          return this.$message.error('上架时间至少要晚于当前时间5分钟 或 下架时间需晚于上架时间5分钟')
+          return this.$message.error('下架时间至少要晚于当前时间5分钟 或 上架时间需晚于下架时间5分钟')
         }
       } else if (params.task_type === 4 || params.task_type === 6) {
         if (onShelfTime.diff(now, 'minute') < 5 || offShelfTime.diff(onShelfTime, 'minute') < 5) {
-          return this.$message.error('下架时间至少要晚于当前时间5分钟 或 上架时间需晚于下架时间5分钟')
+          return this.$message.error('上架时间至少要晚于当前时间5分钟 或 下架时间需晚于上架时间5分钟')
         }
       }
 
