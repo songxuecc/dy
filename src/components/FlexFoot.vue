@@ -5,10 +5,8 @@
         @click="goToHelp"
         @mouseover="changeFlexFootIndex($event,1)"
         @mouseout="changeFlexFootIndex($event,0)">
-      <hh-icon
-            :type="flexFootIndex === 1 ? 'iconjiaochengbarhover':'iconjiaochengbar'"
-            style="font-size:26px;" />
-      <div :class="['column-name text', flexFootIndex === 1 ? 'text-in' : '']">教程</div>
+      <div class="color-warning">教程</div>
+      <div :class="['column-name text', flexFootIndex === 1 ? 'text-in' : '']">打开</div>
     </div>
     <div
         :class="['float-button wechat-button',isDragging ?'move':'']"
@@ -18,12 +16,13 @@
       <div class="'service-content" v-if="isServiceBoxShow" ref="ServiceBox">
         <service-box @serviceHandle="closeService"></service-box>
       </div>
-      <hh-icon
+      <!-- <hh-icon
             @click="handleClick"
             :type="flexFootIndex === 2 ? 'iconkefuweixinbarhover':'iconkefuweixinbar'"
-        style="font-size:26px;color:#1aad19" />
+        style="font-size:26px;color:#1aad19" /> -->
+      <div class="color-warning" @click="handleClick">客服</div>
       <div :class="['column-name text', flexFootIndex === 2 ? 'text-in' : '']"
-      @click="handleClick">客服</div>
+      @click="handleClick">联系</div>
     </div>
     <div
         :class="['float-button',isDragging ?'move':'']"
@@ -31,10 +30,11 @@
         v-if="flexFootVisible"
         @mouseover="changeFlexFootIndex($event,3)"
         @mouseout="changeFlexFootIndex($event,0)">
-      <hh-icon
+      <!-- <hh-icon
             :type="flexFootIndex === 3 ? 'iconyijianbarhover':'iconyijianbar'"
-            style="font-size:26px;" />
-      <div :class="['column-name text', flexFootIndex === 3 ? 'text-in' : '']">意见</div>
+            style="font-size:26px;" /> -->
+      <div class="color-warning" @click="handleClick">意见</div>
+      <div :class="['column-name text', flexFootIndex === 3 ? 'text-in' : '']">提出</div>
     </div>
     <!-- <div
         :class="['float-button',isDragging ?'move':'']"
@@ -54,10 +54,11 @@
         @click="addToFavorite"
         v-if="flexFootVisible"
       @mouseover="changeFlexFootIndex($event,5)" @mouseout="changeFlexFootIndex($event,0)">
-      <hh-icon
+      <!-- <hh-icon
             :type="flexFootIndex === 5 ? 'iconshoucangbarhover':'iconshoucangbar'"
-            style="font-size:26px;" />
-      <div :class="['column-name text', flexFootIndex === 5 ? 'text-in' : '']">收藏</div>
+            style="font-size:26px;" /> -->
+      <div class="color-warning" @click="handleClick">收藏</div>
+      <div :class="['column-name text', flexFootIndex === 5 ? 'text-in' : '']">点击</div>
     </div>
     <div
         :class="['float-button nav-go-top',isDragging ?'move':'']"
