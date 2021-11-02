@@ -70,8 +70,8 @@
 
       <div class="mb-20">
         <el-radio-group v-model="shelfRadio" v-if="[3,4,5,6].includes(detail.task_type)" @change="handleChangeShelfRadio">
-          <el-radio-button :label="shelf.off_shelf_task_id">下架操作</el-radio-button>
-          <el-radio-button :label="shelf.on_shelf_task_id">上架操作</el-radio-button>
+          <el-radio-button :label="shelf.off_shelf_task_id" v-if="shelf.off_shelf_task_id">下架操作</el-radio-button>
+          <el-radio-button :label="shelf.on_shelf_task_id"  v-if="shelf.off_shelf_task_id">>上架操作</el-radio-button>
         </el-radio-group>
       </div>
       <div v-if="shelfRadio === shelf.off_shelf_task_id" class="mb-18">

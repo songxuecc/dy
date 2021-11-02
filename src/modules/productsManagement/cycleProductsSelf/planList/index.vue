@@ -89,16 +89,16 @@
       :append-to-body="true"
     >
        <div class="left cycleProductsSelf-planList-dialog" v-for="(item,index) in activeDetailShelfProductsData.sub_task_list" :key="index">
-        <h1>第一次循环</h1>
+        <h1>第{{index + 1}}次循环</h1>
         <div class="c">
-          <div class="width-170">
+          <div class="width-190">
             <div class="text mb-4">上架时间：{{item.on_shelf_time}}</div>
             <div class="text">实际上架商品数：{{item.on_shelf_nums}}</div>
           </div>
           <el-divider direction="vertical" style="height:32px"></el-divider>
           <div class="pl-40">
             <div class="text mb-4">下架时间：{{item.off_shelf_time}}</div>
-            <div class="text">实际下架商品数：{{item.off_shelf_time}}</div>
+            <div class="text">实际下架商品数：{{item.on_shelf_nums}}</div>
           </div>
         </div>
         </div>
@@ -487,13 +487,13 @@ export default {
     font-family: MicrosoftYaHei;
     color: #4E4E4E;
     line-height: 16px;
-    width: 170px;
+    width: 190px;
   }
   .mb-4 {
     margin-bottom: 4px;
   }
-  .width-170 {
-    width: 170px;
+  .width-190 {
+    width: 190px;
     box-sizing: border-box;
   }
   .pl-40 {
