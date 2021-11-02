@@ -11,34 +11,34 @@
         <span v-if="[1].includes(detail.task_type)">
             <span class="mr-8">下架时间</span>
             <span class="mr-40">{{detail.off_shelf_time}}</span>
-            <span class="mr-8">下架商品数</span>
-            <span class="mr-40">{{detail.off_shelf_nums  || '—'}}</span>
+            <!-- <span class="mr-8">下架商品数</span> -->
+            <!-- <span class="mr-40">{{detail.off_shelf_nums  || '—'}}</span> -->
         </span>
         <span v-if="[2].includes(detail.task_type)">
             <span class="mr-8">上架时间</span>
             <span class="mr-40">{{detail.on_shelf_time}}</span>
-            <span class="mr-8">上架商品数</span>
-            <span class="mr-40">{{detail.on_shelf_nums  || '—'}}</span>
+            <!-- <span class="mr-8">上架商品数</span> -->
+            <!-- <span class="mr-40">{{detail.on_shelf_nums  || '—'}}</span> -->
         </span>
         <span v-if="[3,5].includes(detail.task_type)">
             <span class="mr-8">下架时间</span>
             <span class="mr-40">{{detail.off_shelf_time}}</span>
-            <span class="mr-8">下架商品数</span>
-            <span class="mr-40">{{detail.off_shelf_nums  || '—'}}</span>
+            <!-- <span class="mr-8">下架商品数</span> -->
+            <!-- <span class="mr-40">{{detail.off_shelf_nums  || '—'}}</span> -->
             <span class="mr-8">上架时间</span>
             <span class="mr-40">{{detail.on_shelf_time}}</span>
-            <span class="mr-8">上架商品数</span>
-            <span class="mr-40">{{detail.on_shelf_nums  || '—'}}</span>
+            <!-- <span class="mr-8">上架商品数</span> -->
+            <!-- <span class="mr-40">{{detail.on_shelf_nums  || '—'}}</span> -->
         </span>
         <span v-if="[4,6].includes(detail.task_type)">
             <span class="mr-8">上架时间</span>
             <span class="mr-40">{{detail.on_shelf_time}}</span>
-            <span class="mr-8">上架商品数</span>
-            <span class="mr-40">{{detail.on_shelf_nums  || '—'}}</span>
+            <!-- <span class="mr-8">上架商品数</span> -->
+            <!-- <span class="mr-40">{{detail.on_shelf_nums  || '—'}}</span> -->
             <span class="mr-8">下架时间</span>
             <span class="mr-40">{{detail.off_shelf_time}}</span>
-            <span class="mr-8">下架商品数</span>
-            <span class="mr-40">{{detail.off_shelf_nums  || '—'}}</span>
+            <!-- <span class="mr-8">下架商品数</span> -->
+            <!-- <span class="mr-40">{{detail.off_shelf_nums  || '—'}}</span> -->
         </span>
       </div>
       <div class="flex wrap font-12" v-if="[5,6].includes(detail.task_type)">
@@ -52,8 +52,8 @@
       </div>
       <div  v-if="[5].includes(detail.task_type)" class="flex justify-b mb-15 mt-5" >
         <span v-if="!isOpen" class="info"  @click="open">
-          <span class="mr-20">下架时间：{{shelf.on_shelf_time || '—'}}</span>
-          <span class="mr-20">上架时间：{{shelf.off_shelf_time || '—'}}</span>
+          <span class="mr-20">下架时间：{{shelf.off_shelf_time || '—'}}</span>
+          <span class="mr-20">上架时间：{{shelf.on_shelf_time || '—'}}</span>
         </span>
         <span v-if="subTaskList.length > 18 && !isOpen">展开</span>
         <span v-if="subTaskList.length > 18 && isOpen">关闭</span>
@@ -61,8 +61,8 @@
 
       <div  v-if="[6].includes(detail.task_type)" class="flex justify-b mb-15 mt-5" >
         <span v-if="!isOpen" class="info"  @click="open">
-          <span class="mr-20">上架时间：{{shelf.off_shelf_time || '—'}}</span>
-          <span class="mr-20">下架时间：{{shelf.on_shelf_time || '—'}}</span>
+          <span class="mr-20">上架时间：{{shelf.on_shelf_time || '—'}}</span>
+          <span class="mr-20">下架时间：{{shelf.off_shelf_time || '—'}}</span>
         </span>
         <span v-if="subTaskList.length > 18 && !isOpen">展开</span>
         <span v-if="subTaskList.length > 18 && isOpen">关闭</span>
@@ -71,7 +71,7 @@
       <div class="mb-20">
         <el-radio-group v-model="shelfRadio" v-if="[3,4,5,6].includes(detail.task_type)" @change="handleChangeShelfRadio">
           <el-radio-button :label="shelf.off_shelf_task_id" v-if="shelf.off_shelf_task_id">下架操作</el-radio-button>
-          <el-radio-button :label="shelf.on_shelf_task_id"  v-if="shelf.off_shelf_task_id">>上架操作</el-radio-button>
+          <el-radio-button :label="shelf.on_shelf_task_id"  v-if="shelf.on_shelf_task_id">>上架操作</el-radio-button>
         </el-radio-group>
       </div>
       <div v-if="shelfRadio === shelf.off_shelf_task_id" class="mb-18">
