@@ -169,6 +169,10 @@
         :total="total"
       >
       </el-pagination>
+
+      <div class="flex justify-c mt-20">
+        <el-button @click="goback" plain type="primary" style="width: 120px">返回</el-button>
+      </div>
   </div>
 </template>
 
@@ -199,7 +203,6 @@ export default {
       'form'
     ])
   },
-  watch: {},
   activated () {
     this.init()
   },
@@ -221,6 +224,7 @@ export default {
         let carouselIndex = 0
         if (data.sub_task_list[carouselIndex]) {
           this.detail = data
+          console.log(this.detail, 'this.detail')
           this.subTaskList = data.sub_task_list
           this.carouselIndex = carouselIndex
           this.shelf = data.sub_task_list[carouselIndex]
@@ -291,6 +295,9 @@ export default {
     },
     open () {
       this.isOpen = !this.isOpen
+    },
+    goback () {
+      this.$router.back()
     }
   }
 }

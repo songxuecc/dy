@@ -88,7 +88,10 @@
       width="500px"
       :append-to-body="true"
     >
-       <div class="left cycleProductsSelf-planList-dialog" v-for="(item,index) in activeDetailShelfProductsData.sub_task_list" :key="index">
+       <div
+          class="left cycleProductsSelf-planList-dialog"
+          v-for="(item,index) in activeDetailShelfProductsData.sub_task_list"
+          :key="index">
         <h1>第{{index + 1}}次循环</h1>
         <div class="c">
           <div class="width-190">
@@ -102,12 +105,16 @@
           </div>
         </div>
         </div>
+        <div v-if="activeDetailShelfProductsData && activeDetailShelfProductsData.sub_task_list &&  !activeDetailShelfProductsData.sub_task_list.length">
+          这里暂时什么都没有哦～
+        </div>
     </el-dialog>
 
   </div>
 </template>
 
 <script>
+
 // import DrawerSyncDetail from './DrawerSyncDetail'
 import services from '@servises'
 import debounce from 'lodash/debounce'
@@ -305,9 +312,9 @@ export default {
     handleDetailShelfProducts (row) {
       services.productAutoShelfDetail({task_id: row.task_id})
         .then((data) => {
-          console.log(data, 'data')
           this.activeDetailShelfProductsData = data
           this.visible = true
+          console.log(this.activeDetailShelfProductsData, 'this.activeDetailShelfProductsData')
         })
     },
     objToStrMap (obj) {
