@@ -65,11 +65,8 @@
       </el-table-column>
       <el-table-column align="center" label="修改后" prop="new_data">
         <template slot-scope="scope">
-          <HhImage :src="scope.row.img_url" style="height:50px;max-width:65px"/>
-          <div v-if="!scope.row.is_add"> 已删除</div>
-          <div v-if="scope.row.is_add"> 已新增至
-            <span v-if="index > 0">正数</span>
-            <span v-if="index < 0">倒数</span>第{{index}}张</div>
+          <HhImage :src="scope.row.img_url" style="height:50px;max-width:65px" v-if="scope.row.new_data.includes('新增')"/>
+          <div>{{scope.row.new_data}}</div>
         </template>
       </el-table-column>
       <el-table-column
