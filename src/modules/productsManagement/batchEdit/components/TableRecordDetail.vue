@@ -213,8 +213,8 @@
                 align="center"
               >
                 <template slot-scope="scope">
-                  <HhImage :src="scope.row.img_url" style="height:50px;max-width:65px" v-if="scope.row.new_data.includes('新增')"/>
-                  <div>{{scope.row.new_data}}</div>
+                  <HhImage :src="scope.row.img_url" style="height:50px;max-width:65px" v-if="scope.row.new_data && scope.row.new_data.includes('新增')"/>
+                  <div>{{scope.row.new_data || '-'}}</div>
                 </template>
               </el-table-column>
 
