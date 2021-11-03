@@ -113,7 +113,7 @@
            {{getSecondShelfTime}}
         </el-form-item>
         <el-form-item label="循环次数"  v-if="form.first_shelf_time_hours">
-          <el-input v-model="form.repeat_count" placeholder="填写1-X的正整数, 如填写100则重复操作100次" style="width:308px"></el-input>
+          <el-input-number v-model="form.repeat_count" :min="1" :max="30" :step="1" step-strictly></el-input-number>
         </el-form-item>
       </div>
 
@@ -156,7 +156,7 @@
           {{getSecondShelfTime}}
         </el-form-item>
         <el-form-item label="循环次数" v-if="form.first_shelf_time_hours">
-          <el-input v-model="form.repeat_count" placeholder="填写1-X的正整数, 如填写100则重复操作100次" style="width:365px"></el-input>
+          <el-input-number v-model="form.repeat_count" :min="1" :max="30" :step="1" step-strictly></el-input-number>
         </el-form-item>
       </div>
     </el-form>
@@ -218,6 +218,12 @@ export default {
     ...mapState('productManagement/cycleProductsSelf/chooseProducts', {
       originForm: state => {
         return state.form
+        // if (!isEmpty(state.form)) {
+        //   return state.form
+        // } else {
+        //   const localForm = JSON.parse(localStorage.getItem('cycleProductsSelf_CreatePlan'))
+        //   return localForm.form
+        // }
       }
     }),
     getSecondShelfTime () {
@@ -264,14 +270,19 @@ export default {
         if (this.originForm && this.originForm.ext) {
           this.form = JSON.parse(this.originForm.ext)
         } else {
-          this.form = {
-            task_name: `定时上下架计划: ${moment().format('YYYY-MM-DD')}`,
-            task_type: 1,
-            on_shelf_time: '',
-            off_shelf_time: '',
-            repeat_count: '',
-            first_shelf_time_day: '',
-            first_shelf_time_hours: ''
+          const localForm = JSON.parse(localStorage.getItem('cycleProductsSelf_CreatePlan'))
+          if (localForm) {
+            this.form = localForm.form
+          } else {
+            this.form = {
+              task_name: `定时上下架计划: ${moment().format('YYYY-MM-DD')}`,
+              task_type: 1,
+              on_shelf_time: '',
+              off_shelf_time: '',
+              repeat_count: '',
+              first_shelf_time_day: '',
+              first_shelf_time_hours: ''
+            }
           }
         }
       }
@@ -313,6 +324,7 @@ export default {
     },
     goback () {
       this.$router.back()
+      localStorage.removeItem('cycleProductsSelf_CreatePlan')
     },
     // 更新
     updatePlan () {
@@ -343,8 +355,6 @@ export default {
       const offShelfTime = moment(params.off_shelf_time)
       const onShelfTime = moment(params.on_shelf_time)
 
-      console.log(offShelfTime.diff(now, 'minute') < 5)
-      console.log(onShelfTime.diff(offShelfTime, 'minute') < 5)
       if (params.task_type === 3 || params.task_type === 5) {
         if (offShelfTime.diff(now, 'minute') < 5 || onShelfTime.diff(offShelfTime, 'minute') < 5) {
           return this.$message.error('下架时间至少要晚于当前时间5分钟 或 上架时间需晚于下架时间5分钟')
@@ -355,10 +365,18 @@ export default {
         }
       }
 
+      if ((params.task_type === 5 || params.task_type === 6) && this.getSecondShelfTime === '请选择第一次上架开始时间') {
+        return this.$message.error('请选择第一次上架开始时间')
+      }
+
       this.$refs.form.validate((valid, object) => {
         if (valid) {
           this.fetch()
           this.save({form: params})
+          localStorage.setItem('cycleProductsSelf_CreatePlan', JSON.stringify({
+            params,
+            form: this.form
+          }))
           this.$router.push({
             name: 'cycleProductsSelf_ChooseProducts'
           })

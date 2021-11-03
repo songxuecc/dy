@@ -143,6 +143,7 @@ import Search from './Search'
 import services from '@servises'
 import { mapActions, mapState, mapMutations } from 'vuex'
 import debounce from 'lodash/debounce'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   name: 'TableProductList',
@@ -248,6 +249,7 @@ export default {
     clearData () {
       this.clear()
       this.originFilters = undefined
+      localStorage.removeItem('cycleProductsSelf_CreatePlan')
     },
     handleCancel () {
       this.$router.back()
@@ -276,8 +278,13 @@ export default {
       }
 
       console.log(goodsQueryParams, 'goodsQueryParams')
+      let formData = this.form
+      const localForm = JSON.parse(localStorage.getItem('cycleProductsSelf_CreatePlan'))
+      if (isEmpty(this.form)) {
+        formData = localForm.params
+      }
       const parmas = {
-        ...this.form,
+        ...formData,
         goods_query_params: JSON.stringify(goodsQueryParams)
       }
       this.loadingPost = true

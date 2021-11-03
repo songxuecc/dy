@@ -101,7 +101,7 @@
           <el-divider direction="vertical" style="height:32px"></el-divider>
           <div class="pl-40">
             <div class="text mb-4">下架时间：{{item.off_shelf_time}}</div>
-            <div class="text">实际下架商品数：{{item.on_shelf_nums}}</div>
+            <div class="text">实际下架商品数：{{item.off_shelf_nums}}</div>
           </div>
         </div>
         </div>
@@ -251,9 +251,11 @@ export default {
           ]),
           h('div', {
             class: 'planList-text'
-          }, '确定删除该计划?')
+          }, '确认删除该计划?')
         ]),
         type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '点错了',
         customClass: 'planList-customClass',
         cancelButtonClass: 'planList-cancelButtonClass',
         confirmButtonClass: 'planList-confirmButtonClass',
