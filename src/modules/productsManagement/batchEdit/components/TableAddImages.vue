@@ -65,7 +65,7 @@
       </el-table-column>
       <el-table-column align="center" label="修改后" prop="new_data">
         <template slot-scope="scope">
-          <HhImage :src="scope.row.img_url" style="height:50px;max-width:65px" v-if="scope.row.new_data.includes('新增')"/>
+          <HhImage :src="scope.row.img_url" style="height:50px;max-width:65px" />
           <div>{{scope.row.new_data}}</div>
         </template>
       </el-table-column>
