@@ -35,22 +35,7 @@
       </el-table-column>
       <el-table-column label="图片" width="70" align="center" prop="id">
         <template slot-scope="scope">
-          <el-image
-            style="height: 50px; max-width: 50px; border-radius: 2px"
-            :src="scope.row.image_url"
-            fit="contain"
-            :preview-src-list="[scope.row.image_url]"
-          >
-            <div slot="placeholder">
-              <hh-icon type="iconwuzhaopian" style="font-size: 50px" />
-            </div>
-            <div slot="error" class="flex align-c" style="height: 100%">
-              <hh-icon
-                type="icontupianjiazaishibai03"
-                style="font-size: 30px"
-              />
-            </div>
-          </el-image>
+          <HhImage :src="scope.row.image_url" style="height:50px;max-width:65px;border-radius: 2px" />
         </template>
       </el-table-column>
 
