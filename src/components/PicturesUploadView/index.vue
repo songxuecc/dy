@@ -57,7 +57,8 @@
                     action="/api/image/create"
                     :headers="getTokenHeaders"
                     :data="{'belong_type': belongType}"
-                    :multiple="false"
+                    :multiple="true"
+                    :limit="containLimit - curPictureList.length"
                 >
                     <i class="el-icon-plus upload-icon">
                         <br><span>({{ curPictureList.length }}/{{ containLimit }})</span>
@@ -141,8 +142,10 @@ export default {
       this.selectedPictureDic = {}
 
       this.elemUploadDiv = this.$el.querySelector('div.el-upload--picture-card')
-      this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
-      this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+      if (this.elemUploadDiv) {
+        this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
+        this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+      }
     }
   },
   mounted () {
@@ -150,7 +153,7 @@ export default {
   },
   methods: {
     imageExceedHandler (files, fileList) {
-      this.$message.error('图片最多上传' + this.containLimit + '张')
+      this.$message.error('剩余图片最多上传' + (this.containLimit - this.curPictureList.length) + '张')
     },
     clear () {
     },
@@ -239,12 +242,14 @@ export default {
         }
         return
       }
+      console.log(file)
+
       this.curPictureList.push({ 'url': response.data.url, 'bg': 0 })
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
       this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
     },
     handleUploadError (err, file, fileList) {
-      this.$message.error(err.message)
+      this.$message.error(`${err}`)
     },
     handlemouseover (index) {
       this.$refs['popover-picture-wall-' + index][0].doShow()
