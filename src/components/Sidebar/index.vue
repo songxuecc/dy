@@ -102,6 +102,12 @@
                 <span class="">商品源同步</span>
               </div>
            </el-menu-item>
+           <el-menu-item index="/productsManagement/cycleProductsSelf/planList" :disabled="!isAuth()">
+             <div slot="title" class="flex align-c">
+                <hh-icon type="icondingshishangxiajiaxuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
+                <span class="">定时上下架</span>
+              </div>
+           </el-menu-item>
            <el-menu-item index="/productsManagement/combination" :disabled="!isAuth()">
              <div slot="title" class="flex align-c">
                 <hh-icon type="iconzuheshangpinxuanzhong1" style="font-size:16px; margin-right:4px"></hh-icon>

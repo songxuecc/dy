@@ -139,6 +139,8 @@
                 <TableRemark ref="TableRemark" />
                 <AfterSalesService ref="AfterSalesService" v-if="editType === 15"/>
                 <TableAfterSalesService ref="TableAfterSalesService" v-if="editType === 15"/>
+                <AddImages ref="AddImages" v-if="editType === 16"/>
+                <TableAddImages ref="TableAddImages" v-if="editType === 16"/>
           </div>
           <div class="flex justify-c pb-20 mt-20">
               <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
@@ -193,6 +195,7 @@ import LimitCount from '@productsManagement/batchEdit/components/LimitCount'
 import Weight from '@productsManagement/batchEdit/components/Weight'
 import Remark from '@productsManagement/batchEdit/components/Remark'
 import AfterSalesService from '@productsManagement/batchEdit/components/AfterSalesService'
+import AddImages from '@productsManagement/batchEdit/components/AddImages'
 
 import TablePrice from '@productsManagement/batchEdit/components/TablePrice'
 import TableShelves from '@productsManagement/batchEdit/components/TableShelves'
@@ -213,6 +216,7 @@ import TableLimitCount from '@productsManagement/batchEdit/components/TableLimit
 import TableWeight from '@productsManagement/batchEdit/components/TableWeight'
 import TableRemark from '@productsManagement/batchEdit/components/TableRemark'
 import TableAfterSalesService from '@productsManagement/batchEdit/components/TableAfterSalesService'
+import TableAddImages from '@productsManagement/batchEdit/components/TableAddImages'
 import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
@@ -252,7 +256,9 @@ export default {
     TableRemark,
     categorySelectView,
     AfterSalesService,
-    TableAfterSalesService
+    TableAfterSalesService,
+    AddImages,
+    TableAddImages
   },
   beforeRouteLeave (to, from, next) {
     this.save({
@@ -284,7 +290,7 @@ export default {
       categoryVislble: false,
       category: {},
       showEditRecordTip: false,
-      editType: 1,
+      editType: 16,
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
@@ -449,6 +455,16 @@ export default {
           text: '售后服务',
           ref: 'AfterSalesService',
           tableRef: 'TableAfterSalesService',
+          needExpand: false,
+          hot: false
+        },
+        {
+          primary: 'iconpiliangjiatuxuanzhong',
+          info: 'iconpiliangjiatuweixuanzhong',
+          index: 16,
+          text: '详情首尾图',
+          ref: 'AddImages',
+          tableRef: 'TableAddImages',
           needExpand: false,
           hot: false
         }
