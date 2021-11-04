@@ -297,7 +297,7 @@ export default {
             this.$message.success('修改成功！')
             this.clearData()
             this.$nextTick(() => {
-              this.$router.push({
+              this.$router.replace({
                 name: 'cycleProductsSelf_PlanList'
               })
             })
@@ -320,7 +320,7 @@ export default {
           // 创建成功
             this.$message.success('创建成功')
             this.clearData()
-            this.$router.push({
+            this.$router.replace({
               name: 'cycleProductsSelf_PlanList'
             })
             this.save({
