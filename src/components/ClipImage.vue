@@ -43,7 +43,7 @@
             <el-button  size="small" type="primary" @click="down" plain><i class="el-icon-download"></i></el-button>
         </div>
           <div style="margin-top:25px">
-            <el-button  size="medium" type="primary" style="width:70px" plain>取消</el-button>
+            <el-button  size="medium" type="primary" style="width:70px" plain @click="visible = false">取消</el-button>
             <el-button  size="medium" type="primary" style="width:70px" @click="finish" :disbaled="loading" :loading="loading">保存</el-button>
           </div>
   </el-dialog>
@@ -56,6 +56,10 @@ import servises from '@servises'
 
 export default {
   name: 'ClipImage',
+  props: {
+    fixed: Boolean,
+    fixedNumber: Object
+  },
   components: {
     VueCropper
   },
@@ -69,10 +73,10 @@ export default {
         size: 1,
         full: true,
         outputType: 'png',
-        canMove: true,
+        canMove: false,
         fixedBox: false,
         original: false,
-        canMoveBox: false,
+        canMoveBox: true,
         autoCrop: true,
         // 只有自动截图开启 宽度高度才生效
         autoCropWidth: 400,
@@ -81,31 +85,49 @@ export default {
         high: true,
         max: 99999,
         mode: '400px 400px'
-      },
-      fixed: true,
-      // 根据图片尺寸动态获取截框大小
-      fixedNumber: [400, 400]
+      }
     }
   },
   methods: {
     open (img) {
-      this.option.img = img
-      this.visible = true
+      this.tranformImgToBase64(img, (base64) => {
+        this.option.img = base64
+        this.visible = true
+      })
+    },
+    tranformImgToBase64 (src, callback) {
+      let _this = this
+      let image = new Image()
+      // 处理缓存
+      image.src = src + '?v=' + Math.random()
+      // 支持跨域图片
+      image.crossOrigin = '*'
+      image.onload = function () {
+        let base64 = _this.transBase64FromImage(image)
+        callback && callback(base64)
+      }
+    },
+    transBase64FromImage (image) {
+      let canvas = document.createElement('canvas')
+      canvas.width = image.width
+      canvas.height = image.height
+      let ctx = canvas.getContext('2d')
+      ctx.drawImage(image, 0, 0, image.width, image.height)
+      // 可选其他值 image/jpeg
+      return canvas.toDataURL('image/png')
     },
     refreshCrop () {
       this.$refs.cropper.refresh()
     },
     changeScale (num) {
       num = num || 1
-      console.log(num, 'num')
       this.$refs.cropper.changeScale(num)
     },
     finish () {
       this.loading = true
       this.$refs.cropper.getCropBlob((data) => {
         let form = new FormData()
-        form.append('file', data, 'png')
-        console.log(form, 'form')
+        form.append('file', data, 'jpeg')
         servises.imageCreate(form, {
           'Content-Type': 'multipart/form-data;'
         }).then(d => {
@@ -131,13 +153,10 @@ export default {
     // 实时预览函数
     realTime (data) {
       this.previews = data
-      console.log(data)
     },
     imgMoving (data) {
-      console.log(data)
     },
     imgLoad (data) {
-      console.log(data)
     }
   }
 }

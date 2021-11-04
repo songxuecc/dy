@@ -99,7 +99,9 @@
                       response,
                       file,
                       fileList,
-                      specificationValue
+                      idx,
+                      specificationValue,
+                      index
                     )
                 "
                 :on-error="handleUploadError"
@@ -173,6 +175,7 @@
                     </el-popover>
                 </div>
               </div>
+              <div>{{specificationValue.imgErrorTip}}</div>
             </div>
           </div>
 
@@ -253,7 +256,7 @@
     </el-dialog>
     </el-form>
 
-    <ClipImage ref="ClipImage" @submit="ClipImageSubmit"></ClipImage>
+    <ClipImage ref="ClipImage" @submit="ClipImageSubmit" :fixed="true" :fixedNumber="[400, 400]" ></ClipImage>
 
   </div>
 </template>
@@ -375,6 +378,7 @@ export default {
           value.order = index
           if (value.image) {
             specification.addSkuImage = true
+            specification.imgErrorTip = ''
           }
         })
         return specification
@@ -536,15 +540,49 @@ export default {
         return false
       }
     },
-    handleUploadSuccess (response, file, fileList, row) {
+    getImgRawSize (img) {
+      return new Promise((resolve, reject) => {
+        var _image = img
+        if (_image instanceof HTMLImageElement) {
+          if (_image.naturalWidth) {
+            resolve({width: _image.naturalWidth, height: _image.naturalHeight})
+          }
+          img = img.src
+        }
+        if (typeof img === 'string') {
+          _image = new Image()
+          _image.src = img
+        }
+        _image.onload = _ => resolve({width: _image.naturalWidth || _image.width, height: _image.naturalHeight || _image.height})
+        _image.onerror = _ => {
+          const err = {width: 0, height: 0}
+          reject(err)
+        }
+      })
+    },
+    async handleUploadSuccess (response, file, fileList, idx, specificationValue, index) {
       if (parseInt(response.code) !== 0) {
         if (response.msg) {
           this.$message.error(response.msg)
         }
         return
       }
-      this.$set(row, 'image', response.data.url)
-      this.$emit('change', this.specifications, 'edit')
+      const url = response.data.url
+      const data = await this.getImgRawSize(url)
+      const text = data.width !== data.height ? '长宽比不满足1:1' : ''
+      const specifications = this.specifications.map((item, i) => {
+        if (i === index) {
+          item.value_list[idx].image = url
+          item.value_list[idx].imgErrorTip = text
+        }
+        return item
+      })
+      this.$nextTick(() => {
+        this.$set(specificationValue, 'image', url)
+        this.$set(specificationValue, 'imgErrorTip', text)
+        if (text) this.clipIamge(url, idx, specificationValue, index)
+        this.$emit('change', specifications, 'edit')
+      })
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
@@ -599,11 +637,13 @@ export default {
       const specifications = this.specifications.map((item, i) => {
         if (i === index) {
           item.value_list[idx].image = url
+          item.value_list[idx].imgErrorTip = ''
         }
         return item
       })
       this.$nextTick(() => {
         this.$set(specificationValue, 'image', url)
+        this.$set(specificationValue, 'imgErrorTip', '')
         this.$emit('change', specifications, 'edit')
       })
     }

@@ -29,13 +29,21 @@
                           <i class="el-icon-upload-success el-icon-check"></i>
                       </label>
                       <span class="el-upload-list__item-actions" @click.self="onClick(picture, index)" v-on:mouseover.self="handlemouseover(index)"  v-on:mouseleave.self="handlemouseleave(index)">
-                          <span class="el-upload-list__item-preview" style="margin-left: 0px;"
+                          <span class="el-upload-list__item-preview iconshanchu1" style="margin-left: 0px;"
                                 @click="onShowPreview(picture, index)"
                           > <i class="el-icon-zoom-in"></i> </span>
-                          <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete"
+                          <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete iconshanchu1"
                                 style="visibility: visible;" @click="onHandle(picture, index)"
                           > <i class="el-icon-edit-outline"></i> </span>
-                          <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete"
+                          <hh-icon
+                            type="iconcaijian1"
+                            style="font-size: 20px;"
+                            class="iconshanchu1"
+                            @click="clipIamge(
+                              picture, index
+                            )"
+                          />
+                          <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete iconshanchu1"
                                 style="visibility: visible;" @click="onRemove(picture, index)"
                           > <i class="el-icon-delete"></i> </span>
                       </span>
@@ -70,16 +78,20 @@
           <span v-if="containLimit!=-1">图片最多 {{containLimit}} 张，</span><span>sku图片+轮播图+详情图 不能超过 50 张</span>
         </div>
         <div class="color-danger">*若为用户自定义上传的图片，系统仅能保存7天，请尽快上传该商品到抖音</div>
+        <ClipImage ref="ClipImage" @submit="ClipImageSubmit"></ClipImage>
+
     </div>
 </template>
 <script>
 import common from '@/common/common'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
+import ClipImage from '@/components/ClipImage'
 
 export default {
   components: {
-    draggable
+    draggable,
+    ClipImage
   },
   props: {
     tip: {
@@ -256,6 +268,20 @@ export default {
     },
     handlemouseleave (index) {
       this.$refs['popover-picture-wall-' + index][0].doClose()
+    },
+    clipIamge (picture, index) {
+      console.log(picture, 'picture')
+      this.activeImage = {
+        picture,
+        index
+      }
+      this.$refs.ClipImage.open(picture.url)
+    },
+    ClipImageSubmit (url) {
+      const { picture, index } = this.activeImage
+      picture.url = url
+      this.$set(this.curPictureList, index, picture)
+      this.$emit('handleEdit', picture, index)
     }
   }
 }
@@ -266,5 +292,11 @@ export default {
       top: 5px;
       right: 5px;
       font-size: 20px;
+    }
+
+    .iconshanchu1 {
+      &:hover {
+        color:@color-primary;
+      }
     }
 </style>
