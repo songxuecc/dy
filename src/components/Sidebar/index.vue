@@ -29,7 +29,11 @@
             <el-menu-item index="/migrate/startMigrate" :disabled="!isAuth()">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaishifuzhixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
-                <span class="">开始复制</span>
+                <span class="">开始复制
+                  <NewFeatureTips type="批量处理新版本-hot" :isPermanent="true">
+                    <hh-icon type="iconHOT-copy" style="font-size:24px;margin-left:3px;color:#d81e06;border-radius:6px;overflow:hidden"></hh-icon>
+                  </NewFeatureTips>
+                </span>
               </div>
             </el-menu-item>
 
@@ -69,7 +73,12 @@
             <el-menu-item index="/productsManagement/batchEdit" :disabled="!isAuth()">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconpiliangchulixuanzhong2" style="font-size:16px; margin-right:4px"></hh-icon>
-                <span class="">批量处理<NewFeatureTips type="批量处理新版本-售卖价"/></span>
+                <span class="">
+                  批量处理
+                  <NewFeatureTips type="批量处理新版本-hot" :isPermanent="true">
+                    <hh-icon type="iconHOT-copy" style="font-size:24px;margin-left:3px;color:#d81e06;border-radius:6px;overflow:hidden"></hh-icon>
+                  </NewFeatureTips>
+                </span>
               </div>
             </el-menu-item>
             <el-menu-item index="/productsManagement/skuImport" :disabled="!isAuth()">
@@ -81,7 +90,7 @@
             <el-menu-item index="/productsManagement/productExports" :disabled="!isAuth()">
               <div slot="title" class="flex align-c">
                 <hh-icon type="icondaochushangpinxuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
-                <span class="">导出商品<NewFeatureTips type="导出商品"/></span>
+                <span class="">导出商品</span>
               </div>
             </el-menu-item>
            <!-- <el-menu-item index="/shopDecorate/poster/dg/list" :disabled="!isAuth()">

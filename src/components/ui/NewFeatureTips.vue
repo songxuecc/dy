@@ -1,8 +1,11 @@
 <!-- 新功能提示 -->
 <template>
-    <hh-icon type="icon60" class="left-translate" v-if="visible && type && isAuth()">
-        <span class="font-12 new-features">新功能</span>
+  <span v-if="visible && type && isAuth()" class="left-translate">
+    <slot  v-if="$slots.default"></slot>
+    <hh-icon type="icon60"   v-else>
+      <span class="font-12 new-features">新功能</span>
     </hh-icon>
+  </span>
 </template>
 
 <script>
@@ -59,7 +62,8 @@ class GetNewFeature {
 export default {
   name: 'NewFeatureTips',
   props: {
-    type: String
+    type: String,
+    isPermanent: Boolean
   },
   data () {
     return {
@@ -71,6 +75,10 @@ export default {
     this.newFeature.init(this.type)
   },
   beforeMount () {
+    if (this.isPermanent) {
+      this.visible = true
+      return
+    }
     if (this.newFeature && this.newFeature.getVisible) {
       this.visible = this.newFeature.getVisible(this.type)
     }
@@ -90,7 +98,6 @@ export default {
     display: inline-flex;
     align-items: center;
     margin-left:-2px;
-    color:#ffffff;
     font-size:16px;
     padding:0 2px !important;
     line-height:14px;
