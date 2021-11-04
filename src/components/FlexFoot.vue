@@ -5,7 +5,7 @@
         @click="goToHelp"
         @mouseover="changeFlexFootIndex($event,1)"
         @mouseout="changeFlexFootIndex($event,0)">
-      <div class="color-warning">教程</div>
+      <div class="color-tip">教程</div>
       <div :class="['column-name text', flexFootIndex === 1 ? 'text-in' : '']">打开</div>
     </div>
     <div
@@ -13,14 +13,10 @@
         v-if="flexFootVisible && isAuth"
         @mouseover="changeFlexFootIndex($event,2)"
         @mouseout="changeFlexFootIndex($event,0)">
-      <div class="'service-content" v-if="isServiceBoxShow" ref="ServiceBox">
+      <div class="service-content" v-if="isServiceBoxShow" ref="ServiceBox">
         <service-box @serviceHandle="closeService"></service-box>
       </div>
-      <!-- <hh-icon
-            @click="handleClick"
-            :type="flexFootIndex === 2 ? 'iconkefuweixinbarhover':'iconkefuweixinbar'"
-        style="font-size:26px;color:#1aad19" /> -->
-      <div class="color-warning" @click="handleClick">客服</div>
+      <div class="color-tip" @click="handleClick">客服</div>
       <div :class="['column-name text', flexFootIndex === 2 ? 'text-in' : '']"
       @click="handleClick">联系</div>
     </div>
@@ -30,34 +26,15 @@
         v-if="flexFootVisible"
         @mouseover="changeFlexFootIndex($event,3)"
         @mouseout="changeFlexFootIndex($event,0)">
-      <!-- <hh-icon
-            :type="flexFootIndex === 3 ? 'iconyijianbarhover':'iconyijianbar'"
-            style="font-size:26px;" /> -->
-      <div class="color-warning" @click="handleClick">意见</div>
+      <div class="color-tip" @click="goToComments">意见</div>
       <div :class="['column-name text', flexFootIndex === 3 ? 'text-in' : '']">提出</div>
     </div>
-    <!-- <div
-        :class="['float-button',isDragging ?'move':'']"
-        @click="openNotificationBox"
-        v-if="flexFootVisible"
-        @mouseover="changeFlexFootIndex($event,4)"
-        @mouseout="changeFlexFootIndex($event,0)">
-      <span v-if="unRead > 0" class="notice-icon"
-          @click="openNotificationBox">{{unRead}}</span>
-      <hh-icon
-            :type="flexFootIndex === 4 ? 'icontongzhibarhover':'icontongzhibar'"
-            style="font-size:26px;" />
-      <div :class="['column-name text', flexFootIndex === 4 ? 'text-in' : '']">通知</div>
-    </div> -->
     <div
         :class="['float-button collect-button',isDragging ?'move':'']"
         @click="addToFavorite"
         v-if="flexFootVisible"
       @mouseover="changeFlexFootIndex($event,5)" @mouseout="changeFlexFootIndex($event,0)">
-      <!-- <hh-icon
-            :type="flexFootIndex === 5 ? 'iconshoucangbarhover':'iconshoucangbar'"
-            style="font-size:26px;" /> -->
-      <div class="color-warning" @click="handleClick">收藏</div>
+      <div class="color-tip">收藏</div>
       <div :class="['column-name text', flexFootIndex === 5 ? 'text-in' : '']">点击</div>
     </div>
     <div
@@ -285,6 +262,11 @@ export default {
     border-bottom: solid 1px #ebeaea;
     cursor: pointer;
 
+    &:hover {
+      .color-tip {
+          color: #3277FF;
+        }
+    }
     .notice-icon {
       font-family: 'Avenir', Helvetica, Arial, sans-serif;
       position: absolute;
@@ -366,6 +348,10 @@ export default {
   }
   .move {
     cursor: move !important;
+  }
+
+  .color-tip {
+    color: #6A6E80;
   }
 }
 </style>
