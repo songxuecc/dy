@@ -19,8 +19,8 @@ export default {
     return {
       items: [
         this.gotoSync,
-        this.gotoMeizhe,
-        this.gotoMeizheShouhou
+        this.gotoMeizheShouhou,
+        this.gotoMeizheDuanxin
 
       ]
     }
@@ -29,11 +29,11 @@ export default {
     gotoOrder () {
       window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=866&from=fuwu_market_home')
     },
-    gotoMeizhe () {
-      window.open('https://dx5.cn/454S1A')
+    gotoMeizheDuanxin () {
+      window.open('https://dx5.cn/45LhbP')
     },
     gotoMeizheShouhou () {
-      window.open('https://fuwu.jinritemai.com/detail?service_id=19772')
+      window.open('https://dx5.cn/45TfWd')
     },
     gotoSync () {
       this.$router.push({name: 'ProductsSync'})
@@ -87,11 +87,11 @@ export default {
   background-image: url('../images/banner2.png');
   background-size: cover;
 }
-.img1 {
+.img2 {
   background-image: url('../images/meizhe-duanxin.png');
   background-size: cover;
 }
-.img2 {
+.img1 {
   background-image: url('../images/meizhe-shouhou.png');
   background-size: cover;
 }
@@ -101,11 +101,11 @@ export default {
       background-image: url('../images/banner2-1680.png');
       background-size: cover;
     }
-    .img1 {
+    .img2 {
       background-image: url('../images/meizhe-duanxin-1680.png');
       background-size: cover;
     }
-    .img2 {
+    .img1 {
       background-image: url('../images/meizhe-shouhou-1680.png');
       background-size: cover;
     }
