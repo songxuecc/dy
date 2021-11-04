@@ -147,6 +147,18 @@
                           @click="downloadIamge(specificationValue.image,`${specification.name}-${specificationValue.name}-${idx}`)"
                         />
                         <hh-icon
+                          type="iconcaijian1"
+                          style="font-size: 15px;"
+                          class="iconshanchu1"
+                          @click="clipIamge(
+                            specificationValue.image,
+                            idx,
+                            specificationValue,
+                            specification,
+                            index
+                          )"
+                        />
+                        <hh-icon
                           type="iconshanchu1"
                           style="font-size: 13px;"
                           class="iconshanchu1"
@@ -241,6 +253,8 @@
     </el-dialog>
     </el-form>
 
+    <ClipImage ref="ClipImage" @submit="ClipImageSubmit"></ClipImage>
+
   </div>
 </template>
 
@@ -249,7 +263,7 @@ import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import shortid from 'shortid'
 import cloneDeep from 'lodash/cloneDeep'
-
+import ClipImage from '@/components/ClipImage'
 export default {
   name: 'SkuSelect',
   props: {
@@ -275,7 +289,8 @@ export default {
     skuPropertyValueMap: Object
   },
   components: {
-    draggable
+    draggable,
+    ClipImage
   },
   data () {
     return {
@@ -570,6 +585,27 @@ export default {
         a.dispatchEvent(event) // 触发a的单击事件
       }
       image.src = imgsrc
+    },
+    clipIamge (url, idx, specificationValue, index) {
+      this.activeImage = {
+        idx,
+        specificationValue,
+        index
+      }
+      this.$refs.ClipImage.open(url)
+    },
+    ClipImageSubmit (url) {
+      const {idx, specificationValue, index} = this.activeImage
+      const specifications = this.specifications.map((item, i) => {
+        if (i === index) {
+          item.value_list[idx].image = url
+        }
+        return item
+      })
+      this.$nextTick(() => {
+        this.$set(specificationValue, 'image', url)
+        this.$emit('change', specifications, 'edit')
+      })
     }
   }
 }

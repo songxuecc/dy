@@ -445,6 +445,9 @@ const hhgjAPIs = {
   },
   thirdpartDyGoodsBundleUpdate: (params) => {
     return api.actionCreatorPost('/api/thirdpart/dy/goods/bundle/update', params)
+  },
+  imageCreate: (params) => {
+    return api.actionCreatorPostImage('/api/image/create', params)
   }
 
 }
