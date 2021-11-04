@@ -84,100 +84,107 @@
               </div>
 
             <!-- 图片上传 -->
-            <div v-if="specification.addSkuImage" class="mt-15">
-              <el-upload
-                v-if="!specificationValue.image"
-                slot="reference"
-                :class="[
-                  'skuSelect-el-upload--picture-card ',
-                  'hover-skuSelect-el-upload--picture-card'
-                ]"
-                :show-file-list="false"
-                :on-success="
-                  (response, file, fileList) =>
-                    handleUploadSuccess(
-                      response,
-                      file,
-                      fileList,
-                      idx,
-                      specificationValue,
-                      index
-                    )
-                "
-                :on-error="handleUploadError"
-                :before-upload="handleBeforeUpload"
-                action="/api/image/create"
-                :headers="getTokenHeaders"
-                :data="{ belong_type: belongType }"
-                :multiple="false"
-              >
-                <span class="flex column align-c justify-c">
-                  <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
-                  <span class="uploader-text">(0/1)</span>
-                </span>
-              </el-upload>
-              <div
-                v-else
-                :class="['skuSelect-el-upload--picture-card ']"
-              >
-                <div class="imgWrapper" >
-                    <el-image
-                      :src="specificationValue.image"
-                      class="avatar"
-                      :ref="`img${specificationValue.skuString}-${idx}`"
-                      :preview-src-list="[specificationValue.image]"
-                    />
-                    <el-popover
-                      placement="left"
-                      width="270"
-                      popper-class="SkuSelect-popper-class"
-                      trigger="hover">
-                      <img :src="specificationValue.image" style="width: 270px;"/>
-                      <div
-                        slot="reference"
-                          :class="[
-                            'mask',
-                            'flex',
-                            'justify-b',
-                            'align-c'
-                          ]"
-                      >
-                        <hh-icon
-                          type="iconxiazai1"
-                          style="font-size: 15px;"
-                          class="iconshanchu1"
-                          @click="downloadIamge(specificationValue.image,`${specification.name}-${specificationValue.name}-${idx}`)"
-                        />
-                        <hh-icon
-                          type="iconcaijian1"
-                          style="font-size: 15px;"
-                          class="iconshanchu1"
-                          @click="clipIamge(
-                            specificationValue.image,
-                            idx,
-                            specificationValue,
-                            specification,
-                            index
-                          )"
-                        />
-                        <hh-icon
-                          type="iconshanchu1"
-                          style="font-size: 13px;"
-                          class="iconshanchu1"
-                          @click="deleteImage(
-                            idx,
-                            specificationValue,
-                            specification,
-                            index
-                          )"
-                        />
-                      </div>
-                    </el-popover>
+            <el-form-item :prop="`[${index}].value_list[${idx}].image`" class="form-image">
+              <div v-if="specification.addSkuImage" class="mt-15 relative" >
+                <el-input style="z-index:-1;position:absolute;left:0;right:0;margin:auto" v-model="specificationValue.image" ></el-input>
+                <el-upload
+                  v-if="!specificationValue.image"
+                  slot="reference"
+                  :class="[
+                    'skuSelect-el-upload--picture-card ',
+                    'hover-skuSelect-el-upload--picture-card'
+                  ]"
+                  :show-file-list="false"
+                  :on-success="
+                    (response, file, fileList) =>
+                      handleUploadSuccess(
+                        response,
+                        file,
+                        fileList,
+                        idx,
+                        specificationValue,
+                        index
+                      )
+                  "
+                  :on-error="handleUploadError"
+                  :before-upload="handleBeforeUpload"
+                  action="/api/image/create"
+                  :headers="getTokenHeaders"
+                  :data="{ belong_type: belongType }"
+                  :multiple="false"
+
+                >
+                  <span class="flex column align-c justify-c">
+                    <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
+                    <span class="uploader-text">(0/1)</span>
+                  </span>
+                </el-upload>
+                <div
+                  v-else
+                  :class="['skuSelect-el-upload--picture-card ']"
+                >
+                  <div class="imgWrapper" >
+                      <el-image
+                        :src="specificationValue.image"
+                        class="avatar validImageSIze"
+                        :ref="`img${specificationValue.skuString}-${idx}`"
+                        :preview-src-list="[specificationValue.image]"
+                        :id="`[${index}].value_list[${idx}].image.id.SkuSelect`"
+                      />
+                      <el-popover
+                        placement="left"
+                        width="270"
+                        popper-class="SkuSelect-popper-class"
+                        trigger="hover">
+                        <img :src="specificationValue.image" style="width: 270px;"/>
+                        <div
+                          slot="reference"
+                            :class="[
+                              'mask',
+                              'flex',
+                              'justify-b',
+                              'align-c'
+                            ]"
+                        >
+                          <hh-icon
+                            type="iconxiazai1"
+                            style="font-size: 15px;"
+                            class="iconshanchu1"
+                            @click="downloadIamge(specificationValue.image,`${specification.name}-${specificationValue.name}-${idx}`)"
+                          />
+                          <hh-icon
+                            type="iconcaijian1"
+                            style="font-size: 15px;"
+                            class="iconshanchu1"
+                            @click="clipIamge(
+                              specificationValue.image,
+                              idx,
+                              specificationValue,
+                              specification,
+                              index
+                            )"
+                          />
+                          <hh-icon
+                            type="iconshanchu1"
+                            style="font-size: 13px;"
+                            class="iconshanchu1"
+                            @click="deleteImage(
+                              idx,
+                              specificationValue,
+                              specification,
+                              index
+                            )"
+                          />
+                        </div>
+                      </el-popover>
+                  </div>
                 </div>
               </div>
-              <div>{{specificationValue.imgErrorTip}}</div>
-            </div>
+            </el-form-item>
+
           </div>
+
+              <!-- <div class="fail" v-if="specificationValue.imgErrorTip">{{specificationValue.imgErrorTip}}</div> -->
 
           <el-input
             size="mini"
@@ -267,6 +274,8 @@ import draggable from 'vuedraggable'
 import shortid from 'shortid'
 import cloneDeep from 'lodash/cloneDeep'
 import ClipImage from '@/components/ClipImage'
+import utils from '@/common/utils'
+
 export default {
   name: 'SkuSelect',
   props: {
@@ -308,6 +317,7 @@ export default {
     rules () {
       const nameRules = {}
       const specificationValueRules = {}
+      const specificationImageValueRules = {}
       // 规格名
       const validateName = index => (rule, value, callback) => {
         const nameList = this.specifications
@@ -348,9 +358,36 @@ export default {
           ]
         })
       })
+
+      // // 图片尺寸
+      const validateSpecificationImageValue = (index, idx, id) => (rule, value, callback) => {
+        if (!value) {
+          callback()
+        } else {
+          var img = document.getElementById(id)
+          if (img && img.naturalWidth !== img.naturalHeight) {
+            console.log('实际尺寸：', img.width, img.height)
+            callback(new Error('长宽比不满足1:1'))
+          } else {
+            callback()
+          }
+        }
+      }
+      this.specifications.forEach((specification, index) => {
+        specification.value_list.forEach((list, idx) => {
+          const key = `[${index}].value_list[${idx}].image`
+          const id = `[${index}].value_list[${idx}].image.id.SkuSelect`
+          console.log(key, id, 'key')
+          specificationImageValueRules[key] = [
+            { validator: validateSpecificationImageValue(index, idx, id), trigger: ['focus', 'blur', 'change'] }
+          ]
+        })
+      })
+      console.log(specificationImageValueRules, this.specifications, 'specificationImageValueRules')
       return {
         ...nameRules,
-        ...specificationValueRules
+        ...specificationValueRules,
+        ...specificationImageValueRules
       }
     },
     dragOptions () {
@@ -378,7 +415,7 @@ export default {
           value.order = index
           if (value.image) {
             specification.addSkuImage = true
-            specification.imgErrorTip = ''
+            specification.imgErrorTip = value.imgErrorTip || ''
           }
         })
         return specification
@@ -540,26 +577,6 @@ export default {
         return false
       }
     },
-    getImgRawSize (img) {
-      return new Promise((resolve, reject) => {
-        var _image = img
-        if (_image instanceof HTMLImageElement) {
-          if (_image.naturalWidth) {
-            resolve({width: _image.naturalWidth, height: _image.naturalHeight})
-          }
-          img = img.src
-        }
-        if (typeof img === 'string') {
-          _image = new Image()
-          _image.src = img
-        }
-        _image.onload = _ => resolve({width: _image.naturalWidth || _image.width, height: _image.naturalHeight || _image.height})
-        _image.onerror = _ => {
-          const err = {width: 0, height: 0}
-          reject(err)
-        }
-      })
-    },
     async handleUploadSuccess (response, file, fileList, idx, specificationValue, index) {
       if (parseInt(response.code) !== 0) {
         if (response.msg) {
@@ -568,7 +585,7 @@ export default {
         return
       }
       const url = response.data.url
-      const data = await this.getImgRawSize(url)
+      const data = await utils.getImgRawSize(url)
       const text = data.width !== data.height ? '长宽比不满足1:1' : ''
       const specifications = this.specifications.map((item, i) => {
         if (i === index) {
@@ -655,6 +672,13 @@ export default {
 .hover-light {
   &:hover {
     color: @color-primary;
+  }
+}
+
+/deep/ .form-image{
+  .el-form-item__content{
+      width: 130px;
+      margin-bottom: 10px;
   }
 }
 </style>

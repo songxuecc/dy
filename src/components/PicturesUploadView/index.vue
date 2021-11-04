@@ -52,6 +52,7 @@
                       >
                   </li>
                   <div style="font-size: 12px">第{{index + 1}}张</div>
+                  <div class="fail" v-if="picture.text">{{picture.text}}</div>
                 </span>
               </div>
                 <el-upload
@@ -78,7 +79,8 @@
           <span v-if="containLimit!=-1">图片最多 {{containLimit}} 张，</span><span>sku图片+轮播图+详情图 不能超过 50 张</span>
         </div>
         <div class="color-danger">*若为用户自定义上传的图片，系统仅能保存7天，请尽快上传该商品到抖音</div>
-        <ClipImage ref="ClipImage" @submit="ClipImageSubmit"></ClipImage>
+        <ClipImage ref="ClipImage" @submit="ClipImageSubmit" :fixed="true" :fixedNumber="[400, 400]" v-if="validSize"></ClipImage>
+        <ClipImage ref="ClipImage" @submit="ClipImageSubmit" v-else></ClipImage>
 
     </div>
 </template>
@@ -87,6 +89,7 @@ import common from '@/common/common'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import ClipImage from '@/components/ClipImage'
+import utils from '@/common/utils'
 
 export default {
   components: {
@@ -94,6 +97,7 @@ export default {
     ClipImage
   },
   props: {
+    validSize: Boolean,
     tip: {
       type: String,
       default: ''
@@ -247,18 +251,21 @@ export default {
         return false
       }
     },
-    handleUploadSuccess (response, file, fileList) {
+    async handleUploadSuccess (response, file, fileList) {
       if (parseInt(response.code) !== 0) {
         if (response.msg) {
           this.$message.error(response.msg)
         }
         return
       }
-      console.log(file)
-
-      this.curPictureList.push({ 'url': response.data.url, 'bg': 0 })
+      const url = response.data.url
+      const data = await utils.getImgRawSize(url)
+      const text = data.width !== data.height && this.validSize ? '长宽比不满足1:1' : ''
+      const picture = { 'url': response.data.url, 'bg': 0, text }
+      this.curPictureList.push(picture)
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
       this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+      if (text) this.clipIamge(picture, this.curPictureList.length - 1)
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(`${err}`)

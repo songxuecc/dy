@@ -152,7 +152,7 @@
                   </span>
                   <div >
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
-                      <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList">
+                      <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList" :validSize="true">
                       </pictures-upload-view>
                   </div>
                   <div class="common-bottom">
@@ -902,7 +902,7 @@ export default {
       }
       let error = ''
       let errorSkuProduct = false
-      let errorSkuMessage = false
+      let errorSkuTableMessage = false
       this.productList.forEach(item => {
         let tpProductId = item.tp_product_id
         if (tpProductId in this.products) {
@@ -916,27 +916,70 @@ export default {
           }
           // 检验价格 & 库存
           const skuList = product.model.sku_json.spec_price_list
-          if (!skuList.length) errorSkuMessage = 'sku为空，请设置sku'
+          if (!skuList.length) errorSkuTableMessage = 'sku为空，请设置sku'
           skuList
             .forEach(sku => {
               if (!errorSkuProduct) {
                 if (!utils.isNumber(sku.quantity) || sku.quantity > 1000000 || sku.quantity < 0 || (utils.isNumber(sku.quantity) && sku.quantity % 1)) {
-                  errorSkuMessage = 'sku库存必填，且只可以输入0-1000000的整数数字'
+                  errorSkuTableMessage = 'sku库存必填，且只可以输入0-1000000的整数数字'
                   errorSkuProduct = item
                 // 表单验证
                 } else if (!utils.isNumber(sku.promo_price) || sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
-                  errorSkuMessage = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+                  errorSkuTableMessage = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
                   errorSkuProduct = item
                 }
               }
             })
         }
       })
+      let errorImageSKuMessage = false
+      let errorImageBannerMessage = false
+      // todo 根据products把所有图片都校验一遍获取 errorSkuProduct
+      if (errorImageSKuMessage) {
+        // 展示错误提示
+        this.activityTab = 'sku'
+        // 设置当前行高亮
+        this.$refs.productList.setCurrentRow(errorSkuProduct)
+        // 获取当前行数据
+        this.setProduct(errorSkuProduct)
+        this.$nextTick(() => {
+          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
+            let isError = document.getElementsByClassName('is-error')
+            if (isError && isError[0]) {
+              isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+                block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+                behavior: 'smooth'
+              })
+            }
+          })
+        })
+        // return false
+      }
+      if (errorImageBannerMessage) {
+        this.$nextTick(() => {
+          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
+            let isError = document.getElementsByClassName('is-error')
+            if (isError && isError[0]) {
+              isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+                block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+                behavior: 'smooth'
+              })
+            }
+          })
+        })
+      }
+      // return
       if (error) {
         this.activityTab = 'info'
         return this.$message.error(error)
       }
-      if (errorSkuProduct && errorSkuMessage) {
+      if (errorSkuProduct && errorSkuTableMessage) {
         // 展示错误提示
         this.activityTab = 'sku'
         // 设置当前行高亮
@@ -958,7 +1001,7 @@ export default {
             }
           })
         })
-        return this.$message.error(errorSkuMessage)
+        return this.$message.error(errorSkuTableMessage)
       }
       try {
         const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
