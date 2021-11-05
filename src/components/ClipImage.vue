@@ -6,7 +6,7 @@
     <el-dialog
       :visible.sync="visible"
       width="628px"
-      title="图片裁剪"
+      :title="title? title: '图片裁剪'"
       append-to-body
       class="ClipImage-dialog">
         <div class="cut">
@@ -58,7 +58,8 @@ export default {
   name: 'ClipImage',
   props: {
     fixed: Boolean,
-    fixedNumber: Object
+    fixedNumber: Object,
+    title: String
   },
   components: {
     VueCropper
