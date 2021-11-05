@@ -152,7 +152,7 @@
                   </span>
                   <div >
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
-                      <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList" :validSize="true">
+                      <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList" :validSize="true" :multiple="false">
                       </pictures-upload-view>
                   </div>
                   <div class="common-bottom">
@@ -174,7 +174,7 @@
                   </span>
                   <div >
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
-                      <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="45" :pictureUrlList="descPicUrlList">
+                      <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="45" :pictureUrlList="descPicUrlList" :multiple="true">
                       </pictures-upload-view>
                   </div>
                   <div class="common-bottom">

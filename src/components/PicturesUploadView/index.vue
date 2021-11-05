@@ -66,7 +66,7 @@
                     action="/api/image/create"
                     :headers="getTokenHeaders"
                     :data="{'belong_type': belongType}"
-                    :multiple="true"
+                    :multiple="multiple"
                     :limit="containLimit - curPictureList.length"
                 >
                     <i class="el-icon-plus upload-icon">
@@ -98,6 +98,7 @@ export default {
   },
   props: {
     validSize: Boolean,
+    multiple: Boolean,
     tip: {
       type: String,
       default: ''
