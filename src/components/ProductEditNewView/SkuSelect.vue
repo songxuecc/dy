@@ -64,7 +64,7 @@
             style="flex: 0 0 25%; max-width: 25%;"
             class="mb-10"
           >
-              <div class="flex align-c">
+              <div class="flex align-c mb-10">
                 <el-form-item :prop="`[${index}].value_list[${idx}].name`">
                   <el-input
                     v-model="specificationValue.name"
@@ -84,15 +84,14 @@
               </div>
 
             <!-- 图片上传 -->
-            <el-form-item :prop="`[${index}].value_list[${idx}].image`" class="form-image">
-              <div v-if="specification.addSkuImage" class="mt-15 relative" >
-                <el-input style="z-index:-1;position:absolute;left:0;right:0;margin:auto" v-model="specificationValue.image" ></el-input>
+            <el-form-item :prop="`[${index}].value_list[${idx}].image`" class="form-image" >
+              <div v-if="specification.addSkuImage" class="mt-15 relative">
                 <el-upload
                   v-if="!specificationValue.image"
                   slot="reference"
                   :class="[
                     'skuSelect-el-upload--picture-card ',
-                    'hover-skuSelect-el-upload--picture-card'
+                    'hover-skuSelect-el-upload--picture-card',
                   ]"
                   :show-file-list="false"
                   :on-success="
@@ -123,13 +122,12 @@
                   v-else
                   :class="['skuSelect-el-upload--picture-card ']"
                 >
-                  <div class="imgWrapper" >
+                  <div class="imgWrapper">
                       <el-image
                         :src="specificationValue.image"
-                        class="avatar validImageSIze"
+                        :class="`avatar validImageSIze `"
                         :ref="`img${specificationValue.skuString}-${idx}`"
                         :preview-src-list="[specificationValue.image]"
-                        :id="`[${index}].value_list[${idx}].image.id.SkuSelect`"
                       />
                       <el-popover
                         placement="left"
@@ -183,8 +181,6 @@
             </el-form-item>
 
           </div>
-
-              <!-- <div class="fail" v-if="specificationValue.imgErrorTip">{{specificationValue.imgErrorTip}}</div> -->
 
           <el-input
             size="mini"
@@ -359,35 +355,9 @@ export default {
         })
       })
 
-      // // 图片尺寸
-      const validateSpecificationImageValue = (index, idx, id) => (rule, value, callback) => {
-        if (!value) {
-          callback()
-        } else {
-          var img = document.getElementById(id)
-          if (img && img.naturalWidth !== img.naturalHeight) {
-            console.log('实际尺寸：', img.width, img.height)
-            callback(new Error('长宽比不满足1:1'))
-          } else {
-            callback()
-          }
-        }
-      }
-      this.specifications.forEach((specification, index) => {
-        specification.value_list.forEach((list, idx) => {
-          const key = `[${index}].value_list[${idx}].image`
-          const id = `[${index}].value_list[${idx}].image.id.SkuSelect`
-          console.log(key, id, 'key')
-          specificationImageValueRules[key] = [
-            { validator: validateSpecificationImageValue(index, idx, id), trigger: ['focus', 'blur', 'change'] }
-          ]
-        })
-      })
-      console.log(specificationImageValueRules, this.specifications, 'specificationImageValueRules')
       return {
         ...nameRules,
-        ...specificationValueRules,
-        ...specificationImageValueRules
+        ...specificationValueRules
       }
     },
     dragOptions () {
@@ -415,7 +385,6 @@ export default {
           value.order = index
           if (value.image) {
             specification.addSkuImage = true
-            specification.imgErrorTip = value.imgErrorTip || ''
           }
         })
         return specification
@@ -585,19 +554,14 @@ export default {
         return
       }
       const url = response.data.url
-      const data = await utils.getImgRawSize(url)
-      const text = data.width !== data.height ? '长宽比不满足1:1' : ''
       const specifications = this.specifications.map((item, i) => {
         if (i === index) {
           item.value_list[idx].image = url
-          item.value_list[idx].imgErrorTip = text
         }
         return item
       })
       this.$nextTick(() => {
         this.$set(specificationValue, 'image', url)
-        this.$set(specificationValue, 'imgErrorTip', text)
-        if (text) this.clipIamge(url, idx, specificationValue, index)
         this.$emit('change', specifications, 'edit')
       })
     },
@@ -654,13 +618,11 @@ export default {
       const specifications = this.specifications.map((item, i) => {
         if (i === index) {
           item.value_list[idx].image = url
-          item.value_list[idx].imgErrorTip = ''
         }
         return item
       })
       this.$nextTick(() => {
         this.$set(specificationValue, 'image', url)
-        this.$set(specificationValue, 'imgErrorTip', '')
         this.$emit('change', specifications, 'edit')
       })
     }
@@ -675,12 +637,6 @@ export default {
   }
 }
 
-/deep/ .form-image{
-  .el-form-item__content{
-      width: 130px;
-      margin-bottom: 10px;
-  }
-}
 </style>
 <style lang="less">
 .skuAddSelect {

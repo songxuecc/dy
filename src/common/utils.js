@@ -358,9 +358,9 @@ export default {
         _image = new Image()
         _image.src = img
       }
-      _image.onload = _ => resolve({width: _image.naturalWidth || _image.width, height: _image.naturalHeight || _image.height})
+      _image.onload = _ => resolve({width: _image.naturalWidth || _image.width, height: _image.naturalHeight || _image.height, src: _image.src})
       _image.onerror = _ => {
-        const err = {width: 0, height: 0}
+        const err = {width: 0, height: 0, src: _image.src}
         reject(err)
       }
     })

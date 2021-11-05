@@ -10,10 +10,11 @@
                    style="display: inline-flex;text-align: left;"
                    :key="index"
               >
-                <span class="center mb-5">
+                <span class="center mb-10" >
                   <li :key="picture.url + index"
                       class="el-upload-list__item is-success" @click="onClickImage(picture, index)"
                       style="margin-bottom: 0px;"
+                      :class="`needValid ${picture.url}`"
                   >
                       <el-popover
                         placement="left"
@@ -75,7 +76,7 @@
                 </el-upload>
             </draggable>
         </ul>
-        <div>
+        <div class="mt-10">
           <span v-if="containLimit!=-1">图片最多 {{containLimit}} 张，</span><span>sku图片+轮播图+详情图 不能超过 50 张</span>
         </div>
         <div class="color-danger">*若为用户自定义上传的图片，系统仅能保存7天，请尽快上传该商品到抖音</div>

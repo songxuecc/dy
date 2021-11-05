@@ -895,6 +895,32 @@ export default {
         return 'background-color:rgb(179, 216, 255);'
       }
     },
+    promiseBannerImage (products) {
+      return new Promise((resolve, reject) => {
+        console.log(products, 'products')
+        products.forEach((product, idx) => {
+          let specImageList = []
+          product.model.sku_json.spec_list.forEach(item => {
+            specImageList = [...specImageList, ...item.value_list.map(value => value.image)]
+          })
+          const allBannerPromise = product.model.bannerPicUrlList.map(item => utils.getImgRawSize(item.url))
+          Promise.all(allBannerPromise).then(data => {
+            if (data.some(item => item.width !== item.height)) {
+              resolve({
+                result: true,
+                product,
+                src: data.find(item => item.width !== item.height).src
+              })
+            }
+            if (idx + 1 === products.length && data.every(item => item.width === item.height)) {
+              resolve({
+                result: false
+              })
+            }
+          })
+        })
+      })
+    },
     // 保存编辑
     async onSaveProduct () {
       if (window._hmt) {
@@ -903,6 +929,7 @@ export default {
       let error = ''
       let errorSkuProduct = false
       let errorSkuTableMessage = false
+
       this.productList.forEach(item => {
         let tpProductId = item.tp_product_id
         if (tpProductId in this.products) {
@@ -932,49 +959,7 @@ export default {
             })
         }
       })
-      let errorImageSKuMessage = false
-      let errorImageBannerMessage = false
-      // todo 根据products把所有图片都校验一遍获取 errorSkuProduct
-      if (errorImageSKuMessage) {
-        // 展示错误提示
-        this.activityTab = 'sku'
-        // 设置当前行高亮
-        this.$refs.productList.setCurrentRow(errorSkuProduct)
-        // 获取当前行数据
-        this.setProduct(errorSkuProduct)
-        this.$nextTick(() => {
-          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
-            let isError = document.getElementsByClassName('is-error')
-            if (isError && isError[0]) {
-              isError[0].scrollIntoView({
-                // 滚动到指定节点
-                // 值有start,center,end，nearest，当前显示在视图区域中间
-                block: 'center',
-                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-                behavior: 'smooth'
-              })
-            }
-          })
-        })
-        // return false
-      }
-      if (errorImageBannerMessage) {
-        this.$nextTick(() => {
-          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
-            let isError = document.getElementsByClassName('is-error')
-            if (isError && isError[0]) {
-              isError[0].scrollIntoView({
-                // 滚动到指定节点
-                // 值有start,center,end，nearest，当前显示在视图区域中间
-                block: 'center',
-                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-                behavior: 'smooth'
-              })
-            }
-          })
-        })
-      }
-      // return
+
       if (error) {
         this.activityTab = 'info'
         return this.$message.error(error)
@@ -986,7 +971,6 @@ export default {
         this.$refs.productList.setCurrentRow(errorSkuProduct)
         // 获取当前行数据
         this.setProduct(errorSkuProduct)
-
         this.$nextTick(() => {
           this.$refs.SkuTable.$refs.form.validate((valid, object) => {
             let isError = document.getElementsByClassName('is-error')
@@ -1002,6 +986,40 @@ export default {
           })
         })
         return this.$message.error(errorSkuTableMessage)
+      }
+      // 轮播图验证
+      const products = this.productList
+        .filter(item => {
+          let tpProductId = item.tp_product_id
+          return tpProductId in this.products
+        }).map(item => {
+          return this.products[item.tp_product_id]
+        })
+      const promiseBannerImageResult = await this.promiseBannerImage(products)
+      console.log(promiseBannerImageResult, 'promiseBannerImageResult')
+      if (promiseBannerImageResult && promiseBannerImageResult.result) {
+        this.$refs.productList.setCurrentRow(promiseBannerImageResult.product.model)
+        const resetProduct = this.productList.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
+        this.setProduct(resetProduct)
+        this.activityTab = 'carousel'
+        const src = promiseBannerImageResult.src
+        const image = document.getElementsByClassName(`needValid ${src}`)
+        image[0].classList.add('is-error-carousel')
+        this.$nextTick(() => {
+          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
+            let isError = document.getElementsByClassName('is-error-carousel')
+            if (isError && isError[0]) {
+              isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+                block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+                behavior: 'smooth'
+              })
+            }
+          })
+        })
+        return this.$message.error('轮播图尺寸需要1:1')
       }
       try {
         const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
@@ -1907,5 +1925,22 @@ export default {
       background-clip: padding-box;
       border-radius: 4px;
       box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+    }
+
+    .needValid.is-error-carousel {
+      border:1px solid red !important;
+      position: relative;
+      margin-bottom:5px;
+      overflow: visible;
+    }
+    .needValid.is-error-carousel:after{
+      content:"此图需裁剪" !important;
+      position: absolute !important;
+      bottom:-40px !important;
+      left:0 !important;
+      color: red;
+      font-size:12px;
+      width:100%;
+      text-align:center;
     }
 </style>
