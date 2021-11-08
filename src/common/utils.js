@@ -343,5 +343,26 @@ export default {
   },
   isEmptyObj (obj) {
     return isEmpty(obj)
+  },
+  // 获取图片大小
+  getImgRawSize (img) {
+    return new Promise((resolve, reject) => {
+      var _image = img
+      if (_image instanceof HTMLImageElement) {
+        if (_image.naturalWidth) {
+          resolve({width: _image.naturalWidth, height: _image.naturalHeight})
+        }
+        img = img.src
+      }
+      if (typeof img === 'string') {
+        _image = new Image()
+        _image.src = img
+      }
+      _image.onload = _ => resolve({width: _image.naturalWidth || _image.width, height: _image.naturalHeight || _image.height, src: _image.src})
+      _image.onerror = _ => {
+        const err = {width: 0, height: 0, src: _image.src}
+        reject(err)
+      }
+    })
   }
 }

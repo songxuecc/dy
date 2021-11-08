@@ -64,7 +64,7 @@
             style="flex: 0 0 25%; max-width: 25%;"
             class="mb-10"
           >
-              <div class="flex align-c">
+              <div class="flex align-c mb-10">
                 <el-form-item :prop="`[${index}].value_list[${idx}].name`">
                   <el-input
                     v-model="specificationValue.name"
@@ -84,84 +84,102 @@
               </div>
 
             <!-- 图片上传 -->
-            <div v-if="specification.addSkuImage" class="mt-15">
-              <el-upload
-                v-if="!specificationValue.image"
-                slot="reference"
-                :class="[
-                  'skuSelect-el-upload--picture-card ',
-                  'hover-skuSelect-el-upload--picture-card'
-                ]"
-                :show-file-list="false"
-                :on-success="
-                  (response, file, fileList) =>
-                    handleUploadSuccess(
-                      response,
-                      file,
-                      fileList,
-                      specificationValue
-                    )
-                "
-                :on-error="handleUploadError"
-                :before-upload="handleBeforeUpload"
-                action="/api/image/create"
-                :headers="getTokenHeaders"
-                :data="{ belong_type: belongType }"
-                :multiple="false"
-              >
-                <span class="flex column align-c justify-c">
-                  <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
-                  <span class="uploader-text">(0/1)</span>
-                </span>
-              </el-upload>
-              <div
-                v-else
-                :class="['skuSelect-el-upload--picture-card ']"
-              >
-                <div class="imgWrapper" >
-                    <el-image
-                      :src="specificationValue.image"
-                      class="avatar"
-                      :ref="`img${specificationValue.skuString}-${idx}`"
-                      :preview-src-list="[specificationValue.image]"
-                    />
-                    <el-popover
-                      placement="left"
-                      width="270"
-                      popper-class="SkuSelect-popper-class"
-                      trigger="hover">
-                      <img :src="specificationValue.image" style="width: 270px;"/>
-                      <div
-                        slot="reference"
-                          :class="[
-                            'mask',
-                            'flex',
-                            'justify-b',
-                            'align-c'
-                          ]"
-                      >
-                        <hh-icon
-                          type="iconxiazai1"
-                          style="font-size: 15px;"
-                          class="iconshanchu1"
-                          @click="downloadIamge(specificationValue.image,`${specification.name}-${specificationValue.name}-${idx}`)"
-                        />
-                        <hh-icon
-                          type="iconshanchu1"
-                          style="font-size: 13px;"
-                          class="iconshanchu1"
-                          @click="deleteImage(
-                            idx,
-                            specificationValue,
-                            specification,
-                            index
-                          )"
-                        />
-                      </div>
-                    </el-popover>
+            <el-form-item :prop="`[${index}].value_list[${idx}].image`" class="form-image" >
+              <div v-if="specification.addSkuImage" class="mt-15 relative">
+                <el-upload
+                  v-if="!specificationValue.image"
+                  slot="reference"
+                  :class="[
+                    'skuSelect-el-upload--picture-card ',
+                    'hover-skuSelect-el-upload--picture-card',
+                  ]"
+                  :show-file-list="false"
+                  :on-success="
+                    (response, file, fileList) =>
+                      handleUploadSuccess(
+                        response,
+                        file,
+                        fileList,
+                        idx,
+                        specificationValue,
+                        index
+                      )
+                  "
+                  :on-error="handleUploadError"
+                  :before-upload="handleBeforeUpload"
+                  action="/api/image/create"
+                  :headers="getTokenHeaders"
+                  :data="{ belong_type: belongType }"
+                  :multiple="false"
+
+                >
+                  <span class="flex column align-c justify-c">
+                    <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
+                    <span class="uploader-text">(0/1)</span>
+                  </span>
+                </el-upload>
+                <div
+                  v-else
+                  :class="['skuSelect-el-upload--picture-card ']"
+                >
+                  <div class="imgWrapper">
+                      <el-image
+                        :src="specificationValue.image"
+                        :class="`avatar validImageSIze `"
+                        :ref="`img${specificationValue.skuString}-${idx}`"
+                        :preview-src-list="[specificationValue.image]"
+                      />
+                      <el-popover
+                        placement="left"
+                        width="270"
+                        popper-class="SkuSelect-popper-class"
+                        trigger="hover">
+                        <img :src="specificationValue.image" style="width: 270px;"/>
+                        <div
+                          slot="reference"
+                            :class="[
+                              'mask',
+                              'flex',
+                              'justify-b',
+                              'align-c'
+                            ]"
+                        >
+                          <hh-icon
+                            type="iconxiazai1"
+                            style="font-size: 15px;"
+                            class="iconshanchu1"
+                            @click="downloadIamge(specificationValue.image,`${specification.name}-${specificationValue.name}-${idx}`)"
+                          />
+                          <hh-icon
+                            type="iconcaijian1"
+                            style="font-size: 15px;"
+                            class="iconshanchu1"
+                            @click="clipIamge(
+                              specificationValue.image,
+                              idx,
+                              specificationValue,
+                              specification,
+                              index
+                            )"
+                          />
+                          <hh-icon
+                            type="iconshanchu1"
+                            style="font-size: 13px;"
+                            class="iconshanchu1"
+                            @click="deleteImage(
+                              idx,
+                              specificationValue,
+                              specification,
+                              index
+                            )"
+                          />
+                        </div>
+                      </el-popover>
+                  </div>
                 </div>
               </div>
-            </div>
+            </el-form-item>
+
           </div>
 
           <el-input
@@ -241,6 +259,8 @@
     </el-dialog>
     </el-form>
 
+    <ClipImage ref="ClipImage" @submit="ClipImageSubmit" :fixed="true" :fixedNumber="[400, 400]" ></ClipImage>
+
   </div>
 </template>
 
@@ -249,6 +269,8 @@ import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import shortid from 'shortid'
 import cloneDeep from 'lodash/cloneDeep'
+import ClipImage from '@/components/ClipImage'
+import utils from '@/common/utils'
 
 export default {
   name: 'SkuSelect',
@@ -275,7 +297,8 @@ export default {
     skuPropertyValueMap: Object
   },
   components: {
-    draggable
+    draggable,
+    ClipImage
   },
   data () {
     return {
@@ -290,6 +313,7 @@ export default {
     rules () {
       const nameRules = {}
       const specificationValueRules = {}
+      const specificationImageValueRules = {}
       // 规格名
       const validateName = index => (rule, value, callback) => {
         const nameList = this.specifications
@@ -330,6 +354,7 @@ export default {
           ]
         })
       })
+
       return {
         ...nameRules,
         ...specificationValueRules
@@ -521,15 +546,24 @@ export default {
         return false
       }
     },
-    handleUploadSuccess (response, file, fileList, row) {
+    async handleUploadSuccess (response, file, fileList, idx, specificationValue, index) {
       if (parseInt(response.code) !== 0) {
         if (response.msg) {
           this.$message.error(response.msg)
         }
         return
       }
-      this.$set(row, 'image', response.data.url)
-      this.$emit('change', this.specifications, 'edit')
+      const url = response.data.url
+      const specifications = this.specifications.map((item, i) => {
+        if (i === index) {
+          item.value_list[idx].image = url
+        }
+        return item
+      })
+      this.$nextTick(() => {
+        this.$set(specificationValue, 'image', url)
+        this.$emit('change', specifications, 'edit')
+      })
     },
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
@@ -570,6 +604,27 @@ export default {
         a.dispatchEvent(event) // 触发a的单击事件
       }
       image.src = imgsrc
+    },
+    clipIamge (url, idx, specificationValue, index) {
+      this.activeImage = {
+        idx,
+        specificationValue,
+        index
+      }
+      this.$refs.ClipImage.open(url)
+    },
+    ClipImageSubmit (url) {
+      const {idx, specificationValue, index} = this.activeImage
+      const specifications = this.specifications.map((item, i) => {
+        if (i === index) {
+          item.value_list[idx].image = url
+        }
+        return item
+      })
+      this.$nextTick(() => {
+        this.$set(specificationValue, 'image', url)
+        this.$emit('change', specifications, 'edit')
+      })
     }
   }
 }
@@ -581,6 +636,7 @@ export default {
     color: @color-primary;
   }
 }
+
 </style>
 <style lang="less">
 .skuAddSelect {

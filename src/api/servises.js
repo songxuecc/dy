@@ -466,6 +466,9 @@ const hhgjAPIs = {
   },
   productAutoShelfClose: (params) => {
     return api.actionCreatorPost('/api/product/auto_shelf/close', params)
+  },
+  imageCreate: (params) => {
+    return api.actionCreatorPostImage('/api/image/create', params)
   }
 
 }
