@@ -1,6 +1,7 @@
 <!-- PropertySet 商品属性设置 -->
 <template>
-    <el-form :model="model" ref="propertySet" v-if="productModel && productModel.length" :rules="rules">
+    <el-form :model="model" ref="propertySet" v-if="productModel && productModel.length" :rules="rules" size="small">
+
         <el-form-item
             v-for="(item,index) in productModel"
             :key="index"
@@ -16,15 +17,37 @@
                <i v-if="item.required && item.name !== '品牌'"  style="color:#E02020">*</i>
                {{item.name}}
               </span>
-             <el-select
+
+            <!-- 选择框为品牌 -->
+            <el-select
+              v-model="model[item.name]"
+              v-if="item.name === '品牌' && item.type === 'select'"
+              :style="{width:  '190px'}"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请选择品牌"
+              :remote-method="(query) => remoteMethod(query,item,index)"
+              @change="handleChange($event,item.name)"
+              :loading="loading">
+              <el-option
+                v-for="option in item.options"
+                :key="option.name"
+                :label="option.name"
+                :value="option.value">
+              </el-option>
+            </el-select>
+
+            <!-- 选择框为非品牌 -->
+            <el-select
                 clearable
+                filterable
                 @clear="handleClear(item.name)"
                 @change="handleChange($event,item.name)"
-                size="small"
-                :style="{width: item.name !== '品牌' ? '400px' : '190px'}"
+                :style="{width: '400px'}"
                 :placeholder="`请选择${item.name}`"
                 v-model="model[item.name]"
-                v-if="(item.options.length || item.name === '品牌') && item.type === 'select' "
+                v-if="(item.options.length && item.name !== '品牌') && item.type === 'select' "
                 :default-first-option="true">
                 <el-option
                     v-for="(option,index) in item.options"
@@ -33,9 +56,9 @@
                     :value="option.value">
                 </el-option>
             </el-select>
+
             <el-checkbox-group
                 @change="handleCheckboxChange($event,item.name)"
-                size="small"
                 :style="{width: item.name !== '品牌' ? '400px' : '190px',display:'inline-block'}"
                 :placeholder="`请选择${item.name}`"
                 v-model="model[item.name]"
@@ -56,14 +79,13 @@
                 clearable
                 @clear="handleClear(item.name)"
                 @change="handleChange($event,item.name)"
-                size="small"
                 style="width:400px;"
                 :placeholder="`请输入${item.name}`"
                 v-model="model[item.name]"
-                v-else
+                v-else-if="item.type === 'text'"
               />
-
             <span>
+
               <span v-if="item.name === '品牌'" style="">
                   <el-button type="text" @click="reloadBrandList" ><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
                   <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
@@ -71,7 +93,6 @@
                     border
                     :value="!!selected[item.name]"
                     @change="applyPropertiesToSelection($event,item.name)"
-                    size="small"
                     class="batch" >
                     批量修改同分类商品
                   </el-checkbox>
@@ -82,7 +103,6 @@
                 border
                 @change="applyPropertiesToSelection($event,item.name)"
                 :value="!!selected[item.name]"
-                size="small"
                 class="batch">
                 批量修改同分类商品
               </el-checkbox>
@@ -115,6 +135,7 @@
 </template>
 
 <script>
+import servises from '@servises'
 
 export default {
   name: 'property-set',
@@ -143,8 +164,14 @@ export default {
       model: {},
       validation: {},
       selected: {},
-      checkList: []
+      checkList: [],
+      loading: false
     }
+  },
+  mounted () {
+    this.list = this.states.map(item => {
+      return { value: `value:${item}`, label: `label:${item}` }
+    })
   },
   computed: {
     rules () {
@@ -252,7 +279,7 @@ export default {
     },
     // 清空
     handleClear (name) {
-      delete this.model[name]
+      this.model[name] = ''
     },
     handleChange (value, name) {
       const newModal = Object.assign(this.model, {[name]: value})
@@ -287,6 +314,50 @@ export default {
     closeNewComer () {
       const ref = this.$refs.newComer
       ref[0] && ref[0].close && ref[0].close()
+    },
+    remoteMethod (query, item, index) {
+      if (query) {
+        this.loading = true
+        servises.productCategoryBrandList({
+          category_id: this.catId,
+          brand_name: query
+        }).then(data => {
+          this.$set(item, 'options', data)
+          this.loading = false
+        })
+        // const data = [
+        //   {
+        //     'name': 'uhhuh master/嗯哼匠1',
+        //     'sequence': 0,
+        //     'value': 4186496331,
+        //     'value_id': '4186496331'
+        //   },
+        //   {
+        //     'name': 'uhhuh master/嗯哼匠2',
+        //     'sequence': 0,
+        //     'value': 4186496332,
+        //     'value_id': '4186496332'
+        //   },
+        //   {
+        //     'name': 'uhhuh master/嗯哼匠3',
+        //     'sequence': 0,
+        //     'value': 4186496333,
+        //     'value_id': '4186496333'
+        //   },
+        //   {
+        //     'name': 'uhhuh master/嗯哼匠4',
+        //     'sequence': 0,
+        //     'value': 4186496334,
+        //     'value_id': '4186496334'
+        //   }
+        // ]
+        // setTimeout(() => {
+        //   this.loading = false
+        //   this.$set(item, 'options', data)
+        // }, 200)
+      } else {
+        this.options = []
+      }
     }
   }
 }
