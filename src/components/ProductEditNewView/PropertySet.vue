@@ -40,7 +40,7 @@
                   :label="option.name"
                   :value="option.value">
                 </el-option>
-                <div class="info ml-10">更多品牌请搜索</div>
+                <div class="info ml-20">更多品牌请搜索</div>
               </el-select>
               <hh-icon type="iconsousuo1" class=" search info"></hh-icon>
             </span>
@@ -176,11 +176,6 @@ export default {
       checkList: [],
       loading: false
     }
-  },
-  mounted () {
-    this.list = this.states.map(item => {
-      return { value: `value:${item}`, label: `label:${item}` }
-    })
   },
   computed: {
     rules () {
