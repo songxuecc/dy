@@ -1,6 +1,6 @@
 <!-- PropertySet 商品属性设置 -->
 <template>
-    <el-form :model="model" ref="propertySet" v-if="productModel && productModel.length" :rules="rules" size="small">
+    <el-form :model="model" ref="propertySet" v-if="productModel && productModel.length" :rules="rules" size="small" class="mt-10">
 
         <el-form-item
             v-for="(item,index) in productModel"
@@ -19,24 +19,31 @@
               </span>
 
             <!-- 选择框为品牌 -->
-            <el-select
-              v-model="model[item.name]"
+
+            <span
+              class="relative"
               v-if="item.name === '品牌' && item.type === 'select'"
-              :style="{width:  '190px'}"
-              filterable
-              remote
-              reserve-keyword
-              placeholder="请选择品牌"
-              :remote-method="(query) => remoteMethod(query,item,index)"
-              @change="handleChange($event,item.name)"
-              :loading="loading">
-              <el-option
-                v-for="option in item.options"
-                :key="option.name"
-                :label="option.name"
-                :value="option.value">
-              </el-option>
-            </el-select>
+            >
+              <el-select
+                v-model="model[item.name]"
+                :style="{width:  '220px'}"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请选择品牌"
+                :remote-method="(query) => remoteMethod(query,item,index)"
+                @change="handleChange($event,item.name)"
+                :loading="loading">
+                <el-option
+                  v-for="option in item.options"
+                  :key="option.name"
+                  :label="option.name"
+                  :value="option.value">
+                </el-option>
+                <div class="info ml-10">更多品牌请搜索</div>
+              </el-select>
+              <hh-icon type="iconsousuo1" class=" search info"></hh-icon>
+            </span>
 
             <!-- 选择框为非品牌 -->
             <el-select
@@ -86,17 +93,19 @@
               />
             <span>
 
-              <span v-if="item.name === '品牌'" style="">
-                  <el-button type="text" @click="reloadBrandList" ><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
-                  <el-button type="text" @click="open(catId)"> 添加品牌 </el-button>
-                  <el-checkbox
-                    border
-                    :value="!!selected[item.name]"
-                    @change="applyPropertiesToSelection($event,item.name)"
-                    class="batch" >
-                    批量修改同分类商品
-                  </el-checkbox>
-              </span>
+            <span v-if="item.name === '品牌'" class="ml-10 ">
+                <el-button type="text" @click="reloadBrandList" ><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
+                <el-tooltip content="未搜到需要的品牌？点击申请" placement="top" >
+                  <el-button type="text" @click="open(catId)" class="mr-10"> 添加品牌 </el-button>
+                </el-tooltip>
+                <el-checkbox
+                  border
+                  :value="!!selected[item.name]"
+                  @change="applyPropertiesToSelection($event,item.name)"
+                  class="batch" >
+                  批量修改同分类商品
+                </el-checkbox>
+            </span>
 
               <el-checkbox
                 v-if="item.name !== '品牌'"
@@ -411,5 +420,11 @@ export default {
 
     line-height: 20px;
   }
+}
+
+.search {
+  position: absolute;
+  right:10px;
+  top:2px;
 }
 </style>
