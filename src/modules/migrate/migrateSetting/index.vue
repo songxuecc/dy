@@ -275,7 +275,7 @@
                     </el-tag>
                 </div>
             </div>
-            <div style="margin-top: 10px;">
+            <!-- <div style="margin-top: 10px;">
               <span style="font-size: 12px;">轮播首图、详情尾图违规词自动删除</span>
               <el-switch v-model="is_cut_image_black_word" />
             </div>
@@ -296,7 +296,7 @@
                         {{tag}}
                     </el-tag>
                 </div>
-            </div>
+            </div> -->
         </el-form-item>
       </el-form>
       <div class="color-danger">注：价格、运费模版、发货模式等重要信息的填写是在商品复制后再填写。这里不用设置哦～</div>
