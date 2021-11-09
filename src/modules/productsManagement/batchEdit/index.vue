@@ -290,7 +290,7 @@ export default {
       categoryVislble: false,
       category: {},
       showEditRecordTip: false,
-      editType: 16,
+      editType: 1,
       modifyMethods: 'area',
       loading: false,
       lostGoodsIds: undefined,
