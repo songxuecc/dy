@@ -44,9 +44,8 @@
       :headers="getTokenHeaders"
       :data="{ belong_type: 0 }"
       :multiple="true"
-      :limit="limit"
+      :limit="quality.quality_attachments ? limit - quality.quality_attachments.length : 20"
       :on-exceed="imageExceedHandler"
-      :file-list="quality.quality_attachments"
       :show-file-list="false"
       v-if="quality.quality_attachments && quality.quality_attachments.length < limit"
     >
@@ -117,6 +116,7 @@ export default {
         }
         return
       }
+      console.log(file)
       row.push({
         url: response.data.url
       })

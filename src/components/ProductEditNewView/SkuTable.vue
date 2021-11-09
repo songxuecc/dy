@@ -373,6 +373,9 @@ export default {
   methods: {
     init (skuJson) {
       // 批量修改表单初始化
+      if (!skuJson) {
+        return
+      }
       this.spec_list = cloneDeep(skuJson.spec_list)
       this.spec_price_list = cloneDeep(skuJson.spec_price_list)
       const tableData = []

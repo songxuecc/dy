@@ -193,11 +193,6 @@ export default {
       }
     }
   },
-  watch: {
-    template (n) {
-      console.log(n)
-    }
-  },
   computed: {
     ...mapGetters(['getSelectTPProductIdList']),
     ...mapState(['ownerId']),

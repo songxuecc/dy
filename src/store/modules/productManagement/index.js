@@ -2,6 +2,7 @@ import skuImport from './skuImport'
 import batchEdit from './batchEdit'
 import productsSync from './productsSync'
 import combination from './combination'
+import cycleProductsSelf from './cycleProductsSelf'
 
 const modules = {
   productManagement: {
@@ -10,7 +11,8 @@ const modules = {
       skuImport,
       batchEdit,
       ...productsSync,
-      ...combination
+      ...combination,
+      ...cycleProductsSelf
     }
   }
 }

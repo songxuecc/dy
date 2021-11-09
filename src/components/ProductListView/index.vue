@@ -301,7 +301,7 @@
           @close="dialogClose"
           :before-close="dialogBeforeClose"
         >
-          <product-edit-new-view ref="productEditNewView" @changeProducts="onChangeProducts" @triggerDialogClose="triggerDialogClose"></product-edit-new-view>
+          <product-edit-new-view ref="productEditNewView" @changeProducts="onChangeProducts" @triggerDialogClose="triggerDialogClose" v-if="dialogEditVisible"></product-edit-new-view>
         </el-drawer>
         <div class="closeBtn pointer" v-show="dialogEditVisible" @click="triggerDialogClose">
           <hh-icon type="iconguanbi1" class="iconguanbi"></hh-icon>

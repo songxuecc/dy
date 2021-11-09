@@ -51,16 +51,24 @@
       </el-table-column>
       <el-table-column
         prop="editBtns"
-        label="操作">
+        label="操作" class-name="cell-class">
           <template slot-scope="scope">
             <div v-if="scope.row.editBtns.length">
               <span v-for="(btn,index) in scope.row.editBtns" :key="index" >
-                <el-link
-                  @click="btn.handle"
-                  :class="['btn',btn.diabled ? 'diabled' : '']"
-                  type="primary"
-                  :underline="false"
-                >{{btn.text}}</el-link>
+                <el-tooltip popper-class="shopsBand-tooltip" :manual="true" effect="light"  placement="top-start" :value="btn.text === '切换成TA' && !btn.diabled && showTooltip">
+                    <div slot="content">
+                      <div style="width:172px" class="color-666 font-12 left mt-10" >
+                       点我切换店铺哦~
+                      </div>
+                      <div @click="closeNewComer" class="right pointer underline primary mb-10">我知道了</div>
+                    </div>
+                    <el-link
+                      @click="btn.handle"
+                      :class="['btn',btn.diabled ? 'diabled' : '']"
+                      type="primary"
+                      :underline="false" >{{btn.text}}
+                    </el-link>
+                  </el-tooltip>
               </span>
             </div>
             <el-link v-else type="primary" class="btn">—</el-link>
@@ -86,7 +94,8 @@ export default {
   },
   data () {
     return {
-      radio1: this.isMainShops
+      radio1: this.isMainShops,
+      showTooltip: true
     }
   },
   mounted () {
@@ -102,6 +111,9 @@ export default {
     openDinggou () {
       window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
       return false
+    },
+    closeNewComer () {
+      this.showTooltip = false
     }
   },
   computed: {
@@ -164,5 +176,99 @@ export default {
     }
 
   }
+
+     /deep/ .el-drawer__body {
+      height: 100%;
+    }
+   /deep/ .cell-class {
+      .cell {
+        overflow: inherit;
+      }
+    }
+
+    /deep/ .table-cal-2 {
+      overflow: inherit !important;
+      min-height: 200px;
+      .el-table__body-wrapper {
+        overflow: inherit !important;
+      }
+    }
+
+    .triangle{
+        position: absolute;
+        content:"";
+        width: 0;
+        height: 0;
+        border: 9px solid transparent;
+    }
+
+    .triangle-top {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -17px;
+      border-top: 6px solid #1D8FFF;
+    }
+    .triangle-white-top {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -14px;
+      border-top: 6px solid #ffffff;
+    }
+    .triangle-white{
+        position: absolute;
+        content:"";
+        width: 0;
+        height: 0;
+        border: 9px solid transparent;
+    }
+
+</style>
+<style lang="less">
+    .shopsBand-tooltip.is-light {
+        border:0;
+        border-bottom: 10px solid #1D8FFF;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+        width: 208px;
+        padding:10px 14px 0;
+    }
+    .shopsBand-tooltip.is-light[x-placement^=top] .popper__arrow::after {
+      position: absolute;
+      content:"";
+      width: 0;
+      height: 0;
+      border-top: 5px solid #ffffff;
+      bottom:4px;
+    }
+    .shopsBand-tooltip[x-placement^=top] .popper__arrow {
+      bottom: -15px;
+      border-top-color: #1D8FFF;
+      border-bottom-width: 0;
+    }
+    .shopsBand-tooltip.is-light[x-placement^=top] .popper__arrow {
+        border-top-color: #1D8FFF;
+    }
+    .shopsBand-tooltip .popper__arrow {
+        border-width: 9px;
+    }
+
+    .shopsBand-tooltip[x-placement^=top] .popper__arrow {
+      bottom: -16px;
+      border-top-color: #1D8FFF;
+      border-bottom-width: 0;
+    }
+    .shopsBand-tooltip::after {
+      content:"";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -7px;
+      top: 0;
+      margin:auto;
+      background:#fff;
+      border-radius: 3px;
+      z-index: -1;
+    }
 
 </style>

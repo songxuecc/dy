@@ -384,7 +384,6 @@ export default {
         confirmButtonClass: 'TableSkuPriceList-confirmButtonClass',
         customClass: 'TableSkuPriceList-customClass'
       }).then(() => {
-        console.log(row)
         this.deleteRow(row)
         this.$message({
           type: 'success',

@@ -110,6 +110,28 @@ const actionCreatorPost = async (relativePath, params) => {
   })
 }
 
+const actionCreatorPostImage = async (relativePath, params) => {
+  params = params || {}
+  return new Promise(function (resolve, reject) {
+    let headers = {
+      'Content-Type': 'multipart/form-data;'
+    }
+    let token = localStorage.getItem('token')
+    let fakeToken = localStorage.getItem('fake_token')
+    if (token) {
+      headers['token'] = token
+    }
+    if (fakeToken && relativePath !== '/api/fakeUser') {
+      headers['fake-token'] = fakeToken
+    }
+    let changeShop = localStorage.getItem('change_shop')
+    if (changeShop) {
+      headers['change-shop'] = changeShop
+    }
+    post(relativePath, params, headers, resolve, reject)
+  })
+}
+
 const actionCreatorJsonPost = async (relativePath, params) => {
   params = params || {}
   return new Promise(function (resolve, reject) {
@@ -201,5 +223,6 @@ export default {
   actionCreateGet,
   actionCreatorPost,
   actionCreatorJsonPost,
-  actionCreatorDownload
+  actionCreatorDownload,
+  actionCreatorPostImage
 }

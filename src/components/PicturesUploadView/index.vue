@@ -10,10 +10,11 @@
                    style="display: inline-flex;text-align: left;"
                    :key="index"
               >
-                <span class="center mb-5">
+                <span class="center mb-10" >
                   <li :key="picture.url + index"
                       class="el-upload-list__item is-success" @click="onClickImage(picture, index)"
                       style="margin-bottom: 0px;"
+                      :class="`needValid ${picture.url}`"
                   >
                       <el-popover
                         placement="left"
@@ -29,13 +30,21 @@
                           <i class="el-icon-upload-success el-icon-check"></i>
                       </label>
                       <span class="el-upload-list__item-actions" @click.self="onClick(picture, index)" v-on:mouseover.self="handlemouseover(index)"  v-on:mouseleave.self="handlemouseleave(index)">
-                          <span class="el-upload-list__item-preview" style="margin-left: 0px;"
+                          <span class="el-upload-list__item-preview iconshanchu1" style="margin-left: 0px;"
                                 @click="onShowPreview(picture, index)"
                           > <i class="el-icon-zoom-in"></i> </span>
-                          <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete"
+                          <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete iconshanchu1"
                                 style="visibility: visible;" @click="onHandle(picture, index)"
                           > <i class="el-icon-edit-outline"></i> </span>
-                          <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete"
+                          <hh-icon
+                            type="iconcaijian1"
+                            style="font-size: 20px;"
+                            class="iconshanchu1"
+                            @click="clipIamge(
+                              picture, index
+                            )"
+                          />
+                          <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete iconshanchu1"
                                 style="visibility: visible;" @click="onRemove(picture, index)"
                           > <i class="el-icon-delete"></i> </span>
                       </span>
@@ -57,7 +66,8 @@
                     action="/api/image/create"
                     :headers="getTokenHeaders"
                     :data="{'belong_type': belongType}"
-                    :multiple="false"
+                    :multiple="multiple"
+                    :limit="containLimit - curPictureList.length"
                 >
                     <i class="el-icon-plus upload-icon">
                         <br><span>({{ curPictureList.length }}/{{ containLimit }})</span>
@@ -65,22 +75,30 @@
                 </el-upload>
             </draggable>
         </ul>
-        <div>
+        <div class="mt-10">
           <span v-if="containLimit!=-1">图片最多 {{containLimit}} 张，</span><span>sku图片+轮播图+详情图 不能超过 50 张</span>
         </div>
         <div class="color-danger">*若为用户自定义上传的图片，系统仅能保存7天，请尽快上传该商品到抖音</div>
+        <ClipImage ref="ClipImage" @submit="ClipImageSubmit" :fixed="true" :fixedNumber="[400, 400]" v-if="validSize" title="轮播图裁剪-图片长宽比需1:1"></ClipImage>
+        <ClipImage ref="ClipImage" @submit="ClipImageSubmit" v-else></ClipImage>
+
     </div>
 </template>
 <script>
 import common from '@/common/common'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
+import ClipImage from '@/components/ClipImage'
+import utils from '@/common/utils'
 
 export default {
   components: {
-    draggable
+    draggable,
+    ClipImage
   },
   props: {
+    validSize: Boolean,
+    multiple: Boolean,
     tip: {
       type: String,
       default: ''
@@ -141,8 +159,10 @@ export default {
       this.selectedPictureDic = {}
 
       this.elemUploadDiv = this.$el.querySelector('div.el-upload--picture-card')
-      this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
-      this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+      if (this.elemUploadDiv) {
+        this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
+        this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+      }
     }
   },
   mounted () {
@@ -150,7 +170,7 @@ export default {
   },
   methods: {
     imageExceedHandler (files, fileList) {
-      this.$message.error('图片最多上传' + this.containLimit + '张')
+      this.$message.error('剩余图片最多上传' + (this.containLimit - this.curPictureList.length) + '张')
     },
     clear () {
     },
@@ -232,25 +252,44 @@ export default {
         return false
       }
     },
-    handleUploadSuccess (response, file, fileList) {
+    async handleUploadSuccess (response, file, fileList) {
       if (parseInt(response.code) !== 0) {
         if (response.msg) {
           this.$message.error(response.msg)
         }
         return
       }
-      this.curPictureList.push({ 'url': response.data.url, 'bg': 0 })
+      const url = response.data.url
+      const data = await utils.getImgRawSize(url)
+      const text = data.width !== data.height && this.validSize ? '长宽比不满足1:1' : ''
+      const picture = { 'url': response.data.url, 'bg': 0, text }
+      this.curPictureList.push(picture)
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
       this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+      if (text) this.clipIamge(picture, this.curPictureList.length - 1)
     },
     handleUploadError (err, file, fileList) {
-      this.$message.error(err.message)
+      this.$message.error(`${err}`)
     },
     handlemouseover (index) {
       this.$refs['popover-picture-wall-' + index][0].doShow()
     },
     handlemouseleave (index) {
       this.$refs['popover-picture-wall-' + index][0].doClose()
+    },
+    clipIamge (picture, index) {
+      console.log(picture, 'picture')
+      this.activeImage = {
+        picture,
+        index
+      }
+      this.$refs.ClipImage.open(picture.url)
+    },
+    ClipImageSubmit (url) {
+      const { picture, index } = this.activeImage
+      picture.url = url
+      this.$set(this.curPictureList, index, picture)
+      this.$emit('handleEdit', picture, index)
     }
   }
 }
@@ -261,5 +300,11 @@ export default {
       top: 5px;
       right: 5px;
       font-size: 20px;
+    }
+
+    .iconshanchu1 {
+      &:hover {
+        color:@color-primary;
+      }
     }
 </style>
