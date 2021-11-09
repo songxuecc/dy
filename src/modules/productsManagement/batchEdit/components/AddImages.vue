@@ -10,10 +10,10 @@
     <el-form-item label="订单计数方式:">
       <el-radio-group v-model="form.is_add">
         <el-radio :label="1">批量增加详情图</el-radio>
-        <el-radio :label="0">批量删除详情图</el-radio>
+        <el-radio :label="0">选择需要删除的详情图</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="下架商品修改后:" v-if="form.is_add">
+    <el-form-item label="请添加图片:" v-if="form.is_add">
       <el-upload
         class="batchEdit-addimages-avatar-uploader"
         action="/api/image/create"
@@ -21,7 +21,15 @@
         :data="getImageLastData"
         :show-file-list="false"
         :on-success="handleAvatarSuccessLast">
-        <img v-if="form.img_url" :src="form.img_url" class="avatar">
+        <el-popover
+          v-if="form.img_url"
+          placement="right"
+          width="250"
+          popper-class="SkuSelect-popper-class"
+          trigger="hover">
+          <img :src="form.img_url" style="width: 250px;"/>
+          <img :src="form.img_url" class="avatar" slot="reference" />
+        </el-popover>
         <i v-else class="el-icon-plus avatar-uploader-icon">
             选择图片
         </i>

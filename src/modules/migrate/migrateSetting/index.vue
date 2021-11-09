@@ -1,6 +1,5 @@
 <template lang="html">
   <div class="migrateSetting">
-
     <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" class="tab" @tab-click="tabClick" ref="tab">
       <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
     </el-tabs>

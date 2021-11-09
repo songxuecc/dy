@@ -36,7 +36,7 @@
             class="idx"
             :class="[carouselIndex === idx && 'primary', 'pointer underline']"
             @click="changeSubTask(idx)"
-          >第{{idx+1}}次轮播</span>
+          >第{{idx+1}}次轮循</span>
       </div>
       <div  v-if="[5].includes(detail.task_type)" class="flex justify-b mb-15 mt-5" >
         <span v-if="!isOpen" class="info"  @click="open">
@@ -56,12 +56,31 @@
         <span v-if="subTaskList.length > 18 && isOpen">关闭</span>
       </div>
 
-      <div class="mb-20">
-        <el-radio-group v-model="shelfRadio" v-if="[3,4,5,6].includes(detail.task_type)" @change="handleChangeShelfRadio">
+      <div class="mb-20" v-if="detail.task_type === 3">
+        <el-radio-group v-model="shelfRadio"  @change="handleChangeShelfRadio">
           <el-radio-button :label="shelf.off_shelf_task_id" v-if="shelf.off_shelf_task_id">下架操作</el-radio-button>
           <el-radio-button :label="shelf.on_shelf_task_id"  v-if="shelf.on_shelf_task_id">上架操作</el-radio-button>
         </el-radio-group>
       </div>
+      <div class="mb-20" v-if="detail.task_type === 4">
+        <el-radio-group v-model="shelfRadio"  @change="handleChangeShelfRadio">
+          <el-radio-button :label="shelf.on_shelf_task_id"  v-if="shelf.on_shelf_task_id">上架操作</el-radio-button>
+          <el-radio-button :label="shelf.off_shelf_task_id" v-if="shelf.off_shelf_task_id">下架操作</el-radio-button>
+        </el-radio-group>
+      </div>
+      <div class="mb-20" v-if="detail.task_type === 5">
+        <el-radio-group v-model="shelfRadio"  @change="handleChangeShelfRadio">
+          <el-radio-button :label="shelf.off_shelf_task_id" v-if="shelf.off_shelf_task_id">下架操作</el-radio-button>
+          <el-radio-button :label="shelf.on_shelf_task_id"  v-if="shelf.on_shelf_task_id">上架操作</el-radio-button>
+        </el-radio-group>
+      </div>
+      <div class="mb-20" v-if="detail.task_type === 6">
+        <el-radio-group v-model="shelfRadio"  @change="handleChangeShelfRadio">
+          <el-radio-button :label="shelf.on_shelf_task_id"  v-if="shelf.on_shelf_task_id">上架操作</el-radio-button>
+          <el-radio-button :label="shelf.off_shelf_task_id" v-if="shelf.off_shelf_task_id">下架操作</el-radio-button>
+        </el-radio-group>
+      </div>
+
       <div v-if="shelfRadio === shelf.off_shelf_task_id" class="mb-18">
         <span class="mr-20" @click="getStatusProducts(0)" :class="[status === 0 && shelfRadio === shelf.off_shelf_task_id && 'primary', 'pointer underline']">待下架</span>
         <span class="mr-20" @click="getStatusProducts(3)" :class="[status === 3 && shelfRadio === shelf.off_shelf_task_id && 'primary', 'pointer underline']">下架成功</span>

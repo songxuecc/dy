@@ -114,6 +114,7 @@
         </el-form-item>
         <el-form-item label="循环次数"  v-if="form.first_shelf_time_hours">
           <el-input-number v-model="form.repeat_count" :min="1" :max="30" :step="1" step-strictly></el-input-number>
+          <span class="info ml-5">最大为30</span>
         </el-form-item>
       </div>
 
@@ -157,6 +158,7 @@
         </el-form-item>
         <el-form-item label="循环次数" v-if="form.first_shelf_time_hours">
           <el-input-number v-model="form.repeat_count" :min="1" :max="30" :step="1" step-strictly></el-input-number>
+          <span class="info ml-5">最大为30</span>
         </el-form-item>
       </div>
     </el-form>
@@ -174,12 +176,23 @@ import {mapMutations, mapActions, mapState} from 'vuex'
 import debounce from 'lodash/debounce'
 import services from '@servises'
 import moment from 'moment'
+import utils from '@/common/utils'
 
 export default {
   name: 'CreateSyncPlan',
   props: {
   },
   data () {
+    const validate = (rule, value, callback) => {
+      if (value && !utils.isNumber(value)) {
+        callback(new Error('必须填写数字'))
+      } else if (value && utils.isNumber(value) && value > 30) {
+        callback(new Error('最大为30'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       isEdit: false,
       isShowSample: false,
@@ -197,6 +210,9 @@ export default {
       rules: {
         task_name: [
           { required: true, message: '请输入计划名称', trigger: ['blur', 'change'] }
+        ],
+        repeat_count: [
+          { validator: validate, trigger: ['blur', 'change'] }
         ]
       },
       pickerOptions: {

@@ -259,7 +259,7 @@
     </el-dialog>
     </el-form>
 
-    <ClipImage ref="ClipImage" @submit="ClipImageSubmit" :fixed="true" :fixedNumber="[400, 400]" ></ClipImage>
+    <ClipImage ref="ClipImage" @submit="ClipImageSubmit" ></ClipImage>
 
   </div>
 </template>
@@ -270,7 +270,6 @@ import draggable from 'vuedraggable'
 import shortid from 'shortid'
 import cloneDeep from 'lodash/cloneDeep'
 import ClipImage from '@/components/ClipImage'
-import utils from '@/common/utils'
 
 export default {
   name: 'SkuSelect',
@@ -313,7 +312,6 @@ export default {
     rules () {
       const nameRules = {}
       const specificationValueRules = {}
-      const specificationImageValueRules = {}
       // 规格名
       const validateName = index => (rule, value, callback) => {
         const nameList = this.specifications
