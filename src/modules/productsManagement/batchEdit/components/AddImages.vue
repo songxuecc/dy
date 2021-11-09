@@ -5,12 +5,12 @@
     :model="form"
     size="small"
     label-position="right"
-    label-width="120px"
+    label-width="140px"
   >
     <el-form-item label="订单计数方式:">
       <el-radio-group v-model="form.is_add">
         <el-radio :label="1">批量增加详情图</el-radio>
-        <el-radio :label="0">选择需要删除的详情图</el-radio>
+        <el-radio :label="0">批量删除详情图</el-radio>
       </el-radio-group>
     </el-form-item>
     <el-form-item label="请添加图片:" v-if="form.is_add">
@@ -35,7 +35,7 @@
         </i>
     </el-upload>
     </el-form-item>
-    <el-form-item label="新增详情图的位置:">
+    <el-form-item :label="form.is_add? '新增详情图的位置:':'选择需要删除的详情图:'">
       <el-select v-model="form.value" placeholder="请选择">
         <el-option
             v-for="item in options"
