@@ -5,9 +5,9 @@
             <div>
               <hh-icon type="icontishi" ></hh-icon>
               什么是定时上下架？
-              <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
+              <!-- <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
                 点我查看教程视频
-              </span>
+              </span> -->
             </div>
             <p>提前设置上下架类型及上下架时间，系统会根据你的设置按时进行上下架操作</p>
 
