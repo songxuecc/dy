@@ -568,9 +568,11 @@ export default {
       }
       this.$refs.productList.setCurrentRow(tpProduct)
       let self = this
-      setTimeout(function () {
-        self.$refs.productList.$el.scrollTop = 85 * tpProduct.index
-      }, 100)
+      this.$nextTick(() => {
+        setTimeout(function () {
+          if (self.$refs.productList && self.$refs.productList.$el) self.$refs.productList.$el.scrollTop = 85 * tpProduct.index
+        }, 100)
+      })
       this.$refs.productList.toggleAllSelection()
       this.hasSelection = true
     },
