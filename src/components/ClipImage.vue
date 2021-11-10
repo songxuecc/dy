@@ -73,7 +73,7 @@ export default {
         img: '',
         size: 1,
         full: true,
-        outputType: 'png',
+        outputType: 'jpeg',
         canMove: false,
         fixedBox: false,
         original: false,
@@ -83,8 +83,8 @@ export default {
         autoCropWidth: 400,
         autoCropHeight: 400,
         centerBox: true,
-        high: true,
-        max: 99999,
+        high: false,
+        max: 5120,
         mode: '400px 400px'
       }
     }
@@ -99,13 +99,17 @@ export default {
     tranformImgToBase64 (src, callback) {
       let _this = this
       let image = new Image()
+      image.crossOrigin = '*'
+      src = src.includes('?') ? src.split('?')[0] : src
       // 处理缓存
       image.src = src + '?v=' + Math.random()
       // 支持跨域图片
-      image.crossOrigin = '*'
       image.onload = function () {
         let base64 = _this.transBase64FromImage(image)
         callback && callback(base64)
+      }
+      image.onerror = function () {
+        console.log('Error loading ' + src)
       }
     },
     transBase64FromImage (image) {
@@ -115,7 +119,7 @@ export default {
       let ctx = canvas.getContext('2d')
       ctx.drawImage(image, 0, 0, image.width, image.height)
       // 可选其他值 image/jpeg
-      return canvas.toDataURL('image/png')
+      return canvas.toDataURL('image/jpeg')
     },
     refreshCrop () {
       this.$refs.cropper.refresh()

@@ -1,4 +1,4 @@
-<!-- 批量修改详情首尾图-->
+<!-- 批量修改详情图-->
 <template>
   <el-drawer
     :visible.sync="visible"
@@ -8,7 +8,7 @@
     size="80%"
   >
     <div class="title center">
-      预览批量修改详情首尾图效果
+      预览批量修改详情图效果
       <hh-icon
         type="iconquxiaoanniu"
         class="close pointer"
