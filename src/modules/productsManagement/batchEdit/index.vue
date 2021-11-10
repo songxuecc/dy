@@ -462,7 +462,7 @@ export default {
           primary: 'iconpiliangjiatuxuanzhong',
           info: 'iconpiliangjiatuweixuanzhong',
           index: 16,
-          text: '详情首尾图',
+          text: '详情图',
           ref: 'AddImages',
           tableRef: 'TableAddImages',
           needExpand: false,

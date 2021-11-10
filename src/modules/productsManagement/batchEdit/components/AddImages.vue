@@ -1,4 +1,4 @@
-<!-- 详情首尾图 -->
+<!-- 详情图 -->
 <template>
   <el-form
     ref="form"

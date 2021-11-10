@@ -205,7 +205,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <!-- 详情首尾图 -->
+              <!-- 详情图 -->
               <el-table-column
                 prop="new_data"
                 label="修改后"
