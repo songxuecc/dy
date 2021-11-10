@@ -83,7 +83,7 @@ export default {
         autoCropWidth: 400,
         autoCropHeight: 400,
         centerBox: true,
-        high: false,
+        high: true,
         max: 5120,
         mode: '400px 400px'
       }
