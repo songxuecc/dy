@@ -14,6 +14,7 @@ const state = {
   token: localStorage.getItem('token') || '',
   fakeToken: localStorage.getItem('fake_token') || false,
   isAuth: JSON.parse(localStorage.getItem('is_auth')) || false,
+  isNew: JSON.parse(localStorage.getItem('is_new')) || false,
   orderTimes: localStorage.getItem('order_times') || 0,
   leftDays: localStorage.getItem('left_days') || '',
   exportFields: localStorage.getItem('export_fields'),
@@ -63,6 +64,7 @@ const getters = {
     return headers
   },
   getIsAuth: state => state.isAuth,
+  getIsNew: state => state.isNew,
   getOrderTimes: state => state.orderTimes,
   getLeftDays: state => state.leftDays,
   getFakeToken: state => state.fakeToken,
@@ -331,6 +333,10 @@ const mutations = {
       localStorage.setItem('fake_token', data.fake_token)
       state.fakeToken = data.fake_token
     }
+    if (data.is_new) {
+      localStorage.setItem('is_new', data.is_new)
+      state.isNew = data.is_new
+    }
   },
   [ types.LOGOUT ] (state) {
     localStorage.removeItem('token')
@@ -341,12 +347,14 @@ const mutations = {
     localStorage.removeItem('expire_time')
     localStorage.removeItem('is_auth')
     localStorage.removeItem('fake_token')
+    localStorage.removeItem('is_new')
     state.name = ''
     state.ownerId = ''
     state.shopName = ''
     state.loginNum = 0
     state.token = ''
     state.isAuth = false
+    state.isNew = false
     state.orderTimes = 0
     state.leftDays = ''
     state.fake_token = ''
