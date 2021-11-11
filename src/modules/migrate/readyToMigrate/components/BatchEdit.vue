@@ -127,11 +127,11 @@ export default {
           label: '修改标题',
           key: 'visibleEditTitle'
         },
-        {
-          value: 2,
-          label: '修改品牌',
-          key: 'visvileEditBrandId'
-        },
+        // {
+        //   value: 2,
+        //   label: '修改品牌',
+        //   key: 'visvileEditBrandId'
+        // },
         {
           value: 3,
           label: '删除轮播首图',

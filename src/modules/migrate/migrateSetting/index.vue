@@ -52,15 +52,7 @@
         </el-form-item>
         <!-- 品牌 -->
         <el-form-item  label="品牌统一为:" style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-brand">
-          <el-select v-model="default_brand_id" placeholder="默认无品牌设置" style="width:280px;margin-right:12px"
-            clearable @clear="clear">
-            <el-option label="默认无品牌" :value="0"></el-option>
-            <el-option v-for="item in brandList" :key="item.id" :label="getBrandName(item)" :value="item.id" />
-          </el-select>
-          <el-button type="text" @click="loadData" :loading="loadingBrandList">
-            <hh-icon type="iconjiazai" style="font-size:10px;margin-right:3px" v-if="!loadingBrandList" />
-            <span>{{!loadingBrandList ? '刷新':'加载中'}}</span>
-          </el-button>
+          <p class="font-12 mb-10 flex align-c" style="height:28px">是否统一为无品牌<el-switch class="ml-5" v-model="is_all_no_brand" /></p>
         </el-form-item>
         <!-- 商家推荐语 -->
         <el-form-item  label="推荐语统一为:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-recommend" >
@@ -377,6 +369,7 @@ export default {
       detail_img_cut: undefined,
       // is_cut_sku_spec: undefined,
       is_cut_black_word: undefined,
+      is_all_no_brand: undefined,
       is_cut_image_black_word: undefined,
       is_banner_auto_5: undefined,
 
@@ -409,7 +402,6 @@ export default {
       target_title_str: '',
       default_category: {},
       default_category_id: undefined,
-      default_brand_id: 0,
       property_radio: '1',
       goods_property_selected: '',
       goods_code_type: 0,
@@ -737,6 +729,7 @@ export default {
     updateMigrateSettingData (data) {
       let boolPropertys = [
         'is_cut_black_word',
+        'is_all_no_brand',
         'is_cut_image_black_word',
         'is_banner_auto_5',
         // 'is_cut_sku_spec',
@@ -794,9 +787,6 @@ export default {
         if (setting.default_category) {
           this.default_category = setting.default_category
         }
-        if (typeof setting.default_brand_id !== 'undefined') {
-          this.default_brand_id = setting.default_brand_id || 0
-        }
         if (setting.default_category_id && setting.default_category) {
           setting.default_category.name = setting.default_category.levels
             .map((item) => item.name)
@@ -829,6 +819,7 @@ export default {
         detail_img_cut: Number(this.detail_img_cut),
         // is_cut_sku_spec: Number(this.is_cut_sku_spec),
         is_cut_black_word: Number(this.is_cut_black_word),
+        is_all_no_brand: Number(this.is_all_no_brand),
         is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
         goods_code_type: Number(this.goods_code_type),
@@ -862,7 +853,6 @@ export default {
         source_title_str: this.source_title_str,
         target_title_str: this.target_title_str,
         default_category_id: Number(this.default_category_id),
-        default_brand_id: Number(this.default_brand_id),
         default_attr_value: this.default_attr_value,
         is_select_first_options_attr: Number(this.is_select_first_options_attr),
         is_use_default_attr_value: Number(this.is_use_default_attr_value),
@@ -1100,9 +1090,6 @@ export default {
       } else {
         return item.brand_chinese_name.trim()
       }
-    },
-    clear () {
-      this.default_brand_id = 0
     },
     handleIsUseMaxSkuStock (value) {
       if (value && this.is_use_default_sku_stock) {

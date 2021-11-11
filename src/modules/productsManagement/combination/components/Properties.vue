@@ -33,6 +33,7 @@
             :clearable="true"
           ></el-input>
           <el-select
+            filterable
             v-model="form[`${property.id}`]"
             placeholder="请选择活动区域"
             style="width: 220px"
