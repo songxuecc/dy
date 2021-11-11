@@ -324,41 +324,11 @@ export default {
         this.loading = true
         servises.productCategoryBrandList({
           category_id: this.catId,
-          brand_name: query
+          keyword: query
         }).then(data => {
           this.$set(item, 'options', data)
           this.loading = false
         })
-        // const data = [
-        //   {
-        //     'name': 'uhhuh master/嗯哼匠1',
-        //     'sequence': 0,
-        //     'value': 4186496331,
-        //     'value_id': '4186496331'
-        //   },
-        //   {
-        //     'name': 'uhhuh master/嗯哼匠2',
-        //     'sequence': 0,
-        //     'value': 4186496332,
-        //     'value_id': '4186496332'
-        //   },
-        //   {
-        //     'name': 'uhhuh master/嗯哼匠3',
-        //     'sequence': 0,
-        //     'value': 4186496333,
-        //     'value_id': '4186496333'
-        //   },
-        //   {
-        //     'name': 'uhhuh master/嗯哼匠4',
-        //     'sequence': 0,
-        //     'value': 4186496334,
-        //     'value_id': '4186496334'
-        //   }
-        // ]
-        // setTimeout(() => {
-        //   this.loading = false
-        //   this.$set(item, 'options', data)
-        // }, 200)
       } else {
         this.options = []
       }
