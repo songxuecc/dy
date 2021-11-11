@@ -4,7 +4,6 @@
         <el-form :inline="true" :model="model" class="start-migrate-setting  flex " size="medium">
           <el-form-item label="复制后的品牌" style="margin-right:45px">
                 <el-select v-model="model.default_brand_id" placeholder="默认无品牌设置" style="width:230px;margin-right:12px" clearable @clear="clear">
-                    <el-option label="默认无品牌" :value="0"></el-option>
                     <el-option v-for="item in brandList" :key="item.id" :label="getBrandName(item)" :value="item.id" />
                 </el-select>
                 <el-button type="text" @click="loadData" :loading="loadingBrandList" size="small">
