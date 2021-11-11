@@ -67,7 +67,6 @@
                     :headers="getTokenHeaders"
                     :data="{'belong_type': belongType}"
                     :multiple="multiple"
-                    :limit="containLimit - curPictureList.length"
                 >
                     <i class="el-icon-plus upload-icon">
                         <br><span>({{ curPictureList.length }}/{{ containLimit }})</span>
@@ -170,6 +169,7 @@ export default {
   },
   methods: {
     imageExceedHandler (files, fileList) {
+      console.log(fileList, 'fileList')
       this.$message.error('剩余图片最多上传' + (this.containLimit - this.curPictureList.length) + '张')
     },
     clear () {
