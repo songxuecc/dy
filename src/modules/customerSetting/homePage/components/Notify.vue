@@ -18,7 +18,7 @@
             <hh-icon :type="item.is_read ? 'iconlaoxiaoxi':'iconxinxiaoxi'" class="icon"></hh-icon>
             <span class="text" >{{ item.title }}</span>
           </span>
-          <span class="btn" :data-index="index" v-if="item.btn_link">去体验</span>
+          <span class="btn" :data-index="index" v-if="item.btn_link">{{item.btn_text}}</span>
         </li>
       </ul>
     </vue-seamless-scroll>
