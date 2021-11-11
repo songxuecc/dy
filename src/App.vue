@@ -148,6 +148,7 @@ export default {
       getShopName: 'getShopName',
       userId: 'getUserId',
       isAuth: 'getIsAuth',
+      isNew: 'getIsNew',
       orderTimes: 'getOrderTimes',
       leftDays: 'getLeftDays',
       syncStatus: 'getSyncStatus',
@@ -197,6 +198,10 @@ export default {
       }
     },
     notificationList (notiList) {
+      // 新用户不展示通知
+      if (this.isNew) {
+        notiList = notiList.filter(item => !item.is_shield_new_user)
+      }
       // 预渲染不处理notifincation
       if (window.__PRERENDER_INJECTED && window.__PRERENDER_INJECTED.isReader) {
         return
