@@ -185,6 +185,7 @@
 
         <el-form-item  label="轮播图:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-banner" >
             <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
+            <p class="font-12 mb-10">若轮播图尺寸比例不满足1：1，系统自动剪裁<el-switch class="ml-5" v-model="is_auto_cut_banner" /></p>
             <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
             <p class="font-12 mb-10">删除轮播尾图<el-switch class="ml-5" v-model="is_cut_banner_last" /></p>
             <p class="font-12"><span style="margin-right: 5px">随机打乱轮播图顺序 (首图不变位置</span><el-checkbox v-model="is_keep_main_banner"></el-checkbox>)<el-switch class="ml-5" v-model="is_mix_banner" /></p>
@@ -385,6 +386,7 @@ export default {
       max_sku_stock: '',
       is_use_max_sku_stock: undefined,
       is_cut_banner_first: undefined,
+      is_auto_cut_banner: undefined,
       is_cut_banner_last: undefined,
       is_cut_detail_last: undefined,
       is_cut_detail_first: undefined,
@@ -737,6 +739,7 @@ export default {
         'is_use_default_sku_stock',
         'is_use_max_sku_stock',
         'is_cut_banner_first',
+        'is_auto_cut_banner',
         'is_cut_banner_last',
         'is_cut_detail_last',
         'is_cut_detail_first',
@@ -833,6 +836,7 @@ export default {
         is_use_max_sku_stock: Number(this.is_use_max_sku_stock),
         max_sku_stock: this.max_sku_stock,
         is_cut_banner_first: Number(this.is_cut_banner_first),
+        is_auto_cut_banner: Number(this.is_auto_cut_banner),
         is_cut_banner_last: Number(this.is_cut_banner_last),
         is_cut_detail_last: Number(this.is_cut_detail_last),
         is_cut_detail_first: Number(this.is_cut_detail_first),
