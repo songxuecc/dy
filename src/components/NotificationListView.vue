@@ -61,6 +61,10 @@ export default {
       orderTimes: 'getOrderTimes',
       leftDays: 'getLeftDays',
       unRead: 'getUnRead'
+    }),
+    ...mapGetters({
+      isAuth: 'getIsAuth',
+      isNew: 'getIsNew'
     })
   },
   methods: {
@@ -76,23 +80,29 @@ export default {
       }
       this.mailNotificationList = []
       this.getUserNoticeStatus()
-      for (let i in this.notificationList) {
-        if (parseInt(this.notificationList[i].type) === common.NotificationType['only_in_mail'] && utils.isAppendNotice(this.notificationList[i], this.userOrderTimes, this.userLeftDays)) {
-          this.mailNotificationList.push(this.notificationList[i])
+
+      let notificationList = this.notificationList
+      // 新用户不展示通知
+      if (this.isNew) {
+        notificationList = notificationList.filter(item => !item.is_shield_new_user)
+      }
+      for (let i in notificationList) {
+        if (parseInt(notificationList[i].type) === common.NotificationType['only_in_mail'] && utils.isAppendNotice(notificationList[i], this.userOrderTimes, this.userLeftDays)) {
+          this.mailNotificationList.push(notificationList[i])
         }
       }
       if (this.isCanGrade) { // 邮箱中加入好评返现
         // this.mailNotificationList.unshift(this.gradeData)
       }
       this.$nextTick(function () {
-        for (let i in this.notificationList) {
-          let notification = this.notificationList[i]
+        for (let i in notificationList) {
+          let notification = notificationList[i]
           if (notification.id in dicIgnore) {
             notification['is_ignore'] = dicIgnore[notification.id]
           } else {
             notification['is_ignore'] = 0
           }
-          this.$set(this.notificationList, i, notification)
+          this.$set(notificationList, i, notification)
         }
       })
     },

@@ -140,9 +140,9 @@ export default {
       this.$set(this.arr, this.activeCategoryIndex, activeCategory)
       this.$nextTick(() => {
         this.chooseProperties(activeCategory, this.activeCategoryIndex)
+        this.activeCategoryIndex = undefined
+        this.activeData = undefined
       })
-      this.activeCategoryIndex = undefined
-      this.activeData = undefined
     },
     // 选择分类
     chooseCategory (data, idx) {
@@ -218,7 +218,6 @@ export default {
     handleClose (data, idx) {
       this.visible = !this.visible
       this.$set(this.arr, idx, data)
-      console.log(this.arr, 'arr')
     }
   }
 }

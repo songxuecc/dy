@@ -105,6 +105,7 @@
 
                         <el-form-item  label="抖音属性:">
                             <property-set
+                              v-if="product.model.cat_id !== -1"
                               @change="handlePropertyset"
                               :catId="product.model.cat_id"
                               :productModel="product.model.attrList"
@@ -172,7 +173,7 @@
                       <el-badge :value="product.model.check_error_msg_static['3'].num" ></el-badge>
                   </el-tooltip>
                   </span>
-                  <div >
+                  <div>
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
                       <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="45" :pictureUrlList="descPicUrlList" :multiple="true">
                       </pictures-upload-view>
