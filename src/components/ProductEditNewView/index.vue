@@ -900,24 +900,24 @@ export default {
     },
     promiseBannerImage (products) {
       return new Promise((resolve, reject) => {
-        console.log(products, 'products')
         products.forEach((product, idx) => {
-          let specImageList = []
-          product.model.sku_json.spec_list.forEach(item => {
-            specImageList = [...specImageList, ...item.value_list.map(value => value.image)]
-          })
           const allBannerPromise = product.model.bannerPicUrlList.map(item => utils.getImgRawSize(item.url))
           Promise.all(allBannerPromise).then(data => {
-            if (data.some(item => item.width !== item.height)) {
+            const arr = []
+            data.forEach(item => {
+              if (item.width !== item.height) {
+                arr.push(item.src)
+              }
+            })
+            if (idx + 1 === products.length && !arr.length) {
+              resolve({
+                result: false
+              })
+            } else {
               resolve({
                 result: true,
                 product,
-                src: data.find(item => item.width !== item.height).src
-              })
-            }
-            if (idx + 1 === products.length && data.every(item => item.width === item.height)) {
-              resolve({
-                result: false
+                srcs: arr
               })
             }
           })
@@ -1005,9 +1005,12 @@ export default {
         const resetProduct = this.productList.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
         this.setProduct(resetProduct)
         this.activityTab = 'carousel'
-        const src = promiseBannerImageResult.src
-        const image = document.getElementsByClassName(`needValid ${src}`)
-        image[0].classList.add('is-error-carousel')
+        const srcs = promiseBannerImageResult.srcs
+        for (var i = 0; i < srcs.length; i++) {
+          const src = srcs[i]
+          const image = document.getElementsByClassName(`needValid ${src}`)
+          image[0].classList.add('is-error-carousel')
+        }
         this.$nextTick(() => {
           this.$refs.SkuTable.$refs.form.validate((valid, object) => {
             let isError = document.getElementsByClassName('is-error-carousel')
