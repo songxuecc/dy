@@ -113,6 +113,7 @@ export default {
         const value = item.properties.map(property => {
           return {
             options: property.options,
+            id: property.id,
             name: property.name,
             value: property.tp_value
           }
