@@ -112,6 +112,7 @@ export default {
         const id = item.category.id
         const value = item.properties.map(property => {
           return {
+            options: property.options,
             name: property.name,
             value: property.tp_value
           }
@@ -140,9 +141,9 @@ export default {
       this.$set(this.arr, this.activeCategoryIndex, activeCategory)
       this.$nextTick(() => {
         this.chooseProperties(activeCategory, this.activeCategoryIndex)
+        this.activeCategoryIndex = undefined
+        this.activeData = undefined
       })
-      this.activeCategoryIndex = undefined
-      this.activeData = undefined
     },
     // 选择分类
     chooseCategory (data, idx) {
@@ -208,9 +209,9 @@ export default {
         this.visible = !this.visible
         this.$nextTick(() => {
           this.$refs.Properties && this.$refs.Properties.init(data, idx)
+          this.$set(this.arr, idx, data)
+          this.loading = false
         })
-        this.$set(this.arr, idx, data)
-        this.loading = false
       } else {
         return this.$message.warning('请点击左侧按钮，选择分类')
       }
