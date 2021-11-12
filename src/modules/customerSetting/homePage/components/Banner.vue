@@ -88,11 +88,11 @@ export default {
   background-size: cover;
 }
 .img2 {
-  background-image: url('../images/meizhe-duanxin.png');
+  background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-yx-712_370@2x.png');
   background-size: cover;
 }
 .img1 {
-  background-image: url('../images/meizhe-shouhou.png');
+  background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-banner-356_185%402x.png');
   background-size: cover;
 }
 
@@ -102,11 +102,11 @@ export default {
       background-size: cover;
     }
     .img2 {
-      background-image: url('../images/meizhe-duanxin-1680.png');
+      background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-yx-1784_740@2x.png');
       background-size: cover;
     }
     .img1 {
-      background-image: url('../images/meizhe-shouhou-1680.png');
+      background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-banner-892_370%402x.png');
       background-size: cover;
     }
 }
