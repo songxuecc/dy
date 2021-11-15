@@ -510,7 +510,11 @@ export default {
       this.fetchHhTaskPage()
     }
   },
-  mounted () {},
+  activated  () {
+    if (this.$route.query.editType) {
+      this.editType = this.$route.query.editType
+    }
+  },
   updated () {},
   methods: {
     ...mapActions(['handleSyncProducts']),

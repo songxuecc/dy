@@ -18,10 +18,10 @@ export default {
   data () {
     return {
       items: [
-        this.gotoSync,
+        this.gotoCycleProductsSelfPlanList,
+        this.gotoBatchEdit,
         this.gotoMeizheShouhou,
         this.gotoMeizheDuanxin
-
       ]
     }
   },
@@ -35,10 +35,16 @@ export default {
     gotoMeizheShouhou () {
       window.open('https://dx5.cn/45TfWd')
     },
-    gotoSync () {
-      this.$router.push({name: 'ProductsSync'})
+    gotoCycleProductsSelfPlanList () {
+      this.$router.push({name: 'cycleProductsSelf_PlanList'})
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '主页', '点击', `banner-ProductsSync`])
+        window._hmt.push(['_trackEvent', '主页', '点击', `banner-cycleProductsSelf_PlanList`])
+      }
+    },
+    gotoBatchEdit () {
+      this.$router.push({name: 'BatchEdit', query: {editType: 16}})
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '主页', '点击', `banner-BatchEdit`])
       }
     }
   }
@@ -84,29 +90,36 @@ export default {
 }
 
 .img0 {
+  background-image: url('../images/banner1.png');
+  background-size: cover;
+}
+.img1 {
   background-image: url('../images/banner2.png');
   background-size: cover;
 }
 .img2 {
-  background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-yx-712_370@2x.png');
+  background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-banner-356_185%402x.png');
   background-size: cover;
 }
-.img1 {
-  background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-banner-356_185%402x.png');
+.img3 {
+  background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-yx-712_370@2x.png');
   background-size: cover;
 }
 
 @media screen and (min-width:1680px) and (max-width:1920px){
     .img0 {
-      background-image: url('../images/banner2-1680.png');
-      background-size: cover;
-    }
-    .img2 {
-      background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-yx-1784_740@2x.png');
+      background-image: url('../images/banner1-1680.png');
       background-size: cover;
     }
     .img1 {
+      background-image: url('../images/banner2-1680.png');
+    }
+    .img2 {
       background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-banner-892_370%402x.png');
+      background-size: cover;
+    }
+    .img3 {
+      background-image: url('https://cdn.meideng.net/fuwu-page/partner/huhu/huhu-yx-1784_740@2x.png');
       background-size: cover;
     }
 }
