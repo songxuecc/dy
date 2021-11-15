@@ -5,8 +5,7 @@
         @click="goToHelp"
         @mouseover="changeFlexFootIndex($event,1)"
         @mouseout="changeFlexFootIndex($event,0)">
-      <div class="color-tip">教程</div>
-      <!-- <div :class="['column-name text', flexFootIndex === 1 ? 'text-in' : '']">打开</div> -->
+      <div class="color-tip pionter">教程</div>
     </div>
     <div
         :class="['float-button wechat-button',isDragging ?'move':'']"
@@ -16,9 +15,7 @@
       <div class="service-content" v-if="isServiceBoxShow" ref="ServiceBox">
         <service-box @serviceHandle="closeService"></service-box>
       </div>
-      <div class="color-tip" @click="handleClick">客服</div>
-      <!-- <div :class="['column-name text', flexFootIndex === 2 ? 'text-in' : '']"
-      @click="handleClick">联系</div> -->
+      <div class="color-tip pionter" @click="handleClick">客服</div>
     </div>
     <div
         :class="['float-button',isDragging ?'move':'']"
@@ -27,15 +24,13 @@
         @mouseover="changeFlexFootIndex($event,3)"
         @mouseout="changeFlexFootIndex($event,0)">
       <div class="color-tip" @click="goToComments">意见</div>
-      <!-- <div :class="['column-name text', flexFootIndex === 3 ? 'text-in' : '']">提出</div> -->
     </div>
     <div
         :class="['float-button collect-button',isDragging ?'move':'']"
         @click="addToFavorite"
         v-if="flexFootVisible"
       @mouseover="changeFlexFootIndex($event,5)" @mouseout="changeFlexFootIndex($event,0)">
-      <div class="color-tip">收藏</div>
-      <!-- <div :class="['column-name text', flexFootIndex === 5 ? 'text-in' : '']">点击</div> -->
+      <div class="color-tip pionter">收藏</div>
     </div>
     <div
         :class="['float-button nav-go-top',isDragging ?'move':'']"
@@ -45,7 +40,7 @@
       <hh-icon
             type="iconshanglajiantou"
             style="font-size:18px;" />
-      <div :class="['go-to-top text', flexFootIndex === 6 ? 'text-in' : '']">到顶部</div>
+      <div :class="['go-to-top text pionter', flexFootIndex === 6 ? 'text-in' : '']">到顶部</div>
     </div>
   </div>
 </template>
