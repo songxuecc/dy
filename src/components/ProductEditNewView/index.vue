@@ -94,9 +94,6 @@
                                       :label="getBrandName(item)"
                             ></el-option>
                           </el-select>
-                          <el-button type="text" @click="reloadBrandList" :loading="loadingBrandList">
-                              <hh-icon type="iconjiazai" style="font-size:12px;" v-if="!loadingBrandList"/>
-                          </el-button>
                           <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
                                   :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
                           >添加品牌</el-link>
@@ -113,7 +110,6 @@
                               :propertyBatchMapSelect="propertyBatchMap.get(product.model.tp_product_id)"
                               @applySelectBrandToSelection="applySelectBrandToSelection()"
                               @applyPropertiesToSelection="applyPropertiesToSelection"
-                              @reloadBrandList="reloadBrandList"
                               :forceUpdateKey="forceUpdatePropertySet"
                               ></property-set>
                         </el-form-item>
@@ -843,30 +839,6 @@ export default {
     },
     handlePropertyNameChange (pid, vid, ele) {
       this.updateNameOfSkuPropertyValueMap(pid, vid, ele['value'])
-    },
-    reloadBrandList () {
-      this.loadingBrandList = true
-      this.request('getShopBrandList', {}, data => {
-        this.loadingBrandList = false
-        this.shopBrandList = data
-        const attrList = this.product.model.attrList.map(item => {
-          if (item.name === '品牌') {
-            item.options = data.map(item => ({
-              value: `${item.id}`,
-              name: this.getBrandName(item)
-            }))
-            if (data.length) {
-              item.tp_value = `${data[0].id}`
-            }
-          }
-          return item
-        })
-        Object.assign(this.product.model, {attrList})
-        this.$message({
-          message: '刷新成功',
-          type: 'success'
-        })
-      })
     },
     onDeleteSku (pId, pVid) {
       this.deleteSkus(pId, pVid)

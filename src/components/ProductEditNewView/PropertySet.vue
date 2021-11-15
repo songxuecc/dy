@@ -90,7 +90,6 @@
             <span>
 
             <span v-if="item.name === '品牌'" class="ml-10 ">
-                <el-button type="text" @click="reloadBrandList" ><hh-icon type="iconjiazai" style="font-size:12px;"/>刷新</el-button>
                 <el-tooltip content="未搜到需要的品牌？点击申请" placement="top" >
                   <el-button type="text" @click="open(catId)" class="mr-10"> 添加品牌 </el-button>
                 </el-tooltip>
@@ -242,10 +241,6 @@ export default {
     }
   },
   methods: {
-    // 重置 品牌列表
-    reloadBrandList () {
-      this.$emit('reloadBrandList')
-    },
     // 验证
     validate () {
       return new Promise((resolve, reject) => {
