@@ -42,9 +42,6 @@
                                      :label="getBrandName(item)"
                           ></el-option>
                         </el-select>
-                        <el-button type="text" @click="reloadBrandList" :loading="loadingBrandList">
-                            <hh-icon type="iconjiazai" style="font-size:12px;"  v-if="!loadingBrandList"/>
-                        </el-button>
                         <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
                                  :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
                         >添加品牌</el-link>
@@ -637,13 +634,6 @@ export default {
             this.product.assign({brand_id: data.brand_id})
           }
         }
-      })
-    },
-    reloadBrandList () {
-      this.loadingBrandList = true
-      this.request('getShopBrandList', {}, data => {
-        this.shopBrandList = data
-        this.loadingBrandList = false
       })
     },
     onDeleteSku (pId, pVid) {

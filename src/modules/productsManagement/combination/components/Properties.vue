@@ -32,11 +32,40 @@
             @clear="handleClear(property.id)"
             :clearable="true"
           ></el-input>
+
+          <span v-else-if="property.type === 'select' && property.name === '品牌'" class="relative">
+            <el-select
+              filterable
+              remote
+              reserve-keyword
+              v-model="form[`${property.id}`]"
+              placeholder="请选择活动区域"
+              style="width: 220px"
+              popper-class="select-popper-properties"
+              :clearable="true"
+              :remote-method="(query) => remoteMethod(query,property,idx)"
+              @clear="handleClear(property.id)"
+              :loading="loading"
+            >
+              <el-option :label="option.name" :value="option.value" v-for="(option,idx) in property.options" :key="idx">
+                  {{option.name}}
+              </el-option>
+              <div class="info ml-20">更多品牌请搜索</div>
+            </el-select>
+            <hh-icon type="iconsousuo1" class=" search info"></hh-icon>
+            <span class="ml-10">
+              <el-tooltip content="未搜到需要的品牌？点击申请" placement="top" >
+                <el-button type="text" @click="open(category.id)" class="mr-10"> 添加品牌 </el-button>
+              </el-tooltip>
+            </span>
+          </span>
+
           <el-select
+            filterable
             v-model="form[`${property.id}`]"
             placeholder="请选择活动区域"
             style="width: 220px"
-            v-else-if="property.type === 'select'"
+            v-else-if="property.type === 'select' && property.name !== '品牌'"
             popper-class="select-popper-properties"
             :clearable="true"
             @clear="handleClear(property.id)"
@@ -71,6 +100,8 @@
 </template>
 
 <script>
+import servises from '@servises'
+
 export default {
   name: 'Properties',
   data () {
@@ -78,7 +109,8 @@ export default {
       form: {},
       originForm: {},
       properties: [],
-      category: {}
+      category: {},
+      loading: false
     }
   },
   computed: {
@@ -152,11 +184,33 @@ export default {
     },
     handleClear (id) {
       this.form[`${id}`] = ''
+    },
+    open (catId) {
+      window.open(`https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=${catId}`)
+    },
+    remoteMethod (query, item, index) {
+      if (query) {
+        this.loading = true
+        servises.productCategoryBrandList({
+          category_id: this.category.id,
+          keyword: query
+        }).then(data => {
+          this.$set(item, 'options', data)
+          this.loading = false
+        })
+      } else {
+        this.options = []
+      }
     }
   }
 }
 </script>
 <style lang="less" scoped>
+.search {
+  position: absolute;
+  right:84px;
+  top:2px;
+}
 .properties {
   width: 750px;
 }

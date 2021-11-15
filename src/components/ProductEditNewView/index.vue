@@ -94,9 +94,6 @@
                                       :label="getBrandName(item)"
                             ></el-option>
                           </el-select>
-                          <el-button type="text" @click="reloadBrandList" :loading="loadingBrandList">
-                              <hh-icon type="iconjiazai" style="font-size:12px;" v-if="!loadingBrandList"/>
-                          </el-button>
                           <el-link v-if="product.model.cat_id !== 0" type="primary" target="_blank" :underline="false" style="margin-left: 10px;"
                                   :href="'https://fxg.jinritemai.com/index.html#/ffa/goods/qualification/edit?type=2&cid=' + product.model.cat_id"
                           >添加品牌</el-link>
@@ -105,6 +102,7 @@
 
                         <el-form-item  label="抖音属性:">
                             <property-set
+                              v-if="product.model.cat_id !== -1"
                               @change="handlePropertyset"
                               :catId="product.model.cat_id"
                               :productModel="product.model.attrList"
@@ -112,7 +110,6 @@
                               :propertyBatchMapSelect="propertyBatchMap.get(product.model.tp_product_id)"
                               @applySelectBrandToSelection="applySelectBrandToSelection()"
                               @applyPropertiesToSelection="applyPropertiesToSelection"
-                              @reloadBrandList="reloadBrandList"
                               :forceUpdateKey="forceUpdatePropertySet"
                               ></property-set>
                         </el-form-item>
@@ -172,7 +169,7 @@
                       <el-badge :value="product.model.check_error_msg_static['3'].num" ></el-badge>
                   </el-tooltip>
                   </span>
-                  <div >
+                  <div>
                       <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
                       <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="45" :pictureUrlList="descPicUrlList" :multiple="true">
                       </pictures-upload-view>
@@ -843,30 +840,6 @@ export default {
     handlePropertyNameChange (pid, vid, ele) {
       this.updateNameOfSkuPropertyValueMap(pid, vid, ele['value'])
     },
-    reloadBrandList () {
-      this.loadingBrandList = true
-      this.request('getShopBrandList', {}, data => {
-        this.loadingBrandList = false
-        this.shopBrandList = data
-        const attrList = this.product.model.attrList.map(item => {
-          if (item.name === '品牌') {
-            item.options = data.map(item => ({
-              value: `${item.id}`,
-              name: this.getBrandName(item)
-            }))
-            if (data.length) {
-              item.tp_value = `${data[0].id}`
-            }
-          }
-          return item
-        })
-        Object.assign(this.product.model, {attrList})
-        this.$message({
-          message: '刷新成功',
-          type: 'success'
-        })
-      })
-    },
     onDeleteSku (pId, pVid) {
       this.deleteSkus(pId, pVid)
     },
@@ -899,24 +872,24 @@ export default {
     },
     promiseBannerImage (products) {
       return new Promise((resolve, reject) => {
-        console.log(products, 'products')
         products.forEach((product, idx) => {
-          let specImageList = []
-          product.model.sku_json.spec_list.forEach(item => {
-            specImageList = [...specImageList, ...item.value_list.map(value => value.image)]
-          })
           const allBannerPromise = product.model.bannerPicUrlList.map(item => utils.getImgRawSize(item.url))
           Promise.all(allBannerPromise).then(data => {
-            if (data.some(item => item.width !== item.height)) {
+            const arr = []
+            data.forEach(item => {
+              if (item.width !== item.height) {
+                arr.push(item.src)
+              }
+            })
+            if (idx + 1 === products.length && !arr.length) {
+              resolve({
+                result: false
+              })
+            } else {
               resolve({
                 result: true,
                 product,
-                src: data.find(item => item.width !== item.height).src
-              })
-            }
-            if (idx + 1 === products.length && data.every(item => item.width === item.height)) {
-              resolve({
-                result: false
+                srcs: arr
               })
             }
           })
@@ -1004,9 +977,12 @@ export default {
         const resetProduct = this.productList.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
         this.setProduct(resetProduct)
         this.activityTab = 'carousel'
-        const src = promiseBannerImageResult.src
-        const image = document.getElementsByClassName(`needValid ${src}`)
-        image[0].classList.add('is-error-carousel')
+        const srcs = promiseBannerImageResult.srcs
+        for (var i = 0; i < srcs.length; i++) {
+          const src = srcs[i]
+          const image = document.getElementsByClassName(`needValid ${src}`)
+          image[0].classList.add('is-error-carousel')
+        }
         this.$nextTick(() => {
           this.$refs.SkuTable.$refs.form.validate((valid, object) => {
             let isError = document.getElementsByClassName('is-error-carousel')

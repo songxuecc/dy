@@ -783,7 +783,7 @@ export default {
       // if ([...new Set(selectId)].length !== 1) {
       // }
 
-      if (this.curTPProduct.tp_product_id) {
+      if (this.curTPProduct.tp_product_id && this.$refs.productEditNewView) {
         this.$refs.productEditNewView
           .initList(this.curTPProduct, showProducts
             .filter(product => [

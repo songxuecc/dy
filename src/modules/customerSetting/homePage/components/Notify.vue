@@ -22,7 +22,6 @@
         </li>
       </ul>
     </vue-seamless-scroll>
-
     </div>
 
     <div class="wechat">
@@ -95,16 +94,18 @@ export default {
   computed: {
     ...mapGetters({
       isAuth: 'getIsAuth',
-      notificationList: 'getNotificationList'
-    }),
-    list () {
-      console.log(this.notificationList, 'notificationList')
-      return this.notificationList
-    }
+      isNew: 'getIsNew'
+    })
   },
   created () {
     this.requestNotification().then(data => {
-      this.listData = data.list.filter(item => item.type === 4).map(item => {
+      this.listData = data.list.filter(item => {
+        if (item.is_shield_new_user && this.isNew && item.type === 4) {
+          return false
+        } else {
+          return item.type === 4
+        }
+      }).map(item => {
         return ({
           ...item,
           data: item.start_time.substr(0, 10)

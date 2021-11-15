@@ -469,6 +469,9 @@ const hhgjAPIs = {
   },
   imageCreate: (params) => {
     return api.actionCreatorPostImage('/api/image/create', params)
+  },
+  productCategoryBrandList: (params) => {
+    return api.actionCreateGet('/api/product/category/brand/list', params)
   }
 
 }
