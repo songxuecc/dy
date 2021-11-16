@@ -921,7 +921,7 @@ export default {
             }
           }
           // 检验价格 & 库存
-          const skuList = product.model.sku_json.spec_price_list
+          const skuList = product.model.sku_json.spec_price_list || []
           if (!skuList.length) errorSkuTableMessage = 'sku为空，请设置sku'
           skuList
             .forEach(sku => {
