@@ -881,16 +881,20 @@ export default {
                 arr.push(item.src)
               }
             })
-            if (idx + 1 === products.length && !arr.length) {
-              resolve({
-                result: false
-              })
+            if (!arr.length && (idx + 1 !== products.length)) {
+
             } else {
-              resolve({
-                result: true,
-                product,
-                srcs: arr
-              })
+              if (!arr.length) {
+                resolve({
+                  result: false
+                })
+              } else {
+                resolve({
+                  result: true,
+                  product,
+                  srcs: arr
+                })
+              }
             }
           })
         })
@@ -977,13 +981,13 @@ export default {
         const resetProduct = this.productList.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
         this.setProduct(resetProduct)
         this.activityTab = 'carousel'
-        const srcs = promiseBannerImageResult.srcs
-        for (var i = 0; i < srcs.length; i++) {
-          const src = srcs[i]
-          const image = document.getElementsByClassName(`needValid ${src}`)
-          image[0].classList.add('is-error-carousel')
-        }
         this.$nextTick(() => {
+          const srcs = promiseBannerImageResult.srcs
+          for (var i = 0; i < srcs.length; i++) {
+            const src = srcs[i]
+            const image = document.getElementsByClassName(`needValid ${src}`)
+            image && image[0].classList.add('is-error-carousel')
+          }
           this.$refs.SkuTable.$refs.form.validate((valid, object) => {
             let isError = document.getElementsByClassName('is-error-carousel')
             if (isError && isError[0]) {
