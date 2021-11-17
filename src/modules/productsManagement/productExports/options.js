@@ -22,10 +22,12 @@ export const cityOptions1 = [
 export const cityOptions2 = [
   'skuID',
   'sku规格属性',
-  'sku价格',
   'sku编码',
   'sku现货或预售库存',
-  'sku阶梯库存'
+  'sku阶梯库存',
+  'sku价格',
+  '货源sku价格',
+  'sku价格/货源sku价格'
 ]
 
 export const exportFieldList = {
@@ -91,6 +93,12 @@ export const exportFieldList = {
   },
   'sku价格': {
     name: 'sku价格', key: 'sku_price'
+  },
+  '货源sku价格': {
+    name: '货源sku价格', key: 'origin_sku_price'
+  },
+  'sku价格/货源sku价格': {
+    'name': 'sku价格/货源sku价格', key: 'sku_price_rate'
   },
   'sku编码': {
     name: 'sku编码', key: 'sku_code'
