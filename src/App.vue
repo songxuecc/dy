@@ -73,6 +73,7 @@
             </template>
         </hh-dialog>
         <MeizheActivityModel />
+        <ModalNewUserActivity />
     </div>
 </template>
 
@@ -83,6 +84,7 @@ import GoodAssessDialog from '@/components/GoodAssessDialog'
 import ExpireNotifyDialog from '@/components/ExpireNotifyDialog'
 import NotificationListView from '@/components/NotificationListView.vue'
 import MeizheActivityModel from '@/components/MeizheActivityModel'
+import ModalNewUserActivity from '@/components/ModalNewUserActivity'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
@@ -138,7 +140,8 @@ export default {
     ExpireNotifyDialog,
     vueCustomScrollbar,
     NotificationListView,
-    MeizheActivityModel
+    MeizheActivityModel,
+    ModalNewUserActivity
   },
   computed: {
     ...mapState({
