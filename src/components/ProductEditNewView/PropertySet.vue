@@ -27,7 +27,7 @@
                 filterable
                 remote
                 reserve-keyword
-                placeholder="请选择品牌"
+                placeholder="请输入需要关联的品牌"
                 :remote-method="(query) => remoteMethod(query,item,index)"
                 @change="handleChange($event,item.name)"
                 :loading="loading">
@@ -37,7 +37,7 @@
                   :label="option.name"
                   :value="option.value">
                 </el-option>
-                <div class="info ml-20">更多品牌请搜索</div>
+                <div class="info ml-20">请输入关键词检索品牌</div>
               </el-select>
               <hh-icon type="iconsousuo1" class=" search info"></hh-icon>
             </span>

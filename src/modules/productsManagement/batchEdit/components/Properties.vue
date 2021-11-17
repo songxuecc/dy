@@ -38,7 +38,7 @@
               remote
               reserve-keyword
               v-model="form[`${property.id}`]"
-              placeholder="请选择活动区域"
+              placeholder="请输入需要关联的品牌"
               style="width: 220px"
               popper-class="select-popper-properties"
               :clearable="true"
@@ -49,7 +49,7 @@
               <el-option :label="option.name" :value="option.value" v-for="(option,idx) in property.options" :key="idx">
                   {{option.name}}
               </el-option>
-              <div class="info ml-10">更多品牌请搜索</div>
+              <div class="info ml-10">请输入关键词检索品牌</div>
             </el-select>
             <hh-icon type="iconsousuo1" class=" search info"></hh-icon>
             <span class="ml-10">
@@ -62,7 +62,7 @@
           <el-select
             filterable
             v-model="form[`${property.id}`]"
-            placeholder="请选择活动区域"
+            placeholder="请选择"
             style="width: 220px"
             v-else-if="property.type === 'select' && property.name !== '品牌'"
             popper-class="select-popper-properties"
