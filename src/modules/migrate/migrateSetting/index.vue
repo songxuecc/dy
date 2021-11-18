@@ -185,7 +185,7 @@
 
         <el-form-item  label="轮播图:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-banner" >
             <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
-            <p class="font-12 mb-10">若轮播图尺寸比例不满足1：1，系统自动剪裁<el-switch class="ml-5" v-model="is_auto_cut_banner" /></p>
+            <!-- <p class="font-12 mb-10">若轮播图尺寸比例不满足1：1，系统自动剪裁<el-switch class="ml-5" v-model="is_auto_cut_banner" /></p> -->
             <p class="font-12 mb-10">删除轮播首图<el-switch class="ml-5" v-model="is_cut_banner_first" /></p>
             <p class="font-12 mb-10">删除轮播尾图<el-switch class="ml-5" v-model="is_cut_banner_last" /></p>
             <p class="font-12"><span style="margin-right: 5px">随机打乱轮播图顺序 (首图不变位置</span><el-checkbox v-model="is_keep_main_banner"></el-checkbox>)<el-switch class="ml-5" v-model="is_mix_banner" /></p>
