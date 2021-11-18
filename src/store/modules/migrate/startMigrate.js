@@ -33,7 +33,8 @@ export default assign(tableData, {
     },
     async getCaptureShopCompleteList ({commit, state, dispatch}, payload) {
       try {
-        const data = await Api.hhgjAPIs.getCaptureShopCompleteList()
+        // const data = await Api.hhgjAPIs.getCaptureShopCompleteList()
+        const data = []
         // let data = [{'tp_name': '\u6296\u97f3', 'capture_id': '12461027', 'shop_name': '\u58f9\u53f7\u7403\u5bb6\u5c45\u4e13\u8425\u5e97'}, {'tp_name': '\u6296\u97f3', 'capture_id': '12461027', 'shop_name': '\u58f9\u53f7\u7403\u5bb6\u5c45\u4e13\u8425\u5e97'}, {'capture_id': '12482483', 'shop_name': '\u5357\u96c5\u96c6  \u539f\u521b', 'tp_name': '\u6dd8\u5b9d'}]
         if (data.length) {
           data.forEach(item => {
