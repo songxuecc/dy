@@ -472,8 +472,13 @@ const hhgjAPIs = {
   },
   productCategoryBrandList: (params) => {
     return api.actionCreateGet('/api/product/category/brand/list', params)
+  },
+  userCatAttLrist: (params) => {
+    return api.actionCreateGet('/api/user/cat_attr/list', params)
+  },
+  userCatAttrCreate: (params) => {
+    return api.actionCreatorPost('/api/user/cat_attr/create', params)
   }
-
 }
 
 export default hhgjAPIs
