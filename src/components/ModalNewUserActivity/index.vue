@@ -4,7 +4,6 @@
         <el-dialog
             :visible.sync="visible"
             width="579px"
-            @closed="close"
             :close-on-click-modal="false"
         >
             <div class="relative">
