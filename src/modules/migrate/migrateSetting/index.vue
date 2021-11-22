@@ -137,18 +137,18 @@
             <p class="font-12 mb-10 mt-5">轮播图+详情图+规格图片超过50张自动删除详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
             <p class="font-12 mb-10">删除详情首图<el-switch class="ml-5" v-model="is_cut_detail_first" /></p>
             <p class="font-12 mb-10">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
-            <p class="font-12 mb-10">如果是天猫商品，优先抓天猫 &nbsp;
-              <el-radio-group v-model="is_tmall_pc_first">
-                <el-radio :label="1">电脑端详情图</el-radio>
-                <el-radio :label="0">移动端详情图</el-radio>
-              </el-radio-group>
-            </p>
-            <p class="font-12 mb-10">如果是淘宝商品，优先抓淘宝 &nbsp;
-              <el-radio-group v-model="is_taobao_pc_first">
-                <el-radio :label="1">电脑端详情图</el-radio>
-                <el-radio :label="0">移动端详情图</el-radio>
-              </el-radio-group>
-            </p>
+<!--            <p class="font-12 mb-10">如果是天猫商品，优先抓天猫 &nbsp;-->
+<!--              <el-radio-group v-model="is_tmall_pc_first">-->
+<!--                <el-radio :label="1">电脑端详情图</el-radio>-->
+<!--                <el-radio :label="0">移动端详情图</el-radio>-->
+<!--              </el-radio-group>-->
+<!--            </p>-->
+<!--            <p class="font-12 mb-10">如果是淘宝商品，优先抓淘宝 &nbsp;-->
+<!--              <el-radio-group v-model="is_taobao_pc_first">-->
+<!--                <el-radio :label="1">电脑端详情图</el-radio>-->
+<!--                <el-radio :label="0">移动端详情图</el-radio>-->
+<!--              </el-radio-group>-->
+<!--            </p>-->
             <p class="font-12" style="display: flex;align-items: center;">批量增加详情首图
             <el-upload
               class="migrateSetting-avatar-uploader"
