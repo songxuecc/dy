@@ -60,20 +60,27 @@
             </span>
           </span>
 
-          <el-select
-            filterable
-            v-model="form[`${property.id}`]"
-            placeholder="请选择"
-            style="width: 220px"
-            v-else-if="property.type === 'select' && property.name !== '品牌'"
-            popper-class="select-popper-properties"
-            :clearable="true"
-            @clear="handleClear(property.id)"
-          >
-            <el-option :label="option.name" :value="option.value" v-for="(option,idx) in property.options" :key="idx" class="left dropdown">
-                {{option.name}}
-            </el-option>
-          </el-select>
+          <span
+              class="relative"
+              v-else-if="property.type === 'select' && property.name !== '品牌'"
+            >
+            <el-select
+              filterable
+              v-model="form[`${property.id}`]"
+              :placeholder="`请输入需要关联的${property.name}`"
+              style="width: 220px"
+              popper-class="select-popper-properties"
+              :clearable="true"
+              @clear="handleClear(property.id)"
+            >
+              <el-option :label="option.name" :value="option.value" v-for="(option,idx) in property.options" :key="idx" class="left dropdown">
+                  {{option.name}}
+              </el-option>
+              <div class="info ml-10">请输入关键词检索{{property.name}}</div>
+            </el-select>
+            <hh-icon type="iconsousuo1" class=" searchSelect info"></hh-icon>
+          </span>
+
           <el-checkbox-group
             v-model="form[`${property.id}`]"
             style="width: 220px"
@@ -211,6 +218,11 @@ export default {
   right:84px;
   top:2px;
 }
+.searchSelect {
+  position: absolute;
+  right:10px;
+  top:2px;
+}
 .properties {
   width: 750px;
 }
@@ -229,6 +241,9 @@ export default {
       font-size: 12px;
       padding: 0 10px;
     }
+    /deep/.el-input__suffix-inner{
+  display: none;
+}
 </style>
 <style lang="less">
 .select-popper-properties {
