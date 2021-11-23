@@ -36,7 +36,6 @@
         <div class="color-767989 item" @click="go({name:'ProductExports'},'商品管理-商品导出')">
             <div class="icon-content">
               <hh-icon type="iconshangpindaochuxuanzhong" class="icon"></hh-icon>
-              <!-- <img :src="hot" class="hot ml-5"></img> -->
             </div>
             <h1 class="font-14 mb-5">商品导出</h1>
             <ul  class="text">
@@ -45,26 +44,24 @@
             <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
         </div>
 
-        <div class="color-767989 item" @click="go({name:'ProductsSync'},'商品管理-商品源同步')">
+        <div class="color-767989 item" @click="go({name:'cycleProductsSelf_PlanList'},'商品管理-定时上下架')">
             <div class="icon-content">
-              <hh-icon type="iconshangpinyuantongbuxuanzhong" class="icon"></hh-icon>
-              <!-- <img :src="hot" class="hot ml-5"></img> -->
+              <hh-icon type="iconquanbushangpinxuanzhong2" class="icon"></hh-icon>
             </div>
-            <h1 class="font-14 mb-5">商品源同步</h1>
+            <h1 class="font-14 mb-5">定时上下架</h1>
             <ul class="text">
-              <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
+              <li class="font-12">提前设置上下架类型及上下架时间，系统会根据你的设置按时进行上下架操作</li>
             </ul>
             <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
         </div>
 
-        <div class="color-767989 item" @click="go({name:'AllProducts'},'商品管理-全部商品')">
+        <div class="color-767989 item" @click="go({name:'ProductsSync'},'商品管理-商品源同步')">
             <div class="icon-content">
-              <hh-icon type="iconquanbushangpinxuanzhong2" class="icon"></hh-icon>
-              <!-- <img :src="hot" class="hot ml-5"></img> -->
+              <hh-icon type="iconshangpinyuantongbuxuanzhong" class="icon"></hh-icon>
             </div>
-            <h1 class="font-14 mb-5">全部商品</h1>
+            <h1 class="font-14 mb-5">商品源同步</h1>
             <ul class="text">
-              <li class="font-12">支持查看修改商品</li>
+              <li class="font-12">当货源方的价格、库存、标题、上下架信息发生变化时，系统将检测变化并做出修改。</li>
             </ul>
             <hh-icon type="iconqucaozuoxuanzhong" class="btn"></hh-icon>
         </div>

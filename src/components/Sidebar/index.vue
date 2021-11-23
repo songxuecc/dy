@@ -131,6 +131,14 @@
 <!--            <el-menu-item index="/customerSetting/woda">-->
 <!--              <span slot="title">打单发货</span>-->
 <!--            </el-menu-item>-->
+            <el-menu-item index="" @click="openWoDa">
+              <div slot="title" class="flex align-c">
+                <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
+                <span class="relative">我打_批量打单发货
+                  <span  class="badge bold">新店3个月免费</span>
+                </span>
+              </div>
+            </el-menu-item>
             <el-menu-item index="" @click="openMeiZhe">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
@@ -188,6 +196,9 @@ export default {
     },
     openPdd () {
       window.open('https://pdd.huhuguanjia.com/?from=douyin')
+    },
+    openWoDa () {
+      window.open('https://s.woda.com/E2Z3N')
     },
     openMeiZhe () {
       window.open('https://dx5.cn/45Uosn')
