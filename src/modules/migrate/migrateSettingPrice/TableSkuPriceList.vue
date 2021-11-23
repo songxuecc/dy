@@ -57,7 +57,7 @@
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.origin_price_diff"
-                @input="handleSetTemplate($event,'origin_price_diff')"
+                @input="handleSkuPriceChange($event,'origin_price_diff')"
                 size="mini"
                 class="price-sku-input"
               />
@@ -69,7 +69,7 @@
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.group_price_rate"
-                @input="handleSetTemplate($event,'group_price_rate')"
+                @input="handleSkuPriceChange($event,'group_price_rate')"
                 size="mini"
                 class="price-sku-input"
               />
@@ -81,7 +81,7 @@
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.group_price_diff"
-                @input="handleSetTemplate($event,'group_price_diff')"
+                @input="handleSkuPriceChange($event,'group_price_diff')"
                 size="mini"
                 class="price-sku-input"
               />
@@ -89,7 +89,8 @@
           </div>
         </template>
         <template slot-scope="scope">
-          <span class="price">{{ scope.row.group_price_range }}</span>
+          <!-- <span class="price">{{ scope.row.group_price_range }}</span> -->
+          <span class="price">{{getGroupPriceRange(scope.row)}}</span>
           <hh-icon
             type="iconbianji"
             style="font-size: 12px"
@@ -97,7 +98,7 @@
             @click="showSkuPrice(scope.row)"
             :class="[tableDataErrorMsg[scope.$index].group_price_range_error ? 'warn':'']"
           />
-          <span class="info tutorials" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</span>
+          <span class="info tutorials" v-if="getSelectInfo(scope.row)">{{getSelectInfo(scope.row)}}</span>
           <span class="fail absolute" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</span>
         </template>
       </el-table-column>
@@ -107,7 +108,7 @@
           <el-radio-group
             class="font-14"
             v-model.number="template.model.is_sale_price_show_max"
-            @change="handleSetTemplate($event,'is_sale_price_show_max')"
+            @change="handleDiscountChange($event,'is_sale_price_show_max')"
             size="mini"
           >
             <el-radio-button label="0">最低价</el-radio-button>
@@ -125,7 +126,7 @@
                 @clear="handleClearDiscountPrice(scope.row.tp_product_id)"
                 :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
               />
-              <span class="tutorials" v-if="scope.row.custome_discount_price">已编辑</span>
+              <span class="tutorials" v-if="scope.row.custom_setting_discount_price">已编辑</span>
             </div>
             <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
         </template>
@@ -148,7 +149,7 @@
               :debounce="500"
               style="width: 55px"
               :value="template.model.price_rate"
-              @input="handleSetTemplate($event,'price_rate')"
+              @input="handleMarketPriceChange($event,'price_rate')"
               size="mini"
               class="price-sku-input"
             />
@@ -158,7 +159,7 @@
               :debounce="500"
               style="width: 55px"
               :value="template.model.price_diff"
-              @input="handleSetTemplate($event,'price_diff')"
+              @input="handleMarketPriceChange($event,'price_diff')"
               size="mini"
               class="price-sku-input"
             />
@@ -175,7 +176,7 @@
               @clear="handleClearMarketPrice(scope.row.tp_product_id)"
               :class="[tableDataErrorMsg[scope.$index].market_price_error ? 'warn':'']"
             />
-            <span class="tutorials"  v-if="scope.row.custome_market_price">已编辑</span>
+            <span class="tutorials"  v-if="scope.row.custom_setting_market_price">已编辑</span>
           </div>
           <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].market_price_error">{{tableDataErrorMsg[scope.$index].market_price_error}}</p>
         </template>
@@ -283,14 +284,16 @@ export default {
   methods: {
     ...mapActions('migrate/migrateSettingPrice', [
       'getTPProductByIds',
-      'formatTableData',
-      'marketPriceChange',
-      'singleSkuPriceChange',
-      'discountPriceChange',
+      'unitChange',
+      'marketCustomeChange',
+      'skuPriceCustomeChange',
+      'discountChange',
+      'discountCustomeChange',
       'clearMarketPrice',
       'clearDiscountPrice',
       'parsetIntFloat',
-      'updateTemplate',
+      'marketPriceChange',
+      'skuPriceChange',
       'deleteRow'
     ]),
     ...mapActions('migrate/migrateSettingTemplate', [
@@ -298,15 +301,13 @@ export default {
       'saveTempTemplate'
     ]),
     toFixFloat (unit) {
-      this.formatTableData({
-        tableData: this.tableData,
-        template: this.template,
+      this.unitChange({
         unit
       })
     },
     // 设置划线价
     handleMarketPrice (price, id, oldValue) {
-      this.marketPriceChange({
+      this.marketCustomeChange({
         price,
         id
       })
@@ -325,7 +326,7 @@ export default {
     },
     // 设置售卖价
     handleDiscountPrice (price, id) {
-      this.discountPriceChange({
+      this.discountCustomeChange({
         price,
         id
       })
@@ -345,8 +346,8 @@ export default {
       this.selectTpProductSkuJson = selectTpProduct.sku_json
       this.selectTpProductSkuId = selectTpProduct.tp_product_id
       this.marketPrice = selectTpProduct.market_price
-      if (selectTpProduct.selectPriceType) {
-        this.selectTpProductSkuPriceStting = {...selectTpProduct.selectPriceArithmetic, unit: this.unit}
+      if (selectTpProduct.custom_setting_unit) {
+        this.selectTpProductSkuPriceStting = {...selectTpProduct.custom_setting_unit, unit: this.unit}
       } else {
         this.selectTpProductSkuPriceStting = {
           subtraction1: this.template.model.origin_price_diff,
@@ -359,19 +360,53 @@ export default {
       }
       this.dialogSkuPriceVisible = true
     },
-    handleSureBatchEdut (arithmetic) {
+    handleSureBatchEdut (arithmetic, skuData) {
       this.closeSkuPriceListView()
-      this.singleSkuPriceChange({
+      this.skuPriceCustomeChange({
         id: this.selectTpProductSkuId,
-        arithmetic
+        arithmetic,
+        skuData
       })
     },
-    handleSetTemplate (value, key) {
+    handleSkuPriceChange (value, key) {
       this.template.model[key] = value
-      this.updateTemplate({
+      this.skuPriceChange({
         template: this.template,
         key
       })
+    },
+    handleDiscountChange (value, key) {
+      this.template.model[key] = value
+      this.discountChange({
+        template: this.template,
+        key
+      })
+    },
+    handleMarketPriceChange (value, key) {
+      this.template.model[key] = value
+      this.marketPriceChange({
+        template: this.template,
+        key
+      })
+    },
+    getGroupPriceRange (row) {
+      const skuMap = row.sku_json.sku_map
+      console.log(skuMap, 'skuMap')
+      const skuPricesValues = Object.values(skuMap)
+        .map(sku => sku.sku_price)
+        .sort((a, b) => a - b)
+      const minSkuPrices = skuPricesValues[0]
+      const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
+      return minSkuPrices === maxSkuPrices ? maxSkuPrices : `${minSkuPrices}~${maxSkuPrices}`
+    },
+    getSelectInfo (row) {
+      let msg = ''
+      const skuMap = row.sku_json.sku_map
+      const skuEditTypes = Object.values(skuMap).map(sku => sku.editType)
+      if (skuEditTypes.includes(1) || skuEditTypes.includes(2)) {
+        msg = '已编辑'
+      }
+      return msg
     },
     // 删除
     handleDelete (row) {

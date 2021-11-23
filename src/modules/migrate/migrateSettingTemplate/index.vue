@@ -284,7 +284,6 @@ export default {
           return false
         }
 
-        console.log(this.customPrices, 'this.customPrices')
         let params = {
           template: JSON.stringify(formatParmas),
           migration_type: this.migrate_type,

@@ -132,6 +132,7 @@ import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
 import utils from '@/common/utils'
+import isEqual from 'lodash/isEqual'
 
 function financial (unit) {
   const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
@@ -156,34 +157,50 @@ export default {
       textPrice: this.skuPriceStting.textPrice ? evalPrice(this.skuPriceStting.textPrice) : '',
       unit: this.skuPriceStting.unit || 100,
       hasRender: false,
-      tableData: []
+      tableData: [],
+      originSkuPriceStting: {}
     }
   },
   watch: {
     propsData: {
       handler: function (n) {
-        const {skuData, unit} = n
+        const {skuData, unit, skuPriceStting} = n
+        this.originSkuPriceStting = skuPriceStting
         const skuMap = skuData.sku_map
         const skuPropertyMap = skuData.sku_property_map
         const skuPropertyValueMap = skuData.sku_property_value_map
+        console.log(skuMap, 'skuMap')
+
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           let currentColumnData = cloneDeep(skuMap[key])
+          currentColumnData.custom_key = key
+          const originPriceDiff = this.template.subtraction1
+          const groupPriceRate = this.template.subtraction2
+          const groupPriceDiff = this.template.subtraction3
+          const textPrice = this.template.textPrice
           const evalPrice = financial(unit)
-          // 根据 定制公式重设价格
-          if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
-            const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
-            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_price))
-          } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
-            currentColumnData.sku_price = evalPrice(this.textPrice)
+          // 数据回显
+          if (
+            Number(this.radio) === 1 &&
+            currentColumnData.custom_setting_unit &&
+            utils.isNumber(this.subtraction1) &&
+            utils.isNumber(this.subtraction2) &&
+            utils.isNumber(this.subtraction3)
+          ) {
+            const evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff).toFixed(2)
+            console.log(currentColumnData.origin_promo_price, 'currentColumnData.origin_promo_price')
+            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_promo_price))
           }
-          // 根据 自定义价格
-          if (currentColumnData.custom_price && !this.hasRender) {
-            currentColumnData.sku_price = evalPrice(currentColumnData.custom_price)
+          if (
+            Number(this.radio) === 2 &&
+            currentColumnData.custom_setting_unit &&
+            utils.isNumber(textPrice) &&
+            textPrice
+          ) {
+            currentColumnData.sku_price = evalPrice(textPrice)
           }
-          if (this.skuPriceStting.tabledata) {
-            currentColumnData = this.skuPriceStting.tabledata.find(item => item.custome_key === key)
-          }
+
           // 规格设置
           let column = {}
           // 默认规格设置
@@ -209,41 +226,64 @@ export default {
       immediate: true
     },
     template (n) {
-      const unit = this.unit
+      const unit = n.unit
       const evalPrice = financial(unit)
-      let number1 = n.subtraction1
-      let number2 = n.subtraction2
-      let number3 = n.subtraction3
+      let originPriceDiff = n.subtraction1
+      let groupPriceRate = n.subtraction2
+      let groupPriceDiff = n.subtraction3
+      let textPrice = n.textPrice
       // 添加默认 sku公式值
       if (!utils.isNumber(n.subtraction1)) {
-        number1 = 0
+        originPriceDiff = 0
       }
       if (!utils.isNumber(n.subtraction2)) {
-        number2 = 0
+        groupPriceRate = 0
       }
       if (!utils.isNumber(n.subtraction3)) {
-        number3 = 0
+        groupPriceDiff = 0
       }
-      if (Number(n.radio) === 1 && utils.isNumber(number1) && utils.isNumber(number2) && utils.isNumber(number3)) {
-        const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, number1), number2), 100), number3)
+      console.log(isEqual(n, this.originSkuPriceStting))
+      if (
+        Number(n.radio) === 1 &&
+         utils.isNumber(originPriceDiff) &&
+         utils.isNumber(groupPriceRate) &&
+         utils.isNumber(groupPriceDiff) &&
+         !isEqual(n, this.originSkuPriceStting)
+      ) {
+        const evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff).toFixed(2)
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
-          delete nextItem.custom_price
-          nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_price))
+          // item.custom_setting_unit = this.template
+          // item.custom_setting_sku_price = false
+          nextItem.editType = 1
+          console.log(nextItem.origin_promo_price, 'nextItem.origin_promo_price')
+          nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_promo_price))
           this.$set(this.tableData, idx, nextItem)
           return nextItem
         })
+        this.custom_setting_unit = true
         this.tableData = tableData
-      } else if (Number(n.radio) === 2 && utils.isNumber(n.textPrice) && evalPrice(n.textPrice) > 0.01 && evalPrice(n.textPrice) < 9999999.99) {
+      }
+      if (
+        Number(n.radio) === 2 &&
+          utils.isNumber(textPrice) &&
+          evalPrice(textPrice) > 0.01 &&
+          evalPrice(textPrice) < 9999999.99 &&
+          !isEqual(n, this.originSkuPriceStting)
+      ) {
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
-          delete nextItem.custom_price
-          nextItem.sku_price = evalPrice(n.textPrice)
+          // item.custom_setting_unit = this.template
+          // item.custom_setting_sku_price = false
+          nextItem.editType = 1
+          nextItem.sku_price = evalPrice(textPrice)
           this.$set(this.tableData, idx, nextItem)
           return nextItem
         })
+        this.custom_setting_unit = true
         this.tableData = tableData
       }
+      console.log(this.tableData, 'this.tableData')
     }
   },
   computed: {
@@ -253,13 +293,16 @@ export default {
         subtraction1: this.subtraction1,
         subtraction2: this.subtraction2,
         subtraction3: this.subtraction3,
-        textPrice: this.textPrice
+        textPrice: this.textPrice,
+        unit: this.unit
       }
     },
     propsData () {
       const skuData = this.skuData
       const unit = this.skuPriceStting.unit
-      return {skuData, unit}
+      const skuPriceStting = this.skuPriceStting
+      console.log(this.skuPriceStting, 'this.skuPriceStting')
+      return {skuData, unit, skuPriceStting}
     },
     skuPropertyList () {
       const skuPropertyMap = this.skuData.sku_property_map
@@ -337,18 +380,16 @@ export default {
     handleSkuChange (price, index, columnData) {
       const tableData = this.tableData.map((item, idx) => {
         if (idx !== index) return item
-        this.$set(this.tableData, index, {
+        const nextItem = {
           ...columnData,
+          // custom_setting_sku_price: true,
           sku_price: price,
-          // 自定义价格
-          custom_price: price
-        })
-        return {
-          ...columnData,
-          sku_price: price,
-          custom_price: price
+          editType: 2
         }
+        this.$set(this.tableData, index, nextItem)
+        return nextItem
       })
+      this.custom_setting_unit = false
       this.tableData = tableData
     },
     handleClearSkuPrice (index) {
@@ -396,15 +437,17 @@ export default {
       if (!utils.isNumber(this.subtraction3)) {
         this.subtraction3 = 0
       }
-
-      this.$emit('handleSureBatchEdut', {
-        radio: this.radio,
-        subtraction1: this.subtraction1,
-        subtraction2: this.subtraction2,
-        subtraction3: this.subtraction3,
-        textPrice: this.textPrice,
-        tableData: this.tableData
-      })
+      console.log(this.tableData, 'this.tableData')
+      this.$emit('handleSureBatchEdut',
+        {
+          radio: this.radio,
+          subtraction1: this.subtraction1,
+          subtraction2: this.subtraction2,
+          subtraction3: this.subtraction3,
+          textPrice: this.textPrice
+        },
+        this.tableData
+      )
     },
     handleTextPrice (value) {
       if (!utils.isNumber(value)) {
