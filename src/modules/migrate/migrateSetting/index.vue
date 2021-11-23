@@ -660,9 +660,11 @@ export default {
       const newImageBlackWords = [...imageBlackWords].filter(
         (item) => !originImageBlackWords.has(item)
       )
+
       // 属性设置
       const diffPropertiesMap = this.propertiesMap.filter(item => item.name && item.value)
       const isEqualPropertiesMap = isEqual(diffPropertiesMap, this.originPropertiesMap)
+      console.log(isEqualPropertiesMap, 'isEqualPropertiesMap')
       // 分类
       return (
         isEqualSetting &&
@@ -966,10 +968,18 @@ export default {
             const updateSetting = !isEqualSetting
               ? Api.hhgjAPIs.updateMigrateSetting(productParams)
               : Promise.resolve(this.originMigrateSetting)
+            const diffPropertiesMap = this.propertiesMap.filter(item => item.name && item.value)
+            const isEqualPropertiesMap = isEqual(diffPropertiesMap, this.originPropertiesMap)
+            const updateProperties = !isEqualPropertiesMap
+              ? servises.userCatAttrCreate({
+                attr_list: JSON.stringify(diffPropertiesMap)
+              })
+              : Promise.resolve(this.originMigrateSetting)
             await Promise.all([
               updateBlackWords,
               updateImageBlackWords,
-              updateSetting
+              updateSetting,
+              updateProperties
             ])
             this.$message.success('保存成功')
             this.createBlackWordsLoading = false
@@ -1145,7 +1155,7 @@ export default {
         })
         this.setScrollTop()
         console.log(this.propertiesMap, 'this.propertiesMap ')
-        this.originPropertiesMap = this.propertiesMap
+        this.originPropertiesMap = cloneDeep(this.propertiesMap)
         this.loadingPropertiesMap = false
         // this.canSubmitProperties = false
       } catch (err) {
