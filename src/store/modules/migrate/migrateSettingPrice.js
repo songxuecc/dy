@@ -603,6 +603,12 @@ export default {
             const skuValue = skuMap[key]
             if (!skuDiffObj[key]) skuDiffObj[key] = {}
             skuDiffObj[key].promo_price = utils.yuanToFen(skuValue.sku_price)
+            // const evalPrice = financial(state.unit)
+            // skuDiffObj[key].promo_price = utils.yuanToFen(evalPrice(skuValue.sku_price))
+            // if (skuValue.custom_price) {
+            //   skuDiffObj[key].promo_price = utils.yuanToFen(skuValue.custom_price)
+            // }
+            console.log(skuValue.sku_price, 'skuValue.sku_price ')
           })
           dicCustomPrices[id].sku = skuDiffObj
           // 保存用户的自定义价格设置
@@ -632,7 +638,11 @@ export default {
         Object.keys(skuMap).forEach(key => {
           const skuValue = skuMap[key]
           if (!skuDiffObj[key]) skuDiffObj[key] = {}
-          skuDiffObj[key].promo_price = utils.yuanToFen(skuValue.sku_price)
+          const evalPrice = financial(state.unit)
+          skuDiffObj[key].promo_price = utils.yuanToFen(evalPrice(skuValue.sku_price))
+          if (skuValue.custom_price) {
+            skuDiffObj[key].promo_price = utils.yuanToFen(skuValue.custom_price)
+          }
         })
         dicCustomPrices[id].sku = skuDiffObj
 
