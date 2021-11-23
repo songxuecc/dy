@@ -43,23 +43,29 @@
             </span>
 
             <!-- 选择框为非品牌 -->
-            <el-select
-                clearable
-                filterable
-                @clear="handleClear(item.name)"
-                @change="handleChange($event,item.name)"
-                :style="{width: '400px'}"
-                :placeholder="`请选择${item.name}`"
-                v-model="model[item.name]"
-                v-if="(item.options.length && item.name !== '品牌') && item.type === 'select' "
-                :default-first-option="true">
-                <el-option
-                    v-for="(option,index) in item.options"
-                    :key="index"
-                    :label="option.name"
-                    :value="option.value">
-                </el-option>
-            </el-select>
+            <span
+              class="relative"
+              v-if="(item.options.length && item.name !== '品牌') && item.type === 'select' "
+            >
+              <el-select
+                  clearable
+                  filterable
+                  @clear="handleClear(item.name)"
+                  @change="handleChange($event,item.name)"
+                  :style="{width: '400px'}"
+                  :placeholder="`请输入需要关联的${item.name}`"
+                  v-model="model[item.name]"
+                  :default-first-option="true">
+                  <el-option
+                      v-for="(option,index) in item.options"
+                      :key="index"
+                      :label="option.name"
+                      :value="option.value">
+                  </el-option>
+                  <div class="info ml-10">请输入关键词检索{{item.name}}</div>
+              </el-select>
+              <hh-icon type="iconsousuo1" class=" search info"></hh-icon>
+            </span>
             <el-checkbox-group
                 @change="handleCheckboxChange($event,item.name)"
                 :style="{width: item.name !== '品牌' ? '400px' : '190px',display:'inline-block'}"
@@ -382,5 +388,9 @@ export default {
   position: absolute;
   right:10px;
   top:2px;
+}
+
+/deep/.el-input__suffix-inner{
+  display: none;
 }
 </style>
