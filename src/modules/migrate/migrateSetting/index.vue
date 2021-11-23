@@ -77,10 +77,10 @@
                 v-if="propertiesMap.length &&  propertiesMap.length > 2 && !propertiesVisible"
                 @click="togglePropertiesVisible"><i class="el-icon-arrow-down"></i>展开</span>
               <el-popover
-                width="400"
+                width="600"
                 trigger="hover">
-                <img style="width:400px"
-                src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/717803240fbd43868db89dddd4f2a540~tplv-k3u1fbpfcp-watermark.image" />
+                <img style="width:600px"
+                src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dde8340598824c24be244968edab366f~tplv-k3u1fbpfcp-watermark.image?" />
                 <span class="pointer flex align-c" slot="reference" style="margin-left:30px">
                   <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                   <span class="info">填写帮助</span>
@@ -968,7 +968,12 @@ export default {
             const updateSetting = !isEqualSetting
               ? Api.hhgjAPIs.updateMigrateSetting(productParams)
               : Promise.resolve(this.originMigrateSetting)
-            const diffPropertiesMap = this.propertiesMap.filter(item => item.name && item.value)
+            const diffPropertiesMap = this.propertiesMap
+              .filter(item => item.name && item.value)
+              .map(item => {
+                item.is_open = Number(item.is_open)
+                return item
+              })
             const isEqualPropertiesMap = isEqual(diffPropertiesMap, this.originPropertiesMap)
             const updateProperties = !isEqualPropertiesMap
               ? servises.userCatAttrCreate({
