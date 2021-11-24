@@ -89,8 +89,8 @@
             </div>
             <div class="font-12 mb-5" v-for="(properties,idx) in showPropertiesMap" :key="properties.id" v-if="propertiesMap.length">
               当属性维度是
-              <el-input size="mini" style="width:150px" @focus="changeProperties" class="ml-5 mr-5" placeholder="请填写" v-model="properties.name"></el-input> 时，对应的属性值是
-              <el-input  size="mini"  style="width:150px" @focus="changeProperties" class="ml-5 mr-5" placeholder="请填写" v-model="properties.value"></el-input>
+              <el-input size="mini" style="width:150px" @change="changeProperties" class="ml-5 mr-5" placeholder="请填写,如产地" v-model="properties.name"></el-input> 时，对应的属性值是
+              <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" v-model="properties.value"></el-input>
               <el-switch class="ml-5"  size="mini" v-model="properties.is_open"></el-switch>
               <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)">删除</el-button>
             </div>
@@ -929,6 +929,10 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
       }
+      const names = this.propertiesMap.map(item => item.name)
+      if ([...new Set(names)].length !== names.length) {
+        return this.$message.warning('属性维度重复,请重新填写')
+      }
       const product = this.getFormatSettings()
       this.$refs.template.validate(async (valid) => {
         if (valid) {
@@ -1263,42 +1267,16 @@ export default {
         is_open: true
       }
       this.propertiesMap.push(originPropertied)
-      this.canSubmitProperties = true
     },
     async deleteProperties (properties, idx) {
-      console.log(properties, 'properties')
       this.propertiesMap.splice(idx, 1)
-      this.canSubmitProperties = true
     },
-    changeProperties () {
-      this.canSubmitProperties = true
+    changeProperties (value) {
+      const names = this.propertiesMap.map(item => item.name)
+      if ([...new Set(names)].length !== names.length) {
+        this.$message.warning('属性维度重复,请重新填写')
+      }
     },
-    async updateProperties () {
-      this.canSubmitProperties = false
-      this.propertiesVisible = false
-      console.log(this.canSubmitProperties, 'updateProperties')
-      // try {
-      //   await Api.hhgjAPIs.userPropertiesMapCreate({
-      //     attr_list: JSON.stringify(
-      //       this.propertiesMap.map(properties => {
-      //         return {
-      //           attr_id: properties.tp_id,
-      //           name: properties.tp_cid,
-      //           value: properties.dy_cid,
-      //           is_open: Number(properties.is_open)
-      //         }
-      //       })
-      //     )
-      //   })
-      //   this.$message.success('保存成功')
-      //   this.visvileProperties = false
-      //   this.changePropertiesVisible = false
-      //   this.loadPropertiesMapList()
-      // } catch (err) {
-      //   this.$message.error(`${err}`)
-      // }
-    },
-
     getIcon (product) {
       if (product.source === '淘宝') {
         return require('@/assets/images/taobao.png')
