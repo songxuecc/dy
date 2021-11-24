@@ -39,6 +39,7 @@ class FormModel {
       } else if (modelPrototype === '[object Object]' || modelPrototype === '[object Array]') {
         // Object, Array 的情况
         if (!utils.isObjectValueEqual(this.model[key], this.originModel[key], exclude)) {
+          console.log(this.model[key], 'this.model[key]')
           diff[key] = this.model[key]
         }
       } else {

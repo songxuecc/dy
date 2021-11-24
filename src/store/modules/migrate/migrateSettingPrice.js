@@ -38,6 +38,7 @@ export default {
         }
         const data = await Api.hhgjAPIs.getTPProductByIds(params)
         const tableData = data.items
+        template.originModel.ext_json = JSON.parse(template.originModel.ext_json)
         this.dispatch('migrate/migrateSettingPrice/initTableData', {
           template,
           tableData,
@@ -59,6 +60,7 @@ export default {
       } = payload
       // 再次进入数据回显示
       if (!isEmpty(dicCustomPrices)) {
+        console.log(dicCustomPrices, 'dicCustomPrices')
         return commit('save', dicCustomPrices)
       }
       // 添加默认模版值
@@ -215,8 +217,128 @@ export default {
         item.origin_discount_price = isSalePriceShowMax ? maxSkuPrices : minSkuPrices
         return cloneDeep(item)
       })
-      console.log(nextTableData, 'nextTableData')
       commit('save', {tableData: cloneDeep(nextTableData), template})
+    },
+    // 划线价格公式改变
+    marketPriceChange  ({commit, state}, payload) {
+      const tableData = state.tableData
+      const template = payload.template
+      const unit = state.unit
+      const priceRate = template.model.price_rate
+      const priceDiff = template.model.price_diff
+      const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff).toFixed(2)
+      const evalPrice = financial(unit)
+      const nextTableData = tableData.map(item => {
+        const maxMarketPrices = evalPrice(evalMarketPrice(item.origin_market_price_no_eval))
+        // 如果是抖音商品，则取商品最小价格作为划线价
+        item.market_price = maxMarketPrices
+        return cloneDeep(item)
+      })
+      commit('save', {tableData: cloneDeep(nextTableData), template})
+    },
+    // 售卖价格公示改变
+    discountChange ({commit, state}, payload) {
+      const tableData = state.tableData
+      const template = payload.template
+      const unit = state.unit
+      const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
+      const evalPrice = financial(unit)
+      const nextTableData = tableData.map(item => {
+        const skuMap = cloneDeep(item.sku_json.sku_map)
+        let skuPricesValues = Object.values(skuMap).map(sku => sku.sku_price).sort((a, b) => a - b)
+        const minSkuPrices = skuPricesValues[0]
+        const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
+        // 售卖价
+        item.discount_price = isSalePriceShowMax ? evalPrice(maxSkuPrices) : evalPrice(minSkuPrices)
+        return cloneDeep(item)
+      })
+      commit('save', {tableData: cloneDeep(nextTableData), template})
+    },
+    // unit 整数位改变
+    unitChange ({commit, state}, payload) {
+      // 保留自定义编辑后再取整
+      const unit = payload.unit
+      const tableData = state.tableData
+      const evalPrice = financial(unit)
+      const template = state.template
+      const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
+
+      const nextTableData = (tableData || []).map(item => {
+        let skuMap = cloneDeep(item.sku_json.sku_map)
+        let nextSkuMap = {}
+        Object.keys(skuMap).forEach(key => {
+          const value = skuMap[key]
+          value.sku_price = evalPrice(value.origin_sku_price)
+          nextSkuMap[key] = value
+        })
+        item.sku_json.sku_map = nextSkuMap
+        if (item.custom_setting_discount_price) {
+          item.discount_price = evalPrice(item.custom_setting_discount_price)
+        } else {
+          const skuMap = cloneDeep(item.sku_json.sku_map)
+          let skuPricesValues = Object.values(skuMap).map(sku => sku.sku_price).sort((a, b) => a - b)
+          const minSkuPrices = skuPricesValues[0]
+          const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
+          item.discount_price = isSalePriceShowMax ? evalPrice(maxSkuPrices) : evalPrice(minSkuPrices)
+        }
+
+        if (item.custom_setting_market_price) {
+          item.market_price = evalPrice(item.custom_setting_market_price)
+        } else {
+          item.market_price = evalPrice(item.origin_market_price)
+        }
+        return cloneDeep(item)
+      })
+      template.model.unit = unit
+      commit('save', {tableData: cloneDeep(nextTableData), unit, template})
+    },
+    // 自定义售卖价
+    discountCustomeChange ({commit, state}, payload) {
+      const tableData = state.tableData
+      const {id, price} = payload
+      const nextTableData = tableData.map(item => {
+        if (item.tp_product_id === id) {
+          // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
+
+          const skuMap = item.sku_json.sku_map
+          const skuPricesValues = Object.values(skuMap)
+            .map(sku => sku.sku_price)
+            .sort((a, b) => a - b)
+          const minSkuPrices = skuPricesValues[0]
+          const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
+          // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
+          if ((price === minSkuPrices) || (price === maxSkuPrices)) {
+            item.custom_setting_discount_price = false
+            item.discount_price = price
+          } else {
+            item.custom_setting_discount_price = price
+            item.discount_price = price
+          }
+        }
+        return item
+      })
+      commit('save', {tableData: nextTableData})
+    },
+    // 自定义化纤价
+    marketCustomeChange ({commit, state}, payload) {
+      const tableData = state.tableData
+      const {id, price} = payload
+      const unit = state.unit
+      const evalPrice = financial(unit)
+      const nextTableData = tableData.map(item => {
+        if (item.tp_product_id === id) {
+          // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
+          if (price !== evalPrice(item.origin_market_price)) {
+            item.custom_setting_market_price = price
+            item.market_price = price
+          } else {
+            item.custom_setting_market_price = false
+            item.market_price = price
+          }
+        }
+        return item
+      })
+      commit('save', {tableData: nextTableData})
     },
     // 自定义sku价格修改
     skuPriceCustomeChange ({commit, state}, payload) {
@@ -277,128 +399,6 @@ export default {
       })
       commit('save', {tableData: cloneDeep(nextTableData)})
     },
-    // 划线价格公式改变
-    marketPriceChange  ({commit, state}, payload) {
-      const tableData = state.tableData
-      const template = payload.template
-      const unit = state.unit
-      const priceRate = template.model.price_rate
-      const priceDiff = template.model.price_diff
-      const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff).toFixed(2)
-      const evalPrice = financial(unit)
-      const nextTableData = tableData.map(item => {
-        const maxMarketPrices = evalPrice(evalMarketPrice(item.origin_market_price_no_eval))
-        // 如果是抖音商品，则取商品最小价格作为划线价
-        item.market_price = maxMarketPrices
-        return cloneDeep(item)
-      })
-      commit('save', {tableData: cloneDeep(nextTableData), template})
-    },
-    // 自定义售卖价
-    discountCustomeChange ({commit, state}, payload) {
-      const tableData = state.tableData
-      const {id, price} = payload
-      const nextTableData = tableData.map(item => {
-        if (item.tp_product_id === id) {
-          // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
-
-          const skuMap = item.sku_json.sku_map
-          const skuPricesValues = Object.values(skuMap)
-            .map(sku => sku.sku_price)
-            .sort((a, b) => a - b)
-          const minSkuPrices = skuPricesValues[0]
-          const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
-          // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
-          if ((price === minSkuPrices) || (price === maxSkuPrices)) {
-            item.custom_setting_discount_price = false
-            item.discount_price = price
-          } else {
-            item.custom_setting_discount_price = price
-            item.discount_price = price
-          }
-        }
-        return item
-      })
-      commit('save', {tableData: nextTableData})
-    },
-    // 自定义化纤价
-    marketCustomeChange ({commit, state}, payload) {
-      const tableData = state.tableData
-      const {id, price} = payload
-      const unit = state.unit
-      const evalPrice = financial(unit)
-      const nextTableData = tableData.map(item => {
-        if (item.tp_product_id === id) {
-          // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
-          if (price !== evalPrice(item.origin_market_price)) {
-            item.custom_setting_market_price = price
-            item.market_price = price
-          } else {
-            item.custom_setting_market_price = false
-            item.market_price = price
-          }
-        }
-        return item
-      })
-      commit('save', {tableData: nextTableData})
-    },
-    // 售卖价格公示改变
-    discountChange ({commit, state}, payload) {
-      const tableData = state.tableData
-      const template = payload.template
-      const unit = state.unit
-      const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
-      const evalPrice = financial(unit)
-      const nextTableData = tableData.map(item => {
-        const skuMap = cloneDeep(item.sku_json.sku_map)
-        let skuPricesValues = Object.values(skuMap).map(sku => sku.sku_price).sort((a, b) => a - b)
-        const minSkuPrices = skuPricesValues[0]
-        const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
-        // 售卖价
-        item.discount_price = isSalePriceShowMax ? evalPrice(maxSkuPrices) : evalPrice(minSkuPrices)
-        return cloneDeep(item)
-      })
-      commit('save', {tableData: cloneDeep(nextTableData), template})
-    },
-    // unit 整数位改变
-    unitChange ({commit, state}, payload) {
-      // 保留自定义编辑后再取整
-      const unit = payload.unit
-      const tableData = state.tableData
-      const evalPrice = financial(unit)
-      const template = state.template
-      const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
-
-      const nextTableData = (tableData || []).map(item => {
-        let skuMap = cloneDeep(item.sku_json.sku_map)
-        let nextSkuMap = {}
-        Object.keys(skuMap).forEach(key => {
-          const value = skuMap[key]
-          value.sku_price = evalPrice(value.origin_sku_price)
-          nextSkuMap[key] = value
-        })
-        item.sku_json.sku_map = nextSkuMap
-        if (item.custom_setting_discount_price) {
-          item.discount_price = evalPrice(item.custom_setting_discount_price)
-        } else {
-          const skuMap = cloneDeep(item.sku_json.sku_map)
-          let skuPricesValues = Object.values(skuMap).map(sku => sku.sku_price).sort((a, b) => a - b)
-          const minSkuPrices = skuPricesValues[0]
-          const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
-          item.discount_price = isSalePriceShowMax ? evalPrice(maxSkuPrices) : evalPrice(minSkuPrices)
-        }
-
-        if (item.custom_setting_market_price) {
-          item.market_price = evalPrice(item.custom_setting_market_price)
-        } else {
-          item.market_price = evalPrice(item.origin_market_price)
-        }
-        return cloneDeep(item)
-      })
-      console.log(nextTableData, 'nextTableData')
-      commit('save', {tableData: cloneDeep(nextTableData), unit})
-    },
-
     // 清除划线价
     clearMarketPrice ({commit, state}, payload) {
       const tableData = state.tableData
@@ -526,7 +526,6 @@ export default {
         if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
         if (item.discount_price) dicCustomPrices[id].last_discount_price = utils.yuanToFen(item.discount_price)
         if (item.discount_price) dicCustomPrices[id].discount_price = utils.yuanToFen(item.discount_price)
-
         // sku价格设置
         if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
         const skuMap = item.sku_json.sku_map
@@ -534,18 +533,14 @@ export default {
         Object.keys(skuMap).forEach(key => {
           const skuValue = skuMap[key]
           if (!skuDiffObj[key]) skuDiffObj[key] = {}
-          const evalPrice = financial(state.unit)
-          skuDiffObj[key].promo_price = utils.yuanToFen(evalPrice(skuValue.sku_price))
-          if (skuValue.custom_price) {
-            skuDiffObj[key].promo_price = utils.yuanToFen(skuValue.custom_price)
-          }
+          skuDiffObj[key].promo_price = utils.yuanToFen(skuValue.sku_price)
         })
         dicCustomPrices[id].sku = skuDiffObj
-
         // 划线价设置
         if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
         if (item.market_price) dicCustomPrices[id].price = utils.yuanToFen(item.market_price)
       })
+      console.log(dicCustomPrices, 'dicCustomPrices')
       return dicCustomPrices
     }
   }
