@@ -242,7 +242,6 @@ export default {
       if (!utils.isNumber(n.subtraction3)) {
         groupPriceDiff = 0
       }
-      console.log(isEqual(n, this.originSkuPriceStting))
       if (
         Number(n.radio) === 1 &&
          utils.isNumber(originPriceDiff) &&
@@ -253,8 +252,6 @@ export default {
         const evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff).toFixed(2)
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
-          // item.custom_setting_unit = this.template
-          // item.custom_setting_sku_price = false
           nextItem.editType = 1
           console.log(nextItem.origin_promo_price, 'nextItem.origin_promo_price')
           nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_promo_price))
@@ -262,6 +259,7 @@ export default {
           return nextItem
         })
         this.custom_setting_unit = true
+        console.log(this.tableData, 'this.tableData')
         this.tableData = tableData
       }
       if (

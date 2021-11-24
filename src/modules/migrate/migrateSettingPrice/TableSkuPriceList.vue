@@ -12,7 +12,7 @@
           </el-tooltip>
         </el-radio>
       </el-radio-group>
-      <div class="click mr-20 pointer ml-20" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tl4g0a'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频: 如何设置价格</div>
+      <div class="click pointer" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tl4g0a'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频: 如何设置价格</div>
     </div>
     <el-table :data="tableData" style="width: 100%;min-height:270px">
       <el-table-empty slot="empty" />
@@ -313,6 +313,7 @@ export default {
       'saveTempTemplate'
     ]),
     toFixFloat (unit) {
+      console.log(unit, 'unit')
       let value = this.every_decimal
       if (unit === -1 && this.every_decimal) {
         if (value && utils.isNumber(value) && value > 0 && value < 1) {
@@ -451,6 +452,7 @@ export default {
     },
     focus () {
       this.float = -1
+      this.toFixFloat(-1)
     },
     everyDecimal (value) {
       if (value && utils.isNumber(value) && value > 0 && value < 1) {

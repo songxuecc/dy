@@ -86,7 +86,6 @@ export default {
       const priceDiff = template.model.price_diff
       const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
       const everyDcimal = template.model.ext_json.every_decimal
-      console.log(everyDcimal, template.model, 'everyDcimal')
       // sku价格计算公式
       let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff)
       // 划线价计算公式
@@ -233,11 +232,12 @@ export default {
     marketPriceChange  ({commit, state}, payload) {
       const tableData = state.tableData
       const template = payload.template
+      const everyDcimal = template.model.ext_json.every_decimal
       const unit = state.unit
       const priceRate = template.model.price_rate
       const priceDiff = template.model.price_diff
       const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff)
-      const evalPrice = financial(unit)
+      const evalPrice = financial(unit, everyDcimal)
       const nextTableData = tableData.map(item => {
         const maxMarketPrices = evalPrice(evalMarketPrice(item.origin_market_price_no_eval))
         // 如果是抖音商品，则取商品最小价格作为划线价
@@ -250,9 +250,10 @@ export default {
     discountChange ({commit, state}, payload) {
       const tableData = state.tableData
       const template = payload.template
+      const everyDcimal = template.model.ext_json.every_decimal
       const unit = state.unit
       const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
-      const evalPrice = financial(unit)
+      const evalPrice = financial(unit, everyDcimal)
       const nextTableData = tableData.map(item => {
         const skuMap = cloneDeep(item.sku_json.sku_map)
         let skuPricesValues = Object.values(skuMap).map(sku => sku.sku_price).sort((a, b) => a - b)
@@ -269,6 +270,7 @@ export default {
       // 保留自定义编辑后再取整
       const unit = payload.unit
       const everyDcimal = payload.everyDcimal
+      console.log(everyDcimal, 'everyDcimal')
       const tableData = state.tableData
       const evalPrice = financial(unit, everyDcimal)
       const template = state.template
@@ -279,8 +281,10 @@ export default {
         let nextSkuMap = {}
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
-          if (!value.custom_setting_sku_price) {
+          if (!value.editType === 0) {
             value.sku_price = evalPrice(value.origin_sku_price)
+          } else {
+            value.sku_price = evalPrice(value.sku_price)
           }
           nextSkuMap[key] = value
         })
@@ -308,6 +312,9 @@ export default {
     // 自定义售卖价
     discountCustomeChange ({commit, state}, payload) {
       const tableData = state.tableData
+      // const unit = state.unit
+      // const everyDcimal = state.template.model.ext_json.every_decimal
+      // const evalPrice = financial(unit, everyDcimal)
       const {id, price} = payload
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
@@ -337,7 +344,8 @@ export default {
       const tableData = state.tableData
       const {id, price} = payload
       const unit = state.unit
-      const evalPrice = financial(unit)
+      const everyDcimal = state.template.model.ext_json.every_decimal
+      const evalPrice = financial(unit, everyDcimal)
       const nextTableData = tableData.map(item => {
         if (item.tp_product_id === id) {
           // 自定义价格设置 记录旧的价格 如果和旧的价格 相当于还原自定义价格 则去除自定义价格标志
@@ -362,7 +370,8 @@ export default {
       const model = state.template.model
       const tableData = state.tableData
       const unit = state.unit
-      const evalPrice = financial(unit)
+      const everyDcimal = state.template.model.ext_json.every_decimal
+      const evalPrice = financial(unit, everyDcimal)
 
       // 添加默认模版值
       if (!utils.isNumber(model.origin_price_diff)) {
