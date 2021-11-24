@@ -5,11 +5,16 @@ import cloneDeep from 'lodash/cloneDeep'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 
-import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
+import { accSub, accDiv, accMul, accAdd } from '@/common/evalFloat.js'
 
-function financial (unit) {
-  const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
-  return (x) => Number.parseFloat(accDiv(Math.round(accMul(x, unit)), unit)).toFixed(fix)
+function financial (unit, everyDecimal) {
+  return (x) => {
+    if (unit === -1 && everyDecimal) {
+      return accAdd(parseInt(x), Number(everyDecimal))
+    }
+    const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
+    return Number.parseFloat(accDiv(Math.round(accMul(x, unit)), unit)).toFixed(fix)
+  }
 }
 
 export default {
@@ -19,7 +24,8 @@ export default {
     unit: undefined,
     template: undefined,
     dicCustomPrices: {},
-    origin: false
+    origin: false,
+    every_decimal: undefined
   }),
   mutations: {
     save (state, payload) {
@@ -31,7 +37,7 @@ export default {
       try {
         commit('save', {tableData: []})
         const {template, dicCustomPrices} = await this.dispatch('migrate/migrateSettingTemplate/requestTemplate')
-        commit('save', {unit: template.model.unit})
+        commit('save', {unit: template.model.unit, every_decimal: template.model.ext_json.every_decimal})
         const params = {
           tp_product_ids: rootGetters.getSelectTPProductIdList,
           need_sku: true
@@ -79,12 +85,14 @@ export default {
       const priceRate = template.model.price_rate
       const priceDiff = template.model.price_diff
       const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
+      const everyDcimal = template.model.ext_json.every_decimal
+      console.log(everyDcimal, template.model, 'everyDcimal')
       // sku价格计算公式
-      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff).toFixed(2)
+      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff)
       // 划线价计算公式
-      const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff).toFixed(2)
+      const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff)
       // 抹角 抹分
-      const evalPrice = financial(unit)
+      const evalPrice = financial(unit, everyDcimal)
       const nextTableData = (tableData || []).map(item => {
         let skuMap = cloneDeep(item.sku_json.sku_map)
         console.log(skuMap, 'skuMap')
@@ -98,6 +106,7 @@ export default {
             value.origin_sku_price = evalGroupPriceRange(promoPrice)
             value.market_price = evalPrice(value.price / 100)
             value.initial_market_price = evalPrice(value.price / 100)
+            value.origin_price = value.promo_price / 100
             // 初始化价格设置 分转元
             value.origin_promo_price = utils.fenToYuan(value.promo_price)
             // 自定义编辑sku价格
@@ -162,12 +171,13 @@ export default {
       const priceRate = template.model.price_rate
       const priceDiff = template.model.price_diff
       const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
+      const everyDcimal = template.model.ext_json.every_decimal
       // sku价格计算公式
-      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff).toFixed(2)
+      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff)
       // 划线价计算公式
-      const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff).toFixed(2)
+      const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff)
       // 抹角 抹分
-      const evalPrice = financial(unit)
+      const evalPrice = financial(unit, everyDcimal)
 
       const nextTableData = tableData.map(item => {
         let skuMap = cloneDeep(item.sku_json.sku_map)
@@ -184,7 +194,7 @@ export default {
           value.origin_promo_price = utils.fenToYuan(value.promo_price)
           // 自定义编辑sku价格
           value.custom_setting_sku_price = false
-          // editType 0 公式 1 内部编辑公式 2 自定义编辑
+          // editType 0 公式 1 内部编辑公式 2 自定义编辑 3统一设置
           value.editType = 0
           nextSkuMap[key] = value
         })
@@ -226,7 +236,7 @@ export default {
       const unit = state.unit
       const priceRate = template.model.price_rate
       const priceDiff = template.model.price_diff
-      const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff).toFixed(2)
+      const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff)
       const evalPrice = financial(unit)
       const nextTableData = tableData.map(item => {
         const maxMarketPrices = evalPrice(evalMarketPrice(item.origin_market_price_no_eval))
@@ -258,8 +268,9 @@ export default {
     unitChange ({commit, state}, payload) {
       // 保留自定义编辑后再取整
       const unit = payload.unit
+      const everyDcimal = payload.everyDcimal
       const tableData = state.tableData
-      const evalPrice = financial(unit)
+      const evalPrice = financial(unit, everyDcimal)
       const template = state.template
       const isSalePriceShowMax = Number(template.model.is_sale_price_show_max)
 
@@ -268,7 +279,9 @@ export default {
         let nextSkuMap = {}
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
-          value.sku_price = evalPrice(value.origin_sku_price)
+          if (!value.custom_setting_sku_price) {
+            value.sku_price = evalPrice(value.origin_sku_price)
+          }
           nextSkuMap[key] = value
         })
         item.sku_json.sku_map = nextSkuMap
@@ -399,6 +412,73 @@ export default {
       })
       commit('save', {tableData: cloneDeep(nextTableData)})
     },
+    everyDecimalChange ({commit, state}, payload) {
+      const {everyDecimal, change} = payload
+      commit('save', {every_decimal: everyDecimal})
+      if (!change) return false
+      const tableData = state.tableData
+      const model = state.template.model
+      const template = state.template
+      const unit = state.unit
+      const evalPrice = financial(unit)
+      const priceRate = model.price_rate
+      const priceDiff = model.price_diff
+      // 添加默认模版值
+      if (!utils.isNumber(model.origin_price_diff)) {
+        model.origin_price_diff = 0
+      }
+      if (!utils.isNumber(model.group_price_diff)) {
+        model.group_price_diff = 0
+      }
+      if (!utils.isNumber(model.price_diff)) {
+        model.price_diff = 0
+      }
+      const isSalePriceShowMax = Number(model.is_sale_price_show_max)
+      // 获取最低价最高价 划线价格
+
+      const nextTableData = tableData.map(item => {
+        const skuMap = cloneDeep(item.sku_json.sku_map)
+        let nextSkuMap = {}
+        Object.keys(skuMap).forEach(key => {
+          const value = skuMap[key]
+          value.sku_price = evalPrice(value.sku_price, everyDecimal)
+          // 统一设置
+          value.editType = 3
+          nextSkuMap[key] = value
+        })
+        let skuPricesValues = Object.values(nextSkuMap).map(sku => sku.sku_price).sort((a, b) => a - b)
+        const minSkuPrices = skuPricesValues[0]
+        const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
+        // 划线价 价格范围
+        const marketPrices = Object.values(nextSkuMap).map(sku => sku.initial_market_price)
+        const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff)
+        const maxMarketPrices = evalPrice(evalMarketPrice(Math.max(...marketPrices)), everyDecimal)
+        // sku价
+        item.sku_json.sku_map = nextSkuMap
+        // 售卖价
+        item.discount_price = isSalePriceShowMax ? evalPrice(maxSkuPrices, everyDecimal) : evalPrice(minSkuPrices, everyDecimal)
+        // 如果是抖音商品，则取商品最小价格作为划线价
+        item.market_price = maxMarketPrices
+        // 售卖价格没计算过的价格
+        item.origin_market_price_no_eval = Math.max(...marketPrices)
+        if (item.tp_id === common.TpType.dy) {
+          item.market_price = evalPrice(evalMarketPrice(item.min_price / 100))
+          item.origin_market_price_no_eval = item.min_price / 100
+        }
+        // 自定义编辑价格单位
+        item.custom_setting_unit = false
+        // 自定义编辑划线价
+        item.custom_setting_market_price = false
+        item.origin_market_price = evalMarketPrice(Math.max(...marketPrices))
+        // 自定义编辑售卖
+        item.custom_setting_discount_price = false
+        item.origin_discount_price = isSalePriceShowMax ? maxSkuPrices : minSkuPrices
+        return cloneDeep(item)
+      })
+      template.model.ext_json.every_decimal = everyDecimal
+      template.model.unit = -1
+      commit('save', {tableData: cloneDeep(nextTableData), template})
+    },
     // 清除划线价
     clearMarketPrice ({commit, state}, payload) {
       const tableData = state.tableData
@@ -466,48 +546,49 @@ export default {
         售卖价：在sku价格范围内
         划线价：sku规格最高价≤划线价≤9999999.99
        */
-
       const nextTableDataErrorMsg = tableData.map(item => {
         let error = {}
         let discountPriceError = ''
         let marketPriceError = ''
         let groupPriceRangeError = ''
-        // const hasRangeSkuPrice = item.group_price_range.toString().includes('~')
-        // const minPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[0] : item.group_price_range)
-        // const maxPrice = Number(hasRangeSkuPrice ? item.group_price_range.split('~')[1] : item.group_price_range)
+        const skuMap = item.sku_json.sku_map
+        const skuPricesValues = Object.values(skuMap)
+          .map(sku => sku.sku_price)
+          .sort((a, b) => a - b)
+        const minPrice = skuPricesValues[0]
+        const maxPrice = skuPricesValues[skuPricesValues.length - 1]
+        if (!utils.isNumber(item.discount_price)) {
+          discountPriceError = '请输入数字'
+        } else if (item.discount_price < 0.01 || item.discount_price > 9999999.99) {
+          discountPriceError = '价格范围：0.01-9999999.99'
+        }
+        if (Number(item.discount_price) > maxPrice || Number(item.discount_price) < minPrice) {
+          discountPriceError = `售卖价必须在sku价格范围内`
+        }
 
-        // if (!utils.isNumber(item.discount_price)) {
-        //   discountPriceError = '请输入数字'
-        // } else if (item.discount_price < 0.01 || item.discount_price > 9999999.99) {
-        //   discountPriceError = '价格范围：0.01-9999999.99'
-        // }
-        // if (Number(item.discount_price) > maxPrice || Number(item.discount_price) < minPrice) {
-        //   discountPriceError = `售卖价必须在sku价格范围内`
-        // }
+        if (!utils.isNumber(item.market_price)) {
+          marketPriceError = '请输入数字'
+        } else if (Number(item.market_price) < 0.01 || Number(item.market_price) > 9999999.99) {
+          marketPriceError = '价格范围：0.01-9999999.99'
+        } else if (maxPrice > Number(item.market_price) || Number(item.market_price) > 9999999.99) {
+          marketPriceError = `划线价需>=sku最高价`
+        }
 
-        // if (!utils.isNumber(item.market_price)) {
-        //   marketPriceError = '请输入数字'
-        // } else if (Number(item.market_price) < 0.01 || Number(item.market_price) > 9999999.99) {
-        //   marketPriceError = '价格范围：0.01-9999999.99'
-        // } else if (maxPrice > Number(item.market_price) || Number(item.market_price) > 9999999.99) {
-        //   marketPriceError = `划线价需>=sku最高价`
-        // }
+        if (!utils.isNumber(template.model.price_rate)) {
+          marketPriceError = '划线价格公式输入错误'
+        }
 
-        // if (!utils.isNumber(template.model.price_rate)) {
-        //   marketPriceError = '划线价格公式输入错误'
-        // }
+        if (minPrice < 0.01 || maxPrice > 9999999.99) {
+          groupPriceRangeError = '价格范围：0.01-9999999.99'
+        }
+        if (!utils.isNumber(template.model.group_price_rate)) {
+          groupPriceRangeError = 'SKU价格公式输入错误'
+          discountPriceError = 'SKU价格公式输入错误'
+        }
 
-        // if (minPrice < 0.01 || maxPrice > 9999999.99) {
-        //   groupPriceRangeError = '价格范围：0.01-9999999.99'
-        // }
-        // if (!utils.isNumber(template.model.group_price_rate)) {
-        //   groupPriceRangeError = 'SKU价格公式输入错误'
-        //   discountPriceError = 'SKU价格公式输入错误'
-        // }
-
-        // if (discountPriceError) error.discount_price_error = discountPriceError
-        // if (marketPriceError) error.market_price_error = marketPriceError
-        // if (groupPriceRangeError) error.group_price_range_error = groupPriceRangeError
+        if (discountPriceError) error.discount_price_error = discountPriceError
+        if (marketPriceError) error.market_price_error = marketPriceError
+        if (groupPriceRangeError) error.group_price_range_error = groupPriceRangeError
 
         return error
       })

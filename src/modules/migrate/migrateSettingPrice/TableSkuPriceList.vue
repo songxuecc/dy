@@ -6,9 +6,13 @@
         <el-radio :label="1" >保留整数(四舍五入)</el-radio>
         <el-radio :label="10" >保留一位小数(四舍五入)</el-radio>
         <el-radio :label="100" >保留两位小数(四舍五入)</el-radio>
-        <el-radio :label="100" >保留两位小数(四舍五入)</el-radio>
+        <el-radio :label="-1" >统一设置小数部分为
+          <el-tooltip content="请填写大于0小于1的数，例如0.8、0.88" placement="top-start">
+            <el-input v-model="every_decimal"  @input="everyDecimal"  @focus="focus" size="mini" placeholder="请填写数字" />
+          </el-tooltip>
+        </el-radio>
       </el-radio-group>
-      <span class="click mr-20 pointer ml-20" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tl4g0a'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频: 如何设置价格</span>
+      <div class="click mr-20 pointer ml-20" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tl4g0a'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频: 如何设置价格</div>
     </div>
     <el-table :data="tableData" style="width: 100%;min-height:270px">
       <el-table-empty slot="empty" />
@@ -255,7 +259,7 @@ export default {
     this.getTPProductByIds()
   },
   computed: {
-    ...mapState('migrate/migrateSettingPrice', ['tableData', 'unit']),
+    ...mapState('migrate/migrateSettingPrice', ['tableData', 'unit', 'every_decimal']),
     ...mapGetters('migrate/migrateSettingPrice', ['tableDataErrorMsg']),
     ...mapGetters('migrate/migrateSettingTemplate', {
       template: 'getTemplate',
@@ -280,6 +284,12 @@ export default {
         this.float = newVal
       },
       deep: true
+    },
+    every_decimal: {
+      handler: function (newVal) {
+        this.every_decimal = newVal
+      },
+      deep: true
     }
   },
   methods: {
@@ -295,15 +305,26 @@ export default {
       'parsetIntFloat',
       'marketPriceChange',
       'skuPriceChange',
-      'deleteRow'
+      'deleteRow',
+      'everyDecimalChange'
     ]),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
       'saveTempTemplate'
     ]),
     toFixFloat (unit) {
+      let value = this.every_decimal
+      if (unit === -1 && this.every_decimal) {
+        if (value && utils.isNumber(value) && value > 0 && value < 1) {
+
+        } else if (value) {
+          this.$message.warning('请输入0-1的数字')
+          return false
+        }
+      }
       this.unitChange({
-        unit
+        unit,
+        everyDcimal: value
       })
     },
     // 设置划线价
@@ -427,6 +448,22 @@ export default {
         })
       }).catch(() => {
       })
+    },
+    focus () {
+      this.float = -1
+    },
+    everyDecimal (value) {
+      if (value && utils.isNumber(value) && value > 0 && value < 1) {
+        this.everyDecimalChange({
+          everyDecimal: Math.floor(value * 100) / 100,
+          change: true
+        })
+      } else {
+        this.everyDecimalChange({
+          everyDecimal: value,
+          change: false
+        })
+      }
     }
   }
 }
