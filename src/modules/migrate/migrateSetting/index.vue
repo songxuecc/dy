@@ -58,7 +58,7 @@
         <el-form-item  label="推荐语统一为:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-recommend" >
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <el-form-item style="display:inline;margin-bottom:0" prop="default_recommend_remark"  class="mr-5">
-                <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="default_recommend_remark" style="width: 650px;" class="ml-5" placeholder="请填写商家推荐语设置" clearable @clear="handleClear('default_recommend_remark')"></el-input>
+                <el-input :maxlength="50" :minlength="8" show-word-limit  v-model="default_recommend_remark" style="width: 650px;" placeholder="请填写商家推荐语设置" clearable @clear="handleClear('default_recommend_remark')"></el-input>
             </el-form-item>
             <el-form-item style="display:inline;margin-bottom:0" prop="is_open_recommend_remark">
                 <el-switch v-model="is_open_recommend_remark"/>
@@ -66,7 +66,36 @@
           </div>
         </el-form-item>
         <!-- 属性设置 -->
-        <el-form-item  label="属性设置:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-attribute" >
+        <el-form-item  label="属性设置:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-attribute" v-loading="loadingCategoryMap">
+          <div style="margin-bottom:20px" class="align-c" v-loading="loadingPropertiesMap">
+            <div class="flex">
+              <el-button size="small" type="primary" plain style="width:80px" class="mb-5" @click="addProperties"> <i class="el-icon-plus"></i> 新增 </el-button>
+              <span class="primary ml-10"
+                  v-if="propertiesMap.length &&  propertiesMap.length > 2 &&  propertiesVisible"
+                  @click="togglePropertiesVisible"><i class="el-icon-arrow-up"></i>收起</span>
+              <span class="primary ml-10"
+                v-if="propertiesMap.length &&  propertiesMap.length > 2 && !propertiesVisible"
+                @click="togglePropertiesVisible"><i class="el-icon-arrow-down"></i>展开</span>
+              <el-popover
+                width="600"
+                trigger="hover">
+                <img style="width:600px"
+                src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dde8340598824c24be244968edab366f~tplv-k3u1fbpfcp-watermark.image?" />
+                <span class="pointer flex align-c" slot="reference" style="margin-left:30px">
+                  <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
+                  <span class="info">填写帮助</span>
+                </span>
+              </el-popover>
+            </div>
+            <div class="font-12 mb-5" v-for="(properties,idx) in showPropertiesMap" :key="properties.id" v-if="propertiesMap.length">
+              当属性维度是
+              <el-input size="mini" style="width:150px" @change="changeProperties" class="ml-5 mr-5" placeholder="请填写,如产地" v-model="properties.name"></el-input> 时，对应的属性值是
+              <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" v-model="properties.value"></el-input>
+              <el-switch class="ml-5"  size="mini" v-model="properties.is_open"></el-switch>
+              <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)">删除</el-button>
+            </div>
+            <div v-if="!propertiesMap.length" class="font-12">无，点击新增按钮添加</div>
+          </div>
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p class="font-12">
               必填属性未填写时，若需输入属性值，则默认填写值为<el-input v-model="default_attr_value" style="width: 280px;" class="ml-5" placeholder="类目属性默认值设置"  clearable @clear="handleClear('default_attr_value')"></el-input>
@@ -313,6 +342,7 @@ import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import Api from '@/api/apis.js'
 import categorySelectView from '@/components/CategorySelectView'
+import servises from '@servises'
 
 export default {
   mixins: [request],
@@ -339,7 +369,6 @@ export default {
   },
   data () {
     return {
-      categoryVisible: false,
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
         { label: '类目匹配', className: '.migrateSetting-categoryMatch' },
@@ -450,7 +479,13 @@ export default {
       settingKeys: [],
       categoryMap: [],
       loadingCategoryMap: false,
-      changeCategoryVisible: false
+      categoryVisible: false,
+      propertiesMap: [],
+      propertiesVisible: true,
+      loadingPropertiesMap: false,
+      canSubmitProperties: false,
+      changeCategoryVisible: false,
+      originPropertiesMap: []
     }
   },
   created () {
@@ -508,6 +543,13 @@ export default {
       let categoryMap = this.categoryMap
       categoryMap = categoryMap.slice(0, 2)
       return categoryMap
+    },
+    showPropertiesMap () {
+      if (this.propertiesVisible) return this.propertiesMap
+      let propertiesMap = this.propertiesMap
+      propertiesMap = propertiesMap.slice(0, 2)
+      console.log(propertiesMap, 'propertiesMap')
+      return propertiesMap
     },
     rules () {
       const checkMaxSkuStock = (rule, value, callback) => {
@@ -619,9 +661,18 @@ export default {
         (item) => !originImageBlackWords.has(item)
       )
 
+      // 属性设置
+      const diffPropertiesMap = this.propertiesMap.filter(item => item.name && item.value)
+      const isEqualPropertiesMap = isEqual(diffPropertiesMap, this.originPropertiesMap)
+      console.log(isEqualPropertiesMap, 'isEqualPropertiesMap')
       // 分类
       return (
-        isEqualSetting && !newBlackWords.length && !newImageBlackWords.length && isEqualStatusList && isEqualCutTypeList
+        isEqualSetting &&
+         !newBlackWords.length &&
+         !newImageBlackWords.length &&
+         isEqualStatusList &&
+         isEqualCutTypeList &&
+         isEqualPropertiesMap
       )
     }
   },
@@ -769,7 +820,8 @@ export default {
             use_type: 1
           }),
           self.loadData(),
-          self.loadCategoryMapList()
+          self.loadCategoryMapList(),
+          self.loadPropertiesMapList()
         ])
         let originMigrateSetting = {}
         let settingKeys = []
@@ -877,6 +929,10 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
       }
+      const names = this.propertiesMap.map(item => item.name)
+      if ([...new Set(names)].length !== names.length) {
+        return this.$message.warning('属性维度重复,请重新填写')
+      }
       const product = this.getFormatSettings()
       this.$refs.template.validate(async (valid) => {
         if (valid) {
@@ -916,10 +972,23 @@ export default {
             const updateSetting = !isEqualSetting
               ? Api.hhgjAPIs.updateMigrateSetting(productParams)
               : Promise.resolve(this.originMigrateSetting)
+            const diffPropertiesMap = this.propertiesMap
+              .filter(item => item.name && item.value)
+              .map(item => {
+                item.is_open = Number(item.is_open)
+                return item
+              })
+            const isEqualPropertiesMap = isEqual(diffPropertiesMap, this.originPropertiesMap)
+            const updateProperties = !isEqualPropertiesMap
+              ? servises.userCatAttrCreate({
+                attr_list: JSON.stringify(diffPropertiesMap)
+              })
+              : Promise.resolve(this.originMigrateSetting)
             await Promise.all([
               updateBlackWords,
               updateImageBlackWords,
-              updateSetting
+              updateSetting,
+              updateProperties
             ])
             this.$message.success('保存成功')
             this.createBlackWordsLoading = false
@@ -1067,7 +1136,7 @@ export default {
     async loadCategoryMapList () {
       this.loadingCategoryMap = true
       try {
-        const categoryMap = await Api.hhgjAPIs.userCategoryMapList({})
+        const categoryMap = await servises.userCategoryMapList({})
         // 类目匹配
         this.categoryMap = categoryMap.map(item => {
           return {
@@ -1079,6 +1148,28 @@ export default {
         this.loadingCategoryMap = false
       } catch (err) {
         this.loadingCategoryMap = false
+        this.$message.error(`${err}`)
+      }
+      return Promise.resolve(true)
+    },
+    async loadPropertiesMapList () {
+      this.loadingPropertiesMap = true
+      try {
+        const propertiesMap = await servises.userCatAttLrist()
+        this.propertiesMap = propertiesMap.map(item => {
+          return {
+            ...item,
+            is_open: Boolean(item.is_open)
+          }
+        })
+        this.setScrollTop()
+        console.log(this.propertiesMap, 'this.propertiesMap ')
+        this.originPropertiesMap = cloneDeep(this.propertiesMap)
+        this.loadingPropertiesMap = false
+        // this.canSubmitProperties = false
+      } catch (err) {
+        this.loadingPropertiesMap = false
+        // this.canSubmitProperties = false
         this.$message.error(`${err}`)
       }
       return Promise.resolve(true)
@@ -1130,6 +1221,7 @@ export default {
       this.visvileCategory = true
       this.changeCategoryVisible = true
     },
+    // 多分类预设
     async changeCategoryOpen (category) {
       try {
         const categoryMap = {
@@ -1158,6 +1250,31 @@ export default {
         this.loadCategoryMapList()
       } catch (err) {
         this.$message.error(`${err}`)
+      }
+    },
+    // 多属性预设
+    togglePropertiesVisible () {
+      this.propertiesVisible = !this.propertiesVisible
+      console.log(this.propertiesVisible, 'this.propertiesVisible')
+      this.$nextTick(() => {
+        this.setScrollTop()
+      })
+    },
+    addProperties () {
+      const originPropertied = {
+        name: '',
+        value: '',
+        is_open: true
+      }
+      this.propertiesMap.push(originPropertied)
+    },
+    async deleteProperties (properties, idx) {
+      this.propertiesMap.splice(idx, 1)
+    },
+    changeProperties (value) {
+      const names = this.propertiesMap.map(item => item.name)
+      if ([...new Set(names)].length !== names.length) {
+        this.$message.warning('属性维度重复,请重新填写')
       }
     },
     getIcon (product) {

@@ -147,16 +147,23 @@
       <div style="width:200px;" v-if="startMigrateBtnFixed"></div>
       <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;margin-left:1px;">
         <div>
-          <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
-            <span style="line-height:21px">下一步: 修改价格</span>
-            <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
-          </el-button>
-          <NewComer type="下一步: 修改价格" ref="newComer">
-            <div class="left">
-              <div style="width:180px " class="color-666 font-12">勾选待上线商品，并点击此处进行下一步操作</div>
-              <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
+
+          <el-tooltip popper-class="readyToMigrate-tooltip" :manual="true" effect="light"  placement="top-start" :value="tpProductList && tpProductList.length && selectIdList.length == 0 && showTooltip">
+            <div slot="content">
+              <div style="width:172px" class="color-666 font-12 left mt-10" >
+                勾选待上线商品，并点击此处进行下一步操作
+              </div>
+              <div @click="closeNewComerNext" class="right pointer underline primary mb-10">好的</div>
             </div>
-          </NewComer>
+            <el-button
+              type="primary"
+              @click="toMigrate"
+              @mouseover.native="mouseover"
+              @mouseout.native="mouseout">
+              <span style="line-height:21px">下一步: 修改价格</span>
+              <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
+            </el-button>
+          </el-tooltip>
           <span v-if="is_migrate_new">
             <el-popover
                 width="200"
@@ -275,6 +282,7 @@ export default {
   data () {
     return {
       is_migrate_new: false,
+      showTooltip: false,
       isMounted: false,
       bindShopList: [],
       tpProductList: [],
@@ -1316,6 +1324,10 @@ export default {
       this.$router.replace({ query })
     },
     async toMigrate () {
+      if (!this.selectIdList.length) {
+        this.$message.warning('请选择商品！')
+        return false
+      }
       const userVersion = this.userVersion || (await this.userVersionQuery())
       const isFreeUpgrate = userVersion.is_free_upgrate
       const isSenior = userVersion.is_senior
@@ -1331,7 +1343,7 @@ export default {
         }
       } else {
         this.removeTempTemplate()
-        this.closeNewComer()
+        // this.closeNewComerNext()
         this.setSelectTPProductIdList(this.selectIdList)
         this.$router.push({
           name: 'MigrateSettingPrice'
@@ -1563,6 +1575,17 @@ export default {
     closeNewComer () {
       this.$refs.newComer.close && this.$refs.newComer.close()
     },
+    closeNewComerNext () {
+      this.showTooltip = false
+    },
+    mouseover () {
+      this.showTooltip = true
+      console.log('mouseover')
+    },
+    mouseout () {
+      this.showTooltip = false
+      console.log('mouseout')
+    },
     closeShopCapture () {
       this.$refs.newComerShop.close && this.$refs.newComerShop.close()
     },
@@ -1713,4 +1736,54 @@ export default {
     }
   }
 }
+</style>
+
+<style lang="less">
+    .readyToMigrate-tooltip.is-light {
+        border:0;
+        border-bottom: 10px solid #1D8FFF;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+        width: 208px;
+        padding:10px 14px 0;
+    }
+    .readyToMigrate-tooltip.is-light[x-placement^=top] .popper__arrow::after {
+      position: absolute;
+      content:"";
+      width: 0;
+      height: 0;
+      border-top: 5px solid #ffffff;
+      bottom:4px;
+    }
+    .readyToMigrate-tooltip[x-placement^=top] .popper__arrow {
+      bottom: -15px;
+      border-top-color: #1D8FFF;
+      border-bottom-width: 0;
+    }
+    .readyToMigrate-tooltip.is-light[x-placement^=top] .popper__arrow {
+        border-top-color: #1D8FFF;
+    }
+    .readyToMigrate-tooltip .popper__arrow {
+        border-width: 9px;
+    }
+
+    .readyToMigrate-tooltip[x-placement^=top] .popper__arrow {
+      bottom: -16px;
+      border-top-color: #1D8FFF;
+      border-bottom-width: 0;
+    }
+    .readyToMigrate-tooltip::after {
+      content:"";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -7px;
+      top: 0;
+      margin:auto;
+      background:#fff;
+      border-radius: 3px;
+      z-index: -1;
+    }
+
 </style>
