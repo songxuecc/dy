@@ -94,7 +94,6 @@ export default {
       const evalPrice = financial(unit, everyDcimal)
       const nextTableData = (tableData || []).map(item => {
         let skuMap = cloneDeep(item.sku_json.sku_map)
-        console.log(skuMap, 'skuMap')
         let nextSkuMap = {}
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
@@ -423,13 +422,14 @@ export default {
     },
     everyDecimalChange ({commit, state}, payload) {
       const {everyDecimal, change} = payload
+      console.log(everyDecimal, change, 'everyDecimal, change')
       commit('save', {every_decimal: everyDecimal})
       if (!change) return false
       const tableData = state.tableData
       const model = state.template.model
       const template = state.template
       const unit = state.unit
-      const evalPrice = financial(unit)
+      const evalPrice = financial(unit, everyDecimal)
       const priceRate = model.price_rate
       const priceDiff = model.price_diff
       // 添加默认模版值
@@ -450,7 +450,8 @@ export default {
         let nextSkuMap = {}
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
-          value.sku_price = evalPrice(value.sku_price, everyDecimal)
+          value.sku_price = evalPrice(value.sku_price)
+          console.log(value.sku_price, 'value.sku_price')
           // 统一设置
           value.editType = 3
           nextSkuMap[key] = value
@@ -461,11 +462,11 @@ export default {
         // 划线价 价格范围
         const marketPrices = Object.values(nextSkuMap).map(sku => sku.initial_market_price)
         const evalMarketPrice = x => ((x * priceRate) / 100 - priceDiff)
-        const maxMarketPrices = evalPrice(evalMarketPrice(Math.max(...marketPrices)), everyDecimal)
+        const maxMarketPrices = evalPrice(evalMarketPrice(Math.max(...marketPrices)))
         // sku价
         item.sku_json.sku_map = nextSkuMap
         // 售卖价
-        item.discount_price = isSalePriceShowMax ? evalPrice(maxSkuPrices, everyDecimal) : evalPrice(minSkuPrices, everyDecimal)
+        item.discount_price = isSalePriceShowMax ? evalPrice(maxSkuPrices) : evalPrice(minSkuPrices)
         // 如果是抖音商品，则取商品最小价格作为划线价
         item.market_price = maxMarketPrices
         // 售卖价格没计算过的价格
@@ -486,6 +487,7 @@ export default {
       })
       template.model.ext_json.every_decimal = everyDecimal
       template.model.unit = -1
+      console.log(nextTableData, 'nextTableData')
       commit('save', {tableData: cloneDeep(nextTableData), template})
     },
     // 清除划线价

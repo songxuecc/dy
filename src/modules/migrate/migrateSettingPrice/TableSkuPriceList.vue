@@ -414,7 +414,6 @@ export default {
     },
     getGroupPriceRange (row) {
       const skuMap = row.sku_json.sku_map
-      console.log(skuMap, 'skuMap')
       const skuPricesValues = Object.values(skuMap)
         .map(sku => sku.sku_price)
         .sort((a, b) => a - b)
@@ -455,6 +454,7 @@ export default {
       this.toFixFloat(-1)
     },
     everyDecimal (value) {
+      console.log(value, 'value')
       if (value && utils.isNumber(value) && value > 0 && value < 1) {
         this.everyDecimalChange({
           everyDecimal: Math.floor(value * 100) / 100,
