@@ -19,7 +19,7 @@
                 <el-tooltip style="max-width: 50px;" manual :value="scope.row.index === mouseOverIndex" v-if="scope.row.status === 7" :disabled="scope.row.status !== 7" class="item" effect="dark" placement="left">
                     <div slot="content" style="max-width: 180px;">
                       <ul v-if="scope.row.migration_msg.length!=0" style="padding: 0; margin: 0;" v-for="(v,i) in scope.row.migration_msg" :key="i">{{v}}</ul>
-                      <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">如需帮助请 <a href="/service" style="color: white;">联系客服</a>。</ul>
+                      <ul v-if="scope.row.migration_msg.length===1 && scope.row.migration_msg[0].length===0" style="padding: 0; margin: 0;">商品可能已下架，如需帮助请 <a href="/service" style="color: white;">联系客服</a>。</ul>
                     </div>
                     <i></i>
                 </el-tooltip>
