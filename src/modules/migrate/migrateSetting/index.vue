@@ -153,9 +153,11 @@
               </el-form-item>
             </p>
         </el-form-item>
-
-        <el-form-item   label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c migrateSetting-code">
-            <p class="font-12">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
+        <el-form-item   label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c  migrateSetting-code">
+            <p class="font-12" style="height:24px">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
+        </el-form-item>
+        <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
+            <p class="font-12" style="height:24px">低价SKU自动过滤<el-switch class="ml-5" v-model="low_sku_price" /></p>
         </el-form-item>
 
         <!-- <el-form-item  label="SKU规格:"  style="padding-bottom: 20px;" class="flex align-c migrateSetting-spec">
@@ -376,6 +378,7 @@ export default {
         { label: '商家推荐语', className: '.migrateSetting-recommend' },
         { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: 'SKU库存', className: '.migrateSetting-stock' },
+        { label: 'SKU价格', className: '.migrateSetting-price' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
         { label: '详情图', className: '.migrateSetting-detail' },
         { label: '轮播图', className: '.migrateSetting-banner' },
@@ -436,6 +439,7 @@ export default {
       property_radio: '1',
       goods_property_selected: '',
       goods_code_type: 0,
+      low_sku_price: 0,
       goods_property_value: '',
       goods_property_options: [],
       goods_property_options_dic: {},
@@ -801,6 +805,7 @@ export default {
         'is_open_title_prefix_suffix',
         'is_open_title_replace',
         'goods_code_type',
+        'low_sku_price',
         'is_select_first_options_attr',
         'is_use_default_attr_value',
         'is_open_recommend_remark'
@@ -878,6 +883,7 @@ export default {
         is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
         goods_code_type: Number(this.goods_code_type),
+        low_sku_price: Number(this.low_sku_price),
         property_radio: this.property_radio,
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
@@ -1313,6 +1319,11 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '~./index.less';
+.tab {
+  /deep/ .el-tabs__item {
+    padding:0 15px;
+  }
+}
 </style>
 <style lang="less">
   .migrateSetting-avatar-uploader {
