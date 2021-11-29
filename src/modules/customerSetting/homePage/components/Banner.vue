@@ -18,11 +18,11 @@ export default {
   data () {
     return {
       items: [
+        this.gotoMeizheShouhou,
+        this.gotoMeizheDuanxin,
         this.gotoOrder,
         this.gotoCycleProductsSelfPlanList,
-        this.gotoBatchEdit,
-        this.gotoMeizheShouhou,
-        this.gotoMeizheDuanxin
+        this.gotoBatchEdit
       ]
     }
   },
