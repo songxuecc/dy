@@ -34,13 +34,14 @@
     </div>
     <div
         :class="['float-button nav-go-top',isDragging ?'move':'']"
-        @click="backToTop"
+        @click.stop="backToTop"
         @mouseover="changeFlexFootIndex($event,6)"
         @mouseout="changeFlexFootIndex($event,0)">
-      <hh-icon
+        <div class="color-tip pionter">{{!flexFootVisible ? '显示':'隐藏'}}</div>
+      <!-- <hh-icon
             type="iconshanglajiantou"
             style="font-size:18px;" />
-      <div :class="['go-to-top text pionter', flexFootIndex === 6 ? 'text-in' : '']">到顶部</div>
+      <div :class="['go-to-top text pionter', flexFootIndex === 6 ? 'text-in' : '']">到顶部</div> -->
     </div>
   </div>
 </template>
@@ -57,7 +58,8 @@ export default {
       isServiceBoxShow: false,
       dialogNotificationVisible: false,
       flexFootIndex: 0,
-      isDragging: false
+      isDragging: false,
+      text: '缩小'
     }
   },
   components: {
@@ -117,17 +119,19 @@ export default {
       this.$emit('toggleDialogNotificationVisible', true)
     },
     backToTop (event) {
-      event || (event = window.event)
-      event.stopPropagation
-        ? event.stopPropagation()
-        : (event.cancelBubble = true)
+      // event || (event = window.event)
+      // event.stopPropagation
+      //   ? event.stopPropagation()
+      //   : (event.cancelBubble = true)
+      // event.preventDefault()
+      // const el = document.querySelector('.page-component__scroll')
+      // el.scrollTo({
+      //   top: 0,
+      //   left: 0,
+      //   behavior: 'smooth'
+      // })
       event.preventDefault()
-      const el = document.querySelector('.page-component__scroll')
-      el.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth'
-      })
+      this.$emit('visible')
     },
     closeService (event) {
       event || (event = window.event)

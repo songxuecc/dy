@@ -148,7 +148,7 @@
                   </el-tooltip>
                   </span>
                   <div >
-                      <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
+                      <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序，鼠标放在图片上点击第2个图标可裁剪图片 </div>
                       <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList" :validSize="true" :multiple="false">
                       </pictures-upload-view>
                   </div>
@@ -170,7 +170,7 @@
                   </el-tooltip>
                   </span>
                   <div>
-                      <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序 </div>
+                      <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序，鼠标放在图片上点击第2个图标可裁剪图片 </div>
                       <pictures-upload-view @imageChanged="onDescImageChanged" ref="descPicListView" :belongType="1" :containLimit="45" :pictureUrlList="descPicUrlList" :multiple="true">
                       </pictures-upload-view>
                   </div>

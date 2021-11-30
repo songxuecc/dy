@@ -94,7 +94,11 @@
               <el-switch class="ml-5"  size="mini" v-model="properties.is_open"></el-switch>
               <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)">删除</el-button>
             </div>
-            <div v-if="!propertiesMap.length" class="font-12">无，点击新增按钮添加</div>
+            <div v-if="!propertiesMap.length" class="font-12">
+              <el-input size="mini" style="width:150px"  class=" mr-5" placeholder="请填写,如产地" ></el-input> 时，对应的属性值是
+              <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" ></el-input>
+              <el-switch class="ml-5"  size="mini" ></el-switch>
+            </div>
           </div>
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p class="font-12">

@@ -61,8 +61,13 @@ export default {
     msgError () {
       return this.tableDataErrorMsg.some(item => !isEmpty(item)) || this.templateError
     },
-    loadingData () {
-      return this.loadingGetTPProductByIds || this.loadingFormatTableData
+    loadingData: {
+      get: function () {
+        this.scroll()
+        return this.loadingGetTPProductByIds || this.loadingFormatTableData
+      },
+      set: function (n) {
+      }
     }
   },
   mounted () {
@@ -71,9 +76,13 @@ export default {
   },
   activated () {
     window.addEventListener('beforeunload', this.beforeunloadFn)
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.addEventListener('scroll', this.scroll)
   },
   deactivated () {
     window.removeEventListener('beforeunload', this.beforeunloadFn)
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.removeEventListener('scroll', this.scroll)
   },
   beforeDestroy () {
     const scrollEl = document.querySelector('.page-component__scroll')
