@@ -157,12 +157,12 @@
             <p class="font-12" style="height:24px">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
         </el-form-item>
         <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
-            <p class="mb-10 flex align-c mb-10">
-              <span class="font-12 mr-5">低价SKU自动过滤</span>
-              <el-form-item style="display:inline;margin-bottom:0" prop="default_sku_stock"  class="mr-5">
-                  <el-input-number v-model="low_sku_price" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
-              </el-form-item>
-              <el-form-item style="display:inline;margin-bottom:0" prop="low_sku_price">
+            <p class="mb-10 flex align-c mb-10 ">
+              <span class="font-12 mr-5 flex align-c">低于
+              <el-form-item style="display:inline;margin-bottom:0" prop="low_sku_price"  class="mr-5 ml-5">
+                  <el-input v-model="low_sku_price" placeholder="请输入数字" style="width: 120px;" />
+              </el-form-item>元的sku自动过滤</span>
+              <el-form-item style="display:inline;margin-bottom:0" prop="is_remove_sku_by_price">
                   <el-switch v-model="is_remove_sku_by_price" />
               </el-form-item>
             </p>
@@ -353,6 +353,7 @@ import common from '@/common/common.js'
 import Api from '@/api/apis.js'
 import categorySelectView from '@/components/CategorySelectView'
 import servises from '@servises'
+import utils from '@/common/utils'
 
 export default {
   mixins: [request],
@@ -413,7 +414,6 @@ export default {
       is_all_no_brand: undefined,
       is_cut_image_black_word: undefined,
       is_banner_auto_5: undefined,
-
       is_select_first_options_attr: undefined,
       is_use_default_attr_value: undefined,
       default_attr_value: '',
@@ -422,9 +422,9 @@ export default {
       is_open_title_prefix_suffix: undefined,
       is_open_title_replace: undefined,
       default_sku_stock: '',
-      low_sku_price: '',
       is_use_default_sku_stock: undefined,
       max_sku_stock: '',
+      low_sku_price: '',
       is_use_max_sku_stock: undefined,
       is_cut_banner_first: undefined,
       is_auto_cut_banner: undefined,
@@ -590,6 +590,15 @@ export default {
         callback()
       }
 
+      const checkLowSkuPrice = (rule, value, callback) => {
+        if (!utils.isNumber(value)) {
+          return callback(new Error('请输入数字'))
+        } else if (value < 0 || value > 999999.99) {
+          return callback(new Error('0<价格<999999.99'))
+        }
+        callback()
+      }
+
       const checkUseDefaultSkuStock = (rule, value, callback) => {
         if (this.is_use_default_sku_stock) {
           this.$refs.template.validateField('default_sku_stock')
@@ -635,6 +644,9 @@ export default {
         ],
         is_open_recommend_remark: [
           { validator: checkIsOpenDefaultRecommendRremark, trigger: 'change' }
+        ],
+        low_sku_price: [
+          { validator: checkLowSkuPrice, trigger: 'change' }
         ]
       }
     },
@@ -801,7 +813,6 @@ export default {
         // 'is_cut_sku_spec',
         'detail_img_cut',
         'is_use_default_sku_stock',
-        'low_sku_price',
         'is_use_max_sku_stock',
         'is_cut_banner_first',
         'is_auto_cut_banner',
@@ -900,10 +911,10 @@ export default {
         goods_property: this.goods_property_options,
         able_migrate_status_list: this.able_migrate_status_list,
         default_sku_stock: this.default_sku_stock,
-        low_sku_price: this.default_sku_stock,
         is_use_default_sku_stock: Number(this.is_use_default_sku_stock),
         is_use_max_sku_stock: Number(this.is_use_max_sku_stock),
         max_sku_stock: this.max_sku_stock,
+        low_sku_price: this.low_sku_price,
         is_cut_banner_first: Number(this.is_cut_banner_first),
         is_auto_cut_banner: Number(this.is_auto_cut_banner),
         is_cut_banner_last: Number(this.is_cut_banner_last),
