@@ -1,7 +1,13 @@
 <!-- 如何绑定店铺 -->
 <template>
     <div class="EditHowToBindStore">
-      <h1>如何绑定<span class="tutorials" @click="caozuojiaocheng">操作教程 ></span></h1>
+      <h1>如何绑定
+         <span
+          class="click pointer font-12  ml-5"
+          style="padding-top: 7px;"
+          v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/knnu2m'"><hh-icon type="iconwenhao" ></hh-icon>绑定店铺教程</span>
+
+      </h1>
       <h3><span>1、</span>当前店铺如果作为主店铺，授权码为</h3>
       <div class="code">
         <el-link

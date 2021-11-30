@@ -23,7 +23,7 @@
 
     <span>
       <span class="click mr-20" style="align-content:right" @click="openDialogExport">抖店商品导出</span>
-      <span class="click mr-20 pointer" style="align-content:right" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/lzteg9'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span>
+      <span class="click mr-20 pointer" style="align-content:right" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/lzteg9'"><hh-icon type="iconwenhao" ></hh-icon>导入表格修改教程</span>
     </span>
     <ModelGoodsExport :dialogExportVisible.sync="dialogExportVisible"/>
   </el-form>
