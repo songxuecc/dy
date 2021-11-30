@@ -129,19 +129,19 @@
 <script>
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
-import { accSub, accDiv, accMul, accAdd } from '@/common/evalFloat.js'
+import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
 import utils from '@/common/utils'
 import isEqual from 'lodash/isEqual'
 
-function financial (unit, everyDecimal) {
-  return (x) => {
-    if (unit === -1 && everyDecimal) {
-      return accAdd(parseInt(x), Number(everyDecimal))
-    }
-    const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
-    return Number.parseFloat(accDiv(Math.round(accMul(x, unit)), unit)).toFixed(fix)
-  }
-}
+// function financial (unit, everyDecimal) {
+//   return (x) => {
+//     if (unit === -1 && everyDecimal) {
+//       return accAdd(parseInt(x), Number(everyDecimal))
+//     }
+//     const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
+//     return Number.parseFloat(accDiv(Math.round(accMul(x, unit)), unit)).toFixed(fix)
+//   }
+// }
 
 export default {
   name: 'ModalSingleSkuList',
@@ -153,13 +153,13 @@ export default {
   data () {
     const unit = this.skuPriceStting.unit || 100
     const everyDecimal = this.skuPriceStting.every_decimal
-    const evalPrice = financial(unit, everyDecimal)
+    // const evalPrice = financial(unit, everyDecimal)
     return {
       radio: this.skuPriceStting.radio,
       subtraction1: this.skuPriceStting.subtraction1 || 0,
       subtraction2: this.skuPriceStting.subtraction2 || 100,
       subtraction3: this.skuPriceStting.subtraction3 || 0,
-      textPrice: this.skuPriceStting.textPrice ? evalPrice(this.skuPriceStting.textPrice) : '',
+      textPrice: this.skuPriceStting.textPrice ? this.skuPriceStting.textPrice : '',
       unit: unit,
       everyDecimal: everyDecimal,
       hasRender: false,
@@ -170,14 +170,15 @@ export default {
   watch: {
     propsData: {
       handler: function (n) {
-        const {skuData, unit, skuPriceStting} = n
-        const everyDecimal = skuPriceStting.every_decimal
-        const evalPrice = financial(unit, everyDecimal)
+        const {skuData, skuPriceStting} = n
+        console.log(n, 'skuPriceStting')
+        // const everyDecimal = skuPriceStting.every_decimal
+        // const evalPrice = financial(unit, everyDecimal)
         this.originSkuPriceStting = skuPriceStting
         const skuMap = skuData.sku_map
         const skuPropertyMap = skuData.sku_property_map
         const skuPropertyValueMap = skuData.sku_property_value_map
-
+        console.log(skuMap, 'skuMap')
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           let currentColumnData = cloneDeep(skuMap[key])
@@ -195,7 +196,8 @@ export default {
             utils.isNumber(this.subtraction3)
           ) {
             const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, originPriceDiff), groupPriceRate), 100), groupPriceDiff)
-            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_promo_price))
+            currentColumnData.sku_price = evalGroupPriceRange(currentColumnData.origin_promo_price)
+            // currentColumnData.sku_price = currentColumnData.sku_price
           }
           if (
             Number(this.radio) === 2 &&
@@ -203,7 +205,7 @@ export default {
             utils.isNumber(textPrice) &&
             textPrice
           ) {
-            currentColumnData.sku_price = evalPrice(textPrice)
+            currentColumnData.sku_price = textPrice
           }
 
           // 规格设置
