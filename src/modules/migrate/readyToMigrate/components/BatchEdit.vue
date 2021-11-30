@@ -1,26 +1,25 @@
 <template>
   <div style="margin: 5px 0">
     <el-row type="flex" justify="start" style="margin-bottom: 4px">
-      <el-col style="text-align: left">
-        <el-dropdown @command="handleCommand">
-          <div class="relative">
-            <el-tooltip   placement="top">
-            <div slot="content" style="width:200px" class="left">批量修改本页勾选产品。自动过滤抓取失败、搬迁中、等待搬迁、审核中，4种状态的商品。</div>
-            <el-button type="primary" size="mini" style="padding:5px 20px;" >
-              批量修改商品
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-          </el-tooltip>
-          <span v-if="selecEdittList && selecEdittList.length" class="badge bold">{{selecEdittList.length}}</span>
+      <el-col style="text-align: left" class="flex justify-b">
+          <div class="flex">
+            <div
+                class="relative mr-10"
+                v-for="item in dropdownOptions"
+                :key="item.value">
+              <el-button
+                size="mini"
+                class="left"
+                :style="item.props.style"
+                :type="item.props.type"
+                :plain="item.props.plain"
+                @click="handleClick(item.value,item.key)">
+                {{item.label}}
+              </el-button>
+              <!-- <span v-if="selecEdittList && selecEdittList.length" class="badge bold">{{selecEdittList.length}}</span> -->
+            </div>
           </div>
-          <el-dropdown-menu slot="dropdown" >
-            <el-dropdown-item v-for="item in dropdownOptions" :key="item.value" style="width:100px" class="left"
-              :command="item.value" :style="{color: activeIndex === item.value ? 'black' : 'gray'}">
-              {{item.label}}</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <el-button type="primary" plain size="mini" style="padding:5px 20px;width:120px" class="ml-5" @click="handleDelete(5)">批量删除记录</el-button>
-        <RefershCategoryBtn />
+          <RefershCategoryBtn style="align-content:flex-end"/>
       </el-col>
     </el-row>
     <EditTitle :visible.sync="visibleEditTitle" v-if="visibleEditTitle" @batchUpdate="batchUpdate" :loading="loading"
@@ -120,12 +119,20 @@ export default {
         {
           value: 0,
           label: '修改分类',
-          key: 'visvileCategory'
+          key: 'visvileCategory',
+          props: {
+            type: 'primary',
+            style: 'padding:5px 20px;width:100px'
+          }
         },
         {
           value: 1,
           label: '修改标题',
-          key: 'visibleEditTitle'
+          key: 'visibleEditTitle',
+          props: {
+            type: 'primary',
+            style: 'padding:5px 20px;width:100px'
+          }
         },
         // {
         //   value: 2,
@@ -135,12 +142,32 @@ export default {
         {
           value: 3,
           label: '删除轮播首图',
-          key: 'visibleEditDeleteCarousel'
+          key: 'visibleEditDeleteCarousel',
+          props: {
+            type: 'primary',
+            plain: true,
+            style: 'padding:5px 20px;width:120px'
+          }
         },
         {
           value: 4,
           label: '删除详情尾图',
-          key: 'visibleEditDelteDetailImage'
+          key: 'visibleEditDelteDetailImage',
+          props: {
+            type: 'primary',
+            plain: true,
+            style: 'padding:5px 20px;width:120px'
+          }
+        },
+        {
+          value: 5,
+          label: '批量删除记录',
+          key: 'visibleEditDelteRecord',
+          props: {
+            type: '',
+            plain: true,
+            style: 'padding:5px 20px;width:120px'
+          }
         }
       ],
       percentage: 0,
@@ -196,9 +223,9 @@ export default {
     onChange (value) {
       this.$emit('onSizeChange', value)
     },
-    handleDelete () {
-      this.activeIndex = 5
-      this.visibleEditDelteRecord = !this.visibleEditDelteRecord
+    handleClick (index, key) {
+      this.activeIndex = index
+      this[key] = !this[key]
     },
     handleCommand (command) {
       this.activeIndex = command
