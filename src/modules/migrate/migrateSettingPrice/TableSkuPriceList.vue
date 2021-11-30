@@ -6,28 +6,30 @@
         <el-radio :label="1" >保留整数(四舍五入)</el-radio>
         <el-radio :label="10" >保留一位小数(四舍五入)</el-radio>
         <el-radio :label="100" >保留两位小数(四舍五入)</el-radio>
+        <el-radio :label="-1" >统一设置小数部分为
+          <el-tooltip content="请填写大于0小于1的数。如填写0.8，则原价9元的商品将变为9.8元" placement="top-start">
+            <span class="relative">
+              <el-input v-model="every_decimal"  @input="handleEveryDecimal" :debounce="500" controls-position="right" @focus="focus" size="mini" :precision="2" :step="0.01" :max="0.99" :min="0.01" placeholder="请填写数字" style="width:110px" class="numberInput"/>
+              <span class="tipNumber" v-if="tipNumberShow">请填写大于0小于1的数字。</span>
+            </span>
+          </el-tooltip>
+        </el-radio>
       </el-radio-group>
-      <span class="click mr-20 pointer ml-20" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tl4g0a'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频: 如何设置价格</span>
+      <span class="click pointer ml-20" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tl4g0a'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频: 如何设置价格</span>
     </div>
     <el-table :data="tableData" style="width: 100%;min-height:270px">
       <el-table-empty slot="empty" />
-      <el-table-column label="操作" width="50" align="center">
+      <el-table-column label="操作" width="80" align="center">
         <template slot-scope="scope">
           <span class="primary" @click="handleDelete(scope.row)">删除</span>
         </template>
       </el-table-column>
-      <el-table-column label="图片" width="78" align="center">
+      <el-table-column label="图片" width="98" align="center">
         <template slot-scope="scope">
-          <img
-            style="height: 50px"
-            :src="scope.row.thumbnail"
-            class="border-2"
-            v-if="scope.row.thumbnail"
-          />
-          <hh-icon v-else type="iconwuzhaopian" style="font-size:50px" />
+          <HhImage :src="scope.row.thumbnail" style="height:50px;max-width:65px" class="mr-10 border-2"/>
         </template>
       </el-table-column>
-      <el-table-column label="标题" align="center">
+      <el-table-column label="标题" width="380">
         <div slot-scope="scope" class="left">
           <el-link
             :href="scope.row.url"
@@ -42,14 +44,14 @@
         </div>
       </el-table-column>
 
-      <el-table-column align="center" width="280" class-name="custom-column">
+      <el-table-column align="center"  class-name="custom-column">
         <template slot="header" slot-scope="scope">
-          <p class="font-14 mb-10">sku价格=
+          <span class="font-14 mb-10">sku价格=
             <el-tooltip content="SKU价格公式输入必须为数字" v-if="templateError.group_price_rate" placement="top">
               <hh-icon type="iconjinggao1" style="font-size:14px"></hh-icon>
             </el-tooltip>
-          </p>
-          <div>
+          </span>
+          <span>
             <span> (&nbsp;原价 - </span>
             <el-tooltip content="一般填0，若源商品含运费则可以加上运费后再设置百分比。比如源商品运费是10元，则填-10" placement="top">
               <el-input
@@ -57,7 +59,7 @@
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.origin_price_diff"
-                @input="handleSetTemplate($event,'origin_price_diff')"
+                @input="handleSkuPriceChange($event,'origin_price_diff')"
                 size="mini"
                 class="price-sku-input"
               />
@@ -69,7 +71,7 @@
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.group_price_rate"
-                @input="handleSetTemplate($event,'group_price_rate')"
+                @input="handleSkuPriceChange($event,'group_price_rate')"
                 size="mini"
                 class="price-sku-input"
               />
@@ -81,15 +83,15 @@
                 :debounce="500"
                 style="width: 55px"
                 :value="template.model.group_price_diff"
-                @input="handleSetTemplate($event,'group_price_diff')"
+                @input="handleSkuPriceChange($event,'group_price_diff')"
                 size="mini"
                 class="price-sku-input"
               />
             </el-tooltip>
-          </div>
+          </span>
         </template>
         <template slot-scope="scope">
-          <span class="price">{{ scope.row.group_price_range }}</span>
+          <span class="price">{{getGroupPriceRange(scope.row)}}</span>
           <hh-icon
             type="iconbianji"
             style="font-size: 12px"
@@ -97,87 +99,8 @@
             @click="showSkuPrice(scope.row)"
             :class="[tableDataErrorMsg[scope.$index].group_price_range_error ? 'warn':'']"
           />
-          <span class="info tutorials" v-if="scope.row.selectPriceInfo">{{scope.row.selectPriceInfo}}</span>
+          <span class="info tutorials" v-if="getSelectInfo(scope.row)">{{getSelectInfo(scope.row)}}</span>
           <span class="fail absolute" v-if="tableDataErrorMsg[scope.$index].group_price_range_error">{{tableDataErrorMsg[scope.$index].group_price_range_error}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center"  width="180"  class-name="custom-column">
-        <template slot="header" slot-scope="scope">
-          <p class="font-14 mb-10">售卖价</p>
-          <el-radio-group
-            class="font-14"
-            v-model.number="template.model.is_sale_price_show_max"
-            @change="handleSetTemplate($event,'is_sale_price_show_max')"
-            size="mini"
-          >
-            <el-radio-button label="0">最低价</el-radio-button>
-            <el-radio-button label="1">最高价</el-radio-button>
-          </el-radio-group>
-        </template>
-        <template slot-scope="scope">
-            <div class="flex align-c justify-c">
-              <el-input
-                :debounce="500"
-                size="mini"
-                class="price-sale-input"
-                :value="scope.row.discount_price"
-                @input="handleDiscountPrice($event,scope.row.tp_product_id)"
-                @clear="handleClearDiscountPrice(scope.row.tp_product_id)"
-                :class="[tableDataErrorMsg[scope.$index].discount_price_error ? 'warn':'']"
-              />
-              <span class="tutorials" v-if="scope.row.custome_discount_price">已编辑</span>
-            </div>
-            <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].discount_price_error">{{tableDataErrorMsg[scope.$index].discount_price_error}}</p>
-        </template>
-      </el-table-column>
-      <el-table-column align="center"  width="230"  class-name="custom-column">
-        <template slot="header" slot-scope="scope">
-          <p class="font-14 mb-10">
-            划线价=
-            <span class="color-primary pointer" @click="toggleIsShowSample"
-              >查看示例</span
-            >
-            <el-tooltip content="划线价公式输入必须为数字" v-if="templateError.price_rate" placement="top">
-              <hh-icon type="iconjinggao1" style="font-size:14px"></hh-icon>
-            </el-tooltip>
-          </p>
-          <div>
-            <span> 原划线价 x </span>
-            <el-input
-              :class="[templateError.price_rate ? 'warn':'']"
-              :debounce="500"
-              style="width: 55px"
-              :value="template.model.price_rate"
-              @input="handleSetTemplate($event,'price_rate')"
-              size="mini"
-              class="price-sku-input"
-            />
-            <span class="th-title-text"> % - </span>
-            <el-input
-              :class="[templateError.price_diff ? 'warn':'']"
-              :debounce="500"
-              style="width: 55px"
-              :value="template.model.price_diff"
-              @input="handleSetTemplate($event,'price_diff')"
-              size="mini"
-              class="price-sku-input"
-            />
-          </div>
-        </template>
-        <template slot-scope="scope">
-          <div class="flex align-c justify-c">
-            <el-input
-              :debounce="500"
-              size="mini"
-              class="price-sale-input"
-              :value="scope.row.market_price"
-              @input="handleMarketPrice($event,scope.row.tp_product_id)"
-              @clear="handleClearMarketPrice(scope.row.tp_product_id)"
-              :class="[tableDataErrorMsg[scope.$index].market_price_error ? 'warn':'']"
-            />
-            <span class="tutorials"  v-if="scope.row.custome_market_price">已编辑</span>
-          </div>
-          <p class="fail absolute" v-if="tableDataErrorMsg[scope.$index].market_price_error">{{tableDataErrorMsg[scope.$index].market_price_error}}</p>
         </template>
       </el-table-column>
     </el-table>
@@ -191,6 +114,7 @@
       :close-on-click-modal="false"
       :show-close="false"
       ref="dialog"
+      style="margin-top:-80px;"
     >
     <ModalSingleSkuList
       ref="modalSingleSkuList"
@@ -229,6 +153,7 @@
 import { mapActions, mapState, mapGetters } from 'vuex'
 import ModalSingleSkuList from './ModalSingleSkuList'
 import utils from '@/common/utils'
+import debounce from 'lodash/debounce'
 
 export default {
   name: 'TableSkuPriceList',
@@ -246,14 +171,15 @@ export default {
       selectTpProductSkuId: undefined,
       selectTpProductSkuPriceStting: undefined,
       marketPrice: undefined,
-      float: ''
+      float: '',
+      tipNumberShow: false
     }
   },
   async activated () {
     this.getTPProductByIds()
   },
   computed: {
-    ...mapState('migrate/migrateSettingPrice', ['tableData', 'unit']),
+    ...mapState('migrate/migrateSettingPrice', ['tableData', 'unit', 'every_decimal']),
     ...mapGetters('migrate/migrateSettingPrice', ['tableDataErrorMsg']),
     ...mapGetters('migrate/migrateSettingTemplate', {
       template: 'getTemplate',
@@ -278,35 +204,67 @@ export default {
         this.float = newVal
       },
       deep: true
+    },
+    every_decimal: {
+      handler: function (newVal) {
+        // this.every_decimal = newVal
+        console.log(newVal, 'newVal')
+      },
+      deep: true
     }
   },
   methods: {
     ...mapActions('migrate/migrateSettingPrice', [
       'getTPProductByIds',
-      'formatTableData',
-      'marketPriceChange',
-      'singleSkuPriceChange',
-      'discountPriceChange',
+      'unitChange',
+      'marketCustomeChange',
+      'skuPriceCustomeChange',
+      'discountChange',
+      'discountCustomeChange',
       'clearMarketPrice',
       'clearDiscountPrice',
       'parsetIntFloat',
-      'updateTemplate',
-      'deleteRow'
+      'skuPriceChange',
+      'deleteRow',
+      'everyDecimalChange'
     ]),
     ...mapActions('migrate/migrateSettingTemplate', [
       'requestTemplate',
       'saveTempTemplate'
     ]),
-    toFixFloat (unit) {
-      this.formatTableData({
-        tableData: this.tableData,
-        template: this.template,
-        unit
-      })
+    toFixFloat: debounce(function (unit) {
+      let value = this.every_decimal
+
+      if (unit === -1) {
+        if (value && utils.isNumber(value) && value > 0 && value < 1) {
+          this.unitChange({
+            unit,
+            everyDecimal: Math.floor(value * 100) / 100,
+            change: true
+          })
+        } else {
+          this.unitChange({
+            unit,
+            everyDecimal: value,
+            change: false
+          })
+          this.$message.warning('请输入0-1的数字')
+        }
+      } else {
+        this.unitChange({
+          unit,
+          everyDecimal: value,
+          change: false
+        })
+      }
     },
+    300,
+    {
+      leading: true
+    }),
     // 设置划线价
     handleMarketPrice (price, id, oldValue) {
-      this.marketPriceChange({
+      this.marketCustomeChange({
         price,
         id
       })
@@ -325,7 +283,7 @@ export default {
     },
     // 设置售卖价
     handleDiscountPrice (price, id) {
-      this.discountPriceChange({
+      this.discountCustomeChange({
         price,
         id
       })
@@ -345,8 +303,12 @@ export default {
       this.selectTpProductSkuJson = selectTpProduct.sku_json
       this.selectTpProductSkuId = selectTpProduct.tp_product_id
       this.marketPrice = selectTpProduct.market_price
-      if (selectTpProduct.selectPriceType) {
-        this.selectTpProductSkuPriceStting = {...selectTpProduct.selectPriceArithmetic, unit: this.unit}
+      if (selectTpProduct.custom_setting_unit) {
+        this.selectTpProductSkuPriceStting = {
+          ...selectTpProduct.custom_setting_unit,
+          unit: this.unit,
+          every_decimal: this.template.model.ext_json.every_decimal
+        }
       } else {
         this.selectTpProductSkuPriceStting = {
           subtraction1: this.template.model.origin_price_diff,
@@ -354,24 +316,46 @@ export default {
           subtraction3: this.template.model.group_price_diff,
           textPrice: '',
           radio: '1',
-          unit: this.unit
+          unit: this.unit,
+          every_decimal: this.template.model.ext_json.every_decimal
         }
       }
       this.dialogSkuPriceVisible = true
     },
-    handleSureBatchEdut (arithmetic) {
+    handleSureBatchEdut (arithmetic, skuData) {
       this.closeSkuPriceListView()
-      this.singleSkuPriceChange({
+      this.skuPriceCustomeChange({
         id: this.selectTpProductSkuId,
-        arithmetic
+        arithmetic,
+        skuData
       })
     },
-    handleSetTemplate (value, key) {
+    handleSkuPriceChange (value, key) {
       this.template.model[key] = value
-      this.updateTemplate({
-        template: this.template,
-        key
+      this.$nextTick(() => {
+        this.skuPriceChange({
+          template: this.template,
+          key
+        })
       })
+    },
+    getGroupPriceRange (row) {
+      const skuMap = row.sku_json.sku_map
+      const skuPricesValues = Object.values(skuMap)
+        .map(sku => sku.sku_price)
+        .sort((a, b) => a - b)
+      const minSkuPrices = skuPricesValues[0]
+      const maxSkuPrices = skuPricesValues[skuPricesValues.length - 1]
+      return minSkuPrices === maxSkuPrices ? maxSkuPrices : `${minSkuPrices}~${maxSkuPrices}`
+    },
+    getSelectInfo (row) {
+      let msg = ''
+      const skuMap = row.sku_json.sku_map
+      const showMsg = Object.values(skuMap).map(sku => sku.editType).some(item => item !== 0)
+      if (showMsg) {
+        msg = '已编辑'
+      }
+      return msg
     },
     // 删除
     handleDelete (row) {
@@ -391,6 +375,44 @@ export default {
         })
       }).catch(() => {
       })
+    },
+    focus () {
+      this.float = -1
+      this.toFixFloat(-1)
+    },
+    handleEveryDecimal (value) {
+      let unit = this.float
+      if (unit === -1) {
+        if (value && utils.isNumber(value) && value > 0 && value < 1) {
+          if (value >= 1) {
+            value = 0.99
+          }
+
+          if (value <= 0) {
+            value = 0.01
+          }
+          value = Math.floor(value * 100) / 100
+          this.unitChange({
+            unit,
+            everyDecimal: value,
+            change: true
+          })
+          this.tipNumberShow = false
+        } else {
+          this.unitChange({
+            unit,
+            everyDecimal: value,
+            change: false
+          })
+          this.tipNumberShow = true
+        }
+      } else {
+        this.unitChange({
+          unit,
+          everyDecimal: value,
+          change: false
+        })
+      }
     }
   }
 }
@@ -462,6 +484,26 @@ export default {
   .tutorials {
     transform: scale(0.7);
   }
+  .numberInput {
+    // /deep/ .el-input-number__decrease{
+    //   display: none;
+    // }
+    // /deep/ .el-input-number__increase {
+    //   display: none;
+    // }
+    /deep/ .el-input__inner{
+      // padding-left: 10px;
+      // padding-right: 10px;
+      // text-align: left;
+    }
+  }
+}
+
+.tipNumber {
+  position: absolute;
+  bottom:-22px;
+  left: 0;
+  color:red;
 }
 
 </style>

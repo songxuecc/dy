@@ -129,8 +129,8 @@
                 <TableProductDelete ref="TableProductDelete" />
                 <ProductProperties ref="ProductProperties" v-if="editType === 10"/>
                 <TableProductProperties ref="TableProductProperties" />
-                <SaleAndUnderlinedPrice ref="SaleAndUnderlinedPrice" v-if="editType === 11"/>
-                <TableSaleAndUnderlinedPrice ref="TableSaleAndUnderlinedPrice" />
+                <!-- <SaleAndUnderlinedPrice ref="SaleAndUnderlinedPrice" v-if="editType === 11"/>
+                <TableSaleAndUnderlinedPrice ref="TableSaleAndUnderlinedPrice" /> -->
                 <LimitCount ref="LimitCount" v-if="editType === 12"/>
                 <TableLimitCount ref="TableLimitCount" />
                 <Weight ref="Weight" v-if="editType === 13"/>
@@ -143,7 +143,7 @@
                 <TableAddImages ref="TableAddImages" v-if="editType === 16"/>
           </div>
           <div class="flex justify-c pb-20 mt-20">
-              <el-button type="primary" class="w-120" @click="preview" :loading="loading">效果修改预览</el-button>
+              <el-button type="primary" class="w-120" @click="preview" :loading="loading">预览修改效果</el-button>
           </div>
         </div>
         <TableRecord
@@ -190,7 +190,7 @@ import ConsumerHotline from '@productsManagement/batchEdit/components/ConsumerHo
 import CountMethod from '@productsManagement/batchEdit/components/CountMethod'
 import ProductDelete from '@productsManagement/batchEdit/components/ProductDelete'
 import ProductProperties from '@productsManagement/batchEdit/components/ProductProperties'
-import SaleAndUnderlinedPrice from '@productsManagement/batchEdit/components/SaleAndUnderlinedPrice'
+// import SaleAndUnderlinedPrice from '@productsManagement/batchEdit/components/SaleAndUnderlinedPrice'
 import LimitCount from '@productsManagement/batchEdit/components/LimitCount'
 import Weight from '@productsManagement/batchEdit/components/Weight'
 import Remark from '@productsManagement/batchEdit/components/Remark'
@@ -211,7 +211,7 @@ import TableConsumerHotline from '@productsManagement/batchEdit/components/Table
 import TableCountMethod from '@productsManagement/batchEdit/components/TableCountMethod'
 import TableProductDelete from '@productsManagement/batchEdit/components/TableProductDelete'
 import TableProductProperties from '@productsManagement/batchEdit/components/TableProductProperties'
-import TableSaleAndUnderlinedPrice from '@productsManagement/batchEdit/components/TableSaleAndUnderlinedPrice'
+// import TableSaleAndUnderlinedPrice from '@productsManagement/batchEdit/components/TableSaleAndUnderlinedPrice'
 import TableLimitCount from '@productsManagement/batchEdit/components/TableLimitCount'
 import TableWeight from '@productsManagement/batchEdit/components/TableWeight'
 import TableRemark from '@productsManagement/batchEdit/components/TableRemark'
@@ -246,8 +246,8 @@ export default {
     TableProductDelete,
     TableProductProperties,
     ProductProperties,
-    SaleAndUnderlinedPrice,
-    TableSaleAndUnderlinedPrice,
+    // SaleAndUnderlinedPrice,
+    // TableSaleAndUnderlinedPrice,
     LimitCount,
     TableLimitCount,
     Weight,
@@ -351,16 +351,16 @@ export default {
           tableRef: 'TablePrice',
           needExpand: true
         },
-        {
-          primary: 'icona-shoumaihuaxianjiaxuanzhong',
-          info: 'icona-shoumaihuaxianjiaweixuanzhong',
-          index: 11,
-          text: '售卖&划线价',
-          ref: 'SaleAndUnderlinedPrice',
-          tableRef: 'TableSaleAndUnderlinedPrice',
-          needExpand: false,
-          hot: true
-        },
+        // {
+        //   primary: 'icona-shoumaihuaxianjiaxuanzhong',
+        //   info: 'icona-shoumaihuaxianjiaweixuanzhong',
+        //   index: 11,
+        //   text: '售卖&划线价',
+        //   ref: 'SaleAndUnderlinedPrice',
+        //   tableRef: 'TableSaleAndUnderlinedPrice',
+        //   needExpand: false,
+        //   hot: true
+        // },
         {
           primary: 'iconfahuomoshixuanzhong',
           info: 'iconfahuomoshiweixuanzhong',

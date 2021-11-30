@@ -27,6 +27,8 @@
 <script>
 import { createNamespacedHelpers, mapGetters, mapState, mapActions } from 'vuex'
 import cloneDeep from 'lodash/cloneDeep'
+import isEqual from 'lodash/isEqual'
+
 import isEmpty from 'lodash/isEmpty'
 import pick from 'lodash/pick'
 import moment from 'moment'

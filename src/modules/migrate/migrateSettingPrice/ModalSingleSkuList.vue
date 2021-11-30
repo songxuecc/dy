@@ -1,10 +1,8 @@
 <template>
     <div class="ModalSingleSkuList relative mt-20">
-      <div class="center font-12" style="position:absolute;top:-25px;left:0;right:0;margin-auto">
-        <span class="color-4e" v-if="unit === 1" >已选择&nbsp;-&nbsp;保留整数(四舍五入)</span>
-        <span class="color-4e" v-if="unit === 10" >已选择&nbsp;-&nbsp;保留一位小数(四舍五入)</span>
-        <span class="color-4e" v-if="unit === 100" >已选择&nbsp;-&nbsp;保留两位小数(四舍五入)</span>
-      </div>
+      <!-- <div class="center font-12" style="position:absolute;top:-25px;left:0;right:0;margin-auto">
+        <span class="color-4e" v-if="Number(radio) === 1">{{parseFloatText}}</span>
+      </div> -->
       <div class="priceChange">
         <el-radio v-model="radio" label="1">
           <span>(原sku价-</span>
@@ -50,7 +48,8 @@
           ref="skuListTable"
           :data="tableData"
           row-key="tp_product_id"
-          style="width: 100%"
+          max-height="450"
+          style="width: 100%;margin-bottom:20px"
           :cell-class-name="cellClassName">
             <el-table-empty slot="empty"/>
             <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id"
@@ -130,12 +129,18 @@
 <script>
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
-import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
+import { accSub, accDiv, accMul, accAdd } from '@/common/evalFloat.js'
 import utils from '@/common/utils'
+import isEqual from 'lodash/isEqual'
 
-function financial (unit) {
-  const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
-  return (x) => Number.parseFloat(accDiv(Math.round(accMul(x, unit)), unit)).toFixed(fix)
+function financial (unit, everyDecimal) {
+  return (x) => {
+    if (unit === -1 && everyDecimal) {
+      return accAdd(parseInt(x), Number(everyDecimal))
+    }
+    const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
+    return Number.parseFloat(accDiv(Math.round(accMul(x, unit)), unit)).toFixed(fix)
+  }
 }
 
 export default {
@@ -146,44 +151,61 @@ export default {
     marketPrice: Number | String
   },
   data () {
-    const unit = this.skuPriceStting.unit
-    const evalPrice = financial(unit)
+    const unit = this.skuPriceStting.unit || 100
+    const everyDecimal = this.skuPriceStting.every_decimal
+    const evalPrice = financial(unit, everyDecimal)
     return {
       radio: this.skuPriceStting.radio,
       subtraction1: this.skuPriceStting.subtraction1 || 0,
       subtraction2: this.skuPriceStting.subtraction2 || 100,
       subtraction3: this.skuPriceStting.subtraction3 || 0,
       textPrice: this.skuPriceStting.textPrice ? evalPrice(this.skuPriceStting.textPrice) : '',
-      unit: this.skuPriceStting.unit || 100,
+      unit: unit,
+      everyDecimal: everyDecimal,
       hasRender: false,
-      tableData: []
+      tableData: [],
+      originSkuPriceStting: {}
     }
   },
   watch: {
     propsData: {
       handler: function (n) {
-        const {skuData, unit} = n
+        const {skuData, unit, skuPriceStting} = n
+        const everyDecimal = skuPriceStting.every_decimal
+        const evalPrice = financial(unit, everyDecimal)
+        this.originSkuPriceStting = skuPriceStting
         const skuMap = skuData.sku_map
         const skuPropertyMap = skuData.sku_property_map
         const skuPropertyValueMap = skuData.sku_property_value_map
+
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           let currentColumnData = cloneDeep(skuMap[key])
-          const evalPrice = financial(unit)
-          // 根据 定制公式重设价格
-          if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
-            const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
-            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_price))
-          } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
-            currentColumnData.sku_price = evalPrice(this.textPrice)
+          currentColumnData.custom_key = key
+          const originPriceDiff = this.template.subtraction1
+          const groupPriceRate = this.template.subtraction2
+          const groupPriceDiff = this.template.subtraction3
+          const textPrice = this.template.textPrice
+          // 数据回显
+          if (
+            Number(this.radio) === 1 &&
+            currentColumnData.custom_setting_unit &&
+            utils.isNumber(this.subtraction1) &&
+            utils.isNumber(this.subtraction2) &&
+            utils.isNumber(this.subtraction3)
+          ) {
+            const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, originPriceDiff), groupPriceRate), 100), groupPriceDiff)
+            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_promo_price))
           }
-          // 根据 自定义价格
-          if (currentColumnData.custom_price && !this.hasRender) {
-            currentColumnData.sku_price = evalPrice(currentColumnData.custom_price)
+          if (
+            Number(this.radio) === 2 &&
+            currentColumnData.custom_setting_unit &&
+            utils.isNumber(textPrice) &&
+            textPrice
+          ) {
+            currentColumnData.sku_price = evalPrice(textPrice)
           }
-          if (this.skuPriceStting.tabledata) {
-            currentColumnData = this.skuPriceStting.tabledata.find(item => item.custome_key === key)
-          }
+
           // 规格设置
           let column = {}
           // 默认规格设置
@@ -209,39 +231,59 @@ export default {
       immediate: true
     },
     template (n) {
-      const unit = this.unit
-      const evalPrice = financial(unit)
-      let number1 = n.subtraction1
-      let number2 = n.subtraction2
-      let number3 = n.subtraction3
+      // const unit = n.unit
+      // const everyDecimal = n.everyDecimal
+      // const evalPrice = financial(unit, everyDecimal)
+      let originPriceDiff = n.subtraction1
+      let groupPriceRate = n.subtraction2
+      let groupPriceDiff = n.subtraction3
+      let textPrice = n.textPrice
       // 添加默认 sku公式值
       if (!utils.isNumber(n.subtraction1)) {
-        number1 = 0
+        originPriceDiff = 0
       }
       if (!utils.isNumber(n.subtraction2)) {
-        number2 = 0
+        groupPriceRate = 0
       }
       if (!utils.isNumber(n.subtraction3)) {
-        number3 = 0
+        groupPriceDiff = 0
       }
-      if (Number(n.radio) === 1 && utils.isNumber(number1) && utils.isNumber(number2) && utils.isNumber(number3)) {
-        const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, number1), number2), 100), number3)
+      if (
+        Number(n.radio) === 1 &&
+         utils.isNumber(originPriceDiff) &&
+         utils.isNumber(groupPriceRate) &&
+         utils.isNumber(groupPriceDiff) &&
+         !isEqual(n, this.originSkuPriceStting)
+      ) {
+        const evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff)
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
-          delete nextItem.custom_price
-          nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_price))
+          nextItem.editType = 1
+          // nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_promo_price))
+          nextItem.sku_price = evalGroupPriceRange(nextItem.origin_promo_price)
           this.$set(this.tableData, idx, nextItem)
           return nextItem
         })
+        this.custom_setting_unit = true
         this.tableData = tableData
-      } else if (Number(n.radio) === 2 && utils.isNumber(n.textPrice) && evalPrice(n.textPrice) > 0.01 && evalPrice(n.textPrice) < 9999999.99) {
+      }
+      if (
+        Number(n.radio) === 2 &&
+          utils.isNumber(textPrice) &&
+          textPrice > 0.01 &&
+          textPrice < 9999999.99 &&
+          !isEqual(n, this.originSkuPriceStting)
+      ) {
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
-          delete nextItem.custom_price
-          nextItem.sku_price = evalPrice(n.textPrice)
+          // item.custom_setting_unit = this.template
+          // item.custom_setting_sku_price = false
+          nextItem.editType = 1
+          nextItem.sku_price = textPrice
           this.$set(this.tableData, idx, nextItem)
           return nextItem
         })
+        this.custom_setting_unit = true
         this.tableData = tableData
       }
     }
@@ -253,13 +295,16 @@ export default {
         subtraction1: this.subtraction1,
         subtraction2: this.subtraction2,
         subtraction3: this.subtraction3,
-        textPrice: this.textPrice
+        textPrice: this.textPrice,
+        unit: this.skuPriceStting.unit,
+        everyDecimal: this.skuPriceStting.every_decimal
       }
     },
     propsData () {
       const skuData = this.skuData
       const unit = this.skuPriceStting.unit
-      return {skuData, unit}
+      const skuPriceStting = this.skuPriceStting
+      return {skuData, unit, skuPriceStting}
     },
     skuPropertyList () {
       const skuPropertyMap = this.skuData.sku_property_map
@@ -309,7 +354,7 @@ export default {
         } else if (price < 0.01 || price > 9999999.99) {
           errorMsg = '价格范围：0.01-9999999.99'
         } else if (!isInteger(price)) {
-          errorMsg = `价格最多最多${this.parseFloatText}`
+          errorMsg = `价格最多保留两位小数`
         }
         return errorMsg
       })
@@ -324,6 +369,9 @@ export default {
       if (this.unit === 100) {
         return '保留两位小数(四舍五入)'
       }
+      if (this.unit === -1) {
+        return `统一设置小数部分: ${this.everyDecimal}`
+      }
     }
   },
   methods: {
@@ -337,18 +385,16 @@ export default {
     handleSkuChange (price, index, columnData) {
       const tableData = this.tableData.map((item, idx) => {
         if (idx !== index) return item
-        this.$set(this.tableData, index, {
+        const nextItem = {
           ...columnData,
+          // custom_setting_sku_price: true,
           sku_price: price,
-          // 自定义价格
-          custom_price: price
-        })
-        return {
-          ...columnData,
-          sku_price: price,
-          custom_price: price
+          editType: 2
         }
+        this.$set(this.tableData, index, nextItem)
+        return nextItem
       })
+      this.custom_setting_unit = false
       this.tableData = tableData
     },
     handleClearSkuPrice (index) {
@@ -363,14 +409,17 @@ export default {
       const column = cloneDeep(this.tableData[index])
       let price = column.promo_price / 100
       // 抹角 抹分
-      const unit = this.skuPriceStting.unit
-      const evalPrice = financial(unit)
+      // const unit = this.skuPriceStting.unit
+      // const everyDecimal = this.skuPriceStting.everyDecimal
+      // const evalPrice = financial(unit, everyDecimal)
       // 根据 自定义设置重设价格
       if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
         const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
-        price = evalPrice(evalGroupPriceRange(price))
+        // price = evalPrice(evalGroupPriceRange(price))
+        price = evalGroupPriceRange(price)
       } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
-        price = evalPrice(this.textPrice)
+        // price = evalPrice(this.textPrice)
+        price = this.textPrice
       }
       column.sku_price = price
       // 自定义价格设置删除
@@ -396,15 +445,17 @@ export default {
       if (!utils.isNumber(this.subtraction3)) {
         this.subtraction3 = 0
       }
-
-      this.$emit('handleSureBatchEdut', {
-        radio: this.radio,
-        subtraction1: this.subtraction1,
-        subtraction2: this.subtraction2,
-        subtraction3: this.subtraction3,
-        textPrice: this.textPrice,
-        tableData: this.tableData
-      })
+      // console.log(this.tableData, 'this.tableData')
+      this.$emit('handleSureBatchEdut',
+        {
+          radio: this.radio,
+          subtraction1: this.subtraction1,
+          subtraction2: this.subtraction2,
+          subtraction3: this.subtraction3,
+          textPrice: this.textPrice
+        },
+        this.tableData
+      )
     },
     handleTextPrice (value) {
       if (!utils.isNumber(value)) {
@@ -413,9 +464,11 @@ export default {
       this.textPrice = value
     },
     handleTextPriceChange (value) {
-      const unit = this.skuPriceStting.unit
-      const evalPrice = financial(unit)
-      this.textPrice = evalPrice(value)
+      // const unit = this.skuPriceStting.unit
+      // const everyDecimal = this.skuPriceStting.everyDecimal
+      // const evalPrice = financial(unit, everyDecimal)
+      // this.textPrice = evalPrice(value)
+      this.textPrice = value
     },
     handlemouseover (item) {
       this.$set(item, 'maskShow', true)
@@ -455,9 +508,14 @@ export default {
 
   }
   .btns{
-    margin-top: 20px ;
     display: flex;
     justify-content: center;
+    // position: absolute;
+    // left: 0;
+    // right: 0;
+    // bottom: 0;
+    // width: 100%;
+    // background:#fff;
   }
 
   .warn {
