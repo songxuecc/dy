@@ -34,7 +34,7 @@
     </div>
     <div
         :class="['float-button nav-go-top',isDragging ?'move':'']"
-        @click="backToTop"
+        @click.stop="backToTop"
         @mouseover="changeFlexFootIndex($event,6)"
         @mouseout="changeFlexFootIndex($event,0)">
         <div class="color-tip pionter">{{!flexFootVisible ? '显示':'隐藏'}}</div>
@@ -130,8 +130,9 @@ export default {
       //   left: 0,
       //   behavior: 'smooth'
       // })
+      event.preventDefault()
       this.$emit('visible')
-      this.text = '放大'
+      console.log('111')
     },
     closeService (event) {
       event || (event = window.event)
