@@ -2,15 +2,13 @@
 <template>
   <div class='left cycleProductsSelf'>
     <div class="alert">
-            <div>
-              <hh-icon type="icontishi" ></hh-icon>
+            <div style="margin-left:16px">
               什么是定时上下架？
-              <!-- <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
-                点我查看教程视频
-              </span> -->
+              <hh-icon type="iconwenhao" class="ml-5"></hh-icon><span class="click pointer font-12 " v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/fytkle'">
+                定时上下架教程
+              </span>
             </div>
             <p>提前设置上下架类型及上下架时间，系统会根据你的设置按时进行上下架操作</p>
-
       </div>
       <div class="flex align-c mb-10">
         <el-button type="primary" size="medium" @click="createPlan">创建定时上下架计划</el-button>
@@ -19,10 +17,6 @@
           <span v-else-if="getSyncButtonStatus === 'running'"><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先同步后台商品，正在同步后台商品...<span class="bold">{{getSyncButtonText}}</span> <i class="el-icon-loading"></i></span>
           <span v-else><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先<span class="underline pointer" @click="handleSyncProducts">同步后台商品</span>（最近同步时间：<span class="bold">{{getSyncButtonText}}</span>），待商品更新至最新再操作</span>
         </span>
-        <!-- <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
-          <hh-icon type="icontishi" ></hh-icon>
-          点我查看教程视频
-        </span> -->
       </div>
     <el-table :data="tableData" style="width: 100%" v-loading="loading || loadingPost">
       <el-table-empty slot="empty"/>

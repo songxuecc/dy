@@ -80,7 +80,16 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource" label="状态" width="130" style="overflow:auto"  align="center" class-name="cell-class">
+             <el-table-column v-if="!isSyncSource"  width="130" style="overflow:auto"  align="center" class-name="cell-class">
+                <template slot="header" slot-scope="scope">
+                    <span>
+                      状态
+                      <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/ut7l6p'">
+                        <hh-icon type="iconwenhao" ></hh-icon>
+                        状态含义
+                      </span>
+                    </span>
+                </template>
                 <template slot-scope="scope">
                     <el-link :underline="false" style="text-decoration:none;" type="info" size="mini" round v-if="[0,1].includes(scope.row.capture_status)">复制中</el-link>
                     <el-link :underline="false" style="text-decoration:none;"  :type="getStatusType(scope.row.status)" size="mini" round v-else-if="scope.row.status!==2" :disabled="scope.row.status === 9">

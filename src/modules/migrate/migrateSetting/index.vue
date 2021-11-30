@@ -157,7 +157,15 @@
             <p class="font-12" style="height:24px">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
         </el-form-item>
         <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
-            <p class="font-12" style="height:24px">低价SKU自动过滤<el-switch class="ml-5" v-model="low_sku_price" /></p>
+            <p class="mb-10 flex align-c mb-10">
+              <span class="font-12 mr-5">低价SKU自动过滤</span>
+              <el-form-item style="display:inline;margin-bottom:0" prop="default_sku_stock"  class="mr-5">
+                  <el-input-number v-model="low_sku_price" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
+              </el-form-item>
+              <el-form-item style="display:inline;margin-bottom:0" prop="low_sku_price">
+                  <el-switch v-model="is_remove_sku_by_price" />
+              </el-form-item>
+            </p>
         </el-form-item>
 
         <!-- <el-form-item  label="SKU规格:"  style="padding-bottom: 20px;" class="flex align-c migrateSetting-spec">
@@ -414,6 +422,7 @@ export default {
       is_open_title_prefix_suffix: undefined,
       is_open_title_replace: undefined,
       default_sku_stock: '',
+      low_sku_price: '',
       is_use_default_sku_stock: undefined,
       max_sku_stock: '',
       is_use_max_sku_stock: undefined,
@@ -439,7 +448,7 @@ export default {
       property_radio: '1',
       goods_property_selected: '',
       goods_code_type: 0,
-      low_sku_price: 0,
+      is_remove_sku_by_price: 0,
       goods_property_value: '',
       goods_property_options: [],
       goods_property_options_dic: {},
@@ -792,6 +801,7 @@ export default {
         // 'is_cut_sku_spec',
         'detail_img_cut',
         'is_use_default_sku_stock',
+        'low_sku_price',
         'is_use_max_sku_stock',
         'is_cut_banner_first',
         'is_auto_cut_banner',
@@ -805,7 +815,7 @@ export default {
         'is_open_title_prefix_suffix',
         'is_open_title_replace',
         'goods_code_type',
-        'low_sku_price',
+        'is_remove_sku_by_price',
         'is_select_first_options_attr',
         'is_use_default_attr_value',
         'is_open_recommend_remark'
@@ -883,13 +893,14 @@ export default {
         is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
         goods_code_type: Number(this.goods_code_type),
-        low_sku_price: Number(this.low_sku_price),
+        is_remove_sku_by_price: Number(this.is_remove_sku_by_price),
         property_radio: this.property_radio,
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
         goods_property: this.goods_property_options,
         able_migrate_status_list: this.able_migrate_status_list,
         default_sku_stock: this.default_sku_stock,
+        low_sku_price: this.default_sku_stock,
         is_use_default_sku_stock: Number(this.is_use_default_sku_stock),
         is_use_max_sku_stock: Number(this.is_use_max_sku_stock),
         max_sku_stock: this.max_sku_stock,
