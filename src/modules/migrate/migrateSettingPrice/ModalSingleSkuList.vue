@@ -1,8 +1,8 @@
 <template>
     <div class="ModalSingleSkuList relative mt-20">
-      <div class="center font-12" style="position:absolute;top:-25px;left:0;right:0;margin-auto">
+      <!-- <div class="center font-12" style="position:absolute;top:-25px;left:0;right:0;margin-auto">
         <span class="color-4e" v-if="Number(radio) === 1">{{parseFloatText}}</span>
-      </div>
+      </div> -->
       <div class="priceChange">
         <el-radio v-model="radio" label="1">
           <span>(原sku价-</span>
@@ -48,7 +48,8 @@
           ref="skuListTable"
           :data="tableData"
           row-key="tp_product_id"
-          style="width: 100%"
+          max-height="450"
+          style="width: 100%;margin-bottom:20px"
           :cell-class-name="cellClassName">
             <el-table-empty slot="empty"/>
             <el-table-column v-for="(item, index) in skuPropertyList" :key="index+':'+item.id"
@@ -230,9 +231,9 @@ export default {
       immediate: true
     },
     template (n) {
-      const unit = n.unit
-      const everyDecimal = n.everyDecimal
-      const evalPrice = financial(unit, everyDecimal)
+      // const unit = n.unit
+      // const everyDecimal = n.everyDecimal
+      // const evalPrice = financial(unit, everyDecimal)
       let originPriceDiff = n.subtraction1
       let groupPriceRate = n.subtraction2
       let groupPriceDiff = n.subtraction3
@@ -258,7 +259,8 @@ export default {
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
           nextItem.editType = 1
-          nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_promo_price))
+          // nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_promo_price))
+          nextItem.sku_price = evalGroupPriceRange(nextItem.origin_promo_price)
           this.$set(this.tableData, idx, nextItem)
           return nextItem
         })
@@ -268,8 +270,8 @@ export default {
       if (
         Number(n.radio) === 2 &&
           utils.isNumber(textPrice) &&
-          evalPrice(textPrice) > 0.01 &&
-          evalPrice(textPrice) < 9999999.99 &&
+          textPrice > 0.01 &&
+          textPrice < 9999999.99 &&
           !isEqual(n, this.originSkuPriceStting)
       ) {
         const tableData = this.tableData.map((item, idx) => {
@@ -277,7 +279,7 @@ export default {
           // item.custom_setting_unit = this.template
           // item.custom_setting_sku_price = false
           nextItem.editType = 1
-          nextItem.sku_price = evalPrice(textPrice)
+          nextItem.sku_price = textPrice
           this.$set(this.tableData, idx, nextItem)
           return nextItem
         })
@@ -352,7 +354,7 @@ export default {
         } else if (price < 0.01 || price > 9999999.99) {
           errorMsg = '价格范围：0.01-9999999.99'
         } else if (!isInteger(price)) {
-          errorMsg = `价格最多最多${this.parseFloatText}`
+          errorMsg = `价格最多保留两位小数`
         }
         return errorMsg
       })
@@ -407,15 +409,17 @@ export default {
       const column = cloneDeep(this.tableData[index])
       let price = column.promo_price / 100
       // 抹角 抹分
-      const unit = this.skuPriceStting.unit
-      const everyDecimal = this.skuPriceStting.everyDecimal
-      const evalPrice = financial(unit, everyDecimal)
+      // const unit = this.skuPriceStting.unit
+      // const everyDecimal = this.skuPriceStting.everyDecimal
+      // const evalPrice = financial(unit, everyDecimal)
       // 根据 自定义设置重设价格
       if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
         const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
-        price = evalPrice(evalGroupPriceRange(price))
+        // price = evalPrice(evalGroupPriceRange(price))
+        price = evalGroupPriceRange(price)
       } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
-        price = evalPrice(this.textPrice)
+        // price = evalPrice(this.textPrice)
+        price = this.textPrice
       }
       column.sku_price = price
       // 自定义价格设置删除
@@ -460,10 +464,11 @@ export default {
       this.textPrice = value
     },
     handleTextPriceChange (value) {
-      const unit = this.skuPriceStting.unit
-      const everyDecimal = this.skuPriceStting.everyDecimal
-      const evalPrice = financial(unit, everyDecimal)
-      this.textPrice = evalPrice(value)
+      // const unit = this.skuPriceStting.unit
+      // const everyDecimal = this.skuPriceStting.everyDecimal
+      // const evalPrice = financial(unit, everyDecimal)
+      // this.textPrice = evalPrice(value)
+      this.textPrice = value
     },
     handlemouseover (item) {
       this.$set(item, 'maskShow', true)
@@ -503,9 +508,14 @@ export default {
 
   }
   .btns{
-    margin-top: 20px ;
     display: flex;
     justify-content: center;
+    // position: absolute;
+    // left: 0;
+    // right: 0;
+    // bottom: 0;
+    // width: 100%;
+    // background:#fff;
   }
 
   .warn {

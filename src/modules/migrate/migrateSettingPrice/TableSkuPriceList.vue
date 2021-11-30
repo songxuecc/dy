@@ -29,7 +29,7 @@
           <HhImage :src="scope.row.thumbnail" style="height:50px;max-width:65px" class="mr-10 border-2"/>
         </template>
       </el-table-column>
-      <el-table-column label="标题" align="center">
+      <el-table-column label="标题" width="380">
         <div slot-scope="scope" class="left">
           <el-link
             :href="scope.row.url"
@@ -44,7 +44,7 @@
         </div>
       </el-table-column>
 
-      <el-table-column align="center" width="480" class-name="custom-column">
+      <el-table-column align="center"  class-name="custom-column">
         <template slot="header" slot-scope="scope">
           <span class="font-14 mb-10">sku价格=
             <el-tooltip content="SKU价格公式输入必须为数字" v-if="templateError.group_price_rate" placement="top">
@@ -114,6 +114,7 @@
       :close-on-click-modal="false"
       :show-close="false"
       ref="dialog"
+      style="margin-top:-80px;"
     >
     <ModalSingleSkuList
       ref="modalSingleSkuList"
