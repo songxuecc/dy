@@ -1,7 +1,7 @@
 <template>
-  <div style="margin: 5px 0">
-    <el-row type="flex" justify="start" style="margin-bottom: 4px">
-      <el-col style="text-align: left" class="flex justify-b">
+  <div style="margin: 8px 0">
+    <el-row type="flex" justify="start">
+      <el-col style="text-align: left" class="flex justify-b ">
           <div class="flex">
             <div
                 class="relative mr-10"
