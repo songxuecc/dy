@@ -191,10 +191,9 @@ export default {
         Object.keys(skuMap).forEach(key => {
           const value = skuMap[key]
           const promoPrice = utils.fenToYuan(value.promo_price)
-          // if (value.editType === 0) {
-          value.sku_price = evalPrice(evalGroupPriceRange(promoPrice))
-          // }
-          value.editType = 0
+          if (value.editType === 0) {
+            value.sku_price = evalPrice(evalGroupPriceRange(promoPrice))
+          }
           nextSkuMap[key] = value
         })
         item.sku_json.sku_map = nextSkuMap
