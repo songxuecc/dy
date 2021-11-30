@@ -1,7 +1,12 @@
 <!-- 绑定后可实现 -->
 <template>
     <div class="CardRealizableAfterBind">
-      <h1>绑定后可实现</h1>
+      <h1>绑定后可实现
+         <span
+          class="click pointer font-12 ml-5"
+          style="padding-top: 7px;color: #1D8FFF"
+          v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/sow5gi'"><hh-icon type="iconwenhao" ></hh-icon>绑定后操作教程</span>
+      </h1>
       <div v-for="(item,index) in list" :key="index" :class="['item', index === list.length-1 ? 'no-margin-bottom' :'']">
           <img :src="item.type" alt="图片" class="icon">
             <div>

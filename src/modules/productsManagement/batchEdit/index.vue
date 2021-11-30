@@ -25,8 +25,8 @@
                       <span v-else><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先<span class="underline pointer" @click="handleSyncProducts">同步后台商品</span>（最近同步时间：<span class="bold">{{getSyncButtonText}}</span>），待商品更新至最新再操作</span>
                     </span>
                     <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
-                      <hh-icon type="icontishi" ></hh-icon>
-                      点我查看教程视频
+                      <hh-icon type="iconwenhao" ></hh-icon>
+                      批量处理教程
                     </span>
                   </h1>
                     <el-radio-group v-model="modifyMethods" class="mb-10">
