@@ -65,7 +65,6 @@ export default {
       } = payload
       // 再次进入数据回显示
       if (!isEmpty(dicCustomPrices)) {
-        console.log(dicCustomPrices, 'dicCustomPrices')
         return commit('save', dicCustomPrices)
       }
       let originPriceDiff = template.model.origin_price_diff
@@ -109,7 +108,6 @@ export default {
         return cloneDeep(item)
       })
       template.model.unit = unit
-      console.log(nextTableData, 'nextTableData')
       commit('save', {tableData: cloneDeep(nextTableData), unit, template})
     },
     // sku价格公式改变
@@ -314,7 +312,6 @@ export default {
         if (!dicCustomPrices[id]) dicCustomPrices[id] = {}
         if (item.market_price) dicCustomPrices[id].price = utils.yuanToFen(item.market_price)
       })
-      console.log(dicCustomPrices, 'dicCustomPrices')
       return dicCustomPrices
     }
   }

@@ -294,7 +294,6 @@ export default {
     },
     target_user_id (newVal) {
       if (newVal) {
-        console.log(newVal, 'newVal')
         this.syncText = ''
         clearTimeout(this.syncTimer)
         this.syncTimer = null

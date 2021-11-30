@@ -387,7 +387,6 @@ export default {
     },
     handleClick (e) {
       this.flexFootVisible = !this.flexFootVisible
-      console.log('000')
     },
     handleHuhuTitletipActive () {
       this.huhuTitletipActive = !this.huhuTitletipActive

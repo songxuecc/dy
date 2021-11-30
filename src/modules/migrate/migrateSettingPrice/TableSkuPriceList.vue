@@ -208,7 +208,6 @@ export default {
     every_decimal: {
       handler: function (newVal) {
         // this.every_decimal = newVal
-        console.log(newVal, 'newVal')
       },
       deep: true
     }

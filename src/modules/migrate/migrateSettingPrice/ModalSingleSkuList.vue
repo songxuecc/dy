@@ -165,14 +165,12 @@ export default {
     propsData: {
       handler: function (n) {
         const {skuData, skuPriceStting} = n
-        console.log(n, 'skuPriceStting')
         // const everyDecimal = skuPriceStting.every_decimal
         // const evalPrice = financial(unit, everyDecimal)
         this.originSkuPriceStting = skuPriceStting
         const skuMap = skuData.sku_map
         const skuPropertyMap = skuData.sku_property_map
         const skuPropertyValueMap = skuData.sku_property_value_map
-        console.log(skuMap, 'skuMap')
         const nextTableData = Object.keys(skuMap).map(key => {
           const properties = key.split(';')
           let currentColumnData = cloneDeep(skuMap[key])
@@ -441,7 +439,6 @@ export default {
       if (!utils.isNumber(this.subtraction3)) {
         this.subtraction3 = 0
       }
-      // console.log(this.tableData, 'this.tableData')
       this.$emit('handleSureBatchEdut',
         {
           radio: this.radio,
