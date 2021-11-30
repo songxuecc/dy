@@ -1325,7 +1325,7 @@ export default {
     },
     async toMigrate () {
       if (!this.selectIdList.length) {
-        this.$message.warning('请选择商品！')
+        this.$message.warning('请选择商品！若商品状态是待修改，请先根据原因对商品进行修改')
         return false
       }
       const userVersion = this.userVersion || (await this.userVersionQuery())

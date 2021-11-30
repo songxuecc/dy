@@ -37,12 +37,6 @@
 
         </span>
       </div>
-      <span v-if="errorMsgModel" class="fail">{{errorMsgModel}}</span>
-
-      <div class="left mb-10 mt-10">
-
-      </div>
-
       <!-- sku价格表 -->
         <el-table
           ref="skuListTable"
