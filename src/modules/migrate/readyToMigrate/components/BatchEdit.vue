@@ -346,7 +346,7 @@ export default {
       const carousel = options.carousel || false
       const detailImage = options.detailImage || false
       const title = options.title
-      const list = this.selecEdittList
+      const list = this.selecEditList
         .map(item => {
           return ({
             tp_product_id: item.tp_product_id,
@@ -402,7 +402,7 @@ export default {
     },
     // 修改品牌
     async updateBrands (id) {
-      const list = this.selecEdittList
+      const list = this.selecEditList
         .map(item => item.tp_product_id)
       if (!list.length) {
         return this.$message({
@@ -451,10 +451,10 @@ export default {
     },
     // 批量删除
     async deleteRecord () {
-      if (!this.selectList.length) {
+      if (!this.selectDeleteList.length) {
         return this.$message.error('请选择要批量删除的商品')
       }
-      const list = this.selectList
+      const list = this.selectDeleteList
         .map(item => item.tp_product_id)
       const fn = async (list) => {
         const data = await Api.hhgjAPIs.deleteTPProduct({
@@ -498,7 +498,7 @@ export default {
     },
     // 批量修改分类
     async onChangeCate (category) {
-      if (!this.selecEdittList.length) {
+      if (!this.selecEditList.length) {
         return this.$message({
           message: '只可选择待上线、驳回、失败、待修改、保存到草稿箱、已上线的商品，请选择正确状态的商品进行批量修改',
           type: 'error',
@@ -508,7 +508,7 @@ export default {
       if (!category || (category && !category.id)) {
         return this.$message.error('请选择分类')
       }
-      const list = this.selecEdittList
+      const list = this.selecEditList
         .map(item => item.tp_product_id)
       const fn = async (list) => {
         const data = await Api.hhgjAPIs.batchUpdateCategory({
