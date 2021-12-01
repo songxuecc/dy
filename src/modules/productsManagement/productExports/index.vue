@@ -36,7 +36,7 @@
         <el-radio-group v-model="resource">
           <el-radio label="全部商品" style="width:120px"></el-radio>
           <el-radio label="售卖中" style="width:120px"></el-radio>
-          <el-radio label="已下架"></el-radio>
+          <el-radio label="仓库中（已下架）"></el-radio>
         </el-radio-group>
       </el-form-item>
 
