@@ -1588,12 +1588,10 @@ export default {
       this.showTooltip = false
     },
     mouseover () {
-      // this.showTooltip = true
-      // console.log('mouseover')
+      this.showTooltip = true
     },
     mouseout () {
-      // this.showTooltip = false
-      // console.log('mouseout')
+      this.showTooltip = false
     },
     closeShopCapture () {
       this.$refs.newComerShop.close && this.$refs.newComerShop.close()
