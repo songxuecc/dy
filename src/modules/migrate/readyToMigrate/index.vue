@@ -147,8 +147,7 @@
       <div style="width:200px;" v-if="startMigrateBtnFixed"></div>
       <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;margin-left:1px;">
         <div>
-
-          <el-tooltip popper-class="readyToMigrate-tooltip" :manual="true" effect="light"  placement="top-start" :value="tpProductList && tpProductList.length && selectIdList.length == 0 && showTooltip">
+          <el-tooltip popper-class="readyToMigrate-tooltip" :manual="true" ref="tooltip" effect="light"  placement="top-start" :value="tipShow">
             <div slot="content">
               <div style="width:172px" class="color-666 font-12 left mt-10" >
                 勾选待上线商品，并点击此处进行下一步操作
@@ -263,7 +262,7 @@ import isEmpty from 'lodash/isEmpty'
 
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapGetters } from 'vuex'
 import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
@@ -282,7 +281,7 @@ export default {
   data () {
     return {
       is_migrate_new: false,
-      showTooltip: false,
+      showTooltip: true,
       isMounted: false,
       bindShopList: [],
       tpProductList: [],
@@ -390,6 +389,16 @@ export default {
       'versionTipType',
       'versionType'
     ]),
+    ...mapGetters({
+      isNew: 'getIsNew'
+    }),
+    tipShow () {
+      // return true
+      // console.log(this.tpProductList, this.showTooltip, 'this.tpProductList')
+      // console.log(this.$refs.tooltip, 'tooltip')
+      // if (this.tpProductList && this.tpProductList.length) return true
+      return this.tpProductList && this.tpProductList.length && this.selectIdList.length === 0 && this.showTooltip
+    },
     getPageTotal () {
       let total = 10
       let currentPageId = this.capture.current_page_id
@@ -1579,12 +1588,12 @@ export default {
       this.showTooltip = false
     },
     mouseover () {
-      this.showTooltip = true
-      console.log('mouseover')
+      // this.showTooltip = true
+      // console.log('mouseover')
     },
     mouseout () {
-      this.showTooltip = false
-      console.log('mouseout')
+      // this.showTooltip = false
+      // console.log('mouseout')
     },
     closeShopCapture () {
       this.$refs.newComerShop.close && this.$refs.newComerShop.close()

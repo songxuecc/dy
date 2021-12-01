@@ -1,7 +1,7 @@
 <template lang="html">
   <div style="position: relative;">
-    <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
-    </help-tips>
+    <!-- <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
+    </help-tips> -->
     <SettingAlert/>
     <span
       class="click mr-20 pointer"
