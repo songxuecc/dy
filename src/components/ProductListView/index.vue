@@ -808,8 +808,10 @@ export default {
       this.$refs.productEditNewView.onClose()
     },
     triggerDialogClose () {
-      this.dialogEditVisible = false
-      this.$refs.productEditNewView.onClose()
+      this.dialogBeforeClose(() => {
+        this.dialogEditVisible = false
+        this.$refs.productEditNewView.onClose()
+      })
     },
     dialogBeforeClose (done) {
       let self = this

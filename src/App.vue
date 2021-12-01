@@ -408,6 +408,7 @@ export default {
     height:100vh; /*IE6不识别min-height*/
     min-height: 100vh;
     background: #F9F9F9;
+    overflow: hidden;
   }
 
   .main-wrapper {
