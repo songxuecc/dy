@@ -134,6 +134,17 @@
           <el-radio   :label="3">
             四舍五入保留两位小数点
           </el-radio>
+
+          <el-radio   :label="-1">
+            统一设置小数部分为
+            <el-tooltip content="请填写大于0小于1的数。如填写0.8，则原价9元的商品将变为9.8元" placement="top-start">
+            <span class="relative">
+              <el-input v-model="form.every_decimal"  :debounce="500" controls-position="right" @focus="focus" size="mini" placeholder="请填写数字" style="width:110px" class="numberInput"/>
+              <span class="tipNumber" v-if="tipNumberShow">请填写大于0小于1的数字。</span>
+            </span>
+          </el-tooltip>
+
+          </el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -230,11 +241,29 @@ export default {
         min_price: '',
         is_open_min_price_rate: false,
         min_price_rate: '',
-        unit: 3
+        unit: 3,
+        every_decimal: ''
+      }
+    }
+  },
+  computed: {
+    tipNumberShow () {
+      let unit = this.form.unit
+      let value = this.form.every_decimal
+      console.log(value, 'value')
+      if (unit === -1) {
+        if (value && utils.isNumber(value) && value > 0 && value < 1) {
+          return false
+        } else {
+          return true
+        }
       }
     }
   },
   methods: {
+    focus () {
+      this.form.unit = -1
+    },
     valid () {
       if (!this.form.is_formula) {
         this.$refs.form.clearValidate(['origin_price_rate', 'incr_diff', 'desc_diff'])
@@ -310,7 +339,12 @@ export default {
 .block {
   display: inline-block;
 }
-
+.tipNumber {
+  position: absolute;
+  bottom:-22px;
+  left: 0;
+  color:red;
+}
 .tip {
   width: 441px;
   height: 16px;
