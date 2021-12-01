@@ -332,7 +332,7 @@ export default {
       }
     },
     closeNewComer () {
-      this.$refs.newComer.close && this.$refs.newComer.close()
+      this.$refs.newComer && this.$refs.newComer.close && this.$refs.newComer.close()
     }
   }
 }

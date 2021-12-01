@@ -150,7 +150,7 @@ export default {
       this.dialogVisible = false
     },
     closeNewComer () {
-      this.$refs.newComer.close && this.$refs.newComer.close()
+      this.$refs.newComer && this.$refs.newComer.close && this.$refs.newComer.close()
     },
     toSetTemplate () {
       if (this.msgError) return false
