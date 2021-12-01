@@ -118,22 +118,22 @@ export default {
       dropdownOptions: [
         {
           value: 0,
-          label: '修改分类',
+          label: '批量修改分类',
           key: 'visvileCategory',
           numberKey: true,
           props: {
             type: 'primary',
-            style: 'padding:5px 20px;width:100px'
+            style: 'text-align:center;width:110px'
           }
         },
         {
           value: 1,
-          label: '修改标题',
+          label: '批量修改标题',
           key: 'visibleEditTitle',
           numberKey: true,
           props: {
             type: 'primary',
-            style: 'padding:5px 20px;width:100px'
+            style: 'text-align:center;width:110px'
           }
         },
         // {
@@ -143,24 +143,24 @@ export default {
         // },
         {
           value: 3,
-          label: '删除轮播首图',
+          label: '批量删除轮播首图',
           key: 'visibleEditDeleteCarousel',
           numberKey: true,
           props: {
             type: 'primary',
             plain: true,
-            style: 'padding:5px 20px;width:120px'
+            style: 'text-align:center;width:130px'
           }
         },
         {
           value: 4,
-          label: '删除详情尾图',
+          label: '批量删除详情尾图',
           key: 'visibleEditDelteDetailImage',
           numberKey: true,
           props: {
             type: 'primary',
             plain: true,
-            style: 'padding:5px 20px;width:120px'
+            style: 'text-align:center;width:130px'
           }
         },
         {
@@ -171,7 +171,7 @@ export default {
           props: {
             type: '',
             plain: true,
-            style: 'padding:5px 20px;width:120px'
+            style: 'text-align:center;width:110px'
           }
         }
       ],
