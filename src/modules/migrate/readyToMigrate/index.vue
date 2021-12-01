@@ -176,7 +176,7 @@
             </el-button>
           </el-tooltip>
 
-          <span v-if="is_migrate_new">
+          <span v-if="is_migrate_new" style="display:inline-flex;flex-direction:column">
             <el-popover
                 width="200"
                 trigger="hover">
@@ -185,10 +185,13 @@
                 <p>若点击此按钮，系统会自动跳过价格编辑页、模板编辑页</p>
                 <p>&nbsp;</p>
                 <p>价格和模板的填写设置与上一次搬家操作的设置保持一致</p>
-                <span class="pointer" slot="reference">
-                  <el-link type="primary" style="font-size: 10px; margin-top: 20px; margin-left: 10px;" :underline="false" @click="quickMigrate" :disabled="selectIdList.length == 0">跳过编辑，现在搬家</el-link>
+                <span class="pointer" slot="reference" style="height:12px;">
+                  <el-link type="primary" style="font-size: 10px;  margin-left: 10px;" :underline="false" @click="quickMigrate" :disabled="selectIdList.length == 0">跳过编辑，现在搬家</el-link>
                 </span>
             </el-popover>
+            <span>
+              选择搬迁方式: 上线
+            </span>
           </span>
         </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
