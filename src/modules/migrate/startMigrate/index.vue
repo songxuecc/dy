@@ -11,8 +11,7 @@
         position: absolute;
         left: 450px;
         top: 56px;
-        z-index:1"
-      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l'"><hh-icon type="icontishi-dengpao" ></hh-icon>多商品复制教程</span>
+        z-index:1" @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')"><hh-icon type="icontishi-dengpao" ></hh-icon>多商品复制教程</span>
     <span
       class="click mr-20 pointer"
       v-if="activeName === 'shop'"
@@ -21,8 +20,7 @@
         position: absolute;
         left: 450px;
         top: 56px;
-        z-index:1"
-      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl'"><hh-icon type="icontishi-dengpao" ></hh-icon>整店复制教程</span>
+        z-index:1" @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl')"><hh-icon type="icontishi-dengpao" ></hh-icon>整店复制教程</span>
     <span
       class="click mr-20 pointer"
       v-if="activeName === 'bindCopy'"
@@ -31,8 +29,7 @@
         position: absolute;
         left: 450px;
         top: 56px;
-        z-index:1"
-      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/dsibrc'"><hh-icon type="icontishi-dengpao" ></hh-icon>绑定复制教程</span>
+        z-index:1" @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/dsibrc')"><hh-icon type="icontishi-dengpao" ></hh-icon>绑定复制教程</span>
     <el-tabs v-model="activeName">
       <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
         <el-input type="textarea" :rows="10" :placeholder="`输入其他平台的商品链接地址，换行分隔多个链接，最多不超过${limit}个`" class="mb-20"
@@ -852,6 +849,12 @@ export default {
         target_user_id: id
       })
       this.getSyncStatus(id)
+    },
+    gobind (url) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '打开新网址链接', '点击', url])
+      }
+      window.open(url)
     },
     async getSyncStatus (id) {
       this.syncLoading = true
