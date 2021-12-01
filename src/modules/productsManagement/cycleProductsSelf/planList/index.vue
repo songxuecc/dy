@@ -4,7 +4,7 @@
     <div class="alert">
             <div style="margin-left:16px">
               什么是定时上下架？
-              <hh-icon type="iconwenhao" class="ml-5"></hh-icon><span class="click pointer font-12 " v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/fytkle'">
+              <hh-icon type="icontishi-dengpao" class="ml-5"></hh-icon><span class="click pointer font-12 " v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/fytkle'">
                 定时上下架教程
               </span>
             </div>
