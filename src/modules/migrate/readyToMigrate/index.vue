@@ -1592,7 +1592,7 @@ export default {
       this.loadingCnt = value
     },
     closeNewComer () {
-      this.$refs.newComer.close && this.$refs.newComer.close()
+      this.$refs.newComer && this.$refs.newComer.close && this.$refs.newComer.close()
     },
     closeNewComerNext () {
       this.showTooltip = false
