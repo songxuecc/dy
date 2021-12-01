@@ -8,7 +8,7 @@
       &nbsp;<a class="click" style="font-size:13px" @click="settingPrice">价格设置</a>
     </p>
     <p class="font-13 " v-if="[2,3].includes(filterType)">2、每次支持5000个商品修改</p>
-    <p class="font-13 ">3、仅支持售卖中、已下架的商品修改 </p>
+    <p class="font-13 ">3、仅支持售卖中、仓库中（已下架）的商品修改 </p>
     <p class="font-13 " v-if="filterType === 0">4、保证导入的商品标题、规格名与抖店后台一致。多个SKU规格请用英文逗号分隔，如：红色,36码 </p>
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
       :data="getFileUploadData" :show-file-list="false" ref="upload" :limit=1 :headers="getTokenHeaders"

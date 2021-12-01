@@ -303,7 +303,7 @@ export default {
       // statusOptions: [
       //   {value: -1, label: '全部商品'},
       //   {value: 0, label: '在售中'},
-      //   {value: 1, label: '已下架'}
+      //   {value: 1, label: '仓库中（已下架）'}
       // ],
       dicWMProduct: [] // 编辑未开始的活动，原活动选中的商品
     }

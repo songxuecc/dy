@@ -114,6 +114,6 @@ export const exportFieldList = {
 
 export const status = {
   '售卖中': {check_status: 3, status: 0},
-  '已下架': {check_status: 1, status: 1},
+  '仓库中（已下架）': {check_status: 1, status: 1},
   '全部商品': {check_status: -1, status: -1}
 }

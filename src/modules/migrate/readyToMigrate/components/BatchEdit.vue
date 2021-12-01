@@ -16,7 +16,7 @@
                 @click="handleClick(item.value,item.key)">
                 {{item.label}}
               </el-button>
-              <!-- <span v-if="selecEdittList && selecEdittList.length" class="badge bold">{{selecEdittList.length}}</span> -->
+              <span v-if="item.numberKey ? (selecEditList && selecEditList.length) : (selectDeleteList && selectDeleteList.length)" class="badge bold">{{item.numberKey ? selecEditList.length : selectDeleteList.length}}</span>
             </div>
           </div>
           <RefershCategoryBtn style="align-content:flex-end"/>
@@ -120,6 +120,7 @@ export default {
           value: 0,
           label: '修改分类',
           key: 'visvileCategory',
+          numberKey: true,
           props: {
             type: 'primary',
             style: 'padding:5px 20px;width:100px'
@@ -129,6 +130,7 @@ export default {
           value: 1,
           label: '修改标题',
           key: 'visibleEditTitle',
+          numberKey: true,
           props: {
             type: 'primary',
             style: 'padding:5px 20px;width:100px'
@@ -143,6 +145,7 @@ export default {
           value: 3,
           label: '删除轮播首图',
           key: 'visibleEditDeleteCarousel',
+          numberKey: true,
           props: {
             type: 'primary',
             plain: true,
@@ -153,6 +156,7 @@ export default {
           value: 4,
           label: '删除详情尾图',
           key: 'visibleEditDelteDetailImage',
+          numberKey: true,
           props: {
             type: 'primary',
             plain: true,
@@ -163,6 +167,7 @@ export default {
           value: 5,
           label: '批量删除记录',
           key: 'visibleEditDelteRecord',
+          numberKey: false,
           props: {
             type: '',
             plain: true,
@@ -208,12 +213,12 @@ export default {
     }
   },
   computed: {
-    selectList () {
+    selectDeleteList () {
       return this.tpProductList.filter(item => {
         return this.selectIdBatchEditList.includes(`${item.tp_product_id}`) && this.canDeleteStatus.includes(item.status)
       })
     },
-    selecEdittList () {
+    selecEditList () {
       return this.tpProductList.filter(item => {
         return this.selectIdBatchEditList.includes(`${item.tp_product_id}`) && this.canEditStatus.includes(item.status)
       })
@@ -235,7 +240,6 @@ export default {
     handleClose (key) {
       this[key] = false
     },
-
     formatTitle (model, title) {
       if (!model) return title
       if (model.textPrefix) {
