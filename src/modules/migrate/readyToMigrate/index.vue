@@ -146,8 +146,20 @@
       :style="{'margin-right': startMigrateBtnFixed ? `${scrollWidth + 40}px` : 0}">
       <div style="width:200px;" v-if="startMigrateBtnFixed"></div>
       <div style="box-sizing: border-box;background:#ffffff;flex:1;padding: 10px;margin-left:1px;">
-        <div>
-          <el-tooltip popper-class="readyToMigrate-tooltip" :manual="true" ref="tooltip" effect="light"  placement="top-start" :value="tipShow">
+        <div class="flex justify-c">
+          <div v-if="currentSubsc.is_newcomer">
+            <el-button :disabled="selectIdList.length == 0" type="primary" @click="toMigrate">
+              <span style="line-height:21px">下一步: 修改价格</span>
+              <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
+            </el-button>
+            <NewComer type="下一步: 修改价格" ref="newComer" >
+              <div class="left">
+                <div style="width:180px " class="color-666 font-12">勾选待上线商品，并点击此处进行下一步操作</div>
+                <div @click="closeNewComer" class="pointer pramiry underline right">好的</div>
+              </div>
+            </NewComer>
+          </div>
+          <el-tooltip popper-class="readyToMigrate-tooltip" :manual="true" ref="tooltip" effect="light"  placement="top-start" :value="tipShow" v-else>
             <div slot="content">
               <div style="width:172px" class="color-666 font-12 left mt-10" >
                 勾选待上线商品，并点击此处进行下一步操作
@@ -163,6 +175,7 @@
               <el-badge v-if="selectIdList.length > 0" :value="selectIdList.length"></el-badge>
             </el-button>
           </el-tooltip>
+
           <span v-if="is_migrate_new">
             <el-popover
                 width="200"
@@ -178,6 +191,7 @@
             </el-popover>
           </span>
         </div>
+      </div>
         <div class="info flex filterOnlineProducts  align-c justify-c ">
           <span v-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior" class="pt-10">
             当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限！ </span>
@@ -186,7 +200,6 @@
             当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 订购高级版 </a>，高级版每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
         </div>
-      </div>
     </div>
 
     <el-dialog title="淘宝登录验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
@@ -390,13 +403,10 @@ export default {
       'versionType'
     ]),
     ...mapGetters({
-      isNew: 'getIsNew'
+      isNew: 'getIsNew',
+      currentSubsc: 'getCurrentSubsc'
     }),
     tipShow () {
-      // return true
-      // console.log(this.tpProductList, this.showTooltip, 'this.tpProductList')
-      // console.log(this.$refs.tooltip, 'tooltip')
-      // if (this.tpProductList && this.tpProductList.length) return true
       return this.tpProductList && this.tpProductList.length && this.selectIdList.length === 0 && this.showTooltip
     },
     getPageTotal () {
@@ -1352,7 +1362,7 @@ export default {
         }
       } else {
         this.removeTempTemplate()
-        // this.closeNewComerNext()
+        this.closeNewComer()
         this.setSelectTPProductIdList(this.selectIdList)
         this.$router.push({
           name: 'MigrateSettingPrice'
