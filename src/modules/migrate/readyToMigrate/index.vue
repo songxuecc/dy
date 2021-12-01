@@ -176,9 +176,10 @@
             </el-button>
           </el-tooltip>
 
-          <span v-if="is_migrate_new" style="display:inline-flex;flex-direction:column">
+          <span v-if="is_migrate_new" style="display:inline-flex;flex-direction:column;">
             <el-popover
                 width="200"
+                style="text-align:left"
                 trigger="hover">
                 <h1>什么是极速搬家?</h1>
                 <p>&nbsp;</p>
@@ -189,8 +190,13 @@
                   <el-link type="primary" style="font-size: 10px;  margin-left: 10px;" :underline="false" @click="quickMigrate" :disabled="selectIdList.length == 0">跳过编辑，现在搬家</el-link>
                 </span>
             </el-popover>
-            <span>
-              选择搬迁方式: 上线
+            <span class="pl-10 font-12">
+              选择搬迁方式:
+              <el-radio-group v-model="commit_type" class="pl-5">
+                  <el-radio :label="0">直接上线</el-radio>
+                  <el-radio :label="1">草稿箱</el-radio>
+                  <el-radio :label="2">仓库中</el-radio>
+              </el-radio-group>
             </span>
           </span>
         </div>
@@ -344,7 +350,8 @@ export default {
       startMigrateBtnFixed: false,
       scrollWidth: 0,
       order_by: 1,
-      captureTaobaoShopPageIndex: undefined
+      captureTaobaoShopPageIndex: undefined,
+      commit_type: 1
     }
   },
   beforeRouteUpdate (to, from, next) {
