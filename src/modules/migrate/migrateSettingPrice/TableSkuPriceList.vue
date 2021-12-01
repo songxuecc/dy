@@ -15,7 +15,7 @@
           </el-tooltip>
         </el-radio>
       </el-radio-group>
-      <span class="click mr-20 pointer ml-20" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tl4g0a'"><hh-icon type="iconwenhao" ></hh-icon>如何设置价格？</span>
+      <span class="click mr-20 pointer ml-20" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/tl4g0a'"><hh-icon type="icontishi-dengpao" ></hh-icon>如何设置价格？</span>
     </div>
     <el-table :data="tableData" style="width: 100%;min-height:270px">
       <el-table-empty slot="empty" />

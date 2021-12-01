@@ -40,8 +40,8 @@
         <!-- <el-footer class="footer">
           <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" >沪ICP备16034003号</el-link>
         </el-footer> -->
-        <div  :class="['float-view pointer',!flexFootVisible ? 'float-view-active' :' ']"  @click.stop.capture="handleClick" @mouseover.stop="handleHuhuTitletipActive" @mouseout.stop="handleHuhuTitletipActive">
-          <div style="width:50px;height:31px;" class="huhutitle" >
+        <div  :class="['float-view pointer',!flexFootVisible ? 'float-view-active' :' ']"   @mouseover.stop="handleHuhuTitletipActive" @mouseout.stop="handleHuhuTitletipActive">
+          <div style="width:50px;height:31px;" class="huhutitle" @click.stop.capture="handleClick">
             <div :class="['huhutitle-tip',huhuTitletipActive ? 'huhutitle-tip-active' :' ']" ref="tip">{{flexFootVisible ? '点击缩小哦～' : '点击放大哦～'}} </div>
           </div>
           <flex-foot ref="flexFoot"  :flexFootVisible="flexFootVisible" @visible="handleClick"></flex-foot>
