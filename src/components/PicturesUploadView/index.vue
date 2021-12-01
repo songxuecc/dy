@@ -26,27 +26,36 @@
                           style="width:100%; height:100%;" slot="reference"
                         ></el-image>
                     </el-popover>
-                      <label class="el-upload-list__item-status-label" :style="{visibility: picture.bg ? 'visible' : 'hidden'}">
+                      <label class="el-upload-list__item-status-label flex" :style="{visibility: picture.bg ? 'visible' : 'hidden'}">
                           <i class="el-icon-upload-success el-icon-check"></i>
+                          <span class="font-12">上传</span>
                       </label>
-                      <span class="el-upload-list__item-actions" @click.self="onClick(picture, index)" v-on:mouseover.self="handlemouseover(index)"  v-on:mouseleave.self="handlemouseleave(index)">
-                          <span class="el-upload-list__item-preview iconshanchu1" style="margin-left: 0px;"
+                      <span class="el-upload-list__item-actions"  style="display:flex;justify-content:center;align-items:center;" @click.self="onClick(picture, index)" v-on:mouseover.self="handlemouseover(index)"  v-on:mouseleave.self="handlemouseleave(index)">
+                          <span class="el-upload-list__item-preview iconshanchu1 flex" style="margin-left: 0px;display:flex;flex-direction:column;justify-content:center;align-items:center;"
                                 @click="onShowPreview(picture, index)"
-                          > <i class="el-icon-zoom-in"></i> </span>
-                          <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete iconshanchu1"
-                                style="visibility: visible;" @click="onHandle(picture, index)"
-                          > <i class="el-icon-edit-outline"></i> </span>
-                          <hh-icon
-                            type="iconcaijian1"
-                            style="font-size: 20px;"
-                            class="iconshanchu1"
-                            @click="clipIamge(
-                              picture, index
-                            )"
-                          />
-                          <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete iconshanchu1"
-                                style="visibility: visible;" @click="onRemove(picture, index)"
-                          > <i class="el-icon-delete"></i> </span>
+                          >
+                            <i class="el-icon-zoom-in"></i>
+                            <span class="font-12">预览</span>
+                          </span>
+                          <span v-if="isAllowOperation('handle')" class="el-upload-list__item-delete iconshanchu1 flex" style="visibility: visible;display:flex;flex-direction:column;justify-content:center;align-items:center;" @click="onHandle(picture, index)"
+                          > <i class="el-icon-edit-outline"></i>
+                            <span class="font-12">编辑</span>
+                          </span>
+                          <span style="display:flex;flex-direction:column;justify-content:center;align-items:center;" class="iconshanchu1">
+                            <hh-icon
+                              type="iconcaijian1"
+                              style="font-size: 20px;"
+                              class="iconshanchu1"
+                              @click="clipIamge(
+                                picture, index
+                              )"
+                            />
+                            <span class="font-12" style="margin-left:0">裁剪</span>
+                          </span>
+                          <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete iconshanchu1 " style="visibility: visible;display:flex;flex-direction:column;justify-content:center;align-items:center;" @click="onRemove(picture, index)" >
+                            <i class="el-icon-delete"></i>
+                            <span class="font-12">删除</span>
+                          </span>
                       </span>
                       <input type="checkbox" v-if="isAllowOperation('select')" :ref="'pictureCheck'+index" class="check-upload"
                             @change="handleSelect(picture, index, $event.target || $event.srcElement)"
