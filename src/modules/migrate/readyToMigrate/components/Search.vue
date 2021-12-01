@@ -1,6 +1,6 @@
 <template>
   <div class="left relative">
-    <span
+    <!-- <span
       class="click mr-20 pointer"
       style="
         align-content:right;
@@ -8,7 +8,7 @@
         right: 10px;
         top: 15px;
         z-index:1"
-      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l'"><hh-icon type="icontishi-dengpao" ></hh-icon>各个状态的含义</span>
+      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l'"><hh-icon type="icontishi-dengpao" ></hh-icon>各个状态的含义</span> -->
     <el-tabs v-model="activeTab" @tab-click="handelTabClick">
       <el-tab-pane
         :label="tab.text"
