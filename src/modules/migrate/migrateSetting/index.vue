@@ -1,12 +1,19 @@
 <template lang="html">
-  <div class="migrateSetting">
+  <div class="migrateSetting relative">
     <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" class="tab" @tab-click="tabClick" ref="tab">
       <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
     </el-tabs>
     <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
     </el-dialog>
-
+     <span
+      class="click mr-20 pointer"
+      style="
+        align-content:right;
+        position: absolute;
+        right: 0px;
+        top: 40px;
+        z-index:1" @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/xoghlm')"><hh-icon type="icontishi-dengpao" ></hh-icon>基本设置教程</span>
     <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': '30px'}" class="migrateSettingForm">
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini" :model="$data">
         <!-- 类目 -->
@@ -686,6 +693,12 @@ export default {
       this.$nextTick(() => {
         this.setScrollTop()
       })
+    },
+    gobind (url) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '打开新网址链接', '点击', url])
+      }
+      window.open(url)
     },
     setScrollTop: debounce(function () {
       const tab = this.tabs
