@@ -123,7 +123,7 @@ export default {
           numberKey: true,
           props: {
             type: 'primary',
-            style: 'padding:0 10px;width:110px'
+            style: 'text-align:center;width:110px'
           }
         },
         {
