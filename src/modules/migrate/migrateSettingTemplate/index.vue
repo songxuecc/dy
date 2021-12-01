@@ -7,7 +7,7 @@
     <ShopsMigrate ref="shopsMigrate"></ShopsMigrate>
     <!-- 搬家店铺 end -->
     <div class="help-tips" >
-      <span class="pointer" @click="goHelpLink"><hh-icon type="iconwenhao" ></hh-icon>如何填写？</span>
+      <span class="pointer" @click="goHelpLink"><hh-icon type="icontishi-dengpao" ></hh-icon>如何填写？</span>
     </div>
     <div class="common-bottom  flex justify-c">
         <el-button style="margin-right: 15px;width:120px" @click="goback"  plain type="primary">返回</el-button>
