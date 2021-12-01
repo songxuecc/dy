@@ -305,8 +305,8 @@
       <div style="display: flex; box-sizing: border-box; background-color: #EBEEF5; width: 100%; height: 80px; position: fixed; bottom: 0px; z-index: 999; margin-left: 10px;">
         <div style="width: 100%; height: 100%; padding-top: 20px; padding-left: 30px; text-align:right;">
             <el-checkbox @change="onRevertSelection" :value="selectedProductIds.length === productList.length" style="position: absolute; bottom: 20px; left: 25px; ">全选</el-checkbox>
-            <el-button plain style="display: block; position: fixed; bottom: 20px; right: 265px; " @click="onRevertProduct">还原</el-button>
-            <el-button type="primary" plain style="display: block; position: fixed; bottom: 20px; right: 135px; " @click="onCloseBtn">返回搬家列表</el-button>
+            <el-button plain style="display: block; position: fixed; bottom: 20px; right: 270px;width: 100px; " @click="onRevertProduct">还原</el-button>
+            <el-button type="primary" plain style="display: block; position: fixed; bottom: 20px; right: 135px; width: 120px;" @click="onCloseBtn">返回搬家列表</el-button>
             <el-button type="primary" style="display: block; position: fixed; bottom: 20px; right: 20px; width: 100px;" @click="onSaveProduct">保存编辑</el-button>
         </div>
       </div>
