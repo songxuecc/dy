@@ -340,7 +340,7 @@
         :disabled="shouldUpdate || loadingSettings">保存设置</el-button>
       <el-link @click="gotoStartCopy" v-if="shouldUpdate || loadingSettings" :underline="false" type="primary" class="font-12 ml-5 " style="margin-top:25px">已设置，去复制商品</el-link>
     </div>
-    <Qualification ref="Qualification"/>
+    <DrawerQualification ref="DrawerQualification"/>
   </div>
 </template>
 
@@ -354,12 +354,12 @@ import common from '@/common/common.js'
 import Api from '@/api/apis.js'
 import categorySelectView from '@/components/CategorySelectView'
 import servises from '@servises'
-import Qualification from './components/Qualification'
+import DrawerQualification from './components/DrawerQualification'
 export default {
   mixins: [request],
   components: {
     categorySelectView,
-    Qualification
+    DrawerQualification
   },
   beforeRouteLeave (to, from, next) {
     // 导航离开该组件的对应路由时调用
@@ -1327,8 +1327,8 @@ export default {
       })
     },
     setQualification () {
-      console.log(this.$refs.Qualification.open, 'this.$refs.Qualification')
-      this.$refs.Qualification.open()
+      console.log(this.$refs.DrawerQualification.open, 'this.$refs.DrawerQualification')
+      this.$refs.DrawerQualification.open()
     }
   }
 }

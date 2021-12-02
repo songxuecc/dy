@@ -24,6 +24,7 @@
                   <el-alert type="warning" style="height:30px" :closable="false">
                     <span slot="title" class="color-333 font-12"><span class="fail">* </span>该类目下的所有商品都统一为以下资质</span>
                   </el-alert>
+                  <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange"/>
                 </div>
             </div>
 
@@ -47,9 +48,12 @@
 
 <script>
 import debounce from 'lodash/debounce'
-
+import PictureQualification from '../PictureQualification'
 export default {
   name: 'Qualification',
+  components: {
+    PictureQualification
+  },
   props: {
     msg: String
   },
@@ -84,7 +88,8 @@ export default {
         {label: '智能设备>XR设备17', hasSet: false, value: 17},
         {label: '智能设备>XR设备18', hasSet: false, value: 18}
       ],
-      list: []
+      list: [],
+      qualityList: []
     }
   },
   created () {
@@ -122,62 +127,15 @@ export default {
         {is_required: 0, quality_attachments: [], quality_key: '3457058936748903145', quality_name: '委托进口协议'},
         {is_required: 0, quality_attachments: [], quality_key: '3457058945162709852', quality_name: '质检报告'}
       ]
+      this.qualityList = data
+    },
+    handlePictureQualificationChange () {
+
     }
   }
 }
 </script>
 <style lang="less" scoped>
-.content {
-  overflow: hidden;
-  display: flex;
-  padding: 37px 30px 0 33px;
-  box-sizing: border-box;
-  height: 100%;
-  padding-bottom: 60px;
-  .left {
-    width: 340px;
-  }
-  .right {
-    flex:1;
-    overflow-y: scroll;
-    padding-left: 30px;
-  }
-  .list {
-    width: 340px;
-    height: 506px;
-    border-radius: 4px;
-    border: 1px solid #E5E5E5;
-    box-sizing: border-box;
-    overflow-y: auto;
-    p {
-      height: 29px;
-      line-height: 29px;
-      padding-left: 11px;
-      font-size: 12px;
-      color: #4E4E4E;
-      cursor: pointer;
-      &:hover {
-        color: @color-primary;
-      }
-    }
-    .border {
-      height: 1px;
-      background: #E5E5E5;;
-    }
-  }
-}
+@import '~./index.less';
 
-.footer {
-  // flex justify-c align-c
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding:10px;
-  // background:#fff;
-
-}
 </style>
