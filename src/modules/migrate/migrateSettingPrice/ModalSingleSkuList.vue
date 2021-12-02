@@ -145,15 +145,15 @@ export default {
     marketPrice: Number | String
   },
   data () {
-    const unit = this.skuPriceStting.unit || 100
+    // const unit = this.skuPriceStting.unit || 100
     const everyDecimal = this.skuPriceStting.every_decimal
-    const evalPrice = financial(unit, everyDecimal)
+    // const evalPrice = financial(unit, everyDecimal)
     return {
       radio: this.skuPriceStting.radio,
       subtraction1: this.skuPriceStting.subtraction1 || 0,
       subtraction2: this.skuPriceStting.subtraction2 || 100,
       subtraction3: this.skuPriceStting.subtraction3 || 0,
-      textPrice: this.skuPriceStting.textPrice ? evalPrice(this.skuPriceStting.textPrice) : '',
+      textPrice: this.skuPriceStting.textPrice ? this.skuPriceStting.textPrice : '',
       unit: this.skuPriceStting.unit || 100,
       everyDecimal: everyDecimal,
       hasRender: false,
