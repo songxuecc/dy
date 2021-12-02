@@ -1,8 +1,8 @@
 <template>
     <div class="ModalSingleSkuList relative mt-20">
-      <!-- <div class="center font-12" style="position:absolute;top:-25px;left:0;right:0;margin-auto">
+      <div class="center font-12" style="position:absolute;top:-25px;left:0;right:0;margin-auto">
         <span class="color-4e" v-if="Number(radio) === 1">{{parseFloatText}}</span>
-      </div> -->
+      </div>
       <div class="priceChange">
         <el-radio v-model="radio" label="1">
           <span>(原sku价-</span>
@@ -123,19 +123,19 @@
 <script>
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
-import { accSub, accDiv, accMul } from '@/common/evalFloat.js'
+import { accSub, accDiv, accMul, accAdd } from '@/common/evalFloat.js'
 import utils from '@/common/utils'
 import isEqual from 'lodash/isEqual'
 
-// function financial (unit, everyDecimal) {
-//   return (x) => {
-//     if (unit === -1 && everyDecimal) {
-//       return accAdd(parseInt(x), Number(everyDecimal))
-//     }
-//     const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
-//     return Number.parseFloat(accDiv(Math.round(accMul(x, unit)), unit)).toFixed(fix)
-//   }
-// }
+function financial (unit, everyDecimal) {
+  return (x) => {
+    if (unit === -1 && everyDecimal) {
+      return accAdd(parseInt(x), Number(everyDecimal))
+    }
+    const fix = unit === 100 ? 2 : unit === 10 ? 1 : 0
+    return Number.parseFloat(accDiv(Math.round(accMul(x, unit)), unit)).toFixed(fix)
+  }
+}
 
 export default {
   name: 'ModalSingleSkuList',
@@ -147,14 +147,14 @@ export default {
   data () {
     const unit = this.skuPriceStting.unit || 100
     const everyDecimal = this.skuPriceStting.every_decimal
-    // const evalPrice = financial(unit, everyDecimal)
+    const evalPrice = financial(unit, everyDecimal)
     return {
       radio: this.skuPriceStting.radio,
       subtraction1: this.skuPriceStting.subtraction1 || 0,
       subtraction2: this.skuPriceStting.subtraction2 || 100,
       subtraction3: this.skuPriceStting.subtraction3 || 0,
-      textPrice: this.skuPriceStting.textPrice ? this.skuPriceStting.textPrice : '',
-      unit: unit,
+      textPrice: this.skuPriceStting.textPrice ? evalPrice(this.skuPriceStting.textPrice) : '',
+      unit: this.skuPriceStting.unit || 100,
       everyDecimal: everyDecimal,
       hasRender: false,
       tableData: [],
@@ -164,9 +164,9 @@ export default {
   watch: {
     propsData: {
       handler: function (n) {
-        const {skuData, skuPriceStting} = n
-        // const everyDecimal = skuPriceStting.every_decimal
-        // const evalPrice = financial(unit, everyDecimal)
+        const {skuData, skuPriceStting, unit} = n
+        const everyDecimal = skuPriceStting.every_decimal
+        const evalPrice = financial(unit, everyDecimal)
         this.originSkuPriceStting = skuPriceStting
         const skuMap = skuData.sku_map
         const skuPropertyMap = skuData.sku_property_map
@@ -188,8 +188,7 @@ export default {
             utils.isNumber(this.subtraction3)
           ) {
             const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, originPriceDiff), groupPriceRate), 100), groupPriceDiff)
-            currentColumnData.sku_price = evalGroupPriceRange(currentColumnData.origin_promo_price)
-            // currentColumnData.sku_price = currentColumnData.sku_price
+            currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_price))
           }
           if (
             Number(this.radio) === 2 &&
@@ -199,6 +198,14 @@ export default {
           ) {
             currentColumnData.sku_price = textPrice
           }
+
+          // 根据 自定义价格
+          // if (currentColumnData.custom_price && !this.hasRender) {
+          //   currentColumnData.sku_price = evalPrice(currentColumnData.custom_price)
+          // }
+          // if (this.skuPriceStting.tabledata) {
+          //   currentColumnData = this.skuPriceStting.tabledata.find(item => item.custome_key === key)
+          // }
 
           // 规格设置
           let column = {}
@@ -225,9 +232,9 @@ export default {
       immediate: true
     },
     template (n) {
-      // const unit = n.unit
-      // const everyDecimal = n.everyDecimal
-      // const evalPrice = financial(unit, everyDecimal)
+      const unit = n.unit
+      const everyDecimal = n.everyDecimal
+      const evalPrice = financial(unit, everyDecimal)
       let originPriceDiff = n.subtraction1
       let groupPriceRate = n.subtraction2
       let groupPriceDiff = n.subtraction3
@@ -253,8 +260,7 @@ export default {
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
           nextItem.editType = 1
-          // nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_promo_price))
-          nextItem.sku_price = evalGroupPriceRange(nextItem.origin_promo_price)
+          nextItem.sku_price = evalPrice(evalGroupPriceRange(nextItem.origin_promo_price))
           this.$set(this.tableData, idx, nextItem)
           return nextItem
         })
@@ -403,16 +409,14 @@ export default {
       const column = cloneDeep(this.tableData[index])
       let price = column.promo_price / 100
       // 抹角 抹分
-      // const unit = this.skuPriceStting.unit
-      // const everyDecimal = this.skuPriceStting.everyDecimal
-      // const evalPrice = financial(unit, everyDecimal)
+      const unit = this.skuPriceStting.unit
+      const everyDecimal = this.skuPriceStting.everyDecimal
+      const evalPrice = financial(unit, everyDecimal)
       // 根据 自定义设置重设价格
       if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
         const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
-        // price = evalPrice(evalGroupPriceRange(price))
-        price = evalGroupPriceRange(price)
+        price = evalPrice(evalGroupPriceRange(price))
       } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
-        // price = evalPrice(this.textPrice)
         price = this.textPrice
       }
       column.sku_price = price
