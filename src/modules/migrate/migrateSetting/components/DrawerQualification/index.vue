@@ -34,12 +34,12 @@
                 plain
                 style="width: 120px"
                 @click="toggleVisible"
-                >暂不修改</el-button>
+                >返回</el-button>
               <el-button
                 type="primary"
                 style="width: 120px"
                 @click="edit">
-                开始批量修改</el-button>
+                保存</el-button>
             </div>
         </el-drawer>
 
@@ -102,6 +102,7 @@ export default {
     },
     init () {
       this.handleClick()
+      this.setActiveQualification(this.originList[0])
     },
     handleClick () {
       const activeName = this.activeName
@@ -131,7 +132,17 @@ export default {
       console.log(data, 'data')
       this.qualityList = data
     },
+    formatqualityList (qualityList) {
+      return qualityList.map(item => {
+        item.quality_attachments = item.quality_attachments.map(i => {
+          i.uid = item.url
+          return i
+        })
+        return item
+      })
+    },
     handlePictureQualificationChange (value) {
+      // const list = this.formatqualityList(value)
       console.log(value, 'value')
     }
   }

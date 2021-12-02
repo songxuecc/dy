@@ -45,8 +45,6 @@
             :headers="getTokenHeaders"
             :data="{ belong_type: 0 }"
             :multiple="true"
-            :limit="quality.quality_attachments ? limit - quality.quality_attachments.length : 20"
-            :on-exceed="imageExceedHandler"
             :show-file-list="false"
             v-if="quality.quality_attachments && quality.quality_attachments.length < limit"
           >
