@@ -10,12 +10,12 @@
     }
     .right {
       flex:1;
-      overflow-y: scroll;
       padding-left: 30px;
     }
     .list {
       width: 340px;
       height: 506px;
+      height: calc(100vh - 194px);
       border-radius: 4px;
       border: 1px solid #E5E5E5;
       box-sizing: border-box;
@@ -30,6 +30,9 @@
         &:hover {
           color: @color-primary;
         }
+      } 
+      .active {
+        color: @color-primary;
       }
       .border {
         height: 1px;

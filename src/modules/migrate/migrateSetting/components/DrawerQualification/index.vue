@@ -13,7 +13,7 @@
                     <el-tab-pane :label="tab.label" :name="tab.name" v-for="tab in tabs" :key="tab.name">
                       <div class="list">
                         <div v-for="(l,idx) in list" :key="l.value">
-                          <p @click="setActiveQualification(l,idx)">{{l.label}}</p>
+                          <p @click="setActiveQualification(l,idx)" :class="[activeQualification.value === l.value ? 'active':'']">{{l.label}}</p>
                           <div class="border" v-if="idx !== list.length -1"></div>
                         </div>
                       </div>
@@ -21,7 +21,7 @@
                   </el-tabs>
                 </div>
                 <div class="right">
-                  <el-alert type="warning" style="height:30px" :closable="false">
+                  <el-alert type="warning" style="height:30px"  :closable="false">
                     <span slot="title" class="color-333 font-12"><span class="fail">* </span>该类目下的所有商品都统一为以下资质</span>
                   </el-alert>
                   <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange"/>
@@ -59,6 +59,7 @@ export default {
   },
   data () {
     return {
+      activeQualification: {},
       drawer: false,
       search: '',
       activeName: 'all',
@@ -127,10 +128,11 @@ export default {
         {is_required: 0, quality_attachments: [], quality_key: '3457058936748903145', quality_name: '委托进口协议'},
         {is_required: 0, quality_attachments: [], quality_key: '3457058945162709852', quality_name: '质检报告'}
       ]
+      console.log(data, 'data')
       this.qualityList = data
     },
-    handlePictureQualificationChange () {
-
+    handlePictureQualificationChange (value) {
+      console.log(value, 'value')
     }
   }
 }

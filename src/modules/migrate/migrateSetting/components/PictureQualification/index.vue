@@ -1,65 +1,66 @@
 <!-- 资质图片 -->
 <template>
-  <div style="margin-bottom:50px">
-    <el-form-item  v-for="(quality, index) in qualitys" :key="index"  :label="quality.quality_name + ':'" :required="quality.is_required" label-width="100px">
-    <div class="flex wrap">
-      <div
-      v-for="(file, index) in quality.quality_attachments"
-      :key="index"
-      class="el-upload--picture-card "
-    >
-      <el-image
-        class="PictureQualification__item-thumbnail"
-        :src="file.url"
-        :ref="file.url"
-        :preview-src-list="[file.url]"
-        fits="contain"
-        alt=""
-      />
-      <span class="PictureQualification__item-actions">
-        <span
-          class="PictureQualification__item-preview"
-          @click="handlePictureCardPreview(file)"
-        >
-          <i class="el-icon-zoom-in"></i>
-        </span>
-        <span
-          v-if="!disabled"
-          class="PictureQualification__item-delete"
-          @click="handleRemove(file, quality.quality_attachments)"
-        >
-          <i class="el-icon-delete"></i>
-        </span>
-      </span>
+  <div style="margin-bottom:50px" class="migrateSetting_pictureQualification">
+    <div  v-for="(quality, index) in qualitys" :key="index"  :required="quality.is_required" label-width="100px">
+      <div class="title">{{quality.quality_name}}({{quality.quality_attachments && quality.quality_attachments.length}}/{{ limit }})</div>
+      <div class="flex wrap">
+          <div
+            v-for="(file, index) in quality.quality_attachments"
+            :key="index"
+            class="el-upload--picture-card "
+          >
+          <el-image
+            class="PictureQualification__item-thumbnail"
+            :src="file.url"
+            :ref="file.url"
+            :preview-src-list="[file.url]"
+            fits="contain"
+            alt=""
+          />
+          <span class="PictureQualification__item-actions">
+            <span
+              class="PictureQualification__item-preview"
+              @click="handlePictureCardPreview(file)"
+            >
+              <i class="el-icon-zoom-in"></i>
+            </span>
+            <span
+              v-if="!disabled"
+              class="PictureQualification__item-delete"
+              @click="handleRemove(file, quality.quality_attachments)"
+            >
+              <i class="el-icon-delete"></i>
+            </span>
+          </span>
+        </div>
+        <el-upload
+            action="/api/image/create"
+            class="PictureQualification--picture-card"
+            :on-success="
+              (response, file, fileList) =>
+                handleUploadSuccess(response, file, fileList, quality.quality_attachments)
+            "
+            :on-error="handleUploadError"
+            :before-upload="handleBeforeUpload"
+            :headers="getTokenHeaders"
+            :data="{ belong_type: 0 }"
+            :multiple="true"
+            :limit="quality.quality_attachments ? limit - quality.quality_attachments.length : 20"
+            :on-exceed="imageExceedHandler"
+            :show-file-list="false"
+            v-if="quality.quality_attachments && quality.quality_attachments.length < limit"
+          >
+          <span
+            class="flex column align-c justify-c"
+            slot="default"
+            style="line-height: 18px; padding-top: 8px"
+          >
+            <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
+            <span class="uploader-text">({{ quality.quality_attachments && quality.quality_attachments.length }}/{{ limit }})</span>
+          </span>
+        </el-upload>
+      </div>
     </div>
-    <el-upload
-      action="/api/image/create"
-      class="PictureQualification--picture-card"
-      :on-success="
-        (response, file, fileList) =>
-          handleUploadSuccess(response, file, fileList, quality.quality_attachments)
-      "
-      :on-error="handleUploadError"
-      :before-upload="handleBeforeUpload"
-      :headers="getTokenHeaders"
-      :data="{ belong_type: 0 }"
-      :multiple="true"
-      :limit="quality.quality_attachments ? limit - quality.quality_attachments.length : 20"
-      :on-exceed="imageExceedHandler"
-      :show-file-list="false"
-      v-if="quality.quality_attachments && quality.quality_attachments.length < limit"
-    >
-      <span
-        class="flex column align-c justify-c"
-        slot="default"
-        style="line-height: 28px; padding-top: 12px"
-      >
-        <span><i class="el-icon-plus avatar-uploader-icon"></i></span>
-        <span class="uploader-text">({{ quality.quality_attachments && quality.quality_attachments.length }}/{{ limit }})</span>
-      </span>
-    </el-upload>
-    </div>
-  </el-form-item>
   </div>
 </template>
 
