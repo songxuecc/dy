@@ -694,6 +694,7 @@ export default {
     scrollEl.removeEventListener('scroll', this.scroll)
   },
   activated () {
+    this.setCommitType()
     if (this.$route.params.keepStatus) {
       if (this.$route.params.needRefresh) {
         this.$refs.productListView.clearSelect()
@@ -728,7 +729,6 @@ export default {
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
     this.getNewMigrate()
-    this.setCommitType()
     window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   deactivated () {
@@ -1680,6 +1680,7 @@ export default {
         this.commit_type = data.commit_type
       } else {
         this.commit_type = Number(commitType)
+        console.log(commitType, 'commitType')
       }
     }
   }
