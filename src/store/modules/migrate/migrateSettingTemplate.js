@@ -61,6 +61,10 @@ export default {
         if (!template.model.unit) {
           template.model.unit = 100
         }
+        // 搬迁方式在首页前置 首页设置优先级最高
+        const commitType = localStorage.getItem('migrate_productList_commit_type')
+        template.model.commit_type = Number(commitType)
+        console.log(commitType, template.model, 'commitType')
         commit('save', {template})
         // 先获取数据 再保存localstorege 最后合并两个数据 是为了保证再用户刷新数据的时候 可以保证用户操作记录还在
         // 在这里真正保存模版

@@ -192,7 +192,7 @@
             </el-popover>
             <span class="pl-10 font-12">
               选择搬迁方式:
-              <el-radio-group v-model="commit_type" class="pl-5">
+              <el-radio-group v-model="commit_type" class="pl-5" @change="onCommitType">
                   <el-radio :label="0">直接上线</el-radio>
                   <el-radio :label="1">草稿箱</el-radio>
                   <el-radio :label="2">仓库中</el-radio>
@@ -675,6 +675,7 @@ export default {
   },
   created () {
     this.search.captureId = (this.$route.query.captureId || '-1').toString()
+    this.setCommitType()
   },
   mounted () {
     let elementList = document.querySelectorAll(
@@ -686,6 +687,7 @@ export default {
     this.isMounted = true
     const scrollEl = document.querySelector('.page-component__scroll')
     scrollEl.addEventListener('scroll', this.scroll)
+    this.setCommitType()
   },
   beforeDestroy () {
     const scrollEl = document.querySelector('.page-component__scroll')
@@ -726,6 +728,7 @@ export default {
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
     this.getNewMigrate()
+    this.setCommitType()
     window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   deactivated () {
@@ -1357,6 +1360,7 @@ export default {
         this.$message.warning('请选择商品！若商品状态是待修改，请先根据原因对商品进行修改')
         return false
       }
+      this.onCommitType()
       const userVersion = this.userVersion || (await this.userVersionQuery())
       const isFreeUpgrate = userVersion.is_free_upgrate
       const isSenior = userVersion.is_senior
@@ -1665,6 +1669,18 @@ export default {
     sortByTime (orderBy) {
       this.order_by = orderBy
       this.updateInfo()
+    },
+    onCommitType () {
+      localStorage.setItem('migrate_productList_commit_type', this.commit_type)
+    },
+    async setCommitType () {
+      const commitType = localStorage.getItem('migrate_productList_commit_type')
+      if (typeof commitType !== 'string') {
+        const data = await Api.hhgjAPIs.getTemplate()
+        this.commit_type = data.commit_type
+      } else {
+        this.commit_type = Number(commitType)
+      }
     }
   }
 }
