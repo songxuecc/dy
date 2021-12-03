@@ -30,6 +30,7 @@
                 placeholder="请输入需要关联的品牌"
                 :remote-method="(query) => remoteMethod(query,item,index)"
                 @change="handleChange($event,item.name)"
+                @focus="remoteMethod2('',item,index)"
                 :loading="loading">
                 <el-option
                   v-for="option in item.options"
@@ -329,6 +330,16 @@ export default {
       } else {
         this.options = []
       }
+    },
+    remoteMethod2 (query, item, index) {
+      this.loading = true
+      servises.productCategoryBrandList({
+        category_id: this.catId,
+        keyword: query
+      }).then(data => {
+        this.$set(item, 'options', data)
+        this.loading = false
+      })
     }
   }
 }
