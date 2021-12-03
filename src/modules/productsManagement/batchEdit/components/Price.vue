@@ -134,19 +134,30 @@
           <el-radio   :label="3">
             四舍五入保留两位小数点
           </el-radio>
+
+          <el-radio   :label="-1">
+            统一设置小数部分为
+            <el-tooltip content="请填写大于0小于1的数。如填写0.8，则原价9元的商品将变为9.8元" placement="top-start">
+            <span class="relative">
+              <el-input v-model="form.every_decimal"  :debounce="500" controls-position="right" @focus="focus" size="mini" placeholder="请填写数字" style="width:110px" class="numberInput"/>
+              <span class="tipNumber" v-if="tipNumberShow">请填写大于0小于1的两位小数的数字。</span>
+            </span>
+          </el-tooltip>
+
+          </el-radio>
         </el-radio-group>
       </el-form-item>
-
     </el-form>
-    <p class="tip mt-10">
-      <span class="fail">*</span
-      >注：为保证审核通过，修改后划线价自动调为sku最高价，售卖价调为sku最低价。
-    </p>
   </div>
 </template>
 
 <script>
 import utils from '@/common/utils'
+import { accMul } from '@/common/evalFloat.js'
+function isInteger (obj) {
+  return Math.round(accMul(obj, 100)) === accMul(obj, 100)
+}
+
 export default {
   name: 'Stocks',
   props: {
@@ -158,6 +169,8 @@ export default {
 
       if (value && !utils.isNumber(value)) {
         callback(new Error('必须填写数字'))
+      } else if (!isInteger(value)) {
+        callback(new Error('价格最多保留两位小数'))
       } else {
         callback()
       }
@@ -169,6 +182,8 @@ export default {
       if (this.form.is_every_price === 1) {
         if (value && !utils.isNumber(value)) {
           callback(new Error('必须填写数字'))
+        } else if (!isInteger(value)) {
+          callback(new Error('价格最多保留两位小数'))
         } else {
           callback()
         }
@@ -183,6 +198,8 @@ export default {
       this.valid()
       if (value && !utils.isNumber(value)) {
         callback(new Error('必须填写数字'))
+      } else if (!isInteger(value)) {
+        callback(new Error('价格最多保留两位小数'))
       } else {
         callback()
       }
@@ -193,6 +210,8 @@ export default {
       this.valid()
       if (value && !utils.isNumber(value)) {
         callback(new Error('必须填写数字'))
+      } else if (!isInteger(value)) {
+        callback(new Error('价格最多保留两位小数'))
       } else {
         callback()
       }
@@ -230,11 +249,30 @@ export default {
         min_price: '',
         is_open_min_price_rate: false,
         min_price_rate: '',
-        unit: 3
+        unit: 3,
+        every_decimal: ''
+      }
+    }
+  },
+  computed: {
+    tipNumberShow () {
+      let unit = this.form.unit
+      let value = this.form.every_decimal
+      if (unit === -1) {
+        if (value && utils.isNumber(value) && value > 0 && value < 1) {
+          return false
+        } else if (!isInteger(value)) {
+          return false
+        } else {
+          return true
+        }
       }
     }
   },
   methods: {
+    focus () {
+      this.form.unit = -1
+    },
     valid () {
       if (!this.form.is_formula) {
         this.$refs.form.clearValidate(['origin_price_rate', 'incr_diff', 'desc_diff'])
@@ -310,7 +348,12 @@ export default {
 .block {
   display: inline-block;
 }
-
+.tipNumber {
+  position: absolute;
+  bottom:-22px;
+  left: 0;
+  color:red;
+}
 .tip {
   width: 441px;
   height: 16px;
