@@ -45,6 +45,7 @@
               :clearable="true"
               :remote-method="(query) => remoteMethod(query,property,idx)"
               @clear="handleClear(property.id)"
+              @focus="remoteMethod2('',item,index)"
               :loading="loading"
             >
               <el-option :label="option.name" :value="option.value" v-for="(option,idx) in property.options" :key="idx">
@@ -208,6 +209,16 @@ export default {
       } else {
         this.options = []
       }
+    },
+    remoteMethod2 (query, item, index) {
+      this.loading = true
+      servises.productCategoryBrandList({
+        category_id: this.catId,
+        keyword: query
+      }).then(data => {
+        this.$set(item, 'options', data)
+        this.loading = false
+      })
     }
   }
 }
