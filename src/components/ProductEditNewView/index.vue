@@ -1062,7 +1062,7 @@ export default {
                     checked: true,
                     skuKey: item.spec_detail_id.split(':')[0],
                     skuValueKey: item.spec_detail_id.split(':')[1],
-                    image: item.image || '',
+                    image: specification.addSkuImage ? item.image : '',
                     value: item.name || ''
                   }))
                 }
@@ -1739,7 +1739,6 @@ export default {
           }
         })
       }
-      // console.log(this.product.model.sku_json.spec_price_list, 'this.product.model.sku_json.spec_price_list')
     }
   }
 }
