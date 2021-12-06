@@ -59,6 +59,7 @@
             <el-table-empty slot="empty"/>
             <el-table-column
                 v-for="(spec, index) in  spec_list"
+                :prop="spec.name"
                 fixed
                 :key="index"
                 :label="spec.name"
@@ -99,7 +100,6 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="address"
                 label="商品编码"
                 >
                  <template slot="header" slot-scope="scope">
@@ -111,9 +111,7 @@
                   </div>
                 </template>
                 <template slot-scope="scope">
-                    <el-form-item  :prop="`[${scope.row.index}].code`">
-                        <el-input v-model="scope.row.code" placeholder="请输入" @input="handleEdit"></el-input>
-                    </el-form-item>
+                    <el-input v-model="scope.row.code" placeholder="请输入" @input="handleEdit"></el-input>
                 </template>
             </el-table-column>
             <el-table-column
