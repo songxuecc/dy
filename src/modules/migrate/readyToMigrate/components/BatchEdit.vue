@@ -132,9 +132,9 @@ export default {
           }
         },
         {
-          value: 1,
-          label: '批量修改标题',
-          key: 'visibleEditTitle',
+          value: 2,
+          label: '批量修改属性',
+          key: 'visibleProperties',
           numberKey: true,
           props: {
             type: 'primary',
@@ -142,9 +142,9 @@ export default {
           }
         },
         {
-          value: 2,
-          label: '批量修改属性',
-          key: 'visibleProperties',
+          value: 1,
+          label: '批量修改标题',
+          key: 'visibleEditTitle',
           numberKey: true,
           props: {
             type: 'primary',
