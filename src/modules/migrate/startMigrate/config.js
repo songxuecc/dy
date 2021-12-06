@@ -34,11 +34,11 @@ export const platformIconsUrl = [
     src: require('@/assets/images/sn.png'),
     tip: '苏宁'
   },
-  {
-    key: '唯品会',
-    src: require('@/assets/images/vph.png'),
-    tip: '唯品会'
-  },
+  // {
+  //   key: '唯品会',
+  //   src: require('@/assets/images/vph.png'),
+  //   tip: '唯品会'
+  // },
   // {
   //   key: '网易考拉',
   //   src: require('@/assets/images/kaola.png'),
