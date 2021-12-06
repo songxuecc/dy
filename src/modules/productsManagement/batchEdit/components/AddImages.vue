@@ -7,7 +7,7 @@
     label-position="right"
     label-width="140px"
   >
-    <el-form-item label="订单计数方式:">
+    <el-form-item label="详情图修改方式:">
       <el-radio-group v-model="form.is_add">
         <el-radio :label="1">批量增加详情图</el-radio>
         <el-radio :label="0">批量删除详情图</el-radio>
