@@ -164,9 +164,19 @@
               </el-form-item>
             </p>
         </el-form-item>
-
-        <el-form-item   label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c migrateSetting-code">
-            <p class="font-12">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
+        <el-form-item   label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c  migrateSetting-code">
+            <p class="font-12" style="height:24px">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
+        </el-form-item>
+        <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
+            <p class="mb-10 flex align-c mb-10 ">
+              <span class="font-12 mr-5 flex align-c">低于
+              <el-form-item style="display:inline;margin-bottom:0" prop="low_sku_price"  class="mr-5 ml-5">
+                  <el-input v-model="low_sku_price" placeholder="请输入数字" style="width: 120px;" />
+              </el-form-item>元的sku自动过滤</span>
+              <el-form-item style="display:inline;margin-bottom:0" prop="is_remove_sku_by_price">
+                  <el-switch v-model="is_remove_sku_by_price" />
+              </el-form-item>
+            </p>
         </el-form-item>
 
         <!-- <el-form-item  label="SKU规格:"  style="padding-bottom: 20px;" class="flex align-c migrateSetting-spec">
@@ -354,6 +364,7 @@ import common from '@/common/common.js'
 import Api from '@/api/apis.js'
 import categorySelectView from '@/components/CategorySelectView'
 import servises from '@servises'
+import utils from '@/common/utils'
 
 export default {
   mixins: [request],
@@ -387,6 +398,7 @@ export default {
         { label: '商家推荐语', className: '.migrateSetting-recommend' },
         { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: 'SKU库存', className: '.migrateSetting-stock' },
+        { label: 'SKU价格', className: '.migrateSetting-price' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
         { label: '详情图', className: '.migrateSetting-detail' },
         { label: '轮播图', className: '.migrateSetting-banner' },
@@ -413,7 +425,6 @@ export default {
       is_all_no_brand: undefined,
       is_cut_image_black_word: undefined,
       is_banner_auto_5: undefined,
-
       is_select_first_options_attr: undefined,
       is_use_default_attr_value: undefined,
       default_attr_value: '',
@@ -424,6 +435,7 @@ export default {
       default_sku_stock: '',
       is_use_default_sku_stock: undefined,
       max_sku_stock: '',
+      low_sku_price: '',
       is_use_max_sku_stock: undefined,
       is_cut_banner_first: undefined,
       is_auto_cut_banner: undefined,
@@ -447,6 +459,7 @@ export default {
       property_radio: '1',
       goods_property_selected: '',
       goods_code_type: 0,
+      is_remove_sku_by_price: 0,
       goods_property_value: '',
       goods_property_options: [],
       goods_property_options_dic: {},
@@ -588,6 +601,15 @@ export default {
         callback()
       }
 
+      const checkLowSkuPrice = (rule, value, callback) => {
+        if (!utils.isNumber(value)) {
+          return callback(new Error('请输入数字'))
+        } else if (value < 0 || value > 999999.99) {
+          return callback(new Error('0<价格<999999.99'))
+        }
+        callback()
+      }
+
       const checkUseDefaultSkuStock = (rule, value, callback) => {
         if (this.is_use_default_sku_stock) {
           this.$refs.template.validateField('default_sku_stock')
@@ -633,6 +655,9 @@ export default {
         ],
         is_open_recommend_remark: [
           { validator: checkIsOpenDefaultRecommendRremark, trigger: 'change' }
+        ],
+        low_sku_price: [
+          { validator: checkLowSkuPrice, trigger: 'change' }
         ]
       }
     },
@@ -818,6 +843,7 @@ export default {
         'is_open_title_prefix_suffix',
         'is_open_title_replace',
         'goods_code_type',
+        'is_remove_sku_by_price',
         'is_select_first_options_attr',
         'is_use_default_attr_value',
         'is_open_recommend_remark'
@@ -895,6 +921,7 @@ export default {
         is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
         goods_code_type: Number(this.goods_code_type),
+        is_remove_sku_by_price: Number(this.is_remove_sku_by_price),
         property_radio: this.property_radio,
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
@@ -904,6 +931,7 @@ export default {
         is_use_default_sku_stock: Number(this.is_use_default_sku_stock),
         is_use_max_sku_stock: Number(this.is_use_max_sku_stock),
         max_sku_stock: this.max_sku_stock,
+        low_sku_price: this.low_sku_price,
         is_cut_banner_first: Number(this.is_cut_banner_first),
         is_auto_cut_banner: Number(this.is_auto_cut_banner),
         is_cut_banner_last: Number(this.is_cut_banner_last),
@@ -1330,6 +1358,11 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '~./index.less';
+.tab {
+  /deep/ .el-tabs__item {
+    padding:0 15px;
+  }
+}
 </style>
 <style lang="less">
   .migrateSetting-avatar-uploader {

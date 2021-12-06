@@ -156,6 +156,7 @@ export default {
         presell.presell_end_time = ''
       }
       // 处理多余属性
+      params.ext_json.need_current_stock = 1
       params.ext_json = JSON.stringify(params.ext_json)
 
       // 处理搬家数据
