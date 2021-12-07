@@ -891,6 +891,10 @@ export default {
             .join(' > ')
           setting.default_category.id = setting.default_category_id
         }
+        // sku价格
+        if (setting.low_sku_price) {
+          setting.low_sku_price = utils.yuanToFen(setting.low_sku_price)
+        }
 
         // 违规词
         this.blackWords = blackWords.customer
@@ -911,7 +915,7 @@ export default {
     },
     getFormatSettings () {
       const product = {
-        ...this.originMigrateSetting,
+        // ...this.originMigrateSetting,
         title_cut_off: Number(this.title_cut_off),
         title_ban_words: Number(this.title_ban_words),
         detail_img_cut: Number(this.detail_img_cut),
@@ -962,12 +966,14 @@ export default {
       }
 
       // 只比较本页需要的数据配置
-      Object.keys(product).map(key => {
-        if (!this.settingKeys.includes(key)) {
-          delete product[key]
-        }
-      })
-
+      // Object.keys(product).map(key => {
+      //   if (!this.settingKeys.includes(key)) {
+      //     delete product[key]
+      //   }
+      // })
+      console.log(this.low_sku_price, 'this.low_sku_price')
+      product.low_sku_price = this.low_sku_price
+      console.log(product, 'product---')
       return product
     },
     saveSetting () {
@@ -979,6 +985,8 @@ export default {
         return this.$message.warning('属性维度重复,请重新填写')
       }
       const product = this.getFormatSettings()
+      console.log(product, 'product00000')
+      product.low_sku_price = utils.fenToYuan(product.low_sku_price)
       this.$refs.template.validate(async (valid) => {
         if (valid) {
           let productParams = {
@@ -1014,6 +1022,8 @@ export default {
               })
               : Promise.resolve([])
             const isEqualSetting = isEqual(this.originMigrateSetting, product)
+            console.log(product, isEqualSetting, 'product')
+
             const updateSetting = !isEqualSetting
               ? Api.hhgjAPIs.updateMigrateSetting(productParams)
               : Promise.resolve(this.originMigrateSetting)
