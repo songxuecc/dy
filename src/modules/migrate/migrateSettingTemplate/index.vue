@@ -156,6 +156,7 @@ export default {
         presell.presell_end_time = ''
       }
       // 处理多余属性
+      params.ext_json.need_current_stock = 1
       params.ext_json = JSON.stringify(params.ext_json)
 
       // 处理搬家数据
@@ -227,11 +228,15 @@ export default {
       }
       return undefined
     },
+    onCommitType (commitType) {
+      localStorage.setItem('migrate_productList_commit_type', commitType)
+    },
     updateTemplate () {
       try {
         const {template} = this.getTemplateParams()
         const diffTemplate = this.template.isDiff()
         if (diffTemplate) {
+          this.onCommitType(template.commit_type)
           Api.hhgjAPIs.updateTemplate(template)
         }
       } catch (err) {

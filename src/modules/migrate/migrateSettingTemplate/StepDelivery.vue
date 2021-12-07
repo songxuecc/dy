@@ -89,16 +89,18 @@
                   </div>
                 </template>
             </el-form-item>
-            <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2" prop="step_stock_num_percentage">
-                <span>现货库存设置为总库存的</span>
-                <el-input
-                  v-model="template.model.step_stock_num_percentage"
-                  @input="handleChangeStock"
-                  style="width:150px">
-                  <template slot="append">%</template>
-                </el-input>
-                <span>(原商品库存 = 现货库存 + 阶梯库存，<span style="color:#FA6400">{{tip}}</span>)</span>
+            <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2" prop="step_stock_num_diff">
+                <span>现货库存设置为</span>
+                <el-input-number
+                  v-model="template.model.step_stock_num_diff"
+                  controls-position="right"
+                  @change="handleChange"
+                  :min="0"
+                  class="input-number"></el-input-number>
+                <span>,&nbsp;&nbsp;剩余为阶梯发货库存&nbsp;&nbsp;&nbsp;(原商品库存 = 现货库存 + 阶梯库存)</span>
+                <div style="position: absolute;top: 28px;left: 105px;color: #E02020; font-size: 1px;">抖音规则：现货库存 > 阶梯库存，否则会搬家失败</div>
             </el-form-item>
+
         </el-form>
 
         <el-dialog :visible.sync="jietiImgVisible">
@@ -150,6 +152,9 @@ export default {
         step_stock_num_percentage: [
           { validator: validatePass, trigger: ['blur', 'change'] },
           { required: true, message: '请输入库存设置', trigger: ['blur', 'change'] }
+        ],
+        step_stock_num_diff: [
+          { required: true, message: '请输入库存设置', trigger: ['blur', 'change'] }
         ]
       },
       pickerOptions: {
@@ -181,13 +186,12 @@ export default {
       } else if (value === 1) {
         this.$refs.form.validateField(['presell_end_time', 'presell_delay'])
       } else if (value === 2) {
-        this.$refs.form.validateField(['presell_delay', 'step_stock_num_percentage'])
+        this.$refs.form.validateField(['presell_delay', 'step_stock_num_diff'])
       }
     },
     handleChangeStock () {
-      console.log('999')
       this.$refs.form.validateField(['presell_delay'])
-      this.$refs.form.validateField(['step_stock_num_percentage'])
+      this.$refs.form.validateField(['step_stock_num_diff'])
     },
     open () {
       window.open('https://school.jinritemai.com/doudian/web/article/101706')

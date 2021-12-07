@@ -694,6 +694,7 @@ export default {
     scrollEl.removeEventListener('scroll', this.scroll)
   },
   activated () {
+    this.setCommitType()
     if (this.$route.params.keepStatus) {
       if (this.$route.params.needRefresh) {
         this.$refs.productListView.clearSelect()
@@ -728,7 +729,6 @@ export default {
     this.getMigrateStatusStatistics()
     this.getMigrateSetting()
     this.getNewMigrate()
-    this.setCommitType()
     window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   deactivated () {
@@ -795,7 +795,8 @@ export default {
     quickMigrate () {
       this.request('migrate', {
         tp_product_ids: this.selectIdList,
-        is_quick_migrate: 1
+        is_quick_migrate: 1,
+        commit_type: this.commit_type
       }, (data) => {
         location.reload()
       })
@@ -1678,8 +1679,10 @@ export default {
       if (typeof commitType !== 'string') {
         const data = await Api.hhgjAPIs.getTemplate()
         this.commit_type = data.commit_type
+        this.onCommitType()
       } else {
         this.commit_type = Number(commitType)
+        console.log(commitType, 'commitType')
       }
     }
   }
