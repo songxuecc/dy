@@ -99,7 +99,7 @@
               <el-input size="mini" style="width:150px" @change="changeProperties" class="ml-5 mr-5" placeholder="请填写,如产地" v-model="properties.name"></el-input> 时，对应的属性值是
               <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" v-model="properties.value"></el-input>
               <el-switch class="ml-5"  size="mini" v-model="properties.is_open"></el-switch>
-              <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)" v-if="showPropertiesMap.length > 1">删除</el-button>
+              <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)" >删除</el-button>
             </div>
           </div>
           <div style="display:flex;margin-bottom:5px" class="align-c">
