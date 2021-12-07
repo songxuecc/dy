@@ -1062,7 +1062,7 @@ export default {
                     checked: true,
                     skuKey: item.spec_detail_id.split(':')[0],
                     skuValueKey: item.spec_detail_id.split(':')[1],
-                    image: specification.addSkuImage ? item.image : '',
+                    image: item.image || '',
                     value: item.name || ''
                   }))
                 }
