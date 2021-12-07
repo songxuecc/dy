@@ -3,7 +3,7 @@
   <div v-loading="loadingCnt">
     <Head></Head>
     <BasicTemplate ref="basicTemplate"></BasicTemplate>
-    <StepDelivery ref="stepDelivery"></StepDelivery>
+    <StepDelivery ref="stepDelivery" ></StepDelivery>
     <ShopsMigrate ref="shopsMigrate"></ShopsMigrate>
     <!-- 搬家店铺 end -->
     <div class="help-tips" >
