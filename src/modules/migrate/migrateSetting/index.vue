@@ -64,9 +64,9 @@
         </div>
 
         <!-- 品牌 -->
-        <el-form-item  label="品牌统一为:" style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-brand">
-          <p class="font-12 mb-10 flex align-c" style="height:28px">是否统一为无品牌<el-switch class="ml-5" v-model="is_all_no_brand" /></p>
-        </el-form-item>
+<!--        <el-form-item  label="品牌统一为:" style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-brand">-->
+<!--          <p class="font-12 mb-10 flex align-c" style="height:28px">是否统一为无品牌<el-switch class="ml-5" v-model="is_all_no_brand" /></p>-->
+<!--        </el-form-item>-->
         <!-- 商家推荐语 -->
         <el-form-item  label="推荐语统一为:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-recommend" >
           <div style="display:flex;margin-bottom:5px" class="align-c">
@@ -383,8 +383,8 @@ export default {
     return {
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
-        // { label: '类目匹配', className: '.migrateSetting-categoryMatch' },
-        { label: '品牌', className: '.migrateSetting-brand' },
+        { label: '类目匹配', className: '.migrateSetting-categoryMatch' },
+        // { label: '品牌', className: '.migrateSetting-brand' },
         { label: '推荐语', className: '.migrateSetting-recommend' },
         { label: '属性', className: '.migrateSetting-attribute' },
         { label: 'SKU', className: '.migrateSetting-sku' },

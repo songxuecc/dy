@@ -152,6 +152,7 @@ export default {
           value.editType = 0
           nextSkuMap[key] = value
         })
+        if (item.custom_setting_unit) delete item.custom_setting_unit
         item.sku_json.sku_map = nextSkuMap
         return cloneDeep(item)
       })

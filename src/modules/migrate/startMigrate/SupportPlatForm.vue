@@ -45,7 +45,7 @@ export default {
         '1688': 'https://www.1688.com/',
         '京东': 'https://www.jd.com/',
         '苏宁易购': 'https://www.suning.com/',
-        '唯品会': 'https://www.vip.com/',
+        // '唯品会': 'https://www.vip.com/',
         '网易考拉': 'https://www.kaola.com/',
         '17网': 'https://gz.17zwd.com/',
         '抖音': 'https://www.yuque.com/huxiao-rkndm/ksui6u/muvtyt',

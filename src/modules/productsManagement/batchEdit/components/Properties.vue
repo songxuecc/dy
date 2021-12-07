@@ -43,6 +43,7 @@
               popper-class="select-popper-properties"
               :clearable="true"
               :remote-method="(query) => remoteMethod(query,property,idx)"
+              @focus="remoteMethod2('',item,index)"
               @clear="handleClear(property.id)"
               :loading="loading"
             >
@@ -227,6 +228,16 @@ export default {
       } else {
         this.options = []
       }
+    },
+    remoteMethod2 (query, item, index) {
+      this.loading = true
+      servises.productCategoryBrandList({
+        category_id: this.catId,
+        keyword: query
+      }).then(data => {
+        this.$set(item, 'options', data)
+        this.loading = false
+      })
     }
   }
 }
