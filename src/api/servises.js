@@ -478,7 +478,20 @@ const hhgjAPIs = {
   },
   userCatAttrCreate: (params) => {
     return api.actionCreatorPost('/api/user/cat_attr/create', params)
+  },
+  userCatQualityList: (params) => {
+    return api.actionCreateGet('/api/user/cat_quality/list', params)
+  },
+  userCatQualityDetail: (params) => {
+    return api.actionCreateGet('/api/user/cat_quality/detail', params)
+  },
+  userCatQualityCreate: (params) => {
+    return api.actionCreatorPost('/api/user/cat_quality/create', params)
+  },
+  userCatQualityDelete: (params) => {
+    return api.actionCreatorPost('/api/user/cat_quality/delete', params)
   }
+
 }
 
 export default hhgjAPIs

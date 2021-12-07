@@ -13,7 +13,7 @@
                     <el-tab-pane :label="tab.label" :name="tab.name" v-for="tab in tabs" :key="tab.name">
                       <div class="list">
                         <div v-for="(l,idx) in list" :key="l.value">
-                          <p @click="setActiveQualification(l,idx)" :class="[activeQualification.value === l.value ? 'active':'']">{{l.label}}</p>
+                          <p @click="setActiveQualification(l,idx)" :class="[activeQualification.category_id === l.category_id ? 'active':'']">{{l.full_name}}</p>
                           <div class="border" v-if="idx !== list.length -1"></div>
                         </div>
                       </div>
@@ -49,6 +49,8 @@
 <script>
 import debounce from 'lodash/debounce'
 import PictureQualification from '../PictureQualification'
+import servises from '@servises'
+
 export default {
   name: 'Qualification',
   components: {
@@ -64,30 +66,30 @@ export default {
       search: '',
       activeName: 'all',
       tabs: [
-        {label: '全部', name: 'all', type: [true, false]},
-        {label: '已配置', name: 'hasSet', type: [true]},
-        {label: '未配置', name: 'noSet', type: [false]}
+        {label: '全部', name: 'all', type: [1, 0]},
+        {label: '已配置', name: 'is_config', type: [1]},
+        {label: '未配置', name: 'is_no_config', type: [0]}
       ],
       originList: [
-        {label: '智能设备>XR设备0', hasSet: false, value: 0},
-        {label: '智能设备>XR设备1', hasSet: true, value: 1},
-        {label: '智能设备>XR设备2', hasSet: false, value: 2},
-        {label: '智能设备>XR设备3', hasSet: false, value: 3},
-        {label: '智能设备>XR设备4', hasSet: false, value: 4},
-        {label: '智能设备>XR设备5', hasSet: false, value: 5},
-        {label: '智能设备>XR设备6', hasSet: false, value: 6},
-        {label: '智能设备>XR设备7', hasSet: true, value: 7},
-        {label: '智能设备>XR设备8', hasSet: false, value: 8},
-        {label: '智能设备>XR设备9', hasSet: false, value: 9},
-        {label: '智能设备>XR设备10', hasSet: false, value: 10},
-        {label: '智能设备>XR设备11', hasSet: false, value: 11},
-        {label: '智能设备>XR设备12', hasSet: false, value: 12},
-        {label: '智能设备>XR设备13', hasSet: true, value: 13},
-        {label: '智能设备>XR设备14', hasSet: false, value: 14},
-        {label: '智能设备>XR设备15', hasSet: false, value: 15},
-        {label: '智能设备>XR设备16', hasSet: false, value: 16},
-        {label: '智能设备>XR设备17', hasSet: false, value: 17},
-        {label: '智能设备>XR设备18', hasSet: false, value: 18}
+        {full_name: '智能设备>XR设备0', is_config: 0, category_id: 0},
+        {full_name: '智能设备>XR设备1', is_config: 1, category_id: 1},
+        {full_name: '智能设备>XR设备2', is_config: 0, category_id: 2},
+        {full_name: '智能设备>XR设备3', is_config: 0, category_id: 3},
+        {full_name: '智能设备>XR设备4', is_config: 0, category_id: 4},
+        {full_name: '智能设备>XR设备5', is_config: 0, category_id: 5},
+        {full_name: '智能设备>XR设备6', is_config: 0, category_id: 6},
+        {full_name: '智能设备>XR设备7', is_config: 1, category_id: 7},
+        {full_name: '智能设备>XR设备8', is_config: 0, category_id: 8},
+        {full_name: '智能设备>XR设备9', is_config: 0, category_id: 9},
+        {full_name: '智能设备>XR设备10', is_config: 0, category_id: 10},
+        {full_name: '智能设备>XR设备11', is_config: 0, category_id: 11},
+        {full_name: '智能设备>XR设备12', is_config: 0, category_id: 12},
+        {full_name: '智能设备>XR设备13', is_config: 1, category_id: 13},
+        {full_name: '智能设备>XR设备14', is_config: 0, category_id: 14},
+        {full_name: '智能设备>XR设备15', is_config: 0, category_id: 15},
+        {full_name: '智能设备>XR设备16', is_config: 0, category_id: 16},
+        {full_name: '智能设备>XR设备17', is_config: 0, category_id: 17},
+        {full_name: '智能设备>XR设备18', is_config: 0, category_id: 18}
       ],
       list: [],
       qualityList: []
@@ -100,28 +102,34 @@ export default {
     open () {
       this.drawer = true
     },
-    init () {
+    async init () {
       this.handleClick()
       this.setActiveQualification(this.originList[0])
+      const catQualityList = await servises.userCatQualityList()
+      console.log(catQualityList, 'catQualityList')
+      this.originList = catQualityList
+      // if (this.originList.length) {
+      //   this.setActiveQualification(this.originList[0])
+      // }
     },
     handleClick () {
       const activeName = this.activeName
       let tab = this.tabs[0]
       tab = this.tabs.find(item => item.name === activeName)
       console.log(activeName, 'activeName')
-      this.list = this.originList.filter(item => tab.type.includes(item.hasSet))
+      this.list = this.originList.filter(item => tab.type.includes(item.is_config))
     },
-    onSearch: debounce(function (value) {
+    onSearch: debounce(function (id) {
       let tab = this.tabs[0]
       const activeName = this.activeName
       tab = this.tabs.find(item => item.name === activeName)
-      const list = this.originList.filter(item => tab.type.includes(item.hasSet))
-      this.list = list.filter(item => item.label.includes(value))
+      const list = this.originList.filter(item => tab.type.includes(item.is_config))
+      this.list = list.filter(item => item.full_name.includes(id))
     }, 300),
     async setActiveQualification (qualification, idx) {
       this.activeQualification = qualification
       // const data = await this.getQualification({
-      //   id: qualification.value
+      //   id: qualification.category_id
       // })
       let data = [
         {is_required: 0, quality_attachments: [], quality_key: '6921664838028542215', quality_name: 'CCC安全认证证书'},
@@ -141,9 +149,9 @@ export default {
         return item
       })
     },
-    handlePictureQualificationChange (value) {
-      // const list = this.formatqualityList(value)
-      console.log(value, 'value')
+    handlePictureQualificationChange (id) {
+      // const list = this.formatqualityList(id)
+      console.log(id, 'category_id')
     }
   }
 }
