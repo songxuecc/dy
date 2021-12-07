@@ -1733,7 +1733,9 @@ export default {
         spec_price_list: tableData.map(item => omit(item, ['index'])),
         spec_list: specList.map(item => {
           return {
-            ...omit(item, ['addSkuImage']),
+            addSkuImage: item.addSkuImage,
+            spec_id: item.spec_id,
+            name: item.name,
             value_list: item.value_list.map(i => {
               return {
                 image: item.addSkuImage ? i.image : '',

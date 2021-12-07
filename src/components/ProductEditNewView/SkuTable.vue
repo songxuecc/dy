@@ -111,7 +111,7 @@
                   </div>
                 </template>
                 <template slot-scope="scope">
-                    <el-input v-model="scope.row.code" placeholder="请输入" @input="handleEdit"></el-input>
+                    <el-input v-model="scope.row.code" placeholder="请输入" @input="handleEdit" size="small"></el-input>
                 </template>
             </el-table-column>
             <el-table-column
@@ -380,6 +380,7 @@ export default {
           addSkuImage: item.value_list.some(v => v.image)
         }
       })
+      // this.spec_list = cloneDeep(skuJson.spec_list)
       this.spec_price_list = cloneDeep(skuJson.spec_price_list)
       const tableData = []
       const specData = this.initTableData(this.spec_list)
@@ -422,7 +423,7 @@ export default {
       this.tableData = cloneDeep(tableData)
       this.originTableData = cloneDeep(tableData)
       this.$nextTick(() => {
-        this.$refs.SkuSelect && this.$refs.SkuSelect.init(skuJson.spec_list)
+        this.$refs.SkuSelect && this.$refs.SkuSelect.init(this.spec_list)
       })
       this.$emit('change', this.tableData, this.spec_list)
       return {
