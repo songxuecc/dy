@@ -374,7 +374,12 @@ export default {
       if (!skuJson) {
         return
       }
-      this.spec_list = cloneDeep(skuJson.spec_list)
+      this.spec_list = cloneDeep(skuJson.spec_list).map(item => {
+        return {
+          ...item,
+          addSkuImage: item.value_list.some(v => v.image)
+        }
+      })
       this.spec_price_list = cloneDeep(skuJson.spec_price_list)
       const tableData = []
       const specData = this.initTableData(this.spec_list)
