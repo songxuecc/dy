@@ -29,7 +29,7 @@
                 <el-button size="mini" type="text" @click="chooseCategory" class="brand">
                   {{default_category && default_category.name}}</el-button>
               </el-tooltip>
-              <el-button size="mini" @click="removeCategory" type="text" class="ml-5">删除</el-button>
+              <el-button size="mini" @click="removeCategory" type="text" class="ml-5" >删除</el-button>
             </div>
           </div>
         </el-form-item>
@@ -99,12 +99,7 @@
               <el-input size="mini" style="width:150px" @change="changeProperties" class="ml-5 mr-5" placeholder="请填写,如产地" v-model="properties.name"></el-input> 时，对应的属性值是
               <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" v-model="properties.value"></el-input>
               <el-switch class="ml-5"  size="mini" v-model="properties.is_open"></el-switch>
-              <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)">删除</el-button>
-            </div>
-            <div v-if="!propertiesMap.length" class="font-12">
-              <el-input size="mini" style="width:150px"  class=" mr-5" placeholder="请填写,如产地" ></el-input> 时，对应的属性值是
-              <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" ></el-input>
-              <el-switch class="ml-5"  size="mini" ></el-switch>
+              <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)" v-if="showPropertiesMap.length > 1">删除</el-button>
             </div>
           </div>
           <div style="display:flex;margin-bottom:5px" class="align-c">
@@ -679,7 +674,6 @@ export default {
       delete originMigrateSetting.cut_type_list
       const isEqualCutTypeList = cutTypeList.length === currentCutTypeList.length &&
       cutTypeList.sort().toString() === currentCutTypeList.sort().toString()
-
       const blackWords = new Set(this.blackWords)
       const originBlackWords = new Set([
         ...this.customerBlackWords,
@@ -699,8 +693,8 @@ export default {
 
       // 属性设置
       const diffPropertiesMap = this.propertiesMap.filter(item => item.name && item.value)
-      const isEqualPropertiesMap = isEqual(diffPropertiesMap, this.originPropertiesMap)
-      console.log(isEqualPropertiesMap, 'isEqualPropertiesMap')
+      const originPropertiesMap = this.originPropertiesMap.filter(item => item.name && item.value)
+      const isEqualPropertiesMap = isEqual(diffPropertiesMap, originPropertiesMap)
       // 分类
       return (
         isEqualSetting &&
@@ -905,7 +899,6 @@ export default {
         this.customerImageBlackWords = imgBlackWords.customer
         this.defaultImageBlackWords = imgBlackWords.default
         this.loadingSettings = false
-
         this.$nextTick(() => {
           this.setScrollTop()
         })
@@ -915,7 +908,7 @@ export default {
     },
     getFormatSettings () {
       const product = {
-        // ...this.originMigrateSetting,
+        ...this.originMigrateSetting,
         title_cut_off: Number(this.title_cut_off),
         title_ban_words: Number(this.title_ban_words),
         detail_img_cut: Number(this.detail_img_cut),
@@ -966,14 +959,12 @@ export default {
       }
 
       // 只比较本页需要的数据配置
-      // Object.keys(product).map(key => {
-      //   if (!this.settingKeys.includes(key)) {
-      //     delete product[key]
-      //   }
-      // })
-      console.log(this.low_sku_price, 'this.low_sku_price')
-      product.low_sku_price = this.low_sku_price
-      console.log(product, 'product---')
+      Object.keys(product).map(key => {
+        if (!this.settingKeys.includes(key)) {
+          delete product[key]
+        }
+      })
+      // product.low_sku_price = this.low_sku_price
       return product
     },
     saveSetting () {
@@ -985,7 +976,6 @@ export default {
         return this.$message.warning('属性维度重复,请重新填写')
       }
       const product = this.getFormatSettings()
-      console.log(product, 'product00000')
       product.low_sku_price = utils.fenToYuan(product.low_sku_price)
       this.$refs.template.validate(async (valid) => {
         if (valid) {
@@ -1023,7 +1013,6 @@ export default {
               : Promise.resolve([])
             const isEqualSetting = isEqual(this.originMigrateSetting, product)
             console.log(product, isEqualSetting, 'product')
-
             const updateSetting = !isEqualSetting
               ? Api.hhgjAPIs.updateMigrateSetting(productParams)
               : Promise.resolve(this.originMigrateSetting)
@@ -1219,6 +1208,13 @@ export default {
         })
         this.setScrollTop()
         console.log(this.propertiesMap, 'this.propertiesMap ')
+        if (!this.propertiesMap.length) {
+          this.propertiesMap = [{
+            is_open: 0,
+            value: '',
+            name: ''
+          }]
+        }
         this.originPropertiesMap = cloneDeep(this.propertiesMap)
         this.loadingPropertiesMap = false
         // this.canSubmitProperties = false
