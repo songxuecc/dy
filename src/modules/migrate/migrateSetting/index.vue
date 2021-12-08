@@ -1359,7 +1359,6 @@ export default {
       })
     },
     setQualification () {
-      console.log(this.$refs.DrawerQualification.open, 'this.$refs.DrawerQualification')
       this.$refs.DrawerQualification.open()
     }
   }
