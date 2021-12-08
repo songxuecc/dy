@@ -898,6 +898,11 @@ export default {
                 })
               }
             }
+          }).catch(err => {
+            console.log(err)
+            resolve({
+              result: false
+            })
           })
         })
       })
@@ -1008,6 +1013,7 @@ export default {
         })
         return this.$message.error('轮播图尺寸需要1:1')
       }
+
       try {
         const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
         if (propertySetValid) {
