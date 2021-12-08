@@ -310,7 +310,7 @@ export default {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '搬家模板', '搬家', commitTypeText])
         }
-
+        this.onCommitType(formatParmas.commit_type)
         await Api.hhgjAPIs.migrate(params)
         if (!this.loadingCnt) {
           this.isStartMigrate = false
