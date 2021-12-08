@@ -12,13 +12,16 @@
                   <el-tabs v-model="activeName" @tab-click="handleClick">
                     <el-tab-pane :label="tab.label" :name="tab.name" v-for="tab in tabs" :key="tab.name" v-loading="loadingCatQualityList">
                       <div class="list">
-                        <div v-for="(l,idx) in list" :key="l.value" >
-                          <p @click="setActiveQualification(l,idx)" :class="[activeQualification.category_id === l.category_id ? 'active':'']">
-                            <span>{{l.full_name}}</span>
-                            <span @click="handleDelete(l)" class="delete" v-if="activeName === 'is_config'">删除</span>
-                          </p>
-                          <div class="border" v-if="idx !== list.length -1"></div>
+                        <div v-if="list.length > 0">
+                          <div v-for="(l,idx) in list" :key="l.value" >
+                            <p @click="setActiveQualification(l,idx)" :class="[activeQualification.category_id === l.category_id ? 'active':'']">
+                              <span>{{l.full_name}}</span>
+                              <span @click="handleDelete(l)" class="delete" v-if="activeName === 'is_config'">删除</span>
+                            </p>
+                            <div class="border" v-if="idx !== list.length -1"></div>
+                          </div>
                         </div>
+                        <ElTableEmpty v-else/>
                       </div>
                     </el-tab-pane>
                   </el-tabs>
