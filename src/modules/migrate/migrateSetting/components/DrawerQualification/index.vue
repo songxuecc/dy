@@ -186,27 +186,39 @@ export default {
         showClose: false
       })
         .then(async (_) => {
-          await servises.userCatQualityDetail({
-            category_id: qualification.category_id
-          })
-          this.handleClick()
-          this.setActiveQualification(qualification)
-          this.$message.success('删除配置成功')
+          try {
+            this.loadingCatQualityList = true
+            await servises.userCatQualityDetail({
+              category_id: qualification.category_id
+            })
+            this.handleClick()
+            this.setActiveQualification(qualification)
+            this.loadingCatQualityList = false
+            this.$message.success('删除配置成功')
+          } catch (err) {
+            this.$message.error(`${err}`)
+            this.loadingCatQualityList = false
+          }
         })
         .catch(_ => {
           return false
         })
     },
     async handleEdit () {
-      const parmas = [...this.dataMap.values()]
-      console.log(parmas, 'parmas')
-      if (!parmas.length) return this.$message.warning('没有需要修改的资质配置')
-      this.loadingSubmit = true
-      await servises.userCatQualityCreate({
-        cat_quality_list: JSON.stringify(parmas)
-      })
-      this.loadingSubmit = false
-      this.$message.success('保存成功')
+      try {
+        const parmas = [...this.dataMap.values()]
+        console.log(parmas, 'parmas')
+        if (!parmas.length) return this.$message.warning('没有需要修改的资质配置')
+        this.loadingSubmit = true
+        await servises.userCatQualityCreate({
+          cat_quality_list: JSON.stringify(parmas)
+        })
+        this.loadingSubmit = false
+        this.$message.success('保存成功')
+      } catch (err) {
+        this.loadingSubmit = false
+        this.$message.error(`${err}`)
+      }
     }
   }
 }
