@@ -16,7 +16,7 @@
                           <div v-for="(l,idx) in list" :key="l.value" >
                             <p @click="setActiveQualification(l,idx)" :class="[activeQualification.category_id === l.category_id ? 'active':'']">
                               <span>{{l.full_name}}</span>
-                              <span @click="handleDelete(l)" class="delete" v-if="activeName === 'is_config'">删除</span>
+                              <span @click.stop="handleDelete(l)" class="delete" v-if="activeName === 'is_config'">删除</span>
                             </p>
                             <div class="border" v-if="idx !== list.length -1"></div>
                           </div>
@@ -111,6 +111,12 @@ export default {
         this.handleClick()
       }
     },
+    async refresh () {
+      const catQualityList = await servises.userCatQualityList()
+      this.originList = catQualityList
+      this.handleClick()
+      this.setActiveQualification(this.activeQualification)
+    },
     handleClick () {
       const activeName = this.activeName
       let tab = this.tabs[0]
@@ -190,10 +196,7 @@ export default {
             await servises.userCatQualityDelete({
               category_id: qualification.category_id
             })
-            const catQualityList = await servises.userCatQualityList()
-            this.originList = catQualityList
-            this.handleClick()
-            this.setActiveQualification(qualification)
+            this.refresh()
             this.loadingCatQualityList = false
             this.$message.success('删除配置成功')
           } catch (err) {
@@ -213,6 +216,7 @@ export default {
         await servises.userCatQualityCreate({
           cat_quality_list: JSON.stringify(parmas)
         })
+        this.refresh()
         this.loadingSubmit = false
         this.$message.success('保存成功')
       } catch (err) {
