@@ -359,6 +359,7 @@ import categorySelectView from '@/components/CategorySelectView'
 import servises from '@servises'
 import DrawerQualification from './components/DrawerQualification'
 import utils from '@/common/utils'
+import { accMul } from '@/common/evalFloat.js'
 
 export default {
   mixins: [request],
@@ -596,10 +597,15 @@ export default {
       }
 
       const checkLowSkuPrice = (rule, value, callback) => {
-        if (!utils.isNumber(value)) {
+        function isInteger (obj) {
+          return Math.round(accMul(obj, 100)) === accMul(obj, 100)
+        }
+        if (value && !utils.isNumber(value)) {
           return callback(new Error('请输入数字'))
         } else if (value < 0 || value > 999999.99) {
           return callback(new Error('0<价格<999999.99'))
+        } else if (!isInteger(value)) {
+          return callback(new Error('价格最多保留两位小数'))
         }
         callback()
       }
@@ -664,6 +670,7 @@ export default {
       delete product.able_migrate_status_list
       delete originMigrateSetting.able_migrate_status_list
       const isEqualSetting = isEqual(originMigrateSetting, product)
+      console.log(originMigrateSetting, product, isEqualSetting, 'originMigrateSetting, product')
       var isEqualStatusList = migrateStatus.length === currentMigrateStatus.length &&
       migrateStatus.sort().toString() === currentMigrateStatus.sort().toString()
       // 搬家标题-删除指定内容
@@ -862,6 +869,12 @@ export default {
         let originMigrateSetting = {}
         let settingKeys = []
         // 记录本页需要的setting 过滤不需要的数据
+
+        // sku价格
+        if (setting.low_sku_price) {
+          setting.low_sku_price = utils.fenToYuan(setting.low_sku_price)
+          this.low_sku_price = setting.low_sku_price
+        }
         Object.keys(setting).map(key => {
           if (this.$data.hasOwnProperty(key)) {
             originMigrateSetting[key] = setting[key]
@@ -883,10 +896,6 @@ export default {
             .map((item) => item.name)
             .join(' > ')
           setting.default_category.id = setting.default_category_id
-        }
-        // sku价格
-        if (setting.low_sku_price) {
-          setting.low_sku_price = utils.yuanToFen(setting.low_sku_price)
         }
 
         // 违规词
@@ -963,7 +972,6 @@ export default {
           delete product[key]
         }
       })
-      // product.low_sku_price = this.low_sku_price
       return product
     },
     saveSetting () {
@@ -975,7 +983,7 @@ export default {
         return this.$message.warning('属性维度重复,请重新填写')
       }
       const product = this.getFormatSettings()
-      product.low_sku_price = utils.fenToYuan(product.low_sku_price)
+      product.low_sku_price = parseInt(product.low_sku_price * 10000) / 100
       this.$refs.template.validate(async (valid) => {
         if (valid) {
           let productParams = {
@@ -1011,7 +1019,6 @@ export default {
               })
               : Promise.resolve([])
             const isEqualSetting = isEqual(this.originMigrateSetting, product)
-            console.log(product, isEqualSetting, 'product')
             const updateSetting = !isEqualSetting
               ? Api.hhgjAPIs.updateMigrateSetting(productParams)
               : Promise.resolve(this.originMigrateSetting)

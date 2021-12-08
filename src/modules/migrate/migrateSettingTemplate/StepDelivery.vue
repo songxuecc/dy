@@ -89,7 +89,7 @@
                   </div>
                 </template>
             </el-form-item>
-            <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2" prop="step_stock_num_diff">
+            <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2 && template.model.commit_type !== 1" prop="step_stock_num_diff">
                 <span>现货库存设置为</span>
                 <el-input-number
                   v-model="template.model.step_stock_num_diff"
@@ -98,7 +98,17 @@
                   :min="0"
                   class="input-number"></el-input-number>
                 <span>,&nbsp;&nbsp;剩余为阶梯发货库存&nbsp;&nbsp;&nbsp;(原商品库存 = 现货库存 + 阶梯库存)</span>
-                <div style="position: absolute;top: 28px;left: 105px;color: #E02020; font-size: 1px;">抖音规则：现货库存 > 阶梯库存，否则会搬家失败</div>
+            </el-form-item>
+
+            <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2 && template.model.commit_type === 1" prop="step_stock_num_percentage">
+                <span>现货库存设置为总库存的</span>
+                <el-input
+                  v-model="template.model.step_stock_num_percentage"
+                  @input="handleChangeStock"
+                  style="width:150px">
+                  <template slot="append">%</template>
+                </el-input>
+                <div style="position: absolute;top: 28px;left: 105px;color: #E02020; font-size: 1px;" >抖音规则：现货库存 > 阶梯库存，否则会搬家失败</div>
             </el-form-item>
 
         </el-form>
@@ -185,8 +195,10 @@ export default {
         this.$refs.form.validateField(['delivery_delay_day'])
       } else if (value === 1) {
         this.$refs.form.validateField(['presell_end_time', 'presell_delay'])
-      } else if (value === 2) {
+      } else if (value === 2 && this.template.model.commit_type !== 1) {
         this.$refs.form.validateField(['presell_delay', 'step_stock_num_diff'])
+      } else if (value === 2 && this.template.model.commit_type === 1) {
+        this.$refs.form.validateField(['presell_delay', 'step_stock_num_percentage'])
       }
     },
     handleChangeStock () {

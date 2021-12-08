@@ -3,7 +3,7 @@
   <div v-loading="loadingCnt">
     <Head></Head>
     <BasicTemplate ref="basicTemplate"></BasicTemplate>
-    <StepDelivery ref="stepDelivery"></StepDelivery>
+    <StepDelivery ref="stepDelivery" ></StepDelivery>
     <ShopsMigrate ref="shopsMigrate"></ShopsMigrate>
     <!-- 搬家店铺 end -->
     <div class="help-tips" >
@@ -310,7 +310,7 @@ export default {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '搬家模板', '搬家', commitTypeText])
         }
-
+        this.onCommitType(formatParmas.commit_type)
         await Api.hhgjAPIs.migrate(params)
         if (!this.loadingCnt) {
           this.isStartMigrate = false
