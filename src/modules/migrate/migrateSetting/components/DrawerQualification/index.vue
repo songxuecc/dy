@@ -150,7 +150,6 @@ export default {
       })
     },
     handlePictureQualificationChange (qualification) {
-      console.log(qualification, 'qualification')
       const id = this.activeQualification.category_id
       const dataMap = new Map(this.dataMap)
       dataMap.set(id, {
@@ -188,9 +187,11 @@ export default {
         .then(async (_) => {
           try {
             this.loadingCatQualityList = true
-            await servises.userCatQualityDetail({
+            await servises.userCatQualityDelete({
               category_id: qualification.category_id
             })
+            const catQualityList = await servises.userCatQualityList()
+            this.originList = catQualityList
             this.handleClick()
             this.setActiveQualification(qualification)
             this.loadingCatQualityList = false
@@ -207,7 +208,6 @@ export default {
     async handleEdit () {
       try {
         const parmas = [...this.dataMap.values()]
-        console.log(parmas, 'parmas')
         if (!parmas.length) return this.$message.warning('没有需要修改的资质配置')
         this.loadingSubmit = true
         await servises.userCatQualityCreate({
