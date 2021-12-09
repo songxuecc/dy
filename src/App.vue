@@ -405,8 +405,9 @@ export default {
     min-height: 100vh;
     position: relative;
     height:auto!important;
-    height:100vh; /*IE6不识别min-height*/
+    height: 100vh; /*IE6不识别min-height*/
     min-height: 100vh;
+    overflow: hidden;
     background: #F9F9F9;
     overflow: hidden;
   }

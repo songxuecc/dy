@@ -100,9 +100,9 @@ export default {
       let _this = this
       let image = new Image()
       image.crossOrigin = '*'
-      src = src.includes('?') ? src.split('?')[0] : src
+      src = src.includes('?') ? src + '&v=' + Math.random() : src + '?v=' + Math.random()
       // 处理缓存
-      image.src = src + '?v=' + Math.random()
+      image.src = src
       // 支持跨域图片
       image.onload = function () {
         let base64 = _this.transBase64FromImage(image)

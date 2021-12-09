@@ -34,6 +34,9 @@
     <EditDelteDetailImage :visible.sync="visibleEditDelteDetailImage" v-if="visibleEditDelteDetailImage"
       @batchUpdate="batchUpdate" :loading="loading" :percentage="percentage" @onShutdown="onShutdown"
       :shutdown="shutdown" />
+
+    <EditProperties :visible.sync="visibleProperties" v-if="visibleProperties" />
+
     <!-- 修改分类 -->
     <el-dialog class="dialog-tight" title="批量修改本页分类" width="800px" center :visible.sync="visvileCategory" v-hh-modal v-if="visvileCategory"
       :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
@@ -72,6 +75,7 @@ import EditTitle from '@migrate/readyToMigrate/components/EditTitle'
 import EditBrandId from '@migrate/readyToMigrate/components/EditBrandId'
 import EditDeleteCarousel from '@migrate/readyToMigrate/components/EditDeleteCarousel'
 import EditDelteDetailImage from '@migrate/readyToMigrate/components/EditDelteDetailImage'
+import EditProperties from '@migrate/readyToMigrate/components/EditProperties'
 
 export default {
   name: 'BatchEdit',
@@ -91,6 +95,7 @@ export default {
     EditTitle,
     EditDeleteCarousel,
     EditDelteDetailImage,
+    EditProperties,
     RefershCategoryBtn
   },
   data () {
@@ -127,6 +132,16 @@ export default {
           }
         },
         {
+          value: 2,
+          label: '批量修改属性',
+          key: 'visibleProperties',
+          numberKey: true,
+          props: {
+            type: 'primary',
+            style: 'text-align:center;width:110px'
+          }
+        },
+        {
           value: 1,
           label: '批量修改标题',
           key: 'visibleEditTitle',
@@ -136,11 +151,6 @@ export default {
             style: 'text-align:center;width:110px'
           }
         },
-        // {
-        //   value: 2,
-        //   label: '修改品牌',
-        //   key: 'visvileEditBrandId'
-        // },
         {
           value: 3,
           label: '批量删除轮播首图',
@@ -181,6 +191,7 @@ export default {
       visibleEditTitle: false,
       visibleEditDelteRecord: false,
       visibleEditDelteDetailImage: false,
+      visibleProperties: false,
       visibleEditDeleteCarousel: false,
       visvileEditBrandId: false,
       visvileCategory: false,

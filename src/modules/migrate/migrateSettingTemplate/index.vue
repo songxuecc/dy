@@ -3,7 +3,7 @@
   <div v-loading="loadingCnt">
     <Head></Head>
     <BasicTemplate ref="basicTemplate"></BasicTemplate>
-    <StepDelivery ref="stepDelivery"></StepDelivery>
+    <StepDelivery ref="stepDelivery" ></StepDelivery>
     <ShopsMigrate ref="shopsMigrate"></ShopsMigrate>
     <!-- 搬家店铺 end -->
     <div class="help-tips" >
@@ -156,6 +156,7 @@ export default {
         presell.presell_end_time = ''
       }
       // 处理多余属性
+      params.ext_json.need_current_stock = 1
       params.ext_json = JSON.stringify(params.ext_json)
 
       // 处理搬家数据
@@ -227,11 +228,15 @@ export default {
       }
       return undefined
     },
+    onCommitType (commitType) {
+      localStorage.setItem('migrate_productList_commit_type', commitType)
+    },
     updateTemplate () {
       try {
         const {template} = this.getTemplateParams()
         const diffTemplate = this.template.isDiff()
         if (diffTemplate) {
+          this.onCommitType(template.commit_type)
           Api.hhgjAPIs.updateTemplate(template)
         }
       } catch (err) {
@@ -305,7 +310,7 @@ export default {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '搬家模板', '搬家', commitTypeText])
         }
-
+        this.onCommitType(formatParmas.commit_type)
         await Api.hhgjAPIs.migrate(params)
         if (!this.loadingCnt) {
           this.isStartMigrate = false

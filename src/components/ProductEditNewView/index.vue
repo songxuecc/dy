@@ -898,6 +898,11 @@ export default {
                 })
               }
             }
+          }).catch(err => {
+            console.log(err)
+            resolve({
+              result: false
+            })
           })
         })
       })
@@ -981,7 +986,6 @@ export default {
           return this.products[item.tp_product_id]
         })
       const promiseBannerImageResult = await this.promiseBannerImage(products)
-      console.log(promiseBannerImageResult, 'promiseBannerImageResult')
       if (promiseBannerImageResult && promiseBannerImageResult.result) {
         this.$refs.productList.setCurrentRow(promiseBannerImageResult.product.model)
         const resetProduct = this.productList.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
@@ -1009,6 +1013,7 @@ export default {
         })
         return this.$message.error('轮播图尺寸需要1:1')
       }
+
       try {
         const propertySetValid = this.$refs.propertySet && await this.$refs.propertySet.validate()
         if (propertySetValid) {
@@ -1734,8 +1739,16 @@ export default {
         spec_price_list: tableData.map(item => omit(item, ['index'])),
         spec_list: specList.map(item => {
           return {
-            ...omit(item, ['addSpecificationValue']),
-            value_list: item.value_list.map(i => omit(i, ['order']))
+            addSkuImage: item.addSkuImage,
+            spec_id: item.spec_id,
+            name: item.name,
+            value_list: item.value_list.map(i => {
+              return {
+                image: item.addSkuImage ? i.image : '',
+                name: i.name,
+                spec_detail_id: i.spec_detail_id
+              }
+            })
           }
         })
       }

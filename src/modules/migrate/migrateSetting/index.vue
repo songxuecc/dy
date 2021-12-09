@@ -29,7 +29,7 @@
                 <el-button size="mini" type="text" @click="chooseCategory" class="brand">
                   {{default_category && default_category.name}}</el-button>
               </el-tooltip>
-              <el-button size="mini" @click="removeCategory" type="text" class="ml-5">删除</el-button>
+              <el-button size="mini" @click="removeCategory" type="text" class="ml-5" >删除</el-button>
             </div>
           </div>
         </el-form-item>
@@ -99,12 +99,7 @@
               <el-input size="mini" style="width:150px" @change="changeProperties" class="ml-5 mr-5" placeholder="请填写,如产地" v-model="properties.name"></el-input> 时，对应的属性值是
               <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" v-model="properties.value"></el-input>
               <el-switch class="ml-5"  size="mini" v-model="properties.is_open"></el-switch>
-              <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)">删除</el-button>
-            </div>
-            <div v-if="!propertiesMap.length" class="font-12">
-              <el-input size="mini" style="width:150px"  class=" mr-5" placeholder="请填写,如产地" ></el-input> 时，对应的属性值是
-              <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" ></el-input>
-              <el-switch class="ml-5"  size="mini" ></el-switch>
+              <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)" >删除</el-button>
             </div>
           </div>
           <div style="display:flex;margin-bottom:5px" class="align-c">
@@ -164,9 +159,19 @@
               </el-form-item>
             </p>
         </el-form-item>
-
-        <el-form-item   label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c migrateSetting-code">
-            <p class="font-12">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
+        <el-form-item   label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c  migrateSetting-code">
+            <p class="font-12" style="height:24px">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
+        </el-form-item>
+        <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
+            <p class="mb-10 flex align-c mb-10 ">
+              <span class="font-12 mr-5 flex align-c">低于
+              <el-form-item style="display:inline;margin-bottom:0" prop="low_sku_price"  class="mr-5 ml-5">
+                  <el-input v-model="low_sku_price" placeholder="请输入数字" style="width: 120px;" />
+              </el-form-item>元的sku自动过滤</span>
+              <el-form-item style="display:inline;margin-bottom:0" prop="is_remove_sku_by_price">
+                  <el-switch v-model="is_remove_sku_by_price" />
+              </el-form-item>
+            </p>
         </el-form-item>
 
         <!-- <el-form-item  label="SKU规格:"  style="padding-bottom: 20px;" class="flex align-c migrateSetting-spec">
@@ -354,6 +359,8 @@ import common from '@/common/common.js'
 import Api from '@/api/apis.js'
 import categorySelectView from '@/components/CategorySelectView'
 import servises from '@servises'
+import utils from '@/common/utils'
+import { accMul } from '@/common/evalFloat.js'
 
 export default {
   mixins: [request],
@@ -387,6 +394,7 @@ export default {
         { label: '商家推荐语', className: '.migrateSetting-recommend' },
         { label: '属性设置', className: '.migrateSetting-attribute' },
         { label: 'SKU库存', className: '.migrateSetting-stock' },
+        { label: 'SKU价格', className: '.migrateSetting-price' },
         { label: 'SKU编码', className: '.migrateSetting-code' },
         { label: '详情图', className: '.migrateSetting-detail' },
         { label: '轮播图', className: '.migrateSetting-banner' },
@@ -413,7 +421,6 @@ export default {
       is_all_no_brand: undefined,
       is_cut_image_black_word: undefined,
       is_banner_auto_5: undefined,
-
       is_select_first_options_attr: undefined,
       is_use_default_attr_value: undefined,
       default_attr_value: '',
@@ -424,6 +431,7 @@ export default {
       default_sku_stock: '',
       is_use_default_sku_stock: undefined,
       max_sku_stock: '',
+      low_sku_price: '',
       is_use_max_sku_stock: undefined,
       is_cut_banner_first: undefined,
       is_auto_cut_banner: undefined,
@@ -447,6 +455,7 @@ export default {
       property_radio: '1',
       goods_property_selected: '',
       goods_code_type: 0,
+      is_remove_sku_by_price: 0,
       goods_property_value: '',
       goods_property_options: [],
       goods_property_options_dic: {},
@@ -588,6 +597,20 @@ export default {
         callback()
       }
 
+      const checkLowSkuPrice = (rule, value, callback) => {
+        function isInteger (obj) {
+          return Math.round(accMul(obj, 100)) === accMul(obj, 100)
+        }
+        if (value && !utils.isNumber(value)) {
+          return callback(new Error('请输入数字'))
+        } else if (value < 0 || value > 999999.99) {
+          return callback(new Error('0<价格<999999.99'))
+        } else if (!isInteger(value)) {
+          return callback(new Error('价格最多保留两位小数'))
+        }
+        callback()
+      }
+
       const checkUseDefaultSkuStock = (rule, value, callback) => {
         if (this.is_use_default_sku_stock) {
           this.$refs.template.validateField('default_sku_stock')
@@ -633,6 +656,9 @@ export default {
         ],
         is_open_recommend_remark: [
           { validator: checkIsOpenDefaultRecommendRremark, trigger: 'change' }
+        ],
+        low_sku_price: [
+          { validator: checkLowSkuPrice, trigger: 'change' }
         ]
       }
     },
@@ -645,6 +671,7 @@ export default {
       delete product.able_migrate_status_list
       delete originMigrateSetting.able_migrate_status_list
       const isEqualSetting = isEqual(originMigrateSetting, product)
+      console.log(originMigrateSetting, product, isEqualSetting, 'originMigrateSetting, product')
       var isEqualStatusList = migrateStatus.length === currentMigrateStatus.length &&
       migrateStatus.sort().toString() === currentMigrateStatus.sort().toString()
       // 搬家标题-删除指定内容
@@ -654,7 +681,6 @@ export default {
       delete originMigrateSetting.cut_type_list
       const isEqualCutTypeList = cutTypeList.length === currentCutTypeList.length &&
       cutTypeList.sort().toString() === currentCutTypeList.sort().toString()
-
       const blackWords = new Set(this.blackWords)
       const originBlackWords = new Set([
         ...this.customerBlackWords,
@@ -674,8 +700,8 @@ export default {
 
       // 属性设置
       const diffPropertiesMap = this.propertiesMap.filter(item => item.name && item.value)
-      const isEqualPropertiesMap = isEqual(diffPropertiesMap, this.originPropertiesMap)
-      console.log(isEqualPropertiesMap, 'isEqualPropertiesMap')
+      const originPropertiesMap = this.originPropertiesMap.filter(item => item.name && item.value)
+      const isEqualPropertiesMap = isEqual(diffPropertiesMap, originPropertiesMap)
       // 分类
       return (
         isEqualSetting &&
@@ -818,6 +844,7 @@ export default {
         'is_open_title_prefix_suffix',
         'is_open_title_replace',
         'goods_code_type',
+        'is_remove_sku_by_price',
         'is_select_first_options_attr',
         'is_use_default_attr_value',
         'is_open_recommend_remark'
@@ -843,6 +870,12 @@ export default {
         let originMigrateSetting = {}
         let settingKeys = []
         // 记录本页需要的setting 过滤不需要的数据
+
+        // sku价格
+        if (setting.low_sku_price) {
+          setting.low_sku_price = utils.fenToYuan(setting.low_sku_price)
+          this.low_sku_price = setting.low_sku_price
+        }
         Object.keys(setting).map(key => {
           if (this.$data.hasOwnProperty(key)) {
             originMigrateSetting[key] = setting[key]
@@ -875,7 +908,6 @@ export default {
         this.customerImageBlackWords = imgBlackWords.customer
         this.defaultImageBlackWords = imgBlackWords.default
         this.loadingSettings = false
-
         this.$nextTick(() => {
           this.setScrollTop()
         })
@@ -895,6 +927,7 @@ export default {
         is_cut_image_black_word: Number(this.is_cut_image_black_word),
         is_banner_auto_5: Number(this.is_banner_auto_5),
         goods_code_type: Number(this.goods_code_type),
+        is_remove_sku_by_price: Number(this.is_remove_sku_by_price),
         property_radio: this.property_radio,
         goods_code_prefix: this.goods_code_prefix,
         goods_code_suffix: this.goods_code_suffix,
@@ -904,6 +937,7 @@ export default {
         is_use_default_sku_stock: Number(this.is_use_default_sku_stock),
         is_use_max_sku_stock: Number(this.is_use_max_sku_stock),
         max_sku_stock: this.max_sku_stock,
+        low_sku_price: this.low_sku_price,
         is_cut_banner_first: Number(this.is_cut_banner_first),
         is_auto_cut_banner: Number(this.is_auto_cut_banner),
         is_cut_banner_last: Number(this.is_cut_banner_last),
@@ -939,7 +973,6 @@ export default {
           delete product[key]
         }
       })
-
       return product
     },
     saveSetting () {
@@ -951,6 +984,7 @@ export default {
         return this.$message.warning('属性维度重复,请重新填写')
       }
       const product = this.getFormatSettings()
+      product.low_sku_price = parseInt(product.low_sku_price * 10000) / 100
       this.$refs.template.validate(async (valid) => {
         if (valid) {
           let productParams = {
@@ -1181,6 +1215,13 @@ export default {
         })
         this.setScrollTop()
         console.log(this.propertiesMap, 'this.propertiesMap ')
+        if (!this.propertiesMap.length) {
+          this.propertiesMap = [{
+            is_open: 0,
+            value: '',
+            name: ''
+          }]
+        }
         this.originPropertiesMap = cloneDeep(this.propertiesMap)
         this.loadingPropertiesMap = false
         // this.canSubmitProperties = false
@@ -1330,6 +1371,11 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '~./index.less';
+.tab {
+  /deep/ .el-tabs__item {
+    padding:0 15px;
+  }
+}
 </style>
 <style lang="less">
   .migrateSetting-avatar-uploader {
