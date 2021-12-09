@@ -720,8 +720,9 @@ export default {
         border-left: 1px solid #F2F2F2;
         padding:0;
         overflow: inherit;
-        .cell {
-            padding-top: 18px;
+        .el-form-item {
+          margin-bottom: 0;
+          margin:10px 0;
         }
     }
     .unit {

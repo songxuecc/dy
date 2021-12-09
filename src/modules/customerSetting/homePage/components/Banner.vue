@@ -22,7 +22,7 @@ export default {
         this.gotoMeizheShouhou,
         this.gotoOrder,
         this.gotoCycleProductsSelfPlanList,
-        this.gotoBatchEdit
+        this.gotoWoda
       ]
     }
   },
@@ -47,6 +47,9 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '主页', '点击', `banner-BatchEdit`])
       }
+    },
+    gotoWoda () {
+      window.open('https://s.woda.com/E2c3W')
     }
   }
 }
@@ -109,7 +112,7 @@ export default {
 }
 
 .img4 {
-  background-image: url('../images/banner2.png');
+  background-image: url('../images/woda.png');
   background-size: cover;
 }
 
@@ -131,7 +134,7 @@ export default {
       background-size: cover;
     }
     .img4 {
-      background-image: url('../images/banner2-1680.png');
+      background-image: url('../images/woda-1680.png');
     }
 }
 </style>

@@ -87,16 +87,16 @@
 
             <div class="price price-text" v-if="form.config_json.price_sync_type === 2">
               <el-form-item style="display: inline-block">
-                sku价格 = 原价 -
+                sku价格 = ( 原价 -
                 <el-input
                   class="price-sku-input"
                   v-model="form.config_json.sku_price_diff"
-                ></el-input>
+                ></el-input>)
                 x
                 <el-input
                   class="price-sku-input"
                   v-model="form.config_json.sku_price_rate"
-                ></el-input>
+                ></el-input>%
                 -
                 <el-input
                   class="price-sku-input"
@@ -104,7 +104,7 @@
                 ></el-input>
               </el-form-item>
 
-              <el-form-item
+              <!-- <el-form-item
                 style="display: inline-block;"
                 label="售卖价"
                 class="mr-20 shoumaijia"
@@ -131,7 +131,7 @@
                 <span class="color-primary pointer" @click="toggleIsShowSample">
                   查看示例
                 </span>
-              </el-form-item>
+              </el-form-item> -->
             </div>
           </el-radio-group>
         </el-form-item>

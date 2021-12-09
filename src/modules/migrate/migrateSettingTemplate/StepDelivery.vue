@@ -108,7 +108,7 @@
                   style="width:150px">
                   <template slot="append">%</template>
                 </el-input>
-                <div style="position: absolute;top: 28px;left: 105px;color: #E02020; font-size: 1px;" >抖音规则：现货库存 > 阶梯库存，否则会搬家失败</div>
+                <div style="position: absolute;top: 28px;left: 105px;color: #E02020; font-size: 1px;" >若搬迁至草稿箱，据抖音规则：现货库存 > 阶梯库存，否则搬家失败；若希望避开此规则，请选仓库中或直接上线</div>
             </el-form-item>
 
         </el-form>
