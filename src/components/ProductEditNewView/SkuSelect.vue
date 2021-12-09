@@ -135,7 +135,7 @@
                         width="270"
                         popper-class="SkuSelect-popper-class"
                         trigger="hover">
-                        <img :src="specificationValue.image" style="width: 270px;"/>
+                        <img :src="specificationValue.image" style="width: 270px;" referrerPolicy="no-referrer"/>
                         <div
                           slot="reference"
                             :class="[
