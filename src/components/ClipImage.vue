@@ -100,6 +100,7 @@ export default {
       let _this = this
       let image = new Image()
       image.crossOrigin = '*'
+      image.referrerPolicy = 'no-referrer'
       src = src.includes('?') ? src + '&v=' + Math.random() : src + '?v=' + Math.random()
       // 处理缓存
       image.src = src
