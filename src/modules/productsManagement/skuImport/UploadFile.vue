@@ -4,9 +4,9 @@
     <p class="font-13">1、上传前确保已进行过商品同步&nbsp;&nbsp;<a :class="[isSyncing?'color-info':'click','pointer font-13']"
         @click="handleSyncProducts">{{syncButtonText}}</a> <span class="color-767989">&nbsp;最近同步时间
         {{ syncStatus.last_sync_time }} </span></p>
-    <p class="font-13 " v-if="[0,1].includes(filterType)">2、每次支持5000个sku修改，导入的Excel格式仅支持.lxsx格式
+    <p class="font-13 " v-if="[0,1].includes(filterType)">2、每次支持5000个sku修改，导入的Excel格式仅支持.xlsx格式
     </p>
-    <p class="font-13 " v-if="[2,3].includes(filterType)">2、每次支持5000个sku修改，导入的Excel格式仅支持.lxsx格式</p>
+    <p class="font-13 " v-if="[2,3].includes(filterType)">2、每次支持5000个sku修改，导入的Excel格式仅支持.xlsx格式</p>
     <p class="font-13 ">3、仅支持售卖中、仓库中（已下架）的商品修改 </p>
     <p class="font-13 " v-if="filterType === 0">4、保证导入的商品标题、规格名与抖店后台一致。多个SKU规格请用英文逗号分隔，如：红色,36码 </p>
     <el-upload class="upload-demo mt-10" action="/api/product/sku/excel/create" :multiple="false"
