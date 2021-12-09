@@ -128,6 +128,7 @@
                         :class="`avatar validImageSIze `"
                         :ref="`img${specificationValue.skuString}-${idx}`"
                         :preview-src-list="[specificationValue.image]"
+                        referrerPolicy="no-referrer"
                       />
                       <el-popover
                         placement="left"

@@ -16,6 +16,7 @@
                       :src="scope.row.thumbnail"
                       fit="contain"
                       :preview-src-list="[scope.row.thumbnail]"
+                      referrerPolicy="no-referrer"
                       lazy>
                       <div slot="placeholder">
                         <hh-icon  type="iconwuzhaopian" style="font-size:50px" />
