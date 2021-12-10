@@ -601,17 +601,18 @@ export default {
         // sku数据初始化
         this.skuJson = this.product.model.sku_json
         const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        const skuJson = {...this.product.model.sku_json}
+        if (originModel) {
+          skuJson.spec_price_list = originModel.tableData.map(item => omit(item, ['index']))
+          skuJson.spec_list = originModel.spec_list.map(item => {
+            return {
+              ...item,
+              value_list: item.value_list.map(i => omit(i, ['order']))
+            }
+          })
+        }
         Object.assign(this.product.originModel, {
-          sku_json: {
-            ...this.product.model.sku_json,
-            spec_price_list: originModel.tableData.map(item => omit(item, ['index'])),
-            spec_list: originModel.spec_list.map(item => {
-              return {
-                ...item,
-                value_list: item.value_list.map(i => omit(i, ['order']))
-              }
-            })
-          }
+          sku_json: skuJson
         })
 
         this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
@@ -749,17 +750,18 @@ export default {
         // sku数据初始化
         this.skuJson = this.product.model.sku_json
         const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        const skuJson = {...this.product.model.sku_json}
+        if (originModel) {
+          skuJson.spec_price_list = originModel.tableData.map(item => omit(item, ['index']))
+          skuJson.spec_list = originModel.spec_list.map(item => {
+            return {
+              ...item,
+              value_list: item.value_list.map(i => omit(i, ['order']))
+            }
+          })
+        }
         Object.assign(this.product.originModel, {
-          sku_json: {
-            ...this.product.model.sku_json,
-            spec_price_list: originModel.tableData.map(item => omit(item, ['index'])),
-            spec_list: originModel.spec_list.map(item => {
-              return {
-                ...item,
-                value_list: item.value_list.map(i => omit(i, ['order']))
-              }
-            })
-          }
+          sku_json: skuJson
         })
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
