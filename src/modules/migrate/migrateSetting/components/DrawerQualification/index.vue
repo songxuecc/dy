@@ -42,7 +42,7 @@
                 type="primary"
                 plain
                 style="width: 120px"
-                @click="toggleVisible"
+                @click="triggerDrawerClose"
                 >返回</el-button>
               <el-button
                 type="primary"
@@ -62,7 +62,6 @@ import debounce from 'lodash/debounce'
 import PictureQualification from '../PictureQualification'
 import servises from '@servises'
 import cloneDeep from 'lodash/cloneDeep'
-import isEqual from 'lodash/isEqual'
 
 export default {
   name: 'Qualification',
