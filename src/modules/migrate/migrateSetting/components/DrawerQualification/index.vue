@@ -5,18 +5,20 @@
             :visible.sync="drawer"
             :with-header="false"
             direction="rtl"
+            :before-close="dialogBeforeClose"
             size="80%">
             <div class="content">
+                <div class="close" @click="triggerDrawerClose" v-show="drawer && !loadingCatQualityList"><hh-icon type="iconguanbi1" class="iconguanbi"></hh-icon></div>
                 <div class="left">
                   <el-input v-model="search" placeholder="搜索类目关键词" style="width:340px;" size="small" @input="onSearch" clearable @clear="onClear"> </el-input>
                   <el-tabs v-model="activeName" @tab-click="handleClick">
                     <el-tab-pane :label="tab.label" :name="tab.name" v-for="tab in tabs" :key="tab.name" v-loading="loadingCatQualityList">
                       <div class="list">
                         <div v-if="list.length > 0">
-                          <div v-for="(l,idx) in list" :key="l.value" >
+                          <div v-for="(l,idx) in getList(tab)" :key="l.value">
                             <p @click="setActiveQualification(l,idx)" :class="[activeQualification.category_id === l.category_id ? 'active':'']">
                               <span>{{l.full_name}}</span>
-                              <span @click.stop="handleDelete(l)" class="delete" v-if="activeName === 'is_config'">删除</span>
+                              <span @click.stop="handleDelete(l,idx)" class="delete" v-if="activeName === 'is_config'">删除</span>
                             </p>
                             <div class="border" v-if="idx !== list.length -1"></div>
                           </div>
@@ -28,7 +30,8 @@
                 </div>
                 <div class="right" v-loading="loadingQualityList">
                   <el-alert type="warning" style="height:30px"  :closable="false">
-                    <span slot="title" class="color-333 font-12"><span class="fail">* </span>该类目下的所有商品都统一为以下资质</span>
+                    <span slot="title" class="color-333 font-12" v-if="activeQualification && activeQualification.category_id !== -1"><span class="fail">* </span>该类目下的所有商品都统一为以下资质</span>
+                    <span slot="title" class="color-333 font-12" v-if="activeQualification && activeQualification.category_id === -1"><span class="fail">* </span>设置了通用类目资质图片后，默认会上传至拥有该资质的所有商品</span>
                   </el-alert>
                   <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange" v-if="qualityList.length"/>
                   <ElTableEmpty v-else/>
@@ -58,6 +61,8 @@
 import debounce from 'lodash/debounce'
 import PictureQualification from '../PictureQualification'
 import servises from '@servises'
+import cloneDeep from 'lodash/cloneDeep'
+import isEqual from 'lodash/isEqual'
 
 export default {
   name: 'Qualification',
@@ -79,12 +84,14 @@ export default {
         {label: '未配置', name: 'is_no_config', type: [0]}
       ],
       originList: [],
+      originDataList: [],
       list: [],
       qualityList: [],
       loadingQualityList: false,
       loadingCatQualityList: false,
       loadingSubmit: false,
-      dataMap: new Map()
+      dataMap: new Map(),
+      deleteQualifications: []
     }
   },
   created () {
@@ -104,10 +111,10 @@ export default {
       this.activeQualification = {}
       this.loadingCatQualityList = true
       const catQualityList = await servises.userCatQualityList()
-      this.originList = catQualityList
+      this.originDataList = cloneDeep(catQualityList)
+      this.originList = cloneDeep(catQualityList)
       this.loadingCatQualityList = false
       if (this.originList.length) {
-        this.setActiveQualification(this.originList[0])
         this.handleClick()
       }
     },
@@ -115,13 +122,19 @@ export default {
       const catQualityList = await servises.userCatQualityList()
       this.originList = catQualityList
       this.handleClick()
-      this.setActiveQualification(this.activeQualification)
+      this.deleteQualifications = []
+      this.dataMap = new Map()
     },
     handleClick () {
       const activeName = this.activeName
       let tab = this.tabs[0]
       tab = this.tabs.find(item => item.name === activeName)
       this.list = this.originList.filter(item => tab.type.includes(item.is_config))
+      this.setActiveQualification(this.list[0])
+    },
+    getList (tab) {
+      const list = this.originList.filter(item => tab.type.includes(item.is_config))
+      return list
     },
     onSearch: debounce(function (id) {
       let tab = this.tabs[0]
@@ -138,13 +151,24 @@ export default {
       this.list = list
     },
     async setActiveQualification (qualification) {
+      if (!qualification) {
+        this.qualityList = []
+        return false
+      }
       this.activeQualification = qualification
-      this.loadingQualityList = true
-      const data = await servises.userCatQualityDetail({
-        category_id: qualification.category_id
-      })
-      this.qualityList = data
-      this.loadingQualityList = false
+      const dataMap = new Map(this.dataMap)
+      // 本地已经存在的配置数据就不请求
+      if (dataMap.has(qualification.category_id)) {
+        this.qualityList = dataMap.get(qualification.category_id).quality_list
+      } else {
+        this.loadingQualityList = true
+        const data = await servises.userCatQualityDetail({
+          category_id: qualification.category_id,
+          is_config: qualification.is_config
+        })
+        this.qualityList = data
+        this.loadingQualityList = false
+      }
     },
     formatqualityList (qualityList) {
       return qualityList.map(item => {
@@ -155,67 +179,86 @@ export default {
         return item
       })
     },
-    handlePictureQualificationChange (qualification) {
-      const id = this.activeQualification.category_id
-      const dataMap = new Map(this.dataMap)
-      dataMap.set(id, {
-        category_id: id,
-        quality_list: qualification
-      })
-      this.dataMap = dataMap
+    handlePictureQualificationChange (qualityList) {
+      let isAdd = true
+      if (qualityList.every(item => !item.quality_attachments.length)) {
+        isAdd = false
+      }
+      console.log(isAdd, 'isAdd')
+      // 添加资质
+      if (isAdd) {
+        const id = this.activeQualification.category_id
+        const dataMap = new Map(this.dataMap)
+        // const originList = this.originList
+        dataMap.set(id, {
+          category_id: id,
+          quality_list: qualityList
+        })
+        this.dataMap = dataMap
+        // originList.map((item, index) => {
+        //   if (id === item.category_id) item.is_config = 1
+        //   return item
+        // })
+        // this.originList = originList
+        // const activeName = this.activeName
+        // let tab = this.tabs[0]
+        // tab = this.tabs.find(item => item.name === activeName)
+        // this.list = originList.filter(item => tab.type.includes(item.is_config))
+        const deleteQualifications = [...new Set(this.deleteQualifications)]
+        this.deleteQualifications = deleteQualifications.filter(item => item !== id)
+      } else {
+        // 资质图片全部被删除
+        this.handleDelete(this.activeQualification)
+      }
+      console.log(this.dataMap, 'this.dataMap')
+      console.log(this.deleteQualifications, 'this.deleteQualifications ')
     },
     handleDelete (qualification) {
-      const h = this.$createElement
-      this.$confirm('', {
-        message: h('div', null, [
-          h('div', {
-            class: 'center'
-          }, [
-            h('hh-icon', {
-              props: {
-                type: 'iconjinggao1'
-              },
-              class: 'DrawerQualification-icon'
-            })
-          ]),
-          h('div', {
-            class: 'DrawerQualification-text'
-          }, '确定删除该类目下已配置的资质图片吗？')
-        ]),
-        type: 'warning',
-        confirmButtonText: '确认',
-        cancelButtonText: '点错了',
-        customClass: 'DrawerQualification-customClass',
-        cancelButtonClass: 'DrawerQualification-cancelButtonClass',
-        confirmButtonClass: 'DrawerQualification-confirmButtonClass',
-        showClose: false
+      const originList = this.originList
+      originList.map((item, index) => {
+        if (qualification.category_id === item.category_id) item.is_config = 0
+        return item
       })
-        .then(async (_) => {
-          try {
-            this.loadingCatQualityList = true
-            await servises.userCatQualityDelete({
-              category_id: qualification.category_id
-            })
-            this.refresh()
-            this.loadingCatQualityList = false
-            this.$message.success('删除配置成功')
-          } catch (err) {
-            this.$message.error(`${err}`)
-            this.loadingCatQualityList = false
-          }
-        })
-        .catch(_ => {
-          return false
-        })
+      this.originList = originList
+      const activeName = this.activeName
+      let tab = this.tabs[0]
+      tab = this.tabs.find(item => item.name === activeName)
+      this.list = originList.filter(item => tab.type.includes(item.is_config))
+      const deleteQualifications = [...new Set(this.deleteQualifications)]
+      deleteQualifications.push(qualification.category_id)
+      this.deleteQualifications = deleteQualifications
+      const dataMap = new Map(this.dataMap)
+      if (dataMap.has(qualification.id)) {
+        dataMap.delete(qualification.id)
+        this.dataMap = dataMap
+      }
+      console.log(this.dataMap, 'this.dataMap')
+      console.log(this.deleteQualifications, 'this.deleteQualifications ')
     },
     async handleEdit () {
       try {
+        // 添加资质的参数
         const parmas = [...this.dataMap.values()]
-        if (!parmas.length) return this.$message.warning('没有需要修改的资质配置')
-        this.loadingSubmit = true
-        await servises.userCatQualityCreate({
-          cat_quality_list: JSON.stringify(parmas)
-        })
+        // 删除资质的参数
+        const deleteQualifications = [...new Set(this.deleteQualifications)]
+        console.log(parmas, '添加资质的参数')
+        console.log(deleteQualifications, '删除资质的参数')
+        if (!parmas.length && !deleteQualifications.length) {
+          this.$message.warning('没有需要修改的资质配置')
+          return false
+        }
+        if (parmas.length) {
+          this.loadingSubmit = true
+          await servises.userCatQualityCreate({
+            cat_quality_list: JSON.stringify(parmas)
+          })
+        }
+        if (deleteQualifications.length) {
+          this.loadingSubmit = true
+          await servises.userCatQualityDelete({
+            category_id_list: JSON.stringify(this.deleteQualifications)
+          })
+        }
         this.refresh()
         this.loadingSubmit = false
         this.$message.success('保存成功')
@@ -223,72 +266,34 @@ export default {
         this.loadingSubmit = false
         this.$message.error(`${err}`)
       }
+    },
+    triggerDrawerClose () {
+      this.dialogBeforeClose(() => {
+        this.drawer = false
+      })
+    },
+    dialogBeforeClose (done) {
+      const parmas = [...this.dataMap.values()]
+      const deleteQualifications = [...new Set(this.deleteQualifications)]
+      let b = parmas.length || deleteQualifications.length
+      if (b) {
+        this.$confirm('有未保存的修改，是否保存?', '提示', {
+          confirmButtonText: '保存',
+          cancelButtonText: '不保存'
+        }).then(_ => {
+          // 保存
+          const e = this.handleEdit()
+          if (e) {
+            done()
+          }
+        }).catch(_ => { done() })
+      } else {
+        done()
+      }
     }
   }
 }
 </script>
 <style lang="less" scoped>
 @import '~./index.less';
-
-</style>
-<style lang="less">
-.DrawerQualification-cancelButtonClass{
-  font-size: 12px;
-  margin-right: 10px;
-  width: 120px;
-  padding: 12px;
-  border-color: #1D8FFF;
-  color: #1D8FFF;
-  font-size: 14px;
-}
-
-.DrawerQualification-confirmButtonClass{
-  font-size: 12px;
-  width: 140px;
-  padding: 12px;
-  font-size: 14px;
-  background: #1D8FFF;
-}
-
-.DrawerQualification-icon {
-  width: 50px;
-  height: 50px;
-  font-size: 50px;
-}
-
-.DrawerQualification-text {
-  width: 364px;
-  height: 20px;
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #4E4E4E;
-  line-height: 20px;
-  text-align: center;
-  margin-top: 16px;
-  margin-bottom: 20px;
-}
-
-.DrawerQualification-customClass {
-    padding-bottom: 20px;
-    .el-message-box__header {
-      padding-top: 0;
-    }
-    .el-message-box__btns {
-      text-align: center;
-    }
-    .el-message-box__content {
-      .el-message-box__message {
-        padding-left: 0;
-      }
-      p {
-        font-size: 18px;
-        margin: 15px 0 10px;
-        text-align: center;
-      }
-      .el-icon-warning {
-        display: none;
-      }
-    }
-}
 </style>
