@@ -478,6 +478,15 @@ const hhgjAPIs = {
   },
   userCatAttrCreate: (params) => {
     return api.actionCreatorPost('/api/user/cat_attr/create', params)
+  },
+  productQualityScoreOverview: (params) => {
+    return api.actionCreateGet('/api/product/quality_score/overview', params)
+  },
+  productQualityScoreList: (params) => {
+    return api.actionCreateGet('/api/product/quality_score/list', params)
+  },
+  productQualityScoreDetail: (params) => {
+    return api.actionCreateGet('/api/product/quality_score/detail', params)
   }
 }
 

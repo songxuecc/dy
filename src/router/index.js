@@ -274,6 +274,18 @@ const router = new VueRouter({
       }
     },
     {
+      path: '/productsManagement/productQualityScore',
+      name: 'ProductQualityScore',
+      component: () => import(
+        /* webpackChunkName: `Combination` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/productQualityScore'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
       path: '/productsManagement/productExports',
       name: 'ProductExports',
       component: () => import(

@@ -3,6 +3,7 @@ import batchEdit from './batchEdit'
 import productsSync from './productsSync'
 import combination from './combination'
 import cycleProductsSelf from './cycleProductsSelf'
+import productQualityScore from './productQualityScore'
 
 const modules = {
   productManagement: {
@@ -12,7 +13,8 @@ const modules = {
       batchEdit,
       ...productsSync,
       ...combination,
-      ...cycleProductsSelf
+      ...cycleProductsSelf,
+      ...productQualityScore
     }
   }
 }
