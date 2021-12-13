@@ -129,6 +129,15 @@ export default {
       const activeName = this.activeName
       let tab = this.tabs[0]
       tab = this.tabs.find(item => item.name === activeName)
+      const originList = this.originList
+      // 点击tab的时候 更新数据的is_config 获取最新tab需要展示的list数据
+      const dataMap = this.dataMap
+      this.originList = originList.map(item => {
+        if (dataMap.has(item.category_id)) {
+          item.is_config = 1
+        }
+        return item
+      })
       this.list = this.originList.filter(item => tab.type.includes(item.is_config))
       this.setActiveQualification(this.list[0])
     },
