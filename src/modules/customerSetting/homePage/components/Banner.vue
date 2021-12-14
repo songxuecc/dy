@@ -102,17 +102,17 @@ export default {
 }
 
 .img2 {
-  background-image: url('../images/banner-activity.png');
+  background-image: url('https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9bfc2e6f0c6e4a369a46f3cbceda7ca6~tplv-k3u1fbpfcp-watermark.image?');
   background-size: cover;
 }
 
 .img3 {
-  background-image: url('../images/banner1.png');
+  background-image: url('https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3bf5e4549a8c48868661949ab1d37af9~tplv-k3u1fbpfcp-watermark.image?');
   background-size: cover;
 }
 
 .img4 {
-  background-image: url('../images/woda.png');
+  background-image: url('https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f6d383de95dd4906a5054d04674f60e0~tplv-k3u1fbpfcp-watermark.image?');
   background-size: cover;
 }
 
@@ -126,15 +126,15 @@ export default {
       background-size: cover;
     }
     .img2 {
-      background-image: url('../images/banner-activity-1680.png');
+      background-image: url('https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3ea80fe796e6402d9a7db2e73532ff9e~tplv-k3u1fbpfcp-watermark.image?');
       background-size: cover;
     }
     .img3 {
-      background-image: url('../images/banner1-1680.png');
+      background-image: url('https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/77845335654b4d76adab66cbcc6185c3~tplv-k3u1fbpfcp-watermark.image?');
       background-size: cover;
     }
     .img4 {
-      background-image: url('../images/woda-1680.png');
+      background-image: url('https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a0458d615b7140fca9b3bae2cdd32cf9~tplv-k3u1fbpfcp-watermark.image?');
     }
 }
 </style>

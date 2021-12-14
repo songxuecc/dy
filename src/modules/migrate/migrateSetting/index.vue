@@ -17,46 +17,50 @@
     <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': '30px'}" class="migrateSettingForm">
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini" :model="$data">
         <!-- 类目 -->
-        <el-form-item  label="类目统一为:" style="max-width:379px;padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-category">
-          <div class="flex align-c " style="height:28px">
-            <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
-              type="text">点击选择类目</el-button>
-            <a class="skeleton skeleton-item" v-if="!default_category" style="width:100px;height:18px"/>
 
-            <div class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
-              <el-tooltip :content="default_category && default_category.name"
-                :disabled="default_category.name && default_category.name.length < 18">
-                <el-button size="mini" type="text" @click="chooseCategory" class="brand">
-                  {{default_category && default_category.name}}</el-button>
-              </el-tooltip>
-              <el-button size="mini" @click="removeCategory" type="text" class="ml-5" >删除</el-button>
+        <div class="migrateSetting-category">
+          <el-form-item  label="类目统一为:" style="max-width:379px;padding-bottom: 20px;box-sizing: border-box" >
+            <div class="flex align-c " style="height:28px">
+              <el-button size="mini" v-if="default_category && !default_category.name" @click="chooseCategory"
+                type="text">点击选择类目</el-button>
+              <a class="skeleton skeleton-item" v-if="!default_category" style="width:100px;height:18px"/>
+
+              <div class="flex align-c" style="height:28px" v-if="default_category && default_category.name">
+                <el-tooltip :content="default_category && default_category.name"
+                  :disabled="default_category.name && default_category.name.length < 18">
+                  <el-button size="mini" type="text" @click="chooseCategory" class="brand">
+                    {{default_category && default_category.name}}</el-button>
+                </el-tooltip>
+                <el-button size="mini" @click="removeCategory" type="text" class="ml-5" >删除</el-button>
+              </div>
             </div>
-          </div>
-        </el-form-item>
-        <el-form-item style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-categoryMatch">
-          <span slot="label" style="display:inline">
-            <div>淘宝\天猫\拼多多</div>
-            <div>商品类目匹配:</div>
-          </span>
-          <div class="flex column left" v-loading="loadingCategoryMap">
-            <div v-for="category in showCategoryMap" :key="category.id" class="flex align-c" v-if="categoryMap.length">
-              <span class="flex align-c font-12 color-333">
-                <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(category)">
-                {{category.source}}-
-              </span>
-              <span class="info">
-                {{category.tp_category_name}}
-              </span>
-              <span class="mr-10 ml-10 font-12">对应抖店分类</span>
-              <span class="primary mr-10" @click="changeCategory(category)">{{category.dy_category_name}}</span>
-              <el-switch v-model="category.is_open" class="ml-5 mr-10" @change="changeCategoryOpen(category)"/>
-              <span class="primary" @click="deleteCategory(category)" >删除</span>
+          </el-form-item>
+          <el-form-item style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-categoryMatch">
+            <span slot="label" style="display:inline">
+              <div>淘宝\天猫\拼多多</div>
+              <div>商品类目匹配:</div>
+            </span>
+            <div class="flex column left" v-loading="loadingCategoryMap">
+              <div v-for="category in showCategoryMap" :key="category.id" class="flex align-c" v-if="categoryMap.length">
+                <span class="flex align-c font-12 color-333">
+                  <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(category)">
+                  {{category.source}}-
+                </span>
+                <span class="info">
+                  {{category.tp_category_name}}
+                </span>
+                <span class="mr-10 ml-10 font-12">对应抖店分类</span>
+                <span class="primary mr-10" @click="changeCategory(category)">{{category.dy_category_name}}</span>
+                <el-switch v-model="category.is_open" class="ml-5 mr-10" @change="changeCategoryOpen(category)"/>
+                <span class="primary" @click="deleteCategory(category)" >删除</span>
+              </div>
+              <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 && !categoryVisible" @click="toggleCategoryVisible">点击展开类目匹配</span>
+              <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 &&  categoryVisible" @click="toggleCategoryVisible">点击合并类目匹配</span>
+              <div v-if="!categoryMap.length">无，可以在 搬家列表-基本信息 中设置</div>
             </div>
-            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 && !categoryVisible" @click="toggleCategoryVisible">点击展开类目匹配</span>
-            <span style="align-self: flex-end;width:70%" class="primary" v-if="categoryMap.length &&  categoryMap.length > 2 &&  categoryVisible" @click="toggleCategoryVisible">点击合并类目匹配</span>
-            <div v-if="!categoryMap.length">无，可以在 搬家列表-基本信息 中设置</div>
-          </div>
-        </el-form-item>
+          </el-form-item>
+        </div>
+
         <!-- 品牌 -->
 <!--        <el-form-item  label="品牌统一为:" style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-brand">-->
 <!--          <p class="font-12 mb-10 flex align-c" style="height:28px">是否统一为无品牌<el-switch class="ml-5" v-model="is_all_no_brand" /></p>-->
@@ -96,8 +100,8 @@
             </div>
             <div class="font-12 mb-5" v-for="(properties,idx) in showPropertiesMap" :key="properties.id" v-if="propertiesMap.length">
               当属性维度是
-              <el-input size="mini" style="width:150px" @change="changeProperties" class="ml-5 mr-5" placeholder="请填写,如产地" v-model="properties.name"></el-input> 时，对应的属性值是
-              <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" placeholder="请填写,如中国大陆" v-model="properties.value"></el-input>
+              <el-input size="mini" style="width:150px" @change="changeProperties" class="ml-5 mr-5" :placeholder="idx !==0 ? '请填写,如产地':'请填写,如品牌'" v-model="properties.name"></el-input> 时，对应的属性值是
+              <el-input  size="mini"  style="width:150px"  class="ml-5 mr-5" :placeholder="idx !==0?'请填写,如中国大陆':'请填写,如雅诗兰黛'" v-model="properties.value"></el-input>
               <el-switch class="ml-5"  size="mini" v-model="properties.is_open"></el-switch>
               <el-button type="text" class="ml-5" @click="deleteProperties(properties,idx)" >删除</el-button>
             </div>
@@ -137,32 +141,29 @@
           </div>
         </el-form-item>
         <!-- 库存 -->
-        <el-form-item  label="SKU库存:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-stock" >
-            <p class="mb-10 flex align-c mb-10">
-              <span class="font-12 mr-5">SKU库存最高值为</span>
-              <span class="font-12">（若超过该值，系统会自动调为最高值）</span>
-              <el-form-item style="display:inline;margin-bottom:0" prop="max_sku_stock"  class="mr-5">
-                  <el-input-number v-model="max_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
-              </el-form-item>
-              <el-form-item style="display:inline;margin-bottom:0" prop="is_use_max_sku_stock">
-                  <el-switch v-model="is_use_max_sku_stock" @change="handleIsUseMaxSkuStock"/>
-              </el-form-item>
-            </p>
-
-            <p class="mb-10 flex align-c mb-10">
-              <span class="font-12 mr-5">所有SKU库存均为</span>
-              <el-form-item style="display:inline;margin-bottom:0" prop="default_sku_stock"  class="mr-5">
-                  <el-input-number v-model="default_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
-              </el-form-item>
-              <el-form-item style="display:inline;margin-bottom:0" prop="is_use_default_sku_stock">
-                  <el-switch v-model="is_use_default_sku_stock" @change="handleIsUseDefaultSkuStock"/>
-              </el-form-item>
-            </p>
-        </el-form-item>
-        <el-form-item   label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c  migrateSetting-code">
-            <p class="font-12" style="height:24px">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
-        </el-form-item>
-        <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
+        <div class="migrateSetting-sku" >
+          <el-form-item  label="SKU库存:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex" >
+              <p class="mb-10 flex align-c mb-10">
+                <span class="font-12 mr-5">SKU库存最高值为</span>
+                <span class="font-12">（若超过该值，系统会自动调为最高值）</span>
+                <el-form-item style="display:inline;margin-bottom:0" prop="max_sku_stock"  class="mr-5">
+                    <el-input-number v-model="max_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
+                </el-form-item>
+                <el-form-item style="display:inline;margin-bottom:0" prop="is_use_max_sku_stock">
+                    <el-switch v-model="is_use_max_sku_stock" @change="handleIsUseMaxSkuStock"/>
+                </el-form-item>
+              </p>
+              <p class="mb-10 flex align-c mb-10">
+                <span class="font-12 mr-5">所有SKU库存均为</span>
+                <el-form-item style="display:inline;margin-bottom:0" prop="default_sku_stock"  class="mr-5">
+                    <el-input-number v-model="default_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
+                </el-form-item>
+                <el-form-item style="display:inline;margin-bottom:0" prop="is_use_default_sku_stock">
+                    <el-switch v-model="is_use_default_sku_stock" @change="handleIsUseDefaultSkuStock"/>
+                </el-form-item>
+              </p>
+          </el-form-item>
+          <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
             <p class="mb-10 flex align-c mb-10 ">
               <span class="font-12 mr-5 flex align-c">低于
               <el-form-item style="display:inline;margin-bottom:0" prop="low_sku_price"  class="mr-5 ml-5">
@@ -172,28 +173,26 @@
                   <el-switch v-model="is_remove_sku_by_price" />
               </el-form-item>
             </p>
+          </el-form-item>
+          <el-form-item   label="SKU编码:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex align-c">
+              <p class="font-12">用ID代替SKU编码<el-switch class="ml-5" v-model="goods_code_type" /></p>
+          </el-form-item>
+        </div>
+        <!-- 类目资质 -->
+        <el-form-item  label="类目资质:" style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-qualification">
+          <div class="flex align-c " style="height:28px">
+            <el-button size="mini" @click="setQualification" type="text">点击设置</el-button>
+          </div>
         </el-form-item>
 
         <!-- <el-form-item  label="SKU规格:"  style="padding-bottom: 20px;" class="flex align-c migrateSetting-spec">
             <p class="font-12">SKU规格值超过20个自动截断<el-switch class="ml-5" v-model="is_cut_sku_spec" /></p>
         </el-form-item> -->
-
+        <!-- 详情图 -->
         <el-form-item  label="详情图:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-detail" >
             <p class="font-12 mb-10 mt-5">轮播图+详情图+规格图片超过50张自动删除详情图(否则官方会驳回)<el-switch class="ml-5" v-model="detail_img_cut" /></p>
             <p class="font-12 mb-10">删除详情首图<el-switch class="ml-5" v-model="is_cut_detail_first" /></p>
             <p class="font-12 mb-10">删除详情尾图<el-switch class="ml-5" v-model="is_cut_detail_last" /></p>
-<!--            <p class="font-12 mb-10">如果是天猫商品，优先抓天猫 &nbsp;-->
-<!--              <el-radio-group v-model="is_tmall_pc_first">-->
-<!--                <el-radio :label="1">电脑端详情图</el-radio>-->
-<!--                <el-radio :label="0">移动端详情图</el-radio>-->
-<!--              </el-radio-group>-->
-<!--            </p>-->
-<!--            <p class="font-12 mb-10">如果是淘宝商品，优先抓淘宝 &nbsp;-->
-<!--              <el-radio-group v-model="is_taobao_pc_first">-->
-<!--                <el-radio :label="1">电脑端详情图</el-radio>-->
-<!--                <el-radio :label="0">移动端详情图</el-radio>-->
-<!--              </el-radio-group>-->
-<!--            </p>-->
             <p class="font-12" style="display: flex;align-items: center;">批量增加详情首图
             <el-upload
               class="migrateSetting-avatar-uploader"
@@ -227,7 +226,7 @@
             <p class="font-12" style="display: flex;align-items: center;">
             </p>
         </el-form-item>
-
+        <!-- 轮播图 -->
         <el-form-item  label="轮播图:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-banner" >
             <p class="font-12 mb-10">仅保留前5张轮播图(否则官方会驳回)<el-switch class="ml-5" v-model="is_banner_auto_5" /></p>
             <!-- <p class="font-12 mb-10">若轮播图尺寸比例不满足1：1，系统自动剪裁<el-switch class="ml-5" v-model="is_auto_cut_banner" /></p> -->
@@ -235,9 +234,8 @@
             <p class="font-12 mb-10">删除轮播尾图<el-switch class="ml-5" v-model="is_cut_banner_last" /></p>
             <p class="font-12"><span style="margin-right: 5px">随机打乱轮播图顺序 (首图不变位置</span><el-checkbox v-model="is_keep_main_banner"></el-checkbox>)<el-switch class="ml-5" v-model="is_mix_banner" /></p>
         </el-form-item>
-
+        <!-- 标题 -->
         <el-form-item  label="标题:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex migrateSetting-title" >
-
           <div style="display:flex;margin-bottom:5px" class="align-c">
             <p style="margin-right:10px">
               <el-input clearable @clear="handleClear('title_prefix')" v-model="title_prefix" placeholder="前缀" style="width: 280px;margin-right:10px"></el-input>
@@ -345,7 +343,7 @@
         :disabled="shouldUpdate || loadingSettings">保存设置</el-button>
       <el-link @click="gotoStartCopy" v-if="shouldUpdate || loadingSettings" :underline="false" type="primary" class="font-12 ml-5 " style="margin-top:25px">已设置，去复制商品</el-link>
     </div>
-
+    <DrawerQualification ref="DrawerQualification"/>
   </div>
 </template>
 
@@ -359,13 +357,15 @@ import common from '@/common/common.js'
 import Api from '@/api/apis.js'
 import categorySelectView from '@/components/CategorySelectView'
 import servises from '@servises'
+import DrawerQualification from './components/DrawerQualification'
 import utils from '@/common/utils'
 import { accMul } from '@/common/evalFloat.js'
 
 export default {
   mixins: [request],
   components: {
-    categorySelectView
+    categorySelectView,
+    DrawerQualification
   },
   beforeRouteLeave (to, from, next) {
     // 导航离开该组件的对应路由时调用
@@ -389,13 +389,12 @@ export default {
     return {
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
-        { label: '类目匹配', className: '.migrateSetting-categoryMatch' },
+        // { label: '类目匹配', className: '.migrateSetting-categoryMatch' },
         // { label: '品牌', className: '.migrateSetting-brand' },
-        { label: '商家推荐语', className: '.migrateSetting-recommend' },
-        { label: '属性设置', className: '.migrateSetting-attribute' },
-        { label: 'SKU库存', className: '.migrateSetting-stock' },
-        { label: 'SKU价格', className: '.migrateSetting-price' },
-        { label: 'SKU编码', className: '.migrateSetting-code' },
+        { label: '推荐语', className: '.migrateSetting-recommend' },
+        { label: '属性', className: '.migrateSetting-attribute' },
+        { label: 'SKU', className: '.migrateSetting-sku' },
+        { label: '资质', className: '.migrateSetting-qualification' },
         { label: '详情图', className: '.migrateSetting-detail' },
         { label: '轮播图', className: '.migrateSetting-banner' },
         { label: '标题', className: '.migrateSetting-title' },
@@ -1214,13 +1213,18 @@ export default {
           }
         })
         this.setScrollTop()
-        console.log(this.propertiesMap, 'this.propertiesMap ')
         if (!this.propertiesMap.length) {
-          this.propertiesMap = [{
-            is_open: 0,
-            value: '',
-            name: ''
-          }]
+          this.propertiesMap = [
+            {
+              is_open: 0,
+              value: '',
+              name: ''
+            }, {
+              is_open: 0,
+              value: '',
+              name: ''
+            }
+          ]
         }
         this.originPropertiesMap = cloneDeep(this.propertiesMap)
         this.loadingPropertiesMap = false
@@ -1365,6 +1369,9 @@ export default {
       this.$router.push({
         name: 'StartMigrate'
       })
+    },
+    setQualification () {
+      this.$refs.DrawerQualification.open()
     }
   }
 }
