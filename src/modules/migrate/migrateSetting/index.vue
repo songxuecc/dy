@@ -1380,7 +1380,7 @@ export default {
 @import '~./index.less';
 .tab {
   /deep/ .el-tabs__item {
-    padding:0 15px;
+    padding:0 25px;
   }
 }
 </style>
