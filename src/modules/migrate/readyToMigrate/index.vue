@@ -1682,7 +1682,6 @@ export default {
         this.onCommitType()
       } else {
         this.commit_type = Number(commitType)
-        console.log(commitType, 'commitType')
       }
     }
   }
