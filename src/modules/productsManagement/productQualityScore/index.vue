@@ -1,6 +1,6 @@
 <!-- 我的页面 -->
 <template>
-  <div class='productQualityScore left'>
+  <div class='productQualityScore left' v-loading="loading">
     <div class="flex">
         <div class="left" :class="[!overviewData.is_standard && 'fail']">{{overviewData.standard_rate}}%</div>
         <div class="right">
@@ -35,6 +35,7 @@ export default {
   data () {
     return {
       overviewData: {},
+      loading: false,
       type: {
         1: '商品信息不规范',
         2: '关键信息待优化',
@@ -46,6 +47,8 @@ export default {
 
   },
   created () {
+  },
+  activated () {
     this.init()
   },
   mounted () {
@@ -63,6 +66,7 @@ export default {
       'fetch'
     ]),
     async init () {
+      this.loading = true
       const data = await servises.productQualityScoreOverview()
       const id = data.task_id
       this.overviewData = data
@@ -71,9 +75,11 @@ export default {
           task_id: id
         }
       })
+      this.loading = false
     },
     // 事件名称
     check () {
+      window.open('https://school.jinritemai.com/doudian/web/article/111700')
     }
   }
 }

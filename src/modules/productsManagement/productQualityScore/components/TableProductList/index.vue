@@ -43,7 +43,7 @@
             prop="address"
             label="操作">
             <template slot-scope="scope">
-                <span class="click" @click="go(scope.row.product_id)">立即优化</span>
+                <!-- <span class="click" @click="go(scope.row.product_id)">立即优化</span> -->
                 <span class="click" @click="open(scope.row.product_id)">详情</span>
             </template>
         </el-table-column>
