@@ -125,6 +125,7 @@ export default {
       this.dataMap = new Map()
     },
     handleClick () {
+      this.search = ''
       const activeName = this.activeName
       let tab = this.tabs[0]
       tab = this.tabs.find(item => item.name === activeName)
@@ -141,8 +142,13 @@ export default {
       this.setActiveQualification(this.list[0])
     },
     getList (tab) {
-      const list = this.originList.filter(item => tab.type.includes(item.is_config))
-      return list
+      if (this.search) {
+        const list = this.list.filter(item => tab.type.includes(item.is_config))
+        return list
+      } else {
+        const list = this.originList.filter(item => tab.type.includes(item.is_config))
+        return list
+      }
     },
     onSearch: debounce(function (id) {
       let tab = this.tabs[0]
@@ -150,6 +156,7 @@ export default {
       tab = this.tabs.find(item => item.name === activeName)
       const list = this.originList.filter(item => tab.type.includes(item.is_config))
       this.list = list.filter(item => item.full_name.includes(id))
+      console.log(this.list, 'this.list')
     }, 300),
     onClear () {
       let tab = this.tabs[0]
