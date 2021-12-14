@@ -205,6 +205,7 @@
               </el-tab-pane>
               <el-tab-pane v-if="qualityList.length" label="服务与资质">
                   <el-form class="setting-content">
+                      <el-button @click="useCustome" v-if="product.model && product.model.category_show" size="medium" class="mb-10 ml-10" type="text"><hh-icon type="iconshuaxin"></hh-icon> 刷新{{product.model.category_show}}默认资质配置</el-button>
                       <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange"/>
                   </el-form>
               </el-tab-pane>
@@ -392,6 +393,8 @@ import PictureQualification from './PictureQualification.vue'
 import xorWith from 'lodash/xorWith'
 import omit from 'lodash/omit'
 import SkuTable from './SkuTable'
+import servises from '@servises'
+
 export default {
   inject: ['reload'],
   mixins: [request, skuHandlerProductNewEdit],
@@ -1754,6 +1757,17 @@ export default {
           }
         })
       }
+    },
+    async useCustome () {
+      console.log(this.product.model)
+      const data = await servises.userCatQualityDetail({
+        category_id: this.product.model.cat_id,
+        is_config: 1
+      })
+      // this.product.assign({quality_list: data})
+      this.qualityList = data
+      this.handlePictureQualificationChange(data)
+      console.log(data, 'data')
     }
   }
 }
