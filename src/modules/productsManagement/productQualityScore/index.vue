@@ -5,7 +5,7 @@
         <div class="left" :class="[!overviewData.is_standard && 'fail']">{{overviewData.standard_rate}}%</div>
         <div class="right">
             <h3>
-              商品基础分不达标商品{{overviewData.product_num_to_improve_total}}个，达标率{{overviewData.standard_rate}}%<span v-if="!overviewData.is_standard">，远低于及格线，影响店铺流量转化，请尽快优化 <span class="color-primary pointer" @click="check">查看如何优化</span></span>
+              商品基础分不达标商品 {{overviewData.product_num_to_improve_total}} 个，达标率 {{overviewData.standard_rate}}%<span v-if="!overviewData.is_standard">，远低于及格线，影响店铺流量转化，请尽快优化 <span class="color-primary pointer" @click="check">查看如何优化</span></span>
             </h3>
             <div v-for="list in overviewData.problem_type_distribution" :key="list.type_key">
               <span class="width-100">{{list.type_name}}</span> <span class="color-333">{{list.num}}个</span>
