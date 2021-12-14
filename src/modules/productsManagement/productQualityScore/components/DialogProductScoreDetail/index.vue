@@ -13,7 +13,7 @@
             <div>ID: {{detail.product_id}}</div>
             <div>本商品待优化内容{{detail.field_problem.length}}个</div>
           </div>
-          <div v-for="problem in detail.field_problem" :key="problem.field_key" class="mb-10">
+          <div v-for="(problem,idx) in detail.field_problem" :key="problem.field_key + idx" class="mb-10">
             <div class="color-333 bold ">
               <span>{{problem.problem_name}}</span>
             </div>
