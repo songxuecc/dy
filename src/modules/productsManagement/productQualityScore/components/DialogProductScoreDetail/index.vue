@@ -8,21 +8,19 @@
         append-to-body
         center>
         <div v-if="detail.product_id">
-          <div class="title">
+          <div class="title mb-10">
             <div>商品: {{detail.product_name}}</div>
             <div>ID: {{detail.product_id}}</div>
+            <div>本商品待优化内容{{detail.field_problem.length}}个</div>
           </div>
-          <div v-for="problem in field_problem" :key="problem.field_key">
-            <div>
-              <span>{{problem.field_name}}</span>
+          <div v-for="problem in detail.field_problem" :key="problem.field_key" class="mb-10">
+            <div class="color-333 bold ">
               <span>{{problem.problem_name}}</span>
             </div>
-            <div>{{problem.suggestion}}</div>
+            <div class="color-4e">{{problem.suggestion}}</div>
           </div>
         </div>
-        <div v-else class="center">
-          此商品没数据
-        </div>
+        <el-table-empty v-else></el-table-empty>
         <span slot="footer" class="dialog-footer">
           <el-button @click="visible = false">取 消</el-button>
           <el-button type="primary" @click="visible = false">确 定</el-button>
@@ -61,4 +59,8 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.title {
+    font-size: 14px;
+    font-weight: bold;
+}
 </style>
