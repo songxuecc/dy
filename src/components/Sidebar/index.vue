@@ -74,7 +74,7 @@
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconpiliangchulixuanzhong2" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">
-                  批量处理
+                  批量修改商品
                   <NewFeatureTips type="批量处理新版本-hot" :isPermanent="true">
                     <hh-icon type="iconHOT-copy" style="font-size:24px;margin-left:3px;color:#d81e06;border-radius:6px;overflow:hidden"></hh-icon>
                   </NewFeatureTips>
