@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import image from './image.png'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -27,7 +26,7 @@ export default {
   data () {
     return {
       visible: false,
-      image
+      image: 'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d2fefc416a6840f5b0ad762d81522e92~tplv-k3u1fbpfcp-watermark.image?'
     }
   },
   computed: {
