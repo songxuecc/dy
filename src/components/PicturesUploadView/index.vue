@@ -21,9 +21,9 @@
                         title=""
                         :ref="'popover-picture-wall-'+index"
                         trigger="manual">
-                        <img :src="picture.url" style="width: 250px;"/>
+                        <img :src="picture.url" style="width: 250px;" referrerPolicy="no-referrer"/>
                         <el-image :ref="'image'+index" :src="picture.url" :preview-src-list="curPictureUrlList" fit="scale-down"
-                          style="width:100%; height:100%;" slot="reference"
+                          style="width:100%; height:100%;" slot="reference"  referrerPolicy="no-referrer"
                         ></el-image>
                     </el-popover>
                       <label class="el-upload-list__item-status-label flex" :style="{visibility: picture.bg ? 'visible' : 'hidden'}">

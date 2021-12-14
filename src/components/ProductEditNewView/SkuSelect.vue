@@ -128,13 +128,14 @@
                         :class="`avatar validImageSIze `"
                         :ref="`img${specificationValue.skuString}-${idx}`"
                         :preview-src-list="[specificationValue.image]"
+                        referrerPolicy="no-referrer"
                       />
                       <el-popover
                         placement="left"
                         width="270"
                         popper-class="SkuSelect-popper-class"
                         trigger="hover">
-                        <img :src="specificationValue.image" style="width: 270px;"/>
+                        <img :src="specificationValue.image" style="width: 270px;" referrerPolicy="no-referrer"/>
                         <div
                           slot="reference"
                             :class="[
