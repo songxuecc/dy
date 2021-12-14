@@ -114,12 +114,12 @@
                 <span class="">组合商品</span>
               </div>
            </el-menu-item>
-           <el-menu-item index="/productsManagement/productQualityScore" :disabled="!isAuth()">
+           <!-- <el-menu-item index="/productsManagement/productQualityScore" :disabled="!isAuth()">
              <div slot="title" class="flex align-c">
                 <hh-icon type="icona-shangpinzhiliangfenjianceweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">商品质量分检测</span>
               </div>
-           </el-menu-item>
+           </el-menu-item> -->
           </el-submenu>
           <el-submenu index="3">
              <template slot="title">
