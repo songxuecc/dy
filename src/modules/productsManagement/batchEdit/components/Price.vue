@@ -4,7 +4,7 @@
     <el-form ref="form" :model="form" size="small" label-position="left" :rules="rules">
       <el-form-item>
         <el-radio v-model="form.is_formula" @change="handleIsFormulaChange" :label="1" class="flex align-c">
-          <span class="flex align-c"><span class="color-4e font-12">按照公式修改&nbsp;<span class="bold">原价</span>
+          <span class="flex align-c"><span class="color-4e font-12">按照公式修改&nbsp;<span class="bold">现sku价</span>
             <span class="font-12 ml-5 mr-5">x&nbsp;</span>
           </span>
           <el-form-item prop="origin_price_rate">
