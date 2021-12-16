@@ -1,6 +1,7 @@
 import Api from '@/api/apis'
 import FormModel from '@/common/formModel'
 import cloneDeep from 'lodash/cloneDeep'
+import { read, remove, update } from '@/common/indexDB'
 
 // 店铺绑定
 export default {
@@ -78,15 +79,18 @@ export default {
       delete model['template_list']
       localStorage.setItem('temp_template', JSON.stringify(model))
       // localStorage.setItem('custom_prices', JSON.stringify(state.dicCustomPrices))
+      update('custom_prices', state.dicCustomPrices)
     },
       /**
        * 载入模板，如果localStorage中有模板数据，则直接刷新
        * @param commit
        * @param state
        */
-    loadTempTemplate ({commit, state}, payload) {
+    async loadTempTemplate ({commit, state}, payload) {
       let strTemplate = localStorage.getItem('temp_template') || ''
       // let strCustomPrices = localStorage.getItem('custom_prices') || ''
+      const strCustomPrices = await read('custom_prices')
+      console.log(strCustomPrices, 'strCustomPrices')
       let template = payload
       if (strTemplate) {
         template = cloneDeep(payload)
@@ -104,18 +108,19 @@ export default {
         }
         commit('save', {template})
       }
-      // if (strCustomPrices) {
-      //   commit('save', {dicCustomPrices: JSON.parse(strCustomPrices)})
-      // }
+      if (strCustomPrices) {
+        commit('save', {dicCustomPrices: strCustomPrices})
+      }
       this.dispatch('migrate/migrateSettingTemplate/saveTempTemplate')
       return {
-        template
-        // dicCustomPrices: strCustomPrices ? JSON.parse(strCustomPrices) : {}
+        template,
+        dicCustomPrices: strCustomPrices || {}
       }
     },
     removeTempTemplate () {
       localStorage.removeItem('temp_template')
-      localStorage.removeItem('custom_prices')
+      // localStorage.removeItem('custom_prices')
+      remove('custom_prices')
     },
     removeDicCustomPrices ({commit}) {
       commit('save', {dicCustomPrices: {}})
