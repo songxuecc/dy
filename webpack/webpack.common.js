@@ -50,7 +50,7 @@ const commonConfig = {
     'moment': 'moment',
     'vuedraggable': 'vuedraggable'
   },
-  devtool: isDev ? 'source-map' : false,
+  // devtool: isDev ? 'source-map' : false,
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {

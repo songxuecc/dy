@@ -6,8 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 
 const webpackDev = {
-  devtool: 'source-map',
   mode: 'development',
+  devtool: 'cheap-module-eval-source-map',
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name].[hash].js',
@@ -49,9 +49,9 @@ const webpackDev = {
     hot: true,
     proxy: {
       '/api': {
-        // target: 'http://192.168.51.55:10080/',
+        target: 'http://192.168.51.55:10080/',
         // target: 'http://localhost:10080/',
-        target: 'http://dy.nix.huhuguanjia.com/',
+        // target: 'http://dy.nix.huhuguanjia.com/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'

@@ -978,7 +978,7 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
       }
-      const names = this.propertiesMap.map(item => item.name)
+      const names = this.propertiesMap.map(item => item.name).filter(item => item.name)
       if ([...new Set(names)].length !== names.length) {
         return this.$message.warning('属性维度重复,请重新填写')
       }
