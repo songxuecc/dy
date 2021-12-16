@@ -105,7 +105,7 @@
                         :headers="getTokenHeaders"
                         :data="{'belong_type': belongType}"
                         :multiple="false"
-                        style="width:50px; height: 50px; line-height: 80px;overflow:hidden"
+                        style="width:50px; height: 50px; line-height: 50px;overflow:hidden"
                     >
                         <img style="height:50px" :src="scope.row.img" class="border-2" v-on:mouseover="handlemouseover(scope.row)"  v-on:mouseleave="handlemouseleave(scope.row)">
                     </el-upload>
