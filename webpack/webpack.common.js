@@ -126,8 +126,6 @@ const commonConfig = {
           {
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-env'],
-              babelrc: true,
               cacheDirectory: true // 启用缓存
             }
           }
