@@ -403,7 +403,8 @@ export default {
           }
         })
         // 当用户抓取的商品缺少sku时，库存=0，价格取第一个sku价格（库存既然是0了所以价格是多少不重要，只要不是0就行）。从而解决价格=0的问题
-        const matchspecsPrice = allSkuSpec.toString().includes(spec.toString())
+        const matchspecsPrice = allSkuSpec.some(item => spec.every(s => item.includes(s)))
+
         if (!matchspecsPrice) {
           matchSpecData.promo_price = recordFirstPromoPrice
         }
