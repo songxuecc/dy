@@ -161,6 +161,9 @@
         width='100%' height='800px;' frameborder='0'></iframe>
     </el-dialog>
     <ModalBindCopyIdSearch :ids="lostGoodsIds" ref="ModalBindCopyIdSearch" @continueCopy="continueCopy"/>
+    <ModalVersionUp ref="ModalVersionUp" />
+    <ModalVersionUpOrder  ref="ModalVersionUpOrder" />
+
   </div>
 </template>
 <script>
@@ -168,15 +171,17 @@ import request from '@/mixins/request.js'
 import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import common from '@/common/common.js'
 import helpTips from '@/components/HelpTips.vue'
-import SupportPlatForm from '@migrate/startMigrate/SupportPlatForm'
-import BindCopyTip from '@migrate/startMigrate/BindCopyTip'
-import ModalBindCopyIdSearch from '@migrate/startMigrate/ModalBindCopyIdSearch'
-import StartCopyTips from '@migrate/startMigrate/StartCopyTips'
-import BindCopyTips from '@migrate/startMigrate/BindCopyTips'
-import SettingAlert from '@migrate/startMigrate/SettingAlert'
+import SupportPlatForm from '@migrate/startMigrate/components/SupportPlatForm'
+import BindCopyTip from '@migrate/startMigrate/components/BindCopyTip'
+import ModalBindCopyIdSearch from '@migrate/startMigrate/components/ModalBindCopyIdSearch'
+import StartCopyTips from '@migrate/startMigrate/components/StartCopyTips'
+import BindCopyTips from '@migrate/startMigrate/components/BindCopyTips'
+import SettingAlert from '@migrate/startMigrate/components/SettingAlert'
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
 import TablemigrateHistory from '@migrate/startMigrate/components/TablemigrateHistory'
+import ModalVersionUp from '@migrate/startMigrate/components/ModalVersionUp'
+import ModalVersionUpOrder from '@migrate/startMigrate/components/ModalVersionUpOrder'
 
 const {
   mapActions: mapActionsPaidRecharge,
@@ -227,7 +232,9 @@ export default {
     StartCopyTips,
     BindCopyTips,
     SettingAlert,
-    TablemigrateHistory
+    TablemigrateHistory,
+    ModalVersionUp,
+    ModalVersionUpOrder
   },
   activated () {
     this.getUserBindList()
