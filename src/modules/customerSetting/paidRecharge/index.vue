@@ -2,7 +2,10 @@
 <template>
     <div class='left'  v-loading="loadingVersion">
         <div style="margin-bottom: 20px;margin-top: 20px;font-size:18px;font-weight:bold">
-          <h label="PayRecord" v-if="userVersion && (userVersion.is_senior || userVersion.is_free_upgrate)" >拼多多额度充值</h>
+          <h1 v-if="userVersion && (userVersion.is_senior || userVersion.is_free_upgrate)" label="PayRecord" class="border">
+            <span class="color-333 font-14 mr-10">复制额度充值</span>
+            <img :src="src" v-for="src in list" :key="src" style="width:18px;margin-right:8px"/>
+          </h1>
           <h label="VersionUp" v-else >试用版本升级</h>
         </div>
         <PayRecord v-if="userVersion && (userVersion.is_senior || userVersion.is_free_upgrate)"/>
@@ -23,7 +26,21 @@ export default {
     return {
       tabType: 'PayRecord',
       available_pdd_capture_nums: 0,
-      total_pdd_capture_nums: 0
+      total_pdd_capture_nums: 0,
+      list: [
+        require('@/assets/images/taobao.png'),
+        require('@/assets/images/tm.png'),
+        require('@/assets/images/1688.png'),
+        require('@/assets/images/jd.png'),
+        require('@/assets/images/sn.png'),
+        require('@/assets/images/kaola.png'),
+        require('@/assets/images/vph.png'),
+        require('@/assets/images/17.png'),
+        require('@/assets/images/pdd.png'),
+        require('@/assets/images/chanmama.png'),
+        require('@/assets/images/soukuanwang.png'),
+        require('@/assets/images/youzan.png')
+      ]
     }
   },
   components: {
@@ -69,5 +86,9 @@ export default {
 //@import url(); 引入公共css类
 /deep/ .el-radio-button__inner {
         min-width: 100px !important;
+    }
+    .border {
+      padding-bottom: 20px;
+      border-bottom: 1px solid #F2F2F2;
     }
 </style>
