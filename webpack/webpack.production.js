@@ -130,10 +130,10 @@ const webpackPro = {
   },
   stats: {
     colors: true,
-    modules: false,
+    modules: true,
     children: false,
     chunks: false,
-    chunkModules: false
+    chunkModules: true
   }
 }
 

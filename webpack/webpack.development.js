@@ -62,7 +62,7 @@ const webpackDev = {
     port: 8000
   },
   optimization: {
-    moduleIds: 'hashed'
+    moduleIds: 'named'
   },
   stats: {
     colors: true,
