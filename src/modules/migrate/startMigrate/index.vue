@@ -126,23 +126,28 @@
     </el-tabs>
 
     <!-- 多商品复制 -->
-    <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
-    <p class="left font-12 mt-20 "  v-if="activeName === 'single'">非抖音平台抓取额度有限制(抖音平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
-    <div class="startCopyBtn" v-if="activeName === 'single'">
-      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
-        <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px" >
-          <span style="width:120px">开始复制</span>
-          <el-badge :value="captureUrlNums"></el-badge>
-        </el-button>
-        <StartCopyTips v-show="showStartCopyTips"/>
+    <div v-if="activeName === 'single'">
+      <SupportPlatForm :list="platformIconsUrl" />
+      <PayCharge  />
+      <div class="startCopyBtn" >
+        <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
+          <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px" >
+            <span style="width:120px">开始复制</span>
+            <el-badge :value="captureUrlNums"></el-badge>
+          </el-button>
+          <StartCopyTips v-show="showStartCopyTips"/>
+        </div>
       </div>
     </div>
     <!-- 整店复制 -->
-    <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'"  class="shopCopySupportPlatForm"/>
-    <div class="startCopyBtn" v-if="activeName === 'shop'" >
-      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
-        <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
-        <StartCopyTips v-show="showStartCopyTips"/>
+    <div v-if="activeName === 'shop'">
+      <SupportPlatForm :list="platformIconsStore"  class="shopCopySupportPlatForm"/>
+      <PayCharge  />
+      <div class="startCopyBtn" >
+        <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
+          <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
+          <StartCopyTips v-show="showStartCopyTips"/>
+        </div>
       </div>
     </div>
     <!-- 绑定复制 -->
@@ -182,6 +187,7 @@ import Api from '@/api/apis'
 import TablemigrateHistory from '@migrate/startMigrate/components/TablemigrateHistory'
 import ModalCharge from '@migrate/startMigrate/components/ModalCharge'
 import ModalChargeOrder from '@migrate/startMigrate/components/ModalChargeOrder'
+import PayCharge from '@migrate/startMigrate/components/PayCharge'
 
 const {
   mapActions: mapActionsPaidRecharge,
@@ -234,7 +240,8 @@ export default {
     SettingAlert,
     TablemigrateHistory,
     ModalCharge,
-    ModalChargeOrder
+    ModalChargeOrder,
+    PayCharge
   },
   activated () {
     this.getUserBindList()
@@ -676,6 +683,7 @@ export default {
             } else {
               this.$refs && this.$refs.ModalChargeOrder.open()
             }
+            this.isStartCapture = false
             return false
           }
           this.isStartCapture = false
