@@ -6,6 +6,7 @@
             :data="tableData"
             v-loading="loading"
             style="width: 100%">
+            <el-table-empty slot="empty" />
             <el-table-column
               prop="create_time"
               label="复制时间"
@@ -46,8 +47,7 @@ export default {
       'tableData',
       'total',
       'pagination',
-      'filters',
-      'form'
+      'filters'
     ]),
     ...mapState({
       loading: state => state['@@loading'].effects['customerSetting/paidRecharge/consumptionRecord/fetch']

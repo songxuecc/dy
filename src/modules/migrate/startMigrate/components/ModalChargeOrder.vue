@@ -48,14 +48,10 @@ import Api from '@/api/apis'
 export default {
   name: 'ModalVersionUpOrder',
   props: {
-    key: {
-      type: String,
-      default: 'up'
-    }
   },
   data () {
     return {
-      visible: true
+      visible: false
     }
   },
   computed: {
@@ -64,7 +60,7 @@ export default {
   methods: {
     open () {
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '试用限制优化20210507', '弹层曝光', '7天试用限制_展示弹层'])
+        window._hmt.push(['_trackEvent', '付费充值', '弹层曝光', '7天试用限制_展示弹层'])
       }
       this.visible = !this.visible
     },
@@ -74,7 +70,7 @@ export default {
     async up () {
       try {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_订购高级版本'])
+          window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '7天试用限制_订购高级版本'])
         }
       // 订单统计打点
         await Api.hhgjAPIs.statisticsEventCreate({
@@ -276,6 +272,12 @@ export default {
     font-weight: normal;
     color: #FFFFFF;
     line-height: 25px;
+  }
+  /deep/ .el-dialog__header {
+    padding-top: 0;
+  }
+  /deep/ .el-dialog__headerbtn {
+    right: 0px;
   }
 
 }

@@ -127,7 +127,7 @@
 
     <!-- 多商品复制 -->
     <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
-    <p class="left font-12 mt-20 "  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
+    <p class="left font-12 mt-20 "  v-if="activeName === 'single'">非抖音平台抓取额度有限制(抖音平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
     <div class="startCopyBtn" v-if="activeName === 'single'">
       <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
         <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px" >
@@ -161,14 +161,14 @@
         width='100%' height='800px;' frameborder='0'></iframe>
     </el-dialog>
     <ModalBindCopyIdSearch :ids="lostGoodsIds" ref="ModalBindCopyIdSearch" @continueCopy="continueCopy"/>
-    <ModalVersionUp ref="ModalVersionUp" />
-    <ModalVersionUpOrder  ref="ModalVersionUpOrder" />
+    <ModalCharge ref="ModalCharge" />
+    <ModalChargeOrder  ref="ModalChargeOrder" />
 
   </div>
 </template>
 <script>
 import request from '@/mixins/request.js'
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers, mapState } from 'vuex'
 import common from '@/common/common.js'
 import helpTips from '@/components/HelpTips.vue'
 import SupportPlatForm from '@migrate/startMigrate/components/SupportPlatForm'
@@ -180,8 +180,8 @@ import SettingAlert from '@migrate/startMigrate/components/SettingAlert'
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
 import TablemigrateHistory from '@migrate/startMigrate/components/TablemigrateHistory'
-import ModalVersionUp from '@migrate/startMigrate/components/ModalVersionUp'
-import ModalVersionUpOrder from '@migrate/startMigrate/components/ModalVersionUpOrder'
+import ModalCharge from '@migrate/startMigrate/components/ModalCharge'
+import ModalChargeOrder from '@migrate/startMigrate/components/ModalChargeOrder'
 
 const {
   mapActions: mapActionsPaidRecharge,
@@ -233,8 +233,8 @@ export default {
     BindCopyTips,
     SettingAlert,
     TablemigrateHistory,
-    ModalVersionUp,
-    ModalVersionUpOrder
+    ModalCharge,
+    ModalChargeOrder
   },
   activated () {
     this.getUserBindList()
@@ -280,6 +280,9 @@ export default {
     }),
     ...mapStatePaidRecharge(['availablePddCaptureNums']),
     ...mapGetters(['getTokenHeaders', 'getCaptureIdList', 'getUserId']),
+    ...mapState('migrate/readyToMigrate', [
+      'userVersion'
+    ]),
     subscItemLevelMap () {
       return common.subscItemLevelMap
     },
@@ -347,6 +350,9 @@ export default {
     ]),
     ...mapActions('migrate/startMigrate', ['getCaptureShopCompleteList']),
     ...mapActionsPaidRecharge(['getUserAccountQuery']),
+    ...mapActions('migrate/readyToMigrate', [
+      'userVersionQuery'
+    ]),
     clearTargetUserId () {
       this.target_user_id = undefined
     },
@@ -652,15 +658,26 @@ export default {
     },
     async capture (parmas, needUpdateMigrateSetting = true) {
       try {
-        // if (needUpdateMigrateSetting) {
-        //   const updateResult = await this.$refs.setting.updateMigrateSetting()
-        //   if (updateResult === 'error') {
-        //     return false
-        //   }
-        // }
         let self = this
         this.isStartCapture = true
-        this.request('capture', parmas, data => {
+        this.request('capture', parmas, async (data) => {
+          console.log(data, 'data')
+          // 试用用户判断抓取是否有限制
+          const userVersion = this.userVersion || (await this.userVersionQuery())
+          console.log(userVersion, 'userVersion')
+          const isFreeUpgrate = userVersion.is_free_upgrate
+          const isSenior = userVersion.is_senior
+          const versionTipType = userVersion.version_type
+          if (!isFreeUpgrate && !isSenior && data.left_capture_nums_not_enough) {
+            // 3个月试用引导内部升级
+            // 7天试用引导在服务市场
+            if (versionTipType === 'free_three_months') {
+              this.$refs && this.$refs.ModalCharge.open()
+            } else {
+              this.$refs && this.$refs.ModalChargeOrder.open()
+            }
+            return false
+          }
           this.isStartCapture = false
           let captureId = data.capture_id
           this.$router.push({

@@ -15,8 +15,8 @@
 
 <script>
 import { createNamespacedHelpers, mapState } from 'vuex'
-import PayRecord from '@customerSetting/paidRecharge/PayRecord.vue'
-import VersionUp from '@customerSetting/paidRecharge/VersionUp.vue'
+import PayRecord from '@customerSetting/paidRecharge/components/PayRecord.vue'
+import VersionUp from '@customerSetting/paidRecharge/components/VersionUp.vue'
 
 const {
   mapActions
@@ -68,7 +68,6 @@ export default {
     }
   },
   methods: {
-
     ...mapActions(['getUserAccountQuery', 'userVersionQuery']),
     // 事件名称
     methodsName () {

@@ -1,3 +1,4 @@
+<!-- ModalVersionUp -->
 <template>
   <el-dialog
     :visible.sync="visible"
@@ -26,16 +27,18 @@
         </div>
       </div>
       <div class="color-666 font-14" v-if="userVersion">
+
         当前是试用版，仅限20条复制额度；已用{{
           userVersion.today_cnt
         }}条，还剩<span class="price">{{ userVersion.left_cnt || 0 }}</span>条
-        <div>建议您订购高级版，订购后额度增加！</div>
+        <div>建议您升级高级版，升级后额度增加！</div>
       </div>
+
     </div>
     <div class="modalVersionUpBtn pb-20" slot="footer" v-if="versionType">
       <p class="relative heartbeat pointer" @click="up">
-        订购高级版
-        <span>原价订1年返38元</span>
+        升级高级版
+        <span>0.25元/天</span>
       </p>
     </div>
   </el-dialog>
@@ -46,12 +49,8 @@ import { mapState } from 'vuex'
 import Api from '@/api/apis'
 
 export default {
-  name: 'ModalVersionUpOrder',
+  name: 'ModalVersionUp',
   props: {
-    key: {
-      type: String,
-      default: 'up'
-    }
   },
   data () {
     return {
@@ -64,7 +63,7 @@ export default {
   methods: {
     open () {
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '试用限制优化20210507', '弹层曝光', '7天试用限制_展示弹层'])
+        window._hmt.push(['_trackEvent', '付费充值', '弹层曝光', '3个月试用限制_展示弹层'])
       }
       this.visible = !this.visible
     },
@@ -74,15 +73,21 @@ export default {
     async up () {
       try {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_订购高级版本'])
+          window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '3个月试用限制_升级高级版本'])
         }
-      // 订单统计打点
+        // 订单统计打点
         await Api.hhgjAPIs.statisticsEventCreate({
-          event_type: 'free_seven_days',
-          action: 'resubscribe'
+          event_type: 'free_three_months',
+          action: 'modal'
         })
         this.close()
-        window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
+        let routeData = this.$router.resolve({
+          name: 'PaidRecharge',
+          params: {
+            active: 'VersionUp'
+          }
+        })
+        window.open(routeData.href, '_blank')
       } catch (err) {
         this.$message.error(`${err}`)
       }
@@ -126,7 +131,7 @@ export default {
     border-radius: 10px;
     overflow: hidden;
     .old {
-      height: 160px;
+      height: 143px;
       background: linear-gradient(206deg, #F9FAFE 0%, #E8E6E9 100%);
       border-radius: 7px;
       // width: 292px;
@@ -181,7 +186,7 @@ export default {
     }
 
     .new {
-      height: 160px;
+      height: 143px;
       background: linear-gradient(206deg, #E4D2A8 0%, #C6A776 100%);
       border-radius: 7px;
       width: 210px;
@@ -242,11 +247,12 @@ export default {
       text-align: center;
       margin-bottom: 12px;
       span {
-        width: 125px;
+        width: 51px;
         font-size: 14px;
         font-family: MicrosoftYaHei;
         color: #FFFFFF;
         position: absolute;
+        width: 70px;
         height: 28px;
         background: linear-gradient(270deg, #FF6717 0%, #FFC300 100%);
         border-radius: 10px 0px 10px 0px;
@@ -277,7 +283,12 @@ export default {
     color: #FFFFFF;
     line-height: 25px;
   }
-
+  /deep/ .el-dialog__header {
+    padding-top: 0;
+  }
+  /deep/ .el-dialog__headerbtn {
+    right: 0px;
+  }
 }
 
 </style>

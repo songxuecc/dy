@@ -34,11 +34,11 @@
 <script>
 import { createNamespacedHelpers } from 'vuex'
 import Api from '@/api/apis'
-import ModalEvalRules from '@customerSetting/paidRecharge/ModalEvalRules'
-import TableRecharge from '@customerSetting/paidRecharge/TableRecharge.vue'
-import ModalWxPay from '@customerSetting/paidRecharge/ModalWxPay.vue'
-import ConsumptionRecord from '@customerSetting/paidRecharge/ConsumptionRecord.vue'
-import Billingrules from '@customerSetting/paidRecharge/Billingrules.vue'
+import ModalEvalRules from '@customerSetting/paidRecharge/components/ModalEvalRules'
+import TableRecharge from '@customerSetting/paidRecharge/components/TableRecharge.vue'
+import ModalWxPay from '@customerSetting/paidRecharge/components/ModalWxPay.vue'
+import ConsumptionRecord from '@customerSetting/paidRecharge/components/ConsumptionRecord.vue'
+import Billingrules from '@customerSetting/paidRecharge/components/Billingrules.vue'
 
 import utils from '@/common/utils'
 import { accMul } from '@/common/evalFloat.js'

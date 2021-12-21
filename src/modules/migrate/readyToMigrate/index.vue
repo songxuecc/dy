@@ -271,14 +271,12 @@
         <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <ModalVersionUp ref="ModalVersionUp" />
-    <ModalVersionUpOrder  ref="ModalVersionUpOrder" />
+    <ModalCharge ref="ModalCharge" />
   </div>
 </template>
 <script>
 import productListView from '@/components/ProductListView'
-import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
-import ModalVersionUpOrder from '@migrate/readyToMigrate/components/ModalVersionUpOrder'
+import ModalCharge from '@migrate/readyToMigrate/components/ModalCharge'
 import Search from '@migrate/readyToMigrate/components/Search'
 import isEmpty from 'lodash/isEmpty'
 
@@ -296,8 +294,7 @@ export default {
   components: {
     productListView,
     BatchEdit: () => import('./components/BatchEdit'),
-    ModalVersionUp,
-    ModalVersionUpOrder,
+    ModalCharge,
     Search
   },
   data () {
@@ -1042,6 +1039,12 @@ export default {
         'getCapture',
         params,
         (data) => {
+          console.log(data, 'data')
+          const hasShow = localStorage.getItem(data.capture_id)
+          if (data.is_error_balance && !hasShow) {
+            this.$refs.ModalCharge.open()
+            localStorage.setItem(data.capture_id, 1)
+          }
           this.isForceGetCapture = 0
           this.capture = data
           this.shopCaptureType = data.shop_capture_type
@@ -1362,27 +1365,33 @@ export default {
         return false
       }
       this.onCommitType()
-      const userVersion = this.userVersion || (await this.userVersionQuery())
-      const isFreeUpgrate = userVersion.is_free_upgrate
-      const isSenior = userVersion.is_senior
-      const limit = 10
-      const versionTipType = userVersion.version_type
-      if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit && !isSenior) {
-        // 3个月试用引导内部升级
-        // 7天试用引导在服务市场
-        if (versionTipType === 'free_three_months') {
-          this.$refs && this.$refs.ModalVersionUp.open()
-        } else {
-          this.$refs && this.$refs.ModalVersionUpOrder.open()
-        }
-      } else {
-        this.removeTempTemplate()
-        this.closeNewComer()
-        this.setSelectTPProductIdList(this.selectIdList)
-        this.$router.push({
-          name: 'MigrateSettingPrice'
-        })
-      }
+      // const userVersion = this.userVersion || (await this.userVersionQuery())
+      // const isFreeUpgrate = userVersion.is_free_upgrate
+      // const isSenior = userVersion.is_senior
+      // const limit = 10
+      // const versionTipType = userVersion.version_type
+      // if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit && !isSenior) {
+      //   // 3个月试用引导内部升级
+      //   // 7天试用引导在服务市场
+      //   if (versionTipType === 'free_three_months') {
+      //     this.$refs && this.$refs.ModalCharge.open()
+      //   } else {
+      //     this.$refs && this.$refs.ModalChargeOrder.open()
+      //   }
+      // } else {
+      //   this.removeTempTemplate()
+      //   this.closeNewComer()
+      //   this.setSelectTPProductIdList(this.selectIdList)
+      //   this.$router.push({
+      //     name: 'MigrateSettingPrice'
+      //   })
+      // }
+      this.removeTempTemplate()
+      this.closeNewComer()
+      this.setSelectTPProductIdList(this.selectIdList)
+      this.$router.push({
+        name: 'MigrateSettingPrice'
+      })
     },
     getTPProductByIds () {
       clearTimeout(this.productStatusSyncTimer)
@@ -1624,7 +1633,7 @@ export default {
     async versionTypeUp (btnText) {
       if (btnText === 'free_seven_days') {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_底部文案提示点击'])
+          window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '7天试用限制_底部文案提示点击'])
         }
         await Api.hhgjAPIs.statisticsEventCreate({
           event_type: 'free_seven_days',
@@ -1633,7 +1642,7 @@ export default {
         window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
       } else {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_底部文案提示点击'])
+          window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '3个月试用限制_底部文案提示点击'])
         }
         await Api.hhgjAPIs.statisticsEventCreate({
           event_type: 'free_three_months',

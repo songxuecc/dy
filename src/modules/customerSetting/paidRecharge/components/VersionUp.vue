@@ -36,7 +36,7 @@
 import { mapState, mapActions } from 'vuex'
 
 import Api from '@/api/apis'
-import ModalWxPay from '@customerSetting/paidRecharge/ModalWxPay.vue'
+import ModalWxPay from '@customerSetting/paidRecharge/components/ModalWxPay.vue'
 
 export default {
   name: 'VersionUp',
