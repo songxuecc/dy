@@ -35,7 +35,7 @@
                 (需手动点击页面底部的页码触发下一页的复制)
               </span>
               <span v-if="ShopsCaptureStatus === 4">【{{capture.shop_name}}】所有商品均复制完成！</span>
-              <span v-if="ShopsCaptureStatus === 5">【{{capture.shop_name}}】无法继续复制，小虎猜测原因是：当前店铺所有商品已复制完成</span>
+              <span v-if="ShopsCaptureStatus === 5">【{{capture.shop_name}}】无法继续复制，小虎猜测原因是：当前店铺所有商品已复制完成或抓取额度不足，请充值</span>
               <span v-if="ShopsCaptureStatus === 7">【{{capture.shop_name}}】已经抓取完成，共{{capture.total_num}}条数据，共{{Math.ceil(capture.total_num / capture.page_size)}}页，当前第{{pagination.index}}页</span>
 
               <!-- 淘宝自动抓取的状态逻辑判断 -->
