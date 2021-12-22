@@ -1,4 +1,4 @@
-<!--  -->
+<!-- template -->
 <template>
     <div>
          <p class="left font-12 mt-20 " v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">
@@ -7,8 +7,8 @@
             <el-tooltip class="item" effect="dark" placement="top-start">
                 <div slot="content" class='left'>
                 <div class="mb-5">试用版：全平台仅限20条复制额度。</div>
-                <div class="mb-5">高级版：抖音平台支持无限量复制；</div>
-                <div class="mb-5">非抖音平台订购1月送500条额度，订购3月送1500条，以此类推（用完可充值）</div>
+                <div class="mb-5">高级版：抖音平台支持无限量复制；非抖音平台订购1月送500条额度，</div>
+                <div class="mb-5">订购3月送1500条，以此类推（用完可充值）</div>
                 </div>
                 <span class="color-primary ml-10 underline pointer">版本区别</span>
             </el-tooltip>
@@ -18,9 +18,9 @@
             <span class="color-primary ml-10 underline pointer" @click="goUpVersion">去升级</span>
             <el-tooltip class="item" effect="dark" placement="top-start">
                 <div slot="content" class='left'>
-                <div class="mb-5">试用版：全平台仅限20条复制额度。</div>
-                <div class="mb-5">高级版：抖音平台支持无限量复制；</div>
-                <div class="mb-5">非抖音平台订购1月送500条额度，订购3月送1500条，以此类推（用完可充值）</div>
+                  <div class="mb-5">试用版：全平台仅限20条复制额度。</div>
+                  <!-- 升级费用在0-5元则是150条，升级费用在5-10元则是300条，升级费用在10-15元则是500条，升级费用在15-22.5元则是600条。 -->
+                  <div class="mb-5" v-if="userVersion">非抖音平台升级送{{getCount(userVersion.unit_price * userVersion.left_days)}}条额度</div>
                 </div>
                 <span class="color-primary ml-10 underline pointer">版本区别</span>
             </el-tooltip>
@@ -46,6 +46,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import utils from '@/common/utils'
 
 export default {
   name: 'payCharge',
@@ -90,6 +91,19 @@ export default {
         }
       })
       window.open(routeData.href, '_blank')
+    },
+    getCount (price) {
+      if (utils.fenToYuan(price) > 0 && utils.fenToYuan(price) <= 5) {
+        return 150
+      } else if (utils.fenToYuan(price) > 5 && utils.fenToYuan(price) <= 10) {
+        return 300
+      } else if (utils.fenToYuan(price) > 5 && utils.fenToYuan(price) <= 10) {
+        return 300
+      } else if (utils.fenToYuan(price) > 10 && utils.fenToYuan(price) <= 15) {
+        return 500
+      } else {
+        return 600
+      }
     }
   }
 }

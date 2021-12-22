@@ -21,14 +21,12 @@
           <div class="flex column justify-c">
             <p class="shiyong left" style="margin-bottom:4px">高级版</p>
             <p class="shiyongri left flex align-c" style="margin-bottom:6px">抖音平台无限量复制</p>
-            <p class="shiyongri left flex align-c" style="font-size:12px">非抖音平台升级后送600条额度(用完可充值）</p>
+            <p class="shiyongri left flex align-c" style="font-size:12px">非抖音平台订购1月送500条额度，订购1年送6000条额度（用完可充值）</p>
           </div>
         </div>
       </div>
       <div class="color-666 font-14" v-if="userVersion">
-        当前是试用版，仅限20条复制额度；已用{{
-          userVersion.today_cnt
-        }}条，还剩<span class="price">{{ userVersion.left_cnt || 0 }}</span>条
+        当前是试用版，仅限20条复制额度；已用20条，还剩<span class="price">0</span>条
         <div>建议您订购高级版，订购后额度增加！</div>
       </div>
     </div>
@@ -78,7 +76,7 @@ export default {
           action: 'resubscribe'
         })
         this.close()
-        window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
+        window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
       } catch (err) {
         this.$message.error(`${err}`)
       }

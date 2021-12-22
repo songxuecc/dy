@@ -22,12 +22,11 @@
           <div class="flex column justify-c">
             <p class="shiyong left" style="margin-bottom:4px">高级版</p>
             <p class="shiyongri left flex align-c" style="margin-bottom:6px">抖音平台无限量复制</p>
-            <p class="shiyongri left flex align-c" style="font-size:12px">非抖音平台升级后送600条额度(用完可充值）</p>
+            <p class="shiyongri left flex align-c" style="font-size:12px" v-if="userVersion">非抖音平台升级后送{{getCount(userVersion.unit_price * userVersion.left_days)}}条额度(用完可充值）</p>
           </div>
         </div>
       </div>
       <div class="color-666 font-14" v-if="userVersion">
-
         当前是试用版，仅限20条复制额度；已用{{
           userVersion.today_cnt
         }}条，还剩<span class="price">{{ userVersion.left_cnt || 0 }}</span>条
@@ -47,6 +46,7 @@
 <script>
 import { mapState } from 'vuex'
 import Api from '@/api/apis'
+import utils from '@/common/utils'
 
 export default {
   name: 'ModalVersionUp',
@@ -69,6 +69,19 @@ export default {
     },
     close () {
       this.visible = !this.visible
+    },
+    getCount (price) {
+      if (utils.fenToYuan(price) > 0 && utils.fenToYuan(price) <= 5) {
+        return 150
+      } else if (utils.fenToYuan(price) > 5 && utils.fenToYuan(price) <= 10) {
+        return 300
+      } else if (utils.fenToYuan(price) > 5 && utils.fenToYuan(price) <= 10) {
+        return 300
+      } else if (utils.fenToYuan(price) > 10 && utils.fenToYuan(price) <= 15) {
+        return 500
+      } else {
+        return 600
+      }
     },
     async up () {
       try {

@@ -5,13 +5,28 @@
     class="ModalCharge"
     :show-close="false"
   >
-    <div class="ModalVersionUp" >
+    <div class="ModalVersionUp " >
       <hh-icon type="iconjinggao1" style="font-size:50px"></hh-icon>
       <div class="payAmount">请充值额度</div>
       <div class="tip mb-10">非抖音平台受复制成本影响有额度限制，当前剩余0条，请充值</div>
+      <div class=" left" style="margin-left:38px">
+        <el-tooltip class="item" effect="dark" placement="top-start">
+          <div slot="content" class='left'>
+          <div>1、订购1个月赠送500条，订购3个月赠送1500条，订购了6个月赠送3000条</div>
+          <div style="padding-left:20px" class="mb-5">订购12个月赠送6000条；</div>
+          <div>2、试用版升级高级版，升级费用0-5元赠送150条，升级费用5-10元赠送300条</div>
+          <div style="padding-left:20px"  class="mb-5">升级费用10-15元赠送500条，升级费用15-22.5元赠送600条；</div>
+          <div  class="mb-5">3、赠送额度用完后可通过额外付费充值增加额度；</div>
+          <div >4、赠送额度、充值额度均可累计且在任何场景下不会被清空；</div>
+          <div style="padding-left:20px"  class="mb-5">抓取成功1个商品消耗1条额度，抓取失败不消耗额度；</div>
+          <div>5、此规则从2021.12.X日开始生效，在此前产生的充值费用不支持退差价。</div>
+          </div>
+          <span class="color-primary underline pointer" >额度计算规则</span>
+        </el-tooltip>
+      </div>
       <div class="mt-20">
         <el-button type="primary" plain style="width:120px">暂不充值</el-button>
-        <el-button class="relative modalVersionUpBtn" type="primary" style="width:120px" @click="charge">充值额度<span class="g">原价订1年返38元</span></el-button>
+        <el-button class="relative modalVersionUpBtn" type="primary" style="width:120px" @click="charge">充值额度<span class="g">低至0.016元/条</span></el-button>
       </div>
     </div>
   </el-dialog>
@@ -23,10 +38,6 @@ import { mapState } from 'vuex'
 export default {
   name: 'ModalCharge',
   props: {
-    key: {
-      type: String,
-      default: 'up'
-    }
   },
   data () {
     return {
