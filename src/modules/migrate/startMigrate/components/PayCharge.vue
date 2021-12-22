@@ -1,7 +1,7 @@
 <!--  -->
 <template>
     <div>
-         <p class="left font-12 mt-20 " v-if="userVersion && userVersion.is_free_upgrate && userVersion.is_senior && userVersion.version_type === 'free_seven_days'">
+         <p class="left font-12 mt-20 " v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">
             当前为试用版仅限20条复制额度，剩余<span class="fail">{{availablePddCaptureNums}} 条</span>；建议订购高级版提升额度
             <span class="color-primary ml-10 underline pointer" @click="goOrder">去订购</span>
             <el-tooltip class="item" effect="dark" placement="top-start">
@@ -13,7 +13,7 @@
                 <span class="color-primary ml-10 underline pointer">版本区别</span>
             </el-tooltip>
             </p>
-        <p class="left font-12 mt-20 "  v-if="userVersion && userVersion.is_free_upgrate && userVersion.is_senior && userVersion.version_type === 'free_three_months'">
+        <p class="left font-12 mt-20 "  v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">
             当前为试用版仅限20条复制额度，剩余<span class="fail">{{availablePddCaptureNums}} 条</span>；建议升级高级版提升额度
             <span class="color-primary ml-10 underline pointer" @click="goUpVersion">去升级</span>
             <el-tooltip class="item" effect="dark" placement="top-start">
@@ -58,6 +58,7 @@ export default {
   },
   async created () {
     if (!this.userVersion) (await this.userVersionQuery())
+    console.log(this.userVersion, 'userVersion')
   },
   computed: {
     ...mapState('customerSetting/paidRecharge', ['availablePddCaptureNums', 'versionList']),
