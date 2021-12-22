@@ -64,9 +64,6 @@ class BaseModelClass {
     // 请求函数
     this.fetch = options.fetch
 
-    // 函数名称前缀
-    this.name = options.name
-
     return this.baseModel()
   }
 

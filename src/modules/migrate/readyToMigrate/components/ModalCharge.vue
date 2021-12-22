@@ -24,7 +24,15 @@
           <span class="color-primary underline pointer" >额度计算规则</span>
         </el-tooltip>
       </div>
-      <div class="mt-20">
+      <div class="mt-20" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">
+        <el-button type="primary" plain style="width:120px">暂不订购</el-button>
+        <el-button class="relative modalVersionUpBtn" type="primary" style="width:120px" @click="goOrder">去订购<span class="g">低至0.016元/条</span></el-button>
+      </div>
+      <div class="mt-20" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">
+        <el-button type="primary" plain style="width:120px">暂不升级</el-button>
+        <el-button class="relative modalVersionUpBtn" type="primary" style="width:120px" @click="goUpVersion">去升级<span class="g">低至0.016元/条</span></el-button>
+      </div>
+      <div class="mt-20" v-else>
         <el-button type="primary" plain style="width:120px">暂不充值</el-button>
         <el-button class="relative modalVersionUpBtn" type="primary" style="width:120px" @click="charge">充值额度<span class="g">低至0.016元/条</span></el-button>
       </div>
@@ -55,11 +63,28 @@ export default {
       this.visible = !this.visible
     },
     async charge () {
-      if (window._hmt) {
-        window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '7天试用限制_订购高级版本'])
-      }
+      let routeData = this.$router.resolve({
+        name: 'PaidRecharge',
+        params: {
+          active: 'VersionUp'
+        }
+      })
+      window.open(routeData.href, '_blank')
       this.close()
-      window.open('https://dy.huhuguanjia.com/customerSetting/paidRecharge/PayRecord')
+    },
+    goUpVersion () {
+      let routeData = this.$router.resolve({
+        name: 'PaidRecharge',
+        params: {
+          active: 'VersionUp'
+        }
+      })
+      this.close()
+      window.open(routeData.href, '_blank')
+    },
+    goOrder () {
+      this.close()
+      window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
     }
   }
 }
