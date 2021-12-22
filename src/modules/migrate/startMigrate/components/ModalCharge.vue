@@ -27,9 +27,7 @@
         </div>
       </div>
       <div class="color-666 font-14" v-if="userVersion">
-        当前是试用版，仅限20条复制额度；已用{{
-          userVersion.today_cnt
-        }}条，还剩<span class="price">{{ userVersion.left_cnt || 0 }}</span>条
+        当前是试用版，仅限20条复制额度；已用{{20 - userVersion.total_capture_nums}}条，还剩<span class="price">0</span>条
         <div>建议您升级高级版，升级后额度增加！</div>
       </div>
 
