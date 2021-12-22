@@ -35,7 +35,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['versionList', 'availablePddCaptureNums'])
+    ...mapState(['versionList'])
   },
   methods: {
     toggleVisible () {

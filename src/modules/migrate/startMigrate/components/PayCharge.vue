@@ -2,7 +2,7 @@
 <template>
     <div>
          <p class="left font-12 mt-20 " v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">
-            当前为试用版仅限20条复制额度，剩余<span class="fail">{{availablePddCaptureNums}} 条</span>；建议订购高级版提升额度
+            当前为试用版仅限20条复制额度，剩余<span class="fail">{{20 - userVersion.total_capture_nums}} 条</span>；建议订购高级版提升额度
             <span class="color-primary ml-10 underline pointer" @click="goOrder">去订购</span>
             <el-tooltip class="item" effect="dark" placement="top-start">
                 <div slot="content" class='left'>
@@ -14,7 +14,7 @@
             </el-tooltip>
             </p>
         <p class="left font-12 mt-20 "  v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">
-            当前为试用版仅限20条复制额度，剩余<span class="fail">{{availablePddCaptureNums}} 条</span>；建议升级高级版提升额度
+            当前为试用版仅限20条复制额度，剩余<span class="fail">{{20 - userVersion.total_capture_nums}} 条</span>；建议升级高级版提升额度
             <span class="color-primary ml-10 underline pointer" @click="goUpVersion">去升级</span>
             <el-tooltip class="item" effect="dark" placement="top-start">
                 <div slot="content" class='left'>
@@ -62,7 +62,7 @@ export default {
     console.log(this.userVersion, 'userVersion')
   },
   computed: {
-    ...mapState('customerSetting/paidRecharge', ['availablePddCaptureNums', 'versionList']),
+    ...mapState('customerSetting/paidRecharge', ['versionList', 'availablePddCaptureNums']),
     ...mapState('migrate/readyToMigrate', [
       'userVersion'
     ])

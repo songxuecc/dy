@@ -285,7 +285,6 @@ export default {
     ...mapGetters({
       isAuth: 'getIsAuth'
     }),
-    ...mapStatePaidRecharge(['availablePddCaptureNums']),
     ...mapGetters(['getTokenHeaders', 'getCaptureIdList', 'getUserId']),
     ...mapState('migrate/readyToMigrate', [
       'userVersion'
