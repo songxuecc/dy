@@ -112,7 +112,8 @@ export default {
           ext_json: {}
         }
         if (this.custome) {
-          parmas.ext_json.nums = this.nums
+          parmas.ext_json = JSON.stringify({nums: this.nums})
+          parmas.version_type = 'charge_custom'
         }
         const data = await Api.hhgjAPIs.userAccountFlowCreate(parmas)
         this.orderData = data

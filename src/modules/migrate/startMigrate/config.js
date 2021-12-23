@@ -49,11 +49,11 @@ export const platformIconsUrl = [
     src: require('@/assets/images/17.png'),
     tip: '17网'
   },
-  {
-    key: '禅妈妈',
-    src: require('@/assets/images/chanmama.png'),
-    tip: '禅妈妈'
-  },
+  // {
+  //   key: '禅妈妈',
+  //   src: require('@/assets/images/chanmama.png'),
+  //   tip: '禅妈妈'
+  // },
   {
     key: '搜款网',
     src: require('@/assets/images/soukuanwang.png'),

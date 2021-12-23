@@ -55,10 +55,8 @@
             </div>
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
-
-          <div class="info mt-5">导入复制前可以通过
-            <span class="click" @click="openProductCollection">商品采集功能</span>
-            采集商品链接</div>
+          <div class="info mt-5 ">导入复制前可以通过<span class="click" @click="openProductCollection">商品采集功能</span>采集商品链接</div>
+          <PayCharge  />
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
@@ -168,7 +166,7 @@
     <ModalBindCopyIdSearch :ids="lostGoodsIds" ref="ModalBindCopyIdSearch" @continueCopy="continueCopy"/>
     <ModalCharge ref="ModalCharge" />
     <ModalChargeOrder  ref="ModalChargeOrder" />
-
+    <ModalChargeTip  ref="ModalChargeTip" />
   </div>
 </template>
 <script>
@@ -187,11 +185,11 @@ import Api from '@/api/apis'
 import TablemigrateHistory from '@migrate/startMigrate/components/TablemigrateHistory'
 import ModalCharge from '@migrate/startMigrate/components/ModalCharge'
 import ModalChargeOrder from '@migrate/startMigrate/components/ModalChargeOrder'
+import ModalChargeTip from '@migrate/startMigrate/components/ModalChargeTip'
 import PayCharge from '@migrate/startMigrate/components/PayCharge'
 
 const {
-  mapActions: mapActionsPaidRecharge,
-  mapState: mapStatePaidRecharge
+  mapActions: mapActionsPaidRecharge
 } = createNamespacedHelpers('customerSetting/paidRecharge')
 
 export default {
@@ -241,7 +239,8 @@ export default {
     TablemigrateHistory,
     ModalCharge,
     ModalChargeOrder,
-    PayCharge
+    PayCharge,
+    ModalChargeTip
   },
   activated () {
     this.getUserBindList()
@@ -355,7 +354,7 @@ export default {
       'setCaptureIdList'
     ]),
     ...mapActions('migrate/startMigrate', ['getCaptureShopCompleteList']),
-    ...mapActionsPaidRecharge(['getUserAccountQuery']),
+    ...mapActionsPaidRecharge(['getUserAccountQuery', 'availablePddCaptureNums']),
     ...mapActions('migrate/readyToMigrate', [
       'userVersionQuery'
     ]),
@@ -667,7 +666,6 @@ export default {
         let self = this
         this.isStartCapture = true
         this.request('capture', parmas, async (data) => {
-          console.log(data, 'data')
           // 试用用户判断抓取是否有限制
           const userVersion = this.userVersion || (await this.userVersionQuery())
           console.log(userVersion, 'userVersion')
@@ -685,6 +683,13 @@ export default {
             this.isStartCapture = false
             return false
           }
+          // 高级版 充值限制
+          if (data.left_capture_nums_not_enough) {
+            this.$refs && this.$refs.ModalChargeTip.open()
+            this.isStartCapture = false
+            return false
+          }
+
           this.isStartCapture = false
           let captureId = data.capture_id
           this.$router.push({
@@ -725,6 +730,9 @@ export default {
         this.$message.error('上传文件太大')
         return false
       }
+      //   this.$refs.upload.abort()
+      //   return false
+      // }
       // 修改搬家配置
       // const updateResult = await this.$refs.setting.updateMigrateSetting()
       // if (updateResult === 'error') {
@@ -744,12 +752,35 @@ export default {
       this.showProcess = false
       this.$refs.upload.clearFiles()
     },
-    uploadOnSuccess: function (response, file, fileList) {
+    uploadOnSuccess: async function (response, file, fileList) {
       this.isStartCapture = false
       this.processLength = 100
       this.showProcess = false
       this.$refs.upload.clearFiles()
       let code = parseInt(response.code)
+      // 导入复制 弹窗限制
+      const userVersion = this.userVersion || (await this.userVersionQuery())
+      console.log(userVersion, 'userVersion')
+      const isFreeUpgrate = userVersion.is_free_upgrate
+      const isSenior = userVersion.is_senior
+      const versionTipType = userVersion.version_type
+      if (!isFreeUpgrate && !isSenior && response.data.left_capture_nums_not_enough) {
+            // 3个月试用引导内部升级
+            // 7天试用引导在服务市场
+        if (versionTipType === 'free_three_months') {
+          this.$refs && this.$refs.ModalCharge.open()
+        } else {
+          this.$refs && this.$refs.ModalChargeOrder.open()
+        }
+        this.isStartCapture = false
+        return false
+      }
+      if (response.data.left_capture_nums_not_enough) {
+        this.$refs && this.$refs.ModalChargeTip.open()
+        this.isStartCapture = false
+        return false
+      }
+
       if (code !== 0) {
         this.uploading = false
         if (code === 205) { // 体验版功能受限
@@ -863,6 +894,7 @@ export default {
     handleBlur () {
       // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.close()
     },
+    // 调转整店复制查看历史记录
     handleTablemigrateHistory (captureId) {
       this.$router.push({
         path: '/migrate/productList',
