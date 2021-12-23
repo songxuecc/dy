@@ -1,11 +1,12 @@
 <!-- 额度消耗记录-->
 <template>
-    <el-dialog title="额度消耗记录" :visible.sync="visible"  v-hh-modal width="800px" center  v-if="visible">
+    <el-dialog title="额度消耗记录" :visible.sync="visible"  v-hh-modal width="800px" center  v-if="visible" style="margin-top:-50px">
         <div class="">
           <el-table
             :data="tableData"
             v-loading="loading"
-            style="width: 100%">
+            height="500"
+            style="width: 100%;">
             <el-table-empty slot="empty" />
             <el-table-column
               prop="create_time"

@@ -55,20 +55,29 @@
           <template slot-scope="scope">
             <div v-if="scope.row.editBtns.length">
               <span v-for="(btn,index) in scope.row.editBtns" :key="index" >
-                <el-tooltip popper-class="shopsBand-tooltip" :manual="true" effect="light"  placement="top-start" :value="btn.text === '切换成TA' && !btn.diabled && showTooltip">
-                    <div slot="content">
-                      <div style="width:172px" class="color-666 font-12 left mt-10" >
-                       点我切换店铺哦~
-                      </div>
-                      <div @click="closeNewComer" class="right pointer underline primary mb-10">我知道了</div>
+                <el-tooltip popper-class="shopsBand-tooltip" :manual="true" effect="light"  placement="top-start" :value="btn.text === '切换成TA' && !btn.diabled && showTooltip" v-if="scope.row.idx === 0">
+                  <div slot="content" >
+                    <div style="width:172px" class="color-666 font-12 left mt-10" >
+                      点我切换店铺哦~
                     </div>
-                    <el-link
-                      @click="btn.handle"
-                      :class="['btn',btn.diabled ? 'diabled' : '']"
-                      type="primary"
-                      :underline="false" >{{btn.text}}
-                    </el-link>
-                  </el-tooltip>
+                    <div @click="closeNewComer" class="right pointer underline primary mb-10" >我知道了</div>
+                  </div>
+                  <el-link
+                    @click="btn.handle"
+                    :class="['btn',btn.diabled ? 'diabled' : '']"
+                    type="primary"
+                    :underline="false" >{{btn.text}}
+                  </el-link>
+                </el-tooltip>
+
+                <el-link
+                  v-else
+                  @click="btn.handle"
+                  :class="['btn',btn.diabled ? 'diabled' : '']"
+                  type="primary"
+                  :underline="false" >{{btn.text}}
+                </el-link>
+
               </span>
             </div>
             <el-link v-else type="primary" class="btn">—</el-link>

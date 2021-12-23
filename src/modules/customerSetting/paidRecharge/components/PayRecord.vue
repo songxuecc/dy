@@ -17,8 +17,8 @@
           <span>自定义 <el-input style="width:100px" size="mini" v-model="nums" class="input" :class="['tag','pointer',custome && 'active']" @focus="custome = true" > </el-input> 条 <el-link class="font-12 bold ml-5" :underline="false" type="primary" @click="toggleVisibleBillingrules">计费规则</el-link></span>
         </div>
         <div class="mb-20 color-333 font-12 bold">价格：
-          <span class="price font-24 bold" v-if="versionList && versionList.length && !custome">{{versionList[active].amount / 100 || 0}}</span>
-          <span class="price font-24 bold" v-if="versionList && versionList.length && custome">{{customAmount}}</span><span class="price">元</span>
+          <span class="price font-24 bold" v-if="versionList && versionList.length && !custome">{{financial(versionList[active].amount / 100) || 0}}</span>
+          <span class="price font-24 bold" v-if="versionList && versionList.length && custome">{{financial(customAmount)}}</span><span class="price">元</span>
         <span class="tutorials">支持开发票</span>
         </div>
         <el-button type="primary" class="mb-20" @click="onCharge" :loading="loading" :diabled="loading" style="width:120px" >立即充值</el-button>
@@ -101,6 +101,9 @@ export default {
     },
     toggleVisibleBillingrules () {
       this.$refs.Billingrules.open()
+    },
+    financial (x) {
+      return Number.parseFloat(x).toFixed(2)
     },
     async onCharge () {
       this.loading = true
