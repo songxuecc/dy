@@ -42,7 +42,7 @@
         <TablemigrateHistory class="TablemigrateHistory"  ref="TablemigrateHistory" @change="handleTablemigrateHistory"/>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
-        <div style="width: 520px; margin: auto;margin-bottom:20px">
+        <div style="width: 540px; margin: auto;margin-bottom:20px">
           <el-upload class="capture-file-upload" drag :action="uploadAction" :headers="getTokenHeaders"
             :data="{'upload_type': 'local'}" :before-upload="uploadBeforeUpload" :on-progress="uploadOnProgress"
             :on-success="uploadOnSuccess" :on-change="uploadChange" :limit=1 ref="upload" :show-file-list="false"
