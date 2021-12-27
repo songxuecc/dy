@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="color-666 font-14" v-if="userVersion">
-        当前是试用版，仅限20条复制额度；已用{{userVersion.total_capture_nums}}条，还剩<span class="price">{{20 - userVersion.total_capture_nums > 0 ? 20 - userVersion.total_capture_nums : 0}}</span>条
+        当前是试用版，仅限20条复制额度；已用{{userVersion.total_capture_nums}}条，还剩<span class="price">{{left_capture_nums}}</span>条
         <div>建议您订购高级版，订购后额度增加！</div>
       </div>
     </div>
@@ -49,7 +49,8 @@ export default {
   },
   data () {
     return {
-      visible: false
+      visible: false,
+      left_capture_nums: 0
     }
   },
   computed: {

@@ -676,16 +676,16 @@ export default {
             // 3个月试用引导内部升级
             // 7天试用引导在服务市场
             if (versionTipType === 'free_three_months') {
-              this.$refs && this.$refs.ModalCharge.open()
+              this.$refs && this.$refs.ModalCharge.open(this.capture)
             } else {
-              this.$refs && this.$refs.ModalChargeOrder.open()
+              this.$refs && this.$refs.ModalChargeOrder.open(this.capture)
             }
             this.isStartCapture = false
             return false
           }
           // 高级版 充值限制
           if (data.left_capture_nums_not_enough) {
-            this.$refs && this.$refs.ModalChargeTip.open()
+            this.$refs && this.$refs.ModalChargeTip.open(this.capture)
             this.isStartCapture = false
             return false
           }
