@@ -43,7 +43,7 @@
             :on-error="handleUploadError"
             :before-upload="handleBeforeUpload"
             :headers="getTokenHeaders"
-            :data="{ belong_type: 0 }"
+            :data="{ belong_type: 0, is_no_delete:1 }"
             :multiple="true"
             :show-file-list="false"
             v-if="quality.quality_attachments && quality.quality_attachments.length < limit"
