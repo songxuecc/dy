@@ -10,9 +10,9 @@
       <div class="payAmount" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'" >请订购</div>
       <div class="payAmount" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">请升级</div>
       <div class="payAmount" v-else>请充值额度</div>
-      <div class="tip mb-10" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">非抖音平台受复制成本影响有额度限制，当前剩余0条，请订购</div>
-      <div class="tip mb-10" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">非抖音平台受复制成本影响有额度限制，当前剩余0条，请升级</div>
-      <div class="tip mb-10" v-else>非抖音平台受复制成本影响有额度限制，当前剩余0条，请充值</div>
+      <div class="tip mb-10" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">非抖音平台受复制成本影响有额度限制，当前剩余{{availablePddCaptureNums}}条，请订购</div>
+      <div class="tip mb-10" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">非抖音平台受复制成本影响有额度限制，当前剩余{{availablePddCaptureNums}}条，请升级</div>
+      <div class="tip mb-10" v-else>非抖音平台受复制成本影响有额度限制，当前剩余{{availablePddCaptureNums}}条，请充值</div>
 
       <div class=" left" style="margin-left:38px" >
         <el-tooltip class="item" effect="dark" placement="top-start">
@@ -59,7 +59,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType'])
+    ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType']),
+    ...mapState('customerSetting/paidRecharge', ['versionList', 'availablePddCaptureNums'])
+
   },
   methods: {
     open () {

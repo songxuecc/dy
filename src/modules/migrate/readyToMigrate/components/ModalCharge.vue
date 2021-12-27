@@ -7,9 +7,9 @@
   >
     <div class="ModalVersionUp " >
       <hh-icon type="iconjinggao1" style="font-size:50px"></hh-icon>
-      <div class="payAmount" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'" >请订购</div>
-      <div class="payAmount" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">请升级</div>
-      <div class="payAmount" v-else>请充值额度</div>
+      <div class="payAmount"  >请订购</div>
+      <div class="payAmount" >请升级</div>
+      <div class="payAmount" >请充值额度</div>
       <div class="tip mb-10" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">非抖音平台受复制成本影响有额度限制，当前剩余0条，请订购</div>
       <div class="tip mb-10" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">非抖音平台受复制成本影响有额度限制，当前剩余0条，请升级</div>
       <div class="tip mb-10" v-else>非抖音平台受复制成本影响有额度限制，当前剩余0条，请充值</div>
@@ -48,7 +48,6 @@
 
 <script>
 import { mapState } from 'vuex'
-
 export default {
   name: 'ModalCharge',
   props: {

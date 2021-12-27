@@ -56,7 +56,6 @@
               <span v-if="ShopsCaptureStatus === 12">
                 【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
               </span>
-
               <span v-if="ShopsCaptureStatus === 13">
                 正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
                 <br/> <span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size) }}页，第{{captureTaobaoShopPageIndex}}页抓取完成，正在准备抓取下一页中...</span>
@@ -64,7 +63,11 @@
                   <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
                 </div>
               </span>
-
+              <div v-if="ShopsCaptureStatus === 14"  class="underline pointer">
+                <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" @click="goChargeOrder">抓取余额不足，请点击订购 !!</span>
+                <span v-else-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior"  @click="goCharge">抓取余额不足，请点击升级 !!</span>
+                <span v-else @click="goCharge">抓取余额不足，请点击充值 !!</span>
+              </div>
             </div>
             <!-- 链接复制的提示语 -->
             <div v-else>
@@ -85,10 +88,9 @@
           </template>
           <!-- <el-tooltip
             class="item" effect="light" placement="bottom" :content="calcProgressText(capture)">
-
           </el-tooltip> -->
 
-          <div class="progress-bar blue stripes" style="width: 200px;margin: 5px auto;" v-show="getCaptureStatus ==='capture-item' && ([0, 1].includes(this.capture.page_status) || [1].includes(this.capture.current_page_status))">
+          <div class="progress-bar blue stripes" style="width: 200px;margin: 5px auto;" v-show="!capture.is_error_balance &&  getCaptureStatus ==='capture-item' && ([0, 1].includes(this.capture.page_status) || [1].includes(this.capture.current_page_status))">
               <span :style="{ width: calcProgressVal(capture) }"></span>
             </div>
         </el-alert>
@@ -272,11 +274,15 @@
       </span>
     </el-dialog>
     <ModalCharge ref="ModalCharge" />
+    <ModalChargeSevenDays ref="ModalChargeSevenDays" />
+    <ModalChargeTreeMonth ref="ModalChargeTreeMonth" />
   </div>
 </template>
 <script>
 import productListView from '@/components/ProductListView'
 import ModalCharge from '@migrate/readyToMigrate/components/ModalCharge'
+import ModalChargeSevenDays from '@migrate/readyToMigrate/components/ModalChargeSevenDays'
+import ModalChargeTreeMonth from '@migrate/readyToMigrate/components/ModalChargeTreeMonth'
 import Search from '@migrate/readyToMigrate/components/Search'
 import isEmpty from 'lodash/isEmpty'
 
@@ -295,6 +301,8 @@ export default {
     productListView,
     BatchEdit: () => import('./components/BatchEdit'),
     ModalCharge,
+    ModalChargeSevenDays,
+    ModalChargeTreeMonth,
     Search
   },
   data () {
@@ -434,6 +442,8 @@ export default {
     },
     ShopsCaptureStatus () {
       if (!this.isShopCapture) return 0
+      // 抓取余额不足
+      if (this.capture.is_error_balance) return 14
       if (this.capture.tp_id === 1002 || this.capture.tp_id === 1001) {
         // 淘宝平台
         const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
@@ -1038,10 +1048,19 @@ export default {
       this.request(
         'getCapture',
         params,
-        (data) => {
+        async (data) => {
           console.log(data, 'data')
           const hasShow = localStorage.getItem(data.capture_id)
-          if (data.is_error_balance && !hasShow) {
+          const userVersion = this.userVersion || (await this.userVersionQuery())
+          const isSevenDays = userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'
+          const isTreeMounth = userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'
+          if (data.is_error_balance && !hasShow && isSevenDays) {
+            this.$refs.ModalChargeSevenDays.open()
+            localStorage.setItem(data.capture_id, 1)
+          } else if (data.is_error_balance && !hasShow && isTreeMounth) {
+            this.$refs.ModalChargeTreeMonth.open()
+            localStorage.setItem(data.capture_id, 1)
+          } else if (data.is_error_balance && !hasShow && (!isSevenDays || !isTreeMounth)) {
             this.$refs.ModalCharge.open()
             localStorage.setItem(data.capture_id, 1)
           }
@@ -1692,6 +1711,18 @@ export default {
       } else {
         this.commit_type = Number(commitType)
       }
+    },
+    goCharge () {
+      let routeData = this.$router.resolve({
+        name: 'PaidRecharge',
+        params: {
+          active: 'VersionUp'
+        }
+      })
+      window.open(routeData.href, '_blank')
+    },
+    goChargeOrder () {
+      window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
     }
   }
 }
