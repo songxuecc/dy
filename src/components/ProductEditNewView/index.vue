@@ -1,5 +1,5 @@
 <template lang="html">
-  <div style="height: 100%" class="ProductEditNewView">
+  <div style="height: 100%" class="ProductEditNewView" >
     <el-row :gutter="20" style="height: 100%">
       <el-col :span="7" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
         <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
@@ -537,7 +537,10 @@ export default {
     }
   },
   mounted () {
-
+    document.addEventListener('keydown', this.keyDown)
+  },
+  beforeDestroy () {
+    document.removeEventListener('keydown', this.keyDown)
   },
   updated () {
   },
@@ -548,6 +551,17 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    // w和s键盘上下控制
+    keyDown (e) {
+      const key = window.event ? e.keyCode : e.switch
+      const id = this.product.model.tp_product_id
+      const index = this.productList.findIndex(item => item.tp_product_id === id)
+      if (key === 87 && index > 0) {
+        this.handleProductSelect(this.productList[index - 1], this.product)
+      } else if (key === 83 && index < this.productList.length - 1) {
+        this.handleProductSelect(this.productList[index + 1], this.product)
+      }
+    },
     // 检查资质中心
     checkQualityList (product) {
       const originQualityList = product.originModel.quality_list || []
@@ -629,6 +643,7 @@ export default {
       }
     },
     handleProductSelect (val, old) {
+      console.log(val, old, 'handleProductSelect')
       if (this.isLoading) {
         return false
       }
@@ -1710,6 +1725,9 @@ export default {
     },
     setPromp (number, row, borderKey, key) {
       // this.$set(row,'promo_price',)
+    },
+    doSomething () {
+      console.log('999')
     },
     getPriceStyle (number, row, borderKey, key) {
       if (number > 9999999.99 || number < 0.01) {
