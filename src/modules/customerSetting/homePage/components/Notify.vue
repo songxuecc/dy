@@ -4,7 +4,10 @@
     <div class="tip left">
       <hh-icon type="iconxiaoxitongzhi" class="mr-5"></hh-icon> 消息通知
     </div>
-    <div class="warp" @click="goBtnLink">
+    <div class="warp2" v-if="!listData.length">
+      <el-table-empty style="margin-top:-35px"></el-table-empty>
+    </div>
+    <div class="warp" @click="goBtnLink" v-else>
       <vue-seamless-scroll
       :data="listData"
       class="scroll"
@@ -191,6 +194,17 @@ export default {
 
 }
 
+.warp2{
+  width:100%;
+  height: 190px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  overflow: hidden;
+  background:#fff;
+  border: 1px solid rgba(50, 119, 255, 0.5);
+  box-shadow: 0px 3px 4px 0px rgba(30, 30, 30, 0.05);
+}
 // @media screen and (min-width:1680px) and (max-width:1920px){
 //   .scroll {
 //     width: 354px;
