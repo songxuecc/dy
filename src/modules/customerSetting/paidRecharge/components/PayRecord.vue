@@ -106,6 +106,9 @@ export default {
       return Number.parseFloat(x).toFixed(2)
     },
     async onCharge () {
+      if (!utils.isNumber(this.nums) && this.custome) {
+        return this.$message.warning('自定义金额请填写数字！！')
+      }
       this.loading = true
       try {
         const versionType = this.versionList[this.active].version_type
