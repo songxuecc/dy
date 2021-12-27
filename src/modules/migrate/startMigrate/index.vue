@@ -676,16 +676,16 @@ export default {
             // 3个月试用引导内部升级
             // 7天试用引导在服务市场
             if (versionTipType === 'free_three_months') {
-              this.$refs && this.$refs.ModalCharge.open(this.capture)
+              this.$refs && this.$refs.ModalCharge.open(data)
             } else {
-              this.$refs && this.$refs.ModalChargeOrder.open(this.capture)
+              this.$refs && this.$refs.ModalChargeOrder.open(data)
             }
             this.isStartCapture = false
             return false
           }
           // 高级版 充值限制
           if (data.left_capture_nums_not_enough) {
-            this.$refs && this.$refs.ModalChargeTip.open(this.capture)
+            this.$refs && this.$refs.ModalChargeTip.open(data)
             this.isStartCapture = false
             return false
           }
@@ -760,7 +760,6 @@ export default {
       let code = parseInt(response.code)
       // 导入复制 弹窗限制
       const userVersion = this.userVersion || (await this.userVersionQuery())
-      console.log(userVersion, 'userVersion')
       const isFreeUpgrate = userVersion.is_free_upgrate
       const isSenior = userVersion.is_senior
       const versionTipType = userVersion.version_type
@@ -768,15 +767,15 @@ export default {
             // 3个月试用引导内部升级
             // 7天试用引导在服务市场
         if (versionTipType === 'free_three_months') {
-          this.$refs && this.$refs.ModalCharge.open()
+          this.$refs && this.$refs.ModalCharge.open(response.data)
         } else {
-          this.$refs && this.$refs.ModalChargeOrder.open()
+          this.$refs && this.$refs.ModalChargeOrder.open(response.data)
         }
         this.isStartCapture = false
         return false
       }
       if (response.data.left_capture_nums_not_enough) {
-        this.$refs && this.$refs.ModalChargeTip.open()
+        this.$refs && this.$refs.ModalChargeTip.open(response.data)
         this.isStartCapture = false
         return false
       }
