@@ -49,16 +49,16 @@ export const platformIconsUrl = [
     src: require('@/assets/images/17.png'),
     tip: '17网'
   },
-  {
-    key: '禅妈妈',
-    src: require('@/assets/images/chanmama.png'),
-    tip: '禅妈妈'
-  },
-  {
-    key: '搜款网',
-    src: require('@/assets/images/soukuanwang.png'),
-    tip: '搜款网'
-  },
+  // {
+  //   key: '禅妈妈',
+  //   src: require('@/assets/images/chanmama.png'),
+  //   tip: '禅妈妈'
+  // },
+  // {
+  //   key: '搜款网',
+  //   src: require('@/assets/images/soukuanwang.png'),
+  //   tip: '搜款网'
+  // },
   {
     key: '淘宝特价',
     src: require('@/assets/images/tb-tejia.png'),
@@ -112,11 +112,11 @@ export const platformIconsStore = [
     src: require('@/assets/images/17.png'),
     tip: '17网'
   },
-  {
-    key: '搜款网',
-    src: require('@/assets/images/soukuanwang.png'),
-    tip: '搜款网'
-  },
+  // {
+  //   key: '搜款网',
+  //   src: require('@/assets/images/soukuanwang.png'),
+  //   tip: '搜款网'
+  // },
   {
     key: '有赞',
     src: require('@/assets/images/youzan.png'),
