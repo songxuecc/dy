@@ -40,7 +40,7 @@
             <el-table-column label="标题">
                 <template slot-scope="scope">
                     <el-link type="primary" target="_blank" :underline="false" class="font-12">
-                        {{ productTitleDic[scope.row.tp_product_id] }} - {{scope.row.isDelete}}
+                        {{ productTitleDic[scope.row.tp_product_id] }}
                     </el-link>
                 </template>
             </el-table-column>
