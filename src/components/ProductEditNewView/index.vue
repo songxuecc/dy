@@ -1,11 +1,11 @@
 <template lang="html">
   <div style="height: 100%" class="ProductEditNewView" >
     <el-row :gutter="20" style="height: 100%">
-      <el-col :span="7" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
-        <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
+      <el-col :span="7" style="height: 100%; overflow-y: scroll;padding-right: 0px; padding-bottom: 80px;">
+        <div class="left bold" style="width:320px;font-size:14px;padding:8px 10px;"> <b >商品名称</b> <b class="color-999">（Tip：键盘↑(W)键和↓(S)键可切换商品）</b></div>
+        <el-table ref="productList" :data="tableData" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
                   :row-style="{height:'68px'}"
                   @current-change="handleProductSelect"
-                  style="height: 100%; overflow-y: scroll;"
                   @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" @selection-change="handleSelectionChange"
         >
             <el-table-column width="1">
@@ -25,29 +25,37 @@
                 </el-tooltip>
               </template>
             </el-table-column>
-            <el-table-column type="selection" class-name="ProductEditNewView-select">
+            <el-table-column type="selection" class-name="ProductEditNewView-select" width="35">
             </el-table-column>
-            <el-table-column label="图片" width="100" align="center" class-name="ProductEditNewView-img">
+            <el-table-column label="图片" width="70" align="center" class-name="ProductEditNewView-img">
                 <template slot-scope="scope">
                   <el-badge class="item" :value="Object.values(scope.row.check_error_msg_static).map(item => item.num).reduce((total, num) => total + num)"
                             v-if="scope.row.check_error_msg_static && Object.keys(scope.row.check_error_msg_static).length > 0">
-                    <img style="height:60px; max-width: 60px;" :src="scope.row.thumbnail">
+                    <img style="height:55px; max-width: 55px;" :src="scope.row.thumbnail">
                   </el-badge>
-                    <img v-else style="height:60px" :src="scope.row.thumbnail">
+                    <img v-else style="height:55px" :src="scope.row.thumbnail">
                   <div v-if="scope.row.isEdit" style="height: 20px; width: 100%; background-color: #fecf23; bottom: 0; left: 0; position: absolute;" >已编辑</div>
                 </template>
             </el-table-column>
             <el-table-column label="标题">
                 <template slot-scope="scope">
-                    <el-link type="primary" target="_blank" :underline="false">
-                        {{ productTitleDic[scope.row.tp_product_id] }}
+                    <el-link type="primary" target="_blank" :underline="false" class="font-12">
+                        {{ productTitleDic[scope.row.tp_product_id] }} - {{scope.row.isDelete}}
                     </el-link>
                 </template>
             </el-table-column>
+
+            <el-table-column label="删除" width="50">
+                <template slot-scope="scope">
+                    <div class="font-12 flex align-c pointer" @click.stop="onDeleteProduct(scope.row)"><hh-icon type="iconshanchu1" class="font-12"></hh-icon>(D)</div>
+                </template>
+            </el-table-column>
+
         </el-table>
       </el-col>
       <el-col :span="17" style="height: 100%; padding-bottom: 100px;">
-          <el-tabs v-loading="loadingCnt" v-model="activityTab" type="card" style="height: 100%;" @tab-click="handleTabClick">
+          <div v-if="!tableData.length">暂无数据</div>
+          <el-tabs v-loading="loadingCnt" v-model="activityTab" type="card" style="height: 100%;" @tab-click="handleTabClick" v-else>
               <el-tab-pane label="商品属性" name="info">
                   <span slot="label" v-if=" product.model.check_error_msg_static  && '0' in product.model.check_error_msg_static">商品属性
                     <el-tooltip effect="dark"  placement="top-start">
@@ -394,6 +402,7 @@ import xorWith from 'lodash/xorWith'
 import omit from 'lodash/omit'
 import SkuTable from './SkuTable'
 import servises from '@servises'
+import Api from '@/api/apis'
 
 export default {
   inject: ['reload'],
@@ -507,6 +516,10 @@ export default {
     ...mapGetters({
       getTokenHeaders: 'getTokenHeaders'
     }),
+    tableData () {
+      const p = this.productList.filter(item => !item.isDelete)
+      return p
+    },
     isTitleWarn () {
       if (this.getTitleLength(this.product.model.title) > 30) {
         return true
@@ -555,11 +568,16 @@ export default {
     keyDown (e) {
       const key = window.event ? e.keyCode : e.switch
       const id = this.product.model.tp_product_id
-      const index = this.productList.findIndex(item => item.tp_product_id === id)
-      if (key === 87 && index > 0) {
-        this.handleProductSelect(this.productList[index - 1], this.product)
-      } else if (key === 83 && index < this.productList.length - 1) {
-        this.handleProductSelect(this.productList[index + 1], this.product)
+      const index = this.tableData.findIndex(item => item.tp_product_id === id)
+      // w
+      if ((key === 87 || key === 38) && index > 0) {
+        this.handleProductSelect(this.tableData[index - 1], this.product)
+        // s
+      } else if ((key === 83 || key === 40) && index < this.tableData.length - 1) {
+        this.handleProductSelect(this.tableData[index + 1], this.product)
+        // d
+      } else if (key === 68) {
+        this.onDeleteProduct(this.tableData[index])
       }
     },
     // 检查资质中心
@@ -881,14 +899,14 @@ export default {
     },
     productListCellStyle ({row, column, rowIndex, columnIndex}) {
       if (
-        this.productList.length > 0 &&
-        this.productList[rowIndex].tp_product_id !== this.product.model.tp_product_id &&
-        this.productList[rowIndex].category_id === this.product.model.cat_id) {
+        this.tableData.length > 0 &&
+        this.tableData[rowIndex].tp_product_id !== this.product.model.tp_product_id &&
+        this.tableData[rowIndex].category_id === this.product.model.cat_id) {
         return 'background-color:rgb(236, 245, 255);'
       }
       if (
-        this.productList.length > 0 &&
-        this.productList[rowIndex].tp_product_id === this.product.model.tp_product_id) {
+        this.tableData.length > 0 &&
+        this.tableData[rowIndex].tp_product_id === this.product.model.tp_product_id) {
         return 'background-color:rgb(179, 216, 255);'
       }
     },
@@ -935,6 +953,21 @@ export default {
     async onSaveProduct () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
+      }
+      if (!this.tableData.length) {
+        const isDeleteProductID = this.productList.filter(item => item.isDelete).map(item => item.tp_product_id)
+        if (isDeleteProductID.length) {
+          Api.hhgjAPIs.deleteTPProduct({
+            tp_product_ids: isDeleteProductID
+          }).then(data => {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.$emit('triggerDialogClose')
+          })
+        }
+        return false
       }
       let error = ''
       let errorSkuProduct = false
@@ -1228,10 +1261,22 @@ export default {
             this.$emit('triggerDialogClose')
             self.closeAfterSave = false
           }
-          this.$message({
-            message: '保存成功',
-            type: 'success'
-          })
+          const isDeleteProductID = this.productList.filter(item => item.isDelete).map(item => item.tp_product_id)
+          if (isDeleteProductID.length) {
+            Api.hhgjAPIs.deleteTPProduct({
+              tp_product_ids: isDeleteProductID
+            }).then(data => {
+              this.$message({
+                message: '保存成功',
+                type: 'success'
+              })
+            })
+          } else {
+            this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+          }
         } else {
           // 批量保存没完成继续处理
           let cnt = Math.min(tpProductListIdx + 5, tpProductList.length) + Math.min(tpProductIdListIdx + 5, tpProductIdList.length)
@@ -1310,6 +1355,29 @@ export default {
     isProductChange () {
       return this.updateProductEditStatus()
     },
+    getProductList () {
+      const p = this.productList.filter(item => !item.isDelete)
+      return p
+    },
+    // 删除
+    onDeleteProduct (val) {
+      const productList = this.productList.map((item, idx) => {
+        if (item.tp_product_id === val.tp_product_id) {
+          return {
+            ...item,
+            isDelete: true
+          }
+        }
+        return item
+      })
+      let tableDataIndex = this.tableData.findIndex(item => item.tp_product_id === val.tp_product_id)
+      this.productList = productList
+      this.$nextTick(() => {
+        if (this.tableData[tableDataIndex]) {
+          this.setProduct(this.tableData[tableDataIndex])
+        }
+      })
+    },
     // 还原
     onRevertProduct () {
       for (let i in this.products) {
@@ -1330,8 +1398,8 @@ export default {
       this.skuJson = this.product.model.sku_json
       this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
       // this.specifications = this.product.model.specifications
-      this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
-      this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
+      this.$refs['bannerPicListView'] && this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
+      this.$refs['descPicListView'] && this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
     },
     onClose () {
       this.setIsShowFloatView(true)
@@ -1347,9 +1415,9 @@ export default {
       this.productRemoveFirstBannerDic = {}
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
-      this.$refs['bannerPicListView'].clear()
-      this.$refs['descPicListView'].clear()
-      this.$refs['propertySet'].clearData()
+      this.$refs['bannerPicListView'] && this.$refs['bannerPicListView'].clear()
+      this.$refs['descPicListView'] && this.$refs['descPicListView'].clear()
+      this.$refs['propertySet'] && this.$refs['propertySet'].clearData()
     },
     handleMouseEnter (row, column, cell, event) {
       if (this.mouseOverIndex === row.index) {
@@ -1798,11 +1866,16 @@ export default {
   .cell {
     text-overflow: clip;
     overflow-y: auto;
+    padding:0;
   }
 }
 /deep/ .el-tabs__content {
   height: 100%;
   overflow-y: auto;
+}
+
+/deep/ .el-table__body-wrapper {
+  border-top: 1px solid #000;
 }
   // /deep/ .el-table__body tr.current-row>td {
   //   background-color: rgb(179, 216, 255);
@@ -1946,7 +2019,7 @@ export default {
         right: 20px;
       }
       .el-badge{
-        padding:10px;
+        // padding:10px;
       }
     }
 

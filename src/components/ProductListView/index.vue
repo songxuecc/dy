@@ -812,6 +812,7 @@ export default {
       this.dialogBeforeClose(() => {
         this.dialogEditVisible = false
         this.$refs.productEditNewView.onClose()
+        this.reload()
       })
     },
     dialogBeforeClose (done) {
