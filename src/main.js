@@ -7,14 +7,21 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from './store/store'
 import utils from '@/common/utils'
-import HhIcon from '@/components/HhIcon'
 import VueClipboard from 'vue-clipboard2'
 import {registerComponent, registerDirectives, requireAll} from '@/common/register'
+import MdUi from 'vue-midou-icon'
+import 'vue-midou-icon/lib/midou.css'
 
+const IconFont = MdUi.createFromIconfontCN({
+  scriptUrl: [
+    '//at.alicdn.com/t/font_2290850_33l600rrdf.js'
+  ],
+  name: 'hh-icon'
+})
+Vue.use(IconFont)
 Vue.use(VueClipboard)
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
-Vue.component('hh-icon', HhIcon)
 registerComponent()
 registerDirectives()
 
