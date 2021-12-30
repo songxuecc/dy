@@ -97,6 +97,11 @@
                   class="price-sku-input"
                   v-model="form.config_json.sku_price_rate"
                 ></el-input>%
+                <!-- +
+                <el-input
+                  class="price-sku-input"
+                  v-model="form.config_json.out_price_diff_add"
+                ></el-input> -->
                 -
                 <el-input
                   class="price-sku-input"
@@ -450,6 +455,7 @@ export default {
         this.form.config_json.sku_price_diff = template.origin_price_diff
         this.form.config_json.sku_price_rate = template.group_price_rate
         this.form.config_json.out_price_diff = template.group_price_diff
+        // this.form.config_json.out_price_diff = template.group_price_diff
         // 划线价
         this.form.config_json.market_price_rate = template.price_rate
         this.form.config_json.market_price_diff = template.price_diff

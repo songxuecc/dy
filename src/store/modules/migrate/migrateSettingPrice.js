@@ -70,6 +70,7 @@ export default {
       let originPriceDiff = template.model.origin_price_diff
       let groupPriceRate = template.model.group_price_rate
       let groupPriceDiff = template.model.group_price_diff
+      let groupPriceDiffAdd = template.model.group_price_diff_add
       // 添加默认模版值
       if (!utils.isNumber(originPriceDiff)) {
         originPriceDiff = 0
@@ -80,10 +81,13 @@ export default {
       if (!utils.isNumber(groupPriceDiff)) {
         groupPriceDiff = 0
       }
+      if (!utils.isNumber(groupPriceDiffAdd)) {
+        groupPriceDiffAdd = 0
+      }
 
       const everyDcimal = template.model.ext_json.every_decimal
       // sku价格计算公式
-      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff)
+      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff + Number(groupPriceDiffAdd))
       // 抹角 抹分
       const evalPrice = financial(unit, everyDcimal)
       const nextTableData = (tableData || []).map(item => {
@@ -118,6 +122,7 @@ export default {
       const unit = state.unit
       let originPriceDiff = template.model.origin_price_diff
       let groupPriceDiff = template.model.group_price_diff
+      let groupPriceDiffAdd = template.model.group_price_diff_add
       let groupPriceRate = template.model.group_price_rate
 
       // 添加默认模版值
@@ -130,10 +135,13 @@ export default {
       if (!utils.isNumber(groupPriceDiff)) {
         groupPriceDiff = 0
       }
+      if (!utils.isNumber(groupPriceDiffAdd)) {
+        groupPriceDiffAdd = 0
+      }
 
       const everyDcimal = template.model.ext_json.every_decimal
       // sku价格计算公式
-      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff)
+      let evalGroupPriceRange = x => (((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff) + Number(groupPriceDiffAdd))
       // 抹角 抹分
       const evalPrice = financial(unit, everyDcimal)
       const nextTableData = tableData.map(item => {
@@ -172,6 +180,7 @@ export default {
       let originPriceDiff = template.model.origin_price_diff
       let groupPriceRate = template.model.group_price_rate
       let groupPriceDiff = template.model.group_price_diff
+      let groupPriceDiffAdd = template.model.group_price_diff_add
       // 添加默认模版值
       if (!utils.isNumber(originPriceDiff)) {
         originPriceDiff = 0
@@ -182,7 +191,10 @@ export default {
       if (!utils.isNumber(groupPriceDiff)) {
         groupPriceDiff = 0
       }
-      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff)
+      if (!utils.isNumber(groupPriceDiffAdd)) {
+        groupPriceDiffAdd = 0
+      }
+      let evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 + Number(groupPriceDiffAdd) - groupPriceDiff)
 
       const nextTableData = (tableData || []).map(item => {
         let skuMap = cloneDeep(item.sku_json.sku_map)
@@ -214,6 +226,9 @@ export default {
       if (!utils.isNumber(model.group_price_diff)) {
         model.group_price_diff = 0
       }
+      if (!utils.isNumber(model.group_price_diff_add)) {
+        model.group_price_diff_add = 0
+      }
       if (!utils.isNumber(model.price_diff)) {
         model.price_diff = 0
       }
@@ -233,12 +248,14 @@ export default {
         const globalTemplate = {
           subtraction1: model.origin_price_diff,
           subtraction2: model.group_price_rate,
-          subtraction3: model.group_price_diff
+          subtraction3: model.group_price_diff,
+          subtraction4: model.group_price_diff_add
         }
         const localTemplate = {
           subtraction1: arithmetic.subtraction1,
           subtraction2: arithmetic.subtraction2,
-          subtraction3: arithmetic.subtraction3
+          subtraction3: arithmetic.subtraction3,
+          subtraction4: arithmetic.subtraction4
         }
         if (Number(arithmetic.radio) === 1 && isEqual(globalTemplate, localTemplate)) {
           delete item.custom_setting_unit

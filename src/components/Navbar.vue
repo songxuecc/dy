@@ -26,16 +26,25 @@
                 </el-tooltip>
                 <img @click="goToOrder()" style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" v-else/>
               </div> -->
-              <!-- 充值升级 -->
               <div v-if="shopName" class="syncProduct pointer " @click="paidRecharge" :disabled="isSyncing">
-                  <div class="flex align-c ">
-                    <hh-icon type="iconchongzhishengji" style="font-size:15px;margin-right:2px"/>
-                    <div class="relative" style="height:60px;line-height:60px">
-                      充值升级
-                      <div class="active-bar"></div>
-                    </div>
+                <div class="flex align-c ">
+                  <hh-icon type="iconjiaocheng" style="font-size:12px;margin-right:2px;margin-bottom:2px"/>
+                  <div class="relative" style="height:60px;line-height:60px">
+                    教程
+                    <div class="active-bar"></div>
                   </div>
                 </div>
+              </div>
+              <!-- 充值升级 -->
+              <div v-if="shopName" class="syncProduct pointer " @click="paidRecharge" :disabled="isSyncing">
+                <div class="flex align-c ">
+                  <hh-icon type="iconchongzhishengji" style="font-size:15px;margin-right:2px"/>
+                  <div class="relative" style="height:60px;line-height:60px">
+                    充值升级
+                    <div class="active-bar"></div>
+                  </div>
+                </div>
+              </div>
               <!-- 同步商品 & 绑定店铺 -->
               <el-tooltip v-if="shopName" class="syncProductToolTip" effect="dark" placement="bottom">
                 <template slot="content">
