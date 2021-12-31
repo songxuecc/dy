@@ -273,6 +273,7 @@
     </el-dialog>
     <ModalVersionUp ref="ModalVersionUp" />
     <ModalVersionUpOrder  ref="ModalVersionUpOrder" />
+    <ModalPresellType  ref="ModalPresellType" />
   </div>
 </template>
 <script>
@@ -280,8 +281,8 @@ import productListView from '@/components/ProductListView'
 import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
 import ModalVersionUpOrder from '@migrate/readyToMigrate/components/ModalVersionUpOrder'
 import Search from '@migrate/readyToMigrate/components/Search'
+import ModalPresellType from '@migrate/readyToMigrate/components/ModalPresellType'
 import isEmpty from 'lodash/isEmpty'
-
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import { mapActions, mapState, mapGetters } from 'vuex'
@@ -289,6 +290,7 @@ import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
 import Api from '@/api/apis'
+import servises from '@servises'
 
 export default {
   inject: ['reload'],
@@ -298,7 +300,8 @@ export default {
     BatchEdit: () => import('./components/BatchEdit'),
     ModalVersionUp,
     ModalVersionUpOrder,
-    Search
+    Search,
+    ModalPresellType
   },
   data () {
     return {
@@ -793,12 +796,20 @@ export default {
       })
     },
     quickMigrate () {
-      this.request('migrate', {
-        tp_product_ids: this.selectIdList,
-        is_quick_migrate: 1,
-        commit_type: this.commit_type
-      }, (data) => {
-        location.reload()
+      const self = this
+      servises.migrateCreateCheck().then((data) => {
+        // self.$refs.ModalPresellType.open(data.template, self.selectIdList)
+        if (!data.is_valid) {
+          self.$refs.ModalPresellType.open(data.template, self.selectIdList)
+        } else {
+          self.request('migrate', {
+            tp_product_ids: self.selectIdList,
+            is_quick_migrate: 1,
+            commit_type: self.commit_type
+          }, (data) => {
+            location.reload()
+          })
+        }
       })
     },
     calendarTime (strTime) {
