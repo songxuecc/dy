@@ -26,7 +26,7 @@
                 <div style="display:flex">
                   <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:150px;margin-right:10px;align-items:center">
                     <el-option :value="9999" label="当日" :key="9999"> </el-option>
-                    <el-option :value="1" label="24小时"> </el-option>
+                    <el-option :value="1" label="次日"> </el-option>
                     <el-option :value="2" label="48小时"> </el-option>
                     <el-option :value="3" label="3天">3天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
                     <el-option :value="5" label="5天">5天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>

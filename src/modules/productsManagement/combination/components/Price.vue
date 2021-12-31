@@ -37,7 +37,7 @@
               <el-form-item label="现货发货时间:" prop="delivery_delay_day" class="item mb-10" v-if="form.presell_type === 0" >
                   <el-radio-group v-model="form.delivery_delay_day">
                     <el-radio :label="9999">当日发</el-radio>
-                    <el-radio :label="1">24小时</el-radio>
+                    <el-radio :label="1">次日</el-radio>
                     <el-radio :label="2">48小时</el-radio>
                 </el-radio-group>
               </el-form-item>
