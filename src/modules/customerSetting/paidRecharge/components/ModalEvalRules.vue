@@ -6,7 +6,7 @@
               <li class="color-4e font-14">试用版升级高级版，升级费用0-5元赠送150条，升级费用5-10元赠送300条，升级费用10-15元赠送500条，升级费用15-22.5元赠送600条；</li>
               <li class="color-4e font-14">赠送额度用完后可通过额外付费充值增加额度；</li>
               <li class="color-4e font-14">赠送额度、充值额度均可累计且在任何场景下不会被清空；抓取成功1个商品消耗1条额度，抓取失败不消耗额度；</li>
-              <li class="color-4e font-14">此规则从2021.12.X日开始生效，在此前产生的充值费用不支持退差价。</li>
+              <li class="color-4e font-14">此规则从2022.01.04日开始生效，在此前产生的充值费用不支持退差价。</li>
           </ol>
           <div slot="footer"> <el-button @click="visible = false" type="primary" style="width:120px">我知道了</el-button></div>
       </el-dialog>
