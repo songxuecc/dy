@@ -305,32 +305,6 @@ export default {
           active: 'PayRecord'
         }
       })
-    },
-    async paidUp () {
-      if (this.versionTipType === 'free_three_months') {
-        if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_narvbar点击'])
-        }
-        await Api.hhgjAPIs.statisticsEventCreate({
-          event_type: 'free_three_months',
-          action: 'narvebar_text'
-        })
-        this.$router.push({
-          name: 'PaidRecharge',
-          params: {
-            active: 'VersionUp'
-          }
-        })
-      } else {
-        if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_narvbar点击'])
-        }
-        await Api.hhgjAPIs.statisticsEventCreate({
-          event_type: 'free_seven_days',
-          action: 'narvebar_text'
-        })
-        window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
-      }
     }
   }
 }

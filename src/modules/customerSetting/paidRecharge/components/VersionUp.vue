@@ -9,8 +9,8 @@
                     width="320"
                     trigger="hover">
                     <div class="left " >
-                        <p class="font-12">1、试用版每日搬家数为10，高级版每日搬家数不受限制</p>
-                        <p class="font-12">2、试用版升级高级版费用为{{userVersion.unit_price / 100 || 0.3}}元/日，升级后使用时长不变</p>
+                        <p class="font-12">试用版：全平台仅限20条复制额度</p>
+                        <p class="font-12" v-if="getToolTip">高级版：抖音平台支持无限量复制，非抖音平台送{{ getToolTip }}条额度</p>
                     </div>
                     <a class="primary " slot="reference">版本区别</a>
                 </el-popover>
@@ -19,7 +19,6 @@
             <p class="mb-20 color-333 font-12 bold">价格：
               <span class="price font-24 bold" >{{userVersion.free_upgrate_amount / 100 || 0}}</span>
               <span class="price">元</span>
-              <span v-if="getToolTip" class="tooltiptext">{{ getToolTip }}</span>
               <span class="tutorials">支持开发票</span>
             </p>
             <el-button type="primary" class="mb-10" style="width:120px" @click="onVipUp" :loading="loading" :diabled="loading">立即升级版本</el-button>  <span @click="reload" class="primary pointer"><hh-icon type="iconjiazai" style="font-size:12px;" class="ml-5"/> <a >已升级，刷新一下</a></span>
@@ -36,7 +35,8 @@
 import { mapState, mapActions } from 'vuex'
 
 import Api from '@/api/apis'
-import ModalWxPay from '@customerSetting/paidRecharge/ModalWxPay.vue'
+import ModalWxPay from '@customerSetting/paidRecharge/components/ModalWxPay.vue'
+import utils from '@/common/utils'
 
 export default {
   name: 'VersionUp',
@@ -59,13 +59,19 @@ export default {
     }),
     ...mapState('customerSetting/paidRecharge', ['userVersion']),
     getToolTip () {
-      let freeUpgradeAmount = this.userVersion.free_upgrate_amount
-      if (freeUpgradeAmount > 1000 && freeUpgradeAmount <= 1500) {
-        return '赠送拼多多抓取额度100条'
-      } else if (freeUpgradeAmount > 1500) {
-        return '赠送拼多多抓取额度150条'
+      if (!this.userVersion) return ''
+      const price = this.userVersion.unit_price * this.userVersion.left_days
+      if (utils.fenToYuan(price) > 0 && utils.fenToYuan(price) <= 5) {
+        return 150
+      } else if (utils.fenToYuan(price) > 5 && utils.fenToYuan(price) <= 10) {
+        return 300
+      } else if (utils.fenToYuan(price) > 5 && utils.fenToYuan(price) <= 10) {
+        return 300
+      } else if (utils.fenToYuan(price) > 10 && utils.fenToYuan(price) <= 15) {
+        return 500
+      } else {
+        return 600
       }
-      return false
     }
   },
   methods: {

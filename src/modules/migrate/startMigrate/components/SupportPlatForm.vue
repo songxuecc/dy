@@ -50,7 +50,7 @@ export default {
         '17网': 'https://gz.17zwd.com/',
         '抖音': 'https://www.yuque.com/huxiao-rkndm/ksui6u/muvtyt',
         '拼多多': 'http://mobile.yangkeduo.com/',
-        '禅妈妈': 'https://www.chanmama.com/',
+        // '禅妈妈': 'https://www.chanmama.com/',
         '搜款网': 'https://www.vvic.com/gz',
         '淘宝特价': 'https://www.yuque.com/huxiao-rkndm/ksui6u/gb8emy',
         '有赞': 'https://www.youzan.com/'

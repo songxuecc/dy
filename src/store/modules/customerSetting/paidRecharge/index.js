@@ -1,8 +1,11 @@
+import consumptionRecord from './consumptionRecord'
 import Api from '@/api/apis'
 
-// 店铺绑定
-export default {
+const modules = {
   namespaced: true,
+  modules: {
+    consumptionRecord
+  },
   state: () => ({
     tableData: [],
     versionList: [],
@@ -79,3 +82,5 @@ export default {
   getters: {
   }
 }
+
+export default modules

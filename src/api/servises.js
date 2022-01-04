@@ -503,6 +503,9 @@ const hhgjAPIs = {
   // 搬家
   migrateCreateCheck: (params) => {
     return api.actionCreatorPost('/api/migrate/create/check', params)
+  },
+  userCapturePage: (params) => {
+    return api.actionCreateGet('/api/capture/page', params)
   }
 }
 
