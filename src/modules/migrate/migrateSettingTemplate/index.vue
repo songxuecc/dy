@@ -84,7 +84,6 @@ export default {
     ...mapActionsMigrate([
       'requestTemplate',
       'removeTempTemplate',
-      'setPresellEndTime',
       'removeDicCustomPrices'
     ]),
     ...mapActions([
@@ -272,7 +271,6 @@ export default {
         this.removeTempTemplate()
         this.updateTemplate()
         const {template} = this.getTemplateParams()
-        this.setPresellEndTime(template.presell_end_time)
         this.migrage()
       } catch (err) {
         this.$message.error(`startMigrate: ${err || err.message}`)

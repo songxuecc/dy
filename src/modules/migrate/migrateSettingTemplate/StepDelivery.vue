@@ -47,8 +47,7 @@
                   v-model="template.model.presell_end_time"
                   :picker-options="pickerOptions"
                   type="datetime"
-                  placeholder="选择日期时间"
-                  default-time="00:00:00">
+                  placeholder="选择日期时间">
                 </el-date-picker>
                 <p class="info">最多支持设置距离当前30天</p>
             </el-form-item>
