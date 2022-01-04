@@ -2,7 +2,7 @@
   <div style="height: 100%" class="ProductEditNewView" >
     <el-row :gutter="20" style="height: 100%">
       <el-col :span="7" style="height: 100%; overflow-y: scroll;padding-right: 0px; padding-bottom: 80px;">
-        <div class="left bold" style="width:320px;font-size:14px;padding:8px 10px;"> <b >商品名称</b> <b class="color-999">（键盘↑(W)键和↓(S)键可切换商品,D(delete)可删除商品,删除后请点击保存编辑）</b></div>
+        <div class="left bold" style="font-size:14px;padding:8px 10px;"> <b >商品名称</b> <b class="color-999">（键盘↑(W)键和↓(S)键可切换商品,D(delete)可删除商品,删除后请点击保存编辑）</b></div>
         <el-table ref="productList" :data="tableData" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
                   class="productList"
                   :row-style="{height:'68px'}"
