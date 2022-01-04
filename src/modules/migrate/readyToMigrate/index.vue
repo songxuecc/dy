@@ -798,18 +798,18 @@ export default {
     quickMigrate () {
       const self = this
       servises.migrateCreateCheck().then((data) => {
-        // if (!data.is_valid) {
-        //   self.$refs.ModalPresellType.open(data.template, self.selectIdList)
-        // } else {
-        //   self.request('migrate', {
-        //     tp_product_ids: self.selectIdList,
-        //     is_quick_migrate: 1,
-        //     commit_type: self.commit_type
-        //   }, (data) => {
-        //     location.reload()
-        //   })
-        // }
-        self.$refs.ModalPresellType.open(data.template, self.selectIdList)
+        if (!data.is_valid) {
+          self.$refs.ModalPresellType.open(data.template, self.selectIdList)
+        } else {
+          self.request('migrate', {
+            tp_product_ids: self.selectIdList,
+            is_quick_migrate: 1,
+            commit_type: self.commit_type
+          }, (data) => {
+            location.reload()
+          })
+        }
+        // self.$refs.ModalPresellType.open(data.template, self.selectIdList)
       })
     },
     calendarTime (strTime) {
