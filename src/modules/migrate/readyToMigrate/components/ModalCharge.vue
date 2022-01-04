@@ -7,10 +7,12 @@
   >
     <div class="ModalVersionUp " >
       <hh-icon type="iconjinggao1" style="font-size:50px"></hh-icon>
-      <div class="payAmount"  >请订购</div>
-      <div class="payAmount" >请升级</div>
-      <div class="payAmount" >请充值额度</div>
-      <div class="tip mb-10" >非抖音平台受复制成本影响有额度限制，当前剩余{{left_capture_nums}}条，请充值</div>
+      <div class="payAmount" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'" >请订购</div>
+      <div class="payAmount" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">请升级</div>
+      <div class="payAmount" v-else>请充值额度</div>
+      <div class="tip mb-10" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">非抖音平台受复制成本影响有额度限制，当前剩余{{availablePddCaptureNums}}条，请订购</div>
+      <div class="tip mb-10" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">非抖音平台受复制成本影响有额度限制，当前剩余{{availablePddCaptureNums}}条，请升级</div>
+      <div class="tip mb-10" v-else>非抖音平台受复制成本影响有额度限制，当前剩余{{left_capture_nums}}条，请充值</div>
 
       <div class=" left" style="margin-left:38px" >
         <el-tooltip class="item" effect="dark" placement="top-start">
@@ -27,7 +29,15 @@
           <span class="color-primary underline pointer" >额度计算规则</span>
         </el-tooltip>
       </div>
-      <div class="mt-20" >
+      <div class="mt-20" v-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'">
+        <el-button type="primary" plain style="width:120px" @click="close">暂不订购</el-button>
+        <el-button class="relative modalVersionUpBtn" type="primary" style="width:120px" @click="goOrder">去订购<span class="g g1">原价订1年反38元</span></el-button>
+      </div>
+      <div class="mt-20" v-else-if="userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'">
+        <el-button type="primary" plain style="width:120px" @click="close">暂不升级</el-button>
+        <el-button class="relative modalVersionUpBtn" type="primary" style="width:120px" @click="goUpVersion">去升级<span class="g g2">0.25元/天</span></el-button>
+      </div>
+      <div class="mt-20" v-else>
         <el-button type="primary" plain style="width:120px" @click="close">暂不充值</el-button>
         <el-button class="relative modalVersionUpBtn" type="primary" style="width:120px" @click="charge">充值额度<span class="g">低至0.016元/条</span></el-button>
       </div>
@@ -47,7 +57,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType'])
+    ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType']),
+    ...mapState('customerSetting/paidRecharge', ['versionList', 'availablePddCaptureNums'])
   },
   methods: {
     open () {
