@@ -66,7 +66,7 @@ export default {
   methods: {
     open (capture) {
       this.visible = !this.visible
-      this.left_capture_nums = capture.left_capture_nums
+      this.left_capture_nums = capture.left_capture_nums || 0
     },
     close () {
       this.visible = !this.visible
