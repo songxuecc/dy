@@ -35,7 +35,7 @@
                 (需手动点击页面底部的页码触发下一页的复制)
               </span>
               <span v-if="ShopsCaptureStatus === 4">【{{capture.shop_name}}】所有商品均复制完成！</span>
-              <span v-if="ShopsCaptureStatus === 5">【{{capture.shop_name}}】无法继续复制，小虎猜测原因是：当前店铺所有商品已复制完成</span>
+              <span v-if="ShopsCaptureStatus === 5">【{{capture.shop_name}}】无法继续复制，小虎猜测原因是：当前店铺所有商品已复制完成或抓取额度不足，请充值</span>
               <span v-if="ShopsCaptureStatus === 7">【{{capture.shop_name}}】已经抓取完成，共{{capture.total_num}}条数据，共{{Math.ceil(capture.total_num / capture.page_size)}}页，当前第{{pagination.index}}页</span>
 
               <!-- 淘宝自动抓取的状态逻辑判断 -->
@@ -56,7 +56,6 @@
               <span v-if="ShopsCaptureStatus === 12">
                 【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 抓取失败
               </span>
-
               <span v-if="ShopsCaptureStatus === 13">
                 正在复制【{{capture.source}}】平台的<span v-if="capture.shop_name">【{{capture.shop_name}}】</span>店铺, 该平台现支持自动化抓取
                 <br/> <span v-if="capture.total_num">共{{Math.ceil(capture.total_num / capture.page_size) }}页，第{{captureTaobaoShopPageIndex}}页抓取完成，正在准备抓取下一页中...</span>
@@ -64,7 +63,11 @@
                   <hh-icon type="iconjinggao1"></hh-icon> 请勿关闭或操作本页面，如需进行操作请重新打开一个网页
                 </div>
               </span>
-
+              <div v-if="ShopsCaptureStatus === 14"  class="underline pointer">
+                <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" @click="goChargeOrder">抓取余额不足，请点击订购 !!</span>
+                <span v-else-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior"  @click="goCharge">抓取余额不足，请点击升级 !!</span>
+                <span v-else @click="goCharge">抓取余额不足，请点击充值 !!</span>
+              </div>
             </div>
             <!-- 链接复制的提示语 -->
             <div v-else>
@@ -85,10 +88,9 @@
           </template>
           <!-- <el-tooltip
             class="item" effect="light" placement="bottom" :content="calcProgressText(capture)">
-
           </el-tooltip> -->
 
-          <div class="progress-bar blue stripes" style="width: 200px;margin: 5px auto;" v-show="getCaptureStatus ==='capture-item' && ([0, 1].includes(this.capture.page_status) || [1].includes(this.capture.current_page_status))">
+          <div class="progress-bar blue stripes" style="width: 200px;margin: 5px auto;" v-show="!capture.is_error_balance &&  getCaptureStatus ==='capture-item' && ([0, 1].includes(this.capture.page_status) || [1].includes(this.capture.current_page_status))">
               <span :style="{ width: calcProgressVal(capture) }"></span>
             </div>
         </el-alert>
@@ -200,14 +202,14 @@
             </span>
           </span>
         </div>
-        <div class="info flex filterOnlineProducts  align-c justify-c ">
+        <!-- <div class="info flex filterOnlineProducts  align-c justify-c ">
           <span v-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior" class="pt-10">
             当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}}个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 升级为高级版 </a>，升级后每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
           <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" class="pt-10">
             当前版本为试用版(每日搬家数限10个)。今日已搬 {{userVersion.today_cnt}} 个，还能操作<span class="price bold"> {{ userVersion.left_cnt || 0  }} </span>个商品。建议您<a class="primary pointer bold" @click="versionTypeUp(versionTipType)"> 订购高级版 </a>，高级版每日搬家数<span class="color-333 bold"> 无上限！ </span>
           </span>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -271,14 +273,16 @@
         <el-button @click="batchDeleteCaptureVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <ModalVersionUp ref="ModalVersionUp" />
-    <ModalVersionUpOrder  ref="ModalVersionUpOrder" />
+    <ModalCharge ref="ModalCharge" />
+    <ModalChargeSevenDays ref="ModalChargeSevenDays" />
+    <ModalChargeTreeMonth ref="ModalChargeTreeMonth" />
   </div>
 </template>
 <script>
 import productListView from '@/components/ProductListView'
-import ModalVersionUp from '@migrate/readyToMigrate/components/ModalVersionUp'
-import ModalVersionUpOrder from '@migrate/readyToMigrate/components/ModalVersionUpOrder'
+import ModalCharge from '@migrate/readyToMigrate/components/ModalCharge'
+import ModalChargeSevenDays from '@migrate/readyToMigrate/components/ModalChargeSevenDays'
+import ModalChargeTreeMonth from '@migrate/readyToMigrate/components/ModalChargeTreeMonth'
 import Search from '@migrate/readyToMigrate/components/Search'
 import isEmpty from 'lodash/isEmpty'
 
@@ -296,8 +300,9 @@ export default {
   components: {
     productListView,
     BatchEdit: () => import('./components/BatchEdit'),
-    ModalVersionUp,
-    ModalVersionUpOrder,
+    ModalCharge,
+    ModalChargeSevenDays,
+    ModalChargeTreeMonth,
     Search
   },
   data () {
@@ -437,6 +442,8 @@ export default {
     },
     ShopsCaptureStatus () {
       if (!this.isShopCapture) return 0
+      // 抓取余额不足
+      if (this.capture.is_error_balance) return 14
       if (this.capture.tp_id === 1002 || this.capture.tp_id === 1001) {
         // 淘宝平台
         const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
@@ -1041,7 +1048,22 @@ export default {
       this.request(
         'getCapture',
         params,
-        (data) => {
+        async (data) => {
+          console.log(data, 'data')
+          const hasShow = localStorage.getItem(data.capture_id)
+          const userVersion = this.userVersion || (await this.userVersionQuery())
+          const isSevenDays = userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'
+          const isTreeMounth = userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_three_months'
+          if (data.is_error_balance && !hasShow && isSevenDays) {
+            this.$refs.ModalChargeSevenDays.open()
+            localStorage.setItem(data.capture_id, 1)
+          } else if (data.is_error_balance && !hasShow && isTreeMounth) {
+            this.$refs.ModalChargeTreeMonth.open()
+            localStorage.setItem(data.capture_id, 1)
+          } else if (data.is_error_balance && !hasShow && (!isSevenDays || !isTreeMounth)) {
+            this.$refs.ModalCharge.open()
+            localStorage.setItem(data.capture_id, 1)
+          }
           this.isForceGetCapture = 0
           this.capture = data
           this.shopCaptureType = data.shop_capture_type
@@ -1362,27 +1384,33 @@ export default {
         return false
       }
       this.onCommitType()
-      const userVersion = this.userVersion || (await this.userVersionQuery())
-      const isFreeUpgrate = userVersion.is_free_upgrate
-      const isSenior = userVersion.is_senior
-      const limit = 10
-      const versionTipType = userVersion.version_type
-      if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit && !isSenior) {
-        // 3个月试用引导内部升级
-        // 7天试用引导在服务市场
-        if (versionTipType === 'free_three_months') {
-          this.$refs && this.$refs.ModalVersionUp.open()
-        } else {
-          this.$refs && this.$refs.ModalVersionUpOrder.open()
-        }
-      } else {
-        this.removeTempTemplate()
-        this.closeNewComer()
-        this.setSelectTPProductIdList(this.selectIdList)
-        this.$router.push({
-          name: 'MigrateSettingPrice'
-        })
-      }
+      // const userVersion = this.userVersion || (await this.userVersionQuery())
+      // const isFreeUpgrate = userVersion.is_free_upgrate
+      // const isSenior = userVersion.is_senior
+      // const limit = 10
+      // const versionTipType = userVersion.version_type
+      // if (!isFreeUpgrate && this.selectIdList.length + userVersion.today_cnt > limit && !isSenior) {
+      //   // 3个月试用引导内部升级
+      //   // 7天试用引导在服务市场
+      //   if (versionTipType === 'free_three_months') {
+      //     this.$refs && this.$refs.ModalCharge.open()
+      //   } else {
+      //     this.$refs && this.$refs.ModalChargeOrder.open()
+      //   }
+      // } else {
+      //   this.removeTempTemplate()
+      //   this.closeNewComer()
+      //   this.setSelectTPProductIdList(this.selectIdList)
+      //   this.$router.push({
+      //     name: 'MigrateSettingPrice'
+      //   })
+      // }
+      this.removeTempTemplate()
+      this.closeNewComer()
+      this.setSelectTPProductIdList(this.selectIdList)
+      this.$router.push({
+        name: 'MigrateSettingPrice'
+      })
     },
     getTPProductByIds () {
       clearTimeout(this.productStatusSyncTimer)
@@ -1624,7 +1652,7 @@ export default {
     async versionTypeUp (btnText) {
       if (btnText === 'free_seven_days') {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '7天试用限制_底部文案提示点击'])
+          window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '7天试用限制_底部文案提示点击'])
         }
         await Api.hhgjAPIs.statisticsEventCreate({
           event_type: 'free_seven_days',
@@ -1633,7 +1661,7 @@ export default {
         window.open('https://fuwu.jinritemai.com/detail/purchase?service_id=42&sku_id=863&from=fuwu_market_home')
       } else {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '试用限制优化20210507', '按钮点击', '3个月试用限制_底部文案提示点击'])
+          window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '3个月试用限制_底部文案提示点击'])
         }
         await Api.hhgjAPIs.statisticsEventCreate({
           event_type: 'free_three_months',
@@ -1683,6 +1711,18 @@ export default {
       } else {
         this.commit_type = Number(commitType)
       }
+    },
+    goCharge () {
+      let routeData = this.$router.resolve({
+        name: 'PaidRecharge',
+        params: {
+          active: 'VersionUp'
+        }
+      })
+      window.open(routeData.href, '_blank')
+    },
+    goChargeOrder () {
+      window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
     }
   }
 }

@@ -57,7 +57,7 @@ export default {
       }
       const items = payload.user_list
       const canChangeShops = items.some(item => item.is_self && item.is_main)
-      const tableData = items.map(item => {
+      const tableData = items.map((item, idx) => {
         const editBtns = []
         if (!item.is_self) {
           editBtns.push({
@@ -87,7 +87,8 @@ export default {
         }
         return {
           ...item,
-          editBtns
+          editBtns,
+          idx
         }
       })
       commit('save', { tableData })

@@ -14,7 +14,8 @@ import { createNamespacedHelpers } from 'vuex'
 import Api from '@/api/apis'
 
 const {
-  mapState
+  mapState,
+  mapActions
 } = createNamespacedHelpers('customerSetting/paidRecharge')
 const PAY_TIME = 120
 
@@ -35,9 +36,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['versionList', 'availablePddCaptureNums'])
+    ...mapState(['versionList'])
   },
   methods: {
+    ...mapActions(['userVersionQuery']),
     toggleVisible () {
       this.visible = !this.visible
     },
@@ -73,6 +75,7 @@ export default {
     },
     closed () {
       this.isWaiting = false
+      this.userVersionQuery()
     },
     async startGetOrderStatus () {
       console.log(this.orderData)

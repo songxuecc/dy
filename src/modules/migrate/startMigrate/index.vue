@@ -42,7 +42,7 @@
         <TablemigrateHistory class="TablemigrateHistory"  ref="TablemigrateHistory" @change="handleTablemigrateHistory"/>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
-        <div style="width: 520px; margin: auto;margin-bottom:20px">
+        <div style="width: 540px; margin: auto;margin-bottom:20px">
           <el-upload class="capture-file-upload" drag :action="uploadAction" :headers="getTokenHeaders"
             :data="{'upload_type': 'local'}" :before-upload="uploadBeforeUpload" :on-progress="uploadOnProgress"
             :on-success="uploadOnSuccess" :on-change="uploadChange" :limit=1 ref="upload" :show-file-list="false"
@@ -55,10 +55,8 @@
             </div>
             <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
-
-          <div class="info mt-5">导入复制前可以通过
-            <span class="click" @click="openProductCollection">商品采集功能</span>
-            采集商品链接</div>
+          <div class="info mt-5 ">导入复制前可以通过<span class="click" @click="openProductCollection">商品采集功能</span>采集商品链接</div>
+          <PayCharge  />
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
@@ -126,23 +124,28 @@
     </el-tabs>
 
     <!-- 多商品复制 -->
-    <SupportPlatForm :list="platformIconsUrl" v-if="activeName === 'single'" />
-    <p class="left font-12 mt-20 "  v-if="activeName === 'single'">拼多多抓取额度有限制(其他平台无限制)，剩余额度 <span class="fail">{{availablePddCaptureNums}} 条</span> <span class="color-primary ml-10 underline pointer" @click="goCharge">去充值</span></p>
-    <div class="startCopyBtn" v-if="activeName === 'single'">
-      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
-        <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px" >
-          <span style="width:120px">开始复制</span>
-          <el-badge :value="captureUrlNums"></el-badge>
-        </el-button>
-        <StartCopyTips v-show="showStartCopyTips"/>
+    <div v-if="activeName === 'single'">
+      <SupportPlatForm :list="platformIconsUrl" />
+      <PayCharge  />
+      <div class="startCopyBtn" >
+        <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
+          <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px" >
+            <span style="width:120px">开始复制</span>
+            <el-badge :value="captureUrlNums"></el-badge>
+          </el-button>
+          <StartCopyTips v-show="showStartCopyTips"/>
+        </div>
       </div>
     </div>
     <!-- 整店复制 -->
-    <SupportPlatForm :list="platformIconsStore" v-if="activeName === 'shop'"  class="shopCopySupportPlatForm"/>
-    <div class="startCopyBtn" v-if="activeName === 'shop'" >
-      <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
-        <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
-        <StartCopyTips v-show="showStartCopyTips"/>
+    <div v-if="activeName === 'shop'">
+      <SupportPlatForm :list="platformIconsStore"  class="shopCopySupportPlatForm"/>
+      <PayCharge  />
+      <div class="startCopyBtn" >
+        <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
+          <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
+          <StartCopyTips v-show="showStartCopyTips"/>
+        </div>
       </div>
     </div>
     <!-- 绑定复制 -->
@@ -161,26 +164,32 @@
         width='100%' height='800px;' frameborder='0'></iframe>
     </el-dialog>
     <ModalBindCopyIdSearch :ids="lostGoodsIds" ref="ModalBindCopyIdSearch" @continueCopy="continueCopy"/>
+    <ModalCharge ref="ModalCharge" />
+    <ModalChargeOrder  ref="ModalChargeOrder" />
+    <ModalChargeTip  ref="ModalChargeTip" />
   </div>
 </template>
 <script>
 import request from '@/mixins/request.js'
-import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers, mapState } from 'vuex'
 import common from '@/common/common.js'
 import helpTips from '@/components/HelpTips.vue'
-import SupportPlatForm from '@migrate/startMigrate/SupportPlatForm'
-import BindCopyTip from '@migrate/startMigrate/BindCopyTip'
-import ModalBindCopyIdSearch from '@migrate/startMigrate/ModalBindCopyIdSearch'
-import StartCopyTips from '@migrate/startMigrate/StartCopyTips'
-import BindCopyTips from '@migrate/startMigrate/BindCopyTips'
-import SettingAlert from '@migrate/startMigrate/SettingAlert'
+import SupportPlatForm from '@migrate/startMigrate/components/SupportPlatForm'
+import BindCopyTip from '@migrate/startMigrate/components/BindCopyTip'
+import ModalBindCopyIdSearch from '@migrate/startMigrate/components/ModalBindCopyIdSearch'
+import StartCopyTips from '@migrate/startMigrate/components/StartCopyTips'
+import BindCopyTips from '@migrate/startMigrate/components/BindCopyTips'
+import SettingAlert from '@migrate/startMigrate/components/SettingAlert'
 import { platformIconsUrl, platformIconsStore } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
 import TablemigrateHistory from '@migrate/startMigrate/components/TablemigrateHistory'
+import ModalCharge from '@migrate/startMigrate/components/ModalCharge'
+import ModalChargeOrder from '@migrate/startMigrate/components/ModalChargeOrder'
+import ModalChargeTip from '@migrate/startMigrate/components/ModalChargeTip'
+import PayCharge from '@migrate/startMigrate/components/PayCharge'
 
 const {
-  mapActions: mapActionsPaidRecharge,
-  mapState: mapStatePaidRecharge
+  mapActions: mapActionsPaidRecharge
 } = createNamespacedHelpers('customerSetting/paidRecharge')
 
 export default {
@@ -227,7 +236,11 @@ export default {
     StartCopyTips,
     BindCopyTips,
     SettingAlert,
-    TablemigrateHistory
+    TablemigrateHistory,
+    ModalCharge,
+    ModalChargeOrder,
+    PayCharge,
+    ModalChargeTip
   },
   activated () {
     this.getUserBindList()
@@ -271,8 +284,10 @@ export default {
     ...mapGetters({
       isAuth: 'getIsAuth'
     }),
-    ...mapStatePaidRecharge(['availablePddCaptureNums']),
     ...mapGetters(['getTokenHeaders', 'getCaptureIdList', 'getUserId']),
+    ...mapState('migrate/readyToMigrate', [
+      'userVersion'
+    ]),
     subscItemLevelMap () {
       return common.subscItemLevelMap
     },
@@ -339,7 +354,10 @@ export default {
       'setCaptureIdList'
     ]),
     ...mapActions('migrate/startMigrate', ['getCaptureShopCompleteList']),
-    ...mapActionsPaidRecharge(['getUserAccountQuery']),
+    ...mapActionsPaidRecharge(['getUserAccountQuery', 'availablePddCaptureNums']),
+    ...mapActions('migrate/readyToMigrate', [
+      'userVersionQuery'
+    ]),
     clearTargetUserId () {
       this.target_user_id = undefined
     },
@@ -645,15 +663,33 @@ export default {
     },
     async capture (parmas, needUpdateMigrateSetting = true) {
       try {
-        // if (needUpdateMigrateSetting) {
-        //   const updateResult = await this.$refs.setting.updateMigrateSetting()
-        //   if (updateResult === 'error') {
-        //     return false
-        //   }
-        // }
         let self = this
         this.isStartCapture = true
-        this.request('capture', parmas, data => {
+        this.request('capture', parmas, async (data) => {
+          // 试用用户判断抓取是否有限制
+          const userVersion = this.userVersion || (await this.userVersionQuery())
+          console.log(userVersion, 'userVersion')
+          const isFreeUpgrate = userVersion.is_free_upgrate
+          const isSenior = userVersion.is_senior
+          const versionTipType = userVersion.version_type
+          if (!isFreeUpgrate && !isSenior && data.left_capture_nums_not_enough) {
+            // 3个月试用引导内部升级
+            // 7天试用引导在服务市场
+            if (versionTipType === 'free_three_months') {
+              this.$refs && this.$refs.ModalCharge.open(data)
+            } else {
+              this.$refs && this.$refs.ModalChargeOrder.open(data)
+            }
+            this.isStartCapture = false
+            return false
+          }
+          // 高级版 充值限制
+          if (data.left_capture_nums_not_enough) {
+            this.$refs && this.$refs.ModalChargeTip.open(data)
+            this.isStartCapture = false
+            return false
+          }
+
           this.isStartCapture = false
           let captureId = data.capture_id
           this.$router.push({
@@ -694,6 +730,9 @@ export default {
         this.$message.error('上传文件太大')
         return false
       }
+      //   this.$refs.upload.abort()
+      //   return false
+      // }
       // 修改搬家配置
       // const updateResult = await this.$refs.setting.updateMigrateSetting()
       // if (updateResult === 'error') {
@@ -713,12 +752,34 @@ export default {
       this.showProcess = false
       this.$refs.upload.clearFiles()
     },
-    uploadOnSuccess: function (response, file, fileList) {
+    uploadOnSuccess: async function (response, file, fileList) {
       this.isStartCapture = false
       this.processLength = 100
       this.showProcess = false
       this.$refs.upload.clearFiles()
       let code = parseInt(response.code)
+      // 导入复制 弹窗限制
+      const userVersion = this.userVersion || (await this.userVersionQuery())
+      const isFreeUpgrate = userVersion.is_free_upgrate
+      const isSenior = userVersion.is_senior
+      const versionTipType = userVersion.version_type
+      if (!isFreeUpgrate && !isSenior && response.data.left_capture_nums_not_enough) {
+            // 3个月试用引导内部升级
+            // 7天试用引导在服务市场
+        if (versionTipType === 'free_three_months') {
+          this.$refs && this.$refs.ModalCharge.open(response.data)
+        } else {
+          this.$refs && this.$refs.ModalChargeOrder.open(response.data)
+        }
+        this.isStartCapture = false
+        return false
+      }
+      if (response.data.left_capture_nums_not_enough) {
+        this.$refs && this.$refs.ModalChargeTip.open(response.data)
+        this.isStartCapture = false
+        return false
+      }
+
       if (code !== 0) {
         this.uploading = false
         if (code === 205) { // 体验版功能受限
@@ -832,6 +893,7 @@ export default {
     handleBlur () {
       // this.$refs.TablemigrateHistory && this.$refs.TablemigrateHistory.close()
     },
+    // 调转整店复制查看历史记录
     handleTablemigrateHistory (captureId) {
       this.$router.push({
         path: '/migrate/productList',

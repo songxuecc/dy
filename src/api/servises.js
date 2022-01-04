@@ -499,6 +499,9 @@ const hhgjAPIs = {
   },
   userCatQualityDelete: (params) => {
     return api.actionCreatorPost('/api/user/cat_quality/delete', params)
+  },
+  userCapturePage: (params) => {
+    return api.actionCreateGet('/api/capture/page', params)
   }
 
 }
