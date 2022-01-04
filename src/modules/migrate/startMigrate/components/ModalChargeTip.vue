@@ -24,7 +24,7 @@
           <div  class="mb-5">3、赠送额度用完后可通过额外付费充值增加额度；</div>
           <div >4、赠送额度、充值额度均可累计且在任何场景下不会被清空；</div>
           <div style="padding-left:20px"  class="mb-5">抓取成功1个商品消耗1条额度，抓取失败不消耗额度；</div>
-          <div>5、此规则从2021.12.X日开始生效，在此前产生的充值费用不支持退差价。</div>
+          <div>5、此规则从2022.01.04日开始生效，在此前产生的充值费用不支持退差价。</div>
           </div>
           <span class="color-primary underline pointer" >额度计算规则</span>
         </el-tooltip>
