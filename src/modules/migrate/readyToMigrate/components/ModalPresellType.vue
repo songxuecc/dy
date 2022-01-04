@@ -208,7 +208,7 @@ export default {
             quick_migrate_params: JSON.stringify(pamars)
           }).then(data => {
             this.visible = false
-            // location.reload()
+            location.reload()
           })
         }
       })
