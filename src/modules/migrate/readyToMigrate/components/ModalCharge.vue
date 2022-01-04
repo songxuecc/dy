@@ -53,7 +53,8 @@ export default {
   },
   data () {
     return {
-      visible: false
+      visible: false,
+      left_capture_nums: 0
     }
   },
   computed: {
@@ -61,8 +62,9 @@ export default {
     ...mapState('customerSetting/paidRecharge', ['versionList', 'availablePddCaptureNums'])
   },
   methods: {
-    open () {
+    open (capture) {
       this.visible = !this.visible
+      this.left_capture_nums = capture.left_capture_nums || 0
     },
     close () {
       this.visible = !this.visible
