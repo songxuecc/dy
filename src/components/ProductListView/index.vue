@@ -812,11 +812,22 @@ export default {
       this.dialogBeforeClose(() => {
         this.dialogEditVisible = false
         this.$refs.productEditNewView.onClose()
+        this.reload()
       })
     },
     dialogBeforeClose (done) {
       let self = this
-      if (this.$refs.productEditNewView.isProductChange()) {
+      if (this.$refs.productEditNewView.hasDeleteProducts()) {
+        this.$confirm('有未保存的编辑，是否保存?', '提示', {
+          confirmButtonText: '保存',
+          cancelButtonText: '不保存'
+        }).then(_ => {
+          self.$refs.productEditNewView.closeAfterSave = true
+          self.$refs.productEditNewView.onSaveProduct()
+          // 保存完成后再触发关闭
+          // done()
+        }).catch(_ => { done() })
+      } else if (this.$refs.productEditNewView.isProductChange()) {
         this.$confirm('有未保存的修改，是否保存?', '提示', {
           confirmButtonText: '保存',
           cancelButtonText: '不保存'

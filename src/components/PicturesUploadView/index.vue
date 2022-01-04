@@ -21,7 +21,7 @@
                         title=""
                         :ref="'popover-picture-wall-'+index"
                         trigger="manual">
-                        <img :src="picture.url" style="width: 250px;" referrerPolicy="no-referrer"/>
+                        <img :src="picture.url" style="width: 350px;" referrerPolicy="no-referrer"/>
                         <el-image :ref="'image'+index" :src="picture.url" :preview-src-list="curPictureUrlList" fit="scale-down"
                           style="width:100%; height:100%;" slot="reference"  referrerPolicy="no-referrer"
                         ></el-image>
@@ -169,7 +169,7 @@ export default {
       this.elemUploadDiv = this.$el.querySelector('div.el-upload--picture-card')
       if (this.elemUploadDiv) {
         this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
-        this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+        this.elemUploadDiv.style.height = (this.uploadIconVisible ? '180x' : '0')
       }
     }
   },
@@ -220,7 +220,7 @@ export default {
       this.curPictureList.splice(index, 1)
       delete this.selectedPictureDic[picture.url]
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
-      this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+      this.elemUploadDiv.style.height = (this.uploadIconVisible ? '180x' : '0')
     },
     onHandle (picture, index) {
       this.$emit('handleEdit', picture, index)
@@ -274,7 +274,7 @@ export default {
       const picture = { 'url': response.data.url, 'bg': 0, text }
       this.curPictureList.push(picture)
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
-      this.elemUploadDiv.style.height = (this.uploadIconVisible ? '148px' : '0')
+      this.elemUploadDiv.style.height = (this.uploadIconVisible ? '180x' : '0')
       if (text) this.clipIamge(picture, this.curPictureList.length - 1)
     },
     handleUploadError (err, file, fileList) {
@@ -315,5 +315,15 @@ export default {
       &:hover {
         color:@color-primary;
       }
+    }
+
+    /deep/ .el-upload-list--picture-card .el-upload-list__item {
+      width: 200px;
+      height: 200px;
+    }
+
+    /deep/ .el-upload--picture-card {
+      width: 200px;
+      height: 200px;
     }
 </style>

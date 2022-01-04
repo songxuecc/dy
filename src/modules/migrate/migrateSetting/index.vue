@@ -489,7 +489,7 @@ export default {
       defaultBlackWords: [],
       defaultImageBlackWords: [],
       placeholder: `请输入自定义违规词，换行或空格或逗号分隔多个违规词\n\n商品轮播首图、详情尾图中含有该违规词，则自动去除该图片\n\n检测图片会影响抓取速度，若抓取抖音商品则不检测`,
-      pt: `请输入自定义违规词，换行或空格或逗号，分隔多个违规词\n\n表中已有的违禁词是默认违禁词，不可删除，是抖音官方判定的违禁词`,
+      pt: `请输入自定义违规词，换行或空格或逗号，分隔多个违规词\n\n表中已有的违禁词是默认违禁词，不可删除，是抖音官方判定的违禁词\n\n违禁词最多设置3000个，如需搜索请使用浏览器快捷键(Ctrl+F)键搜索`,
       able_migrate_status_list: [
         common.productStatus.WAIT_ONLINE,
         common.productStatus.FAILED,

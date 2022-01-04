@@ -1,11 +1,11 @@
 <template lang="html">
-  <div style="height: 100%" class="ProductEditNewView">
+  <div style="height: 100%" class="ProductEditNewView" >
     <el-row :gutter="20" style="height: 100%">
-      <el-col :span="7" style="height: 100%; padding-right: 0px; padding-bottom: 80px;">
-        <el-table ref="productList" :data="productList" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
+      <el-col :span="7" style="height: 100%; overflow-y: scroll;padding-right: 0px; padding-bottom: 80px;">
+        <div class="left bold" style="width:320px;font-size:14px;padding:8px 10px;"> <b >商品名称</b> <b class="color-999">（键盘↑(W)键和↓(S)键可切换商品,D(delete)可删除商品,删除后请点击保存编辑）</b></div>
+        <el-table ref="productList" :data="tableData" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
                   :row-style="{height:'68px'}"
                   @current-change="handleProductSelect"
-                  style="height: 100%; overflow-y: scroll;"
                   @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" @selection-change="handleSelectionChange"
         >
             <el-table-column width="1">
@@ -25,29 +25,38 @@
                 </el-tooltip>
               </template>
             </el-table-column>
-            <el-table-column type="selection" class-name="ProductEditNewView-select">
+            <el-table-column type="selection" class-name="ProductEditNewView-select" width="35">
             </el-table-column>
-            <el-table-column label="图片" width="100" align="center" class-name="ProductEditNewView-img">
+            <el-table-column label="图片" width="70" align="center" class-name="ProductEditNewView-img">
                 <template slot-scope="scope">
                   <el-badge class="item" :value="Object.values(scope.row.check_error_msg_static).map(item => item.num).reduce((total, num) => total + num)"
                             v-if="scope.row.check_error_msg_static && Object.keys(scope.row.check_error_msg_static).length > 0">
-                    <img style="height:60px; max-width: 60px;" :src="scope.row.thumbnail">
+                    <img style="height:55px; max-width: 55px;" :src="scope.row.thumbnail">
                   </el-badge>
-                    <img v-else style="height:60px" :src="scope.row.thumbnail">
+                    <img v-else style="height:55px" :src="scope.row.thumbnail">
                   <div v-if="scope.row.isEdit" style="height: 20px; width: 100%; background-color: #fecf23; bottom: 0; left: 0; position: absolute;" >已编辑</div>
                 </template>
             </el-table-column>
             <el-table-column label="标题">
                 <template slot-scope="scope">
-                    <el-link type="primary" target="_blank" :underline="false">
+                    <el-link type="primary" target="_blank" :underline="false" class="font-12">
                         {{ productTitleDic[scope.row.tp_product_id] }}
                     </el-link>
                 </template>
             </el-table-column>
+            <el-table-column label="删除" width="50">
+                <template slot-scope="scope">
+                    <div class="font-12 flex align-c pointer" @click.stop="onDeleteProduct(scope.row)"><hh-icon type="iconshanchu1" class="font-12"></hh-icon>(D)</div>
+                </template>
+            </el-table-column>
+
         </el-table>
       </el-col>
       <el-col :span="17" style="height: 100%; padding-bottom: 100px;">
-          <el-tabs v-loading="loadingCnt" v-model="activityTab" type="card" style="height: 100%;" @tab-click="handleTabClick">
+          <div v-if="!tableData.length">
+            <el-table-empty></el-table-empty>
+          </div>
+          <el-tabs v-loading="loadingCnt" v-model="activityTab" type="card" style="height: 100%;" @tab-click="handleTabClick" v-else>
               <el-tab-pane label="商品属性" name="info">
                   <span slot="label" v-if=" product.model.check_error_msg_static  && '0' in product.model.check_error_msg_static">商品属性
                     <el-tooltip effect="dark"  placement="top-start">
@@ -394,6 +403,7 @@ import xorWith from 'lodash/xorWith'
 import omit from 'lodash/omit'
 import SkuTable from './SkuTable'
 import servises from '@servises'
+import Api from '@/api/apis'
 
 export default {
   inject: ['reload'],
@@ -507,6 +517,10 @@ export default {
     ...mapGetters({
       getTokenHeaders: 'getTokenHeaders'
     }),
+    tableData () {
+      const p = this.productList.filter(item => !item.isDelete)
+      return p
+    },
     isTitleWarn () {
       if (this.getTitleLength(this.product.model.title) > 30) {
         return true
@@ -537,7 +551,10 @@ export default {
     }
   },
   mounted () {
-
+    document.addEventListener('keydown', this.keyDown)
+  },
+  beforeDestroy () {
+    document.removeEventListener('keydown', this.keyDown)
   },
   updated () {
   },
@@ -548,6 +565,22 @@ export default {
     ...mapGetters({
       subsc: 'getCurrentSubsc'
     }),
+    // w和s键盘上下控制
+    keyDown (e) {
+      const key = window.event ? e.keyCode : e.switch
+      const id = this.product.model.tp_product_id
+      const index = this.tableData.findIndex(item => item.tp_product_id === id)
+      // w
+      if ((key === 87 || key === 38) && index > 0) {
+        this.handleProductSelect(this.tableData[index - 1], this.product)
+        // s
+      } else if ((key === 83 || key === 40) && index < this.tableData.length - 1) {
+        this.handleProductSelect(this.tableData[index + 1], this.product)
+        // d
+      } else if (key === 68 || key === 46) {
+        this.onDeleteProduct(this.tableData[index])
+      }
+    },
     // 检查资质中心
     checkQualityList (product) {
       const originQualityList = product.originModel.quality_list || []
@@ -629,6 +662,7 @@ export default {
       }
     },
     handleProductSelect (val, old) {
+      console.log(val, old, 'handleProductSelect')
       if (this.isLoading) {
         return false
       }
@@ -866,14 +900,14 @@ export default {
     },
     productListCellStyle ({row, column, rowIndex, columnIndex}) {
       if (
-        this.productList.length > 0 &&
-        this.productList[rowIndex].tp_product_id !== this.product.model.tp_product_id &&
-        this.productList[rowIndex].category_id === this.product.model.cat_id) {
+        this.tableData.length > 0 &&
+        this.tableData[rowIndex].tp_product_id !== this.product.model.tp_product_id &&
+        this.tableData[rowIndex].category_id === this.product.model.cat_id) {
         return 'background-color:rgb(236, 245, 255);'
       }
       if (
-        this.productList.length > 0 &&
-        this.productList[rowIndex].tp_product_id === this.product.model.tp_product_id) {
+        this.tableData.length > 0 &&
+        this.tableData[rowIndex].tp_product_id === this.product.model.tp_product_id) {
         return 'background-color:rgb(179, 216, 255);'
       }
     },
@@ -921,39 +955,58 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '复制商品', '点击', '完成批量修改商品'])
       }
+      if (!this.tableData.length) {
+        const isDeleteProductID = this.productList.filter(item => item.isDelete).map(item => item.tp_product_id)
+        if (isDeleteProductID.length) {
+          Api.hhgjAPIs.deleteTPProduct({
+            tp_product_ids: isDeleteProductID
+          }).then(data => {
+            this.productList = this.tableData
+            this.$nextTick(() => {
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
+              this.$emit('triggerDialogClose')
+            })
+          })
+        }
+        return false
+      }
       let error = ''
       let errorSkuProduct = false
       let errorSkuTableMessage = false
 
-      this.productList.forEach(item => {
-        let tpProductId = item.tp_product_id
-        if (tpProductId in this.products) {
+      this.tableData
+        .forEach(item => {
+          let tpProductId = item.tp_product_id
+          if (tpProductId in this.products) {
         // 检验推荐语
-          const product = this.products[tpProductId]
-          const recommendRemark = product.model.recommend_remark
-          if (recommendRemark) {
-            if (recommendRemark.split('').length > 50 || recommendRemark.split('').length < 8) {
-              error = '商家推荐语只可以填写8-50个字符！'
-            }
-          }
-          // 检验价格 & 库存
-          const skuList = product.model.sku_json.spec_price_list || []
-          if (!skuList.length) errorSkuTableMessage = 'sku为空，请设置sku'
-          skuList
-            .forEach(sku => {
-              if (!errorSkuProduct) {
-                if (!utils.isNumber(sku.quantity) || sku.quantity > 1000000 || sku.quantity < 0 || (utils.isNumber(sku.quantity) && sku.quantity % 1)) {
-                  errorSkuTableMessage = 'sku库存必填，且只可以输入0-1000000的整数数字'
-                  errorSkuProduct = item
-                // 表单验证
-                } else if (!utils.isNumber(sku.promo_price) || sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
-                  errorSkuTableMessage = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
-                  errorSkuProduct = item
-                }
+            const product = this.products[tpProductId]
+            const recommendRemark = product.model.recommend_remark
+            if (recommendRemark) {
+              if (recommendRemark.split('').length > 50 || recommendRemark.split('').length < 8) {
+                error = '商家推荐语只可以填写8-50个字符！'
               }
-            })
-        }
-      })
+            }
+          // 检验价格 & 库存
+            const skuList = product.model.sku_json.spec_price_list || []
+            if (!skuList.length) errorSkuTableMessage = 'sku为空，请设置sku'
+            skuList
+              .forEach(sku => {
+                if (!errorSkuProduct) {
+                  if (!utils.isNumber(sku.quantity) || sku.quantity > 1000000 || sku.quantity < 0 || (utils.isNumber(sku.quantity) && sku.quantity % 1)) {
+                    errorSkuTableMessage = 'sku库存必填，且只可以输入0-1000000的整数数字'
+                    errorSkuProduct = item
+                // 表单验证
+                  } else if (!utils.isNumber(sku.promo_price) || sku.promo_price > 9999999.99 || sku.promo_price < 0.01) {
+                    errorSkuTableMessage = 'sku价格必填，且只可以输入0.01-9999999.99 的数字,最多保留2位小数'
+                    errorSkuProduct = item
+                  }
+                }
+              })
+          }
+        })
 
       if (error) {
         this.activityTab = 'info'
@@ -983,7 +1036,7 @@ export default {
         return this.$message.error(errorSkuTableMessage)
       }
       // 轮播图验证
-      const products = this.productList
+      const products = this.tableData
         .filter(item => {
           let tpProductId = item.tp_product_id
           return tpProductId in this.products
@@ -993,7 +1046,7 @@ export default {
       const promiseBannerImageResult = await this.promiseBannerImage(products)
       if (promiseBannerImageResult && promiseBannerImageResult.result) {
         this.$refs.productList.setCurrentRow(promiseBannerImageResult.product.model)
-        const resetProduct = this.productList.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
+        const resetProduct = this.tableData.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
         this.setProduct(resetProduct)
         this.activityTab = 'carousel'
         this.$nextTick(() => {
@@ -1050,8 +1103,8 @@ export default {
         let tpProductList = []
         let tpProductIdList = []
         const propertyBatchCatIdMap = this.propertyBatchCatIdMap || new Map()
-        for (let i in this.productList) {
-          let tpProductId = this.productList[i].tp_product_id
+        for (let i in this.tableData) {
+          let tpProductId = this.tableData[i].tp_product_id
           if (this.products[tpProductId] && (this.products[tpProductId].isDiff() || this.checkQualityList(this.products[tpProductId]))) {
             if (tpProductId in this.products) {
               let product = this.products[tpProductId]
@@ -1114,16 +1167,16 @@ export default {
             }
           } else {
             let productParams = {
-              tp_product_id: this.productList[i].tp_product_id,
-              category_id: this.productList[i].category_id,
-              title: this.productList[i].title,
-              price: utils.yuanToFen(this.productList[i].price),
-              tp_outer_iid: this.productList[i].tp_outer_iid,
+              tp_product_id: this.tableData[i].tp_product_id,
+              category_id: this.tableData[i].category_id,
+              title: this.tableData[i].title,
+              price: utils.yuanToFen(this.tableData[i].price),
+              tp_outer_iid: this.tableData[i].tp_outer_iid,
               tp_property_json: {}
             }
             let isChange = false
-            if (this.productList[i].title !== this.productTitleDic[tpProductId]) {
-              productParams['title'] = this.productTitleDic[this.productList[i].tp_product_id]
+            if (this.tableData[i].title !== this.productTitleDic[tpProductId]) {
+              productParams['title'] = this.productTitleDic[this.tableData[i].tp_product_id]
               isChange = true
             }
             if (this.productRemoveFirstBannerDic[tpProductId] && !this.products[tpProductId]) {
@@ -1143,7 +1196,7 @@ export default {
               tpProductList.push(productParams)
             }
           }
-          const categoryId = this.productList[i].category_id
+          const categoryId = this.tableData[i].category_id
           const selectedProductIds = this.selectedProductIds
         // 处理批量修改属性的商品
           if (propertyBatchCatIdMap.get(categoryId) && selectedProductIds.includes(tpProductId)) {
@@ -1209,14 +1262,31 @@ export default {
           self.setProduct(self.productDic[self.product.model.tp_product_id])
           this.updateProductEditStatus()
           this.isProductEditSaving = false
-          if (self.closeAfterSave) {
-            this.$emit('triggerDialogClose')
-            self.closeAfterSave = false
+          const isDeleteProductID = this.productList.filter(item => item.isDelete).map(item => item.tp_product_id)
+          if (isDeleteProductID.length) {
+            Api.hhgjAPIs.deleteTPProduct({
+              tp_product_ids: isDeleteProductID
+            }).then(data => {
+              this.productList = this.tableData
+              this.$message({
+                message: '保存成功',
+                type: 'success'
+              })
+              if (self.closeAfterSave) {
+                this.$emit('triggerDialogClose')
+                self.closeAfterSave = false
+              }
+            })
+          } else {
+            if (self.closeAfterSave) {
+              this.$emit('triggerDialogClose')
+              self.closeAfterSave = false
+            }
+            this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
           }
-          this.$message({
-            message: '保存成功',
-            type: 'success'
-          })
         } else {
           // 批量保存没完成继续处理
           let cnt = Math.min(tpProductListIdx + 5, tpProductList.length) + Math.min(tpProductIdListIdx + 5, tpProductIdList.length)
@@ -1295,6 +1365,33 @@ export default {
     isProductChange () {
       return this.updateProductEditStatus()
     },
+    hasDeleteProducts () {
+      const hasDeleteProducts = this.productList.filter(item => item.isDelete)
+      return hasDeleteProducts.length
+    },
+    getProductList () {
+      const p = this.productList.filter(item => !item.isDelete)
+      return p
+    },
+    // 删除
+    onDeleteProduct (val) {
+      const productList = this.productList.map((item, idx) => {
+        if (item.tp_product_id === val.tp_product_id) {
+          return {
+            ...item,
+            isDelete: true
+          }
+        }
+        return item
+      })
+      let tableDataIndex = this.tableData.findIndex(item => item.tp_product_id === val.tp_product_id)
+      this.productList = productList
+      this.$nextTick(() => {
+        if (this.tableData[tableDataIndex]) {
+          this.setProduct(this.tableData[tableDataIndex])
+        }
+      })
+    },
     // 还原
     onRevertProduct () {
       for (let i in this.products) {
@@ -1315,8 +1412,8 @@ export default {
       this.skuJson = this.product.model.sku_json
       this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
       // this.specifications = this.product.model.specifications
-      this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
-      this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
+      this.$refs['bannerPicListView'] && this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
+      this.$refs['descPicListView'] && this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
     },
     onClose () {
       this.setIsShowFloatView(true)
@@ -1332,9 +1429,9 @@ export default {
       this.productRemoveFirstBannerDic = {}
       this.productBrandDic = {}
       this.updateAttrApplyCat({})
-      this.$refs['bannerPicListView'].clear()
-      this.$refs['descPicListView'].clear()
-      this.$refs['propertySet'].clearData()
+      this.$refs['bannerPicListView'] && this.$refs['bannerPicListView'].clear()
+      this.$refs['descPicListView'] && this.$refs['descPicListView'].clear()
+      this.$refs['propertySet'] && this.$refs['propertySet'].clearData()
     },
     handleMouseEnter (row, column, cell, event) {
       if (this.mouseOverIndex === row.index) {
@@ -1356,7 +1453,7 @@ export default {
       if (!propertyBatch) return false
       // 只要有一个属性选中全选应用 就相当于编辑过
       const bool = Object.values(propertyBatch).some(item => {
-        const product = Object.values(this.productList).find(product => product.tp_product_id === tpProductId)
+        const product = Object.values(this.tableData).find(product => product.tp_product_id === tpProductId)
         if (product && product.category_id === item.catId && item.checked) {
           return true
         }
@@ -1366,14 +1463,14 @@ export default {
     },
     updateProductEditStatus () {
       let isChanged = false
-      for (let i in this.productList) {
-        let tpProductId = this.productList[i].tp_product_id
+      for (let i in this.tableData) {
+        let tpProductId = this.tableData[i].tp_product_id
         if (
           this.productDic[tpProductId].title !== this.productTitleDic[tpProductId] ||
           // 单个商品修改
-          (this.products[tpProductId] && this.products[tpProductId].isDiff()) ||
+          (this.products[tpProductId] && this.products[tpProductId].isDiff(['isDelete', 'bannerPicUrlList', 'descPicUrlList'])) ||
           // 商品属性
-          this.attrApplyCatMap[this.productList[i].category_id] ||
+          this.attrApplyCatMap[this.tableData[i].category_id] ||
           // banner修改
           (this.productRemoveFirstBannerDic[tpProductId] && (!this.products[tpProductId] || (this.products[tpProductId] && this.products[tpProductId].model.bannerPicUrlList.length > 1))) ||
           // 详情图修改
@@ -1711,6 +1808,9 @@ export default {
     setPromp (number, row, borderKey, key) {
       // this.$set(row,'promo_price',)
     },
+    doSomething () {
+      console.log('999')
+    },
     getPriceStyle (number, row, borderKey, key) {
       if (number > 9999999.99 || number < 0.01) {
         this.$set(row, borderKey, true)
@@ -1780,11 +1880,16 @@ export default {
   .cell {
     text-overflow: clip;
     overflow-y: auto;
+    padding:0;
   }
 }
 /deep/ .el-tabs__content {
   height: 100%;
   overflow-y: auto;
+}
+
+/deep/ .el-table__body-wrapper {
+  border-top: 1px solid #000;
 }
   // /deep/ .el-table__body tr.current-row>td {
   //   background-color: rgb(179, 216, 255);
@@ -1928,7 +2033,7 @@ export default {
         right: 20px;
       }
       .el-badge{
-        padding:10px;
+        // padding:10px;
       }
     }
 
