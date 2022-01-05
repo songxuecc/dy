@@ -65,7 +65,7 @@ export default {
         window._hmt.push(['_trackEvent', '付费充值', '弹层曝光', '3个月试用限制_展示弹层'])
       }
       this.visible = !this.visible
-      this.left_capture_nums = capture.left_capture_nums
+      this.left_capture_nums = capture.left_capture_nums || 0
     },
     close () {
       this.visible = !this.visible

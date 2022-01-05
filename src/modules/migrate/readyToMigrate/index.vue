@@ -1070,7 +1070,7 @@ export default {
             this.$refs.ModalChargeTreeMonth.open()
             localStorage.setItem(data.capture_id, 1)
           } else if (data.is_error_balance && !hasShow && (!isSevenDays || !isTreeMounth)) {
-            this.$refs.ModalCharge.open()
+            this.$refs.ModalCharge.open(data)
             localStorage.setItem(data.capture_id, 1)
           }
           this.isForceGetCapture = 0

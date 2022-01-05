@@ -133,6 +133,7 @@ export default {
           this.loading = false
           this.qrCode = qrCode
           this.$refs.ModalWxPay.visible = true
+          this.$refs.ModalWxPay.onCharge && this.$refs.ModalWxPay.onCharge()
         }
       } catch (err) {
         this.loading = false
