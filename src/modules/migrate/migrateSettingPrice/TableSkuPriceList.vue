@@ -51,7 +51,7 @@
               <hh-icon type="iconjinggao1" style="font-size:14px"></hh-icon>
             </el-tooltip>
           </span>
-          <span>
+          <span style="display:inline-flex;align-items:center">
             <span> (&nbsp;原价 - </span>
             <el-tooltip content="一般填0，若源商品含运费则可以加上运费后再设置百分比。比如源商品运费是10元，则填-10" placement="top">
               <el-input
@@ -100,6 +100,9 @@
                 class="price-sku-input"
               />
             </el-tooltip>
+            <NewFeatureTips type="sku价格" style="line-height:12px;height:12px;">
+              <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+            </NewFeatureTips>
           </span>
         </template>
         <template slot-scope="scope">

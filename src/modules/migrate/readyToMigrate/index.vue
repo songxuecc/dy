@@ -189,7 +189,14 @@
                 <p>&nbsp;</p>
                 <p>价格和模板的填写设置与上一次搬家操作的设置保持一致</p>
                 <span class="pointer" slot="reference" style="height:12px;">
-                  <el-link type="primary" style="font-size: 10px;  margin-left: 10px;" :underline="false" @click="quickMigrate" :disabled="selectIdList.length == 0">跳过编辑，现在搬家</el-link>
+                  <el-link type="primary" style="font-size: 10px;  margin-left: 10px;" :underline="false" @click="quickMigrate" :disabled="selectIdList.length == 0">
+                    <span style="display:inline-flex;" class="align-c" >
+                      跳过编辑，现在搬家
+                      <NewFeatureTips type="跳过编辑，现在搬家" >
+                        <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                      </NewFeatureTips>
+                    </span>
+                  </el-link>
                 </span>
             </el-popover>
             <span class="pl-10 font-12">
