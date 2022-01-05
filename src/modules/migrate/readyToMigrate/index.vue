@@ -276,6 +276,7 @@
     <ModalCharge ref="ModalCharge" />
     <ModalChargeSevenDays ref="ModalChargeSevenDays" />
     <ModalChargeTreeMonth ref="ModalChargeTreeMonth" />
+    <ModalPresellType ref="ModalPresellType" />
   </div>
 </template>
 <script>
