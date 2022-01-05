@@ -4,7 +4,9 @@
         <title class="flex title wrap">
           <div v-for="(icon,index) in iconList" :key="index" :class="[icon.index === editType ? 'iconBoxActive':'iconBox' , 'center','pointer' , 'relative','mb-10']" @click="toggleEditType(icon.index)">
             <hh-icon :type="icon.index === editType ? icon.primary :icon.info" class="icon"></hh-icon>
-            <hh-icon type="iconhot3" class="hot" v-if="icon.hot"></hh-icon>
+            <NewFeatureTips :type="`batchEdit-${icon.text}`" v-if="icon.hot" class="hot" >
+              <hh-icon type="iconnew" ></hh-icon>
+            </NewFeatureTips>
             <p class="font-12 color-4e yaHei">{{ icon.text }}</p>
           </div>
           <div :class="['iconBox' , 'center','pointer' , 'relative','mb-10' , 'align-c','record']" @click="examineEditRecord">
@@ -322,7 +324,7 @@ export default {
           ref: 'Shelves',
           tableRef: 'TableShelves',
           needExpand: false,
-          hot: true
+          hot: false
         },
         {
           primary: 'iconbiaotixuanzhong',
@@ -405,7 +407,7 @@ export default {
           ref: 'ProductDelete',
           tableRef: 'TableProductDelete',
           needExpand: false,
-          hot: true
+          hot: false
 
         },
         {
@@ -416,7 +418,7 @@ export default {
           ref: 'ProductProperties',
           tableRef: 'TableProductProperties',
           needExpand: false,
-          hot: true
+          hot: false
         },
         {
           primary: 'iconxiangoushuliangxuanzhong',
@@ -466,7 +468,7 @@ export default {
           ref: 'AddImages',
           tableRef: 'TableAddImages',
           needExpand: false,
-          hot: false
+          hot: true
         }
       ],
       visibleSelectProduct: false
@@ -812,10 +814,10 @@ export default {
 
 .hot {
     position: absolute;
-    font-size: 30px;
+    font-size: 26px;
     color: #FA6400;
-    right: -1px;
-    top: -2px;
+    right: -10px;
+    top: -8px;
 }
 .underline-hover {
   color:@color-primary;

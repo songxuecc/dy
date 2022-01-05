@@ -161,6 +161,9 @@
                 <el-form-item style="display:inline;margin-bottom:0" prop="is_use_default_sku_stock">
                     <el-switch v-model="is_use_default_sku_stock" />
                 </el-form-item>
+                <NewFeatureTips type="所有SKU库存均为" >
+                  <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                </NewFeatureTips>
               </p>
               <p class="mb-10 flex align-c mb-10">
                 <span class="font-12 mr-5">当SKU库存小于等于</span>
@@ -171,6 +174,9 @@
                 <el-form-item style="display:inline;margin-bottom:0" prop="is_open_low_sku_stock">
                     <el-switch v-model="is_open_low_sku_stock" @change="handleIsOpenLowSkuStock"/>
                 </el-form-item>
+                <NewFeatureTips type="当SKU库存小于等于" >
+                  <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                </NewFeatureTips>
               </p>
           </el-form-item>
           <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
@@ -192,6 +198,9 @@
         <el-form-item  label="类目资质:" style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-qualification">
           <div class="flex align-c " style="height:28px">
             <el-button size="mini" @click="setQualification" type="text">点击设置</el-button>
+            <NewFeatureTips type="类目资质" >
+              <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+            </NewFeatureTips>
           </div>
         </el-form-item>
 
