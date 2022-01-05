@@ -304,6 +304,7 @@ export default {
     ModalCharge,
     ModalChargeSevenDays,
     ModalChargeTreeMonth,
+    ModalPresellType,
     Search
   },
   data () {
