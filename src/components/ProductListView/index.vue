@@ -104,7 +104,7 @@
                     <!-- 驳回失败 -->
                     <div class="checkSolution" v-if="[5,8].includes(scope.row.status)" @click="checkSolution">点击查看解决方法</div>
                     <!-- 待修改 -->
-                    <span class="tutorials" v-if="[6].includes(scope.row.status)">根据原因进行修改</span>
+                    <span class="tutorials" v-if="[6].includes(scope.row.status)">请根据原因，点击修改</span>
                     <NewComer type="失败" ref="newComerFail" :direction="[0,1].includes(scope.row.index) ? 'bottom' : 'top'" v-if="getFirstShow(5,scope.row.index,scope.row.status)">
                       <div>
                         <div style="width:172px" class="color-666 font-12 left">
@@ -242,10 +242,10 @@
                       </span>
 
                       <span v-if="[0,1,2,3,4,9].includes(Number(scope.row.status))" class="font-13">无</span>
-                      <div  v-if="[6].includes(scope.row.status)">
+                      <!-- <div  v-if="[6].includes(scope.row.status)">
                         <span class="click underline" @click="productEditOpen(scope.row)">请点击修改</span>
                         <span class="info" >修改后再勾选商品进行下一步操作</span>
-                      </div>
+                      </div> -->
                     </div>
                 </template>
             </el-table-column>
