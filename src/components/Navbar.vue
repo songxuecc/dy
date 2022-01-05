@@ -27,7 +27,7 @@
                 <img @click="goToOrder()" style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" v-else/>
               </div> -->
               <div v-if="shopName" class="syncProduct pointer " @click="paidRecharge" :disabled="isSyncing">
-                <div class="flex align-c ">
+                <div class="flex align-c bold" style="color:#E02020">
                   <hh-icon type="iconjiaocheng" style="font-size:12px;margin-right:2px;margin-bottom:2px"/>
                   <div class="relative" style="height:60px;line-height:60px">
                     教程

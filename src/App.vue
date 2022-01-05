@@ -525,7 +525,7 @@ export default {
     position: fixed;
     z-index: 9999;
     transform: translate(0,-50%);
-    top: 78%;
+    top: 70%;
     right: 15px;
     transition: all 0.2s;
   }
