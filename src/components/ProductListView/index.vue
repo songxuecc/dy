@@ -81,7 +81,7 @@
                     </el-tooltip>
                 </template>
             </el-table-column>
-             <el-table-column v-if="!isSyncSource"  width="130" style="overflow:auto"  align="center" class-name="cell-class">
+             <el-table-column v-if="!isSyncSource"  width="150" style="overflow:auto"  align="center" class-name="cell-class">
                 <template slot="header" slot-scope="scope">
                     <span>
                       状态
@@ -102,7 +102,7 @@
                       <el-progress  :text-inside="true" :stroke-width="14" :percentage="scope.row.migrate_process" status="success"></el-progress>
                     </el-link>
                     <!-- 驳回失败 -->
-                    <span class="tutorials" v-if="[5,8].includes(scope.row.status)">根据原因再试一次</span>
+                    <div class="checkSolution" v-if="[5,8].includes(scope.row.status)" @click="checkSolution">点击查看解决方法</div>
                     <!-- 待修改 -->
                     <span class="tutorials" v-if="[6].includes(scope.row.status)">根据原因进行修改</span>
                     <NewComer type="失败" ref="newComerFail" :direction="[0,1].includes(scope.row.index) ? 'bottom' : 'top'" v-if="getFirstShow(5,scope.row.index,scope.row.status)">
@@ -242,6 +242,10 @@
                       </span>
 
                       <span v-if="[0,1,2,3,4,9].includes(Number(scope.row.status))" class="font-13">无</span>
+                      <div  v-if="[6].includes(scope.row.status)">
+                        <span class="click underline" @click="productEditOpen(scope.row)">请点击修改</span>
+                        <span class="info" >修改后再勾选商品进行下一步操作</span>
+                      </div>
                     </div>
                 </template>
             </el-table-column>
@@ -331,6 +335,7 @@
           <categorySelectView ref="categorySelectView" @changeCate="onChangeCate"  v-loading="changeCategoryLoading"/>
         </el-dialog>
         <ModalSourceCategory  ref="ModalSourceCategory" @onChange="onChangeModalSourceCategory"/>
+        <ModalCheckSolution  ref="ModalCheckSolution"/>
     </div>
 </template>
 <script>
@@ -340,6 +345,7 @@ import utils from '@/common/utils.js'
 import request from '@/mixins/request.js'
 import CategorySelectView from '@/components/CategorySelectView'
 import ModalSourceCategory from './ModalSourceCategory'
+import ModalCheckSolution from './ModalCheckSolution'
 import Api from '@/api/apis'
 import isEmpty from 'lodash/isEmpty'
 
@@ -349,7 +355,8 @@ export default {
   components: {
     productEditNewView: () => import('@/components/ProductEditNewView'),
     CategorySelectView,
-    ModalSourceCategory
+    ModalSourceCategory,
+    ModalCheckSolution
   },
   props: {
     tpProductList: Array,
@@ -1007,11 +1014,25 @@ export default {
         return categoryName.split('>').pop()
       }
       return categoryName
+    },
+    // 点击查看解决方法
+    checkSolution () {
+      this.$refs.ModalCheckSolution && this.$refs.ModalCheckSolution.open()
     }
   }
 }
 </script>
 <style lang="less" scoped>
+  .checkSolution{
+    font-size: 10px;
+    color: #1D8FFF;
+    line-height: 18px;
+    height: 18px;
+    border-radius: 9px;
+    border: 1px solid #1D8FFF;
+    padding: 0 5px;
+    cursor: pointer;
+  }
     /deep/ .el-drawer__body {
       height: 100%;
     }
