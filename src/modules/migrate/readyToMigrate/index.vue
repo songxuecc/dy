@@ -350,7 +350,7 @@ export default {
       timer: null,
       isLoadProduct: false,
       migratingStatus: [1, 2, 9],
-      loginDialogVisible: true,
+      loginDialogVisible: false,
       slideDialogVisible: false,
       loginUrl: '',
       slideUrl: '',
@@ -1065,6 +1065,9 @@ export default {
         params,
         async (data) => {
           console.log(data, 'data')
+
+          // data = {'code': 0, 'data': {'shop_capture_type': 1, 'is_error_balance': 0, 'parent_id': 0, 'page_id': 3, 'status_statistics': [{'count': 19, 'status': 2}], 'capture_id': 31849936, 'current_page_id': '', 'create_time': '2022-01-06 14:50:00', 'total_num': 450, 'left_seconds': 155, 'source': '\u5929\u732b', 'current_page_status': 2, 'page_status': 1, 'page_size': 50, 'status': 2, 'shop_name': '\u6ce1\u6ce1\u739b\u7279\u65d7\u8230\u5e97', 'capture_num': 50, 'capture_type_id': 1002, 'shop_async_link': 'https://popmart.tmall.com/i/asynSearch.htm?mid=w-15691211895-0&wid=15691211895&path=/search.htm&search=y&pageNo=3&orderType=hotsell_desc', 'url': 'https://popmart.tmall.com/?spm=a220o.1000855.1997427721.d4918089.4617b4datBs63D', 'tp_id': 1001, 'max_current_page_id': 3}, 'msg': 'succ'}
+          // data = data.data
           const hasShow = localStorage.getItem(data.capture_id)
           const userVersion = this.userVersion || (await this.userVersionQuery())
           const isSevenDays = userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'
