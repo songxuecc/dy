@@ -26,7 +26,7 @@
                 </el-tooltip>
                 <img @click="goToOrder()" style="height: 28px; display: inline-block; position: relative; top: 0px; cursor: pointer" src="../assets/images/reorder.gif" v-else/>
               </div> -->
-              <div v-if="shopName" class="syncProduct pointer " @click="paidRecharge" :disabled="isSyncing">
+              <div v-if="shopName" class="syncProduct pointer " @click="interpret" :disabled="isSyncing">
                 <div class="flex align-c bold" style="color:#E02020">
                   <hh-icon type="iconjiaocheng" style="font-size:12px;margin-right:2px;margin-bottom:2px"/>
                   <div class="relative" style="height:60px;line-height:60px">
@@ -305,6 +305,10 @@ export default {
           active: 'PayRecord'
         }
       })
+    },
+    // 教程
+    interpret () {
+      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')
     }
   }
 }
