@@ -3,6 +3,7 @@
     <div>
       <div class="readyToMigrateContent" ref="readyToMigrateContent">
         <Search
+          ref="Search"
           :capture="capture"
           @change="onSearchChange"/>
         <el-alert v-if="getMigrateInfo.length>0" :title="getMigrateInfo" type="success" :closable="false" center class="mt-5"/>
@@ -66,7 +67,10 @@
               <div v-if="ShopsCaptureStatus === 14"  class="underline pointer">
                 <span v-if="versionTipType === 'free_seven_days' && userVersion && !userVersion.is_senior" @click="goChargeOrder">抓取余额不足，请点击订购 !!</span>
                 <span v-else-if="versionTipType === 'free_three_months' && userVersion && !userVersion.is_senior"  @click="goCharge">抓取余额不足，请点击升级 !!</span>
-                <span v-else @click="goCharge">抓取余额不足，请点击充值 !!</span>
+                <span v-else>
+                  <span @click="goCharge" class="click mr-20">抓取余额不足，去充值</span>
+                  <span @click="continueCapture" class="click">充值完毕，继续抓取</span>
+                </span>
               </div>
             </div>
             <!-- 链接复制的提示语 -->
@@ -1723,6 +1727,10 @@ export default {
     },
     goChargeOrder () {
       window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
+    },
+    // 继续抓取
+    continueCapture () {
+      this.$refs.Search && this.$refs.Search.handleFilterChange()
     }
   }
 }
