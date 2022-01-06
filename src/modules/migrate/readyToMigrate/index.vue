@@ -220,16 +220,13 @@
       </div>
     </div>
 
-    <el-dialog title="淘宝登录验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="loginDialogVisible" width="30%">
-      <p>由于淘宝原因，搜索复制店铺商品需先<span
-          style="color: #dd6161; font-weight:bold; vertical-align:baseline;">登录淘宝</span>，<br />请登陆成功后再返回当前页面继续操作。</p>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="plain" @click="finishLogin">已完成验证，继续操作</el-button>
-        <el-button type="primary" @click="gotoLoginPage">立即登录</el-button>
-      </span>
+      <hh-icon type="iconjinggao1" style="width:50px;height: 50px;font-size: 50px;margin-bottom:12px"></hh-icon>
+      <p>复制前请先登录淘宝账号，否则会导致登录失败</p>
+      <el-button type="primary" style="width:150px" class="mt-10" @click="finishLogin">已登录，开始复制</el-button>
     </el-dialog>
-    <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
+    <!-- <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="slideDialogVisible" width="30%">
       <div class="warning" style="font-size:16px">滑动到右侧后，如果滑块在加载转圈</div>
       <div class="warning" style="font-size:16px">可点击下方继续操作按钮</div>
@@ -238,7 +235,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="finishSlide">已完成验证，继续操作</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog :visible.sync="batchDeleteCaptureVisible" @opened="captureSelectAll()">
       <span slot="title">删除选中的商品</span>
       <div style="margin-top: -30px;">
@@ -1068,6 +1065,9 @@ export default {
         params,
         async (data) => {
           console.log(data, 'data')
+
+          // data = {'code': 0, 'data': {'shop_capture_type': 1, 'is_error_balance': 0, 'parent_id': 0, 'page_id': 3, 'status_statistics': [{'count': 19, 'status': 2}], 'capture_id': 31849936, 'current_page_id': '', 'create_time': '2022-01-06 14:50:00', 'total_num': 450, 'left_seconds': 155, 'source': '\u5929\u732b', 'current_page_status': 2, 'page_status': 1, 'page_size': 50, 'status': 2, 'shop_name': '\u6ce1\u6ce1\u739b\u7279\u65d7\u8230\u5e97', 'capture_num': 50, 'capture_type_id': 1002, 'shop_async_link': 'https://popmart.tmall.com/i/asynSearch.htm?mid=w-15691211895-0&wid=15691211895&path=/search.htm&search=y&pageNo=3&orderType=hotsell_desc', 'url': 'https://popmart.tmall.com/?spm=a220o.1000855.1997427721.d4918089.4617b4datBs63D', 'tp_id': 1001, 'max_current_page_id': 3}, 'msg': 'succ'}
+          // data = data.data
           const hasShow = localStorage.getItem(data.capture_id)
           const userVersion = this.userVersion || (await this.userVersionQuery())
           const isSevenDays = userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'
@@ -1116,7 +1116,7 @@ export default {
                       this.loginDialogVisible = true
                     } else {
                       this.slideUrl = res.url
-                      this.slideDialogVisible = true
+                      this.loginDialogVisible = true
                     }
                   } else {
                     this.pageData[data.page_id] = res
