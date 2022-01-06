@@ -220,16 +220,13 @@
       </div>
     </div>
 
-    <el-dialog title="淘宝登录验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="loginDialogVisible" width="30%">
-      <p>由于淘宝原因，搜索复制店铺商品需先<span
-          style="color: #dd6161; font-weight:bold; vertical-align:baseline;">登录淘宝</span>，<br />请登陆成功后再返回当前页面继续操作。</p>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="plain" @click="finishLogin">已完成验证，继续操作</el-button>
-        <el-button type="primary" @click="gotoLoginPage">立即登录</el-button>
-      </span>
+      <hh-icon type="iconjinggao1" style="width:50px;height: 50px;font-size: 50px;margin-bottom:12px"></hh-icon>
+      <p>复制前请先登录淘宝账号，否则会导致登录失败</p>
+      <el-button type="primary" style="width:150px" class="mt-10" @click="finishLogin">已登录，开始复制</el-button>
     </el-dialog>
-    <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
+    <!-- <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="slideDialogVisible" width="30%">
       <div class="warning" style="font-size:16px">滑动到右侧后，如果滑块在加载转圈</div>
       <div class="warning" style="font-size:16px">可点击下方继续操作按钮</div>
@@ -238,7 +235,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="finishSlide">已完成验证，继续操作</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog :visible.sync="batchDeleteCaptureVisible" @opened="captureSelectAll()">
       <span slot="title">删除选中的商品</span>
       <div style="margin-top: -30px;">
@@ -353,7 +350,7 @@ export default {
       timer: null,
       isLoadProduct: false,
       migratingStatus: [1, 2, 9],
-      loginDialogVisible: false,
+      loginDialogVisible: true,
       slideDialogVisible: false,
       loginUrl: '',
       slideUrl: '',
@@ -1116,7 +1113,7 @@ export default {
                       this.loginDialogVisible = true
                     } else {
                       this.slideUrl = res.url
-                      this.slideDialogVisible = true
+                      this.loginDialogVisible = true
                     }
                   } else {
                     this.pageData[data.page_id] = res
