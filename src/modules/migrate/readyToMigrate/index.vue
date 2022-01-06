@@ -1124,7 +1124,7 @@ export default {
           if (this.isShopCapture && [1002, 1001].includes(this.capture.tp_id)) {
             const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
             // 总数据全部抓取完成
-            const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id)
+            const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id || this.capture.is_error_balance)
             // 抓取页码为展示页码
             const isCurrentPage = this.pagination.index === this.capture.max_current_page_id
             // 总数据全部抓取完成 且 抓取页码为展示页码
