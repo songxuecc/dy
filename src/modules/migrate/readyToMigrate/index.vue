@@ -227,7 +227,7 @@
     <el-dialog  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="loginDialogVisible" width="30%">
       <hh-icon type="iconjinggao1" style="width:50px;height: 50px;font-size: 50px;margin-bottom:12px"></hh-icon>
-      <p>复制前请先登录淘宝账号，否则会导致登录失败</p>
+      <p>复制前请先<span class="click" @click="openTaobao">登录淘宝账号</span>，否则会导致登录失败</p>
       <el-button type="primary" style="width:150px" class="mt-10" @click="finishLogin">已登录，开始复制</el-button>
     </el-dialog>
     <!-- <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
@@ -1749,6 +1749,10 @@ export default {
     // 继续抓取
     continueCapture () {
       this.$refs.Search && this.$refs.Search.handleFilterChange()
+    },
+    // 打开淘宝
+    openTaobao () {
+      window.open('https://www.taobao.com/')
     }
   }
 }
