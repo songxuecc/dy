@@ -57,7 +57,7 @@
           <div v-if="!tableData.length">
             <el-table-empty></el-table-empty>
           </div>
-          <el-tabs v-loading="loadingCnt" v-model="activityTab" type="card" style="height: 100%;" @tab-click="handleTabClick" v-else>
+          <el-tabs id="ProductEditNewView-tab" v-loading="loadingCnt" v-model="activityTab" type="card" style="height: 100%;" @tab-click="handleTabClick" v-else>
               <el-tab-pane label="商品属性" name="info">
                   <span slot="label" v-if=" product.model.check_error_msg_static  && '0' in product.model.check_error_msg_static">商品属性
                     <el-tooltip effect="dark"  placement="top-start">
@@ -569,6 +569,9 @@ export default {
     // w和s键盘上下控制
     keyDown (e) {
       const key = window.event ? e.keyCode : e.switch
+      const tab = document.querySelector('#ProductEditNewView-tab')
+      const contains = tab.contains(e.target)
+      if (contains) return false
       const id = this.product.model.tp_product_id
       const index = this.tableData.findIndex(item => item.tp_product_id === id)
         // w
