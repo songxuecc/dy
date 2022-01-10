@@ -2,6 +2,7 @@ import Api from '@/api/apis'
 import FormModel from '@/common/formModel'
 import cloneDeep from 'lodash/cloneDeep'
 import { read, remove, update } from '@/common/indexDB'
+import servises from '@servises'
 
 // 店铺绑定
 export default {
@@ -31,7 +32,8 @@ export default {
     },
     async requestTemplate ({commit, state}, params) {
       try {
-        const data = await Api.hhgjAPIs.getTemplate(params)
+        const data = await servises.getTemplate()
+        console.log(data, 'data')
         const templateList = await this.dispatch('migrate/migrateSettingTemplate/getCostTemplateList')
         // 运费模版id
         if (data.cost_template_id.toString() === '0' && templateList.length > 0) {
@@ -39,8 +41,6 @@ export default {
         }
         const template = cloneDeep(state.template)
 
-        // 保存结束时间
-        data.presell_end_time = localStorage.getItem('presell_end_time')
         // 设置默认发货时间
         if (!data.delivery_delay_day) {
           data.delivery_delay_day = 2
@@ -65,7 +65,7 @@ export default {
         // 搬迁方式在首页前置 首页设置优先级最高
         const commitType = localStorage.getItem('migrate_productList_commit_type')
         template.model.commit_type = Number(commitType)
-        console.log(commitType, template.model, 'commitType')
+        console.log(template.model, 'template.model')
         commit('save', {template})
         // 先获取数据 再保存localstorege 最后合并两个数据 是为了保证再用户刷新数据的时候 可以保证用户操作记录还在
         // 在这里真正保存模版
@@ -124,9 +124,6 @@ export default {
     },
     removeDicCustomPrices ({commit}) {
       commit('save', {dicCustomPrices: {}})
-    },
-    setPresellEndTime ({commit, state}, payload) {
-      localStorage.setItem('presell_end_time', payload || '')
     },
     async getCostTemplateList ({commit, state}, payload) {
       const targetUserId = payload && payload.targetUserId

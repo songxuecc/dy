@@ -113,7 +113,7 @@
                 <el-checkbox v-model="templateHandler.checkedShipment" style="padding-top: 5px">
                     <span style="display:inline-block; width:70px">发货时间</span>
                     <el-radio v-model="templateHandler.template.shipment_limit_second" :label="172800">48小时</el-radio>
-                    <el-radio v-model="templateHandler.template.shipment_limit_second" :label="86400">24小时</el-radio>
+                    <el-radio v-model="templateHandler.template.shipment_limit_second" :label="86400">次日</el-radio>
                 </el-checkbox><br>
                 <el-checkbox v-model="templateHandler.checkedPromise" style="padding-top: 5px">
                     <span style="display:inline-block; width:70px">承诺服务</span>

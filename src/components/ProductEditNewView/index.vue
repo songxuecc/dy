@@ -2,8 +2,9 @@
   <div style="height: 100%" class="ProductEditNewView" >
     <el-row :gutter="20" style="height: 100%">
       <el-col :span="7" style="height: 100%; overflow-y: scroll;padding-right: 0px; padding-bottom: 80px;">
-        <div class="left bold" style="width:320px;font-size:14px;padding:8px 10px;"> <b >商品名称</b> <b class="color-999">（键盘↑(W)键和↓(S)键可切换商品,D(delete)可删除商品,删除后请点击保存编辑）</b></div>
+        <div class="left bold" style="font-size:14px;padding:8px 10px;"> <b >商品名称</b> <b class="color-999">（键盘↑(W)键和↓(S)键可切换商品,删除后请点击保存编辑）</b></div>
         <el-table ref="productList" :data="tableData" row-key="tp_product_id" border :show-header="false" :cell-style="productListCellStyle"
+                  class="productList"
                   :row-style="{height:'68px'}"
                   @current-change="handleProductSelect"
                   @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" @selection-change="handleSelectionChange"
@@ -44,9 +45,9 @@
                     </el-link>
                 </template>
             </el-table-column>
-            <el-table-column label="删除" width="50">
+            <el-table-column label="删除" width="65">
                 <template slot-scope="scope">
-                    <div class="font-12 flex align-c pointer" @click.stop="onDeleteProduct(scope.row)"><hh-icon type="iconshanchu1" class="font-12"></hh-icon>(D)</div>
+                    <div class="font-12 flex align-c pointer justify-c" @click.stop="onDeleteProduct(scope.row)"><hh-icon type="iconshanchu1" class="font-12 ml-5"></hh-icon>删除</div>
                 </template>
             </el-table-column>
 
@@ -570,16 +571,16 @@ export default {
       const key = window.event ? e.keyCode : e.switch
       const id = this.product.model.tp_product_id
       const index = this.tableData.findIndex(item => item.tp_product_id === id)
-      // w
+        // w
       if ((key === 87 || key === 38) && index > 0) {
         this.handleProductSelect(this.tableData[index - 1], this.product)
         // s
       } else if ((key === 83 || key === 40) && index < this.tableData.length - 1) {
         this.handleProductSelect(this.tableData[index + 1], this.product)
-        // d
-      } else if (key === 68 || key === 46) {
-        this.onDeleteProduct(this.tableData[index])
       }
+      // else if (key === 68 || key === 46) {
+      //   this.onDeleteProduct(this.tableData[index])
+      // }
     },
     // 检查资质中心
     checkQualityList (product) {
@@ -1887,10 +1888,12 @@ export default {
   height: 100%;
   overflow-y: auto;
 }
-
-/deep/ .el-table__body-wrapper {
-  border-top: 1px solid #000;
+.productList {
+  /deep/ .el-table__body-wrapper {
+    border-top: 1px solid #cdcdcd;
+  }
 }
+
   // /deep/ .el-table__body tr.current-row>td {
   //   background-color: rgb(179, 216, 255);
   // }

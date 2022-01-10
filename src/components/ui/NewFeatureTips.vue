@@ -17,7 +17,7 @@ class GetNewFeature {
     this.instance = null
     this.hasMounted = true
     this.delay = {
-      time: 2,
+      time: 30,
       unit: 'days'
     }
   }

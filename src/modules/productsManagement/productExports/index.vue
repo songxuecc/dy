@@ -51,9 +51,14 @@
           v-model="checkedCities1"
           @change="handleCheckedCitiesChange($event, '1')"
         >
-          <el-checkbox v-for="city in cities1" :label="city" :key="city">{{
-            city
-          }}</el-checkbox>
+          <el-checkbox v-for="city in cities1" :label="city" :key="city" >
+            <span class="flex align-c">
+              {{city.text}}
+              <NewFeatureTips :type="`基本信息-${city.text}`" v-if="city.new">
+                <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+              </NewFeatureTips>
+            </span>
+          </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
 
@@ -68,9 +73,14 @@
           v-model="checkedCities2"
           @change="handleCheckedCitiesChange($event, '2')"
         >
-          <el-checkbox v-for="city in cities2" :label="city" :key="city">{{
-            city
-          }}</el-checkbox>
+          <el-checkbox v-for="city in cities2" :label="city" :key="city" >
+            <span class="flex align-c">
+              {{city.text}}
+              <NewFeatureTips :type="`sku信息-${city.text}`" v-if="city.new">
+                <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+              </NewFeatureTips>
+            </span>
+          </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
 

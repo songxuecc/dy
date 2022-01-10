@@ -1,33 +1,33 @@
 export const cityOptions1 = [
-  '主图',
-  '商品ID',
-  '商品链接',
-  '来源链接',
-  '商品标题',
-  '商品分类',
-  '类目属性',
-  '商品库存',
-  '商品状态',
-  '划线价',
-  '售卖价',
-  '轮播图',
-  '详情图',
-  '支付方式',
-  '客服手机',
-  '货号',
-  '发货模式',
-  '创建时间'
+  {text: '主图', new: true},
+  {text: '商品ID', new: false},
+  {text: '商品链接', new: false},
+  {text: '来源链接', new: false},
+  {text: '商品标题', new: false},
+  {text: '商品分类', new: false},
+  {text: '类目属性', new: false},
+  {text: '商品库存', new: false},
+  {text: '商品状态', new: false},
+  {text: '划线价', new: false},
+  {text: '售卖价', new: false},
+  {text: '轮播图', new: false},
+  {text: '详情图', new: false},
+  {text: '支付方式', new: false},
+  {text: '客服手机', new: false},
+  {text: '货号', new: false},
+  {text: '发货模式', new: false},
+  {text: '创建时间', new: false}
 ]
 
 export const cityOptions2 = [
-  'skuID',
-  'sku规格属性',
-  'sku编码',
-  'sku现货或预售库存',
-  'sku阶梯库存',
-  'sku价格',
-  '货源sku价格',
-  'sku价格/货源sku价格'
+  {text: 'skuID', new: false},
+  {text: 'sku规格属性', new: false},
+  {text: 'sku编码', new: false},
+  {text: 'sku现货或预售库存', new: false},
+  {text: 'sku阶梯库存', new: false},
+  {text: 'sku价格', new: false},
+  {text: '货源sku价格', new: false},
+  {text: 'sku价格/货源sku价格', new: false}
 ]
 
 export const exportFieldList = {

@@ -159,8 +159,24 @@
                     <el-input-number v-model="default_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
                 </el-form-item>
                 <el-form-item style="display:inline;margin-bottom:0" prop="is_use_default_sku_stock">
-                    <el-switch v-model="is_use_default_sku_stock" @change="handleIsUseDefaultSkuStock"/>
+                    <el-switch v-model="is_use_default_sku_stock" />
                 </el-form-item>
+                <NewFeatureTips type="所有SKU库存均为" >
+                  <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                </NewFeatureTips>
+              </p>
+              <p class="mb-10 flex align-c mb-10">
+                <span class="font-12 mr-5">当SKU库存小于等于</span>
+                <el-form-item style="display:inline;margin-bottom:0" prop="low_sku_stock"  class="mr-5">
+                    <el-input-number v-model="low_sku_stock" placeholder="请输入数字" style="width: 140px;"  :min="0" :max="1000000"/>
+                    时，将库存设置为 0
+                </el-form-item>
+                <el-form-item style="display:inline;margin-bottom:0" prop="is_open_low_sku_stock">
+                    <el-switch v-model="is_open_low_sku_stock" @change="handleIsOpenLowSkuStock"/>
+                </el-form-item>
+                <NewFeatureTips type="当SKU库存小于等于" >
+                  <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                </NewFeatureTips>
               </p>
           </el-form-item>
           <el-form-item   label="SKU价格:"  style="padding-bottom: 20px;box-sizing: border-box" class="flex  align-c  migrateSetting-price">
@@ -182,6 +198,9 @@
         <el-form-item  label="类目资质:" style="padding-bottom: 20px;box-sizing: border-box" class="migrateSetting-qualification">
           <div class="flex align-c " style="height:28px">
             <el-button size="mini" @click="setQualification" type="text">点击设置</el-button>
+            <NewFeatureTips type="类目资质" >
+              <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+            </NewFeatureTips>
           </div>
         </el-form-item>
 
@@ -429,6 +448,8 @@ export default {
       is_open_title_replace: undefined,
       default_sku_stock: '',
       is_use_default_sku_stock: undefined,
+      low_sku_stock: '',
+      is_open_low_sku_stock: undefined,
       max_sku_stock: '',
       low_sku_price: '',
       is_use_max_sku_stock: undefined,
@@ -596,6 +617,15 @@ export default {
         callback()
       }
 
+      const checkLowSkuStock = (rule, value, callback) => {
+        if (this.is_open_low_sku_stock) {
+          if (this.low_sku_stock < 0 || this.low_sku_stock > 1000000) {
+            return callback(new Error('范围设置:0~1000000'))
+          }
+        }
+        callback()
+      }
+
       const checkLowSkuPrice = (rule, value, callback) => {
         function isInteger (obj) {
           return Math.round(accMul(obj, 100)) === accMul(obj, 100)
@@ -613,6 +643,13 @@ export default {
       const checkUseDefaultSkuStock = (rule, value, callback) => {
         if (this.is_use_default_sku_stock) {
           this.$refs.template.validateField('default_sku_stock')
+        }
+        callback()
+      }
+
+      const checkOpenLowSkuStock = (rule, value, callback) => {
+        if (this.is_open_low_sku_stock) {
+          this.$refs.template.validateField('low_sku_stock')
         }
         callback()
       }
@@ -650,6 +687,12 @@ export default {
         is_use_default_sku_stock: [
           { validator: checkUseDefaultSkuStock, trigger: 'change' }
         ],
+        low_sku_stock: [
+          { validator: checkLowSkuStock, trigger: 'change' }
+        ],
+        is_open_low_sku_stock: [
+          { validator: checkOpenLowSkuStock, trigger: 'change' }
+        ],
         default_recommend_remark: [
           { validator: checkDefaultRecommendRremark, trigger: 'change' }
         ],
@@ -670,7 +713,9 @@ export default {
       delete product.able_migrate_status_list
       delete originMigrateSetting.able_migrate_status_list
       const isEqualSetting = isEqual(originMigrateSetting, product)
-      console.log(originMigrateSetting, product, isEqualSetting, 'originMigrateSetting, product')
+      console.log(originMigrateSetting, 'originMigrateSetting')
+      console.log(product, ' product')
+      console.log(isEqualSetting, 'isEqualSetting')
       var isEqualStatusList = migrateStatus.length === currentMigrateStatus.length &&
       migrateStatus.sort().toString() === currentMigrateStatus.sort().toString()
       // 搬家标题-删除指定内容
@@ -830,6 +875,7 @@ export default {
         // 'is_cut_sku_spec',
         'detail_img_cut',
         'is_use_default_sku_stock',
+        'is_open_low_sku_stock',
         'is_use_max_sku_stock',
         'is_cut_banner_first',
         'is_auto_cut_banner',
@@ -934,6 +980,8 @@ export default {
         able_migrate_status_list: this.able_migrate_status_list,
         default_sku_stock: this.default_sku_stock,
         is_use_default_sku_stock: Number(this.is_use_default_sku_stock),
+        low_sku_stock: this.low_sku_stock,
+        is_open_low_sku_stock: Number(this.is_open_low_sku_stock),
         is_use_max_sku_stock: Number(this.is_use_max_sku_stock),
         max_sku_stock: this.max_sku_stock,
         low_sku_price: this.low_sku_price,

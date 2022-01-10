@@ -193,7 +193,14 @@
                 <p>&nbsp;</p>
                 <p>价格和模板的填写设置与上一次搬家操作的设置保持一致</p>
                 <span class="pointer" slot="reference" style="height:12px;">
-                  <el-link type="primary" style="font-size: 10px;  margin-left: 10px;" :underline="false" @click="quickMigrate" :disabled="selectIdList.length == 0">跳过编辑，现在搬家</el-link>
+                  <el-link type="primary" style="font-size: 10px;  margin-left: 10px;" :underline="false" @click="quickMigrate" :disabled="selectIdList.length == 0">
+                    <span style="display:inline-flex;" class="align-c" >
+                      跳过编辑，现在搬家
+                      <NewFeatureTips type="跳过编辑，现在搬家" >
+                        <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                      </NewFeatureTips>
+                    </span>
+                  </el-link>
                 </span>
             </el-popover>
             <span class="pl-10 font-12">
@@ -217,16 +224,13 @@
       </div>
     </div>
 
-    <el-dialog title="淘宝登录验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="loginDialogVisible" width="30%">
-      <p>由于淘宝原因，搜索复制店铺商品需先<span
-          style="color: #dd6161; font-weight:bold; vertical-align:baseline;">登录淘宝</span>，<br />请登陆成功后再返回当前页面继续操作。</p>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="plain" @click="finishLogin">已完成验证，继续操作</el-button>
-        <el-button type="primary" @click="gotoLoginPage">立即登录</el-button>
-      </span>
+      <hh-icon type="iconjinggao1" style="width:50px;height: 50px;font-size: 50px;margin-bottom:12px"></hh-icon>
+      <p>复制前请先<span class="click" @click="openTaobao">登录淘宝账号</span>，否则会导致登录失败</p>
+      <el-button type="primary" style="width:150px" class="mt-10" @click="finishLogin">已登录，开始复制</el-button>
     </el-dialog>
-    <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
+    <!-- <el-dialog title="滑动验证" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="slideDialogVisible" width="30%">
       <div class="warning" style="font-size:16px">滑动到右侧后，如果滑块在加载转圈</div>
       <div class="warning" style="font-size:16px">可点击下方继续操作按钮</div>
@@ -235,7 +239,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="finishSlide">已完成验证，继续操作</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog :visible.sync="batchDeleteCaptureVisible" @opened="captureSelectAll()">
       <span slot="title">删除选中的商品</span>
       <div style="margin-top: -30px;">
@@ -280,6 +284,7 @@
     <ModalCharge ref="ModalCharge" />
     <ModalChargeSevenDays ref="ModalChargeSevenDays" />
     <ModalChargeTreeMonth ref="ModalChargeTreeMonth" />
+    <ModalPresellType ref="ModalPresellType" />
   </div>
 </template>
 <script>
@@ -288,8 +293,8 @@ import ModalCharge from '@migrate/readyToMigrate/components/ModalCharge'
 import ModalChargeSevenDays from '@migrate/readyToMigrate/components/ModalChargeSevenDays'
 import ModalChargeTreeMonth from '@migrate/readyToMigrate/components/ModalChargeTreeMonth'
 import Search from '@migrate/readyToMigrate/components/Search'
+import ModalPresellType from '@migrate/readyToMigrate/components/ModalPresellType'
 import isEmpty from 'lodash/isEmpty'
-
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import { mapActions, mapState, mapGetters } from 'vuex'
@@ -297,6 +302,7 @@ import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
 import Api from '@/api/apis'
+import servises from '@servises'
 
 export default {
   inject: ['reload'],
@@ -307,6 +313,7 @@ export default {
     ModalCharge,
     ModalChargeSevenDays,
     ModalChargeTreeMonth,
+    ModalPresellType,
     Search
   },
   data () {
@@ -804,12 +811,20 @@ export default {
       })
     },
     quickMigrate () {
-      this.request('migrate', {
-        tp_product_ids: this.selectIdList,
-        is_quick_migrate: 1,
-        commit_type: this.commit_type
-      }, (data) => {
-        location.reload()
+      const self = this
+      servises.migrateCreateCheck().then((data) => {
+        if (!data.is_valid) {
+          self.$refs.ModalPresellType.open(data.template, self.selectIdList)
+        } else {
+          self.request('migrate', {
+            tp_product_ids: self.selectIdList,
+            is_quick_migrate: 1,
+            commit_type: self.commit_type
+          }, (data) => {
+            location.reload()
+          })
+        }
+        // self.$refs.ModalPresellType.open(data.template, self.selectIdList)
       })
     },
     calendarTime (strTime) {
@@ -1054,6 +1069,9 @@ export default {
         params,
         async (data) => {
           console.log(data, 'data')
+
+          // data = {'code': 0, 'data': {'shop_capture_type': 1, 'is_error_balance': 0, 'parent_id': 0, 'page_id': 3, 'status_statistics': [{'count': 19, 'status': 2}], 'capture_id': 31849936, 'current_page_id': '', 'create_time': '2022-01-06 14:50:00', 'total_num': 450, 'left_seconds': 155, 'source': '\u5929\u732b', 'current_page_status': 2, 'page_status': 1, 'page_size': 50, 'status': 2, 'shop_name': '\u6ce1\u6ce1\u739b\u7279\u65d7\u8230\u5e97', 'capture_num': 50, 'capture_type_id': 1002, 'shop_async_link': 'https://popmart.tmall.com/i/asynSearch.htm?mid=w-15691211895-0&wid=15691211895&path=/search.htm&search=y&pageNo=3&orderType=hotsell_desc', 'url': 'https://popmart.tmall.com/?spm=a220o.1000855.1997427721.d4918089.4617b4datBs63D', 'tp_id': 1001, 'max_current_page_id': 3}, 'msg': 'succ'}
+          // data = data.data
           const hasShow = localStorage.getItem(data.capture_id)
           const userVersion = this.userVersion || (await this.userVersionQuery())
           const isSevenDays = userVersion && !userVersion.is_free_upgrate && !userVersion.is_senior && userVersion.version_type === 'free_seven_days'
@@ -1102,7 +1120,7 @@ export default {
                       this.loginDialogVisible = true
                     } else {
                       this.slideUrl = res.url
-                      this.slideDialogVisible = true
+                      this.loginDialogVisible = true
                     }
                   } else {
                     this.pageData[data.page_id] = res
@@ -1731,6 +1749,10 @@ export default {
     // 继续抓取
     continueCapture () {
       this.$refs.Search && this.$refs.Search.handleFilterChange()
+    },
+    // 打开淘宝
+    openTaobao () {
+      window.open('https://www.taobao.com/')
     }
   }
 }

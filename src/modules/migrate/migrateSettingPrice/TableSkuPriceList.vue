@@ -51,7 +51,7 @@
               <hh-icon type="iconjinggao1" style="font-size:14px"></hh-icon>
             </el-tooltip>
           </span>
-          <span>
+          <span style="display:inline-flex;align-items:center">
             <span> (&nbsp;原价 - </span>
             <el-tooltip content="一般填0，若源商品含运费则可以加上运费后再设置百分比。比如源商品运费是10元，则填-10" placement="top">
               <el-input
@@ -76,7 +76,19 @@
                 class="price-sku-input"
               />
             </el-tooltip>
-            <span class="th-title-text"> % - </span>
+            <span class="th-title-text"> % + </span>
+            <el-tooltip content="可以为负数，若要减价50元，则填-50" placement="top">
+              <el-input
+                :class="[templateError.group_price_diff_add ? 'warn':'']"
+                :debounce="500"
+                style="width: 55px"
+                :value="template.model.group_price_diff_add"
+                @input="handleSkuPriceChange($event,'group_price_diff_add')"
+                size="mini"
+                class="price-sku-input"
+              />
+            </el-tooltip>
+            <span class="th-title-text"> - </span>
             <el-tooltip content="可以为负数，若要加价50元，则填-50" placement="top">
               <el-input
                 :class="[templateError.group_price_diff ? 'warn':'']"
@@ -88,6 +100,9 @@
                 class="price-sku-input"
               />
             </el-tooltip>
+            <NewFeatureTips type="sku价格" style="line-height:12px;height:12px;">
+              <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+            </NewFeatureTips>
           </span>
         </template>
         <template slot-scope="scope">
@@ -302,6 +317,7 @@ export default {
       this.selectTpProductSkuJson = selectTpProduct.sku_json
       this.selectTpProductSkuId = selectTpProduct.tp_product_id
       this.marketPrice = selectTpProduct.market_price
+      console.log(selectTpProduct.custom_setting_unit, 'selectTpProduct.custom_setting_unit')
       if (selectTpProduct.custom_setting_unit) {
         this.selectTpProductSkuPriceStting = {
           ...selectTpProduct.custom_setting_unit,
@@ -313,6 +329,7 @@ export default {
           subtraction1: this.template.model.origin_price_diff,
           subtraction2: this.template.model.group_price_rate,
           subtraction3: this.template.model.group_price_diff,
+          subtraction4: this.template.model.group_price_diff_add,
           textPrice: '',
           radio: '1',
           unit: this.unit,

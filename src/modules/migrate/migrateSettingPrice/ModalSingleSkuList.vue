@@ -17,7 +17,13 @@
             style="width:100px;"
             v-model="subtraction2"
             @focus="radio='1'"/>
-          <span>% -</span>
+          <span>% +</span>
+          <el-input
+            size="mini"
+            style="width:100px;"
+            v-model="subtraction4"
+            @focus="radio='1'"/>
+          <span>-</span>
           <el-input
             size="mini"
             style="width:100px;"
@@ -153,6 +159,7 @@ export default {
       subtraction1: this.skuPriceStting.subtraction1 || 0,
       subtraction2: this.skuPriceStting.subtraction2 || 100,
       subtraction3: this.skuPriceStting.subtraction3 || 0,
+      subtraction4: this.skuPriceStting.subtraction4 || 0,
       textPrice: this.skuPriceStting.textPrice ? this.skuPriceStting.textPrice : '',
       unit: this.skuPriceStting.unit || 100,
       everyDecimal: everyDecimal,
@@ -178,6 +185,7 @@ export default {
           const originPriceDiff = this.template.subtraction1
           const groupPriceRate = this.template.subtraction2
           const groupPriceDiff = this.template.subtraction3
+          const groupPriceDiffAdd = this.template.subtraction4
           const textPrice = this.template.textPrice
           // 数据回显
           if (
@@ -185,9 +193,10 @@ export default {
             currentColumnData.custom_setting_unit &&
             utils.isNumber(this.subtraction1) &&
             utils.isNumber(this.subtraction2) &&
-            utils.isNumber(this.subtraction3)
+            utils.isNumber(this.subtraction3) &&
+            utils.isNumber(this.subtraction4)
           ) {
-            const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, originPriceDiff), groupPriceRate), 100), groupPriceDiff)
+            const evalGroupPriceRange = x => accSub(accAdd(accDiv(accMul(accSub(x, originPriceDiff), groupPriceRate), 100), groupPriceDiffAdd), groupPriceDiff)
             currentColumnData.sku_price = evalPrice(evalGroupPriceRange(currentColumnData.origin_price))
           }
           if (
@@ -238,6 +247,7 @@ export default {
       let originPriceDiff = n.subtraction1
       let groupPriceRate = n.subtraction2
       let groupPriceDiff = n.subtraction3
+      let groupPriceDiffAdd = n.subtraction4
       let textPrice = n.textPrice
       // 添加默认 sku公式值
       if (!utils.isNumber(n.subtraction1)) {
@@ -249,14 +259,18 @@ export default {
       if (!utils.isNumber(n.subtraction3)) {
         groupPriceDiff = 0
       }
+      if (!utils.isNumber(n.subtraction4)) {
+        groupPriceDiffAdd = 0
+      }
       if (
         Number(n.radio) === 1 &&
          utils.isNumber(originPriceDiff) &&
          utils.isNumber(groupPriceRate) &&
          utils.isNumber(groupPriceDiff) &&
+         utils.isNumber(groupPriceDiffAdd) &&
          !isEqual(n, this.originSkuPriceStting)
       ) {
-        const evalGroupPriceRange = x => ((x - originPriceDiff) * groupPriceRate / 100 - groupPriceDiff)
+        const evalGroupPriceRange = x => accSub(accAdd(accDiv(accMul(accSub(x, originPriceDiff), groupPriceRate), 100), groupPriceDiffAdd), groupPriceDiff)
         const tableData = this.tableData.map((item, idx) => {
           const nextItem = cloneDeep(item)
           nextItem.editType = 1
@@ -295,6 +309,7 @@ export default {
         subtraction1: this.subtraction1,
         subtraction2: this.subtraction2,
         subtraction3: this.subtraction3,
+        subtraction4: this.subtraction4,
         textPrice: this.textPrice,
         unit: this.skuPriceStting.unit,
         everyDecimal: this.skuPriceStting.every_decimal
@@ -405,6 +420,9 @@ export default {
       if (!utils.isNumber(this.subtraction3)) {
         this.subtraction3 = 0
       }
+      if (!utils.isNumber(this.subtraction4)) {
+        this.subtraction4 = 0
+      }
 
       const column = cloneDeep(this.tableData[index])
       let price = column.promo_price / 100
@@ -413,8 +431,8 @@ export default {
       const everyDecimal = this.skuPriceStting.everyDecimal
       const evalPrice = financial(unit, everyDecimal)
       // 根据 自定义设置重设价格
-      if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3)) {
-        const evalGroupPriceRange = x => accSub(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction3)
+      if (Number(this.radio) === 1 && utils.isNumber(this.subtraction1) && utils.isNumber(this.subtraction2) && utils.isNumber(this.subtraction3) && utils.isNumber(this.subtraction4)) {
+        const evalGroupPriceRange = x => accSub(accAdd(accDiv(accMul(accSub(x, this.subtraction1), this.subtraction2), 100), this.subtraction4), this.subtraction3)
         price = evalPrice(evalGroupPriceRange(price))
       } else if (utils.isNumber(this.textPrice) && this.textPrice && Number(this.radio) === 2) {
         price = this.textPrice
@@ -443,12 +461,16 @@ export default {
       if (!utils.isNumber(this.subtraction3)) {
         this.subtraction3 = 0
       }
+      if (!utils.isNumber(this.subtraction4)) {
+        this.subtraction4 = 0
+      }
       this.$emit('handleSureBatchEdut',
         {
           radio: this.radio,
           subtraction1: this.subtraction1,
           subtraction2: this.subtraction2,
           subtraction3: this.subtraction3,
+          subtraction4: this.subtraction4,
           textPrice: this.textPrice
         },
         this.tableData

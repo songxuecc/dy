@@ -49,7 +49,6 @@ export function read (storeName) {
 
     request.onsuccess = function (event) {
       if (request.result) {
-        console.log('data: ' + request.result)
         const {id, ...rest} = request.result
         resolve(rest)
       } else {

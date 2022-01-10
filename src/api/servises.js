@@ -500,10 +500,13 @@ const hhgjAPIs = {
   userCatQualityDelete: (params) => {
     return api.actionCreatorPost('/api/user/cat_quality/delete', params)
   },
+  // 搬家
+  migrateCreateCheck: (params) => {
+    return api.actionCreatorPost('/api/migrate/create/check', params)
+  },
   userCapturePage: (params) => {
     return api.actionCreateGet('/api/capture/page', params)
   }
-
 }
 
 export default hhgjAPIs

@@ -84,7 +84,6 @@ export default {
     ...mapActionsMigrate([
       'requestTemplate',
       'removeTempTemplate',
-      'setPresellEndTime',
       'removeDicCustomPrices'
     ]),
     ...mapActions([
@@ -133,7 +132,7 @@ export default {
     getTemplateParams () {
       let keyList = ['pay_type', 'mobile', 'cos_ratio', 'cost_template_id',
         'is_refundable', 'is_folt', 'is_pre_sale', 'shipment_limit_second',
-        'group_price_rate', 'group_price_diff', 'single_price_rate', 'single_price_diff',
+        'group_price_rate', 'group_price_diff', 'group_price_diff_add', 'single_price_rate', 'single_price_diff',
         'price_rate', 'price_diff', 'origin_price_diff', 'is_sale_price_show_max',
         'presell_type', 'commit_type', 'reduce_type', 'product_type', 'unit', 'supply_7day_return',
         'weight', 'weight_unit', 'ext_json'
@@ -164,6 +163,7 @@ export default {
       const formatParmas = cloneDeep(template)
       formatParmas.group_price_rate = Math.round(formatParmas.group_price_rate * 100)
       formatParmas.group_price_diff = utils.yuanToFen(formatParmas.group_price_diff)
+      formatParmas.group_price_diff_add = utils.yuanToFen(formatParmas.group_price_diff_add)
       formatParmas.single_price_rate = Math.round(formatParmas.single_price_rate * 100)
       formatParmas.single_price_diff = utils.yuanToFen(formatParmas.single_price_diff)
       formatParmas.price_rate = Math.round(formatParmas.price_rate * 100)
@@ -271,7 +271,6 @@ export default {
         this.removeTempTemplate()
         this.updateTemplate()
         const {template} = this.getTemplateParams()
-        this.setPresellEndTime(template.presell_end_time)
         this.migrage()
       } catch (err) {
         this.$message.error(`startMigrate: ${err || err.message}`)

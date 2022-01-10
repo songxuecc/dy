@@ -26,7 +26,7 @@
                 <div style="display:flex">
                   <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:150px;margin-right:10px;align-items:center">
                     <el-option :value="9999" label="当日" :key="9999"> </el-option>
-                    <el-option :value="1" label="24小时"> </el-option>
+                    <el-option :value="1" label="次日"> </el-option>
                     <el-option :value="2" label="48小时"> </el-option>
                     <el-option :value="3" label="3天">3天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
                     <el-option :value="5" label="5天">5天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
@@ -34,9 +34,12 @@
                     <el-option :value="10" label="10天">10天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
                     <el-option :value="15" label="15天">15天 <span class="warning">仅支持特殊类目可选，一般类目不要选</span></el-option>
                 </el-select>
-                <span class="info" style="line-height:16px;flex:1">
-                  注：目前抖店官方对发货模式及发货时限规则开始调整，若选择现货发货模式，需在消费者下单后<span class="fail">&nbsp;&nbsp;48小时&nbsp;&nbsp;</span>内发货。部分特殊类目可自主设置【3-15天】的发货时间，具体类目以商家后台展示为准。点击查看&nbsp;&nbsp;<el-link @click="open" type="primary" style="font-size:12px" :underline="false">官方文档</el-link>&nbsp;&nbsp;说明  。
-                </span>
+                <NewFeatureTips type="承诺发货时间" >
+                <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                </NewFeatureTips>
+                </div>
+                <div class="info mt-5" style="line-height:16px;flex:1">
+                  注：目前抖店官方对发货模式及发货时限规则开始调整，<br/>若选择现货发货模式，需在消费者下单后<span class="fail">&nbsp;&nbsp;48小时&nbsp;&nbsp;</span>内发货。<br/>部分特殊类目可自主设置【3-15天】的发货时间，具体类目以商家后台展示为准。点击查看&nbsp;&nbsp;<el-link @click="open" type="primary" style="font-size:12px" :underline="false">官方文档</el-link>&nbsp;&nbsp;说明  。
                 </div>
                 <div class="fail" v-if="template.model.delivery_delay_day !==2"> </div>
             </el-form-item>
@@ -47,8 +50,7 @@
                   v-model="template.model.presell_end_time"
                   :picker-options="pickerOptions"
                   type="datetime"
-                  placeholder="选择日期时间"
-                  default-time="00:00:00">
+                  placeholder="选择日期时间">
                 </el-date-picker>
                 <p class="info">最多支持设置距离当前30天</p>
             </el-form-item>
@@ -88,6 +90,7 @@
                     <p class="info">阶梯发货期间商品发货时间以此限制为主，仅可设置3-5天</p>
                   </div>
                 </template>
+
             </el-form-item>
             <el-form-item label="库存设置:"  v-if="template.model.presell_type === 2 && template.model.commit_type !== 1" prop="step_stock_num_diff">
                 <span>现货库存设置为</span>
