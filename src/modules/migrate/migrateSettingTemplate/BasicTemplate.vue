@@ -36,7 +36,7 @@
                 <el-radio :label="1">g</el-radio>
               </el-radio-group>
               <el-form-item prop="weight" style="display:inline-flex;margin-left:10px;margin-bottom: 0;" class="weight">
-                <el-input v-model="template.model.weight"  class="input-num" style="width:150px"></el-input>
+                <el-input-number v-model="template.model.weight"  class="input-num" style="width:150px"></el-input-number>
               </el-form-item>
             </el-form-item>
             <el-form-item label="商品限购设置:" v-if="template.model.ext_json" class="flex item-order">
