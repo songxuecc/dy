@@ -120,6 +120,16 @@
                 <span class="">商品质量分检测</span>
               </div>
            </el-menu-item>
+           <el-menu-item index="/productsManagement/detectDuplicateProducts/detectProductList" :disabled="!isAuth()">
+             <div slot="title" class="flex align-c">
+                <hh-icon type="icona-shangpinzhiliangfenjianceweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
+                <span class="">重复铺货检测
+                  <NewFeatureTips type="重复铺货检测" >
+                    <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                  </NewFeatureTips>
+                </span>
+              </div>
+           </el-menu-item>
           </el-submenu>
           <el-submenu index="3">
              <template slot="title">
