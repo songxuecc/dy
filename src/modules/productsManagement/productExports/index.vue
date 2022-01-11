@@ -184,10 +184,12 @@ export default {
         console.log(err)
       }
     },
+    // 全选
     handleCheckAllChange (val, key) {
-      this[`checkedCities${key}`] = val ? this[`cities${key}`] : []
+      this[`checkedCities${key}`] = val ? this[`cities${key}`].map(item => item.text) : []
       this[`isIndeterminate${key}`] = false
     },
+    // 单选
     handleCheckedCitiesChange (value, key) {
       let checkedCount = value.length
       this[`checkAll${key}`] = checkedCount === this[`cities${key}`].length
