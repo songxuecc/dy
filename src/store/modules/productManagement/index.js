@@ -4,6 +4,7 @@ import productsSync from './productsSync'
 import combination from './combination'
 import cycleProductsSelf from './cycleProductsSelf'
 import productQualityScore from './productQualityScore'
+import detectDuplicateProducts from './detectDuplicateProducts'
 
 const modules = {
   productManagement: {
@@ -14,7 +15,8 @@ const modules = {
       ...productsSync,
       ...combination,
       ...cycleProductsSelf,
-      ...productQualityScore
+      ...productQualityScore,
+      ...detectDuplicateProducts
     }
   }
 }

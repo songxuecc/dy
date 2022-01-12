@@ -1,9 +1,165 @@
 <!-- 检测商品列表 -->
 <template>
-    <div>检测商品列表</div>
+    <div class='left detectProductList'>
+      <div class="alert">
+            <div style="margin-left:16px">
+              <hh-icon type="icontishi" ></hh-icon>什么是重复铺货检测？
+            </div>
+            <p>
+              帮助店铺检测标题完全相同的商品。避免商品
+              <span class="fail">标题完全相同</span>
+              <span>的商品。避免商品或店铺因重复铺货受到官方处罚。</span>
+              <span class="click">点击查看</span>
+              <span>重复铺货的危害</span>
+            </p>
+      </div>
+
+      <div class="mb-10">
+        <span>选择检测商品</span>
+        <el-radio-group v-model="status">
+          <el-radio label="0">全部商品</el-radio>
+          <el-radio label="1">仅上架商品</el-radio>
+          <el-radio label="2">仅下架商品</el-radio>
+        </el-radio-group>
+      </div>
+      <div class="flex align-c mb-26">
+        <el-button style="width:120px" type="primary" @click="startDetect">开始检测</el-button> <SyncProduct />
+      </div>
+
+      <div class="flex align-c mb-14 justify-b">
+        <div class="font-12 ">
+          <el-button type="primary" size="small" class=" mr-10" @click="handleQuikeSelect">快速勾选：每组只保留后一个</el-button>
+          <span class="color-4e">最近检测结果：</span> <span class="fail mr-30">{{detectDetail.group_nums}}组重复商品，共{{detectDetail.goods_nums}}个商品</span>
+          <span class="color-4e">最近检测时间：</span> <span class="color-999">{{detectDetail.repeat_check_time}}</span>
+        </div >
+        <div class="click" @click="goToRecord">查看批量下架 批量删除记录</div>
+      </div>
+
+      <div v-loading="loading || loadingPost">
+          <div class="flex font-12 color-333" style="background-color: #F9F9F9;padding:8px 0;">
+            <div style="width:100px">
+              <el-checkbox style="margin-left:10px;margin-right:10px" @change="handleAllCheckChange" v-model="allChecked"></el-checkbox>全选/反选
+            </div>
+            <div style="flex:1;padding-left:30px" class="center">商品信息</div>
+            <div style="width:80px" class="center">类目</div>
+            <div style="width:80px" class="center">售卖价</div>
+            <div style="width:80px" class="center">库存</div>
+            <div style="width:80px" class="center">销售状态</div>
+            <div style="width:150px" class="center">操作</div>
+          </div>
+          <el-table-empty  v-if="!tableData.length"/>
+          <div v-for="(data,idx) in tableData" :key="idx" v-else>
+              <el-table
+                v-if="data.goods_list && data.goods_list.length"
+                :data="data.goods_list"
+                :show-header="false" >
+                <el-table-column
+                  align="center"
+                  prop="category_name"
+                  label="类目"
+                  width="100">
+                    <template slot-scope="scope">
+                      <div class="flex align-c">
+                        <el-checkbox style="margin-right:10px" v-model="scope.row.is_checked" @change="handleCheckChange($event,`[${idx}].goods_list[${scope.row.index}].is_checked`)"></el-checkbox>
+                        <HhImage :src="scope.row.image_url" style="height:50px;max-width:65px;"/>
+                      </div>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="id"
+                    label="商品信息">
+                    <template slot-scope="scope">
+                        <div>
+                          <el-link :underline="false" :href="'https://haohuo.jinritemai.com/views/product/detail?id=' +scope.row.goods_id"  class="font-13">
+                            {{ scope.row.goods_name }} </el-link><br />
+                          <div class="font-12 flex align-c color-999" style="margin-top:3px">
+                            <span>{{ scope.row.goods_id }}</span>
+                            <span class="ml-10 mr-10 presell_type jieti" v-if="scope.row.presell_type === 2" >阶梯发货</span>
+                            <span class="ml-10 mr-10 presell_type xianhuo" v-if="scope.row.presell_type === 0" >现货发货</span>
+                            <span class="ml-10 mr-10 presell_type yushou" v-if="scope.row.presell_type === 1" >预售发货</span>
+                          </div>
+                        </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    prop="category_name"
+                    label="类目"
+                    width="80">
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    prop="discount_price"
+                    label="售卖价"
+                    width="80">
+                    <template slot-scope="scope">
+                      <span >{{fenToYuan(scope.row.discount_price)}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    prop="goods_quantity"
+                    label="库存"
+                    width="80">
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    prop="address"
+                    label="销售状态"
+                    width="80">
+                    <template slot-scope="scope">
+                      <el-link type="primary" :underline="false" :href="dyGoodsLink(scope.row.goods_id)" target="view_window" class="font-13">{{ dyProductStatusMap[scope.row.status + '-' + scope.row.check_status] }}</el-link>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    prop="address"
+                    label="操作"
+                    width="150">
+                    <template slot-scope="scope">
+                      <span class="click pointer mr-5" @click="handleOnshelf(scope.row,data)">下架</span>
+                      <span class="click pointer mr-5" @click="productDelete(scope.row,data)">删除</span>
+                      <span class="click pointer" @click="productEdit(scope.row)">修改</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <div style="height:2px;background:#97CBFF" v-if="data.goods_list && data.goods_list.length"></div>
+          </div>
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pagination.page_index"
+        class=" pt-20 right mr-20 pagination"
+        :page-size="pagination.page_size"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+      </div>
+
+      <div class="btn flex align-c justify-c" :style="{'margin-right': (40 + scrollWidth)  + 'px'}">
+        <el-button type="primary" class="relative" :disabled="!hasCheckedLength" @click="handleBatchDelete">
+          批量删除选择商品
+          <span class="badge" v-if="hasCheckedLength">{{hasCheckedLength}}</span>
+        </el-button>
+        <el-button type="primary" class="relative" :disabled="!hasCheckedLength"  @click="handleBatchOnShelf">
+          批量下架选择商品
+          <span class="badge" v-if="hasCheckedLength">{{hasCheckedLength}}</span>
+        </el-button>
+      </div>
+
+    </div>
+
 </template>
 
 <script>
+import { mapActions, mapState, mapMutations } from 'vuex'
+import utils from '@/common/utils'
+import common from '@/common/common.js'
+import set from 'lodash/set'
+import services from '@servises'
+import debounce from 'lodash/debounce'
+
 export default {
   name: 'detectProductList',
   props: {
@@ -11,9 +167,354 @@ export default {
   },
   data () {
     return {
+      status: '0',
+      checked: false,
+      utils,
+      dyProductStatusMap: common.dyProductStatusMap,
+      allChecked: false,
+      percent: 0,
+      timer: null,
+      detectDetail: {},
+      loadingPost: false,
+      loadingInstantence: null,
+      scrollWidth: 0
+    }
+  },
+  created () {
+    this.init()
+  },
+  mounted () {
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.addEventListener('scroll', this.scroll)
+  },
+  beforeDestroy () {
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.removeEventListener('scroll', this.scroll)
+  },
+  computed: {
+    ...mapState('productManagement/detectDuplicateProducts/detectProductList', [
+      'tableData',
+      'total',
+      'pagination',
+      'filters',
+      'form'
+    ]),
+    ...mapState({
+      loading: state => state['@@loading'].effects['productManagement/detectDuplicateProducts/detectProductList/fetch']
+    }),
+    hasCheckedLength () {
+      const AllGoods = this.tableData
+        .reduce((target, current) => target.concat(current.goods_list), [])
+      const hasChecked = AllGoods
+        .filter(item => item.is_checked)
+      return hasChecked.length
+    }
+  },
+  methods: {
+    ...mapActions('productManagement/detectDuplicateProducts/detectProductList', [
+      'fetch',
+      'handleCurrentChange',
+      'handleSizeChange'
+    ]),
+    ...mapMutations('productManagement/detectDuplicateProducts/detectProductList', ['save']),
+    fenToYuan: utils.fenToYuan,
+    dyGoodsLink (dyGoodsId) {
+      return 'https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + dyGoodsId
+    },
+    async init () {
+      this.loadingInstantence = this.$loading({
+        lock: true,
+        text: `拼命加载中 ${this.percent}`,
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      services.productRepeatQuery().then(data => {
+        if (data.status === 2) {
+          this.loadingInstantence.close()
+          clearTimeout(this.timer)
+          this.timer = null
+          this.detectDetail = data
+          this.fetch().then(item => {
+            this.scroll()
+          })
+        } else {
+          this.percent = data.percent
+          clearTimeout(this.timer)
+          this.timer = setTimeout(() => {
+            this.init()
+          }, 2000)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    scroll: debounce(function () {
+      // 判断是否有滚动条的方法
+      function hasScrolled (el, direction = 'vertical') {
+        if (direction === 'vertical') {
+          return el.scrollHeight > el.clientHeight
+        } else if (direction === 'horizontal') {
+          return el.scrollWidth > el.clientWidth
+        }
+      }
+      function getScrollbarWidth (el) {
+        el = el || document.body
+        var scrollDiv = document.createElement('div')
+        scrollDiv.style.cssText =
+          'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;'
+        el.appendChild(scrollDiv)
+        var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
+        el.removeChild(scrollDiv)
+        return scrollbarWidth
+      }
+      const scrollEl = document.querySelector('.page-component__scroll')
+      const isScroll = hasScrolled(scrollEl)
+      console.log(this.scrollWidth, 'this.scrollWidth')
+      if (isScroll) {
+        const scrollWidth = getScrollbarWidth(scrollEl)
+        this.scrollWidth = scrollWidth
+      }
+    }, 30),
+    // 快速勾选
+    handleQuikeSelect () {
+      const tableData = this.tableData.map(item => {
+        item.goods_list = item.goods_list.map((goods, index) => {
+          if (index < item.goods_list.length - 1) {
+            goods.is_checked = true
+          }
+          return goods
+        })
+        return item
+      })
+      this.save({tableData})
+    },
+    // 全选
+    handleAllCheckChange (value) {
+      const tableData = this.tableData.map(item => {
+        item.goods_list = item.goods_list.map((goods, index) => {
+          goods.is_checked = value
+          return goods
+        })
+        return item
+      })
+      this.save({tableData})
+    },
+    // 单选
+    handleCheckChange (value, path) {
+      set(this.tableData, path, value)
+      this.save({tableData: this.tableData})
+      // 如果全部勾选 则 全选
+      const AllGoods = this.tableData
+        .reduce((target, current) => target.concat(current.goods_list), [])
+      const hasChecked = AllGoods
+        .filter(item => item.is_checked)
+      if (AllGoods.length === hasChecked.length) {
+        this.allChecked = true
+      } else {
+        this.allChecked = false
+      }
+    },
+    // 开始检测
+    startDetect () {
+      this.loadingInstantence = this.$loading({
+        lock: true,
+        text: `拼命加载中`,
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      const status = this.status
+      const obj = {
+        0: {check_status: -1, status: -1},
+        1: {check_status: 0, status: 3},
+        2: {check_status: 1, status: 1}
+      }
+      services.productRepeatCheck(obj[status]).then(data => {
+        if (data) {
+          this.init()
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    goToRecord () {
+      this.$router.push({
+        name: 'detectDuplicateProducts_Record'
+      })
+    },
+    handleOnshelf (row, data) {
+      const h = this.$createElement
+      this.$confirm('', {
+        message: h('div', null, [
+          h('div', {
+            class: 'center'
+          }, [
+            h('hh-icon', {
+              props: {
+                type: 'iconjinggao1'
+              },
+              class: 'custome-confirm-icon'
+            })
+          ]),
+          h('div', {
+            class: 'custome-confirm-text'
+          }, '确认批量下架勾选商品')
+        ]),
+        type: 'warning',
+        confirmButtonText: '确认下架',
+        cancelButtonText: '点错了',
+        customClass: 'custome-confirm-customClass',
+        cancelButtonClass: 'custome-confirm-cancelButtonClass',
+        confirmButtonClass: 'custome-confirm-confirmButtonClass',
+        showClose: false
+      })
+        .then(_ => {
+          const parmas = {
+            goods_id: row.goods_id
+          }
+          this.loadingPost = true
+          services.productOffshelf(parmas)
+            .then(data => {
+              this.fetch()
+              this.$message.success('下架成功')
+              this.loadingPost = false
+            })
+            .catch(err => {
+              this.$message.error(`${err}`)
+              this.loadingPost = false
+              this.fetch()
+            })
+        })
+        .catch(_ => {
+          return false
+        })
+    },
+    productDelete (row, data) {
+      const h = this.$createElement
+      this.$confirm('', {
+        message: h('div', null, [
+          h('div', {
+            class: 'center'
+          }, [
+            h('hh-icon', {
+              props: {
+                type: 'iconjinggao1'
+              },
+              class: 'custome-confirm-icon'
+            })
+          ]),
+          h('div', {
+            class: 'custome-confirm-text'
+          }, '确认批量删除勾选商品')
+        ]),
+        type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '点错了',
+        customClass: 'custome-confirm-customClass',
+        cancelButtonClass: 'custome-confirm-cancelButtonClass',
+        confirmButtonClass: 'custome-confirm-confirmButtonClass',
+        showClose: false
+      })
+        .then(_ => {
+          const parmas = {
+            goods_id: row.goods_id,
+            group_id: data.group_id
+          }
+          this.loadingPost = true
+          services.productRepeatGoodsGroupDelete(parmas)
+            .then(data => {
+              this.fetch()
+              this.$message.success('删除成功')
+              this.loadingPost = false
+            })
+            .catch(err => {
+              this.$message.error(`${err}`)
+              this.loadingPost = false
+              this.fetch()
+            })
+        })
+        .catch(_ => {
+          return false
+        })
+    },
+    productEdit (product) {
+      window.open('https://fxg.jinritemai.com/index.html#/ffa/g/create?product_id=' + product.goods_id)
+    },
+    // 批量删除
+    async handleBatchDelete () {
+      try {
+        const AllGoods = this.tableData
+          .reduce((target, current) => target.concat(current.goods_list), [])
+        const ids = AllGoods
+          .filter(item => item.is_checked)
+          .map(item => item.goods_id)
+        const parmas = {
+          task_type: 1,
+          task_sub_type: 102,
+          goods_id_list: JSON.stringify(ids),
+          ext_json: JSON.stringify({}),
+          delete_goods_id_list: JSON.stringify([])
+        }
+        await services.hhTaskCreate(parmas)
+        this.fetch()
+        const h = this.$createElement
+        this.$message({
+          message: h('p', null, [
+            h('span', null, '批量删除开始, '),
+            h('i', {
+              class: 'click pointer',
+              on: {
+                click: this.goToRecord
+              }
+            }, '点击查看批量下架 批量删除记录')
+          ]),
+          type: 'success',
+          duration: 6000
+        })
+      } catch (error) {
+        this.$message.error(`${error}`)
+      }
+    },
+    // 批量下架
+    async handleBatchOnShelf () {
+      try {
+        const AllGoods = this.tableData
+          .reduce((target, current) => target.concat(current.goods_list), [])
+        const ids = AllGoods
+          .filter(item => item.is_checked)
+          .map(item => item.goods_id)
+
+        const parmas = {
+          task_type: 1,
+          task_sub_type: 103,
+          goods_id_list: JSON.stringify(ids),
+          ext_json: JSON.stringify({
+            onshelf: 0
+          }),
+          delete_goods_id_list: []
+        }
+        await services.hhTaskCreate(parmas)
+        this.fetch()
+        const h = this.$createElement
+        this.$message({
+          message: h('p', null, [
+            h('span', null, '批量下架开始, '),
+            h('i', {
+              class: 'click pointer',
+              on: {
+                click: this.goToRecord
+              }
+            }, '点击查看批量下架 批量删除记录')
+          ]),
+          type: 'success',
+          duration: 6000
+        })
+      } catch (error) {
+        this.$message.error(`${error}`)
+      }
     }
   }
 }
 </script>
 <style lang="less" scoped>
+    @import '~./index.less';
 </style>
