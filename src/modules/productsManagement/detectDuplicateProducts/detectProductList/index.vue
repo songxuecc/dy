@@ -157,7 +157,7 @@ import { mapActions, mapState, mapMutations } from 'vuex'
 import utils from '@/common/utils'
 import common from '@/common/common.js'
 import set from 'lodash/set'
-import services from '@servises'
+import services from '@services'
 import debounce from 'lodash/debounce'
 
 export default {

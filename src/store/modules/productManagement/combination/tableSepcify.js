@@ -1,10 +1,10 @@
 import createBaseModel from '@commonModels/createBaseModel.js'
 import modelExtend from '@commonModels/modelExtend.js'
-// import servises from '@servises'
+// import services from '@services'
 
 const model = modelExtend(
   createBaseModel({
-    // fetch: servises.getProductList
+    // fetch: services.getProductList
   }),
   {
     namespaced: true,

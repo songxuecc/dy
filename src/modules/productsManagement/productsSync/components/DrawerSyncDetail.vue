@@ -360,7 +360,7 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 import ModalDataCompared from './ModalDataCompared'
-import services from '@servises'
+import services from '@services'
 import debounce from 'lodash/debounce'
 
 export default {

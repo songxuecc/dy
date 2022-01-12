@@ -10,7 +10,7 @@ const modules = {
     }),
     actions: {
     //   async getOverview ({commit, state, dispatch}, payload) {
-    //     const data = await servises.productQualityScoreOverview()
+    //     const data = await services.productQualityScoreOverview()
     //     commit({
 
     //     })

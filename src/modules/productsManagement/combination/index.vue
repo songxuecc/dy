@@ -36,7 +36,7 @@ import Price from './components/Price'
 import PaySet from './components/PaySet'
 import ServiceComponent from './components/Service'
 import BasicInfo from './components/BasicInfo'
-import servises from '@servises'
+import services from '@services'
 import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
@@ -174,7 +174,7 @@ export default {
             ...TableSepcifyData,
             commit: commitType
           }
-          servises.thirdpartDyGoodsBundleCreate(parmas).then(data => {
+          services.thirdpartDyGoodsBundleCreate(parmas).then(data => {
             this.loading = false
             this.$confirm('创建成功，是否去抖店后台查看?', '', {
               showClose: false,

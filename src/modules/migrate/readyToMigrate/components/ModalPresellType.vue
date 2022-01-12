@@ -109,7 +109,7 @@
 import moment from 'moment'
 import commonUtils from '@/common/commonUtils'
 import utils from '@/common/utils'
-import servises from '@servises'
+import services from '@services'
 import pick from 'lodash/pick'
 
 export default {
@@ -201,7 +201,7 @@ export default {
           }
           pamars.presell_type = this.template.presell_type
           console.log(pamars, 'pamars')
-          servises.migrate({
+          services.migrate({
             tp_product_ids: this.selectIdList,
             is_quick_migrate: 1,
             commit_type: this.template.commit_type,

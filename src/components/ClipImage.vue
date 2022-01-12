@@ -52,7 +52,7 @@
 
 <script>
 import { VueCropper } from 'vue-cropper'
-import servises from '@servises'
+import services from '@services'
 
 export default {
   name: 'ClipImage',
@@ -134,7 +134,7 @@ export default {
       this.$refs.cropper.getCropBlob((data) => {
         let form = new FormData()
         form.append('file', data, 'jpeg')
-        servises.imageCreate(form, {
+        services.imageCreate(form, {
           'Content-Type': 'multipart/form-data;'
         }).then(d => {
           const url = d.url

@@ -1,9 +1,9 @@
 import createBaseModel from '@commonModels/createBaseModel.js'
 import modelExtend from '@commonModels/modelExtend.js'
-import servises from '@servises'
+import services from '@services'
 const model = modelExtend(
   createBaseModel({
-    fetch: servises.productSourceSyncDetailPage
+    fetch: services.productSourceSyncDetailPage
   }),
   {
     namespaced: true,
@@ -30,7 +30,7 @@ const model = modelExtend(
         const runingsIds = state.tableData.filter(item => item.status === 1).map(item => item.task_id).filter(item => item)
         if (!runingsIds.length || state.stopGetperprogress) return false
         try {
-          const progressData = await servises.productSourceSyncProgressQuery({
+          const progressData = await services.productSourceSyncProgressQuery({
             task_id_list: JSON.stringify(runingsIds)
           })
           const tableData = state.tableData.map(originItem => {

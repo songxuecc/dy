@@ -100,7 +100,7 @@
 
 <script>
 import DrawerSyncDetail from './DrawerSyncDetail'
-import services from '@servises'
+import services from '@services'
 import debounce from 'lodash/debounce'
 
 import {
