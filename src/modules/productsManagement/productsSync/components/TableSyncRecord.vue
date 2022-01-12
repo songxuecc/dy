@@ -183,17 +183,17 @@ export default {
               props: {
                 type: 'iconjinggao1'
               },
-              class: 'TableSyncRecord-icon'
+              class: 'custome-confirm-icon'
             })
           ]),
           h('div', {
-            class: 'TableSyncRecord-text'
+            class: 'custome-confirm-text'
           }, '确定删除该计划?')
         ]),
         type: 'warning',
-        customClass: 'TableSyncRecord-customClass',
-        cancelButtonClass: 'TableSyncRecord-cancelButtonClass',
-        confirmButtonClass: 'TableSyncRecord-confirmButtonClass',
+        customClass: 'custome-confirm-customClass',
+        cancelButtonClass: 'custome-confirm-cancelButtonClass',
+        confirmButtonClass: 'custome-confirm-confirmButtonClass',
         showClose: false
       })
         .then(_ => {
@@ -349,65 +349,4 @@ export default {
     color: #999999;
     padding: 0 12px;
   }
-</style>
-<style lang="less">
-.TableSyncRecord-cancelButtonClass{
-  font-size: 12px;
-  margin-right: 10px;
-  width: 120px;
-  padding: 12px;
-  border-color: #1D8FFF;
-  color: #1D8FFF;
-  font-size: 14px;
-}
-
-.TableSyncRecord-confirmButtonClass{
-  font-size: 12px;
-  width: 140px;
-  padding: 12px;
-  font-size: 14px;
-  background: #1D8FFF;
-}
-
-.TableSyncRecord-icon {
-  width: 50px;
-  height: 50px;
-  font-size: 50px;
-}
-
-.TableSyncRecord-text {
-  width: 364px;
-  height: 20px;
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #4E4E4E;
-  line-height: 20px;
-  text-align: center;
-  margin-top: 16px;
-  margin-bottom: 20px;
-}
-
-.TableSyncRecord-customClass {
-    padding-bottom: 20px;
-    .el-message-box__header {
-      padding-top: 0;
-    }
-    .el-message-box__btns {
-      text-align: center;
-    }
-    .el-message-box__content {
-      .el-message-box__message {
-        padding-left: 0;
-      }
-      p {
-        font-size: 18px;
-        margin: 15px 0 10px;
-        text-align: center;
-      }
-      .el-icon-warning {
-        display: none;
-      }
-    }
-}
 </style>

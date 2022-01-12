@@ -195,19 +195,19 @@ export default {
               props: {
                 type: 'iconjinggao1'
               },
-              class: 'planList-icon'
+              class: 'custome-confirm-icon'
             })
           ]),
           h('div', {
-            class: 'planList-text'
+            class: 'custome-confirm-text'
           }, '确认终止该计划？终止后系统将不再执行任何操作?')
         ]),
         type: 'warning',
         confirmButtonText: '确认终止',
         cancelButtonText: '点错了',
-        customClass: 'planList-customClass',
-        cancelButtonClass: 'planList-cancelButtonClass',
-        confirmButtonClass: 'planList-confirmButtonClass',
+        customClass: 'custome-confirm-customClass',
+        cancelButtonClass: 'custome-confirm-cancelButtonClass',
+        confirmButtonClass: 'custome-confirm-confirmButtonClass',
         showClose: false
       })
         .then(_ => {
@@ -240,19 +240,19 @@ export default {
               props: {
                 type: 'iconjinggao1'
               },
-              class: 'planList-icon'
+              class: 'custome-confirm-icon'
             })
           ]),
           h('div', {
-            class: 'planList-text'
+            class: 'custome-confirm-text'
           }, '确认删除该计划?')
         ]),
         type: 'warning',
         confirmButtonText: '确认删除',
         cancelButtonText: '点错了',
-        customClass: 'planList-customClass',
-        cancelButtonClass: 'planList-cancelButtonClass',
-        confirmButtonClass: 'planList-confirmButtonClass',
+        customClass: 'custome-confirm-customClass',
+        cancelButtonClass: 'custome-confirm-cancelButtonClass',
+        confirmButtonClass: 'custome-confirm-confirmButtonClass',
         showClose: false
       })
         .then(_ => {
@@ -407,66 +407,6 @@ export default {
   }
 </style>
 <style lang="less">
-.planList-cancelButtonClass{
-  font-size: 12px;
-  margin-right: 10px;
-  width: 120px;
-  padding: 12px;
-  border-color: #1D8FFF;
-  color: #1D8FFF;
-  font-size: 14px;
-}
-
-.planList-confirmButtonClass{
-  font-size: 12px;
-  width: 140px;
-  padding: 12px;
-  font-size: 14px;
-  background: #1D8FFF;
-}
-
-.planList-icon {
-  width: 50px;
-  height: 50px;
-  font-size: 50px;
-}
-
-.planList-text {
-  width: 364px;
-  height: 20px;
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #4E4E4E;
-  line-height: 20px;
-  text-align: center;
-  margin-top: 16px;
-  margin-bottom: 20px;
-}
-
-.planList-customClass {
-    padding-bottom: 20px;
-    .el-message-box__header {
-      padding-top: 0;
-    }
-    .el-message-box__btns {
-      text-align: center;
-    }
-    .el-message-box__content {
-      .el-message-box__message {
-        padding-left: 0;
-      }
-      p {
-        font-size: 18px;
-        margin: 15px 0 10px;
-        text-align: center;
-      }
-      .el-icon-warning {
-        display: none;
-      }
-    }
-}
-
 .cycleProductsSelf-planList-dialog {
   h1 {
     height: 19px;
