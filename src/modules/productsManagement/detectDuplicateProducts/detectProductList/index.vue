@@ -139,11 +139,11 @@
 
       <div class="btn flex align-c justify-c" :style="{'margin-right': (40 + scrollWidth)  + 'px'}">
         <el-button type="primary" class="relative" :disabled="!hasCheckedLength" @click="handleBatchDelete">
-          批量删除选择商品
+          批量删除商品
           <span class="badge" v-if="hasCheckedLength">{{hasCheckedLength}}</span>
         </el-button>
         <el-button type="primary" class="relative" :disabled="!hasCheckedLength"  @click="handleBatchOnShelf">
-          批量下架选择商品
+          批量下架商品
           <span class="badge" v-if="hasCheckedLength">{{hasCheckedLength}}</span>
         </el-button>
       </div>
@@ -269,7 +269,6 @@ export default {
       }
       const scrollEl = document.querySelector('.page-component__scroll')
       const isScroll = hasScrolled(scrollEl)
-      console.log(this.scrollWidth, 'this.scrollWidth')
       if (isScroll) {
         const scrollWidth = getScrollbarWidth(scrollEl)
         this.scrollWidth = scrollWidth
@@ -455,21 +454,37 @@ export default {
           delete_goods_id_list: JSON.stringify([])
         }
         await services.hhTaskCreate(parmas)
-        this.fetch()
         const h = this.$createElement
-        this.$message({
-          message: h('p', null, [
-            h('span', null, '批量删除开始, '),
-            h('i', {
-              class: 'click pointer',
-              on: {
-                click: this.goToRecord
-              }
-            }, '点击查看批量下架 批量删除记录')
+        this.$confirm('', {
+          message: h('div', null, [
+            h('div', {
+              class: 'center'
+            }, [
+              h('hh-icon', {
+                props: {
+                  type: 'iconchenggong'
+                },
+                class: 'custome-confirm-icon'
+              })
+            ]),
+            h('div', {
+              class: 'custome-confirm-text'
+            }, '批量删除开始')
           ]),
-          type: 'success',
-          duration: 6000
+          type: 'warning',
+          confirmButtonText: '查看批量删除记录',
+          cancelButtonText: '我知道了',
+          customClass: 'custome-confirm-customClass',
+          cancelButtonClass: 'custome-confirm-cancelButtonClass',
+          confirmButtonClass: 'custome-confirm-confirmButtonClass',
+          showClose: false
         })
+          .then(_ => {
+            this.goToRecord()
+          })
+          .catch(_ => {
+            return false
+          })
       } catch (error) {
         this.$message.error(`${error}`)
       }
@@ -493,21 +508,37 @@ export default {
           delete_goods_id_list: []
         }
         await services.hhTaskCreate(parmas)
-        this.fetch()
         const h = this.$createElement
-        this.$message({
-          message: h('p', null, [
-            h('span', null, '批量下架开始, '),
-            h('i', {
-              class: 'click pointer',
-              on: {
-                click: this.goToRecord
-              }
-            }, '点击查看批量下架 批量删除记录')
+        this.$confirm('', {
+          message: h('div', null, [
+            h('div', {
+              class: 'center'
+            }, [
+              h('hh-icon', {
+                props: {
+                  type: 'iconchenggong'
+                },
+                class: 'custome-confirm-icon'
+              })
+            ]),
+            h('div', {
+              class: 'custome-confirm-text'
+            }, '批量下架开始')
           ]),
-          type: 'success',
-          duration: 6000
+          type: 'warning',
+          confirmButtonText: '查看批量下架记录',
+          cancelButtonText: '我知道了',
+          customClass: 'custome-confirm-customClass',
+          cancelButtonClass: 'custome-confirm-cancelButtonClass',
+          confirmButtonClass: 'custome-confirm-confirmButtonClass',
+          showClose: false
         })
+          .then(_ => {
+            this.goToRecord()
+          })
+          .catch(_ => {
+            return false
+          })
       } catch (error) {
         this.$message.error(`${error}`)
       }
