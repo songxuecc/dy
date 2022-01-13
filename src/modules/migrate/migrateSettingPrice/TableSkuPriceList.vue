@@ -77,7 +77,7 @@
               />
             </el-tooltip>
             <span class="th-title-text"> % + </span>
-            <el-tooltip content="可以为负数，若要减价50元，则填-50" placement="top">
+            <el-tooltip content="若要加价50，则填50" placement="top">
               <el-input
                 :class="[templateError.group_price_diff_add ? 'warn':'']"
                 :debounce="500"
@@ -89,7 +89,7 @@
               />
             </el-tooltip>
             <span class="th-title-text"> - </span>
-            <el-tooltip content="可以为负数，若要加价50元，则填-50" placement="top">
+            <el-tooltip content="若要减价50，则填50" placement="top">
               <el-input
                 :class="[templateError.group_price_diff ? 'warn':'']"
                 :debounce="500"
