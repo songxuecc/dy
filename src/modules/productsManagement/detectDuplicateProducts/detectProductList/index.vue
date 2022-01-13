@@ -14,25 +14,31 @@
             </p>
       </div>
 
-      <div class="mb-10">
+      <div class="mb-10 flex">
         <span>选择检测商品</span>
-        <el-radio-group v-model="status">
+        <el-radio-group v-model="status" class="ml-10 mr-10">
           <el-radio label="0">全部商品</el-radio>
           <el-radio label="1">仅上架商品</el-radio>
           <el-radio label="2">仅下架商品</el-radio>
         </el-radio-group>
+        <SyncProduct />
       </div>
-      <div class="flex align-c mb-26">
-        <el-button style="width:120px" type="primary" @click="startDetect">开始检测</el-button> <SyncProduct />
-      </div>
-
-      <div class="flex align-c mb-14 justify-b">
-        <div class="font-12 ">
-          <el-button type="primary" size="small" class=" mr-10" @click="handleQuikeSelect">快速勾选：每组只保留后一个</el-button>
+      <div class="flex align-c mb-22">
+        <el-button style="width:120px" type="primary" @click="startDetect" class="mr-10" >{{!detectDetail.repeat_check_time ? '开始检测' : '再次检测'}}</el-button>
+        <div>
           <span class="color-4e">最近检测结果：</span> <span class="fail mr-30">{{detectDetail.group_nums}}组重复商品，共{{detectDetail.goods_nums}}个商品</span>
           <span class="color-4e">最近检测时间：</span> <span class="color-999">{{detectDetail.repeat_check_time}}</span>
+        </div>
+      </div>
+
+      <div class="flex align-c mb-10 justify-b">
+        <div class="font-12 ">
+          <el-button type="primary" size="small" class="" @click="handleQuikeSelectOnSale">保留售卖中的商品</el-button>
+          <el-button type="primary" size="small" class="" @click="handleQuikeSelectQuetity">保留库存高的商品</el-button>
+          <el-button type="primary" size="small" class="" @click="handleQuikeSelectSkuMax">保留价格最高的商品</el-button>
+          <el-button type="primary" size="small" class="" @click="handleQuikeSelectSkuMin">保留价格最低的商品</el-button>
         </div >
-        <div class="click" @click="goToRecord">查看批量下架 批量删除记录</div>
+        <div class="click" @click="goToRecord">查看批量操作记录</div>
       </div>
 
       <div v-loading="loading || loadingPost">
@@ -295,12 +301,98 @@ export default {
         item.goods_list = item.goods_list.map((goods, index) => {
           if (index < item.goods_list.length - 1) {
             goods.is_checked = true
+          } else {
+            goods.is_checked = false
           }
           return goods
         })
         return item
       })
       this.save({tableData})
+    },
+    // 保留售卖中的商品
+    handleQuikeSelectOnSale () {
+      const tableData = this.tableData.map(item => {
+        item.goods_list = item.goods_list.map((goods, index) => {
+          const status = this.dyProductStatusMap[goods.status + '-' + goods.check_status]
+          if (status === '售卖中') {
+            goods.is_checked = true
+          } else {
+            goods.is_checked = false
+          }
+          return goods
+        })
+        return item
+      })
+      this.save({tableData})
+      this.checkAllStatus()
+    },
+    // 保留库存高的商品
+    handleQuikeSelectQuetity () {
+      const tableData = this.tableData.map(item => {
+        // let quantity = item.goods_list[0].goods_quantity
+        let index = 0
+        item.goods_list.forEach((goods, idx) => {
+          if (goods.goods_quantity >= item.goods_list[index].goods_quantity) {
+            index = idx
+          }
+        })
+        item.goods_list = item.goods_list.map((goods, idx) => {
+          if (index === idx) {
+            goods.is_checked = true
+          } else {
+            goods.is_checked = false
+          }
+          return goods
+        })
+        return item
+      })
+      this.save({tableData})
+      this.checkAllStatus()
+    },
+    // 保留价格最高的商品
+    handleQuikeSelectSkuMax () {
+      const tableData = this.tableData.map(item => {
+        let index = 0
+        item.goods_list.forEach((goods, idx) => {
+          if (goods.discount_price >= item.goods_list[index].discount_price) {
+            index = idx
+          }
+        })
+        item.goods_list = item.goods_list.map((goods, idx) => {
+          if (index === idx) {
+            goods.is_checked = true
+          } else {
+            goods.is_checked = false
+          }
+          return goods
+        })
+        return item
+      })
+      this.save({tableData})
+      this.checkAllStatus()
+    },
+    // 保留价格最低的商品
+    handleQuikeSelectSkuMin () {
+      const tableData = this.tableData.map(item => {
+        let index = 0
+        item.goods_list.forEach((goods, idx) => {
+          if (goods.discount_price <= item.goods_list[index].discount_price) {
+            index = idx
+          }
+        })
+        item.goods_list = item.goods_list.map((goods, idx) => {
+          if (index === idx) {
+            goods.is_checked = true
+          } else {
+            goods.is_checked = false
+          }
+          return goods
+        })
+        return item
+      })
+      this.save({tableData})
+      this.checkAllStatus()
     },
     // 全选
     handleAllCheckChange (value) {
@@ -317,6 +409,9 @@ export default {
     handleCheckChange (value, path) {
       set(this.tableData, path, value)
       this.save({tableData: this.tableData})
+      this.checkAllStatus()
+    },
+    checkAllStatus () {
       // 如果全部勾选 则 全选
       const AllGoods = this.tableData
         .reduce((target, current) => target.concat(current.goods_list), [])
