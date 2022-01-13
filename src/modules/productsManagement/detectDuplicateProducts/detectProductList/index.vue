@@ -316,9 +316,9 @@ export default {
         item.goods_list = item.goods_list.map((goods, index) => {
           const status = this.dyProductStatusMap[goods.status + '-' + goods.check_status]
           if (status === '售卖中') {
-            goods.is_checked = true
-          } else {
             goods.is_checked = false
+          } else {
+            goods.is_checked = true
           }
           return goods
         })
@@ -339,9 +339,9 @@ export default {
         })
         item.goods_list = item.goods_list.map((goods, idx) => {
           if (index === idx) {
-            goods.is_checked = true
-          } else {
             goods.is_checked = false
+          } else {
+            goods.is_checked = true
           }
           return goods
         })
@@ -361,9 +361,9 @@ export default {
         })
         item.goods_list = item.goods_list.map((goods, idx) => {
           if (index === idx) {
-            goods.is_checked = true
-          } else {
             goods.is_checked = false
+          } else {
+            goods.is_checked = true
           }
           return goods
         })
@@ -383,9 +383,9 @@ export default {
         })
         item.goods_list = item.goods_list.map((goods, idx) => {
           if (index === idx) {
-            goods.is_checked = true
-          } else {
             goods.is_checked = false
+          } else {
+            goods.is_checked = true
           }
           return goods
         })
