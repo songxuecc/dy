@@ -9,7 +9,7 @@
               帮助店铺检测标题完全相同的商品。避免商品
               <span class="fail">标题完全相同</span>
               <span>的商品。避免商品或店铺因重复铺货受到官方处罚。</span>
-              <span class="click">点击查看</span>
+              <span class="click" v-hh-open="'https://school.jinritemai.com/doudian/web/article/aHKK3UGTKQ29?rank=0&fromPage=search_result&searchInfo=3411068771490959798%3A0%3A0&query=%E9%87%8D%E5%A4%8D%E9%93%BA%E8%B4%A7'">点击查看</span>
               <span>重复铺货的危害</span>
             </p>
       </div>
@@ -47,8 +47,8 @@
             <div style="width:80px" class="center">销售状态</div>
             <div style="width:150px" class="center">操作</div>
           </div>
-          <el-table-empty  v-if="!tableData.length"/>
-          <div v-for="(data,idx) in tableData" :key="idx" v-else>
+          <el-table-empty  v-if="!tableList.length"/>
+          <div v-for="(data,idx) in tableList" :key="idx" v-else>
               <el-table
                 v-if="data.goods_list && data.goods_list.length"
                 :data="data.goods_list"
@@ -181,6 +181,10 @@ export default {
     }
   },
   created () {
+    // this.init()
+    // console.log('999我问问')
+  },
+  activated () {
     this.init()
   },
   mounted () {
@@ -200,7 +204,7 @@ export default {
       'form'
     ]),
     ...mapState({
-      loading: state => state['@@loading'].effects['productManagement/detectDuplicateProducts/detectProductList/fetch']
+      loading: state => state['@@loading'].effects['productManagement/detectDuplicateProducts/detectProductList/query']
     }),
     hasCheckedLength () {
       const AllGoods = this.tableData
@@ -208,6 +212,17 @@ export default {
       const hasChecked = AllGoods
         .filter(item => item.is_checked)
       return hasChecked.length
+    },
+    tableList () {
+      const tableData = this.tableData.map(item => {
+        item.goods_list = item.goods_list.map((goods, index) => {
+          goods.index = index
+          goods.is_checked = Boolean(goods.is_checked)
+          return goods
+        })
+        return item
+      })
+      return tableData
     }
   },
   methods: {
@@ -224,7 +239,7 @@ export default {
     async init () {
       this.loadingInstantence = this.$loading({
         lock: true,
-        text: `拼命加载中 ${this.percent}`,
+        text: `拼命加载中`,
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
