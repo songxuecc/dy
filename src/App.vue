@@ -194,7 +194,8 @@ export default {
       } else if (oldVal.status !== 'complete' && val.status === 'complete') {
         this.$message({
           message: '商品同步完成',
-          type: 'success'
+          type: 'success',
+          onClose: this.reload
         })
       } else if (oldVal.status !== 'error' && val.status === 'error') {
         this.$message.error('商品同步出错：' + val.message)

@@ -117,29 +117,53 @@ export default {
       })
     },
     handleDelete (value, row) {
-      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(async () => {
-        try {
-          await Api.hhgjAPIs.hhTaskDelete({
-            task_id: row.task_id
-          })
-          this.$message({
-            message: '删除成功',
-            type: 'success'
-          })
-          this.fetch()
-        } catch (e) {
-          this.$message({
-            message: e,
-            type: 'error'
-          })
-        }
-      }).catch(() => {
-
+      const h = this.$createElement
+      this.$confirm('', {
+        message: h('div', null, [
+          h('div', {
+            class: 'center'
+          }, [
+            h('hh-icon', {
+              props: {
+                type: 'iconjinggao1'
+              },
+              class: 'custome-confirm-icon'
+            })
+          ]),
+          h('div', {
+            class: 'custome-confirm-text'
+          }, '确认批量删除该任务？')
+        ]),
+        type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '点错了',
+        customClass: 'custome-confirm-customClass',
+        cancelButtonClass: 'custome-confirm-cancelButtonClass',
+        confirmButtonClass: 'custome-confirm-confirmButtonClass',
+        showClose: false
       })
+        .then(async (_) => {
+          try {
+            await Api.hhgjAPIs.hhTaskDelete({
+              task_id: row.task_id
+            })
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.fetch({
+              filters: this.filters
+            })
+          } catch (e) {
+            this.$message({
+              message: e,
+              type: 'error'
+            })
+          }
+        })
+        .catch(_ => {
+          return false
+        })
     },
     handleDownload (index, row) {
       if (!row.fail_nums) return false

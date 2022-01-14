@@ -165,9 +165,13 @@ import common from '@/common/common.js'
 import set from 'lodash/set'
 import services from '@services'
 import debounce from 'lodash/debounce'
+import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
   name: 'detectProductList',
+  mixins: [
+    checkSyncProducts('detectProductList')
+  ],
   props: {
     msg: String
   },
@@ -183,12 +187,12 @@ export default {
       detectDetail: {},
       loadingPost: false,
       loadingInstantence: null,
-      scrollWidth: 0
+      scrollWidth: 0,
+      tableList: []
     }
   },
   created () {
     // this.init()
-    // console.log('999我问问')
   },
   activated () {
     this.init()
@@ -218,9 +222,11 @@ export default {
       const hasChecked = AllGoods
         .filter(item => item.is_checked)
       return hasChecked.length
-    },
-    tableList () {
-      const tableData = this.tableData.map(item => {
+    }
+  },
+  watch: {
+    tableData (n) {
+      const tableList = n.map(item => {
         item.goods_list = item.goods_list.map((goods, index) => {
           goods.index = index
           goods.is_checked = Boolean(goods.is_checked)
@@ -228,7 +234,7 @@ export default {
         })
         return item
       })
-      return tableData
+      this.tableList = tableList
     }
   },
   methods: {
@@ -251,8 +257,8 @@ export default {
       })
       services.productRepeatQuery().then(data => {
         if (data.status === 2) {
-          this.loadingInstantence.close()
           clearTimeout(this.timer)
+          this.loadingInstantence.close()
           this.timer = null
           this.detectDetail = data
           this.fetch().then(item => {
@@ -261,6 +267,7 @@ export default {
         } else {
           this.percent = data.percent
           clearTimeout(this.timer)
+          this.loadingInstantence.close()
           this.timer = setTimeout(() => {
             this.init()
           }, 2000)
