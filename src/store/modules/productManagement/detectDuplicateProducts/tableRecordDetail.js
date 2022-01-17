@@ -4,7 +4,7 @@ import services from '@services'
 
 const model = modelExtend(
   createBaseModel({
-    fetch: services.userAccountFlowPage
+    fetch: services.hhTaskProductPage
   }),
   {
     namespaced: true,
@@ -17,11 +17,20 @@ const model = modelExtend(
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
         const data = await dispatch('query', { ...payload })
-        const tableData = (data.item_list || []).map(item => {
-          item.amount = `${item.amount / 100} 元`
-          return item
+        const tableData = data.tableData.map(item => {
+          if (item.ext_json && item.ext_json.sku_list) {
+            item.ext_json.sku_list = item.ext_json.sku_list.map((item, id) => ({
+              ...item,
+              id
+            }))
+          }
+          return Object.assign(
+            item,
+            item.ext_json
+          )
         })
-        commit('save', {tableData})
+        console.log(tableData, 'tableData')
+        commit('save', { tableData })
       }
     },
     getters: {

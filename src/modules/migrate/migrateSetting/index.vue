@@ -375,7 +375,7 @@ import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import Api from '@/api/apis.js'
 import categorySelectView from '@/components/CategorySelectView'
-import servises from '@servises'
+import services from '@services'
 import DrawerQualification from './components/DrawerQualification'
 import utils from '@/common/utils'
 import { accMul } from '@/common/evalFloat.js'
@@ -1078,7 +1078,7 @@ export default {
               })
             const isEqualPropertiesMap = isEqual(diffPropertiesMap, this.originPropertiesMap)
             const updateProperties = !isEqualPropertiesMap
-              ? servises.userCatAttrCreate({
+              ? services.userCatAttrCreate({
                 attr_list: JSON.stringify(diffPropertiesMap)
               })
               : Promise.resolve(this.originMigrateSetting)
@@ -1234,7 +1234,7 @@ export default {
     async loadCategoryMapList () {
       this.loadingCategoryMap = true
       try {
-        const categoryMap = await servises.userCategoryMapList({})
+        const categoryMap = await services.userCategoryMapList({})
         // 类目匹配
         this.categoryMap = categoryMap.map(item => {
           return {
@@ -1253,7 +1253,7 @@ export default {
     async loadPropertiesMapList () {
       this.loadingPropertiesMap = true
       try {
-        const propertiesMap = await servises.userCatAttLrist()
+        const propertiesMap = await services.userCatAttLrist()
         this.propertiesMap = propertiesMap.map(item => {
           return {
             ...item,

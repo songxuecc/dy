@@ -143,7 +143,7 @@
 
 <script>
 import Search from './Search'
-import services from '@servises'
+import services from '@services'
 import { mapActions, mapState, mapMutations } from 'vuex'
 import debounce from 'lodash/debounce'
 

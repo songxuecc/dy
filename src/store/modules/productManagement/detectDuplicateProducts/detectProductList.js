@@ -4,7 +4,7 @@ import services from '@services'
 
 const model = modelExtend(
   createBaseModel({
-    fetch: services.userAccountFlowPage
+    fetch: services.productRepeatGoodsGroupPage
   }),
   {
     namespaced: true,
@@ -17,10 +17,15 @@ const model = modelExtend(
     actions: {
       async fetch ({commit, state, dispatch}, payload) {
         const data = await dispatch('query', { ...payload })
-        const tableData = (data.item_list || []).map(item => {
-          item.amount = `${item.amount / 100} 元`
+        const tableData = data.tableData.map(item => {
+          item.goods_list = item.goods_list.map((goods, index) => {
+            goods.index = index
+            goods.is_checked = Boolean(goods.is_checked)
+            return goods
+          })
           return item
         })
+        console.log(data, 'data')
         commit('save', {tableData})
       }
     },

@@ -4,11 +4,7 @@
 
     <h1 class="flex align-c" style="margin-left: 13px;margin-bottom:10px">商品导出
       <!-- 商品同步提示 -->
-      <span style="margin-left:10px;font-weight:normal" class="syncProducts flex align-c">
-        <span v-if="getSyncButtonStatus === 'ready'"><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先同步后台商品，正在准备同步后台商品... <i class="el-icon-loading"></i></span>
-        <span v-else-if="getSyncButtonStatus === 'running'"><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先同步后台商品，正在同步后台商品...<span class="bold">{{getSyncButtonText}}</span> <i class="el-icon-loading"></i></span>
-        <span v-else><hh-icon type="iconjingshi1"></hh-icon> 在操作前请先<span class="underline pointer" @click="handleSyncProducts">同步后台商品</span>（最近同步时间：<span class="bold">{{getSyncButtonText}}</span>），待商品更新至最新再操作</span>
-      </span>
+      <SyncProduct />
     </h1>
 
     <el-form

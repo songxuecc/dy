@@ -319,7 +319,7 @@
 import {mapMutations, mapActions, mapState} from 'vuex'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
-import services from '@servises'
+import services from '@services'
 import moment from 'moment'
 
 export default {
@@ -508,7 +508,7 @@ export default {
       })
       // 验证
       // const data = this.getForm()
-      // servises.hhgjAPIs.productSourceSyncCreate(data=>{
+      // services.hhgjAPIs.productSourceSyncCreate(data=>{
 
       // })
       // this.$emit('go')

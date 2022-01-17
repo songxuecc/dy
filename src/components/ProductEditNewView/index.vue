@@ -403,7 +403,7 @@ import PictureQualification from './PictureQualification.vue'
 import xorWith from 'lodash/xorWith'
 import omit from 'lodash/omit'
 import SkuTable from './SkuTable'
-import servises from '@servises'
+import services from '@services'
 import Api from '@/api/apis'
 
 export default {
@@ -1864,7 +1864,7 @@ export default {
     },
     async useCustome () {
       console.log(this.product.model)
-      const data = await servises.userCatQualityDetail({
+      const data = await services.userCatQualityDetail({
         category_id: this.product.model.cat_id,
         is_config: 1
       })

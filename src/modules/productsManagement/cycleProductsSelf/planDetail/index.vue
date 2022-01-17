@@ -170,7 +170,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
-import servises from '@servises'
+import services from '@services'
 
 export default {
   data () {
@@ -210,7 +210,7 @@ export default {
       // 查询初始化
       const taskId = this.$route.query.task_id
       this.taskId = taskId
-      servises.productAutoShelfDetail({
+      services.productAutoShelfDetail({
         task_id: taskId
       }).then(data => {
         let carouselIndex = 0

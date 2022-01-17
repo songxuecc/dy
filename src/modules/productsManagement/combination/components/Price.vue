@@ -109,7 +109,7 @@
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import Properties from './Properties.vue'
-import servises from '@servises'
+import services from '@services'
 import commonUtils from '@/common/commonUtils'
 import utils from '@/common/utils'
 
@@ -227,7 +227,7 @@ export default {
           })
           return false
         }
-        const properties = await servises.getPropductCategoryProperty({
+        const properties = await services.getPropductCategoryProperty({
           category_id: id
         })
         data.properties = properties

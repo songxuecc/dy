@@ -60,7 +60,7 @@
 <script>
 import debounce from 'lodash/debounce'
 import PictureQualification from '../PictureQualification'
-import servises from '@servises'
+import services from '@services'
 import cloneDeep from 'lodash/cloneDeep'
 
 export default {
@@ -109,7 +109,7 @@ export default {
       this.search = ''
       this.activeQualification = {}
       this.loadingCatQualityList = true
-      const catQualityList = await servises.userCatQualityList()
+      const catQualityList = await services.userCatQualityList()
       this.originDataList = cloneDeep(catQualityList)
       this.originList = cloneDeep(catQualityList)
       this.loadingCatQualityList = false
@@ -118,7 +118,7 @@ export default {
       }
     },
     async refresh () {
-      const catQualityList = await servises.userCatQualityList()
+      const catQualityList = await services.userCatQualityList()
       this.originList = catQualityList
       this.handleClick()
       this.deleteQualifications = []
@@ -177,7 +177,7 @@ export default {
         this.qualityList = dataMap.get(qualification.category_id).quality_list
       } else {
         this.loadingQualityList = true
-        const data = await servises.userCatQualityDetail({
+        const data = await services.userCatQualityDetail({
           category_id: qualification.category_id,
           is_config: qualification.is_config
         })
@@ -264,13 +264,13 @@ export default {
         }
         if (parmas.length) {
           this.loadingSubmit = true
-          await servises.userCatQualityCreate({
+          await services.userCatQualityCreate({
             cat_quality_list: JSON.stringify(parmas)
           })
         }
         if (deleteQualifications.length) {
           this.loadingSubmit = true
-          await servises.userCatQualityDelete({
+          await services.userCatQualityDelete({
             category_id_list: JSON.stringify(this.deleteQualifications)
           })
         }
