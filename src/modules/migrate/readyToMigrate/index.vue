@@ -302,7 +302,7 @@ import moment from 'moment'
 import utils from '@/common/utils'
 import debounce from 'lodash/debounce'
 import Api from '@/api/apis'
-import servises from '@servises'
+import services from '@services'
 
 export default {
   inject: ['reload'],
@@ -812,7 +812,7 @@ export default {
     },
     quickMigrate () {
       const self = this
-      servises.migrateCreateCheck().then((data) => {
+      services.migrateCreateCheck().then((data) => {
         if (!data.is_valid) {
           self.$refs.ModalPresellType.open(data.template, self.selectIdList)
         } else {

@@ -174,7 +174,7 @@
 
 import {mapMutations, mapActions, mapState} from 'vuex'
 import debounce from 'lodash/debounce'
-import services from '@servises'
+import services from '@services'
 import moment from 'moment'
 import utils from '@/common/utils'
 

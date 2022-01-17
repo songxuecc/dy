@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import servises from '@servises'
+import services from '@services'
 import utils from '@/common/utils'
 
 export default {
@@ -84,7 +84,7 @@ export default {
       window.open('https://fxg.jinritemai.com/index.html#/ffa/morder/logistics/freight-list')
     },
     async getCostTemplateList () {
-      const data = await servises.getCostTemplateList()
+      const data = await services.getCostTemplateList()
       const costTemplateList = []
       data.List.forEach(item => {
         costTemplateList.push({

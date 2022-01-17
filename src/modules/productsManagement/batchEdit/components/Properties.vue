@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import servises from '@servises'
+import services from '@services'
 
 export default {
   name: 'Properties',
@@ -218,7 +218,7 @@ export default {
     remoteMethod (query, item, index) {
       if (query) {
         this.loading = true
-        servises.productCategoryBrandList({
+        services.productCategoryBrandList({
           category_id: this.category.id,
           keyword: query
         }).then(data => {
@@ -231,7 +231,7 @@ export default {
     },
     remoteMethod2 (query, item, index) {
       this.loading = true
-      servises.productCategoryBrandList({
+      services.productCategoryBrandList({
         category_id: this.catId,
         keyword: query
       }).then(data => {

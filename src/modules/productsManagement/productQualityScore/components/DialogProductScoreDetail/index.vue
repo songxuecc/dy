@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import servises from '@servises'
+import services from '@services'
 
 export default {
   name: 'ProductScoreDetail',
@@ -46,7 +46,7 @@ export default {
   methods: {
     async open (id) {
       this.id = id
-      const data = await servises.productQualityScoreDetail({
+      const data = await services.productQualityScoreDetail({
         product_id: id
       })
       this.detail = data

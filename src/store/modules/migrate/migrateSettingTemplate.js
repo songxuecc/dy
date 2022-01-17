@@ -2,7 +2,7 @@ import Api from '@/api/apis'
 import FormModel from '@/common/formModel'
 import cloneDeep from 'lodash/cloneDeep'
 import { read, remove, update } from '@/common/indexDB'
-import servises from '@servises'
+import services from '@services'
 
 // 店铺绑定
 export default {
@@ -32,7 +32,7 @@ export default {
     },
     async requestTemplate ({commit, state}, params) {
       try {
-        const data = await servises.getTemplate()
+        const data = await services.getTemplate()
         console.log(data, 'data')
         const templateList = await this.dispatch('migrate/migrateSettingTemplate/getCostTemplateList')
         // 运费模版id

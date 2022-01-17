@@ -506,6 +506,21 @@ const hhgjAPIs = {
   },
   userCapturePage: (params) => {
     return api.actionCreateGet('/api/capture/page', params)
+  },
+  productRepeatGoodsGroupPage: (params) => {
+    return api.actionCreateGet('/api/product/repeat/goods_group/page', params)
+  },
+  productRepeatQuery: (params) => {
+    return api.actionCreateGet('/api/product/repeat/query', params)
+  },
+  productRepeatCheck: (params) => {
+    return api.actionCreatorPost('/api/product/repeat/check', params)
+  },
+  productOffshelf: (params) => {
+    return api.actionCreatorPost('/api/product/offshelf', params)
+  },
+  productRepeatGoodsGroupDelete: (params) => {
+    return api.actionCreatorPost('/api/product/repeat/goods_group/delete', params)
   }
 }
 

@@ -370,6 +370,30 @@ const router = new VueRouter({
       }
     },
     {
+      path: '/productsManagement/detectDuplicateProducts/detectProductList',
+      name: 'detectDuplicateProducts_DetectProductList',
+      component: () => import(
+        /* webpackChunkName: `detectDuplicateProducts_DetectProductList` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/detectDuplicateProducts/detectProductList'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/productsManagement/detectDuplicateProducts/record',
+      name: 'detectDuplicateProducts_Record',
+      component: () => import(
+        /* webpackChunkName: `detectDuplicateProducts_Record` */
+        /* webpackMode: "lazy" */
+        '@productsManagement/detectDuplicateProducts/record'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
       path: '/customerSetting/service',
       name: 'CustomerService',
       component: CustomerService,

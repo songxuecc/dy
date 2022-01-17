@@ -25,7 +25,7 @@
 <script>
 
 import TableProductList from './components/TableProductList'
-import servises from '@servises'
+import services from '@services'
 import { mapActions } from 'vuex'
 
 export default {
@@ -67,7 +67,7 @@ export default {
     ]),
     async init () {
       this.loading = true
-      const data = await servises.productQualityScoreOverview()
+      const data = await services.productQualityScoreOverview()
       const id = data.task_id
       this.overviewData = data
       this.fetch({
