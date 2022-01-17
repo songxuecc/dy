@@ -127,34 +127,57 @@
     <div v-if="activeName === 'single'">
       <SupportPlatForm :list="platformIconsUrl" />
       <PayCharge  />
-      <div class="startCopyBtn" >
-        <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
-          <el-button type="primary" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading" style="width:160px;height:50px;font-size:16px" >
-            <span style="width:120px">开始复制</span>
-            <el-badge :value="captureUrlNums"></el-badge>
+      <div class="startCopyBtn flex align-c" >
+        <div style="height:50px" >
+          <el-button type="primary" @click="gotoSetting"  style="height:50px;font-size:16px" >
+            <span >下一步：商品属性设置</span>
+            <el-badge :value="captureUrlNums" v-if="captureUrlNums"></el-badge>
           </el-button>
-          <StartCopyTips v-show="showStartCopyTips"/>
         </div>
+        <el-popover trigger="hover" width="200" style="text-align:left">
+          <div class="left font-12" effect="light">
+            <div>若点击此按钮，系统会自动跳过商品属性设置，直接复制商品</div>
+            <br/>
+            <div>商品的属性设置与上一次复制的操作保持一致</div>
+          </div>
+           <el-button type="text"  class="click ml-10" slot="reference" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading">跳过设置，直接复制</el-button>
+        </el-popover>
       </div>
     </div>
     <!-- 整店复制 -->
     <div v-if="activeName === 'shop'">
       <SupportPlatForm :list="platformIconsStore"  class="shopCopySupportPlatForm"/>
       <PayCharge  />
-      <div class="startCopyBtn" >
-        <div style="width:160px;height:50px" @mouseenter="toggleStartCopyTips" @mouseleave="toggleStartCopyTips">
-          <el-button type="primary" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading"  style="width:160px;height:50px;font-size:16px">开始复制</el-button>
-          <StartCopyTips v-show="showStartCopyTips"/>
+      <div class="startCopyBtn flex align-c" >
+        <div style="height:50px" >
+          <el-button type="primary" @click="gotoSetting"   style="height:50px;font-size:16px">下一步：商品属性设置</el-button>
         </div>
+
+        <el-popover trigger="hover" width="200" style="text-align:left">
+          <div class="left font-12" effect="light">
+            <div>若点击此按钮，系统会自动跳过商品属性设置，直接复制商品</div>
+            <br/>
+            <div>商品的属性设置与上一次复制的操作保持一致</div>
+          </div>
+          <el-button type="text"  class="click ml-10" slot="reference" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading">跳过设置，直接复制</el-button >
+        </el-popover>
+
       </div>
     </div>
     <!-- 绑定复制 -->
-    <div class="startCopyBtn " v-if="activeName === 'bindCopy' && userBindList.length ">
-      <div style="width:160px;height:50px" @mouseenter="toggleBindCopyTips" @mouseleave="toggleBindCopyTips">
-        <el-button type="primary" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading" style="width:160px;height:50px;font-size:16px" class="ralative">开始复制
+    <div class="startCopyBtn flex align-c" v-if="activeName === 'bindCopy' && userBindList.length ">
+      <div style="height:50px">
+        <el-button type="primary" @click="gotoSetting"  style="height:50px;font-size:16px" class="ralative">下一步：商品属性设置
           <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
         </el-button>
-        <BindCopyTips v-show="showBindCopyTips"/>
+        <el-popover trigger="hover" width="200" style="text-align:left">
+          <div class="left font-12" effect="light">
+            <div>若点击此按钮，系统会自动跳过商品属性设置，直接复制商品</div>
+            <br/>
+            <div>商品的属性设置与上一次复制的操作保持一致</div>
+          </div>
+          <el-button type="text" class="click ml-10"  slot="reference" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading">跳过设置，直接复制</el-button>
+        </el-popover>
       </div>
     </div>
     <BindCopyTip v-if="activeName === 'bindCopy'"/>
@@ -941,8 +964,12 @@ export default {
           }, 5000)
         }
       }
+    },
+    gotoSetting () {
+      this.$router.push({
+        name: 'MigrateSetting'
+      })
     }
-
   }
 }
 </script>
