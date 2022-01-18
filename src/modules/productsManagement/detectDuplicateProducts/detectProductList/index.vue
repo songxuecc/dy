@@ -33,10 +33,10 @@
 
       <div class="flex align-c mb-10 justify-b">
         <div class="font-12 ">
-          <el-button type="" size="small" class="" @click="handleQuikeSelectOnSale">保留售卖中的商品</el-button>
-          <el-button type="" size="small" class="" @click="handleQuikeSelectQuetity">保留库存高的商品</el-button>
-          <el-button type="" size="small" class="" @click="handleQuikeSelectSkuMax">保留价格最高的商品</el-button>
-          <el-button type="" size="small" class="" @click="handleQuikeSelectSkuMin">保留价格最低的商品</el-button>
+          <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectOnSale">保留售卖中的商品</el-button>
+          <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectQuetity">保留库存高的商品</el-button>
+          <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectSkuMax">保留价格最高的商品</el-button>
+          <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectSkuMin">保留价格最低的商品</el-button>
         </div >
         <div class="click" @click="goToRecord">查看批量操作记录</div>
       </div>
