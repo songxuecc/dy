@@ -440,9 +440,9 @@ export default {
       })
       const status = this.status
       const obj = {
-        0: {check_status: -1, status: -1},
-        1: {check_status: 0, status: 3},
-        2: {check_status: 1, status: 1}
+        0: { check_status: -1, status: -1 },
+        1: { check_status: 3, status: 0 },
+        2: { check_status: 1, status: 1 }
       }
       services.productRepeatCheck(obj[status]).then(data => {
         if (data) {
