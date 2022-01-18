@@ -14,7 +14,7 @@ import 'vue-midou-icon/lib/midou.css'
 
 const IconFont = MdUi.createFromIconfontCN({
   scriptUrl: [
-    '//at.alicdn.com/t/font_2290850_46vza8pdt0a.js'
+    '//at.alicdn.com/t/font_2290850_nhue8dc5xcr.js'
   ],
   name: 'hh-icon'
 })

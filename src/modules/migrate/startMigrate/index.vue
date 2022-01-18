@@ -42,21 +42,33 @@
         <TablemigrateHistory class="TablemigrateHistory"  ref="TablemigrateHistory" @change="handleTablemigrateHistory"/>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
-        <div style="width: 540px; margin: auto;margin-bottom:20px">
-          <el-upload class="capture-file-upload" drag :action="uploadAction" :headers="getTokenHeaders"
-            :data="{'upload_type': 'local'}" :before-upload="uploadBeforeUpload" :on-progress="uploadOnProgress"
-            :on-success="uploadOnSuccess" :on-change="uploadChange" :limit=1 ref="upload" :show-file-list="false"
-            :multiple="false" :disabled="!this.isAuth">
+        <div style="width: 640px; margin: auto;margin-bottom:20px">
+          <el-upload
+            class="capture-file-upload"
+            :action="uploadAction"
+            :headers="getTokenHeaders"
+            :data="{'upload_type': 'local'}"
+            :before-upload="uploadBeforeUpload"
+            :on-progress="uploadOnProgress"
+            :on-success="uploadOnSuccess"
+            :on-change="uploadChange"
+            :limit=1
+            drag
+            ref="upload"
+            :auto-upload="false"
+            :multiple="false"
+            :on-preview="handlePreview"
+            :disabled="!this.isAuth">
             <hh-icon type="iconshangchuanxiazai" class="el-icon-upload"
               style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
             <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
-            <div class="el-upload__tip" slot="tip"><span style="color: #E02020;">*</span>
+            <div class="el-upload__tip left" slot="tip"><span style="color: #E02020;">*</span>
               <span>只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持 10000 条<span class="click" style="margin-left: 10px" @click="downloadCSV">下载示例文件</span></span>
+              <div class="info mt-5 ">导入复制前可以通过<span class="click" @click="openProductCollection">商品采集功能</span>采集商品链接</div>
+              <PayCharge  class="mt-5"/>
             </div>
-            <el-progress v-show="showProcess" :percentage="processLength" :stroke-width="2"></el-progress>
           </el-upload>
-          <div class="info mt-5 ">导入复制前可以通过<span class="click" @click="openProductCollection">商品采集功能</span>采集商品链接</div>
-          <PayCharge  />
+
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
@@ -126,19 +138,19 @@
     <!-- 多商品复制 -->
     <div v-if="activeName === 'single'">
       <SupportPlatForm :list="platformIconsUrl" />
-      <PayCharge  />
+      <PayCharge  class="mt-10"/>
       <div class="startCopyBtn flex align-c" >
         <div style="height:50px" >
-          <el-button type="primary" @click="gotoSetting"  style="height:50px;font-size:16px" >
-            <span >下一步：商品属性设置</span>
+          <el-button type="primary" @click="gotoSetting(onCaptureUrls,captureUrlNums)"  style="height:50px;font-size:16px" >
+            <span >下一步：复制设置</span>
             <el-badge :value="captureUrlNums" v-if="captureUrlNums"></el-badge>
           </el-button>
         </div>
-        <el-popover trigger="hover" width="200" style="text-align:left">
+        <el-popover trigger="hover" width="200" style="text-align:left" placement="top-start">
           <div class="left font-12" effect="light">
-            <div>若点击此按钮，系统会自动跳过商品属性设置，直接复制商品</div>
+            <div>若点击此按钮，系统会自动跳过复制设置，直接复制商品</div>
             <br/>
-            <div>商品的属性设置与上一次复制的操作保持一致</div>
+            <div>商品的复制设置与上一次复制的操作保持一致</div>
           </div>
            <el-button type="text"  class="click ml-10" slot="reference" @click="onCaptureUrls" :disabled="isStartCapture || settingDataLoading">跳过设置，直接复制</el-button>
         </el-popover>
@@ -147,34 +159,50 @@
     <!-- 整店复制 -->
     <div v-if="activeName === 'shop'">
       <SupportPlatForm :list="platformIconsStore"  class="shopCopySupportPlatForm"/>
-      <PayCharge  />
+      <PayCharge  class="mt-10"/>
       <div class="startCopyBtn flex align-c" >
         <div style="height:50px" >
-          <el-button type="primary" @click="gotoSetting"   style="height:50px;font-size:16px">下一步：商品属性设置</el-button>
+          <el-button type="primary" @click="gotoSetting(onCaptureShops,textCaptureUrls)"   style="height:50px;font-size:16px" >下一步：复制设置</el-button>
         </div>
 
-        <el-popover trigger="hover" width="200" style="text-align:left">
+        <el-popover trigger="hover" width="200" style="text-align:left" placement="top-start">
           <div class="left font-12" effect="light">
-            <div>若点击此按钮，系统会自动跳过商品属性设置，直接复制商品</div>
+            <div>若点击此按钮，系统会自动跳过复制设置，直接复制商品</div>
             <br/>
-            <div>商品的属性设置与上一次复制的操作保持一致</div>
+            <div>商品的复制设置与上一次复制的操作保持一致</div>
           </div>
           <el-button type="text"  class="click ml-10" slot="reference" @click="onCaptureShops" :disabled="isStartCapture || settingDataLoading">跳过设置，直接复制</el-button >
         </el-popover>
 
       </div>
     </div>
+     <!-- 绑定复制 -->
+    <div class="startCopyBtn flex align-c" v-if="activeName === 'file'">
+      <div style="height:50px">
+        <el-button type="primary" @click="gotoSettingFile(onCaptureBindCopy,true)"  style="height:50px;font-size:16px" class="ralative">下一步：复制设置
+          <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
+        </el-button>
+        <el-popover trigger="hover" width="200" style="text-align:left" placement="top-start">
+          <div class="left font-12" effect="light">
+            <div>若点击此按钮，系统会自动跳过复制设置，直接复制商品</div>
+            <br/>
+            <div>商品的复制设置与上一次复制的操作保持一致</div>
+          </div>
+          <el-button type="text" class="click ml-10"  slot="reference" @click="onCaptureFile" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading">跳过设置，直接复制</el-button>
+        </el-popover>
+      </div>
+    </div>
     <!-- 绑定复制 -->
     <div class="startCopyBtn flex align-c" v-if="activeName === 'bindCopy' && userBindList.length ">
       <div style="height:50px">
-        <el-button type="primary" @click="gotoSetting"  style="height:50px;font-size:16px" class="ralative">下一步：商品属性设置
+        <el-button type="primary" @click="gotoSetting(onCaptureBindCopy,true)"  style="height:50px;font-size:16px" class="ralative">下一步：复制设置
           <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
         </el-button>
-        <el-popover trigger="hover" width="200" style="text-align:left">
+        <el-popover trigger="hover" width="200" style="text-align:left" placement="top-start">
           <div class="left font-12" effect="light">
-            <div>若点击此按钮，系统会自动跳过商品属性设置，直接复制商品</div>
+            <div>若点击此按钮，系统会自动跳过复制设置，直接复制商品</div>
             <br/>
-            <div>商品的属性设置与上一次复制的操作保持一致</div>
+            <div>商品的复制设置与上一次复制的操作保持一致</div>
           </div>
           <el-button type="text" class="click ml-10"  slot="reference" @click="onCaptureBindCopy" :disabled="isStartCapture || settingDataLoading || productListCheckLoading" :loading="productListCheckLoading">跳过设置，直接复制</el-button>
         </el-popover>
@@ -194,7 +222,7 @@
 </template>
 <script>
 import request from '@/mixins/request.js'
-import { mapGetters, mapActions, createNamespacedHelpers, mapState } from 'vuex'
+import { mapGetters, mapActions, mapMutations, createNamespacedHelpers, mapState } from 'vuex'
 import common from '@/common/common.js'
 import helpTips from '@/components/HelpTips.vue'
 import SupportPlatForm from '@migrate/startMigrate/components/SupportPlatForm'
@@ -219,6 +247,7 @@ export default {
   mixins: [request],
   data () {
     return {
+      fileList: [],
       syncText: '',
       syncTimer: null,
       syncLoading: false,
@@ -381,6 +410,7 @@ export default {
     ...mapActions('migrate/readyToMigrate', [
       'userVersionQuery'
     ]),
+    ...mapMutations('migrate/migrateSettingAndStartCopy', ['save']),
     clearTargetUserId () {
       this.target_user_id = undefined
     },
@@ -487,6 +517,7 @@ export default {
         })
       }
     },
+
     // 整店复制
     onCaptureShops () {
       if (this.isStartCapture) { // 当前有复制请求
@@ -746,6 +777,7 @@ export default {
         this.$message.error('上传文件太大')
         return false
       }
+
       //   this.$refs.upload.abort()
       //   return false
       // }
@@ -760,6 +792,7 @@ export default {
       this.uploading = true
       this.showProcess = true
       this.processLength = file.percent
+      this.fileList = fileList
     },
     // todo
     uploadOnError: function () {
@@ -769,6 +802,7 @@ export default {
       this.$refs.upload.clearFiles()
     },
     uploadOnSuccess: async function (response, file, fileList) {
+      this.fileList = fileList
       this.isStartCapture = false
       this.processLength = 100
       this.showProcess = false
@@ -816,8 +850,10 @@ export default {
     },
     uploadChange: function (file, fileList) {
       if (file.status === 'ready') {
-        this.processLength = 0
         this.showProcess = true
+        this.fileList = fileList
+        console.log(fileList, 'fileList')
+        this.$message.success('上传成功，请点击下一步')
       }
     },
     downloadCSV () {
@@ -965,10 +1001,31 @@ export default {
         }
       }
     },
-    gotoSetting () {
+    gotoSettingFile () {
       this.$router.push({
-        name: 'MigrateSetting'
+        name: 'MigrateSettingAndStartCopy'
       })
+      this.save({
+        captureCallBack: this.$refs.upload.submit
+      })
+    },
+    onCaptureFile () {
+      this.$refs.upload.submit()
+    },
+    handlePreview (file) {
+      console.log(file, 'file')
+    },
+    gotoSetting (cb, url) {
+      if (url) {
+        this.$router.push({
+          name: 'MigrateSettingAndStartCopy'
+        })
+        this.save({
+          captureCallBack: cb
+        })
+      } else {
+        this.$message.warning('请输入链接')
+      }
     }
   }
 }

@@ -188,6 +188,18 @@ const router = new VueRouter({
       }
     },
     {
+      path: '/migrate/migrateSettingAndStartCopy',
+      name: 'MigrateSettingAndStartCopy',
+      component: () => import(
+        /* webpackChunkName: `MigrateSettingAndStartCopy` */
+        /* webpackMode: "lazy" */
+        '@migrate/migrateSettingAndStartCopy'),
+      meta: {
+        keepAlive: true,
+        requiresAuth: true
+      }
+    },
+    {
       path: '/migrate/migrateSettingPrice',
       name: 'MigrateSettingPrice',
       component: () => import(
