@@ -45,6 +45,7 @@
         <div style="width: 640px; margin: auto;margin-bottom:20px">
           <el-upload
             class="capture-file-upload"
+            @click.native="clearFiles"
             :action="uploadAction"
             :headers="getTokenHeaders"
             :data="{'upload_type': 'local'}"
@@ -52,8 +53,9 @@
             :on-progress="uploadOnProgress"
             :on-success="uploadOnSuccess"
             :on-change="uploadChange"
+            style=""
             :limit=1
-            drag
+            :show-file-list="false"
             ref="upload"
             :auto-upload="false"
             :multiple="false"
@@ -61,14 +63,14 @@
             :disabled="!this.isAuth">
             <hh-icon type="iconshangchuanxiazai" class="el-icon-upload"
               style="font-size:52px; margin-top: 60px; margin-bottom: 18px;" />
-            <div class="el-upload__text">将需要上传的文件拖到此处，或点击上传</div>
+            <div class="el-upload__text">点击此处，上传需要的文件</div>
             <div class="el-upload__tip left" slot="tip"><span style="color: #E02020;">*</span>
               <span>只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持 10000 条<span class="click" style="margin-left: 10px" @click="downloadCSV">下载示例文件</span></span>
-              <div class="info mt-5 ">导入复制前可以通过<span class="click" @click="openProductCollection">商品采集功能</span>采集商品链接</div>
+              <div class="info mt-5 color-success">导入复制前可以通过<span class="click" @click="openProductCollection">商品采集功能</span>采集商品链接</div>
               <PayCharge  class="mt-5"/>
             </div>
           </el-upload>
-
+          <div class="mt-20 font-16 color-success" v-if="fileList.length">{{fileList[0].name}} 上传成功，请点击 下一步：复制设置</div>
         </div>
       </el-tab-pane>
       <el-tab-pane v-loading="loadingCnt"  name="bindCopy" class="left " style="min-height:120px">
@@ -176,10 +178,10 @@
 
       </div>
     </div>
-     <!-- 绑定复制 -->
+     <!-- 导入复制 -->
     <div class="startCopyBtn flex align-c" v-if="activeName === 'file'">
       <div style="height:50px">
-        <el-button type="primary" @click="gotoSettingFile(onCaptureBindCopy,true)"  style="height:50px;font-size:16px" class="ralative">下一步：复制设置
+        <el-button type="primary" @click="gotoSettingFile(onCaptureBindCopy,true)"  style="height:50px;font-size:16px" class="ralative" >下一步：复制设置
           <span v-if="productListCheckLoading" class="info" style="position:absolute;right:-114px;top:12px">正在查询，请稍后...</span>
         </el-button>
         <el-popover trigger="hover" width="200" style="text-align:left" placement="top-start">
@@ -238,6 +240,7 @@ import ModalCharge from '@migrate/startMigrate/components/ModalCharge'
 import ModalChargeOrder from '@migrate/startMigrate/components/ModalChargeOrder'
 import ModalChargeTip from '@migrate/startMigrate/components/ModalChargeTip'
 import PayCharge from '@migrate/startMigrate/components/PayCharge'
+import debounce from 'lodash/debounce'
 
 const {
   mapActions: mapActionsPaidRecharge
@@ -308,6 +311,12 @@ export default {
       this.syncTimer = null
       // this.getSyncStatus(this.target_user_id)
     }
+    console.log(this.$refs.upload, 'activated')
+
+    if (this.activeName === 'file') {
+      this.$refs.upload && this.$refs.upload.clearFiles()
+      this.fileList = []
+    }
 
     // 点击其他区域时, 隐藏店铺复制的 列表记录
     // document.addEventListener('click', event => {
@@ -375,6 +384,10 @@ export default {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '开始复制', '绑定复制', 'tabs'])
         }
+      }
+      if (newVal === 'file') {
+        this.$refs.upload && this.$refs.upload.clearFiles()
+        this.fileList = []
       }
     },
     target_user_id (newVal) {
@@ -853,7 +866,7 @@ export default {
         this.showProcess = true
         this.fileList = fileList
         console.log(fileList, 'fileList')
-        this.$message.success('上传成功，请点击下一步')
+        this.$message.success(`${fileList[0].name} 上传成功，请点击下一步`)
       }
     },
     downloadCSV () {
@@ -1001,7 +1014,13 @@ export default {
         }
       }
     },
+    clearFiles: debounce(function () {
+      this.$refs.upload.clearFiles()
+    }, 100),
     gotoSettingFile () {
+      if (!this.fileList.length) {
+        return this.$message.warning('请导入文件')
+      }
       this.$router.push({
         name: 'MigrateSettingAndStartCopy'
       })
@@ -1010,6 +1029,9 @@ export default {
       })
     },
     onCaptureFile () {
+      if (!this.fileList.length) {
+        return this.$message.warning('请导入文件')
+      }
       this.$refs.upload.submit()
     },
     handlePreview (file) {
@@ -1110,7 +1132,20 @@ export default {
     // position: absolute;
     // top:250px;
   }
-
+/deep/ .capture-file-upload {
+  .el-upload {
+    background-color: #fff;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 360px;
+    height: 180px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+}
 </style>
 <style lang="less">
 

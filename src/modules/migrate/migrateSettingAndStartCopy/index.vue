@@ -1099,6 +1099,7 @@ export default {
             this.createBlackWordsLoading = false
             this.back_words = ''
             this.image_back_words = ''
+            console.log(this.captureCallBack, 'this.captureCallBack')
             this.captureCallBack()
             return true
           } catch (error) {
