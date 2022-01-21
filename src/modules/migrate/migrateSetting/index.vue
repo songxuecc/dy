@@ -21,7 +21,9 @@
         position: absolute;
         right: 0px;
         top: 40px;
-        z-index:1" @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/xoghlm')"><hh-icon type="icontishi-dengpao" ></hh-icon>基本设置教程{{isCapturing}}</span>
+        z-index:1"
+      :style="isCapturing ? 'top: 120px;':'top: 40px;'"
+      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/xoghlm')"><hh-icon type="icontishi-dengpao" ></hh-icon>基本设置教程</span>
     <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': isCapturing ? '120px':'30px'}" class="migrateSettingForm">
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini" :model="$data">
         <!-- 类目 -->
@@ -94,7 +96,7 @@
               <span class="primary ml-10"
                 v-if="propertiesMap.length &&  propertiesMap.length > 2 && !propertiesVisible"
                 @click="togglePropertiesVisible"><i class="el-icon-arrow-down"></i>展开</span>
-              <el-popover
+              <!-- <el-popover
                 width="600"
                 trigger="hover">
                 <img style="width:600px"
@@ -103,7 +105,7 @@
                   <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                   <span class="info">填写帮助</span>
                 </span>
-              </el-popover>
+              </el-popover> -->
             </div>
             <div class="font-12 mb-5" v-for="(properties,idx) in showPropertiesMap" :key="properties.id" v-if="propertiesMap.length">
               当属性维度是
@@ -119,7 +121,7 @@
             </p>
             <el-switch v-model="is_use_default_attr_value" class="ml-5 mr-5"/>
 
-            <el-popover
+            <!-- <el-popover
               width="400"
               trigger="hover">
               <img style="width:400px"
@@ -128,14 +130,14 @@
                 <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                 <span class="info">填写帮助</span>
               </span>
-            </el-popover>
+            </el-popover> -->
 
           </div>
           <div style="display:flex;margin-bottom:5px" class="align-c font-12">
             必填属性未填写时，若需选择属性值，则默认选择第一个属性选项
             <el-switch v-model="is_select_first_options_attr"  class="ml-5 mr-5"/>
 
-            <el-popover
+            <!-- <el-popover
               width="400"
               trigger="hover">
               <img style="width:400px"
@@ -144,7 +146,7 @@
                 <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                 <span class="info">填写帮助</span>
               </span>
-            </el-popover>
+            </el-popover> -->
           </div>
         </el-form-item>
         <!-- 库存 -->
