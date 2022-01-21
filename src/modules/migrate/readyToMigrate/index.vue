@@ -182,7 +182,7 @@
             </el-button>
           </el-tooltip>
 
-          <span  style="display:inline-flex;flex-direction:column;">
+          <span  style="display:inline-flex;flex-direction:column;justify-content: flex-end;">
             <el-popover
                 v-if="is_migrate_new"
                 width="200"
@@ -204,7 +204,7 @@
                   </el-link>
                 </span>
             </el-popover>
-            <span class="pl-10 font-12">
+            <span class="pl-10 font-12" style="align-content:flex-end">
               选择搬迁方式:
               <el-radio-group v-model="commit_type" class="pl-5" @change="onCommitType">
                   <el-radio :label="0">直接上线</el-radio>
