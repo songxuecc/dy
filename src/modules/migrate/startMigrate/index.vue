@@ -337,7 +337,7 @@
       </div>
     </div>
     <!-- 整店复制 -->
-    <div v-if="activeName === 'shop'">
+    <div v-if="activeName === 'shop'" class="pb-20">
       <SupportPlatForm
         :list="platformIconsStore"
         class="shopCopySupportPlatForm"
