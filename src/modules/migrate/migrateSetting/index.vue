@@ -1129,6 +1129,7 @@ export default {
               this.back_words = ''
               this.image_back_words = ''
               console.log(this.captureCallBack, 'this.captureCallBack')
+              this.getSetting()
               this.captureCallBack()
             } else {
               this.$message.success('保存成功')
