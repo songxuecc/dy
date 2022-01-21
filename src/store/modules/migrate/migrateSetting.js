@@ -8,7 +8,8 @@ export default {
     template: new FormModel(),
     dicCustomPrices: {},
     costTemplateList: [],
-    userBindList: []
+    userBindList: [],
+    captureCallBack: () => {}
   }),
   mutations: {
     save (state, payload) {

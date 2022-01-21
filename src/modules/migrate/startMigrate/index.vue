@@ -311,8 +311,6 @@ export default {
       this.syncTimer = null
       // this.getSyncStatus(this.target_user_id)
     }
-    console.log(this.$refs.upload, 'activated')
-
     if (this.activeName === 'file') {
       this.$refs.upload && this.$refs.upload.clearFiles()
       this.fileList = []
@@ -423,7 +421,7 @@ export default {
     ...mapActions('migrate/readyToMigrate', [
       'userVersionQuery'
     ]),
-    ...mapMutations('migrate/migrateSettingAndStartCopy', ['save']),
+    ...mapMutations('migrate/migrateSetting', ['save']),
     clearTargetUserId () {
       this.target_user_id = undefined
     },
@@ -1023,7 +1021,10 @@ export default {
         return this.$message.warning('请导入文件')
       }
       this.$router.push({
-        name: 'MigrateSettingAndStartCopy'
+        name: 'MigrateSetting',
+        params: {
+          isCapturing: 'isCapturing'
+        }
       })
       this.save({
         captureCallBack: this.$refs.upload.submit
@@ -1041,7 +1042,10 @@ export default {
     gotoSetting (cb, url) {
       if (url) {
         this.$router.push({
-          name: 'MigrateSettingAndStartCopy'
+          name: 'MigrateSetting',
+          params: {
+            isCapturing: 'isCapturing'
+          }
         })
         this.save({
           captureCallBack: cb

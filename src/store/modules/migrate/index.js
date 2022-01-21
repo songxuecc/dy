@@ -4,7 +4,6 @@ import migrateSettingTemplate from './migrateSettingTemplate'
 import readyToMigrate from './readyToMigrate'
 import startMigrate from './startMigrate'
 import refershCategoryBtn from './refershCategoryBtn'
-import migrateSettingAndStartCopy from './migrateSettingAndStartCopy'
 
 const modules = {
   migrate: {
@@ -15,8 +14,7 @@ const modules = {
       migrateSetting,
       migrateSettingPrice,
       startMigrate,
-      refershCategoryBtn,
-      migrateSettingAndStartCopy
+      refershCategoryBtn
     }
   }
 }

@@ -105,8 +105,23 @@
   left: 241px;
 }
 
-
+.titlea {
+  position: fixed;
+  left: 241px;
+  z-index: 2;
+  top: 79px;
+  background: #fff;
+}
 .tab {
+  display: flex;
+  box-shadow: 0 1px 3px 0 rgba(218, 215, 215, 0.611);
+  height: 40px;
+  /deep/ .el-tabs__header {
+    padding-left: 20px;
+  }
+}
+
+.tab-no-capture {
   background: #fff;
   display: flex;
   position: fixed;
