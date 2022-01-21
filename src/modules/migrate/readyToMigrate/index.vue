@@ -182,8 +182,9 @@
             </el-button>
           </el-tooltip>
 
-          <span v-if="is_migrate_new" style="display:inline-flex;flex-direction:column;">
+          <span style="display:inline-flex;flex-direction:column;">
             <el-popover
+                v-if="is_migrate_new"
                 width="200"
                 style="text-align:left"
                 trigger="hover">
