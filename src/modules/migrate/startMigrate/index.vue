@@ -465,8 +465,9 @@ export default {
           if (item.user_id === selfUserId) {
             item.shop_name = `${item.shop_name}(本店铺)`
           }
-          item.disabled = item.auth_status === 'expire'
-          item.shop_name = item.auth_status === 'expire' ? `${item.shop_name}(过期)` : item.shop_name
+          item.disabled = item.auth_status === 'expire' || item.auth_status === 'un_login'
+          item.shop_name = item.auth_status === 'expire' ? `${item.shop_name}(订购过期)` : item.shop_name
+          item.shop_name = item.auth_status === 'un_login' ? `${item.shop_name}(登录过期)` : item.shop_name
           bandShopsMap.set(item.user_id, item)
         }
       })
