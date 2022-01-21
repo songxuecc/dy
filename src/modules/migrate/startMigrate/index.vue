@@ -347,7 +347,7 @@
         <div style="height:50px">
           <el-button
             type="primary"
-            @click="gotoSetting(onCaptureShops, textCaptureUrls)"
+            @click="gotoSetting(onCaptureShops, textCaptureShopUrls)"
             style="height:50px;font-size:16px"
             :disabled="
               isStartCapture ||
@@ -1394,6 +1394,7 @@ export default {
       console.log(file, 'file')
     },
     gotoSetting (cb, url) {
+      console.log(url, 'cb, url')
       if (url) {
         this.$router.push({
           name: 'MigrateSetting',
