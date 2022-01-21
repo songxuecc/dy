@@ -176,7 +176,7 @@ const router = new VueRouter({
       }
     },
     {
-      path: '/migrate/migrateSetting',
+      path: '/migrate/migrateSetting/:isCapturing',
       name: 'MigrateSetting',
       component: () => import(
         /* webpackChunkName: `MigrateSetting` */

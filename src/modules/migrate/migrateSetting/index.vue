@@ -1,8 +1,16 @@
 <template lang="html">
   <div class="migrateSetting relative">
-    <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" class="tab" @tab-click="tabClick" ref="tab">
+    <div :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" class="titlea" v-if="isCapturing">
+      <Title />
+      <el-tabs tab-position="top"  v-model="activeTab"  @tab-click="tabClick" ref="tab"  class="tab" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}">
+        <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
+      </el-tabs>
+    </div>
+
+    <el-tabs tab-position="top"  v-model="activeTab" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" class="tab-no-capture" @tab-click="tabClick" ref="tab" v-else>
       <el-tab-pane :label="tab.label" v-for="(tab) in tabs" :key="tab.label"></el-tab-pane>
     </el-tabs>
+
     <el-dialog class="dialog-tight" title="选择复制后的类目" width="800px" center :visible.sync="visvileCategory" v-hh-modal>
       <categorySelectView ref="categorySelectView" @changeCate="onChangeCate" />
     </el-dialog>
@@ -13,11 +21,12 @@
         position: absolute;
         right: 0px;
         top: 40px;
-        z-index:1" @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/xoghlm')"><hh-icon type="icontishi-dengpao" ></hh-icon>基本设置教程</span>
-    <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': '30px'}" class="migrateSettingForm">
+        z-index:1"
+      :style="isCapturing ? 'top: 120px;':'top: 40px;'"
+      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/xoghlm')"><hh-icon type="icontishi-dengpao" ></hh-icon>基本设置教程</span>
+    <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': isCapturing ? '120px':'30px'}" class="migrateSettingForm">
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini" :model="$data">
         <!-- 类目 -->
-
         <div class="migrateSetting-category">
           <el-form-item  label="类目统一为:" style="max-width:379px;padding-bottom: 20px;box-sizing: border-box" >
             <div class="flex align-c " style="height:28px">
@@ -87,7 +96,7 @@
               <span class="primary ml-10"
                 v-if="propertiesMap.length &&  propertiesMap.length > 2 && !propertiesVisible"
                 @click="togglePropertiesVisible"><i class="el-icon-arrow-down"></i>展开</span>
-              <el-popover
+              <!-- <el-popover
                 width="600"
                 trigger="hover">
                 <img style="width:600px"
@@ -96,7 +105,7 @@
                   <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                   <span class="info">填写帮助</span>
                 </span>
-              </el-popover>
+              </el-popover> -->
             </div>
             <div class="font-12 mb-5" v-for="(properties,idx) in showPropertiesMap" :key="properties.id" v-if="propertiesMap.length">
               当属性维度是
@@ -112,7 +121,7 @@
             </p>
             <el-switch v-model="is_use_default_attr_value" class="ml-5 mr-5"/>
 
-            <el-popover
+            <!-- <el-popover
               width="400"
               trigger="hover">
               <img style="width:400px"
@@ -121,14 +130,14 @@
                 <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                 <span class="info">填写帮助</span>
               </span>
-            </el-popover>
+            </el-popover> -->
 
           </div>
           <div style="display:flex;margin-bottom:5px" class="align-c font-12">
             必填属性未填写时，若需选择属性值，则默认选择第一个属性选项
             <el-switch v-model="is_select_first_options_attr"  class="ml-5 mr-5"/>
 
-            <el-popover
+            <!-- <el-popover
               width="400"
               trigger="hover">
               <img style="width:400px"
@@ -137,7 +146,7 @@
                 <hh-icon type="iconquestion" style="font-size:18px;color:#FA6400"></hh-icon>
                 <span class="info">填写帮助</span>
               </span>
-            </el-popover>
+            </el-popover> -->
           </div>
         </el-form-item>
         <!-- 库存 -->
@@ -357,7 +366,11 @@
       <div class="color-danger">注：价格、运费模版、发货模式等重要信息的填写是在商品复制后再填写。这里不用设置哦～</div>
     </div>
 
-    <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}">
+    <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" v-if="isCapturing">
+      <el-button type="primary" @click="goback" :loading="createBlackWordsLoading" class="mt-10" style="width:120px" plain>返回</el-button>
+      <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px" >开始复制</el-button>
+    </div>
+    <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" v-else>
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px"
         :disabled="shouldUpdate || loadingSettings">保存设置</el-button>
       <el-link @click="gotoStartCopy" v-if="shouldUpdate || loadingSettings" :underline="false" type="primary" class="font-12 ml-5 " style="margin-top:25px">已设置，去复制商品</el-link>
@@ -367,7 +380,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import debounce from 'lodash/debounce'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
@@ -377,6 +390,7 @@ import Api from '@/api/apis.js'
 import categorySelectView from '@/components/CategorySelectView'
 import services from '@services'
 import DrawerQualification from './components/DrawerQualification'
+import Title from './components/Title'
 import utils from '@/common/utils'
 import { accMul } from '@/common/evalFloat.js'
 
@@ -384,7 +398,8 @@ export default {
   mixins: [request],
   components: {
     categorySelectView,
-    DrawerQualification
+    DrawerQualification,
+    Title
   },
   beforeRouteLeave (to, from, next) {
     // 导航离开该组件的对应路由时调用
@@ -392,20 +407,25 @@ export default {
     if (this.shouldUpdate || this.loadingSettings) {
       next()
     } else {
-      this.$confirm('您未保存，是否先保存再关闭？')
-        .then(_ => {
-          this.saveSetting().then(() => {
+      if (!this.isCapturing) {
+        this.$confirm('您未保存，是否先保存再关闭？')
+          .then(_ => {
+            this.saveSetting().then(() => {
+              next()
+            })
+          })
+          .catch(_ => {
+            this.revertData()
             next()
           })
-        })
-        .catch(_ => {
-          this.revertData()
-          next()
-        })
+      } else {
+        next()
+      }
     }
   },
   data () {
     return {
+      isCapturing: false,
       tabs: [
         { label: '类目', className: '.migrateSetting-category' },
         // { label: '类目匹配', className: '.migrateSetting-categoryMatch' },
@@ -547,12 +567,24 @@ export default {
   mounted () {
     this.setScrollTop()
     this.bindScroll()
+    if (this.$route.params.isCapturing === 'isCapturing') {
+      this.isCapturing = true
+    } else {
+      this.isCapturing = false
+    }
   },
 
   beforeMount () {
     this.unBindScroll()
   },
   activated () {
+    console.log(this.$route.params.isCapturing === 'isCapturing', 'this.$route.params.isCapturing')
+    if (this.$route.params.isCapturing === 'isCapturing') {
+      this.isCapturing = true
+    } else {
+      this.isCapturing = false
+    }
+
     if (this.shouldUpdate) {
       this.getSetting()
     }
@@ -568,6 +600,7 @@ export default {
     ...mapGetters({
       getTokenHeaders: 'getTokenHeaders'
     }),
+    ...mapState('migrate/migrateSetting', ['captureCallBack']),
     getImageFirstData () {
       return {
         'file_name': 'detail_first'
@@ -1022,6 +1055,9 @@ export default {
       })
       return product
     },
+    goback () {
+      this.$router.back()
+    },
     saveSetting () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '店铺设置', '点击', '保存设置'])
@@ -1088,11 +1124,19 @@ export default {
               updateSetting,
               updateProperties
             ])
-            this.$message.success('保存成功')
-            this.createBlackWordsLoading = false
-            this.back_words = ''
-            this.image_back_words = ''
-            this.getSetting()
+            if (this.isCapturing) {
+              this.createBlackWordsLoading = false
+              this.back_words = ''
+              this.image_back_words = ''
+              console.log(this.captureCallBack, 'this.captureCallBack')
+              this.captureCallBack()
+            } else {
+              this.$message.success('保存成功')
+              this.createBlackWordsLoading = false
+              this.back_words = ''
+              this.image_back_words = ''
+              this.getSetting()
+            }
             return true
           } catch (error) {
             if (error) {

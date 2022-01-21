@@ -128,6 +128,7 @@ export default {
   .products {
     // width: 370px;
     // height: 310px;
+    min-width: 331px;
     background: rgba(247, 248, 249, 0.8);
     border-radius: 20px;
     margin-right: 16px;
@@ -217,6 +218,7 @@ export default {
   .function {
     // width: 258px;
     // height: 309px;
+    min-width: 327px;
     background: rgba(247, 248, 249, 0.8);
     border-radius: 20px;
     padding: 16px;
@@ -255,7 +257,6 @@ export default {
         justify-content: flex-end;
         align-items: center;
         margin-top: 2px;
-
       }
       &:hover {
           .btn {

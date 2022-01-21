@@ -44,7 +44,7 @@
               </div>
             </el-menu-item>
 
-            <el-menu-item index="/migrate/migrateSetting" :disabled="!isAuth()">
+            <el-menu-item index="/migrate/migrateSetting/basic" :disabled="!isAuth()" @click="reload">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconjibenshezhixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="">基本设置</span>
@@ -69,7 +69,6 @@
                 <span class="">全部商品</span>
               </div>
             </el-menu-item>
-
             <el-menu-item index="/productsManagement/batchEdit" :disabled="!isAuth()">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconpiliangchulixuanzhong2" style="font-size:16px; margin-right:4px"></hh-icon>

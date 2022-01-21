@@ -68,6 +68,7 @@ export default {
     height: 90px;
     cursor: pointer;
     display: flex;
+    min-width: 353px;
 }
 
 .gaoji {
