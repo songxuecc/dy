@@ -2,7 +2,10 @@
 <template>
   <div style="margin-bottom:50px" class="migrateSetting_pictureQualification">
     <div  v-for="(quality, index) in qualitys" :key="index"  :required="quality.is_required" label-width="100px">
-      <div class="title">{{quality.quality_name}}({{quality.quality_attachments && quality.quality_attachments.length}}/{{ limit }})</div>
+      <div :class="'title'">
+        {{quality.quality_name}}({{quality.quality_attachments && quality.quality_attachments.length}}/{{ limit }})
+        <span class="fail ml-5 is-error" v-if="quality.quality_attachments && quality.quality_attachments.length > limit">最多设置20张，请删除{{quality.quality_attachments && quality.quality_attachments.length - limit}}张图片</span>
+      </div>
       <div class="flex wrap">
           <div
             v-for="(file, index) in quality.quality_attachments"
@@ -42,6 +45,7 @@
             "
             :on-error="handleUploadError"
             :before-upload="handleBeforeUpload"
+            :on-change ="(file, fileList) => handleUploadChange(file, fileList, quality.quality_attachments)"
             :headers="getTokenHeaders"
             :data="{ belong_type: 0, is_no_delete:1 }"
             :multiple="true"
@@ -64,6 +68,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import debounce from 'lodash/debounce'
+
 export default {
   name: 'PictureQualification',
   props: {
@@ -83,9 +89,6 @@ export default {
     })
   },
   methods: {
-    imageExceedHandler (files, fileList) {
-      this.$message.error('图片最多上传' + this.limit + '张')
-    },
     handleRemove (file, row) {
       const index = row.findIndex((item, index) => item.url === file.url)
       row.splice(index, 1)
@@ -130,6 +133,18 @@ export default {
     handleUploadError (err, file, fileList) {
       this.$message.error(err.message)
     },
+    handleUploadChange: debounce(function (file, fileList, attachments) {
+      let length = 0
+      if (attachments) {
+        length = attachments.length
+      }
+      if (length + fileList.length > this.limit) {
+        this.$message.error('图片最多上传' + this.limit + '张')
+        this.$emit('canSave', false)
+      } else {
+        this.$emit('canSave', true)
+      }
+    }, 1000),
     handleBeforeUpload (file) {
       let type = file.type
       let size = file.size / 1024 / 1024
@@ -141,13 +156,6 @@ export default {
         this.$message.error('上传文件超过8M')
         return false
       }
-    },
-    handleExceed (files, fileList) {
-      this.$message.warning(
-        `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
-          files.length + fileList.length
-        } 个文件`
-      )
     }
   }
 }
