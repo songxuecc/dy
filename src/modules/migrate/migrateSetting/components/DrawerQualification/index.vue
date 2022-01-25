@@ -256,18 +256,18 @@ export default {
         let isValid = true
         let validCategoryIdIndex
         let validCategoryIdlist
-        let qualityIndex
 
         parmas.forEach((item, idx) => {
           validCategoryIdIndex = idx
           validCategoryIdlist = item
           item.quality_list.forEach((list, index) => {
-            if (list.quality_attachments.length < 21) {
+            if (list.quality_attachments.length > 20) {
               isValid = false
-              qualityIndex = index
             }
           })
         })
+
+        console.log(isValid, 'isValid')
         if (!isValid) {
           this.activeName = 'all'
           this.setActiveQualification(validCategoryIdlist, validCategoryIdIndex)
