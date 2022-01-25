@@ -368,7 +368,7 @@
 
     <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" v-if="isCapturing">
       <el-button type="primary" @click="goback" :loading="createBlackWordsLoading" class="mt-10" style="width:120px" plain>返回</el-button>
-      <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px" >开始复制</el-button>
+      <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:150px" >下一步：开始复制</el-button>
     </div>
     <div class="saveBtn" :style="{width: `calc(100% - ${scrollWidth + 282}px)`}" v-else>
       <el-button type="primary" @click="saveSetting()" :loading="createBlackWordsLoading" class="mt-10" style="width:120px"

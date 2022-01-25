@@ -33,7 +33,7 @@
                     <span slot="title" class="color-333 font-12" v-if="activeQualification && activeQualification.category_id !== -1"><span class="fail">* </span>该类目下的所有商品都统一为以下资质</span>
                     <span slot="title" class="color-333 font-12" v-if="activeQualification && activeQualification.category_id === -1"><span class="fail">* </span>设置了通用类目资质图片后，默认会上传至拥有该资质的所有商品</span>
                   </el-alert>
-                  <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange" v-if="qualityList.length"/>
+                  <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange" v-if="qualityList.length" />
                   <ElTableEmpty v-else/>
                 </div>
             </div>
@@ -204,21 +204,11 @@ export default {
       if (isAdd) {
         const id = this.activeQualification.category_id
         const dataMap = new Map(this.dataMap)
-        // const originList = this.originList
         dataMap.set(id, {
           category_id: id,
           quality_list: qualityList
         })
         this.dataMap = dataMap
-        // originList.map((item, index) => {
-        //   if (id === item.category_id) item.is_config = 1
-        //   return item
-        // })
-        // this.originList = originList
-        // const activeName = this.activeName
-        // let tab = this.tabs[0]
-        // tab = this.tabs.find(item => item.name === activeName)
-        // this.list = originList.filter(item => tab.type.includes(item.is_config))
         const deleteQualifications = [...new Set(this.deleteQualifications)]
         this.deleteQualifications = deleteQualifications.filter(item => item !== id)
       } else {
@@ -260,6 +250,38 @@ export default {
         console.log(deleteQualifications, '删除资质的参数')
         if (!parmas.length && !deleteQualifications.length) {
           this.$message.warning('没有需要修改的资质配置')
+          return false
+        }
+        // 不能超过20条图片上传的数据验证
+        let isValid = true
+        let validCategoryIdIndex
+        let validCategoryIdlist
+        let qualityIndex
+
+        parmas.forEach((item, idx) => {
+          validCategoryIdIndex = idx
+          validCategoryIdlist = item
+          item.quality_list.forEach((list, index) => {
+            if (list.quality_attachments.length < 21) {
+              isValid = false
+              qualityIndex = index
+            }
+          })
+        })
+        if (!isValid) {
+          this.activeName = 'all'
+          this.setActiveQualification(validCategoryIdlist, validCategoryIdIndex)
+          this.$message.warning('每个属性最多上传20张，请重新修改')
+          this.$nextTick(() => {
+            let isError = document.getElementsByClassName('is-error')
+            isError[0] && isError[0].scrollIntoView({
+                // 滚动到指定节点
+                // 值有start,center,end，nearest，当前显示在视图区域中间
+              block: 'center',
+                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+              behavior: 'smooth'
+            })
+          })
           return false
         }
         if (parmas.length) {
