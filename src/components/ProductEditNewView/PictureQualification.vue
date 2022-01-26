@@ -1,7 +1,11 @@
 <!-- 资质图片 -->
 <template>
   <div style="margin-bottom:50px">
-    <el-form-item  v-for="(quality, index) in qualitys" :key="index"  :label="quality.quality_name + ':'" :required="quality.is_required" label-width="100px">
+    <el-form-item  v-for="(quality, index) in qualitys" :key="index"  :required="quality.is_required" label-width="100px" >
+      <span slot="label" :class="`needValidQuality ${quality.quality_key}`">
+        {{quality.quality_name }} :
+        <span v-if="quality.quality_attachments.length > 20" class="fail"> 图片不可超过20张</span>
+      </span>
     <div class="flex wrap">
       <div
       v-for="(file, index) in quality.quality_attachments"
@@ -44,8 +48,6 @@
       :headers="getTokenHeaders"
       :data="{ belong_type: 0 }"
       :multiple="true"
-      :limit="quality.quality_attachments ? limit - quality.quality_attachments.length : 20"
-      :on-exceed="imageExceedHandler"
       :show-file-list="false"
       v-if="quality.quality_attachments && quality.quality_attachments.length < limit"
     >
