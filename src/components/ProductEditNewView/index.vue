@@ -213,7 +213,7 @@
                       </el-row>
                   </el-form>
               </el-tab-pane>
-              <el-tab-pane v-if="qualityList.length" label="服务与资质">
+              <el-tab-pane v-if="qualityList.length" label="服务与资质" name="quality">
                   <el-form class="setting-content">
                       <el-button @click="useCustome" v-if="product.model && product.model.category_show" size="medium" class="mb-10 ml-10" type="text"><hh-icon type="iconshuaxin"></hh-icon> 刷新{{product.model.category_show}}默认资质配置</el-button>
                       <PictureQualification :qualitys="qualityList"  @change="handlePictureQualificationChange"/>
@@ -1074,6 +1074,41 @@ export default {
           })
         })
         return this.$message.error('轮播图尺寸需要1:1')
+      }
+
+      // 服务与资质
+      let qualityValidId = false
+      products.forEach(item => {
+        item.model.quality_list.map(quality => {
+          if (quality.quality_attachments.length > 20) {
+            qualityValidId = item.model.tp_product_id
+            const qualityLabel = document.getElementsByClassName(`needValidQuality ${quality.quality_key}`)
+            qualityLabel && qualityLabel[0].classList.add('is-error-quality')
+          } else {
+            const qualityLabel = document.getElementsByClassName(`needValidQuality ${quality.quality_key}`)
+            if (qualityLabel && qualityLabel[0].className.includes('is-error-quality')) {
+              qualityLabel && qualityLabel[0].classList.remove('is-error-quality')
+            }
+          }
+        })
+      })
+
+      if (qualityValidId) {
+        const product = this.tableData.find(p => p.tp_product_id === qualityValidId)
+        this.setProduct(product)
+        this.activityTab = 'quality'
+        this.$nextTick(() => {
+          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
+            let isError = document.getElementsByClassName('is-error-quality')
+            if (isError && isError[0]) {
+              isError[0].scrollIntoView({
+                block: 'center',
+                behavior: 'smooth'
+              })
+            }
+          })
+        })
+        return this.$message.error('资质图每个类型最多20张')
       }
 
       try {
