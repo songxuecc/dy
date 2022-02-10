@@ -495,9 +495,6 @@
       ref="ModalBindCopyIdSearch"
       @continueCopy="continueCopy"
     />
-    <ModalCharge ref="ModalCharge" />
-    <ModalChargeOrder ref="ModalChargeOrder" />
-    <ModalChargeTip ref="ModalChargeTip" />
   </div>
 </template>
 <script>
@@ -523,9 +520,6 @@ import {
 } from '@migrate/startMigrate/config'
 import Api from '@/api/apis'
 import TablemigrateHistory from '@migrate/startMigrate/components/TablemigrateHistory'
-import ModalCharge from '@migrate/startMigrate/components/ModalCharge'
-import ModalChargeOrder from '@migrate/startMigrate/components/ModalChargeOrder'
-import ModalChargeTip from '@migrate/startMigrate/components/ModalChargeTip'
 import PayCharge from '@migrate/startMigrate/components/PayCharge'
 import debounce from 'lodash/debounce'
 
@@ -580,10 +574,7 @@ export default {
     BindCopyTips,
     SettingAlert,
     TablemigrateHistory,
-    ModalCharge,
-    ModalChargeOrder,
-    PayCharge,
-    ModalChargeTip
+    PayCharge
   },
   activated () {
     this.getUserBindList()
@@ -714,6 +705,9 @@ export default {
     ]),
     ...mapActions('migrate/readyToMigrate', ['userVersionQuery']),
     ...mapMutations('migrate/migrateSetting', ['save']),
+    ...mapMutations('migrate/readyToMigrate', {
+      'saveReadyToMigrate': 'save'
+    }),
     clearTargetUserId () {
       this.target_user_id = undefined
     },
@@ -1073,16 +1067,25 @@ export default {
               // 3个月试用引导内部升级
               // 7天试用引导在服务市场
               if (versionTipType === 'free_three_months') {
-                this.$refs && this.$refs.ModalCharge.open(data)
+                this.saveReadyToMigrate({
+                  modalChargeData: data,
+                  modalChargeTreeMonthVisible: true
+                })
               } else {
-                this.$refs && this.$refs.ModalChargeOrder.open(data)
+                this.saveReadyToMigrate({
+                  modalChargeData: data,
+                  modalChargeSevenDaysVisible: true
+                })
               }
               this.isStartCapture = false
               return false
             }
             // 高级版 充值限制
             if (data.left_capture_nums_not_enough) {
-              this.$refs && this.$refs.ModalChargeTip.open(data)
+              this.saveReadyToMigrate({
+                modalChargeData: data,
+                modalChargeVisible: true
+              })
               this.isStartCapture = false
               return false
             }

@@ -1,9 +1,10 @@
-<!-- ModalVersionUp -->
 <template>
   <el-dialog
-    :visible.sync="visible"
+    :visible.sync="modalChargeSevenDaysVisible"
+    append-to-body
     width="600px"
     class="versionUp"
+    :show-close="false"
   >
     <div class="ModalVersionUp" v-if="versionType">
       <div class="flex mb-20 justify-c">
@@ -22,84 +23,67 @@
           <div class="flex column justify-c">
             <p class="shiyong left" style="margin-bottom:4px">高级版</p>
             <p class="shiyongri left flex align-c" style="margin-bottom:6px">抖音平台无限量复制</p>
-            <p class="shiyongri left flex align-c" style="font-size:12px" v-if="userVersion">非抖音平台升级后送{{getCount(userVersion.unit_price * userVersion.left_days)}}条额度(用完可充值）</p>
+            <p class="shiyongri left flex align-c" style="font-size:12px">非抖音平台订购1月送500条额度，订购1年送6000条额度（用完可充值）</p>
           </div>
         </div>
       </div>
       <div class="color-666 font-14" v-if="userVersion">
-        当前是试用版，仅限20条复制额度；已用{{userVersion.total_capture_nums}}条，还剩<span class="price">{{left_capture_nums}}</span>条
-        <div>建议您升级高级版，升级后额度增加！</div>
+        当前是试用版，仅限20条复制额度；已用{{userVersion.total_capture_nums}}条，还剩<span class="price">{{modalChargeData.left_capture_nums}}</span>条
+        <div>建议您订购高级版，订购后额度增加！</div>
       </div>
-
     </div>
     <div class="modalVersionUpBtn pb-20" slot="footer" v-if="versionType">
       <p class="relative heartbeat pointer" @click="up">
-        升级高级版
-        <span>0.25元/天</span>
+        订购高级版
+        <span>原价订1年返38元</span>
       </p>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import Api from '@/api/apis'
-import utils from '@/common/utils'
 
 export default {
-  name: 'ModalVersionUp',
+  name: 'ModalVersionUpOrder',
   props: {
   },
   data () {
     return {
-      visible: false,
-      left_capture_nums: 0
     }
   },
   computed: {
-    ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType'])
+    ...mapState('migrate/readyToMigrate', ['userVersion', 'versionType', 'modalChargeData', 'modalChargeSevenDaysVisible'])
   },
   methods: {
+    ...mapMutations('migrate/readyToMigrate', ['save']),
     open () {
       if (window._hmt) {
-        window._hmt.push(['_trackEvent', '付费充值', '弹层曝光', '3个月试用限制_展示弹层'])
+        window._hmt.push(['_trackEvent', '付费充值', '弹层曝光', '7天试用限制_展示弹层'])
       }
-      this.visible = !this.visible
+
+      this.save({
+        modalChargeSevenDaysVisible: !this.modalChargeSevenDaysVisible
+      })
     },
     close () {
-      this.visible = !this.visible
-    },
-    getCount (price) {
-      if (utils.fenToYuan(price) > 0 && utils.fenToYuan(price) <= 5) {
-        return 150
-      } else if (utils.fenToYuan(price) > 5 && utils.fenToYuan(price) <= 10) {
-        return 300
-      } else if (utils.fenToYuan(price) > 5 && utils.fenToYuan(price) <= 10) {
-        return 300
-      } else if (utils.fenToYuan(price) > 10 && utils.fenToYuan(price) <= 15) {
-        return 500
-      } else {
-        return 600
-      }
+      this.save({
+        modalChargeSevenDaysVisible: !this.modalChargeSevenDaysVisible
+      })
     },
     async up () {
       try {
         if (window._hmt) {
-          window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '3个月试用限制_升级高级版本'])
+          window._hmt.push(['_trackEvent', '付费充值', '按钮点击', '7天试用限制_订购高级版本'])
         }
-        // 订单统计打点
+      // 订单统计打点
         await Api.hhgjAPIs.statisticsEventCreate({
-          event_type: 'free_three_months',
-          action: 'modal'
+          event_type: 'free_seven_days',
+          action: 'resubscribe'
         })
         this.close()
-        let routeData = this.$router.resolve({
-          name: 'PaidRecharge',
-          params: {
-            active: 'VersionUp'
-          }
-        })
-        window.open(routeData.href, '_blank')
+        window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
       } catch (err) {
         this.$message.error(`${err}`)
       }
@@ -143,7 +127,7 @@ export default {
     border-radius: 10px;
     overflow: hidden;
     .old {
-      height: 143px;
+      height: 160px;
       background: linear-gradient(206deg, #F9FAFE 0%, #E8E6E9 100%);
       border-radius: 7px;
       // width: 292px;
@@ -198,7 +182,7 @@ export default {
     }
 
     .new {
-      height: 143px;
+      height: 160px;
       background: linear-gradient(206deg, #E4D2A8 0%, #C6A776 100%);
       border-radius: 7px;
       width: 210px;
@@ -259,12 +243,11 @@ export default {
       text-align: center;
       margin-bottom: 12px;
       span {
-        width: 51px;
+        width: 125px;
         font-size: 14px;
         font-family: MicrosoftYaHei;
         color: #FFFFFF;
         position: absolute;
-        width: 70px;
         height: 28px;
         background: linear-gradient(270deg, #FF6717 0%, #FFC300 100%);
         border-radius: 10px 0px 10px 0px;
@@ -301,6 +284,7 @@ export default {
   /deep/ .el-dialog__headerbtn {
     right: 0px;
   }
+
 }
 
 </style>

@@ -9,6 +9,12 @@ export default {
     userVersion: undefined,
     versionType: undefined,
     versionTipType: undefined,
+    modalChargeTreeMonthVisible: false,
+    modalChargeSevenDaysVisible: false,
+    modalChargeVisible: false,
+    modalChargeData: {
+      left_capture_nums: 0
+    },
     migrateSetting: {},
     shopCaptureOptions: [{ value: '-1', label: '全部' }],
     captureOptions: [{ value: '-1', label: '全部' }],
