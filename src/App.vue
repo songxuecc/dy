@@ -74,6 +74,9 @@
         </hh-dialog>
         <MeizheActivityModel />
         <ModalNewUserActivity />
+        <ModalCharge  />
+        <ModalChargeSevenDays  />
+        <ModalChargeTreeMonth  />
     </div>
 </template>
 
@@ -88,6 +91,9 @@ import ModalNewUserActivity from '@/components/ModalNewUserActivity'
 import navBar from '@/components/Navbar'
 import sideBar from '@/components/Sidebar'
 import FlexFoot from '@/components/FlexFoot.vue'
+import ModalCharge from '@/components/ModalCharge'
+import ModalChargeSevenDays from '@/components/ModalChargeSevenDays'
+import ModalChargeTreeMonth from '@/components/ModalChargeTreeMonth'
 
 import { mapGetters, mapActions, mapState } from 'vuex'
 import moment from 'moment'
@@ -141,7 +147,10 @@ export default {
     vueCustomScrollbar,
     NotificationListView,
     MeizheActivityModel,
-    ModalNewUserActivity
+    ModalNewUserActivity,
+    ModalCharge,
+    ModalChargeSevenDays,
+    ModalChargeTreeMonth
   },
   computed: {
     ...mapState({
