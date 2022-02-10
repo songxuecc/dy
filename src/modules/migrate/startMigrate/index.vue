@@ -1084,7 +1084,7 @@ export default {
             if (data.left_capture_nums_not_enough) {
               this.saveReadyToMigrate({
                 modalChargeData: data,
-                ModalChargeVisible: true
+                modalChargeVisible: true
               })
               this.isStartCapture = false
               return false
