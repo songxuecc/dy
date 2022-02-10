@@ -1086,8 +1086,8 @@ export default {
             qualityLabel && qualityLabel[0].classList.add('is-error-quality')
           } else {
             const qualityLabel = document.getElementsByClassName(`needValidQuality ${quality.quality_key}`)
-            if (qualityLabel && qualityLabel[0].className.includes('is-error-quality')) {
-              qualityLabel && qualityLabel[0].classList.remove('is-error-quality')
+            if (qualityLabel && qualityLabel[0] && qualityLabel[0].className && qualityLabel[0].className.includes('is-error-quality')) {
+              qualityLabel && qualityLabel[0] && qualityLabel[0].classList && qualityLabel[0].classList.remove('is-error-quality')
             }
           }
         })
