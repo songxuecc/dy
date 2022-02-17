@@ -27,7 +27,7 @@
         <h1 class="mb-10 mr-10">发货时效</h1>
         <div class="bg">
           <el-checkbox-group v-model="presellRuleList"  @change="presellRuleListChange">
-              <el-checkbox :label="p.spec_value" v-for="p in presellRuleLists" :key="p.spec_value" >{{p.spec_value}}</el-checkbox>
+              <el-checkbox :label="p.spec_value" v-for="p in presellRuleLists" :key="p.spec_value" :disabled="p.spec_value === '48小时内发货'">{{p.spec_value}}</el-checkbox>
           </el-checkbox-group>
           <div class="font-12 mt-5">发货时效计算起点：买家支付后开始计算发货时效 (例：买家支付后7天发货)</div>
         </div>
@@ -495,9 +495,8 @@ export default {
       })
 
       this.tableData = cloneDeep(tableData)
-      console.log(tableData, 'tableData')
       if (this.presellRuleList.length > 0) {
-        this.presellRuleListChange(this.presellRuleList)
+        tableData = this.presellRuleListChange(this.presellRuleList)
       }
       this.originTableData = cloneDeep(tableData)
       this.$nextTick(() => {
@@ -813,6 +812,7 @@ export default {
       this.oldPresells = presells
       this.tableData = tableData
       this.handlePresellRuleListData()
+      return this.tableData
     },
     spanMethod ({ row, column, rowIndex, columnIndex }) {
       let end = this.spec_list.length + 3

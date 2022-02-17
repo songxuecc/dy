@@ -790,9 +790,7 @@ export default {
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
         // sku数据初始化
-        this.skuJson = this.product.model.sku_json
-        console.log(this.product.model, 'this.product.model.presell_rule_list')
-        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson, this.product.model.presell_rule_list)
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.product.model.sku_json, this.product.model.presell_rule_list)
         const skuJson = {...this.product.model.sku_json}
         if (originModel) {
           skuJson.spec_price_list = originModel.tableData.map(item => omit(item, ['index']))
@@ -803,9 +801,14 @@ export default {
             }
           })
         }
+        console.log(skuJson, this.product.model.sku_json, originModel, 'skuJson')
         Object.assign(this.product.originModel, {
           sku_json: skuJson
         })
+        Object.assign(this.product.model, {
+          sku_json: skuJson
+        })
+        this.skuJson = skuJson
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }

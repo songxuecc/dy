@@ -40,6 +40,7 @@ class FormModel {
         // Object, Array 的情况
         if (!utils.isObjectValueEqual(this.model[key], this.originModel[key], exclude)) {
           diff[key] = this.model[key]
+          // console.log(diff, this.originModel[key], 'diff')
         }
       } else {
         // Number, String, ... 等情况
@@ -48,7 +49,6 @@ class FormModel {
         }
       }
     }
-    console.log(diff, 'diff')
     return diff
   }
   isDiff (exclude = []) {
