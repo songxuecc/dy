@@ -202,8 +202,7 @@
         size="medium"
         plain
         @click="addSpecifications"
-        >添加规格</el-button
-      >
+        >添加规格</el-button>
     </div>
 
     <el-dialog

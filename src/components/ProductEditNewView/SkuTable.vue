@@ -2,10 +2,39 @@
 <template>
     <div class="SkuTable left">
     <h1 class="mb-10">商品规格 <span class="warning"><hh-icon type="icontishi" ></hh-icon>注意：每次编辑完价格后商品单独保存，以免数据丢失！</span></h1>
+
+    <!-- 规格 -->
     <SkuSelect
       ref="SkuSelect"
       :specifications="spec_list"
       @change="onSkuSelectChange"/>
+
+    <el-button @click="addPresell" size="medium" style="margin-left:13px" v-if="!addPresellVisible">添加发货模式</el-button>
+    <el-button @click="removePresell" size="medium"  style="margin-left:13px" v-else>移除发货模式</el-button>
+
+    <!-- 时效设置 -->
+    <div v-if="addPresellVisible && presellRuleListData.length">
+      <div class="pt-10">
+        <h1 class="mb-10 mr-10">发货模式</h1>
+        <div class="bg">
+          <el-radio-group v-model="presell" @change="presellChange" >
+            <el-radio label="time_sku_pure_presell_rule" class="pb-10">新预售发货模式规则</el-radio>
+            <el-radio label="time_sku_presell_with_normal_rule">现货+预售发货规则</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="pt-10">
+        <h1 class="mb-10 mr-10">时效规格</h1>
+        <div class="bg">
+          <el-checkbox-group v-model="presellRuleList"  @change="presellRuleListChange">
+              <el-checkbox :label="p.spec_value" v-for="p in presellRuleLists" :key="p.spec_value" :disabled="!p.is_presell_spec">{{p.spec_value}}</el-checkbox>
+          </el-checkbox-group>
+          <div class="font-12 mt-5">发货时效计算起点：买家支付后开始计算发货时效 (例：买家支付后7天发货)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 批量设置 -->
     <h1 class="mb-10" style="margin-top:20px">{{'批量设置 - 价格、库存、编码'}}  <span class="warning"><hh-icon type="icontishi" ></hh-icon>可对指定规格批量设置哦</span></h1>
     <el-form class="mb-10 flex wrap" style="padding-left:15px" size="small" ref="batchEditForm" :model="batchEditForm" :rules="rulesBatchEditForm">
       <el-form-item>
@@ -47,8 +76,9 @@
           <el-button size="medeium" type="warning" plain style="width:130px;height:32px;padding:0;margin-left:3px" @click="handleBatchEditPrice">
             <hh-icon type="iconjiagebaohu"></hh-icon> 统一增减价格</el-button>
       </el-form-item>
-
     </el-form>
+
+    <!-- sku表格 -->
     <h1 class="mb-10" style="margin-top:10px">货源方原价与库存</h1>
         <el-form ref="form" :rules="rules" :model="tableData" size="small" style="padding-left:15px">
             <el-table
@@ -68,6 +98,14 @@
                     <span >{{getRowData(scope.row,index)}}</span>
                 </template>
             </el-table-column>
+
+            <el-table-column
+                v-if="presellRuleList.length"
+                prop="time_sku_spec_name"
+                label="时效规格"
+                width="130">
+            </el-table-column>
+
             <el-table-column
                 prop="quantity"
                 label="总库存"
@@ -309,7 +347,12 @@ export default {
         quantity: [
           { validator: validateQuantity, trigger: ['change'] }
         ]
-      }
+      },
+      presellRuleList: [],
+      presell: 3,
+      presellRuleListData: [],
+      presellRuleLists: [],
+      addPresellVisible: true
     }
   },
   watch: {
@@ -369,11 +412,19 @@ export default {
     }
   },
   methods: {
-    init (skuJson) {
+    init (skuJson, presellRuleListData) {
       // 批量修改表单初始化
       if (!skuJson) {
         return
       }
+      // 如需设置发货时效 则设置默认值
+      if (presellRuleListData && presellRuleListData.length) {
+        this.presellRuleListData = presellRuleListData
+        this.presellRuleLists = presellRuleListData[0].data.time_sku_spec_detial
+        this.presell = presellRuleListData[0].presell_rule_type
+        this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+      }
+
       this.spec_list = cloneDeep(skuJson.spec_list).map(item => {
         return {
           ...item,
@@ -422,6 +473,9 @@ export default {
         tableData.push(matchSpecData)
       })
       this.tableData = cloneDeep(tableData)
+      if (this.presellRuleList.length > 0) {
+        this.presellRuleListChange(this.presellRuleList)
+      }
       this.originTableData = cloneDeep(tableData)
       this.$nextTick(() => {
         this.$refs.SkuSelect && this.$refs.SkuSelect.init(this.spec_list)
@@ -451,6 +505,19 @@ export default {
         }
       }
       return result
+    },
+    addPresell () {
+      this.addPresellVisible = true
+      if (this.presellRuleListData && this.presellRuleListData.length) {
+        const presellRuleListData = this.presellRuleListData
+        this.presellRuleLists = presellRuleListData[0].data.time_sku_spec_detial
+        this.presell = presellRuleListData[0].presell_rule_type
+        this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+      }
+    },
+    removePresell () {
+      this.addPresellVisible = false
+      this.presellRuleList = []
     },
     validForm () {
       this.$refs.form.validate((valid, object) => {
@@ -536,7 +603,14 @@ export default {
           return data
         })
       }
+      // 删除time_sku_spec_name 初始化有发货模式设置的数据
+      tableData = tableData.map(item => {
+        if (item.time_sku_spec_name) delete item.time_sku_spec_name
+        return item
+      })
       this.tableData = cloneDeep(tableData)
+      console.log(tableData, 'tableData-onSkuSelectChange')
+      this.presellRuleListChange(this.presellRuleList)
       this.spec_list = cloneDeep(specifications)
       this.$emit('change', this.tableData, this.spec_list)
       this.$nextTick(() => {
@@ -630,12 +704,158 @@ export default {
     handleBatchEditPrice () {
       this.dialogPromoPriceVisible = true
     },
+    presellChange (value) {
+      const presellRule = this.presellRuleListData.find(item => String(item.presell_rule_type) === String(value))
+      if (presellRule) {
+        this.presellRuleLists = presellRule.data.time_sku_spec_detial
+        this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+        this.presellRuleListChange(this.presellRuleList)
+      }
+      console.log(this.presellRuleLists, 'presellRuleLists')
+    },
+    handlePresellRuleListData () {
+      const presellRuleListData = this.presellRuleListData.map(item => {
+        if (String(item.presell_rule_type) === String(this.presell)) {
+          item.is_checked = true
+          item.data.time_sku_spec_detial = item.data.time_sku_spec_detial
+            .map(specDetial => {
+              if (this.presellRuleList.includes(specDetial.spec_value)) {
+                specDetial.is_checked = true
+              } else {
+                specDetial.is_checked = false
+              }
+              return specDetial
+            })
+          return item
+        } else {
+          delete item.is_checked
+          item.data.time_sku_spec_detial = item.data.time_sku_spec_detial
+            .map(specDetial => {
+              delete specDetial.is_checked
+              return specDetial
+            })
+          return item
+        }
+      })
+      console.log(presellRuleListData, 'presellRuleListData')
+      this.$emit('presellRuleList', presellRuleListData)
+    },
+    presellRuleListChange (presells) {
+      console.log(presells, 'presells')
+      let length = presells.length
+      if (this.oldPresells) {
+        length = this.oldPresells.length
+      }
+      if (!presells.length) {
+        const tableData = []
+        this.tableData.map((item, index) => {
+          if (index % length === 0) {
+            tableData.push(omit(item, ['time_sku_spec_name']))
+          }
+        })
+
+        this.oldPresells = presells
+        this.$nextTick(() => {
+          this.tableData = tableData
+        })
+        return false
+      }
+
+      const tableData = []
+      // 没有设置过 时效 记录tabledata初始值
+      let shouldAddColumn = false
+      if (this.tableData.every(item => !item.time_sku_spec_name)) {
+        shouldAddColumn = true
+      }
+      this.tableData.map((item, index) => {
+        presells.forEach(presell => {
+          if (shouldAddColumn) {
+            tableData.push({
+              ...item,
+              time_sku_spec_name: presell
+            })
+          } else {
+            if (index % length === 0) {
+              tableData.push({
+                ...item,
+                time_sku_spec_name: presell
+              })
+            }
+          }
+        })
+      })
+      this.oldPresells = presells
+      this.tableData = tableData
+      this.handlePresellRuleListData()
+    },
     spanMethod ({ row, column, rowIndex, columnIndex }) {
-      const end = this.spec_list.length + 3
+      let end = this.spec_list.length + 3
+      // 有时效规格的设置
+
       const arr = []
+
       this.spec_list.map(item => {
         arr.push(item.value_list.length)
       })
+      if (this.presellRuleList.length > 0) {
+        end = end + 1
+        arr.push(this.presellRuleList.length)
+      }
+
+      if (arr.length === 4) {
+        const columnIndex0 = arr[1] * arr[2] * arr[3]
+        const columnIndex1 = arr[2] * arr[3]
+        const columnIndex2 = arr[3]
+        if (columnIndex === 0) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        } else if (columnIndex === 1) {
+          if (rowIndex % columnIndex1 === 0) {
+            return {
+              rowspan: columnIndex1,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        } else if (columnIndex === 2) {
+          if (rowIndex % columnIndex2 === 0) {
+            return {
+              rowspan: columnIndex2,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        } else if (columnIndex === 3) {
+          if (rowIndex % columnIndex0 === 0) {
+            return {
+              rowspan: columnIndex0,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      }
 
       if (arr.length === 3) {
         const columnIndex0 = arr[1] * arr[2]
@@ -746,6 +966,22 @@ export default {
         &:hover,&:focus {
             border: 1px solid @color-primary;
         }
+    }
+
+    /deep/ .el-radio{
+      display: block;
+      margin:0;
+    }
+
+    /deep/ .el-checkbox{
+      // display: block;
+    }
+    .bg {
+      background: rgb(249, 249, 250);
+      padding: 16px 12px;
+      margin-right: 30px;
+      border-radius: 4px;
+      margin-bottom: 10px;
     }
 }
 

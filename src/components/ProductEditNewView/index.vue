@@ -139,7 +139,7 @@
                   </el-tooltip>
                   </span>
                   <!-- sku编辑 -->
-                  <SkuTable @change="handleSkuTable" ref="SkuTable"/>
+                  <SkuTable @change="handleSkuTable" ref="SkuTable" @presellRuleList="handlePresellRuleList"/>
                   <div class="common-bottom">
                 </div>
               </el-tab-pane>
@@ -434,7 +434,7 @@ export default {
       batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'sku_json'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'sku_json', 'presell_rule_list'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -620,7 +620,7 @@ export default {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
           'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark',
-          'sku_json'
+          'sku_json', 'presell_rule_list'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -640,7 +640,7 @@ export default {
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         // sku数据初始化
         this.skuJson = this.product.model.sku_json
-        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson, this.product.model.presell_rule_list)
         const skuJson = {...this.product.model.sku_json}
         if (originModel) {
           skuJson.spec_price_list = originModel.tableData.map(item => omit(item, ['index']))
@@ -768,6 +768,7 @@ export default {
         this.product.assign({recommend_remark: data.recommend_remark})
         this.product.assign({skuPropertyList: [...this.skuPropertyList]})
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
+        this.product.assign({presell_rule_list: data.presell_rule_list})
         this.product.assign({sortSkuKeys: this.sortSkuKeys})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
@@ -790,7 +791,8 @@ export default {
         this.updateRemoveFirstBanner()
         // sku数据初始化
         this.skuJson = this.product.model.sku_json
-        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        console.log(this.product.model, 'this.product.model.presell_rule_list')
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson, this.product.model.presell_rule_list)
         const skuJson = {...this.product.model.sku_json}
         if (originModel) {
           skuJson.spec_price_list = originModel.tableData.map(item => omit(item, ['index']))
@@ -1170,8 +1172,32 @@ export default {
                 }
                 return obj
               })
+              // let presellRuleType = ''
+              // const presell = product.model.presell_rule_list.find(item => item.is_checked)
+              // if (presell) {
+              //   presellRuleType = presell.presell_rule_type
+              //   const obj = {
+              //     spec_id: presellRuleType,
+              //     specificationName: presellRuleType,
+              //     specificationValueList: presell.data.time_sku_spec_detial
+              //       .filter(item => item.is_checked)
+              //       .map(item => ({
+              //         checked: true,
+              //         skuKey: presellRuleType,
+              //         skuValueKey: presellRuleType,
+              //         image: '',
+              //         value: item.spec_value
+              //       }))
+              //   }
+              //   specifications.push(obj)
+              // }
+
             // sku价格列表数据
               const skuList = skuJson.spec_price_list.map(spec => {
+                // if (spec.time_sku_spec_name && presellRuleType) {
+                //   spec.spec_detail_id_list.push(`${presellRuleType}:${spec.time_sku_spec_name}`)
+                // }
+                // console.log(spec.time_sku_spec_name, 'spec.time_sku_spec_name')
                 return {
                   code: spec.code,
                   price: spec.price,
@@ -1198,7 +1224,8 @@ export default {
                   desc_json: product.model.descPicUrlList.map(val => val['url']),
                   brand_id: brandId,
                   recommend_remark: product.model.recommend_remark,
-                  quality_list: product.model.quality_list || []
+                  quality_list: product.model.quality_list || [],
+                  presell_rule_list: product.model.presell_rule_list
                 }
               }
               console.log(productParams, 'productParams')
@@ -1449,7 +1476,8 @@ export default {
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.qualityList = this.product.model.quality_list
       this.skuJson = this.product.model.sku_json
-      this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+      this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson, this.product.model.presell_rule_list)
+
       // this.specifications = this.product.model.specifications
       this.$refs['bannerPicListView'] && this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
       this.$refs['descPicListView'] && this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
@@ -1875,6 +1903,7 @@ export default {
       Object.assign(this.product.model, {quality_list: data})
     },
     handleSkuTable (tableData, specList) {
+      console.log(tableData, specList, 'tableData, specList')
       this.product.model.sku_json = {
         sku_map: this.product.model.sku_json.sku_map,
         sku_property_map: this.product.model.sku_json.sku_property_map,
@@ -1896,6 +1925,10 @@ export default {
           }
         })
       }
+    },
+    handlePresellRuleList (value) {
+      console.log(value, 'handlePresellRuleList')
+      this.product.model.presell_rule_list = value
     },
     async useCustome () {
       console.log(this.product.model)
