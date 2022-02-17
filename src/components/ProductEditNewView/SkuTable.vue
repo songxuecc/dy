@@ -27,7 +27,7 @@
         <h1 class="mb-10 mr-10">发货时效</h1>
         <div class="bg">
           <el-checkbox-group v-model="presellRuleList"  @change="presellRuleListChange">
-              <el-checkbox :label="p.spec_value" v-for="p in presellRuleLists" :key="p.spec_value" :disabled="!p.is_presell_spec">{{p.spec_value}}</el-checkbox>
+              <el-checkbox :label="p.spec_value" v-for="p in presellRuleLists" :key="p.spec_value" >{{p.spec_value}}</el-checkbox>
           </el-checkbox-group>
           <div class="font-12 mt-5">发货时效计算起点：买家支付后开始计算发货时效 (例：买家支付后7天发货)</div>
         </div>
@@ -426,7 +426,7 @@ export default {
           if (item.is_checked) {
             checkedPresellRuleLists = item.data.time_sku_spec_detial
             checkedPresell = item.presell_rule_type
-            checkedPresellRuleList = checkedPresellRuleLists.filter(item => item.is_presell_spec && item.is_checked).map(item => item.spec_value)
+            checkedPresellRuleList = checkedPresellRuleLists.filter(item => item.is_checked).map(item => item.spec_value)
           }
         })
         console.log(checkedPresellRuleLists, checkedPresellRuleLists, checkedPresell, checkedPresellRuleList, 'checkedPresellRuleLists')
@@ -438,7 +438,7 @@ export default {
           // 设置默认值
           this.presellRuleLists = presellRuleListData[0].data.time_sku_spec_detial
           this.presell = presellRuleListData[0].presell_rule_type
-          this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+          this.presellRuleList = this.presellRuleLists.map(item => item.spec_value)
         }
       }
 
