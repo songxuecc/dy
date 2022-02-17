@@ -417,12 +417,29 @@ export default {
       if (!skuJson) {
         return
       }
-      // 如需设置发货时效 则设置默认值
+      // 如需设置发货时效 则
       if (presellRuleListData && presellRuleListData.length) {
         this.presellRuleListData = presellRuleListData
-        this.presellRuleLists = presellRuleListData[0].data.time_sku_spec_detial
-        this.presell = presellRuleListData[0].presell_rule_type
-        this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+        // 数据回显
+        let checkedPresellRuleLists, checkedPresell, checkedPresellRuleList
+        presellRuleListData.forEach(item => {
+          if (item.is_checked) {
+            checkedPresellRuleLists = item.data.time_sku_spec_detial
+            checkedPresell = item.presell_rule_type
+            checkedPresellRuleList = checkedPresellRuleLists.filter(item => item.is_presell_spec && item.is_checked).map(item => item.spec_value)
+          }
+        })
+        console.log(checkedPresellRuleLists, checkedPresellRuleLists, checkedPresell, checkedPresellRuleList, 'checkedPresellRuleLists')
+        if (checkedPresellRuleLists) {
+          this.presellRuleLists = checkedPresellRuleLists
+          this.presell = checkedPresell
+          this.presellRuleList = checkedPresellRuleList
+        } else {
+          // 设置默认值
+          this.presellRuleLists = presellRuleListData[0].data.time_sku_spec_detial
+          this.presell = presellRuleListData[0].presell_rule_type
+          this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+        }
       }
 
       this.spec_list = cloneDeep(skuJson.spec_list).map(item => {
@@ -433,7 +450,7 @@ export default {
       })
       // this.spec_list = cloneDeep(skuJson.spec_list)
       this.spec_price_list = cloneDeep(skuJson.spec_price_list)
-      const tableData = []
+      let tableData = []
       const specData = this.initTableData(this.spec_list)
       const allSkuSpec = this.spec_price_list.map(item => item.spec_detail_id_list)
       let recordFirstPromoPrice = false
@@ -472,7 +489,13 @@ export default {
         matchSpecData.spec_detail_id_list = spec
         tableData.push(matchSpecData)
       })
+      tableData = tableData.map(item => {
+        if (item.time_sku_spec_name) delete item.time_sku_spec_name
+        return item
+      })
+
       this.tableData = cloneDeep(tableData)
+      console.log(tableData, 'tableData')
       if (this.presellRuleList.length > 0) {
         this.presellRuleListChange(this.presellRuleList)
       }
