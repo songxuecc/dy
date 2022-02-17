@@ -23,7 +23,7 @@
           </el-radio-group>
         </div>
       </div>
-      <div class="pt-10">
+      <div class="pt-10" v-if="presellRuleLists.length">
         <h1 class="mb-10 mr-10">发货时效</h1>
         <div class="bg">
           <el-checkbox-group v-model="presellRuleList"  @change="presellRuleListChange">
