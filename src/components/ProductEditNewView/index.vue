@@ -1205,7 +1205,8 @@ export default {
                   sku_id: spec.sku_id || '',
                   quantity: spec.quantity || 0,
                   img: spec.img || '',
-                  specDetailIds: spec.spec_detail_id_list
+                  specDetailIds: spec.spec_detail_id_list,
+                  time_sku_spec_name: spec.time_sku_spec_name
                 }
               })
               let productParams = {

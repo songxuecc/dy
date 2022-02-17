@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="pt-10">
-        <h1 class="mb-10 mr-10">时效规格</h1>
+        <h1 class="mb-10 mr-10">发货时效</h1>
         <div class="bg">
           <el-checkbox-group v-model="presellRuleList"  @change="presellRuleListChange">
               <el-checkbox :label="p.spec_value" v-for="p in presellRuleLists" :key="p.spec_value" :disabled="!p.is_presell_spec">{{p.spec_value}}</el-checkbox>
@@ -513,11 +513,13 @@ export default {
         this.presellRuleLists = presellRuleListData[0].data.time_sku_spec_detial
         this.presell = presellRuleListData[0].presell_rule_type
         this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+        this.presellRuleListChange(this.presellRuleList)
       }
     },
     removePresell () {
       this.addPresellVisible = false
       this.presellRuleList = []
+      this.presellRuleListChange(this.presellRuleList)
     },
     validForm () {
       this.$refs.form.validate((valid, object) => {
@@ -757,6 +759,7 @@ export default {
         this.oldPresells = presells
         this.$nextTick(() => {
           this.tableData = tableData
+          this.handlePresellRuleListData()
         })
         return false
       }
