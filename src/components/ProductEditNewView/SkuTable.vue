@@ -9,10 +9,11 @@
       :specifications="spec_list"
       @change="onSkuSelectChange"/>
 
-    <el-button @click="addPresell" size="medium" style="margin-left:13px" v-if="!addPresellVisible">添加发货模式</el-button>
-    <el-button @click="removePresell" size="medium"  style="margin-left:13px" v-else>移除发货模式</el-button>
-
     <!-- 时效设置 -->
+    <div v-if="presellRuleListData.length">
+      <el-button @click="addPresell" size="medium" style="margin-left:13px" v-if="!addPresellVisible" type="primary">添加发货模式</el-button>
+      <el-button @click="removePresell" size="medium"  style="margin-left:13px" v-else  type="primary" plain>移除发货模式</el-button>
+    </div>
     <div v-if="addPresellVisible && presellRuleListData.length">
       <div class="pt-10">
         <h1 class="mb-10 mr-10">发货模式</h1>
@@ -765,12 +766,17 @@ export default {
       this.$emit('presellRuleList', presellRuleListData)
     },
     presellRuleListChange (presells) {
-      console.log(presells, 'presells')
       let length = presells.length
       if (this.oldPresells) {
         length = this.oldPresells.length
       }
-      if (!presells.length) {
+      if (!presells.length && !length) {
+        this.$nextTick(() => {
+          this.handlePresellRuleListData()
+        })
+        return false
+      }
+      if (!presells.length && length) {
         const tableData = []
         this.tableData.map((item, index) => {
           if (index % length === 0) {
