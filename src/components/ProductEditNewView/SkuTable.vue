@@ -19,6 +19,7 @@
         <h1 class="mb-10 mr-10">发货模式</h1>
         <div class="bg">
           <el-radio-group v-model="presell" @change="presellChange" >
+            <el-radio label="default" class="pb-10">不设置</el-radio>
             <el-radio label="time_sku_pure_presell_rule" class="pb-10">新预售发货模式规则</el-radio>
             <el-radio label="time_sku_presell_with_normal_rule">现货+预售发货规则</el-radio>
           </el-radio-group>
