@@ -536,7 +536,7 @@ export default {
         const presellRuleListData = this.presellRuleListData
         this.presellRuleLists = presellRuleListData[0].data.time_sku_spec_detial
         this.presell = presellRuleListData[0].presell_rule_type
-        this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+        this.presellRuleList = this.presellRuleLists.map(item => item.spec_value)
         this.presellRuleListChange(this.presellRuleList)
       }
     },
@@ -734,7 +734,7 @@ export default {
       const presellRule = this.presellRuleListData.find(item => String(item.presell_rule_type) === String(value))
       if (presellRule) {
         this.presellRuleLists = presellRule.data.time_sku_spec_detial
-        this.presellRuleList = this.presellRuleLists.filter(item => item.is_presell_spec).map(item => item.spec_value)
+        this.presellRuleList = this.presellRuleLists.map(item => item.spec_value)
         this.presellRuleListChange(this.presellRuleList)
       }
       console.log(this.presellRuleLists, 'presellRuleLists')
