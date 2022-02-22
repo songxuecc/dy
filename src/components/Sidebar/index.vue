@@ -220,7 +220,7 @@ export default {
       window.open('https://dx5.cn/45Uosn')
     },
     openMeiZheSHouhou () {
-      window.open('https://dx5.cn/45TC4R')
+      window.open('https://dx5.cn/4kIKah')
     },
     gotoHomePage () {
       if (!this.isAuth()) return false
