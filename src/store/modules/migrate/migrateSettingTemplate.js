@@ -43,7 +43,7 @@ export default {
 
         // 设置默认发货时间
         if (!data.delivery_delay_day) {
-          data.delivery_delay_day = 2
+          data.delivery_delay_day = 1
         }
         Object.assign(template.model, data)
         template.assign({...template.model, ...data})

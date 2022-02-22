@@ -69,7 +69,6 @@
                   </el-select>
                 </div>
             </el-form-item>
-
             <el-form-item
               :label="template.model.presell_type === 1 ?'预售发货时间:':'阶梯发货时间:'"
               v-if="template.model.presell_type === 1 || template.model.presell_type === 2"
