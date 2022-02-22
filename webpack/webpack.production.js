@@ -103,7 +103,7 @@ const webpackPro = {
     minimizer: [
       new UglifyJsPlugin({
         exclude: /\.min\.js$/,
-        parallel: os.cpus().length,
+        parallel: Math.floor(os.cpus().length / 2),
         cache: true,
         sourceMap: true,
         uglifyOptions: {
