@@ -801,7 +801,6 @@ export default {
             }
           })
         }
-        console.log(skuJson, this.product.model.sku_json, originModel, 'skuJson')
         Object.assign(this.product.originModel, {
           sku_json: skuJson
         })
@@ -1175,32 +1174,8 @@ export default {
                 }
                 return obj
               })
-              // let presellRuleType = ''
-              // const presell = product.model.presell_rule_list.find(item => item.is_checked)
-              // if (presell) {
-              //   presellRuleType = presell.presell_rule_type
-              //   const obj = {
-              //     spec_id: presellRuleType,
-              //     specificationName: presellRuleType,
-              //     specificationValueList: presell.data.time_sku_spec_detial
-              //       .filter(item => item.is_checked)
-              //       .map(item => ({
-              //         checked: true,
-              //         skuKey: presellRuleType,
-              //         skuValueKey: presellRuleType,
-              //         image: '',
-              //         value: item.spec_value
-              //       }))
-              //   }
-              //   specifications.push(obj)
-              // }
-
             // sku价格列表数据
               const skuList = skuJson.spec_price_list.map(spec => {
-                // if (spec.time_sku_spec_name && presellRuleType) {
-                //   spec.spec_detail_id_list.push(`${presellRuleType}:${spec.time_sku_spec_name}`)
-                // }
-                // console.log(spec.time_sku_spec_name, 'spec.time_sku_spec_name')
                 return {
                   code: spec.code,
                   price: spec.price,
@@ -1232,7 +1207,6 @@ export default {
                   presell_rule_list: product.model.presell_rule_list
                 }
               }
-              console.log(productParams, 'productParams')
               tpProductList.push(productParams)
             }
           } else {
@@ -1481,7 +1455,6 @@ export default {
       this.qualityList = this.product.model.quality_list
       this.skuJson = this.product.model.sku_json
       this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson, this.product.model.presell_rule_list)
-
       // this.specifications = this.product.model.specifications
       this.$refs['bannerPicListView'] && this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
       this.$refs['descPicListView'] && this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
@@ -1907,7 +1880,6 @@ export default {
       Object.assign(this.product.model, {quality_list: data})
     },
     handleSkuTable (tableData, specList) {
-      console.log(tableData, specList, 'tableData, specList')
       this.product.model.sku_json = {
         sku_map: this.product.model.sku_json.sku_map,
         sku_property_map: this.product.model.sku_json.sku_property_map,
@@ -1931,7 +1903,6 @@ export default {
       }
     },
     handlePresellRuleList (value) {
-      console.log(value, 'handlePresellRuleList')
       this.product.model.presell_rule_list = value
     },
     async useCustome () {

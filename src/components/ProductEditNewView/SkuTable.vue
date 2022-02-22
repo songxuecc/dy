@@ -2,7 +2,6 @@
 <template>
     <div class="SkuTable left">
     <h1 class="mb-10">商品规格 <span class="warning"><hh-icon type="icontishi" ></hh-icon>注意：每次编辑完价格后商品单独保存，以免数据丢失！</span></h1>
-
     <!-- 规格 -->
     <SkuSelect
       ref="SkuSelect"
@@ -431,7 +430,6 @@ export default {
             checkedPresellRuleList = checkedPresellRuleLists.filter(item => item.is_checked).map(item => item.spec_value)
           }
         })
-        console.log(checkedPresellRuleLists, checkedPresellRuleLists, checkedPresell, checkedPresellRuleList, 'checkedPresellRuleLists')
         if (checkedPresellRuleLists) {
           this.presellRuleLists = checkedPresellRuleLists
           this.presell = checkedPresell
@@ -635,7 +633,6 @@ export default {
         return item
       })
       this.tableData = cloneDeep(tableData)
-      console.log(tableData, 'tableData-onSkuSelectChange')
       this.presellRuleListChange(this.presellRuleList)
       this.spec_list = cloneDeep(specifications)
       this.$emit('change', this.tableData, this.spec_list)
@@ -737,7 +734,6 @@ export default {
         this.presellRuleList = this.presellRuleLists.map(item => item.spec_value)
         this.presellRuleListChange(this.presellRuleList)
       }
-      console.log(this.presellRuleLists, 'presellRuleLists')
     },
     handlePresellRuleListData () {
       const presellRuleListData = this.presellRuleListData.map(item => {
@@ -763,7 +759,6 @@ export default {
           return item
         }
       })
-      console.log(presellRuleListData, 'presellRuleListData')
       this.$emit('presellRuleList', presellRuleListData)
     },
     presellRuleListChange (presells) {
@@ -1006,9 +1001,6 @@ export default {
       margin:0;
     }
 
-    /deep/ .el-checkbox{
-      // display: block;
-    }
     .bg {
       background: rgb(249, 249, 250);
       padding: 16px 12px;

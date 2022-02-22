@@ -155,14 +155,14 @@
                 </span>
               </div>
             </el-menu-item>
-            <el-menu-item index="" @click="openMeiZhe">
+            <!-- <el-menu-item index="" @click="openMeiZhe">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="relative">美折·短信CRM
                   <span  class="badge bold">送一年</span>
                 </span>
               </div>
-            </el-menu-item>
+            </el-menu-item> -->
             <el-menu-item index="" @click="openMeiZheSHouhou">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
@@ -220,7 +220,7 @@ export default {
       window.open('https://dx5.cn/45Uosn')
     },
     openMeiZheSHouhou () {
-      window.open('https://dx5.cn/45TC4R')
+      window.open('https://dx5.cn/4kIKah')
     },
     gotoHomePage () {
       if (!this.isAuth()) return false

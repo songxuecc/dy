@@ -92,7 +92,6 @@ import { mapGetters, mapActions, createNamespacedHelpers, mapState } from 'vuex'
 import commonUtils from '@/common/commonUtils'
 import utils from '@/common/utils'
 import common from '@/common/common.js'
-import Api from '@/api/apis'
 
 const { mapActions: mapActionsNavbar } = createNamespacedHelpers(
   'customerSetting/shopsBand'
@@ -281,15 +280,13 @@ export default {
       })
     },
     goToServiceMarket () {
-      window.location.href =
-        'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
+      window.location.href = common.DY_SERVICE_LINK
     },
     goToOrder () {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '导航栏', '点击', '续费点击'])
       }
-      window.location.href =
-        'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
+      window.location.href = common.DY_SERVICE_LINK
     },
     onEfficientAndStable () {
       if (window._hmt) {
