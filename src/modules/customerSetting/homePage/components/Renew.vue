@@ -16,6 +16,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import common from '@/common/common'
 import seniorVersion from '../images/seniorVersion.png'
 export default {
   name: 'Renew',
@@ -53,8 +54,7 @@ export default {
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '首页', '点击', '续费点击'])
       }
-      window.location.href =
-        'https://fuwu.jinritemai.com/detail?from=tab&service_id=42'
+      window.location.href = common.DY_SERVICE_LINK
     }
   }
 }

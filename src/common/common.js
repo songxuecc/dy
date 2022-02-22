@@ -163,7 +163,7 @@ module.exports = {
     'captureShop': 'https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl'
   },
   HELP_LINK: 'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l',
-  DY_SERVICE_LINK: 'https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42',
+  DY_SERVICE_LINK: 'https://fuwu.jinritemai.com/detail?from=yinliu&service_id=42',
   COMMENTS_LINK: 'https://www.wjx.cn/m/99756598.aspx',
   CHANNEL_WHITE_LIST: ['woda', 'douyin', 'pddwoda2', 'pddtgzj1', 'pddspgj2', 'pddddzs2', 'pddhhyh2', 'dywoda1', 'dymeizhe1'],
 
