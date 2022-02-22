@@ -1,6 +1,7 @@
 import Api from '@/api/apis'
 import { Message } from 'element-ui'
 import moment from 'moment'
+import common from '@/common/common'
 const dyHarf = '&response_type=code&redirect_uri=https://dy.huhuguanjia.com/authorize'
 
 export default {
@@ -82,7 +83,7 @@ export default {
     }
     // 目前抖音新用户或者部分支付用户授权登录不完善，先到订购页面
     // let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + encodeURI(JSON.stringify(state)) + dyHarf
-    let url = 'https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42'
+    let url = common.DY_SERVICE_LINK
     return url
   },
   login (shareId = null) {

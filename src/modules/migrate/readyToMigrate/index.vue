@@ -1750,7 +1750,7 @@ export default {
       window.open(routeData.href, '_blank')
     },
     goChargeOrder () {
-      window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
+      window.open(common.DY_SERVICE_LINK)
     },
     // 继续抓取
     continueCapture () {

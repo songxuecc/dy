@@ -89,6 +89,7 @@
 
 <script>
 import { createNamespacedHelpers, mapActions as vueMapActions } from 'vuex'
+import common from '@/common/common'
 const {
   mapState,
   mapActions,
@@ -118,7 +119,7 @@ export default {
       this.changeActive({active})
     },
     openDinggou () {
-      window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
+      window.open(common.DY_SERVICE_LINK)
       return false
     },
     closeNewComer () {

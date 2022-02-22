@@ -48,6 +48,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import common from '@/common/common'
 export default {
   name: 'ModalCharge',
   props: {
@@ -95,7 +96,7 @@ export default {
     },
     goOrder () {
       this.close()
-      window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
+      window.open(common.DY_SERVICE_LINK)
     }
   }
 }
