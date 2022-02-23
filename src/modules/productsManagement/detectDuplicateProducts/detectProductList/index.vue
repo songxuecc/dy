@@ -38,6 +38,7 @@
         <div class="font-12 ">
           <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectOnSale">保留售卖中的商品</el-button>
           <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectQuetity">保留库存高的商品</el-button>
+          <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectQuetityLow">保留库存低的商品</el-button>
           <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectSkuMax">保留价格最高的商品</el-button>
           <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectSkuMin">保留价格最低的商品</el-button>
         </div >
@@ -352,6 +353,29 @@ export default {
         let index = 0
         item.goods_list.forEach((goods, idx) => {
           if (goods.goods_quantity >= item.goods_list[index].goods_quantity) {
+            index = idx
+          }
+        })
+        item.goods_list = item.goods_list.map((goods, idx) => {
+          if (index === idx) {
+            goods.is_checked = false
+          } else {
+            goods.is_checked = true
+          }
+          return goods
+        })
+        return item
+      })
+      this.save({tableData})
+      this.checkAllStatus()
+    },
+    // 保留库存低的商品
+    handleQuikeSelectQuetityLow () {
+      const tableData = this.tableData.map(item => {
+        // let quantity = item.goods_list[0].goods_quantity
+        let index = 0
+        item.goods_list.forEach((goods, idx) => {
+          if (goods.goods_quantity <= item.goods_list[index].goods_quantity) {
             index = idx
           }
         })
