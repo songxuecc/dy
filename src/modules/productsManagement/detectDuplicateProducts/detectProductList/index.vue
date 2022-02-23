@@ -30,7 +30,7 @@
         <el-button style="width:120px" type="primary" @click="startDetect" class="mr-10" >{{!detectDetail.repeat_check_time ? '开始检测' : '再次检测'}}</el-button>
         <div>
           <span class="color-4e">最近检测结果：</span> <span class="fail mr-30">{{detectDetail.group_nums}}组重复商品，共{{detectDetail.goods_nums}}个商品</span>
-          <span class="color-4e">最近检测时间：</span> <span class="color-999">{{detectDetail.repeat_check_time}}</span>
+          <span class="color-4e" v-if="detectDetail.repeat_check_time">最近检测时间：</span> <span class="color-999">{{detectDetail.repeat_check_time}}</span>
         </div>
       </div>
 
