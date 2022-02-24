@@ -2,7 +2,7 @@
 <template>
   <el-form :rules="rules" ref="form" :model="form" size="small" label-position="left">
     <el-form-item>
-      <el-radio-group v-model="form.presell_type" class="mb-10">
+      <el-radio-group v-model="form.presell_type" class="mb-10"  @change="check">
         <el-radio :label="0">现货发货模式</el-radio>
         <el-radio :label="1">预售发货模式</el-radio>
         <el-radio :label="2">阶梯发货模式</el-radio>
@@ -135,6 +135,11 @@ export default {
     }
   },
   methods: {
+    check (value) {
+      if (value === 2 && ![9999, 1, 2].includes(Number(this.form.delivery_delay_day))) {
+        this.form.delivery_delay_day = 1
+      }
+    },
     getForm () {
       if (this.form.presell_type === 1 && !this.form.presell_end_time) {
         this.$message.error('请选择预售结束时间')
