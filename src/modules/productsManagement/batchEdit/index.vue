@@ -109,13 +109,13 @@
                 <div class="mt-20 flex" ><h1>修改设置</h1> <span class="font-12 ml-5">修改商品时，抖音可能对商品提出新的规则约束，需要满足约束条件后才能修改成功，可以由系统自动填充数据，或提醒您手动修改商品</span></div>
                 <div class="font-12">
                   轮播图切割为1:1：
-                  <el-radio v-model="radio1" label="1">自动</el-radio>
-                  <el-radio v-model="radio1" label="2">提醒我</el-radio>
+                  <el-radio v-model="configJson.is_auto_cut_banner" label="1">自动</el-radio>
+                  <el-radio v-model="configJson.is_auto_cut_banner" label="0">提醒我</el-radio>
                 </div>
                 <div class="font-12">
                   填充缺失的商品类目属性：
-                  <el-radio v-model="radio2" label="1">自动</el-radio>
-                  <el-radio v-model="radio2" label="2">提醒我</el-radio>
+                  <el-radio v-model="configJson.is_map_attr" label="1">自动</el-radio>
+                  <el-radio v-model="configJson.is_map_attr" label="0">提醒我</el-radio>
                 </div>
 
                 <h1 class="mt-20" >修改内容</h1>
@@ -323,8 +323,10 @@ export default {
         {value: 1, label: '预售发货'},
         {value: 2, label: '阶梯发货'}
       ],
-      radio1: '1',
-      radio2: '1',
+      configJson: {
+        is_auto_cut_banner: '1',
+        is_map_attr: '1'
+      },
       iconList: [
         {
           primary: 'iconshangxiajiaxuanzhong',
@@ -603,7 +605,8 @@ export default {
         presell_type: this.form.presell_type,
         category_id_list: JSON.stringify(this.categorys.map(item => item.id)),
         goods_id_list: JSON.stringify([]),
-        ext_json: JSON.stringify(this.getEditJson())
+        ext_json: JSON.stringify(this.getEditJson()),
+        config_json: JSON.stringify(this.configJson)
       }
       const result = await this.setFilterHhTaskProductOverview({
         filters
@@ -665,7 +668,8 @@ export default {
           task_type: 1,
           task_sub_type: this.editType,
           goods_id_list: JSON.stringify(goodsIdsSet.length ? goodsIdsSet : ''),
-          ext_json: JSON.stringify(this.getEditJson())
+          ext_json: JSON.stringify(this.getEditJson()),
+          config_json: JSON.stringify(this.configJson)
         }
         const result = await this.setFilterHhTaskProductOverview({
           filters,
@@ -701,7 +705,8 @@ export default {
         task_type: 1,
         task_sub_type: this.editType,
         goods_id_list: JSON.stringify(unionSets.length ? unionSets : ''),
-        ext_json: JSON.stringify(this.getEditJson())
+        ext_json: JSON.stringify(this.getEditJson()),
+        config_json: JSON.stringify(this.configJson)
       }
       const result = await this.setFilterHhTaskProductOverview({
         filters
@@ -733,7 +738,8 @@ export default {
           task_type: 1,
           task_sub_type: this.editType,
           goods_id_list: JSON.stringify(this.selectIds),
-          ext_json: JSON.stringify(this.getEditJson())
+          ext_json: JSON.stringify(this.getEditJson()),
+          config_json: JSON.stringify(this.configJson)
         }
 
         await this.setFilterHhTaskProductOverview({
