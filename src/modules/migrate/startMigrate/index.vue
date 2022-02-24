@@ -3,7 +3,7 @@
     <!-- <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
     </help-tips> -->
     <SettingAlert />
-    <span
+    <!-- <span
       class="click mr-20 pointer"
       v-if="activeName === 'single'"
       style="
@@ -42,7 +42,7 @@
       @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/dsibrc')"
     >
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
-    </span>
+    </span> -->
     <el-tabs v-model="activeName">
       <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
         <el-input
@@ -141,11 +141,11 @@
         class="left "
         style="min-height:120px"
       >
-        <span slot="label" class="relative"
+        <span slot="label" class="relative" style="width:90px;text-align:left;display:inline-block"
           >绑定复制
           <span
             class="tutorials"
-            style="position:absolute;right:-65px;top:-10px;transform:scale(0.8)"
+            style="position:absolute;right:-28px;top:-2px;transform:scale(0.8)"
           >
             多店铺必备
           </span>
@@ -296,6 +296,12 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
+
+      <!-- 已搬家店铺复制 -->
+      <el-tab-pane v-loading="loadingCnt" label="已搬家店铺复制" name="recapture">
+        <Recapture />
+      </el-tab-pane>
+
     </el-tabs>
 
     <!-- 多商品复制 -->
@@ -514,6 +520,8 @@ import ModalBindCopyIdSearch from '@migrate/startMigrate/components/ModalBindCop
 import StartCopyTips from '@migrate/startMigrate/components/StartCopyTips'
 import BindCopyTips from '@migrate/startMigrate/components/BindCopyTips'
 import SettingAlert from '@migrate/startMigrate/components/SettingAlert'
+import Recapture from '@migrate/startMigrate/components/Recapture'
+
 import {
   platformIconsUrl,
   platformIconsStore
@@ -573,6 +581,7 @@ export default {
     StartCopyTips,
     BindCopyTips,
     SettingAlert,
+    Recapture,
     TablemigrateHistory,
     PayCharge
   },
