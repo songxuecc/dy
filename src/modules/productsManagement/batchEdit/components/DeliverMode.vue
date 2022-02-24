@@ -79,6 +79,15 @@
             <span>天发货</span>
             <p class="info mb-10 ladderText">阶梯发货期间商品发货时间以此限制为主，仅可设置3-5天</p>
         </el-form-item>
+        <el-form-item label="承诺发货时间:" prop="delivery_delay_day">
+            <div style="display:flex">
+              <el-select v-model="form.delivery_delay_day" placeholder="请选择" size="small" style="width:150px;margin-right:10px;align-items:center">
+                  <el-option :value="9999" label="当日" :key="9999"> </el-option>
+                  <el-option :value="1" label="次日"> </el-option>
+                  <el-option :value="2" label="48小时"> </el-option>
+              </el-select>
+            </div>
+        </el-form-item>
         <el-form-item label="下架商品修改后:">
             <el-radio-group v-model="form.commit_type">
                 <el-radio :label="0">直接上架</el-radio>
@@ -105,7 +114,7 @@ export default {
       form: {
         commit_type: 0,
         presell_type: 0,
-        delivery_delay_day: 2,
+        delivery_delay_day: 1,
         presell_end_time: '',
         presell_delay: 3
       },
