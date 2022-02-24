@@ -137,7 +137,7 @@ export default {
         market_price: '',
         discount_price: '',
         presell_end_time: '',
-        delivery_delay_day: 9999,
+        delivery_delay_day: 1,
         presell_delay: 2
       },
       attribution_list: undefined,

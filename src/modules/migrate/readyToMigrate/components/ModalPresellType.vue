@@ -54,7 +54,11 @@
                 </el-form-item>
                 <!-- 阶梯发货 -->
                 <el-form-item label="现货发货时间:"  v-if="template.presell_type === 2" >
-                    <span>48小时</span>
+                    <el-select v-model="template.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:150px;margin-right:10px;align-items:center">
+                        <el-option :value="9999" label="当日" :key="9999"> </el-option>
+                        <el-option :value="1" label="次日"> </el-option>
+                        <el-option :value="2" label="48小时"> </el-option>
+                    </el-select>
                     <!-- <p class="info">现货发货模式下生成的订单平台统一规定发货时间为48小时，请严格按照承诺发货时间进行发货</p> -->
                 </el-form-item>
                 <el-form-item
@@ -174,13 +178,16 @@ export default {
       return this.$refs.form.validate(cb)
     },
     check (value) {
+      if (value === 2 && ![9999, 1, 2].includes(Number(this.template.delivery_delay_day))) {
+        this.template.delivery_delay_day = 1
+      }
       this.$refs.form.clearValidate()
       if (value === 0) {
         this.$refs.form.validateField(['delivery_delay_day'])
       } else if (value === 1) {
         this.$refs.form.validateField(['presell_end_time', 'presell_delay'])
       } else if (value === 2) {
-        this.$refs.form.validateField(['presell_delay'])
+        this.$refs.form.validateField(['presell_delay', 'delivery_delay_day'])
       }
     },
     quickMigrate () {
@@ -195,8 +202,7 @@ export default {
             pamars = pick(this.template, ['presell_end_time', 'presell_delay'])
             pamars.presell_end_time = moment(this.template.presell_end_time).format('YYYY-MM-DD HH:mm:ss')
           } else {
-            pamars = pick(this.template, ['presell_delay'])
-            pamars.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+            pamars = pick(this.template, ['presell_delay', 'delivery_delay_day'])
             pamars.presell_end_time = ''
           }
           pamars.presell_type = this.template.presell_type
