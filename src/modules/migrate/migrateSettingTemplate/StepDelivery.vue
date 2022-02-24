@@ -203,6 +203,9 @@ export default {
       return this.$refs.form.validate(cb)
     },
     check (value) {
+      if (value === 2 && ![9999, 1, 2].includes(Number(this.template.model.delivery_delay_day))) {
+        this.template.model.delivery_delay_day = 1
+      }
       this.$refs.form.clearValidate()
       if (value === 0) {
         this.$refs.form.validateField(['delivery_delay_day'])
