@@ -1,11 +1,17 @@
 <!-- 重新复制 -->
 <template>
-    <div>重新复制</div>
+    <div>
+      <Search />
+    </div>
 </template>
 
 <script>
+import Search from './Search'
 export default {
   name: 'Recapture',
+  components: {
+    Search
+  },
   props: {
   },
   data () {
