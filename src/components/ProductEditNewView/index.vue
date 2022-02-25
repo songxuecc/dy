@@ -1051,34 +1051,34 @@ export default {
         }).map(item => {
           return this.products[item.tp_product_id]
         })
-      const promiseBannerImageResult = await this.promiseBannerImage(products)
-      if (promiseBannerImageResult && promiseBannerImageResult.result) {
-        this.$refs.productList.setCurrentRow(promiseBannerImageResult.product.model)
-        const resetProduct = this.tableData.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
-        this.setProduct(resetProduct)
-        this.activityTab = 'carousel'
-        this.$nextTick(() => {
-          const srcs = promiseBannerImageResult.srcs
-          for (var i = 0; i < srcs.length; i++) {
-            const src = srcs[i]
-            const image = document.getElementsByClassName(`needValid ${src}`)
-            image && image[0].classList.add('is-error-carousel')
-          }
-          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
-            let isError = document.getElementsByClassName('is-error-carousel')
-            if (isError && isError[0]) {
-              isError[0].scrollIntoView({
-                // 滚动到指定节点
-                // 值有start,center,end，nearest，当前显示在视图区域中间
-                block: 'center',
-                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-                behavior: 'smooth'
-              })
-            }
-          })
-        })
-        return this.$message.error('轮播图尺寸需要1:1')
-      }
+      // const promiseBannerImageResult = await this.promiseBannerImage(products)
+      // if (promiseBannerImageResult && promiseBannerImageResult.result) {
+      //   this.$refs.productList.setCurrentRow(promiseBannerImageResult.product.model)
+      //   const resetProduct = this.tableData.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
+      //   this.setProduct(resetProduct)
+      //   this.activityTab = 'carousel'
+      //   this.$nextTick(() => {
+      //     const srcs = promiseBannerImageResult.srcs
+      //     for (var i = 0; i < srcs.length; i++) {
+      //       const src = srcs[i]
+      //       const image = document.getElementsByClassName(`needValid ${src}`)
+      //       image && image[0].classList.add('is-error-carousel')
+      //     }
+      //     this.$refs.SkuTable.$refs.form.validate((valid, object) => {
+      //       let isError = document.getElementsByClassName('is-error-carousel')
+      //       if (isError && isError[0]) {
+      //         isError[0].scrollIntoView({
+      //           // 滚动到指定节点
+      //           // 值有start,center,end，nearest，当前显示在视图区域中间
+      //           block: 'center',
+      //           // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+      //           behavior: 'smooth'
+      //         })
+      //       }
+      //     })
+      //   })
+      //   return this.$message.error('轮播图尺寸需要1:1')
+      // }
 
       // 服务与资质
       let qualityValidId = false
