@@ -26,7 +26,7 @@ const log = (model, constitute, count) => {
 }
 
 export default function modelExtend (...models) {
-  const base = { state: () => ({}), actions: {}, mutations: {}, getters: {} }
+  const base = { state: () => ({}), actions: {}, mutations: {}, getters: {}, modules: {} }
   const stateCache = []
   const stateCount = {}
   const gettersCache = []
@@ -35,6 +35,8 @@ export default function modelExtend (...models) {
   const actionsCount = {}
   const mutationsCache = []
   const mutationsCount = {}
+  const modulesCache = []
+  const modulesCount = {}
 
   const model = models.reduce((acc, extend) => {
     acc.namespaced = extend.namespaced
@@ -57,6 +59,8 @@ export default function modelExtend (...models) {
     Object.assign(acc.actions, extend.actions)
     check(extend.mutations, mutationsCache, mutationsCount)
     Object.assign(acc.mutations, extend.mutations)
+    check(extend.mutations, modulesCache, modulesCount)
+    Object.assign(acc.modules, extend.modules)
     return acc
   }, base)
 
@@ -64,5 +68,6 @@ export default function modelExtend (...models) {
   log(model, 'getters', gettersCount)
   log(model, 'actions', actionsCount)
   log(model, 'mutations', mutationsCount)
+  log(model, 'modules', modulesCount)
   return model
 };

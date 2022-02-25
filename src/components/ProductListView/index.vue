@@ -2,8 +2,10 @@
     <div>
         <el-table ref="productListTable" :data="tpProductList" row-key="tp_product_id" style="width: 100%" :class="tpProductList.length < 3 ? 'table-cal-2' : ''"
                   :row-style="{height:'68px'}"
-                  @select-all="handleSelectAll" @select="handleSelect"
-                  @selection-change="handleSelectionChange"  @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut"
+                  @select-all="handleSelectAll"
+                  @select="handleSelect"
+                  @selection-change="handleSelectionChange"
+                  @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut"
         >
         <el-table-empty slot="empty"/>
             <el-table-column type="selection" :selectable="isSelectionEnable">
@@ -55,7 +57,7 @@
                     </div>
                     <div class="flex align-c wrap">
                       <span class="flex align-c" style="margin-right:27px">
-                        <img style="width: 14px; height: 14px;margin-right:2px;" :src="getIcon(scope.row)">
+                        <img style="width: 14px; height: 14px;margin-right:2px;" :src="getSourceIcon(scope.row.source)">
                         <label class="info">{{scope.row.source}}</label>
                       </span>
                       <span class="info" v-if="scope.row.tp_outer_iid">商家编码: {{scope.row.tp_outer_iid}}</span>
@@ -348,7 +350,7 @@ import ModalSourceCategory from './ModalSourceCategory'
 import ModalCheckSolution from './ModalCheckSolution'
 import Api from '@/api/apis'
 import isEmpty from 'lodash/isEmpty'
-
+import getSourceIcon from '@/common/getSourceIcon'
 export default {
   inject: ['reload'],
   mixins: [request],
@@ -485,36 +487,7 @@ export default {
       }
       this.deleteProductVisible = false
     },
-    getIcon (product) {
-      if (product.source === '淘宝') {
-        return require('@/assets/images/taobao.png')
-      } else if (product.source === '天猫') {
-        return require('@/assets/images/tm.png')
-      } else if (product.source === '1688') {
-        return require('@/assets/images/1688.png')
-      } else if (product.source === '京东') {
-        return require('@/assets/images/jd.png')
-      } else if (product.source === '苏宁') {
-        return require('@/assets/images/sn.png')
-      } else if (product.source === '网易考拉') {
-        return require('@/assets/images/kaola.png')
-      } else if (product.source === '唯品会') {
-        return require('@/assets/images/vph.png')
-      } else if (product.source === '一起做网店17zwd') {
-        return require('@/assets/images/17.png')
-      } else if (product.source === '抖音') {
-        return require('@/assets/images/dy.png')
-      } else if (product.source === '拼多多') {
-        return require('@/assets/images/pdd.png')
-      } else if (product.source === '蝉妈妈') {
-        return require('@/assets/images/chanmama.png')
-      } else if (product.source === 'vvic搜款网') {
-        return require('@/assets/images/soukuanwang.png')
-      } else if (product.source === '有赞') {
-        return require('@/assets/images/youzan.png')
-      }
-      return ''
-    },
+    getSourceIcon,
     getButtonName (product) {
       if (product.status === 8) {
         return '处理'

@@ -64,6 +64,7 @@ const modules = {
   ...customerSetting
 }
 
+console.log(modules, 'modules')
 export default new Vuex.Store({
   modules,
   plugins: [createLoadingPlugin({Vue})]

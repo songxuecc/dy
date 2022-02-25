@@ -1,13 +1,16 @@
 import Api from '@/api/apis'
 
-import assign from '../../commonModels/assign'
-import listModel from '../../commonModels/listModel'
-
+import assign from '@commonModels/assign'
+import listModel from '@commonModels/listModel'
+import reCapture from './reCapture'
 const tableData = listModel()
 
 // 店铺绑定
 export default assign(tableData, {
   namespaced: true,
+  modules: {
+    reCapture
+  },
   state: () => ({
   }),
   mutations: {
