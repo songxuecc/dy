@@ -35,7 +35,7 @@ export default {
     //   window.open('https://dx5.cn/45LhbP')
     // },
     gotoMeizheShouhou () {
-      window.open('https://dx5.cn/4kIKah')
+      window.open('https://dx5.cn/4kpxSj')
     },
     gotoCycleProductsSelfPlanList () {
       this.$router.push({name: 'cycleProductsSelf_PlanList'})
