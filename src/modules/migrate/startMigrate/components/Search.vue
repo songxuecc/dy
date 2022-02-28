@@ -36,7 +36,8 @@
           @change="handleCaptureChange"
           popper-class="select-long"
           style="width: 195px"
-          clearable @clear="handleClear('filter.captureId')"
+          clearable
+          @clear="handleClear('filter.captureId')"
         >
           <el-option-group>
             <el-option
@@ -44,16 +45,6 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
-              class="left dropdown"
-            >
-            </el-option>
-          </el-option-group>
-          <el-option-group v-if="isShowCaptureExtendOpt">
-            <el-option
-              :key="capture.capture_id"
-              :label="calendarTime(capture.create_time)"
-              :value="capture.capture_id.toString()"
-              disabled
               class="left dropdown"
             >
             </el-option>
@@ -88,12 +79,12 @@
 
       <el-form-item  label-width="90px" style="width: 325px" label="商品标题">
         <el-input
-          v-model="search.key"
+          v-model="search.keyword"
           placeholder="商品标题"
           @keyup.enter.native="handleFilterChange"
           style="width: 195px"
           clearable
-          @clear="handleClear('search.key')"
+          @clear="handleClear('search.keyword')"
           :debounce="500"
         >
         </el-input>
@@ -104,7 +95,7 @@
           placeholder="请选择"
           popper-class="select-long"
           style="width: 195px"
-          clearable
+          clearablegetCaptureOptionList
           @clear="handleClear('filter.child_shop_user_id')"
           v-if="bindShopList.length > 1"
         >
@@ -162,7 +153,7 @@ export default {
     return {
       activeTab: '全部',
       search: {
-        key: ''
+        keyword: ''
       },
       filter: {
         status: '-1',
@@ -304,7 +295,7 @@ export default {
     handleClear (path) {
       const defaultValue = {
         search: {
-          key: ''
+          keyword: ''
         },
         filter: {
           captureId: '-1',
@@ -319,6 +310,7 @@ export default {
     },
     // 复制时间
     handleCaptureChange (captureId) {
+      console.log(captureId, 'captureId')
       this.handleCaptureOptionChange(captureId)
     },
     // 整店复制-复制名

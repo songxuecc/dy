@@ -1,16 +1,14 @@
 <!-- 重新复制 -->
 <template>
-    <div>
+    <div class="relative">
       <Search @change="onSearchChange"/>
       <el-table
         v-loading="loading"
-        @select-all="handleSelectAll"
-        @select="handleSelect"
         @selection-change="handleSelectionChange"
         :data="tableData"
         style="width: 100%"
         class="mt-10">
-        <el-table-empty/>
+        <el-table-empty slot="empty"/>
           <el-table-column type="selection">
           </el-table-column>
         <el-table-column
@@ -25,12 +23,14 @@
         </el-table-column>
          <el-table-column
           prop="id"
-          label="基本信息">
+          label="基本信息"
+          width="275">
           <template slot-scope="scope">
               <div>
-                <el-link  :href="scope.row.url" target="_blank" :underline="false"  class="font-13">
+                <el-link  :href="scope.row.url" target="_blank" :underline="false"  class="font-13" style="    display: inline;">
                     {{ scope.row.title }}
                 </el-link>
+                <hh-icon @click="copy(scope.row.title)" type="iconfuzhi" style="display:inline;font-size:14px" class="pointer"></hh-icon>
               </div>
           </template>
         </el-table-column>
@@ -108,7 +108,15 @@
           :total="total">
         </el-pagination>
 
-        <div class="btn">akshdkahskd</div>
+        <div class="btn flex align-c justify-c" :style="{'margin-right': (40 + scrollWidth)  + 'px'}">
+        <el-button type="primary" class="relative" @click="gotoSetting">
+          下一步：商品属性设置
+        </el-button>
+        <el-button type="text" class="relative" @click="handleCapture">
+        跳过设置，直接复制
+        </el-button>
+      </div>
+
     </div>
 </template>
 
@@ -117,6 +125,7 @@ import Search from './Search'
 import { mapActions, mapState } from 'vuex'
 import common from '@/common/common.js'
 import getSourceIcon from '@/common/getSourceIcon'
+import debounce from 'lodash/debounce'
 
 export default {
   name: 'Recapture',
@@ -136,6 +145,14 @@ export default {
   activated () {
     this.init()
   },
+  mounted () {
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.addEventListener('scroll', this.scroll)
+  },
+  beforeDestroy () {
+    const scrollEl = document.querySelector('.page-component__scroll')
+    scrollEl.removeEventListener('scroll', this.scroll)
+  },
   computed: {
     ...mapState('migrate/startMigrate/reCapture', [
       'tableData',
@@ -151,7 +168,8 @@ export default {
     ...mapActions('migrate/startMigrate/reCapture', [
       'fetch',
       'handleCurrentChange',
-      'handleSizeChange'
+      'handleSizeChange',
+      'setFilter'
     ]),
     init () {
       this.fetch()
@@ -204,34 +222,105 @@ export default {
       this.$emit('sortByTime', obj[command].order_by)
     },
     getSourceIcon,
+
+    scroll: debounce(function () {
+      // 判断是否有滚动条的方法
+      function hasScrolled (el, direction = 'vertical') {
+        if (direction === 'vertical') {
+          return el.scrollHeight > el.clientHeight
+        } else if (direction === 'horizontal') {
+          return el.scrollWidth > el.clientWidth
+        }
+      }
+      function getScrollbarWidth (el) {
+        el = el || document.body
+        var scrollDiv = document.createElement('div')
+        scrollDiv.style.cssText =
+          'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;'
+        el.appendChild(scrollDiv)
+        var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
+        el.removeChild(scrollDiv)
+        return scrollbarWidth
+      }
+      const scrollEl = document.querySelector('.page-component__scroll')
+      const isScroll = hasScrolled(scrollEl)
+      if (isScroll) {
+        const scrollWidth = getScrollbarWidth(scrollEl)
+        this.scrollWidth = scrollWidth
+      }
+    }, 30),
+
     // 搜索
     onSearchChange (data) {
       // 店铺选择 状态选择 标题搜索 clearSelect resetPaginationIndex updateInfo
       // 复制时间 整店复制-复制名 child_shop_user_id = 0 handleCommonCaptureChange
-      let search = {...data.search, ...data.filter}
-      if (data.filter.shopCaptureId.toString() !== '-1') {
-        search.captureId = data.filter.shopCaptureId
+      let filters = {...data.search, ...data.filter}
+      this.setFilter({
+        filters
+      })
+    },
+
+    // handleSelectAll (selection) {
+    //   console.log(selection, 'selection')
+    // },
+    // handleSelect (selection, row) {
+    //   console.log(selection, row, 'selection, row')
+    // },
+    handleSelectionChange (selection) {
+      console.log(selection, 'selection')
+    },
+    gotoSetting () {
+      if (!this.selection.length) {
+        this.$router.push({
+          name: 'MigrateSetting',
+          params: {
+            isCapturing: 'isCapturing'
+          }
+        })
+        this.save({
+          captureCallBack: this.handleCapture
+        })
+      } else {
+        this.$message.warning('请输入链接')
       }
-      console.log(search, 'search')
     },
-
-    handleSelectAll () {
-
+    copy: async function (title) {
+      try {
+        await this.$copyText(title)
+        this.$message({
+          message: '复制成功',
+          type: 'success'
+        })
+      } catch (err) {
+        this.$message({
+          message: err,
+          type: 'error'
+        })
+      }
     },
-    handleSelect () {
-
-    },
-    handleSelectionChange () {
-
+    handleCapture () {
+      this.$emit()
     }
   }
 }
 </script>
 <style lang="less" scoped>
-
+.pagination {
+        margin-bottom: 80px;
+    }
 .btn {
-  position: fixed;
-  bottom:0;
-  left:0;
-}
+      position: fixed;
+      left: 0px;
+      bottom: 20px;
+      right: 0;
+      margin: auto;
+      margin-left: 240px;
+      margin-right: 55px;
+      background-color: #fff;
+      height: 64px;
+      padding-bottom: 10px;
+      padding-right: 40px;
+      box-shadow: 0 -1px 3px 0 rgba(218, 215, 215, 0.611);
+      z-index: 1;
+  }
 </style>
