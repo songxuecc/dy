@@ -106,7 +106,13 @@
                     </div>
                 </div>
 
-                <div class="mt-20 flex" ><h1>修改设置</h1> <span class="font-12 ml-5">修改商品时，抖音可能对商品提出新的规则约束，需要满足约束条件后才能修改成功，可以由系统自动填充数据，或提醒您手动修改商品</span></div>
+                <div class="mt-20 flex align-c" >
+                  <h1>修改设置
+                    <NewFeatureTips type="修改设置" >
+                      <hh-icon type="iconnew" style="font-size:24px;margin-left:5px;"></hh-icon>
+                    </NewFeatureTips>
+                  </h1>
+                <span class="font-12 ml-5">修改商品时，抖音可能对商品提出新的规则约束，需要满足约束条件后才能修改成功，可以由系统自动填充数据，或提醒您手动修改商品</span></div>
                 <div class="font-12">
                   轮播图切割为1:1：
                   <el-radio v-model="configJson.is_auto_cut_banner" label="1">自动</el-radio>
