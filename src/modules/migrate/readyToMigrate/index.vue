@@ -638,9 +638,9 @@ export default {
           return 'capture-item-waiting'
         }
 
-        if (this.capture.current_page_id === '' && this.capture.status === 2 && (Math.ceil(this.capture.total_num / this.capture.capture_num) > this.capture.max_current_page_id)) {
-          return 'capture-item'
-        }
+        // if (this.capture.current_page_id === '' && this.capture.status === 2 && (Math.ceil(this.capture.total_num / this.capture.capture_num) > this.capture.max_current_page_id)) {
+        //   return 'capture-item'
+        // }
 
         if (
           [0, 1].includes(this.capture.status) &&
