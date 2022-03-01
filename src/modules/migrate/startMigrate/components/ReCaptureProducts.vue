@@ -36,7 +36,7 @@
         </el-table-column>
         <el-table-column label="分类" align="center">
             <template slot-scope="scope">
-                <span>{{ scope.row.category_show}}</span>
+                <span>{{ scope.row.category_show || '-'}}</span>
             </template>
         </el-table-column>
 
@@ -109,10 +109,10 @@
         </el-pagination>
 
         <div class="btn flex align-c justify-c" :style="{'margin-right': (40 + scrollWidth)  + 'px'}">
-        <el-button type="primary" class="relative" @click="gotoSetting">
+        <el-button type="primary" class="relative" @click="gotoSetting" :disabled="!selection.length">
           下一步：商品属性设置
         </el-button>
-        <el-button type="text" class="relative" @click="handleCapture">
+        <el-button type="text" class="relative" @click="handleCapture" :disabled="!selection.length">
         跳过设置，直接复制
         </el-button>
       </div>
@@ -139,7 +139,8 @@ export default {
       commandSortText: '按复制时间降序',
       productStatus: common.productStatus,
       productStatusMap: common.productStatusMap,
-      taskResultStatus: common.taskResultStatus
+      taskResultStatus: common.taskResultStatus,
+      selection: []
     }
   },
   activated () {
@@ -259,27 +260,13 @@ export default {
         filters
       })
     },
-
-    // handleSelectAll (selection) {
-    //   console.log(selection, 'selection')
-    // },
-    // handleSelect (selection, row) {
-    //   console.log(selection, row, 'selection, row')
-    // },
     handleSelectionChange (selection) {
-      console.log(selection, 'selection')
+      this.selection = selection
     },
     gotoSetting () {
-      if (!this.selection.length) {
-        this.$router.push({
-          name: 'MigrateSetting',
-          params: {
-            isCapturing: 'isCapturing'
-          }
-        })
-        this.save({
-          captureCallBack: this.handleCapture
-        })
+      if (this.selection.length) {
+        const urls = this.selection.map(item => item.url)
+        this.$emit('onGotoSetting', urls)
       } else {
         this.$message.warning('请输入链接')
       }
@@ -299,7 +286,8 @@ export default {
       }
     },
     handleCapture () {
-      this.$emit()
+      const urls = this.selection.map(item => item.url)
+      this.$emit('onReCaptureProducts', urls)
     }
   }
 }

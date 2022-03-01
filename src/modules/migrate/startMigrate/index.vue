@@ -3,13 +3,13 @@
     <!-- <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
     </help-tips> -->
     <SettingAlert />
-    <!-- <span
+    <span
       class="click mr-20 pointer"
       v-if="activeName === 'single'"
       style="
         align-content:right;
         position: absolute;
-        left: 450px;
+        right: 0px;
         top: 56px;
         z-index:1"
       @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')"
@@ -23,7 +23,7 @@
       style="
         align-content:right;
         position: absolute;
-        left: 450px;
+        right: 0px;
         top: 56px;
         z-index:1"
       @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl')"
@@ -36,13 +36,13 @@
       style="
         align-content:right;
         position: absolute;
-        left: 450px;
+        right: 0px;
         top: 56px;
         z-index:1"
       @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/dsibrc')"
     >
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
-    </span> -->
+    </span>
     <el-tabs v-model="activeName">
       <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
         <el-input
@@ -299,7 +299,9 @@
 
       <!-- 已搬家店铺复制 -->
       <el-tab-pane v-loading="loadingCnt" label="已搬家店铺复制" name="recapture">
-        <Recapture />
+        <ReCaptureProducts
+          @onReCaptureProducts="handleReCaptureProducts"
+          @onGotoSetting="handleReCaptureGotoSetting"/>
       </el-tab-pane>
 
     </el-tabs>
@@ -520,7 +522,7 @@ import ModalBindCopyIdSearch from '@migrate/startMigrate/components/ModalBindCop
 import StartCopyTips from '@migrate/startMigrate/components/StartCopyTips'
 import BindCopyTips from '@migrate/startMigrate/components/BindCopyTips'
 import SettingAlert from '@migrate/startMigrate/components/SettingAlert'
-import Recapture from '@migrate/startMigrate/components/Recapture'
+import ReCaptureProducts from '@migrate/startMigrate/components/ReCaptureProducts'
 
 import {
   platformIconsUrl,
@@ -581,7 +583,7 @@ export default {
     StartCopyTips,
     BindCopyTips,
     SettingAlert,
-    Recapture,
+    ReCaptureProducts,
     TablemigrateHistory,
     PayCharge
   },
@@ -818,6 +820,39 @@ export default {
         return
       }
       this.capture({ urls, capture_type: 0 })
+    },
+    // 已搬家商品复制
+    async handleReCaptureProducts (urls) {
+      if (this.isStartCapture) {
+        // 当前有复制请求
+        return
+      }
+      console.log(urls, 'urls')
+      let limit = 1
+      let message = ''
+      limit = this.limit
+      message = '多商品复制超过' + limit + '条限制'
+      urls = urls.map(s => s.trim()).filter(s => s !== '')
+      if (urls.length === 0) {
+        this.$alert('复制链接未填写', '警告', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {}
+        })
+        return
+      } else if (urls.length > limit) {
+        this.$alert(message, '警告', {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {}
+        })
+        return
+      }
+      this.capture({ urls, capture_type: 3 })
+    },
+    handleReCaptureGotoSetting (urls) {
+      // 已搬家商品复制 进入基本设置页面的回调
+      this.gotoSetting(() => this.handleReCaptureProducts(urls), urls)
     },
     confirmShopsCapture (urls) {
       this.capture({ urls, capture_type: 1 })
