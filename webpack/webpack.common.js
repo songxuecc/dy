@@ -24,15 +24,12 @@ const isEslint = argv.eslint
 const log = console.log
 
 const jsWorkerPool = {
-  poolTimeout: 2000,
-  workers: 1
+  poolTimeout: 2000
 }
 
 const cssWorkerPool = {
-  workerParallelJobs: 20,
-  poolTimeout: 2000,
-  workers: 1
-
+  workerParallelJobs: 50,
+  poolTimeout: 2000
 }
 
 // 可以通过预热 worker 池(worker pool)来防止启动 worker 时的高延时。
