@@ -18,7 +18,7 @@ const webpackPro = {
     path: path.resolve(__dirname, '../dist'),
     filename: 'static/js/[id].[chunkhash].js',
     chunkFilename: 'static/js/[id].[chunkhash].js',
-    publicPath: '/'
+    publicPath: '`https://dycdn.huhuguanjia.com/'
   },
   plugins: [
     new CleanWebpackPlugin(),
