@@ -1769,7 +1769,7 @@ export default {
     },
     // 打开淘宝
     openTaobao () {
-      window.open('https://www.taobao.com/')
+      window.open('https://login.taobao.com/member/login.jhtml?spm=a21bo.jianhua.754894437.1.5af911d9ufOmAz&f=top&redirectURL=https%3A%2F%2Fwww.taobao.com%2F')
     }
   }
 }
