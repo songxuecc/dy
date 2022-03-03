@@ -1,7 +1,7 @@
 // // The Vue build version to load with the `import` command
 // // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import App from './App'
+import App from './Test'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
@@ -10,6 +10,7 @@ import utils from '@/common/utils'
 import VueClipboard from 'vue-clipboard2'
 import {registerComponent, registerDirectives, requireAll} from '@/common/register'
 import MdUi from 'vue-midou-icon'
+import vcolorpicker from 'vcolorpicker'
 import 'vue-midou-icon/lib/midou.css'
 
 const IconFont = MdUi.createFromIconfontCN({
@@ -20,6 +21,7 @@ const IconFont = MdUi.createFromIconfontCN({
 })
 Vue.use(IconFont)
 Vue.use(VueClipboard)
+Vue.use(vcolorpicker)
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 registerComponent()
