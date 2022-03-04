@@ -160,7 +160,7 @@ module.exports = {
     'client': 1
   },
   HELP_TIPS_LINK: {
-    'captureShop': 'https://meideng.yuque.com/huhuguanjia/gl647x/tm5odl'
+    'captureShop': 'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf'
   },
   HELP_LINK: 'https://meideng.yuque.com/huhuguanjia/gl647x/alvq8l',
   DY_SERVICE_LINK: 'https://fuwu.jinritemai.com/detail?from=md&service_id=42',
