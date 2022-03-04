@@ -225,7 +225,7 @@ export default {
       window.open('https://school.jinritemai.com/doudian/web/article/101706')
     },
     openSpacialCategory () {
-      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/fpa940')
+      window.open('https://meideng.yuque.com/huhuguanjia/gl647x/fpa940')
     }
   }
 }

@@ -22,7 +22,7 @@
                   <h1 class="flex align-c">修改范围
                     <!-- 商品同步提示 -->
                     <SyncProduct />
-                    <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/qyqwt0'">
+                    <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/qyqwt0'">
                       <hh-icon type="icontishi-dengpao" ></hh-icon>
                       批量处理教程
                     </span>

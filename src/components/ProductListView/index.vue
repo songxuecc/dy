@@ -85,7 +85,7 @@
                 <template slot="header" slot-scope="scope">
                     <span>
                       状态
-                      <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/ut7l6p'">
+                      <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/ut7l6p'">
                         <hh-icon type="icontishi-dengpao" ></hh-icon>
                         状态含义
                       </span>

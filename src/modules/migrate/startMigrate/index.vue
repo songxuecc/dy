@@ -12,7 +12,7 @@
         left: 450px;
         top: 56px;
         z-index:1"
-      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')"
+      @click="gobind(common.HELP_LINK)"
     >
       <hh-icon type="icontishi-dengpao"></hh-icon>
       多商品复制教程
@@ -26,7 +26,7 @@
         left: 450px;
         top: 56px;
         z-index:1"
-      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl')"
+      @click="gobind('https://meideng.yuque.com/huhuguanjia/gl647x/tm5odl')"
     >
       <hh-icon type="icontishi-dengpao"></hh-icon>整店复制教程
     </span>
@@ -39,7 +39,7 @@
         left: 450px;
         top: 56px;
         z-index:1"
-      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/dsibrc')"
+      @click="gobind('https://meideng.yuque.com/huhuguanjia/gl647x/dsibrc')"
     >
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
     </span>
@@ -531,6 +531,7 @@ export default {
   mixins: [request],
   data () {
     return {
+      common,
       fileList: [],
       syncText: '',
       syncTimer: null,
@@ -1109,7 +1110,7 @@ export default {
           err => {
             let el = ''
             if (this.activeName === 'bindCopy') {
-              el = `<br/><a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank' style="color:#1D8FFF;font-size:12px">点击查看帮助</a>`
+              el = `<br/><a href='https://meideng.yuque.com/huhuguanjia/gl647x/tm5odl' target='_blank' style="color:#1D8FFF;font-size:12px">点击查看帮助</a>`
             }
             this.$alert(`${err.message}` + el, '警告', {
               dangerouslyUseHTMLString: true,
