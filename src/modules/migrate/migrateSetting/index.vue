@@ -23,7 +23,7 @@
         top: 40px;
         z-index:1"
       :style="isCapturing ? 'top: 120px;':'top: 40px;'"
-      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/xoghlm')"><hh-icon type="icontishi-dengpao" ></hh-icon>基本设置教程</span>
+      @click="gobind('https://meideng.yuque.com/huhuguanjia/gl647x/xoghlm')"><hh-icon type="icontishi-dengpao" ></hh-icon>基本设置教程</span>
     <div :style="{'text-align': 'left', 'font-size': '14px','padding-bottom': mBottom,'padding-top': isCapturing ? '120px':'30px'}" class="migrateSettingForm">
       <el-form ref="template" :rules="rules" style="width: 100%;" size="mini" :model="$data">
         <!-- 类目 -->

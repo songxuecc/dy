@@ -305,7 +305,7 @@ export default {
     },
     // 教程
     interpret () {
-      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')
+      window.open(common.HELP_LINK)
     }
   }
 }

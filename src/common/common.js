@@ -160,9 +160,9 @@ module.exports = {
     'client': 1
   },
   HELP_TIPS_LINK: {
-    'captureShop': 'https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl'
+    'captureShop': 'https://meideng.yuque.com/huhuguanjia/gl647x/tm5odl'
   },
-  HELP_LINK: 'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l',
+  HELP_LINK: 'https://meideng.yuque.com/huhuguanjia/gl647x/alvq8l',
   DY_SERVICE_LINK: 'https://fuwu.jinritemai.com/detail?from=md&service_id=42',
   COMMENTS_LINK: 'https://www.wjx.cn/m/99756598.aspx',
   CHANNEL_WHITE_LIST: ['woda', 'douyin', 'pddwoda2', 'pddtgzj1', 'pddspgj2', 'pddddzs2', 'pddhhyh2', 'dywoda1', 'dymeizhe1'],
@@ -170,5 +170,8 @@ module.exports = {
   PosterType: {
     'WaterMark': 0,
     'PosterDg': 1
-  }
+  },
+  captureShopLiink: 'https://meideng.yuque.com/huhuguanjia/gl647x/alvq8l',
+  statusExplainLink: 'https://meideng.yuque.com/huhuguanjia/gl647x/ut7l6p'
+
 }

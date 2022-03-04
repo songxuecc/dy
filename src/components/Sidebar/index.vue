@@ -208,7 +208,7 @@ export default {
       }
     },
     openHelp () {
-      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')
+      window.open(common.HELP_LINK)
     },
     openPdd () {
       window.open('https://pdd.huhuguanjia.com/?from=douyin')

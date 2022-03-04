@@ -90,7 +90,7 @@ export default {
       'setSelectTPProductIdList'
     ]),
     goHelpLink () {
-      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/zghdvq')
+      window.open('https://meideng.yuque.com/huhuguanjia/gl647x/zghdvq')
     },
     beforeunloadFn (e) {
       e = e || window.event

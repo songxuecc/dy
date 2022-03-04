@@ -158,7 +158,7 @@ export default {
       }
     },
     openSpacialCategory () {
-      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/fpa940')
+      window.open('https://meideng.yuque.com/huhuguanjia/gl647x/fpa940')
     }
   }
 }
