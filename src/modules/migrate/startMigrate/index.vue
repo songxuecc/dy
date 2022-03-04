@@ -26,7 +26,7 @@
         left: 450px;
         top: 56px;
         z-index:1"
-      @click="gobind('https://meideng.yuque.com/huhuguanjia/gl647x/tm5odl')"
+      @click="gobind('https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/tm5odl')"
     >
       <hh-icon type="icontishi-dengpao"></hh-icon>整店复制教程
     </span>
@@ -39,7 +39,7 @@
         left: 450px;
         top: 56px;
         z-index:1"
-      @click="gobind('https://meideng.yuque.com/huhuguanjia/gl647x/dsibrc')"
+      @click="gobind('https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/dsibrc')"
     >
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
     </span>
@@ -1110,7 +1110,7 @@ export default {
           err => {
             let el = ''
             if (this.activeName === 'bindCopy') {
-              el = `<br/><a href='https://meideng.yuque.com/huhuguanjia/gl647x/tm5odl' target='_blank' style="color:#1D8FFF;font-size:12px">点击查看帮助</a>`
+              el = `<br/><a href='https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/tm5odl' target='_blank' style="color:#1D8FFF;font-size:12px">点击查看帮助</a>`
             }
             this.$alert(`${err.message}` + el, '警告', {
               dangerouslyUseHTMLString: true,

@@ -5,7 +5,7 @@
          <span
           class="click pointer font-12 ml-5"
           style="padding-top: 7px;color: #1D8FFF"
-          v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/sow5gi'"><hh-icon type="icontishi-dengpao" ></hh-icon>绑定后操作教程</span>
+          v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/sow5gi'"><hh-icon type="icontishi-dengpao" ></hh-icon>绑定后操作教程</span>
       </h1>
       <div v-for="(item,index) in list" :key="index" :class="['item', index === list.length-1 ? 'no-margin-bottom' :'']">
           <img :src="item.type" alt="图片" class="icon">

@@ -54,16 +54,16 @@
       <div class="left">
         <div class="flex ">
           <hh-icon type="iconruanjianjiaocheng" class="mr-5 font-20"></hh-icon>
-          <span class="kefu">软件教程 <span class="click font-12" style="color:#3277FF" v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x'" >查看全部</span></span>
+          <span class="kefu">软件教程 <span class="click font-12" style="color:#3277FF" v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf'" >查看全部</span></span>
         </div>
         <div class="flex">
             <div class="mt-5 mr-20 ">
                 <div class="click font-12 mb-5 l-14"  style="color:#3277FF" v-hh-open="common.HELP_LINK">01新手必读:多商品复制教程</div>
-                <div class="click font-12 l-14"  style="color:#3277FF" v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/qyqwt0'">02如何批量修改商品?</div>
+                <div class="click font-12 l-14"  style="color:#3277FF" v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/qyqwt0'">02如何批量修改商品?</div>
             </div>
             <div class="mt-5">
-                <div  class="click font-12 mb-5 l-14"  style="color:#3277FF" v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/muvtyt'">03如何获取抖音复制链接?</div>
-                <div  class="click font-12 l-14"  style="color:#3277FF" v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/tm5odl'">04怎么获取整店复制链接?</div>
+                <div  class="click font-12 mb-5 l-14"  style="color:#3277FF" v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/muvtyt'">03如何获取抖音复制链接?</div>
+                <div  class="click font-12 l-14"  style="color:#3277FF" v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/tm5odl'">04怎么获取整店复制链接?</div>
             </div>
         </div>
       </div>

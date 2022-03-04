@@ -50,11 +50,11 @@ export default {
         // '唯品会': 'https://www.vip.com/',
         '网易考拉': 'https://www.kaola.com/',
         '17网': 'https://gz.17zwd.com/',
-        '抖音': 'https://meideng.yuque.com/huhuguanjia/gl647x/muvtyt',
+        '抖音': 'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/muvtyt',
         '拼多多': 'http://mobile.yangkeduo.com/',
         // '禅妈妈': 'https://www.chanmama.com/',
         '搜款网': 'https://www.vvic.com/gz',
-        '淘宝特价': 'https://meideng.yuque.com/huhuguanjia/gl647x/gb8emy',
+        '淘宝特价': 'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/gb8emy',
         '有赞': 'https://www.youzan.com/'
       }
       if (window._hmt) {

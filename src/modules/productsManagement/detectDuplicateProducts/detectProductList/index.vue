@@ -4,7 +4,7 @@
       <div class="alert">
             <div style="margin-left:16px">
               <hh-icon type="icontishi" ></hh-icon>什么是重复铺货检测？
-              <span class="click pointer font-12 " v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/zcg2cm'">
+              <span class="click pointer font-12 " v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/zcg2cm'">
                 重复铺货检测教程
               </span>
             </div>

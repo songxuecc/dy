@@ -12,7 +12,7 @@
       <div class="flex align-c mb-10">
         <el-button type="primary" size="medium" @click="handleGo(undefined,2)">创建商品源同步计划</el-button>
         <SyncProduct />
-        <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/rnezxr'">
+        <span class="right click" style="margin-left:auto;margin-right:10px;font-weight: 400; font-size: 12px;" v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/rnezxr'">
           <hh-icon type="icontishi-dengpao" ></hh-icon>
           商品源同步教程
         </span>
