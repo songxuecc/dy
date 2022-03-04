@@ -158,7 +158,7 @@ export default {
       }
     },
     openSpacialCategory () {
-      window.open('https://meideng.yuque.com/huhuguanjia/gl647x/fpa940')
+      window.open('https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/fpa940')
     }
   }
 }

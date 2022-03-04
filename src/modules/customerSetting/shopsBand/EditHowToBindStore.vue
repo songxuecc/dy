@@ -5,7 +5,7 @@
          <span
           class="click pointer font-12  ml-5"
           style="padding-top: 7px;"
-          v-hh-open="'https://meideng.yuque.com/huhuguanjia/gl647x/knnu2m'"><hh-icon type="icontishi-dengpao" ></hh-icon>绑定店铺教程</span>
+          v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/knnu2m'"><hh-icon type="icontishi-dengpao" ></hh-icon>绑定店铺教程</span>
 
       </h1>
       <h3><span>1、</span>当前店铺如果作为主店铺，授权码为</h3>
@@ -68,7 +68,7 @@ export default {
     ...mapMutations(['save']),
     ...mapActions(['getUserBindList']),
     caozuojiaocheng () {
-      window.open('https://meideng.yuque.com/huhuguanjia/gl647x/knnu2m')
+      window.open('https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/knnu2m')
       return false
     },
     copy: async function () {
