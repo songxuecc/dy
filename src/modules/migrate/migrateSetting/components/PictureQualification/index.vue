@@ -121,6 +121,10 @@ export default {
     },
     handlePs (file) {
       console.log(file.url, 'url')
+      // 测试 正常图片
+      // this.activeUrl = 'https://p6-aio.ecombdimg.com/obj/temai/06276c7f3c7742bd6675d3e9ba1120c2www800-800'
+      // 测试 跨域图片
+      // this.activeUrl = 'https://dy-image-no-delete.oss-cn-shanghai.aliyuncs.com/5009091-vsxpXgWNbUoh.jpg?t=0767982350'
       this.activeUrl = file.url
       this.visibleDrawingBoard = true
     },
