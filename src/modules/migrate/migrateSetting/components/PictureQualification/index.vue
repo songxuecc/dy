@@ -34,6 +34,15 @@
             >
               <i class="el-icon-delete"></i>
             </span>
+
+            <span
+              v-if="!disabled"
+              class="PictureQualification__item-delete"
+              @click="handlePs(file, quality.quality_attachments)"
+            >
+              <i class="el-icon-delete"></i>
+            </span>
+
           </span>
         </div>
         <el-upload
@@ -63,24 +72,34 @@
         </el-upload>
       </div>
     </div>
+
+    <el-dialog :visible.sync="visibleDrawingBoard" append-to-body width="800px">
+      <DrawingBoard :imgUrl="activeUrl" v-if="visibleDrawingBoard"/>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import debounce from 'lodash/debounce'
+import DrawingBoard from '@/components/DrawingBoard'
 
 export default {
   name: 'PictureQualification',
   props: {
     qualitys: Array
   },
+  components: {
+    DrawingBoard
+  },
   data () {
     return {
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
-      limit: 20
+      limit: 20,
+      activeUrl: '',
+      visibleDrawingBoard: false
     }
   },
   computed: {
@@ -100,6 +119,11 @@ export default {
         }
       })
       this.$emit('change', nextqualitys)
+    },
+    handlePs (file) {
+      console.log(file.url, 'url')
+      this.activeUrl = file.url
+      this.visibleDrawingBoard = true
     },
     handlePictureCardPreview (file) {
       const refName = file.url

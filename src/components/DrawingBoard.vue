@@ -1,12 +1,10 @@
 <template>
   <div class="home">
     <div class="btnwrap">
-      <div
-        class="btn-color"
-      >
+      <span class="color-label">颜色</span>
+      <div class="btn-color">
         <colorPicker v-model="strokeColor" />
       </div>
-      <span class="color-label">strokeColor</span>
 
       <div class="brushWidth">
         <label>lineSize:{{ lineSize }}</label>
@@ -16,57 +14,43 @@
         <label>fontSize:{{ fontSize }}</label>
         <input type="range" name="vol" min="18" max="50" v-model="fontSize" />
       </div>
-      <button @click="select" class="btn-tool" :class="{ active: selectTool == 'select' }">选择</button>
-      <button @click="del" class="btn-tool">删除</button>
 
       <button
         @click="tapToolBtn('brush')"
         :class="{ active: selectTool == 'brush' }"
         class="btn-tool"
       >
-        pencil
-      </button>
-      <button
-        @click="tapToolBtn('line')"
-        :class="{ active: selectTool == 'line' }"
-        class="btn-tool"
-      >
-        line
+        画笔
       </button>
       <button
         @click="tapToolBtn('rect')"
         :class="{ active: selectTool == 'rect' }"
         class="btn-tool"
       >
-        rect
+        方块
       </button>
-      <!-- <button
-        @click="tapToolBtn('circle')"
-        :class="{ active: selectTool == 'circle' }"
-        class="btn-tool"
-      >
-        circle
-      </button> -->
       <button
         @click="tapToolBtn('text')"
         :class="{ active: selectTool == 'text' }"
         class="btn-tool"
       >
-        text
+        文本
       </button>
       <button
         @click="tapToolBtn('eraser')"
         :class="{ active: selectTool == 'eraser' }"
         class="btn-tool"
       >
-        eraser
+        橡皮擦
       </button>
-      <button @click="tapHistoryBtn(-1)" class="btn-tool">undo</button>
-      <button @click="tapHistoryBtn(1)" class="btn-tool">redo</button>
-      <button @click="tapClearBtn" class="btn-tool">clear</button>
-      <button @click="tapSaveBtn" class="btn-tool">save</button>
+      <button @click="select" class="btn-tool" :class="{ active: selectTool == 'select' }">选择</button>
+      <button @click="del" class="btn-tool">删除</button>
+      <button @click="tapHistoryBtn(-1)" class="btn-tool">返回</button>
+      <button @click="tapHistoryBtn(1)" class="btn-tool">撤销</button>
+      <button @click="tapClearBtn" class="btn-tool">清除</button>
+      <button @click="tapSaveBtn" class="btn-tool">保存</button>
     </div>
-    <canvas id="c" :width="width" :height="height"></canvas>
+    <canvas id="c" ref="canvasshelf"></canvas>
   </div>
 </template>
 
@@ -75,53 +59,40 @@ import fabric from 'fabric'
 import utils from '@/common/utils'
 
 export default {
-  name: 'Home',
-  components: {
+  name: 'DrawingBoard',
+  props: {
+    // imgUrl: String
   },
   data () {
     return {
-      width: 800,
-      height: 800,
-      canvas: null, // fabric canvas对象
-
-      strokeColor: '#000000', // 线框色
-      // showStrokeColorPicker: false, // 是否显示 线框色选择器
-
-      // fillColor: 'rgba(0,0,0,0)', // 填充色
-      // showFillColorPicker: false, // 是否显示 填充色选择器
-
-      bgColor: '#ffffff', // 背景色
-      // showBgColorPicker: false, // 是否显示 背景色选择器
-
-      lineSize: 5, // 线条大小 （线条 and 线框）
-      fontSize: 18, // 字体大小
-
-      selectTool: '', // 当前用户选择的绘图工具 画笔：brush 直线：line 矩形：rect 圆形 circle 文本 text
-
-      mouseFrom: {}, // 鼠标绘制起点
-      mouseTo: {}, // 鼠标绘制重点
-
-      drawingObject: null, // 保存鼠标未松开时用户绘制的临时图像
-
-      textObject: null, // 保存用户创建的文本对象
-
-      isDrawing: false, // 当前是否正在绘制图形（画笔，文本模式除外）
-      stateArr: [], // 保存画布的操作记录
-      stateIdx: 0, // 当前操作步数
-      isRedoing: false // 当前是否在执行撤销或重做操作
-    }
-  },
-  async beforeCreate () {
-    let imgUrl = 'https://img.alicdn.com/imgextra/i4/3164961781/O1CN01YsfdOG1P1jzuEXHwq_!!3164961781.jpg_800x800.jpg'
-    const data = await utils.getImgRawSize(imgUrl)
-    this.width = data.width
-    this.height = data.height
-    this.hasMount = false
-  },
-  computed: {
-    renderCanvas () {
-      console.log(this.width, this.height, this.hasMount)
-      return this.width && this.height && this.hasMount
+      // fabric canvas对象
+      canvas: null,
+      // 线框色
+      strokeColor: '#000000',
+      // 背景色
+      bgColor: '#ffffff',
+      // 线条大小 （线条 and 线框）
+      lineSize: 5,
+      // 字体大小
+      fontSize: 18,
+      // 当前用户选择的绘图工具 画笔：brush 直线：line 矩形：rect 圆形 circle 文本 text
+      selectTool: '',
+      // 鼠标绘制起点
+      mouseFrom: {},
+      // 鼠标绘制重点
+      mouseTo: {},
+      // 保存鼠标未松开时用户绘制的临时图像
+      drawingObject: null,
+      // 保存用户创建的文本对象
+      textObject: null,
+      // 当前是否正在绘制图形（画笔，文本模式除外）
+      isDrawing: false,
+      // 保存画布的操作记录
+      stateArr: [],
+      // 当前操作步数
+      stateIdx: 0,
+      // 当前是否在执行撤销或重做操作
+      isRedoing: false
     }
   },
   watch: {
@@ -134,47 +105,50 @@ export default {
     strokeColor () {
       console.log(this.selectTool, '99999')
       this.tapToolBtn(this.selectTool, true)
-    },
-    renderCanvas (val) {
-      if (val) {
-        // console.log(val, 'val')
-        // this.initCanvas()
-        // this.tapToolBtn('brush')
-        // this.initCanvasEvent()
-      }
     }
   },
   methods: {
     // 初始化画布
-    initCanvas () {
-      this.strokeColor = '#000000'
+    async initCanvas () {
+      console.log(this.imgUrl, 'this.imgUrl')
+      return new Promise(async (resolve, reject) => {
+        try {
       // 初始化 fabric canvas对象
-      if (!this.canvas) {
-        this.isRedoing = true
-        this.canvas = new fabric.Canvas('c')
-        console.log(this.width)
-        console.log(this.height)
-        this.canvas.width = this.width
-        this.canvas.height = this.height
-        console.log('999')
-        this.initImage()
-        this.isRedoing = false
+          if (!this.canvas) {
+            this.isRedoing = true
+            let imgUrl = 'https://dy-image-no-delete.oss-cn-shanghai.aliyuncs.com/5009091-vsxpXgWNbUoh.jpg'
+            this.imgUrl = imgUrl
+            // const data = await utils.getImgRawSize(this.imgUrl)
+            // const scale = 500 / data.width
+            this.canvas = new fabric.Canvas('c', {
+              // width: scale * data.width,
+              // height: scale * data.height
+            })
+            this.initImage(imgUrl)
+            this.isRedoing = false
         // 设置画布背景色 (背景色需要这样设置，否则拓展的橡皮功能会报错)
-        this.canvas.setBackgroundColor(this.bgColor, undefined, {
-          erasable: false
-        })
+            this.canvas.setBackgroundColor(this.bgColor, undefined, {
+              erasable: false
+            })
         // 设置背景色不受缩放与平移的影响
-        this.canvas.set('backgroundVpt', false)
+            this.canvas.set('backgroundVpt', false)
         // 禁止用户进行组选择
-        this.canvas.selection = false
+            this.canvas.selection = false
         // 设置当前鼠标停留在
-        this.canvas.hoverCursor = 'default'
+            this.canvas.hoverCursor = 'default'
         // 重新渲染画布
-        this.canvas.renderAll()
+            this.canvas.renderAll()
         // 记录画布原始状态
-        this.stateArr.push(JSON.stringify(this.canvas))
-        this.stateIdx = 0
-      }
+            this.stateArr.push(JSON.stringify(this.canvas))
+            this.stateIdx = 0
+          }
+
+          resolve(true)
+        } catch (err) {
+          console.log(err)
+          reject(err)
+        }
+      })
     },
     // 初始化画布事件
     initCanvasEvent () {
@@ -547,27 +521,63 @@ export default {
       let zoom = Number(this.canvas.getZoom())
       return (y - this.canvas.viewportTransform[5]) / zoom
     },
-    initImage () {
-      // 添加canvas背景图片
-      const canvas = this.canvas
-      const self = this
-      // 使用网络图片
-      let imgUrl = 'https://img.alicdn.com/imgextra/i4/3164961781/O1CN01YsfdOG1P1jzuEXHwq_!!3164961781.jpg_800x800.jpg'
-      fabric.Image.fromURL(imgUrl, function (img, err) {
-        if (err) {
-          canvas.setBackgroundColor(self.bgColor, canvas.renderAll.bind(canvas))
-        } else {
-          canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-            scaleX: canvas.width / img.width,
-            scaleY: canvas.height / img.height,
-            erasable: false,
-            // 使用的图片跨域时，配置此参数
-            crossOrigin: 'anonymous'
-          })
+    getURLBase64 (url) { // 将远程图片下载本地成为base64图片
+      return new Promise((resolve, reject) => {
+        let canvas = document.createElement('canvas')
+        let ctx = canvas.getContext('2d')
+        let image = new Image()
+        image.setAttribute('crossOrigin', 'w')
+        image.referrerPolicy = 'no-referrer'
+        // 处理缓存
+        image.src = url
+        // 支持跨域图片
+        image.onload = function () {
+          canvas.width = image.width
+          canvas.height = image.height
+          ctx.drawImage(image, 0, 0, image.width, image.height)
+          ctx.getImageData(0, 0, image.width, image.height)
+          // 可选其他值 image/jpeg
+          const base64 = canvas.toDataURL('image/jpeg')
+          resolve(base64)
         }
-      }, {
-        crossOrigin: 'anonymous'
+        image.onerror = function () {
+          console.log('Error loading 2 ' + url)
+        }
       })
+    },
+    initImage (src) {
+      let bgUrl = src
+      let _this = this
+      _this.getURLBase64(bgUrl).then(image => {
+
+      })
+
+      // 添加canvas背景图片
+      // const canvas = this.canvas
+      // const self = this
+      // 使用网络图片
+
+      // this.tranformImgToBase64(src, (base64) => {
+      //   console.log(base64, 'base64')
+      //   fabric.Image.fromURL(base64, function (img, err) {
+      //     if (err) {
+      //       canvas.setBackgroundColor(self.bgColor, canvas.renderAll.bind(canvas))
+      //     } else {
+      //       canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+      //         scaleX: canvas.width / img.width,
+      //         scaleY: canvas.height / img.height,
+      //         erasable: false,
+      //       // 使用的图片跨域时，配置此参数
+      //         crossOrigin: 'anonymous',
+      //         referrerPolicy: 'no-referrer'
+
+      //       })
+      //     }
+      //   }, {
+      //     crossOrigin: 'anonymous',
+      //     referrerPolicy: 'no-referrer'
+      //   })
+      // })
     },
     select () {
       this.canvas.isDrawingMode = false
@@ -578,10 +588,10 @@ export default {
     }
   },
   mounted () {
-    this.initCanvas()
-    this.tapToolBtn('brush')
-    this.initCanvasEvent()
-    // this.hasMount = true
+    this.initCanvas().then(res => {
+      this.tapToolBtn('brush')
+      this.initCanvasEvent()
+    })
   }
 }
 </script>

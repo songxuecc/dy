@@ -347,7 +347,8 @@ export default {
   // 获取图片大小
   getImgRawSize (img) {
     return new Promise((resolve, reject) => {
-      var _image = img
+      var _image = 'https://dy-image-no-delete.oss-cn-shanghai.aliyuncs.com/5009091-vsxpXgWNbUoh.jpg?t=0767982350&v=0.6984544020858852'
+      console.log(_image, '_image')
       if (_image instanceof HTMLImageElement) {
         if (_image.naturalWidth) {
           resolve({width: _image.naturalWidth, height: _image.naturalHeight})
@@ -358,7 +359,10 @@ export default {
         _image = new Image()
         _image.src = img
       }
-      _image.onload = _ => resolve({width: _image.naturalWidth || _image.width, height: _image.naturalHeight || _image.height, src: _image.src})
+      _image.onload = _ => {
+        console.log(_image.naturalWidth || _image.width, '_image.naturalWidth || _image.width')
+        return resolve({width: _image.naturalWidth || _image.width, height: _image.naturalHeight || _image.height, src: _image.src})
+      }
       _image.onerror = _ => {
         const err = {width: 0, height: 0, src: _image.src}
         reject(err)
