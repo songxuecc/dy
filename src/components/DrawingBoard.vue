@@ -61,7 +61,7 @@ import utils from '@/common/utils'
 export default {
   name: 'DrawingBoard',
   props: {
-    // imgUrl: String
+    imgUrl: String
   },
   data () {
     return {
@@ -116,15 +116,15 @@ export default {
       // 初始化 fabric canvas对象
           if (!this.canvas) {
             this.isRedoing = true
-            let imgUrl = 'https://dy-image-no-delete.oss-cn-shanghai.aliyuncs.com/5009091-vsxpXgWNbUoh.jpg'
-            this.imgUrl = imgUrl
-            // const data = await utils.getImgRawSize(this.imgUrl)
-            // const scale = 500 / data.width
+            // let imgUrl = 'https://dy-image-no-delete.oss-cn-shanghai.aliyuncs.com/5009091-vsxpXgWNbUoh.jpg'
+            // this.imgUrl = imgUrl
+            const data = await utils.getImgRawSize(this.imgUrl)
+            const scale = 500 / data.width
             this.canvas = new fabric.Canvas('c', {
-              // width: scale * data.width,
-              // height: scale * data.height
+              width: scale * data.width,
+              height: scale * data.height
             })
-            this.initImage(imgUrl)
+            this.initImage(this.imgUrl)
             this.isRedoing = false
         // 设置画布背景色 (背景色需要这样设置，否则拓展的橡皮功能会报错)
             this.canvas.setBackgroundColor(this.bgColor, undefined, {
@@ -521,63 +521,51 @@ export default {
       let zoom = Number(this.canvas.getZoom())
       return (y - this.canvas.viewportTransform[5]) / zoom
     },
-    getURLBase64 (url) { // 将远程图片下载本地成为base64图片
-      return new Promise((resolve, reject) => {
-        let canvas = document.createElement('canvas')
-        let ctx = canvas.getContext('2d')
-        let image = new Image()
-        image.setAttribute('crossOrigin', 'w')
-        image.referrerPolicy = 'no-referrer'
-        // 处理缓存
-        image.src = url
-        // 支持跨域图片
-        image.onload = function () {
-          canvas.width = image.width
-          canvas.height = image.height
-          ctx.drawImage(image, 0, 0, image.width, image.height)
-          ctx.getImageData(0, 0, image.width, image.height)
-          // 可选其他值 image/jpeg
-          const base64 = canvas.toDataURL('image/jpeg')
-          resolve(base64)
-        }
-        image.onerror = function () {
-          console.log('Error loading 2 ' + url)
-        }
-      })
-    },
+    // getURLBase64 (url) { // 将远程图片下载本地成为base64图片
+    //   return new Promise((resolve, reject) => {
+    //     let canvas = document.createElement('canvas')
+    //     let ctx = canvas.getContext('2d')
+    //     let image = new Image()
+    //     image.setAttribute('crossOrigin', 'w')
+    //     image.referrerPolicy = 'no-referrer'
+    //     // 处理缓存
+    //     image.src = url
+    //     // 支持跨域图片
+    //     image.onload = function () {
+    //       canvas.width = image.width
+    //       canvas.height = image.height
+    //       ctx.drawImage(image, 0, 0, image.width, image.height)
+    //       ctx.getImageData(0, 0, image.width, image.height)
+    //       // 可选其他值 image/jpeg
+    //       const base64 = canvas.toDataURL('image/jpeg')
+    //       resolve(base64)
+    //     }
+    //     image.onerror = function () {
+    //       console.log('Error loading 2 ' + url)
+    //     }
+    //   })
+    // },
     initImage (src) {
-      let bgUrl = src
-      let _this = this
-      _this.getURLBase64(bgUrl).then(image => {
-
-      })
-
       // 添加canvas背景图片
-      // const canvas = this.canvas
-      // const self = this
+      const canvas = this.canvas
+      const self = this
       // 使用网络图片
-
-      // this.tranformImgToBase64(src, (base64) => {
-      //   console.log(base64, 'base64')
-      //   fabric.Image.fromURL(base64, function (img, err) {
-      //     if (err) {
-      //       canvas.setBackgroundColor(self.bgColor, canvas.renderAll.bind(canvas))
-      //     } else {
-      //       canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-      //         scaleX: canvas.width / img.width,
-      //         scaleY: canvas.height / img.height,
-      //         erasable: false,
-      //       // 使用的图片跨域时，配置此参数
-      //         crossOrigin: 'anonymous',
-      //         referrerPolicy: 'no-referrer'
-
-      //       })
-      //     }
-      //   }, {
-      //     crossOrigin: 'anonymous',
-      //     referrerPolicy: 'no-referrer'
-      //   })
-      // })
+      // let imgUrl = 'https://img.alicdn.com/imgextra/i4/3164961781/O1CN01YsfdOG1P1jzuEXHwq_!!3164961781.jpg_800x800.jpg'
+      fabric.Image.fromURL(src, function (img, err) {
+        if (err) {
+          canvas.setBackgroundColor(self.bgColor, canvas.renderAll.bind(canvas))
+        } else {
+          canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+            scaleX: canvas.width / img.width,
+            scaleY: canvas.height / img.height,
+            erasable: false,
+            // 使用的图片跨域时，配置此参数
+            crossOrigin: 'anonymous'
+          })
+        }
+      }, {
+        crossOrigin: 'anonymous'
+      })
     },
     select () {
       this.canvas.isDrawingMode = false
