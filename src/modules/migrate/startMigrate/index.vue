@@ -1,5 +1,6 @@
 <template lang="html">
   <div style="position: relative;">
+
     <SettingAlert />
     <span
       class="click mr-20 pointer"
@@ -42,7 +43,7 @@
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
     </span>
     <el-tabs v-model="activeName">
-      <!-- <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
+      <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
         <el-input
           type="textarea"
           :rows="10"
@@ -132,7 +133,7 @@
             {{ fileList[0].name }} 上传成功，请点击 下一步：复制设置
           </div>
         </div>
-      </el-tab-pane> -->
+      </el-tab-pane>
       <el-tab-pane
         v-loading="loadingCnt"
         name="bindCopy"
@@ -537,7 +538,7 @@ export default {
       limit: 200,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
-      activeName: 'bindCopy',
+      activeName: 'single',
       placeholder: `商品ID查询,多个查询请换行或空格依次输入\n最多支持1000个id查询`,
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
