@@ -297,7 +297,7 @@
       </el-tab-pane>
     </el-tabs>
     <div class="left">
-      <el-checkbox v-model="dyRule">请遵守平台规范，使用者请获取授权后再进行复制，具体授权规则请 <span class="click"  v-hh-open="'https://school.jinritemai.com/doudian/web/article/aHQbPJNKinX1'" >点击查看</span></el-checkbox>
+      <el-checkbox v-model="dyRule">请遵守平台规范，使用者请获取授权后再进行复制， 点击查看 <span class="click"  v-hh-open="'https://school.jinritemai.com/doudian/web/article/aHQbPJNKinX1'" >具体授权规则</span></el-checkbox>
     </div>
     <!-- 多商品复制 -->
     <div v-if="activeName === 'single'">
