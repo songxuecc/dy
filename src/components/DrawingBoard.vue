@@ -8,47 +8,25 @@
 
       <div class="brushWidth">
         <label>lineSize:{{ lineSize }}</label>
-        <input type="range" name="vol" min="1" max="100" v-model="lineSize" />
-      </div>
-      <div class="brushWidth">
-        <label>fontSize:{{ fontSize }}</label>
-        <input type="range" name="vol" min="18" max="50" v-model="fontSize" />
+        <el-slider  :min="1" :max="100" v-model="lineSize" />
       </div>
 
-      <button
-        @click="tapToolBtn('brush')"
-        :class="{ active: selectTool == 'brush' }"
-        class="btn-tool"
-      >
-        画笔
-      </button>
-      <button
-        @click="tapToolBtn('rect')"
-        :class="{ active: selectTool == 'rect' }"
-        class="btn-tool"
-      >
-        方块
-      </button>
-      <button
-        @click="tapToolBtn('text')"
-        :class="{ active: selectTool == 'text' }"
-        class="btn-tool"
-      >
-        文本
-      </button>
-      <button
-        @click="tapToolBtn('eraser')"
-        :class="{ active: selectTool == 'eraser' }"
-        class="btn-tool"
-      >
-        橡皮擦
-      </button>
-      <button @click="select" class="btn-tool" :class="{ active: selectTool == 'select' }">选择</button>
-      <button @click="del" class="btn-tool">删除</button>
-      <button @click="tapHistoryBtn(-1)" class="btn-tool">返回</button>
-      <button @click="tapHistoryBtn(1)" class="btn-tool">撤销</button>
-      <button @click="tapClearBtn" class="btn-tool">清除</button>
-      <button @click="tapSaveBtn" class="btn-tool">保存</button>
+      <div class="brushWidth">
+        <label>fontSize:{{ fontSize }}</label>
+        <el-slider  :min="18" :max="50" v-model="fontSize" />
+      </div>
+
+      <el-button @click="tapToolBtn('brush')" :class="{ active: selectTool == 'brush' }" class="btn-tool">画笔</el-button>
+      <el-button @click="tapToolBtn('rect')" :class="{ active: selectTool == 'rect' }" class="btn-tool">方块</el-button>
+      <el-button @click="tapToolBtn('text')" :class="{ active: selectTool == 'text' }" class="btn-tool">文本</el-button>
+      <el-button @click="tapToolBtn('eraser')" :class="{ active: selectTool == 'eraser' }" class="btn-tool">橡皮擦</el-button>
+      <el-button @click="select" class="btn-tool" :class="{ active: selectTool == 'select' }">选择</el-button>
+      <el-button @click="del" class="btn-tool">删除</el-button>
+      <el-button @click="tapHistoryBtn(-1)" class="btn-tool">返回</el-button>
+      <el-button @click="tapHistoryBtn(1)" class="btn-tool">撤销</el-button>
+      <el-button @click="tapClearBtn" class="btn-tool">清除</el-button>
+      <el-button @click="tapSaveBtn" class="btn-tool">保存</el-button>
+
     </div>
     <canvas id="c" ref="canvasshelf"></canvas>
   </div>
@@ -98,26 +76,49 @@ export default {
   watch: {
     // 监听线条大小变化
     lineSize () {
-      this.canvas.freeDrawingBrush.width = parseInt(this.lineSize, 10)
-      this.lineSize = parseInt(this.lineSize, 10)
+      this.canvas.freeDrawingBrush.width = this.lineSize
     },
     // 监听背景色变化
     strokeColor () {
-      console.log(this.selectTool, '99999')
       this.tapToolBtn(this.selectTool, true)
     }
   },
   methods: {
+    initImage (src) {
+      // 添加canvas背景图片
+      const canvas = this.canvas
+      const self = this
+      // 使用网络图片
+      fabric.Image.fromURL(
+        src,
+        function (img, err) {
+          if (err) {
+            canvas.setBackgroundColor(
+              self.bgColor,
+              canvas.renderAll.bind(canvas)
+            )
+          } else {
+            canvas.setBackgroundImage(src, canvas.renderAll.bind(canvas), {
+              scaleX: canvas.width / img.width,
+              scaleY: canvas.height / img.height,
+              erasable: false,
+              // 使用的图片跨域时，配置此参数
+              crossOrigin: 'anonymous'
+            })
+          }
+        },
+        {
+          crossOrigin: 'anonymous'
+        }
+      )
+    },
     // 初始化画布
     async initCanvas () {
-      console.log(this.imgUrl, 'this.imgUrl')
       return new Promise(async (resolve, reject) => {
         try {
-      // 初始化 fabric canvas对象
+          // 初始化 fabric canvas对象
           if (!this.canvas) {
             this.isRedoing = true
-            // let imgUrl = 'https://dy-image-no-delete.oss-cn-shanghai.aliyuncs.com/5009091-vsxpXgWNbUoh.jpg'
-            // this.imgUrl = imgUrl
             const data = await utils.getImgRawSize(this.imgUrl)
             const scale = 500 / data.width
             this.canvas = new fabric.Canvas('c', {
@@ -126,23 +127,22 @@ export default {
             })
             this.initImage(this.imgUrl)
             this.isRedoing = false
-        // 设置画布背景色 (背景色需要这样设置，否则拓展的橡皮功能会报错)
+            // 设置画布背景色 (背景色需要这样设置，否则拓展的橡皮功能会报错)
             this.canvas.setBackgroundColor(this.bgColor, undefined, {
               erasable: false
             })
-        // 设置背景色不受缩放与平移的影响
+            // 设置背景色不受缩放与平移的影响
             this.canvas.set('backgroundVpt', false)
-        // 禁止用户进行组选择
+            // 禁止用户进行组选择
             this.canvas.selection = false
-        // 设置当前鼠标停留在
+            // 设置当前鼠标停留在
             this.canvas.hoverCursor = 'default'
-        // 重新渲染画布
+            // 重新渲染画布
             this.canvas.renderAll()
-        // 记录画布原始状态
+            // 记录画布原始状态
             this.stateArr.push(JSON.stringify(this.canvas))
             this.stateIdx = 0
           }
-
           resolve(true)
         } catch (err) {
           console.log(err)
@@ -444,7 +444,7 @@ export default {
       if (this.stateArr[stateIdx]) {
         this.canvas.loadFromJSON(this.stateArr[stateIdx])
         if (this.canvas.getObjects().length > 0) {
-          this.canvas.getObjects().forEach(item => {
+          this.canvas.getObjects().forEach((item) => {
             item.set('selectable', false)
           })
         }
@@ -460,41 +460,44 @@ export default {
     },
     // 保存按钮点击
     tapSaveBtn () {
-      this.canvas.clone(cvs => {
+      this.canvas.clone((cvs) => {
         // 遍历所有对对象，获取最小坐标，最大坐标
         let top = 0
         let left = 0
         let width = this.canvas.width
         let height = this.canvas.height
 
-        var objects = cvs.getObjects()
-        if (objects.length > 0) {
-          var rect = objects[0].getBoundingRect()
-          var minX = rect.left
-          var minY = rect.top
-          var maxX = rect.left + rect.width
-          var maxY = rect.top + rect.height
-          for (var i = 1; i < objects.length; i++) {
-            rect = objects[i].getBoundingRect()
-            minX = Math.min(minX, rect.left)
-            minY = Math.min(minY, rect.top)
-            maxX = Math.max(maxX, rect.left + rect.width)
-            maxY = Math.max(maxY, rect.top + rect.height)
-          }
-          top = minY - 100
-          left = minX - 100
-          width = maxX - minX + 200
-          height = maxY - minY + 200
-          cvs.sendToBack(new fabric.Rect({
-            left,
-            top,
-            width,
-            height,
-            stroke: 'rgba(0,0,0,0)',
-            fill: this.bgColor,
-            strokeWidth: 0
-          }))
-        }
+        // var objects = cvs.getObjects()
+        // console.log(objects, 'objects')
+        // if (objects.length > 0) {
+        //   var rect = objects[0].getBoundingRect()
+        //   var minX = rect.left
+        //   var minY = rect.top
+        //   var maxX = rect.left + rect.width
+        //   var maxY = rect.top + rect.height
+        //   for (var i = 1; i < objects.length; i++) {
+        //     rect = objects[i].getBoundingRect()
+        //     minX = Math.min(minX, rect.left)
+        //     minY = Math.min(minY, rect.top)
+        //     maxX = Math.max(maxX, rect.left + rect.width)
+        //     maxY = Math.max(maxY, rect.top + rect.height)
+        //   }
+        //   top = minY - 100
+        //   left = minX - 100
+        //   width = maxX - minX + 200
+        //   height = maxY - minY + 200
+        //   cvs.sendToBack(
+        //     new fabric.Rect({
+        //       left,
+        //       top,
+        //       width,
+        //       height,
+        //       stroke: 'rgba(0,0,0,0)',
+        //       fill: this.bgColor,
+        //       strokeWidth: 0
+        //     })
+        //   )
+        // }
         const dataURL = cvs.toDataURL({
           format: 'png',
           multiplier: cvs.getZoom(),
@@ -521,52 +524,7 @@ export default {
       let zoom = Number(this.canvas.getZoom())
       return (y - this.canvas.viewportTransform[5]) / zoom
     },
-    // getURLBase64 (url) { // 将远程图片下载本地成为base64图片
-    //   return new Promise((resolve, reject) => {
-    //     let canvas = document.createElement('canvas')
-    //     let ctx = canvas.getContext('2d')
-    //     let image = new Image()
-    //     image.setAttribute('crossOrigin', 'w')
-    //     image.referrerPolicy = 'no-referrer'
-    //     // 处理缓存
-    //     image.src = url
-    //     // 支持跨域图片
-    //     image.onload = function () {
-    //       canvas.width = image.width
-    //       canvas.height = image.height
-    //       ctx.drawImage(image, 0, 0, image.width, image.height)
-    //       ctx.getImageData(0, 0, image.width, image.height)
-    //       // 可选其他值 image/jpeg
-    //       const base64 = canvas.toDataURL('image/jpeg')
-    //       resolve(base64)
-    //     }
-    //     image.onerror = function () {
-    //       console.log('Error loading 2 ' + url)
-    //     }
-    //   })
-    // },
-    initImage (src) {
-      // 添加canvas背景图片
-      const canvas = this.canvas
-      const self = this
-      // 使用网络图片
-      // let imgUrl = 'https://img.alicdn.com/imgextra/i4/3164961781/O1CN01YsfdOG1P1jzuEXHwq_!!3164961781.jpg_800x800.jpg'
-      fabric.Image.fromURL(src, function (img, err) {
-        if (err) {
-          canvas.setBackgroundColor(self.bgColor, canvas.renderAll.bind(canvas))
-        } else {
-          canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-            scaleX: canvas.width / img.width,
-            scaleY: canvas.height / img.height,
-            erasable: false,
-            // 使用的图片跨域时，配置此参数
-            crossOrigin: 'anonymous'
-          })
-        }
-      }, {
-        crossOrigin: 'anonymous'
-      })
-    },
+
     select () {
       this.canvas.isDrawingMode = false
       this.selectTool = 'select'
@@ -576,7 +534,7 @@ export default {
     }
   },
   mounted () {
-    this.initCanvas().then(res => {
+    this.initCanvas().then((res) => {
       this.tapToolBtn('brush')
       this.initCanvasEvent()
     })
@@ -592,7 +550,7 @@ export default {
   height: 50px;
   display: flex;
   align-items: center;
-  margin-bottom:30px;
+  margin-bottom: 30px;
   .btn-color {
     width: 40px;
     height: 40px;
