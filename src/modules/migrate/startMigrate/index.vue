@@ -296,7 +296,9 @@
         </el-form>
       </el-tab-pane>
     </el-tabs>
-
+    <div class="left">
+      <el-checkbox v-model="dyRule">请遵守平台规范，使用者请获取授权后再进行复制，具体授权规则请 <span class="click"  v-hh-open="'https://school.jinritemai.com/doudian/web/article/aHQbPJNKinX1'" >点击查看</span></el-checkbox>
+    </div>
     <!-- 多商品复制 -->
     <div v-if="activeName === 'single'">
       <SupportPlatForm :list="platformIconsUrl" />
@@ -307,7 +309,7 @@
             type="primary"
             @click="gotoSetting(onCaptureUrls, captureUrlNums)"
             style="height:50px;font-size:16px"
-            :disabled="isStartCapture || settingDataLoading"
+            :disabled="isStartCapture || settingDataLoading || !dyRule"
           >
             <span>下一步：复制设置</span>
             <el-badge :value="captureUrlNums" v-if="captureUrlNums"></el-badge>
@@ -329,7 +331,7 @@
             class="click ml-10"
             slot="reference"
             @click="onCaptureUrls"
-            :disabled="isStartCapture || settingDataLoading"
+            :disabled="isStartCapture || settingDataLoading || !dyRule"
             >跳过设置，直接复制
           </el-button>
         </el-popover>
@@ -351,7 +353,7 @@
             :disabled="
               isStartCapture ||
                 settingDataLoading ||
-                isCaptureIsExistShopCapture
+                isCaptureIsExistShopCapture  || !dyRule
             "
             >下一步：复制设置
           </el-button>
@@ -375,7 +377,7 @@
             :disabled="
               isStartCapture ||
                 settingDataLoading ||
-                isCaptureIsExistShopCapture
+                isCaptureIsExistShopCapture  || !dyRule
             "
             >跳过设置，直接复制
           </el-button>
@@ -391,7 +393,7 @@
           style="height:50px;font-size:16px"
           class="ralative"
           :disabled="
-            isStartCapture || settingDataLoading || productListCheckLoading
+            isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
           "
           >下一步：复制设置
           <span
@@ -418,7 +420,7 @@
             slot="reference"
             @click="onCaptureFile"
             :disabled="
-              isStartCapture || settingDataLoading || productListCheckLoading
+              isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
             "
             :loading="productListCheckLoading"
             >跳过设置，直接复制
@@ -438,7 +440,7 @@
           style="height:50px;font-size:16px"
           class="ralative"
           :disabled="
-            isStartCapture || settingDataLoading || productListCheckLoading
+            isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
           "
           >下一步：复制设置
           <span
@@ -465,7 +467,7 @@
             slot="reference"
             @click="onCaptureBindCopy"
             :disabled="
-              isStartCapture || settingDataLoading || productListCheckLoading
+              isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
             "
             :loading="productListCheckLoading"
             >跳过设置，直接复制
@@ -530,6 +532,7 @@ export default {
   mixins: [request],
   data () {
     return {
+      dyRule: true,
       common,
       fileList: [],
       syncText: '',
