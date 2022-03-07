@@ -40,9 +40,8 @@
               class="PictureQualification__item-delete"
               @click="handlePs(file, quality.quality_attachments)"
             >
-              <i class="el-icon-delete"></i>
+              <i class="el-icon-edit-outline"></i>
             </span>
-
           </span>
         </div>
         <el-upload
