@@ -1,12 +1,11 @@
 import Api from '@/api/apis'
+import assign from '@commonModels/assign'
+import listModel from '@commonModels/listModel'
 
-import assign from '../../commonModels/assign'
-import listModel from '../../commonModels/listModel'
-
+import authorizedStore from './authorizedStore'
 const tableData = listModel()
 
-// 店铺绑定
-export default assign(tableData, {
+const o = assign(tableData, {
   namespaced: true,
   state: () => ({
   }),
@@ -112,3 +111,12 @@ export default assign(tableData, {
     getDicCustomPrices: state => state.dicCustomPrices
   }
 })
+const modules = {
+  namespaced: true,
+  modules: {
+    authorizedStore
+  },
+  ...o
+}
+
+export default modules

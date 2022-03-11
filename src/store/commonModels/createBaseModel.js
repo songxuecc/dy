@@ -108,6 +108,7 @@ class BaseModelClass {
             }
 
             const originData = await self.fetch(formatParmas(parmas))
+            console.log(originData, getList, 'originData')
             const formatData = getList(originData)
             const nextFilters = filters
             const nextTotal = formatData.total

@@ -2,17 +2,18 @@
   <div style="position: relative;">
 
     <SettingAlert />
-<!--    <span-->
-<!--      class="click mr-20 pointer"-->
-<!--      v-if="activeName === 'single'"-->
-<!--      style="-->
-<!--        align-content:right;-->
-<!--        position: absolute;-->
-<!--        left: 450px;-->
-<!--        top: 56px;-->
-<!--        z-index:1"-->
-<!--      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')"-->
-<!--    >-->
+        <span
+          class="click mr-20 pointer"
+          v-if="activeName === 'authorizedStore'"
+          style="
+            align-content:right;
+            position: absolute;
+            left: 450px;
+            top: 56px;
+            z-index:1"
+          @click="gobind('https://meideng.yuque.com/huhuguanjia/gl647x/ghw8sk')"
+        ><hh-icon type="icontishi-dengpao"></hh-icon>链接复制教程
+    </span>
 <!--      <hh-icon type="icontishi-dengpao"></hh-icon>-->
 <!--      多商品复制教程-->
 <!--    </span>-->
@@ -134,6 +135,18 @@
 <!--          </div>-->
 <!--        </div>-->
 <!--      </el-tab-pane>-->
+
+      <el-tab-pane
+        v-loading="loadingCnt"
+        name="authorizedStore"
+        class="left "
+        style="min-height:120px">
+        <span slot="label" class="relative">链接复制</span>
+        <AuthorizedStore
+          @goSettings="goSettingsAuthorizedStore"
+          @startCapture="startCaptureAuthorizedStore"
+          />
+      </el-tab-pane>
       <el-tab-pane
         v-loading="loadingCnt"
         name="bindCopy"
@@ -515,6 +528,9 @@ import ModalBindCopyIdSearch from '@migrate/startMigrate/components/ModalBindCop
 import StartCopyTips from '@migrate/startMigrate/components/StartCopyTips'
 import BindCopyTips from '@migrate/startMigrate/components/BindCopyTips'
 import SettingAlert from '@migrate/startMigrate/components/SettingAlert'
+
+import AuthorizedStore from '@migrate/startMigrate/components/AuthorizedStore'
+
 import {
   platformIconsUrl,
   platformIconsStore
@@ -541,7 +557,7 @@ export default {
       limit: 200,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
-      activeName: 'bindCopy',
+      activeName: 'authorizedStore',
       placeholder: `商品ID查询,多个查询请换行或空格依次输入\n最多支持1000个id查询`,
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
@@ -577,7 +593,8 @@ export default {
     BindCopyTips,
     SettingAlert,
     TablemigrateHistory,
-    PayCharge
+    PayCharge,
+    AuthorizedStore
   },
   activated () {
     this.getUserBindList()
@@ -1414,6 +1431,17 @@ export default {
       } else {
         this.$message.warning('请输入链接')
       }
+    },
+    goSettingsAuthorizedStore (row) {
+      console.log(row, 'goSettingsAuthorizedStore')
+      this.gotoSetting(() => this.startCaptureAuthorizedStore(row), true)
+    },
+    startCaptureAuthorizedStore (row) {
+      console.log(row, 'startCaptureAuthorizedStore')
+      const parmas = {}
+      parmas.is_cloud_goods = 1
+      parmas.cloud_goods_id = row.id
+      this.capture(parmas)
     }
   }
 }
