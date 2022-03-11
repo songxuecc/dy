@@ -2,33 +2,33 @@
   <div style="position: relative;">
 
     <SettingAlert />
-    <span
-      class="click mr-20 pointer"
-      v-if="activeName === 'single'"
-      style="
-        align-content:right;
-        position: absolute;
-        left: 450px;
-        top: 56px;
-        z-index:1"
-      @click="gobind(common.HELP_LINK)"
-    >
-      <hh-icon type="icontishi-dengpao"></hh-icon>
-      多商品复制教程
-    </span>
-    <span
-      class="click mr-20 pointer"
-      v-if="activeName === 'shop'"
-      style="
-        align-content:right;
-        position: absolute;
-        left: 450px;
-        top: 56px;
-        z-index:1"
-      @click="gobind('https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/tm5odl')"
-    >
-      <hh-icon type="icontishi-dengpao"></hh-icon>整店复制教程
-    </span>
+<!--    <span-->
+<!--      class="click mr-20 pointer"-->
+<!--      v-if="activeName === 'single'"-->
+<!--      style="-->
+<!--        align-content:right;-->
+<!--        position: absolute;-->
+<!--        left: 450px;-->
+<!--        top: 56px;-->
+<!--        z-index:1"-->
+<!--      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l')"-->
+<!--    >-->
+<!--      <hh-icon type="icontishi-dengpao"></hh-icon>-->
+<!--      多商品复制教程-->
+<!--    </span>-->
+<!--    <span-->
+<!--      class="click mr-20 pointer"-->
+<!--      v-if="activeName === 'shop'"-->
+<!--      style="-->
+<!--        align-content:right;-->
+<!--        position: absolute;-->
+<!--        left: 450px;-->
+<!--        top: 56px;-->
+<!--        z-index:1"-->
+<!--      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl')"-->
+<!--    >-->
+<!--      <hh-icon type="icontishi-dengpao"></hh-icon>整店复制教程-->
+<!--    </span>-->
     <span
       class="click mr-20 pointer"
       v-if="activeName === 'bindCopy'"
@@ -43,97 +43,97 @@
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
     </span>
     <el-tabs v-model="activeName">
-      <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
-        <el-input
-          type="textarea"
-          :rows="10"
-          :placeholder="
-            `输入其他平台的商品链接地址，换行分隔多个链接，最多不超过${limit}个`
-          "
-          class="mb-20"
-          @input="changeCaptureUrl"
-          v-model="textCaptureUrls"
-        >
-        </el-input>
-      </el-tab-pane>
-      <el-tab-pane
-        v-loading="loadingCnt"
-        label="整店复制"
-        name="shop"
-        class="relative"
-        style="height:320px "
-      >
-        <el-input
-          type="textarea"
-          :rows="4"
-          placeholder="输入其他平台的店铺地址"
-          v-model="textCaptureShopUrls"
-          class="my-textarea mb-20 shopCopyTexteare"
-          style="resize: none;"
-          @focus="handleFocus"
-        >
-        </el-input>
-        <TablemigrateHistory
-          class="TablemigrateHistory"
-          ref="TablemigrateHistory"
-          @change="handleTablemigrateHistory"
-        />
-      </el-tab-pane>
-      <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">
-        <div style="width: 640px; margin: auto;margin-bottom:20px">
-          <el-upload
-            class="capture-file-upload"
-            @click.native="clearFiles"
-            :action="uploadAction"
-            :headers="getTokenHeaders"
-            :data="{ upload_type: 'local' }"
-            :before-upload="uploadBeforeUpload"
-            :on-progress="uploadOnProgress"
-            :on-success="uploadOnSuccess"
-            :on-change="uploadChange"
-            style=""
-            :limit="1"
-            :show-file-list="false"
-            ref="upload"
-            :auto-upload="false"
-            :multiple="false"
-            :on-preview="handlePreview"
-            :disabled="!this.isAuth"
-          >
-            <hh-icon
-              type="iconshangchuanxiazai"
-              class="el-icon-upload"
-              style="font-size:52px; margin-top: 60px; margin-bottom: 18px;"
-            />
-            <div class="el-upload__text">点击此处，上传需要的文件</div>
-            <div class="el-upload__tip left" slot="tip">
-              <span style="color: #E02020;">*</span>
-              <span>
-                只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持
-                10000 条
-                <span
-                  class="click"
-                  style="margin-left: 10px"
-                  @click="downloadCSV"
-                >
-                  下载示例文件
-                </span>
-              </span>
-              <div class="info mt-5 color-success">
-                导入复制前可以通过
-                <span class="click" @click="openProductCollection">
-                  商品采集功能
-                </span>
-                采集商品链接
-              </div>
-              <PayCharge class="mt-5" />
-            </div>
-          </el-upload>
-          <div class="mt-20 font-16 color-success" v-if="fileList.length">
-            {{ fileList[0].name }} 上传成功，请点击 下一步：复制设置
-          </div>
-        </div>
-      </el-tab-pane>
+<!--      <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">-->
+<!--        <el-input-->
+<!--          type="textarea"-->
+<!--          :rows="10"-->
+<!--          :placeholder="-->
+<!--            `输入其他平台的商品链接地址，换行分隔多个链接，最多不超过${limit}个`-->
+<!--          "-->
+<!--          class="mb-20"-->
+<!--          @input="changeCaptureUrl"-->
+<!--          v-model="textCaptureUrls"-->
+<!--        >-->
+<!--        </el-input>-->
+<!--      </el-tab-pane>-->
+<!--      <el-tab-pane-->
+<!--        v-loading="loadingCnt"-->
+<!--        label="整店复制"-->
+<!--        name="shop"-->
+<!--        class="relative"-->
+<!--        style="height:320px "-->
+<!--      >-->
+<!--        <el-input-->
+<!--          type="textarea"-->
+<!--          :rows="4"-->
+<!--          placeholder="输入其他平台的店铺地址"-->
+<!--          v-model="textCaptureShopUrls"-->
+<!--          class="my-textarea mb-20 shopCopyTexteare"-->
+<!--          style="resize: none;"-->
+<!--          @focus="handleFocus"-->
+<!--        >-->
+<!--        </el-input>-->
+<!--        <TablemigrateHistory-->
+<!--          class="TablemigrateHistory"-->
+<!--          ref="TablemigrateHistory"-->
+<!--          @change="handleTablemigrateHistory"-->
+<!--        />-->
+<!--      </el-tab-pane>-->
+<!--      <el-tab-pane v-loading="loadingCnt" label="导入复制" name="file">-->
+<!--        <div style="width: 640px; margin: auto;margin-bottom:20px">-->
+<!--          <el-upload-->
+<!--            class="capture-file-upload"-->
+<!--            @click.native="clearFiles"-->
+<!--            :action="uploadAction"-->
+<!--            :headers="getTokenHeaders"-->
+<!--            :data="{ upload_type: 'local' }"-->
+<!--            :before-upload="uploadBeforeUpload"-->
+<!--            :on-progress="uploadOnProgress"-->
+<!--            :on-success="uploadOnSuccess"-->
+<!--            :on-change="uploadChange"-->
+<!--            style=""-->
+<!--            :limit="1"-->
+<!--            :show-file-list="false"-->
+<!--            ref="upload"-->
+<!--            :auto-upload="false"-->
+<!--            :multiple="false"-->
+<!--            :on-preview="handlePreview"-->
+<!--            :disabled="!this.isAuth"-->
+<!--          >-->
+<!--            <hh-icon-->
+<!--              type="iconshangchuanxiazai"-->
+<!--              class="el-icon-upload"-->
+<!--              style="font-size:52px; margin-top: 60px; margin-bottom: 18px;"-->
+<!--            />-->
+<!--            <div class="el-upload__text">点击此处，上传需要的文件</div>-->
+<!--            <div class="el-upload__tip left" slot="tip">-->
+<!--              <span style="color: #E02020;">*</span>-->
+<!--              <span>-->
+<!--                只能上传CSV文件，且不超过100KB，一次最多 200条，一天最多支持-->
+<!--                10000 条-->
+<!--                <span-->
+<!--                  class="click"-->
+<!--                  style="margin-left: 10px"-->
+<!--                  @click="downloadCSV"-->
+<!--                >-->
+<!--                  下载示例文件-->
+<!--                </span>-->
+<!--              </span>-->
+<!--              <div class="info mt-5 color-success">-->
+<!--                导入复制前可以通过-->
+<!--                <span class="click" @click="openProductCollection">-->
+<!--                  商品采集功能-->
+<!--                </span>-->
+<!--                采集商品链接-->
+<!--              </div>-->
+<!--              <PayCharge class="mt-5" />-->
+<!--            </div>-->
+<!--          </el-upload>-->
+<!--          <div class="mt-20 font-16 color-success" v-if="fileList.length">-->
+<!--            {{ fileList[0].name }} 上传成功，请点击 下一步：复制设置-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </el-tab-pane>-->
       <el-tab-pane
         v-loading="loadingCnt"
         name="bindCopy"
@@ -541,7 +541,7 @@ export default {
       limit: 200,
       textCaptureUrls: '',
       textCaptureShopUrls: '',
-      activeName: 'single',
+      activeName: 'bindCopy',
       placeholder: `商品ID查询,多个查询请换行或空格依次输入\n最多支持1000个id查询`,
       captureUrlNums: 0,
       uploadAction: '/api/importCaptureFile',
