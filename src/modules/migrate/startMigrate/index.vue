@@ -11,7 +11,7 @@
             left: 450px;
             top: 56px;
             z-index:1"
-          @click="gobind('https://meideng.yuque.com/huhuguanjia/gl647x/ghw8sk')"
+          @click="gobind('https://meideng.yuque.com/docs/share/730a3a18-0df7-4ea4-99a0-93f2c87e49c1?#')"
         ><hh-icon type="icontishi-dengpao"></hh-icon>链接复制教程
     </span>
 <!--      <hh-icon type="icontishi-dengpao"></hh-icon>-->
