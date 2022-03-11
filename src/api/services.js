@@ -521,6 +521,12 @@ const hhgjAPIs = {
   },
   productRepeatGoodsGroupDelete: (params) => {
     return api.actionCreatorPost('/api/product/repeat/goods_group/delete', params)
+  },
+  userBindCloudGoodsPage: (params) => {
+    return api.actionCreateGet('/api/user/bind/tp_bind/cloud_goods_page', params)
+  },
+  userBindTpBindCreate: (params) => {
+    return api.actionCreatorPost('/api/user/bind/tp_bind/create', params)
   }
 }
 

@@ -68,3 +68,5 @@ export default new Vuex.Store({
   modules,
   plugins: [createLoadingPlugin({Vue})]
 })
+
+console.log(modules, 'modules')
