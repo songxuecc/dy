@@ -1,40 +1,63 @@
 <template>
-  <div class="home">
-    <div class="btnwrap">
-      <span class="color-label">颜色</span>
-      <div class="btn-color">
-        <colorPicker v-model="strokeColor" />
-      </div>
+  <el-container class="left" style="height:100%;box-sizing:border-box;">
+    <el-container >
+      <el-aside width="320px" style="padding:10px 20px 30px 20px;margin-right:20px;box-shadow: 2px 0 4px rgb(0 0 0 / 5%);">
+          <el-row class="bold font-14 mb-10 mt-10">画笔颜色(可吸取图片颜色)</el-row>
+          <div class="flex mb-10">
+            <div class="btn-color flex align-c">
+              <colorPicker v-model="strokeColor" style="flex:1;z-index:9999"/>
+              <el-input type="text" size="mini" v-model="strokeColor" style="width:100px;margin-left:10px" />
+            </div>
+          </div>
 
-      <div class="brushWidth">
-        <label>lineSize:{{ lineSize }}</label>
-        <el-slider  :min="1" :max="100" v-model="lineSize" />
-      </div>
+          <el-row class="bold font-14 ">画笔大小</el-row>
+          <div class="brushWidth flex align-c mb-10">
+            <el-slider  :min="1" :max="100" v-model="lineSize" style="flex:1"/>
+            <el-input type="text" size="mini" v-model="lineSize" style="width:60px;margin-left:10px" />
+          </div>
 
-      <div class="brushWidth">
-        <label>fontSize:{{ fontSize }}</label>
-        <el-slider  :min="18" :max="50" v-model="fontSize" />
-      </div>
+          <el-row class="bold font-14 ">字体大小</el-row>
+          <div class="brushWidth flex align-c mb-10">
+            <el-slider  :min="1" :max="100" v-model="fontSize"  style="flex:1"/>
+            <el-input type="text" size="mini" v-model="fontSize" style="width:60px;margin-left:10px" />
+          </div>
 
-      <el-button @click="tapToolBtn('brush')" :class="{ active: selectTool == 'brush' }" class="btn-tool">画笔</el-button>
-      <el-button @click="tapToolBtn('rect')" :class="{ active: selectTool == 'rect' }" class="btn-tool">方块</el-button>
-      <el-button @click="tapToolBtn('text')" :class="{ active: selectTool == 'text' }" class="btn-tool">文本</el-button>
-      <el-button @click="tapToolBtn('eraser')" :class="{ active: selectTool == 'eraser' }" class="btn-tool">橡皮擦</el-button>
-      <el-button @click="select" class="btn-tool" :class="{ active: selectTool == 'select' }">选择</el-button>
-      <el-button @click="del" class="btn-tool">删除</el-button>
-      <el-button @click="tapHistoryBtn(-1)" class="btn-tool">返回</el-button>
-      <el-button @click="tapHistoryBtn(1)" class="btn-tool">撤销</el-button>
-      <el-button @click="tapClearBtn" class="btn-tool">清除</el-button>
-      <el-button @click="tapSaveBtn" class="btn-tool">保存</el-button>
+          <!-- <div class="bold font-14 flex mb-10 justify-b">
+            <span>缩放大小</span>
+            <div style="width:100px">{{zoom}}</div>
+          </div> -->
 
-    </div>
-    <canvas id="c" ref="canvasshelf"></canvas>
-  </div>
+          <el-row class="bold font-14 mb-10">图片调整</el-row>
+          <el-row class="mb-20">
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-edit-outline" @click="tapToolBtn('brush')" :type="  selectTool == 'brush' ? 'primary':'default'" >画笔</el-button></el-col>
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-edit-outline" @click="tapToolBtn('rect')" :type="selectTool == 'rect' ? 'primary':'default'" >方块</el-button></el-col>
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-edit-outline"  @click="tapToolBtn('text')" :type="selectTool == 'text' ? 'primary':'default'" >文本</el-button></el-col>
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-edit-outline"  @click="tapToolBtn('eraser')" :type="selectTool == 'eraser' ? 'primary':'default'" >橡皮</el-button></el-col>
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-edit-outline"  @click="tapToolBtn('select')"  :type="selectTool == 'select' ? 'primary':'default'">选择</el-button></el-col>
+            <!-- <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-rank"  @click="tapToolBtn('move')" :type="selectTool == 'move' ? 'primary':'default'"  >移动</el-button></el-col> -->
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-circle-plus-outline"  @click="tapScaleBtn(1)"  >放大</el-button></el-col>
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-remove-outline"  @click="tapScaleBtn(-1)"  >缩小</el-button></el-col>
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-delete"  @click="del" >删除</el-button></el-col>
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-refresh-left"  @click="tapHistoryBtn(-1)" >返回</el-button></el-col>
+            <el-col class="mb-10" :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-refresh-right"  @click="tapHistoryBtn(1)" >撤销</el-button></el-col>
+            <el-col  :span="12"><el-button size="medium" style="width:125px;height:36px" icon="el-icon-refresh"  @click="tapClearBtn" >清除</el-button></el-col>
+          </el-row>
+          <el-row >
+            <el-col  :span="12"><el-button size="medium" type="primary" style="width:265px;height:36px" icon="el-icon-edit-outline"  @click="tapSaveBtn" >保存</el-button></el-col>
+          </el-row>
+
+      </el-aside>
+      <el-main class="flex justify-c pr-20" style="overflow:auto">
+        <div :style="`box-shadow: 0 4px 20px rgb(0 0 0 / 10%);width:${width}px;height:${height}px;`" >
+          <canvas id="c"></canvas>
+        </div>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
 import fabric from 'fabric'
-import utils from '@/common/utils'
 
 export default {
   name: 'DrawingBoard',
@@ -70,7 +93,13 @@ export default {
       // 当前操作步数
       stateIdx: 0,
       // 当前是否在执行撤销或重做操作
-      isRedoing: false
+      isRedoing: false,
+      // 画布大小
+      originWidth: 500,
+      originHeight: 500,
+      zoom: 1,
+      width: undefined,
+      height: undefined
     }
   },
   watch: {
@@ -86,25 +115,38 @@ export default {
   methods: {
     initImage (src) {
       // 添加canvas背景图片
-      const canvas = this.canvas
       const self = this
       // 使用网络图片
       fabric.Image.fromURL(
         src,
-        function (img, err) {
+        (img, err) => {
           if (err) {
-            canvas.setBackgroundColor(
-              self.bgColor,
-              canvas.renderAll.bind(canvas)
-            )
+            // canvas.setBackgroundColor(
+            //   self.bgColor,
+            //   canvas.renderAll.bind(canvas)
+            // )
           } else {
-            canvas.setBackgroundImage(src, canvas.renderAll.bind(canvas), {
-              scaleX: canvas.width / img.width,
-              scaleY: canvas.height / img.height,
+            const scale = 500 / img.width
+            this.scale = scale.toFixed(2)
+
+            this.originWidth = img.width
+            this.originHeight = img.height
+
+            this.width = scale * img.width
+            this.height = scale * img.height
+            this.canvas.setWidth(this.width)
+            this.canvas.setHeight(this.height)
+
+            const imgConfig = {
+              scaleX: scale,
+              scaleY: scale,
               erasable: false,
               // 使用的图片跨域时，配置此参数
-              crossOrigin: 'anonymous'
-            })
+              crossOrigin: 'anonymous',
+              src: this.imgUrl
+            }
+            img.set(imgConfig)
+            self.canvas.add(img)
           }
         },
         {
@@ -114,41 +156,30 @@ export default {
     },
     // 初始化画布
     async initCanvas () {
-      return new Promise(async (resolve, reject) => {
-        try {
-          // 初始化 fabric canvas对象
-          if (!this.canvas) {
-            this.isRedoing = true
-            const data = await utils.getImgRawSize(this.imgUrl)
-            const scale = 500 / data.width
-            this.canvas = new fabric.Canvas('c', {
-              width: scale * data.width,
-              height: scale * data.height
-            })
-            this.initImage(this.imgUrl)
-            this.isRedoing = false
+      // 初始化 fabric canvas对象
+      if (!this.canvas) {
+        this.isRedoing = true
+        this.canvas = new fabric.Canvas('c')
+        this.initImage(this.imgUrl)
+        this.isRedoing = false
             // 设置画布背景色 (背景色需要这样设置，否则拓展的橡皮功能会报错)
-            this.canvas.setBackgroundColor(this.bgColor, undefined, {
-              erasable: false
-            })
-            // 设置背景色不受缩放与平移的影响
-            this.canvas.set('backgroundVpt', false)
-            // 禁止用户进行组选择
-            this.canvas.selection = false
-            // 设置当前鼠标停留在
-            this.canvas.hoverCursor = 'default'
-            // 重新渲染画布
-            this.canvas.renderAll()
-            // 记录画布原始状态
-            this.stateArr.push(JSON.stringify(this.canvas))
-            this.stateIdx = 0
-          }
-          resolve(true)
-        } catch (err) {
-          console.log(err)
-          reject(err)
-        }
-      })
+        this.canvas.setBackgroundColor(this.bgColor, undefined, {
+          erasable: false
+        })
+        // 设置背景色不受缩放与平移的影响
+        this.canvas.set('backgroundVpt', false)
+        // 禁止用户进行组选择
+        this.canvas.selection = false
+        // 设置当前鼠标停留在
+        this.canvas.hoverCursor = 'default'
+        // 重新渲染画布
+        this.canvas.renderAll()
+        // 记录画布原始状态
+        this.stateArr.push(JSON.stringify(this.canvas))
+        // 当选择画布中的对象时，该对象不出现在顶层。
+        this.canvas.preserveObjectStacking = true
+        this.stateIdx = 0
+      }
     },
     // 初始化画布事件
     initCanvasEvent () {
@@ -207,15 +238,15 @@ export default {
               // 初始化画布移动
               this.initMove()
               break
-            case 'select':
-              // 初始化画布移动
-              this.select()
-              break
+            // case 'select':
+            //   // 初始化画布移动
+            //   this.select()
+            //   break
           }
         }
       })
       // 监听鼠标松开事件
-      this.canvas.on('mouse:up', () => {
+      this.canvas.on('mouse:up', (options) => {
         // 如果当前正在进行绘图或移动相关操作
         if (this.isDrawing) {
           // 清空鼠标移动时保存的临时绘图对象
@@ -282,10 +313,11 @@ export default {
     // 初始化 绘制矩形
     initRect () {
       // 计算矩形长宽
+      const zoom = this.canvas.getZoom()
       let left = this.getTransformedPosX(this.mouseFrom.x)
       let top = this.getTransformedPosY(this.mouseFrom.y)
-      let width = this.mouseTo.x - this.mouseFrom.x
-      let height = this.mouseTo.y - this.mouseFrom.y
+      let width = (this.mouseTo.x - this.mouseFrom.x) / zoom
+      let height = (this.mouseTo.y - this.mouseFrom.y) / zoom
       // 创建矩形 对象
       let canvasObject = new fabric.Rect({
         left: left,
@@ -397,7 +429,6 @@ export default {
       if (this.selectTool === tool && !reset) return
       // 保存当前选中的绘图工具
       this.selectTool = tool
-
       // 选择任何工具前进行一些重置工作
       // 禁用画笔模式
       this.canvas.isDrawingMode = false
@@ -414,6 +445,9 @@ export default {
       } else if (this.selectTool === 'eraser') {
         // 如果用户选择的是橡皮擦工具，直接初始化，无需等待用户进行鼠标操作
         this.initEraser()
+      } else if (this.selectTool === 'select') {
+        // 如果用户选择的是橡皮擦工具，直接初始化，无需等待用户进行鼠标操作
+        this.initSelect()
       }
     },
     // 缩放按钮点击
@@ -430,7 +464,22 @@ export default {
       // zoom 不能大于 20 不能小于0.01
       zoom = zoom > 20 ? 20 : zoom
       zoom = zoom < 0.01 ? 0.01 : zoom
+
+      zoom = zoom.toFixed(2)
       this.canvas.setZoom(zoom)
+      // 放大缩小画布
+      let newZoom = this.canvas.getZoom()
+      this.zoom = newZoom
+      let scale = this.scale
+      const originWidth = this.originWidth
+      const originHeight = this.originHeight
+      const width = originWidth * scale * newZoom
+      const height = originHeight * scale * newZoom
+      this.canvas.setWidth(width)
+      this.canvas.setHeight(height)
+      this.width = width
+      this.height = height
+      console.log(newZoom, scale, originWidth, width)
     },
     // 撤销重做按钮点击
     tapHistoryBtn (flag) {
@@ -460,59 +509,66 @@ export default {
     },
     // 保存按钮点击
     tapSaveBtn () {
+      let newZoom = this.canvas.getZoom()
+      let scale = this.scale
+      const enlarge = 1 / scale * newZoom
+      const width = this.canvas.width / scale
+      const height = this.canvas.height / scale
+      console.log(enlarge, 'enlarge')
+
       this.canvas.clone((cvs) => {
+        cvs.setZoom(enlarge)
         // 遍历所有对对象，获取最小坐标，最大坐标
         let top = 0
         let left = 0
-        let width = this.canvas.width
-        let height = this.canvas.height
 
-        // var objects = cvs.getObjects()
-        // console.log(objects, 'objects')
-        // if (objects.length > 0) {
-        //   var rect = objects[0].getBoundingRect()
-        //   var minX = rect.left
-        //   var minY = rect.top
-        //   var maxX = rect.left + rect.width
-        //   var maxY = rect.top + rect.height
-        //   for (var i = 1; i < objects.length; i++) {
-        //     rect = objects[i].getBoundingRect()
-        //     minX = Math.min(minX, rect.left)
-        //     minY = Math.min(minY, rect.top)
-        //     maxX = Math.max(maxX, rect.left + rect.width)
-        //     maxY = Math.max(maxY, rect.top + rect.height)
-        //   }
-        //   top = minY - 100
-        //   left = minX - 100
-        //   width = maxX - minX + 200
-        //   height = maxY - minY + 200
-        //   cvs.sendToBack(
-        //     new fabric.Rect({
-        //       left,
-        //       top,
-        //       width,
-        //       height,
-        //       stroke: 'rgba(0,0,0,0)',
-        //       fill: this.bgColor,
-        //       strokeWidth: 0
-        //     })
-        //   )
-        // }
         const dataURL = cvs.toDataURL({
-          format: 'png',
+          format: 'jpeg',
           multiplier: cvs.getZoom(),
           left,
           top,
           width,
           height
         })
-        console.log(dataURL, 'cvs')
-        const link = document.createElement('a')
-        link.download = 'canvas.png'
-        link.href = dataURL
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        // 压缩图片
+        function compress (
+          base64, // 源图片
+          rate, // 缩放比例
+          callback // 回调
+        ) {
+        // 处理缩放，转格式
+          var _img = new Image()
+          _img.src = base64
+          _img.onload = function () {
+            var _canvas = document.createElement('canvas')
+            var w = this.width / rate
+            var h = this.height / rate
+            _canvas.setAttribute('width', w)
+            _canvas.setAttribute('height', h)
+            _canvas.getContext('2d').drawImage(this, 0, 0, w, h)
+            var base64 = _canvas.toDataURL('image/jpeg')
+            _canvas.toBlob(function (blob) {
+              if (blob.size > 750 * 1334) { // 如果还大，继续压缩
+                compress(base64, rate, callback)
+              } else {
+                callback(base64)
+              }
+            }, 'image/jpeg')
+          }
+        }
+        compress(
+          dataURL,
+          1.5,
+          function (base64) {
+            const link = document.createElement('a')
+            link.download = 'canvas.jpeg'
+            console.log(base64, 'base64')
+            link.href = base64
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+          }
+        )
       })
     },
     // 计算画布移动之后的x坐标点
@@ -524,20 +580,42 @@ export default {
       let zoom = Number(this.canvas.getZoom())
       return (y - this.canvas.viewportTransform[5]) / zoom
     },
-
-    select () {
-      this.canvas.isDrawingMode = false
-      this.selectTool = 'select'
+    initSelect () {
+      console.log(this.canvas.getActiveObject())
+      if (this.canvas.getActiveObject() && this.canvas.getActiveObject().src === this.imgUrl) {
+        return false
+      } else {
+        this.canvas.isDrawingMode = false
+        this.selectTool = 'select'
+        let drawObjects = this.canvas.getObjects()
+        if (drawObjects.length > 0) {
+          drawObjects.map((item) => {
+            item.set('selectable', true)
+          })
+        }
+      }
+      // let drawObjects = this.canvas.getObjects()
+      // if (drawObjects.length > 0) {
+      //   drawObjects.map((item) => {
+      //     item.set('selectable', true)
+      //   })
+      // }
+      // this.canvas.isDrawingMode = false
+      // this.selectTool = 'select'
     },
     del () {
-      this.canvas.remove(this.canvas.getActiveObject())
+      if (this.canvas.getActiveObject().src === this.imgUrl) {
+        this.$message.warning('不可以删除此图片')
+        return false
+      } else {
+        this.canvas.remove(this.canvas.getActiveObject())
+      }
     }
   },
   mounted () {
-    this.initCanvas().then((res) => {
-      this.tapToolBtn('brush')
-      this.initCanvasEvent()
-    })
+    this.initCanvas()
+    this.tapToolBtn('brush')
+    this.initCanvasEvent()
   }
 }
 </script>
@@ -546,6 +624,13 @@ export default {
   overflow: hidden;
   height: 100vh;
 }
+
+ /deep/ .colorBtn {
+      width: 40px !important;
+      height: 24px !important;
+      border-radius: 2px;
+    }
+
 .btnwrap {
   height: 50px;
   display: flex;
@@ -556,10 +641,7 @@ export default {
     height: 40px;
     position: relative;
     margin-left: 20px;
-    /deep/ .colorBtn {
-      width: 40px;
-      height: 40px;
-    }
+
   }
   .color-label {
     padding-left: 4px;
@@ -581,5 +663,9 @@ export default {
       border-color: #2962ff;
     }
   }
+}
+
+/deep/ .el-container {
+  height: 100%;
 }
 </style>

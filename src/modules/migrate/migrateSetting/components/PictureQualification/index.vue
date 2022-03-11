@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <el-dialog :visible.sync="visibleDrawingBoard" append-to-body width="800px">
+    <el-dialog :visible.sync="visibleDrawingBoard" append-to-body width="80%" title="图片编辑">
       <DrawingBoard :imgUrl="activeUrl" v-if="visibleDrawingBoard"/>
     </el-dialog>
   </div>
@@ -189,4 +189,28 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '~./index.less';
+/deep/ .el-dialog__header{
+  margin-bottom: 0;
+  padding-top: 10px;
+  background: rgba(39,41,47,.9);
+  overflow: hidden;
+  border-radius: 10px 10px 0 0;
+  .el-dialog__title {
+    color:#fff;
+  }
+}
+
+/deep/ .el-dialog__body{
+  padding: 0;
+  height: calc(100% - 55px);
+}
+
+/deep/ .el-dialog {
+  margin-top: 5vh !important;
+  height: 85vh;
+}
+
+/deep/ .el-dialog__headerbtn {
+  top:0px;
+}
 </style>
