@@ -310,7 +310,7 @@
       </el-tab-pane>
     </el-tabs>
     <div class="left">
-      <el-checkbox v-model="dyRule">我也知晓平台处罚规则，确认已获取复制店铺授权。 点击查看 <span class="click"  v-hh-open="'https://school.jinritemai.com/doudian/web/article/101663?from=md'" >平台处罚规则链接</span></el-checkbox>
+      <el-checkbox v-model="dyRule">我已知晓平台处罚规则，确认已获取复制店铺授权。 点击查看 <span class="click"  v-hh-open="'https://school.jinritemai.com/doudian/web/article/101663?from=md'" >平台处罚规则链接</span></el-checkbox>
     </div>
     <!-- 多商品复制 -->
     <div v-if="activeName === 'single'">
@@ -1434,10 +1434,16 @@ export default {
     },
     goSettingsAuthorizedStore (row) {
       console.log(row, 'goSettingsAuthorizedStore')
+      if (!this.dyRule) {
+        return this.$message.warning('请勾选已查看平台出发规则！')
+      }
       this.gotoSetting(() => this.startCaptureAuthorizedStore(row), true)
     },
     startCaptureAuthorizedStore (row) {
       console.log(row, 'startCaptureAuthorizedStore')
+      if (!this.dyRule) {
+        return this.$message.warning('请勾选已查看平台出发规则！')
+      }
       const parmas = {}
       parmas.is_cloud_goods = 1
       parmas.cloud_goods_id = row.id
