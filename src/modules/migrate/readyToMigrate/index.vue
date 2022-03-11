@@ -637,6 +637,11 @@ export default {
         if (this.capture.page_status === 4) {
           return 'capture-item-waiting'
         }
+
+        // if (this.capture.current_page_id === '' && this.capture.status === 2 && (Math.ceil(this.capture.total_num / this.capture.capture_num) > this.capture.max_current_page_id)) {
+        //   return 'capture-item'
+        // }
+
         if (
           [0, 1].includes(this.capture.status) &&
           this.capture.page_status === 4
@@ -1062,7 +1067,9 @@ export default {
         'getCapture',
         params,
         async (data) => {
-          console.log(data, 'data')
+          // data = {
+          //   'msg': 'succ', 'code': 0, 'data': {'page_size': 24, 'shop_async_link': 'https://shop362260980.taobao.com/i/asynSearch.htm?input_charset=gbk&mid=w-22185737261-0&wid=22185737261&path=/search.htm&search=y&pageNo=1&orderType=hotsell_desc', 'parent_id': 0, 'current_page_status': 2, 'source': '\u6dd8\u5b9d', 'shop_name': '\u4e91\u5357\u8001\u9a6c\u85cf\u5bb6\u5e9c\u90b8\u8336\u53f6', 'capture_num': 24, 'total_num': 39, 'page_status': 1, 'current_page_id': '', 'url': 'https://shop362260980.taobao.com/?spm=2013.1.0.0.669e3b0dfL3enH', 'shop_capture_type': 1, 'capture_type_id': 1002, 'status': 2, 'max_current_page_id': 1, 'create_time': '2022-03-01 11:02:48', 'tp_id': 1002, 'status_statistics': [{'count': 20, 'status': 2}], 'left_seconds': 20, 'capture_id': 37446867, 'is_error_balance': 0, 'page_id': 1}
+          // }
           // data = {'code': 0, 'data': {'shop_capture_type': 1, 'is_error_balance': 0, 'parent_id': 0, 'page_id': 3, 'status_statistics': [{'count': 19, 'status': 2}], 'capture_id': 31849936, 'current_page_id': '', 'create_time': '2022-01-06 14:50:00', 'total_num': 450, 'left_seconds': 155, 'source': '\u5929\u732b', 'current_page_status': 2, 'page_status': 1, 'page_size': 50, 'status': 2, 'shop_name': '\u6ce1\u6ce1\u739b\u7279\u65d7\u8230\u5e97', 'capture_num': 50, 'capture_type_id': 1002, 'shop_async_link': 'https://popmart.tmall.com/i/asynSearch.htm?mid=w-15691211895-0&wid=15691211895&path=/search.htm&search=y&pageNo=3&orderType=hotsell_desc', 'url': 'https://popmart.tmall.com/?spm=a220o.1000855.1997427721.d4918089.4617b4datBs63D', 'tp_id': 1001, 'max_current_page_id': 3}, 'msg': 'succ'}
           // data = data.data
           const hasShow = localStorage.getItem(data.capture_id)
@@ -1140,16 +1147,20 @@ export default {
               }
             }
           }
+
           if (this.loginDialogVisible || this.slideDialogVisible) {
             return
           }
+          console.log(data, this.isShopCapture, this.getCaptureStatus, [1002, 1001].includes(this.capture.tp_id), 'data')
 
           if (this.getCaptureStatus === 'finish' && !(this.isShopCapture && [1002, 1001].includes(this.capture.tp_id))) {
             this.getProductList(isSilent)
             return
           }
+
           // 淘宝整店抓取
           if (this.isShopCapture && [1002, 1001].includes(this.capture.tp_id)) {
+            console.log('淘宝整店抓取')
             const captureTotalPageNumber = Math.ceil(this.capture.total_num / this.capture.page_size)
             // 总数据全部抓取完成
             const isShopFinish = this.getCaptureStatus === 'finish' && (captureTotalPageNumber === this.capture.max_current_page_id || this.capture.is_error_balance)
@@ -1750,7 +1761,7 @@ export default {
       window.open(routeData.href, '_blank')
     },
     goChargeOrder () {
-      window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
+      window.open(common.DY_SERVICE_LINK)
     },
     // 继续抓取
     continueCapture () {
@@ -1758,7 +1769,7 @@ export default {
     },
     // 打开淘宝
     openTaobao () {
-      window.open('https://www.taobao.com/')
+      window.open('https://login.taobao.com/member/login.jhtml?spm=a21bo.jianhua.754894437.1.5af911d9ufOmAz&f=top&redirectURL=https%3A%2F%2Fwww.taobao.com%2F')
     }
   }
 }

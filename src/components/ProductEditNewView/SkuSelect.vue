@@ -202,8 +202,7 @@
         size="medium"
         plain
         @click="addSpecifications"
-        >添加规格</el-button
-      >
+        >添加规格</el-button>
     </div>
 
     <el-dialog
@@ -430,6 +429,10 @@ export default {
     // 删除单个sku
     handleDeleteSingleSku (idx, index, list) {
       // 如果删除 整个规格为空 则返回数据 this.specifications - 1
+      if (list.length === 1 && this.specifications.length === 1) {
+        this.$message.warning('至少保留一个规格')
+        return false
+      }
       list.splice(idx, 1)
       let specifications = [...this.specifications]
       if (!list.length) {

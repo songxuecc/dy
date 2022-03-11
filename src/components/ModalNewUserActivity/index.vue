@@ -18,6 +18,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import common from '@/common/common.js'
 
 export default {
   name: 'ModalNewUserActivity',
@@ -55,7 +56,7 @@ export default {
     },
     preview () {
       localStorage.setItem('hasShowModalNewUserActivity', 1)
-      const url = 'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l'
+      const url = common.HELP_LINK
       window.open(url)
       if (window._hmt) {
         window._hmt.push(['_trackEvent', '引导添加客服弹窗', '点击', '观看教程'])

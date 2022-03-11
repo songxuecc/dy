@@ -55,9 +55,19 @@
                 <p class="info">最多支持设置距离当前30天</p>
             </el-form-item>
             <!-- 阶梯发货 -->
-            <el-form-item label="现货发货时间:"  v-if="template.model.presell_type === 2" >
+            <!-- <el-form-item label="现货发货时间:"  v-if="template.model.presell_type === 2" >
                 <span>48小时</span>
                 <p class="info">现货发货模式下生成的订单平台统一规定发货时间为48小时，请严格按照承诺发货时间进行发货</p>
+            </el-form-item> -->
+
+            <el-form-item label="承诺发货时间:" prop="delivery_delay_day" v-if="template.model.presell_type === 2">
+                <div style="display:flex">
+                  <el-select v-model="template.model.delivery_delay_day" placeholder="请选择" size="small" default-first-option style="width:150px;margin-right:10px;align-items:center">
+                      <el-option :value="9999" label="当日" :key="9999"> </el-option>
+                      <el-option :value="1" label="次日"> </el-option>
+                      <el-option :value="2" label="48小时"> </el-option>
+                  </el-select>
+                </div>
             </el-form-item>
             <el-form-item
               :label="template.model.presell_type === 1 ?'预售发货时间:':'阶梯发货时间:'"
@@ -193,6 +203,9 @@ export default {
       return this.$refs.form.validate(cb)
     },
     check (value) {
+      if (value === 2 && ![9999, 1, 2].includes(Number(this.template.model.delivery_delay_day))) {
+        this.template.model.delivery_delay_day = 1
+      }
       this.$refs.form.clearValidate()
       if (value === 0) {
         this.$refs.form.validateField(['delivery_delay_day'])
@@ -212,7 +225,7 @@ export default {
       window.open('https://school.jinritemai.com/doudian/web/article/101706')
     },
     openSpacialCategory () {
-      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/fpa940')
+      window.open('https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/fpa940')
     }
   }
 }

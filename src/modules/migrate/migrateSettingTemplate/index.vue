@@ -90,7 +90,7 @@ export default {
       'setSelectTPProductIdList'
     ]),
     goHelpLink () {
-      window.open('https://www.yuque.com/huxiao-rkndm/ksui6u/zghdvq')
+      window.open('https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/zghdvq')
     },
     beforeunloadFn (e) {
       e = e || window.event
@@ -149,9 +149,7 @@ export default {
         presell = pick(model, ['presell_end_time', 'presell_delay'])
         presell.presell_end_time = moment(model.presell_end_time).format('YYYY-MM-DD HH:mm:ss')
       } else {
-        presell = pick(model, ['presell_delay', 'step_stock_num_percentage'])
-        // 抖音阶梯发货 现货都是48小时
-        presell.deliver_delay_day = moment().add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+        presell = pick(model, ['presell_delay', 'step_stock_num_percentage', 'delivery_delay_day'])
         presell.presell_end_time = ''
       }
       // 处理多余属性

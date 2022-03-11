@@ -4,7 +4,7 @@
       <div class="alert">
             <div style="margin-left:16px">
               <hh-icon type="icontishi" ></hh-icon>什么是重复铺货检测？
-              <span class="click pointer font-12 " v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/zcg2cm'">
+              <span class="click pointer font-12 " v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/zcg2cm'">
                 重复铺货检测教程
               </span>
             </div>
@@ -30,7 +30,7 @@
         <el-button style="width:120px" type="primary" @click="startDetect" class="mr-10" >{{!detectDetail.repeat_check_time ? '开始检测' : '再次检测'}}</el-button>
         <div>
           <span class="color-4e">最近检测结果：</span> <span class="fail mr-30">{{detectDetail.group_nums}}组重复商品，共{{detectDetail.goods_nums}}个商品</span>
-          <span class="color-4e">最近检测时间：</span> <span class="color-999">{{detectDetail.repeat_check_time}}</span>
+          <span class="color-4e" v-if="detectDetail.repeat_check_time">最近检测时间：</span> <span class="color-999">{{detectDetail.repeat_check_time}}</span>
         </div>
       </div>
 
@@ -38,6 +38,7 @@
         <div class="font-12 ">
           <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectOnSale">保留售卖中的商品</el-button>
           <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectQuetity">保留库存高的商品</el-button>
+          <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectQuetityLow">保留库存低的商品</el-button>
           <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectSkuMax">保留价格最高的商品</el-button>
           <el-button plain type="primary" size="small" class="" @click="handleQuikeSelectSkuMin">保留价格最低的商品</el-button>
         </div >
@@ -352,6 +353,29 @@ export default {
         let index = 0
         item.goods_list.forEach((goods, idx) => {
           if (goods.goods_quantity >= item.goods_list[index].goods_quantity) {
+            index = idx
+          }
+        })
+        item.goods_list = item.goods_list.map((goods, idx) => {
+          if (index === idx) {
+            goods.is_checked = false
+          } else {
+            goods.is_checked = true
+          }
+          return goods
+        })
+        return item
+      })
+      this.save({tableData})
+      this.checkAllStatus()
+    },
+    // 保留库存低的商品
+    handleQuikeSelectQuetityLow () {
+      const tableData = this.tableData.map(item => {
+        // let quantity = item.goods_list[0].goods_quantity
+        let index = 0
+        item.goods_list.forEach((goods, idx) => {
+          if (goods.goods_quantity <= item.goods_list[index].goods_quantity) {
             index = idx
           }
         })

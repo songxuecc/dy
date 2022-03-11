@@ -1,7 +1,6 @@
 <template lang="html">
   <div style="position: relative;">
-    <!-- <help-tips v-if="activeName === 'shop'" helpLink="captureShop" words="怎么获取店铺链接？" positionT="10" positionR="10">
-    </help-tips> -->
+
     <SettingAlert />
 <!--    <span-->
 <!--      class="click mr-20 pointer"-->
@@ -39,7 +38,7 @@
         left: 450px;
         top: 56px;
         z-index:1"
-      @click="gobind('https://www.yuque.com/huxiao-rkndm/ksui6u/dsibrc')"
+      @click="gobind('https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/dsibrc')"
     >
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
     </span>
@@ -297,7 +296,9 @@
         </el-form>
       </el-tab-pane>
     </el-tabs>
-
+    <div class="left">
+      <el-checkbox v-model="dyRule">我也知晓平台处罚规则，确认已获取复制店铺授权。 点击查看 <span class="click"  v-hh-open="'https://school.jinritemai.com/doudian/web/article/101663?from=md'" >平台处罚规则链接</span></el-checkbox>
+    </div>
     <!-- 多商品复制 -->
     <div v-if="activeName === 'single'">
       <SupportPlatForm :list="platformIconsUrl" />
@@ -308,7 +309,7 @@
             type="primary"
             @click="gotoSetting(onCaptureUrls, captureUrlNums)"
             style="height:50px;font-size:16px"
-            :disabled="isStartCapture || settingDataLoading"
+            :disabled="isStartCapture || settingDataLoading || !dyRule"
           >
             <span>下一步：复制设置</span>
             <el-badge :value="captureUrlNums" v-if="captureUrlNums"></el-badge>
@@ -330,7 +331,7 @@
             class="click ml-10"
             slot="reference"
             @click="onCaptureUrls"
-            :disabled="isStartCapture || settingDataLoading"
+            :disabled="isStartCapture || settingDataLoading || !dyRule"
             >跳过设置，直接复制
           </el-button>
         </el-popover>
@@ -352,7 +353,7 @@
             :disabled="
               isStartCapture ||
                 settingDataLoading ||
-                isCaptureIsExistShopCapture
+                isCaptureIsExistShopCapture  || !dyRule
             "
             >下一步：复制设置
           </el-button>
@@ -376,7 +377,7 @@
             :disabled="
               isStartCapture ||
                 settingDataLoading ||
-                isCaptureIsExistShopCapture
+                isCaptureIsExistShopCapture  || !dyRule
             "
             >跳过设置，直接复制
           </el-button>
@@ -392,7 +393,7 @@
           style="height:50px;font-size:16px"
           class="ralative"
           :disabled="
-            isStartCapture || settingDataLoading || productListCheckLoading
+            isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
           "
           >下一步：复制设置
           <span
@@ -419,7 +420,7 @@
             slot="reference"
             @click="onCaptureFile"
             :disabled="
-              isStartCapture || settingDataLoading || productListCheckLoading
+              isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
             "
             :loading="productListCheckLoading"
             >跳过设置，直接复制
@@ -439,7 +440,7 @@
           style="height:50px;font-size:16px"
           class="ralative"
           :disabled="
-            isStartCapture || settingDataLoading || productListCheckLoading
+            isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
           "
           >下一步：复制设置
           <span
@@ -466,7 +467,7 @@
             slot="reference"
             @click="onCaptureBindCopy"
             :disabled="
-              isStartCapture || settingDataLoading || productListCheckLoading
+              isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
             "
             :loading="productListCheckLoading"
             >跳过设置，直接复制
@@ -531,6 +532,8 @@ export default {
   mixins: [request],
   data () {
     return {
+      dyRule: true,
+      common,
       fileList: [],
       syncText: '',
       syncTimer: null,
@@ -1109,7 +1112,7 @@ export default {
           err => {
             let el = ''
             if (this.activeName === 'bindCopy') {
-              el = `<br/><a href='https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl' target='_blank' style="color:#1D8FFF;font-size:12px">点击查看帮助</a>`
+              el = `<br/><a href='https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/tm5odl' target='_blank' style="color:#1D8FFF;font-size:12px">点击查看帮助</a>`
             }
             this.$alert(`${err.message}` + el, '警告', {
               dangerouslyUseHTMLString: true,

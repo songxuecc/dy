@@ -139,7 +139,7 @@
                   </el-tooltip>
                   </span>
                   <!-- sku编辑 -->
-                  <SkuTable @change="handleSkuTable" ref="SkuTable"/>
+                  <SkuTable @change="handleSkuTable" ref="SkuTable" @presellRuleList="handlePresellRuleList"/>
                   <div class="common-bottom">
                 </div>
               </el-tab-pane>
@@ -434,7 +434,7 @@ export default {
       batchCodeInput: '',
       dialogPriceVisible: false,
       product: new FormModel([
-        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'sku_json'
+        'title', 'price', 'cat_id', 'outer_id', 'description', 'skuMap', 'bannerPicUrlList', 'descPicUrlList', 'attrs', 'brand_id', 'sku_json', 'presell_rule_list'
       ]),
       template: new FormModel(),
       bannerPicUrlList: [],
@@ -620,7 +620,7 @@ export default {
         this.product = new FormModel([
           'title', 'price', 'cat_id', 'outer_id', 'description',
           'bannerPicUrlList', 'descPicUrlList', 'attrs', 'attrDic', 'attrList', 'brand_id', 'recommend_remark',
-          'sku_json'
+          'sku_json', 'presell_rule_list'
         ])
         this.product.assign({
           tp_product_id: tpProduct.tp_product_id,
@@ -640,7 +640,7 @@ export default {
         this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
         // sku数据初始化
         this.skuJson = this.product.model.sku_json
-        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson, this.product.model.presell_rule_list)
         const skuJson = {...this.product.model.sku_json}
         if (originModel) {
           skuJson.spec_price_list = originModel.tableData.map(item => omit(item, ['index']))
@@ -768,6 +768,7 @@ export default {
         this.product.assign({recommend_remark: data.recommend_remark})
         this.product.assign({skuPropertyList: [...this.skuPropertyList]})
         this.product.assign({skuPropertyValueMap: {...this.skuPropertyValueMap}})
+        this.product.assign({presell_rule_list: data.presell_rule_list})
         this.product.assign({sortSkuKeys: this.sortSkuKeys})
         this.product.assign({skuShowList: [...this.skuShowList]})
         this.product.assign({originAttr: {...this.origionAttr}})
@@ -789,8 +790,7 @@ export default {
         this.updateTitleChange()
         this.updateRemoveFirstBanner()
         // sku数据初始化
-        this.skuJson = this.product.model.sku_json
-        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+        const originModel = this.$refs.SkuTable && this.$refs.SkuTable.init(this.product.model.sku_json, this.product.model.presell_rule_list)
         const skuJson = {...this.product.model.sku_json}
         if (originModel) {
           skuJson.spec_price_list = originModel.tableData.map(item => omit(item, ['index']))
@@ -804,6 +804,10 @@ export default {
         Object.assign(this.product.originModel, {
           sku_json: skuJson
         })
+        Object.assign(this.product.model, {
+          sku_json: skuJson
+        })
+        this.skuJson = skuJson
         if (this.productBrandDic.hasOwnProperty(this.product.model.tp_product_id)) {
           this.product.model.brand_id = this.productBrandDic[this.product.model.tp_product_id]
         }
@@ -1047,34 +1051,34 @@ export default {
         }).map(item => {
           return this.products[item.tp_product_id]
         })
-      const promiseBannerImageResult = await this.promiseBannerImage(products)
-      if (promiseBannerImageResult && promiseBannerImageResult.result) {
-        this.$refs.productList.setCurrentRow(promiseBannerImageResult.product.model)
-        const resetProduct = this.tableData.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
-        this.setProduct(resetProduct)
-        this.activityTab = 'carousel'
-        this.$nextTick(() => {
-          const srcs = promiseBannerImageResult.srcs
-          for (var i = 0; i < srcs.length; i++) {
-            const src = srcs[i]
-            const image = document.getElementsByClassName(`needValid ${src}`)
-            image && image[0].classList.add('is-error-carousel')
-          }
-          this.$refs.SkuTable.$refs.form.validate((valid, object) => {
-            let isError = document.getElementsByClassName('is-error-carousel')
-            if (isError && isError[0]) {
-              isError[0].scrollIntoView({
-                // 滚动到指定节点
-                // 值有start,center,end，nearest，当前显示在视图区域中间
-                block: 'center',
-                // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-                behavior: 'smooth'
-              })
-            }
-          })
-        })
-        return this.$message.error('轮播图尺寸需要1:1')
-      }
+      // const promiseBannerImageResult = await this.promiseBannerImage(products)
+      // if (promiseBannerImageResult && promiseBannerImageResult.result) {
+      //   this.$refs.productList.setCurrentRow(promiseBannerImageResult.product.model)
+      //   const resetProduct = this.tableData.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
+      //   this.setProduct(resetProduct)
+      //   this.activityTab = 'carousel'
+      //   this.$nextTick(() => {
+      //     const srcs = promiseBannerImageResult.srcs
+      //     for (var i = 0; i < srcs.length; i++) {
+      //       const src = srcs[i]
+      //       const image = document.getElementsByClassName(`needValid ${src}`)
+      //       image && image[0].classList.add('is-error-carousel')
+      //     }
+      //     this.$refs.SkuTable.$refs.form.validate((valid, object) => {
+      //       let isError = document.getElementsByClassName('is-error-carousel')
+      //       if (isError && isError[0]) {
+      //         isError[0].scrollIntoView({
+      //           // 滚动到指定节点
+      //           // 值有start,center,end，nearest，当前显示在视图区域中间
+      //           block: 'center',
+      //           // 值有auto、instant,smooth，缓动动画（当前是慢速的）
+      //           behavior: 'smooth'
+      //         })
+      //       }
+      //     })
+      //   })
+      //   return this.$message.error('轮播图尺寸需要1:1')
+      // }
 
       // 服务与资质
       let qualityValidId = false
@@ -1179,7 +1183,8 @@ export default {
                   sku_id: spec.sku_id || '',
                   quantity: spec.quantity || 0,
                   img: spec.img || '',
-                  specDetailIds: spec.spec_detail_id_list
+                  specDetailIds: spec.spec_detail_id_list,
+                  time_sku_spec_name: spec.time_sku_spec_name
                 }
               })
               let productParams = {
@@ -1198,10 +1203,10 @@ export default {
                   desc_json: product.model.descPicUrlList.map(val => val['url']),
                   brand_id: brandId,
                   recommend_remark: product.model.recommend_remark,
-                  quality_list: product.model.quality_list || []
+                  quality_list: product.model.quality_list || [],
+                  presell_rule_list: product.model.presell_rule_list
                 }
               }
-              console.log(productParams, 'productParams')
               tpProductList.push(productParams)
             }
           } else {
@@ -1449,7 +1454,7 @@ export default {
       this.skuPropertyValueMap = this.product.model.skuPropertyValueMap
       this.qualityList = this.product.model.quality_list
       this.skuJson = this.product.model.sku_json
-      this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson)
+      this.$refs.SkuTable && this.$refs.SkuTable.init(this.skuJson, this.product.model.presell_rule_list)
       // this.specifications = this.product.model.specifications
       this.$refs['bannerPicListView'] && this.$refs['bannerPicListView'].setCurPictureList(this.product.model.bannerPicUrlList)
       this.$refs['descPicListView'] && this.$refs['descPicListView'].setCurPictureList(this.product.model.descPicUrlList)
@@ -1896,6 +1901,9 @@ export default {
           }
         })
       }
+    },
+    handlePresellRuleList (value) {
+      this.product.model.presell_rule_list = value
     },
     async useCustome () {
       console.log(this.product.model)

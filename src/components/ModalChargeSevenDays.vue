@@ -44,6 +44,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import Api from '@/api/apis'
+import common from '@/common/common'
 
 export default {
   name: 'ModalVersionUpOrder',
@@ -83,7 +84,7 @@ export default {
           action: 'resubscribe'
         })
         this.close()
-        window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
+        window.open(common.DY_SERVICE_LINK)
       } catch (err) {
         this.$message.error(`${err}`)
       }

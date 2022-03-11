@@ -47,6 +47,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import utils from '@/common/utils'
+import common from '@/common/common.js'
 
 export default {
   name: 'payCharge',
@@ -72,7 +73,7 @@ export default {
       'userVersionQuery'
     ]),
     goOrder () {
-      window.open('https://fuwu.jinritemai.com/detail?service_id=42&from=fxg_admin_home_sidebar')
+      window.open(common.DY_SERVICE_LINK)
     },
     goUpVersion () {
       let routeData = this.$router.resolve({

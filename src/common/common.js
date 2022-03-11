@@ -160,15 +160,18 @@ module.exports = {
     'client': 1
   },
   HELP_TIPS_LINK: {
-    'captureShop': 'https://www.yuque.com/huxiao-rkndm/ksui6u/tm5odl'
+    'captureShop': 'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf'
   },
-  HELP_LINK: 'https://www.yuque.com/huxiao-rkndm/ksui6u/alvq8l',
-  DY_SERVICE_LINK: 'https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42',
+  HELP_LINK: 'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf',
+  DY_SERVICE_LINK: 'https://fuwu.jinritemai.com/detail?from=md&service_id=42',
   COMMENTS_LINK: 'https://www.wjx.cn/m/99756598.aspx',
   CHANNEL_WHITE_LIST: ['woda', 'douyin', 'pddwoda2', 'pddtgzj1', 'pddspgj2', 'pddddzs2', 'pddhhyh2', 'dywoda1', 'dymeizhe1'],
 
   PosterType: {
     'WaterMark': 0,
     'PosterDg': 1
-  }
+  },
+  captureShopLiink: 'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/alvq8l',
+  statusExplainLink: 'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/ut7l6p'
+
 }

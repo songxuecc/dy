@@ -1,4 +1,5 @@
 import Api from '@/api/apis'
+import common from '@/common/common.js'
 
 // 店铺绑定
 export default {
@@ -104,7 +105,7 @@ export default {
     },
     // 续费
     renew () {
-      window.open('https://fuwu.jinritemai.com/detail?from=fuwu_market_home&service_id=42')
+      window.open(common.DY_SERVICE_LINK)
     },
     // 踢出
     async kickOut ({commit, state}, payload) {

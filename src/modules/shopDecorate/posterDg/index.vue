@@ -17,7 +17,7 @@
         position: absolute;
         right: 10px;
         top: 5px;"
-      v-hh-open="'https://www.yuque.com/huxiao-rkndm/ksui6u/glhkuh'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span>
+      v-hh-open="'https://meideng.yuque.com/books/share/0b65c4cb-9f2a-4099-bb6e-9415844b7ccf/glhkuh'"><hh-icon type="icontishi" ></hh-icon>点我查看教程视频</span>
   </el-menu>
   <keep-alive>
     <router-view v-if="$route.meta.keepAlive"></router-view>
