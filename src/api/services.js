@@ -527,7 +527,11 @@ const hhgjAPIs = {
   },
   userBindTpBindCreate: (params) => {
     return api.actionCreatorPost('/api/user/bind/tp_bind/create', params)
+  },
+  userBindTpBindList: (params) => {
+    return api.actionCreatorPost('/api/user/bind/tp_bind/list', params)
   }
+
 }
 
 export default hhgjAPIs
