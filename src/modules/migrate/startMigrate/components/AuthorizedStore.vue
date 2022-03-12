@@ -57,7 +57,7 @@ export default {
   },
   created () {
     this.fetch()
-    services.userBindTpBindList(data => {
+    services.userBindTpBindList().then(data => {
       this.userBindTpBindLists = data
     })
   },
