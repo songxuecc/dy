@@ -529,7 +529,7 @@ const hhgjAPIs = {
     return api.actionCreatorPost('/api/user/bind/tp_bind/create', params)
   },
   userBindTpBindList: (params) => {
-    return api.actionCreatorPost('/api/user/bind/tp_bind/list', params)
+    return api.actionCreateGet('/api/user/bind/tp_bind/list', params)
   }
 
 }
