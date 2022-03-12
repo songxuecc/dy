@@ -1,14 +1,14 @@
 <!--  -->
 <template>
     <div  >
-        <div v-if="!tableData || !tableData.length " v-loading="loading">
+        <div v-if="!userBindTpBindLists.length" v-loading="loading">
           <el-row class="flex mb-20" style="flex:1">
             <el-col :span="18" ><el-input v-model="tp_code" placeholder="您未绑定店铺，请先输入授权码，绑定其他平台店铺后，再进行复制。如何授权点击查看操作教程可联系客服"></el-input></el-col>
             <el-col :span="3"><el-button class="ml-10" @click="handleBind" type="primary" style="width:120px">授权店铺</el-button></el-col>
             <el-col :span="3"><el-button class="ml-10" @click="gotoShouquan" type="warning" style="width:120px">查看教程</el-button></el-col>
           </el-row>
         </div>
-        <div v-if="tableData && tableData.length">
+        <div v-if="userBindTpBindLists.length">
           <el-table :data="tableData" style="width: 100%" v-loading="loading" >
             <el-table-empty slot="empty" />
             <el-table-column prop="name" label="云商品库名称"></el-table-column>
@@ -51,11 +51,15 @@ export default {
   },
   data () {
     return {
-      tp_code: ''
+      tp_code: '',
+      userBindTpBindLists: []
     }
   },
   created () {
     this.fetch()
+    services.userBindTpBindList(data => {
+      this.userBindTpBindLists = data
+    })
   },
   computed: {
     ...mapState('migrate/startMigrate/authorizedStore', [
