@@ -99,6 +99,9 @@ export default {
       }
       services.userBindTpBindCreate(parmas).then(() => {
         this.$message.success('绑定成功')
+        services.userBindTpBindList().then(data => {
+          this.userBindTpBindLists = data
+        })
         this.fetch()
       }).catch(err => {
         console.log(err)
