@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-    <div  >
+    <div>
         <div v-if="!userBindTpBindLists.length" v-loading="loading">
           <el-row class="flex mb-20" style="flex:1">
             <el-col :span="18" ><el-input v-model="tp_code" placeholder="您未绑定店铺，请先输入授权码，绑定其他平台店铺后，再进行复制。如何授权点击查看操作教程可联系客服"></el-input></el-col>
@@ -9,8 +9,11 @@
           </el-row>
         </div>
         <div v-if="userBindTpBindLists.length">
-          <el-table :data="tableData" style="width: 100%" v-loading="loading" >
-            <el-table-empty slot="empty" />
+          <div @click="gotoPdd" class="click" v-if="tableData && tableData.length">点击我,进入源授权平台</div>
+          <el-table :data="tableData && tableData.length" style="width: 100%" v-loading="loading" >
+            <el-table-empty slot="empty" >
+              <div>您还未创建云商品库，<span @click="gotoPdd" class="click">点击我,进入源授权平台</span>,创建云商品库</div>
+            </el-table-empty>
             <el-table-column prop="name" label="云商品库名称"></el-table-column>
             <el-table-column prop="create_time" label="创建时间" align="center"></el-table-column>
             <el-table-column prop="shop_name" label="店铺名称" align="center"></el-table-column>
@@ -116,6 +119,9 @@ export default {
     },
     gotoShouquan () {
       window.open('https://meideng.yuque.com/docs/share/730a3a18-0df7-4ea4-99a0-93f2c87e49c1?#')
+    },
+    gotoPdd () {
+      window.open('https://pdd.huhuguanjia.com/migrate')
     }
   }
 }
