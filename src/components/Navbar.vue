@@ -35,6 +35,27 @@
                   </div>
                 </div>
               </div>
+
+              <div v-if="shopName" class="syncProduct pointer " @click="bill" :disabled="isSyncing">
+                <div class="flex align-c bold" >
+                  <hh-icon type="iconfapiao" style="font-size:14px;margin-right:2px;margin-bottom:2px"/>
+                  <div class="relative" style="height:60px;line-height:60px">
+                    发票
+                    <div class="active-bar"></div>
+                  </div>
+                </div>
+              </div>
+
+               <div v-if="shopName" class="syncProduct pointer " @click="drawback" :disabled="isSyncing">
+                <div class="flex align-c bold" >
+                  <hh-icon type="icontuikuan1" style="font-size:12px;margin-right:2px;margin-bottom:2px"/>
+                  <div class="relative" style="height:60px;line-height:60px">
+                    退款
+                    <div class="active-bar"></div>
+                  </div>
+                </div>
+              </div>
+
               <!-- 充值升级 -->
               <div v-if="shopName" class="syncProduct pointer " @click="paidRecharge" :disabled="isSyncing">
                 <div class="flex align-c ">
@@ -302,6 +323,12 @@ export default {
           active: 'PayRecord'
         }
       })
+    },
+    bill () {
+      window.open('https://www.wjx.cn/vm/Po63DQq.aspx')
+    },
+    drawback () {
+      window.open('https://www.wjx.top/vm/wb6pzku.aspx')
     },
     // 教程
     interpret () {
