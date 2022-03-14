@@ -3,7 +3,7 @@
     <div class="tools">
         <div class="title"><hh-icon type="iconchangyonggongju"></hh-icon> 常用工具</div>
         <div class="flex" style="padding-left:3px;justify-content: space-around;flex-shrink: 0;height:83px;overflow:hidden;flex-wrap:wrap" >
-            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'single'}},'多商品复制')">
+            <div class="content" @click="go({name:'StartMigrate',params:{activeName:'authorizedStore'}},'多商品复制')">
                 <div>
                     <img :src="prosuctsCopy" alt="多商品复制">
                 </div>

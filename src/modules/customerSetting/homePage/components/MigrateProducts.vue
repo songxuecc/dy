@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div class="hoverDiv" @click="go({name:'StartMigrate',params:{activeName:'single'}},'辅助功能-第二步')">
+      <div class="hoverDiv" @click="go({name:'StartMigrate',params:{activeName:'authorizedStore'}},'辅助功能-第二步')">
         <div class="step two" >第二步 设置完成 复制商品</div>
         <div class="flex justify-b tip">
           <span class="text">支持4种复制方式，请按需选择</span>
