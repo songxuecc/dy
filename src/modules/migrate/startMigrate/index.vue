@@ -601,7 +601,7 @@ export default {
     this.getUserAccountQuery()
     // this.$refs.setting.getMigrateSetting()
     if (this.$route.params.activeName) {
-      this.activeName = this.$route.params.activeName || 'single'
+      this.activeName = this.$route.params.activeName || 'authorizedStore'
     }
 
     if (this.target_user_id) {
