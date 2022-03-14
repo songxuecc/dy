@@ -9,7 +9,7 @@
           </el-row>
         </div>
         <div v-if="userBindTpBindLists.length">
-          <div @click="gotoPdd" class="click" v-if="tableData && tableData.length">点击我,进入源授权平台</div>
+          <div @click="gotoPdd" class="click mb-10" v-if="tableData && tableData.length">点击我,进入源授权平台</div>
           <el-table :data="tableData && tableData.length" style="width: 100%" v-loading="loading" >
             <el-table-empty slot="empty" >
               <div>您还未创建云商品库，<span @click="gotoPdd" class="click">点击我,进入源授权平台</span>,创建云商品库</div>
