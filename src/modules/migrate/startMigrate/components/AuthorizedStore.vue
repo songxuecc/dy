@@ -1,7 +1,7 @@
 <!--  -->
 <template>
-    <div>
-        <div v-if="!userBindTpBindLists.length" v-loading="loading">
+    <div v-loading="loading">
+        <div v-if="!userBindTpBindLists.length" >
           <el-row class="flex mb-20" style="flex:1">
             <el-col :span="18" ><el-input v-model="tp_code" placeholder="您未绑定店铺，请先输入授权码，绑定其他平台店铺后，再进行复制。如何授权点击查看操作教程可联系客服"></el-input></el-col>
             <el-col :span="3"><el-button class="ml-10" @click="handleBind" type="primary" style="width:120px">授权店铺</el-button></el-col>
@@ -9,8 +9,20 @@
           </el-row>
         </div>
         <div v-if="userBindTpBindLists.length">
-          <div @click="gotoPdd" class="click" v-if="tableData">点击我,进入源授权平台</div>
-          <el-table :data="tableData" style="width: 100%" v-loading="loading" >
+          <div class="mb-10 " v-if="tableData">
+            授权店铺：
+            <el-select v-model="bindShopId" size="mini" @change="handleSelect">
+              <el-option
+                v-for="item in userBindTpBindLists"
+                :key="item.tp_user_id"
+                :label="item.shop_name"
+                :value="item.tp_user_id">
+              </el-option>
+            </el-select>
+            <span class="click ml-10" @click="manageBindShop" >授权店铺管理</span>
+          </div>
+
+          <el-table :data="tableData" style="width: 100%" >
             <el-table-empty slot="empty" >
               <div>您还未创建云商品库，<span @click="gotoPdd" class="click">点击我,进入源授权平台</span>,创建云商品库</div>
             </el-table-empty>
@@ -20,8 +32,9 @@
             <el-table-column prop="platform_name" label="平台" align="center"></el-table-column>
             <el-table-column label="操作" width="250"  align="center">
               <template slot-scope="scope">
-                <div class="color-primary pointer pl-5 mb-5" @click="startCapture(scope.row)">跳过设置，直接复制</div>
-                <div class="color-warning pointer pl-5" @click="goSettings(scope.row)">下一步：复制设置</div>
+                <div class="color-warning pointer pl-5 mb-5" @click="startCapture(scope.row)">跳过设置，直接复制</div>
+                <div class="color-primary pointer pl-5" @click="goSettings(scope.row)">下一步：复制设置</div>
+                <div class="color-danger pointer pl-5" @click="deleteClowndStore(scope.row)">删除</div>
               </template>
             </el-table-column>
           </el-table>
@@ -36,6 +49,22 @@
             :total="total">
           </el-pagination>
         </div>
+
+        <el-dialog title="授权店铺列表" :visible.sync="dialogTableVisible">
+          <el-row class="flex mb-20" style="flex:1">
+            <el-col :span="18" ><el-input v-model="tp_code" placeholder="请先输入授权码"></el-input></el-col>
+            <el-col :span="3"><el-button class="ml-10" @click="addBindShop" type="primary" style="width:120px">添加授权店铺</el-button></el-col>
+          </el-row>
+          <el-table :data="userBindTpBindLists">
+            <el-table-column property="shop_name" label="店铺名称"></el-table-column>
+            <el-table-column property="shop_name" label="平台">拼多多</el-table-column>
+            <el-table-column label="操作" width="150"  align="center">
+              <template slot-scope="scope">
+                <div class="color-warning pointer pl-5" @click="deleteBindShop(scope.row)">删除</div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-dialog>
     </div>
 </template>
 
@@ -44,25 +73,24 @@ import services from '@services'
 
 import {
   mapActions,
-  mapState
+  mapState,
+  mapMutations
 } from 'vuex'
 
 export default {
   name: 'AuthorizedStore',
   props: {
-    msg: String
   },
   data () {
     return {
       tp_code: '',
-      userBindTpBindLists: []
+      userBindTpBindLists: [],
+      dialogTableVisible: false,
+      bindShopId: ''
     }
   },
   created () {
-    this.fetch()
-    services.userBindTpBindList().then(data => {
-      this.userBindTpBindLists = data
-    })
+    this.init()
   },
   computed: {
     ...mapState('migrate/startMigrate/authorizedStore', [
@@ -81,6 +109,27 @@ export default {
       'handleCurrentChange',
       'handleSizeChange'
     ]),
+    ...mapMutations('migrate/startMigrate/authorizedStore', [
+      'save'
+    ]),
+    init () {
+      this.save({
+        loading: true
+      })
+      services.userBindTpBindList().then(data => {
+        this.userBindTpBindLists = data
+        this.bindShopId = data[0].tp_user_id
+        this.fetch({
+          filters: {
+            tp_user_id: data[0].tp_user_id
+          }
+        }).then(data => {
+          this.save({
+            loading: false
+          })
+        })
+      })
+    },
     handleBind () {
       if (!this.tp_code) {
         const h = this.$createElement
@@ -104,8 +153,13 @@ export default {
         this.$message.success('绑定成功')
         services.userBindTpBindList().then(data => {
           this.userBindTpBindLists = data
+          this.bindShopId = data[0].tp_user_id
+          this.fetch({
+            filters: {
+              tp_user_id: data[0].tp_user_id
+            }
+          })
         })
-        this.fetch()
       }).catch(err => {
         console.log(err)
         this.$message.error(`${err}`)
@@ -122,6 +176,69 @@ export default {
     },
     gotoPdd () {
       window.open('https://pdd.huhuguanjia.com/migrate')
+    },
+    manageBindShop () {
+      this.dialogTableVisible = true
+    },
+    addBindShop () {
+      const parmas = {
+        tp_code: this.tp_code
+      }
+      services.userBindTpBindCreate(parmas).then(() => {
+        this.$message.success('绑定成功')
+        services.userBindTpBindList().then(data => {
+          this.userBindTpBindLists = data
+        })
+      }).catch(err => {
+        console.log(err)
+        this.$message.error(`${err}`)
+      })
+    },
+    handleSelect (id) {
+      console.log(id)
+      this.save({
+        loading: true
+      })
+      this.bindShopId = id
+      this.fetch({
+        filters: {
+          tp_user_id: id
+        }
+      }).then(data => {
+        this.save({
+          loading: false
+        })
+      })
+    },
+    deleteBindShop (row) {
+      const parmas = {
+        tp_user_id: row.tp_user_id
+      }
+      services.userBindTpBindUnbind(parmas).then(() => {
+        this.$message.success('删除成功')
+        this.init()
+      }).catch(err => {
+        console.log(err)
+        this.$message.error(`${err}`)
+      })
+    },
+    deleteClowndStore (row) {
+      const parmas = {
+        cloud_goods_id: row.id
+      }
+      services.userBindTpBindDeleteCloudGoods(parmas).then(() => {
+        this.$message.success('删除成功')
+        this.fetch({
+          filters: this.filters
+        }).then(data => {
+          this.save({
+            loading: false
+          })
+        })
+      }).catch(err => {
+        console.log(err)
+        this.$message.error(`${err}`)
+      })
     }
   }
 }
