@@ -49,7 +49,7 @@ const webpackDev = {
     hot: true,
     proxy: {
       '/api': {
-        target: 'http://192.168.51.55:10080/',
+        target: 'http://192.168.0.102:10080/',
         // target: 'http://localhost:10080/',
         // target: 'http://dy.nix.huhuguanjia.com/',
         changeOrigin: true,

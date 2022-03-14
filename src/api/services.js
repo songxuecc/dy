@@ -530,8 +530,13 @@ const hhgjAPIs = {
   },
   userBindTpBindList: (params) => {
     return api.actionCreateGet('/api/user/bind/tp_bind/list', params)
+  },
+  userBindTpBindUnbind: (params) => {
+    return api.actionCreatorPost('/api/user/bind/tp_bind/unbind', params)
+  },
+  userBindTpBindDeleteCloudGoods: (params) => {
+    return api.actionCreatorPost('/api/user/bind/tp_bind/delete_cloud_goods', params)
   }
-
 }
 
 export default hhgjAPIs
