@@ -309,9 +309,6 @@
         </el-form>
       </el-tab-pane>
     </el-tabs>
-    <div class="left">
-      <el-checkbox v-model="dyRule">我已知晓平台处罚规则，确认已获取复制店铺授权。 点击查看 <span class="click"  v-hh-open="'https://school.jinritemai.com/doudian/web/article/101663?from=md'" >平台处罚规则链接</span></el-checkbox>
-    </div>
     <!-- 多商品复制 -->
     <div v-if="activeName === 'single'">
       <SupportPlatForm :list="platformIconsUrl" />
@@ -322,7 +319,7 @@
             type="primary"
             @click="gotoSetting(onCaptureUrls, captureUrlNums)"
             style="height:50px;font-size:16px"
-            :disabled="isStartCapture || settingDataLoading || !dyRule"
+            :disabled="isStartCapture || settingDataLoading"
           >
             <span>下一步：复制设置</span>
             <el-badge :value="captureUrlNums" v-if="captureUrlNums"></el-badge>
@@ -344,7 +341,7 @@
             class="click ml-10"
             slot="reference"
             @click="onCaptureUrls"
-            :disabled="isStartCapture || settingDataLoading || !dyRule"
+            :disabled="isStartCapture || settingDataLoading"
             >跳过设置，直接复制
           </el-button>
         </el-popover>
@@ -366,7 +363,7 @@
             :disabled="
               isStartCapture ||
                 settingDataLoading ||
-                isCaptureIsExistShopCapture  || !dyRule
+                isCaptureIsExistShopCaptur
             "
             >下一步：复制设置
           </el-button>
@@ -390,7 +387,7 @@
             :disabled="
               isStartCapture ||
                 settingDataLoading ||
-                isCaptureIsExistShopCapture  || !dyRule
+                isCaptureIsExistShopCaptur
             "
             >跳过设置，直接复制
           </el-button>
@@ -406,7 +403,7 @@
           style="height:50px;font-size:16px"
           class="ralative"
           :disabled="
-            isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
+            isStartCapture || settingDataLoading || productListCheckLoadin
           "
           >下一步：复制设置
           <span
@@ -433,7 +430,7 @@
             slot="reference"
             @click="onCaptureFile"
             :disabled="
-              isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
+              isStartCapture || settingDataLoading || productListCheckLoadin
             "
             :loading="productListCheckLoading"
             >跳过设置，直接复制
@@ -453,7 +450,7 @@
           style="height:50px;font-size:16px"
           class="ralative"
           :disabled="
-            isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
+            isStartCapture || settingDataLoading || productListCheckLoadin
           "
           >下一步：复制设置
           <span
@@ -480,7 +477,7 @@
             slot="reference"
             @click="onCaptureBindCopy"
             :disabled="
-              isStartCapture || settingDataLoading || productListCheckLoading  || !dyRule
+              isStartCapture || settingDataLoading || productListCheckLoadin
             "
             :loading="productListCheckLoading"
             >跳过设置，直接复制
@@ -548,7 +545,6 @@ export default {
   mixins: [request],
   data () {
     return {
-      dyRule: true,
       common,
       fileList: [],
       syncText: '',
@@ -1434,16 +1430,10 @@ export default {
     },
     goSettingsAuthorizedStore (row) {
       console.log(row, 'goSettingsAuthorizedStore')
-      if (!this.dyRule) {
-        return this.$message.warning('请勾选已查看平台出发规则！')
-      }
       this.gotoSetting(() => this.startCaptureAuthorizedStore(row), true)
     },
     startCaptureAuthorizedStore (row) {
       console.log(row, 'startCaptureAuthorizedStore')
-      if (!this.dyRule) {
-        return this.$message.warning('请勾选已查看平台出发规则！')
-      }
       const parmas = {}
       parmas.is_cloud_goods = 1
       parmas.cloud_goods_id = row.id
