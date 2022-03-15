@@ -3,13 +3,16 @@
     <div v-loading="loading">
         <div v-if="!userBindTpBindLists.length" >
           <el-row class="flex mb-20" style="flex:1">
-            <el-col :span="18" ><el-input v-model="tp_code" placeholder="您未绑定店铺，请先输入授权码，绑定其他平台店铺后，再进行复制。如何授权点击查看操作教程可联系客服"></el-input></el-col>
+            <el-col :span="18" ><el-input v-model="tp_code" placeholder="根据抖音新规，跨店复制需要授权才以操作。如何授权点击下面的教程链接查看操作。"></el-input></el-col>
             <el-col :span="3"><el-button class="ml-10" @click="handleBind" type="primary" style="width:120px">授权店铺</el-button></el-col>
-            <el-col :span="3"><el-button class="ml-10" @click="gotoShouquan" type="warning" style="width:120px">查看教程</el-button></el-col>
           </el-row>
+          <div>
+            <div  class="click" @click="gotoShouquan">教程链接: https://meideng.yuque.com/docs/share/730a3a18-0df7-4ea4-99a0-93f2c87e49c1?# </div>
+            <div  class="click" @click="gotoPdd">点击进入源授权平台</div>
+          </div>
         </div>
         <div v-if="userBindTpBindLists.length">
-          <div class="mb-10 " v-if="tableData">
+          <div class="mb-10" v-if="tableData">
             授权店铺：
             <el-select v-model="bindShopId" size="mini" @change="handleSelect">
               <el-option
@@ -20,6 +23,10 @@
               </el-option>
             </el-select>
             <span class="click ml-10" @click="manageBindShop" >授权店铺管理</span>
+          </div>
+          <div class="mb-10">
+            <div  class="click" @click="gotoShouquan">教程链接: https://meideng.yuque.com/docs/share/730a3a18-0df7-4ea4-99a0-93f2c87e49c1?# </div>
+            <div  class="click" @click="gotoPdd">点击进入源授权平台</div>
           </div>
 
           <el-table :data="tableData" style="width: 100%" >
@@ -221,6 +228,12 @@ export default {
         console.log(err)
         this.$message.error(`${err}`)
       })
+    },
+    gobind (url) {
+      if (window._hmt) {
+        window._hmt.push(['_trackEvent', '打开新网址链接', '点击', url])
+      }
+      window.open(url)
     },
     deleteClowndStore (row) {
       const parmas = {
