@@ -25,7 +25,6 @@
             <span class="click ml-10" @click="manageBindShop" >授权店铺管理</span>
           </div>
           <div class="mb-10">
-            <div  class="click" @click="gotoShouquan">教程链接: https://meideng.yuque.com/docs/share/730a3a18-0df7-4ea4-99a0-93f2c87e49c1?# </div>
             <div  class="click" @click="gotoPdd">点击进入源授权平台</div>
           </div>
 
