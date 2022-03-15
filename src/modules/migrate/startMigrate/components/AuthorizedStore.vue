@@ -22,10 +22,10 @@
                 :value="item.tp_user_id">
               </el-option>
             </el-select>
-            <span class="click ml-10" @click="manageBindShop" >授权店铺管理</span>
-          </div>
-          <div class="mb-10">
-            <div  class="click" @click="gotoPdd">点击进入源授权平台</div>
+            <span class="click ml-10 flex align-c" @click="manageBindShop" >
+              <hh-icon type="iconjibenshezhixuanzhong"></hh-icon>
+              授权店铺管理
+              <div  class="click ml-20" v-if="!tableData.length" @click="gotoPdd">点击进入源授权平台</div>  </span>
           </div>
 
           <el-table :data="tableData" style="width: 100%" >
