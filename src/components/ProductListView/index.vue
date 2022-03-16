@@ -35,11 +35,12 @@
                     </el-link><br>
                     <div>
                       <div class="flex align-c " style="height:28px">
-                          <span class="mr-5">类目:
-                            <span v-if="scope.row.category_show" class="info">{{getCategoryShow(scope.row.category_show)}}</span>
-                            <span v-if="!scope.row.category_show" class="info">无</span>
-                          </span>
-                          <hh-icon type="iconbianji-primary" class="pointer" style="font-size:12px;margin-top:4px" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"/>
+                          类目:
+                          <el-tooltip :content="scope.row.category_show"  placement="top" v-if="scope.row.category_show">
+                            <span class="info ellipsis ml-5" style="max-width:235px">{{scope.row.category_show}}</span>
+                          </el-tooltip>
+                          <span v-if="!scope.row.category_show" class="info">无</span>
+                          <hh-icon type="iconbianji-primary" class="pointer ml-5" style="font-size:12px;" v-if="default_category && !default_category.name" @click="chooseCategory(scope.row)"/>
                       </div>
                       <div class="font-12 flex align-c" v-if="scope.row.origin_category_name">
                         <span class="flex align-c" style="flex:1">
