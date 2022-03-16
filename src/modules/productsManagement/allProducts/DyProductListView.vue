@@ -520,6 +520,12 @@ export default {
           goods_id: row.goods_id,
           origin_url: value
         }
+        if (!value) {
+          return this.$message({
+            type: 'warning',
+            message: '请输入链接 '
+          })
+        }
         services.produSourceUpdate(parmas).then(data => {
           this.$message({
             type: 'success',
