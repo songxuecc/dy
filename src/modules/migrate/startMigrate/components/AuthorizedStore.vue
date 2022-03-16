@@ -26,7 +26,7 @@
               <span @click="manageBindShop">
                  <hh-icon type="iconjibenshezhixuanzhong"></hh-icon>授权店铺管理
               </span>
-              <div  class="click ml-20" v-if="tableData.length" @click="gotoPdd">点击进入源授权平台</div>  </span>
+              <div  class="click ml-20" v-if="tableData && tableData.length" @click="gotoPdd">点击进入源授权平台</div>  </span>
           </div>
 
           <el-table :data="tableData" style="width: 100%" >
