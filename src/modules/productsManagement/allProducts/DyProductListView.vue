@@ -512,7 +512,7 @@ export default {
       window.open(url)
     },
     editOriginUrl (row) {
-      this.$prompt('', '请输入货源链接', {
+      this.$prompt(`您的原始链接为: ${row.origin_url}`, '请输入货源链接', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(({ value }) => {
