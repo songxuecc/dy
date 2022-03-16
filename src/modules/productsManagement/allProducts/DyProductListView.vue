@@ -77,9 +77,16 @@
                     {{ scope.row.min_price === scope.row.max_price ? '' : scope.row.max_price / 100 }}
                 </template>
             </el-table-column>
-            <el-table-column label="货源链接" width="80">
-                <template slot-scope="scope" v-if="scope.row.origin_url">
-                  <el-link type="primary" :underline="false" :href="scope.row.origin_url" target="view_window">货源链接</el-link>
+            <el-table-column label="货源链接" width="140">
+                <template slot-scope="scope" >
+                  <div class="flex align-c" v-if="scope.row.origin_url">
+                    <el-link type="primary" :underline="false" @click="openOriginUrl(scope.row.origin_url)" target="view_window" class="mr-5">查看货源链接</el-link>
+                    <hh-icon type="iconbianji-primary" class="pointer" @click="editOriginUrl(scope.row)"></hh-icon>
+                  </div>
+                  <div class="flex align-c" @click="editOriginUrl(scope.row)" v-if="!scope.row.origin_url">
+                    <el-link type="warning" :underline="false" target="view_window" class="mr-5">添加货源链接</el-link>
+                    <hh-icon type="iconbianji" class="pointer"></hh-icon>
+                  </div>
                 </template>
             </el-table-column>
             <el-table-column prop="goods_quantity" label="库存" width="80">
@@ -196,9 +203,11 @@ import productOptimizeView from '@/components/ProductOptimizeView.vue'
 import request from '@/mixins/request.js'
 import common from '@/common/common.js'
 import utils from '@/common/utils.js'
+import services from '@services'
 import checkSyncProducts from '@/mixins/checkSyncProducts.js'
 
 export default {
+  inject: ['reload'],
   mixins: [
     request,
     checkSyncProducts('productsManagement')
@@ -498,6 +507,28 @@ export default {
           type: 'error'
         })
       }
+    },
+    openOriginUrl (url) {
+      window.open(url)
+    },
+    editOriginUrl (row) {
+      this.$prompt('', '请输入货源链接', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        const parmas = {
+          goods_id: row.goods_id,
+          origin_url: value
+        }
+        services.produSourceUpdate(parmas).then(data => {
+          this.$message({
+            type: 'success',
+            message: '修改成功 '
+          })
+          this.reload()
+        })
+      }).catch(() => {
+      })
     }
   }
 }
