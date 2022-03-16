@@ -12,7 +12,7 @@
           </div>
         </div>
         <div v-if="userBindTpBindLists.length">
-          <div class="mb-10" v-if="tableData">
+          <div class="mb-10 flex" v-if="tableData">
             授权店铺：
             <el-select v-model="bindShopId" size="mini" @change="handleSelect">
               <el-option
