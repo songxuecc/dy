@@ -77,11 +77,15 @@
                     {{ scope.row.min_price === scope.row.max_price ? '' : scope.row.max_price / 100 }}
                 </template>
             </el-table-column>
-            <el-table-column label="货源链接" width="120">
-                <template slot-scope="scope" v-if="scope.row.origin_url">
-                  <div class="flex align-c">
-                    <el-link type="primary" :underline="false" :href="scope.row.origin_url" target="view_window" class="mr-5">货源链接</el-link>
-                    <hh-icon type="iconbianji-primary" @click="editOriginUrl(scope.row)"></hh-icon>
+            <el-table-column label="货源链接" width="140">
+                <template slot-scope="scope" >
+                  <div class="flex align-c" v-if="scope.row.origin_url">
+                    <el-link type="primary" :underline="false" @click="openOriginUrl(scope.row.origin_url)" target="view_window" class="mr-5">查看货源链接</el-link>
+                    <hh-icon type="iconbianji-primary" class="pointer" @click="editOriginUrl(scope.row)"></hh-icon>
+                  </div>
+                  <div class="flex align-c" @click="editOriginUrl(scope.row)" v-if="!scope.row.origin_url">
+                    <el-link type="warning" :underline="false" target="view_window" class="mr-5">添加货源链接</el-link>
+                    <hh-icon type="iconbianji" class="pointer"></hh-icon>
                   </div>
                 </template>
             </el-table-column>
@@ -503,6 +507,9 @@ export default {
           type: 'error'
         })
       }
+    },
+    openOriginUrl (url) {
+      window.open(url)
     },
     editOriginUrl (row) {
       this.$prompt('', '请输入货源链接', {
