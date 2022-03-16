@@ -349,6 +349,11 @@ import ModalSourceCategory from './ModalSourceCategory'
 import ModalCheckSolution from './ModalCheckSolution'
 import Api from '@/api/apis'
 import isEmpty from 'lodash/isEmpty'
+import {
+  mapState,
+  mapMutations,
+  mapActions
+} from 'vuex'
 
 export default {
   inject: ['reload'],
@@ -390,6 +395,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('migrate/readyToMigrate', ['userVersion']),
     productStatus () {
       return common.productStatus
     },
@@ -430,6 +436,10 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('migrate/readyToMigrate', {
+      'saveReadyToMigrate': 'save'
+    }),
+    ...mapActions('migrate/readyToMigrate', ['userVersionQuery']),
     getshow () {
       if (!this.nubk) {
         this.nubk = true
@@ -608,25 +618,65 @@ export default {
             window.open('https://fxg.jinritemai.com/index.html#/ffa/goods/create?product_id=' + product.goods_commit_id)
           }
         }
+        // 抓取失败
       } else if (product.status === this.productStatus.CAPTURE_FAILED) {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '重新复制新商品'])
         }
         let self = this
-        this.request('capture', { urls: [product.url], capture_type: 0, tp_product_id: product.tp_product_id }, data => {
-          let params = {}
-          if (data.parent_id !== 0 && data.page_id !== 0) {
-            params['captureId'] = data.parent_id
-            params['pageId'] = data.page_id
-          } else {
-            params['captureId'] = data.capture_id
-          }
-          self.$router.push({
-            path: '/migrate/productList',
-            query: params
-          }).catch(() => {})
-          self.reload()
-        })
+        this.request('capture',
+          { urls: [product.url], capture_type: 0, tp_product_id: product.tp_product_id },
+          async data => {
+             // 试用用户判断抓取是否有限制
+            const userVersion =
+              this.userVersion || (await this.userVersionQuery())
+            const isFreeUpgrate = userVersion.is_free_upgrate
+            const isSenior = userVersion.is_senior
+            const versionTipType = userVersion.version_type
+            if (
+              !isFreeUpgrate &&
+              !isSenior &&
+              data.left_capture_nums_not_enough
+            ) {
+              // 3个月试用引导内部升级
+              // 7天试用引导在服务市场
+              if (versionTipType === 'free_three_months') {
+                this.saveReadyToMigrate({
+                  modalChargeData: data,
+                  modalChargeTreeMonthVisible: true
+                })
+              } else {
+                this.saveReadyToMigrate({
+                  modalChargeData: data,
+                  modalChargeSevenDaysVisible: true
+                })
+              }
+              this.isStartCapture = false
+              return false
+            }
+            // 高级版 充值限制
+            if (data.left_capture_nums_not_enough) {
+              this.saveReadyToMigrate({
+                modalChargeData: data,
+                modalChargeVisible: true
+              })
+              this.isStartCapture = false
+              return false
+            }
+
+            let params = {}
+            if (data.parent_id !== 0 && data.page_id !== 0) {
+              params['captureId'] = data.parent_id
+              params['pageId'] = data.page_id
+            } else {
+              params['captureId'] = data.capture_id
+            }
+            self.$router.push({
+              path: '/migrate/productList',
+              query: params
+            }).catch(() => {})
+            self.reload()
+          })
       } else if ([3, 4, 8].includes(product.status)) {
         if (window._hmt) {
           window._hmt.push(['_trackEvent', '复制商品', '点击', '删除复制商品'])
