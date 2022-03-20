@@ -11,7 +11,6 @@
 <script>
 
 // import { createImageEditor } from '@gaoding/editor-sdk'
-import { createImageEditor } from '@gaoding/editor-sdk/dist/editor-sdk.umd.js'
 import services from '@services'
 
 export default {
@@ -32,19 +31,15 @@ export default {
   methods: {
     createImage () {
       if (this.editor) return false
-      const editor = createImageEditor({
+      const editor = window.gaoding.createImageEditor({
         appId: 'LHCXOH948273',
         container: '.edit-gaoding-container'
-        // css: 'background:red'
       })
       editor.on('load', () => {
-        var iframe = document.getElementById('edit')
-        iframe.onload = () => {
-          setTimeout(() => {
-            console.log('99999')
-            this.show = true
-          }, 500)
-        }
+        setTimeout(() => {
+          console.log('99999')
+          this.show = true
+        }, 500)
       })
 
       editor.on('editor.load', () => {

@@ -73,23 +73,12 @@
       </div>
     </div>
 
-    <!-- <ImageEdit @change="handleImageEdit" ref="ImageEdit"/> -->
-    <!-- <el-dialog :visible.sync="visibleDrawingBoard" append-to-body width="98%" id="gaoding">
-      <slot name="title">
-        <div class="flex justify-b font-18">
-          <span class="pl-20">图片编辑</span>
-          <el-button class="mr-20" type="primary" style="width:100px">替换</el-button>
-        </div>
-      </slot>
-      <DrawingBoard :imgUrl="activeUrl" v-if="visibleDrawingBoard"/>
-    </el-dialog> -->
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import debounce from 'lodash/debounce'
-import DrawingBoard from '@/components/DrawingBoard'
 import ImageEdit from '@/components/ImageEdit'
 
 export default {
@@ -98,7 +87,6 @@ export default {
     qualitys: Array
   },
   components: {
-    DrawingBoard,
     ImageEdit
   },
   data () {
