@@ -630,3 +630,10 @@ export default {
   }
 
 </style>
+
+<style lang="css">
+  .design-editor-page {
+    z-index: 3000 !important;
+  }
+
+</style>

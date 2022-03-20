@@ -1,6 +1,9 @@
 <!-- 资质图片 -->
 <template>
   <div style="margin-bottom:50px" class="migrateSetting_pictureQualification">
+    <div class="edit-gaoding" v-show="visibleDrawingBoard">
+      <div class="edit-gaoding-container"></div>
+    </div>
     <div  v-for="(quality, index) in qualitys" :key="index"  :required="quality.is_required" label-width="100px">
       <div :class="'title'">
         {{quality.quality_name}}({{quality.quality_attachments && quality.quality_attachments.length}}/{{ limit }})
@@ -72,9 +75,15 @@
       </div>
     </div>
 
-    <el-dialog :visible.sync="visibleDrawingBoard" append-to-body width="80%" title="图片编辑">
+    <!-- <el-dialog :visible.sync="visibleDrawingBoard" append-to-body width="98%" id="gaoding">
+      <slot name="title">
+        <div class="flex justify-b font-18">
+          <span class="pl-20">图片编辑</span>
+          <el-button class="mr-20" type="primary" style="width:100px">替换</el-button>
+        </div>
+      </slot>
       <DrawingBoard :imgUrl="activeUrl" v-if="visibleDrawingBoard"/>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -82,6 +91,13 @@
 import { mapGetters } from 'vuex'
 import debounce from 'lodash/debounce'
 import DrawingBoard from '@/components/DrawingBoard'
+import { createImageEditor } from '@gaoding/editor-sdk'
+import services from '@services'
+
+const editor = createImageEditor({
+  appId: 'LHCXOH948273',
+  container: '.edit-gaoding-container'
+})
 
 export default {
   name: 'PictureQualification',
@@ -125,8 +141,34 @@ export default {
       // this.activeUrl = 'https://p6-aio.ecombdimg.com/obj/temai/06276c7f3c7742bd6675d3e9ba1120c2www800-800'
       // 测试 跨域图片
       // this.activeUrl = 'https://dy-image-no-delete.oss-cn-shanghai.aliyuncs.com/5009091-vsxpXgWNbUoh.jpg?t=0767982350'
-      this.activeUrl = file.url
+      // this.activeUrl = file.url
       this.visibleDrawingBoard = true
+      this.$nextTick(() => {
+        editor.importImage(
+          [file.url],
+          {disableModules: ['panel.template', 'panel.element', 'panel.upload']}
+        )
+
+        editor.onSave(({ files, workId, type, title }) => {
+        // 直接关闭编辑器
+          editor.close()
+        // 对结果进行下载
+          const file = files[0]
+
+          let form = new FormData()
+          form.append('file', file, 'jpeg')
+          services.imageCreate(form, {
+            'Content-Type': 'multipart/form-data;'
+          }).then(d => {
+            const url = d.url
+            console.log('裁剪图片地址：', url)
+            this.visibleDrawingBoard = false
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        })
+      })
     },
     handlePictureCardPreview (file) {
       const refName = file.url
@@ -191,13 +233,18 @@ export default {
 @import '~./index.less';
 /deep/ .el-dialog__header{
   margin-bottom: 0;
-  padding-top: 10px;
-  background: rgba(39,41,47,.9);
+  margin-top: 0;
+  padding-top: 0;
   overflow: hidden;
   border-radius: 10px 10px 0 0;
   .el-dialog__title {
     color:#fff;
   }
+}
+
+/deep/ .el-dialog .el-dialog__headerbtn .el-dialog__close {
+  top: -12px;
+  right: -30px;
 }
 
 /deep/ .el-dialog__body{
@@ -212,5 +259,24 @@ export default {
 
 /deep/ .el-dialog__headerbtn {
   top:0px;
+}
+
+.edit-gaoding {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  right: 0%;
+  bottom: 0%;
+  margin: auto;
+  z-index: 10000;
+  background: rgba(0,0,0,0.5);
+  .edit-gaoding-container {
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    right: 2%;
+    bottom: 2%;
+    margin: auto;
+  }
 }
 </style>
