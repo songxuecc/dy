@@ -1,9 +1,7 @@
 <!-- 资质图片 -->
 <template>
   <div style="margin-bottom:50px" class="migrateSetting_pictureQualification">
-    <div class="edit-gaoding" v-show="visibleDrawingBoard">
-      <div class="edit-gaoding-container"></div>
-    </div>
+
     <div  v-for="(quality, index) in qualitys" :key="index"  :required="quality.is_required" label-width="100px">
       <div :class="'title'">
         {{quality.quality_name}}({{quality.quality_attachments && quality.quality_attachments.length}}/{{ limit }})
@@ -38,13 +36,13 @@
               <i class="el-icon-delete"></i>
             </span>
 
-            <span
+            <!-- <span
               v-if="!disabled"
               class="PictureQualification__item-delete"
               @click="handlePs(file, quality.quality_attachments)"
             >
               <i class="el-icon-edit-outline"></i>
-            </span>
+            </span> -->
           </span>
         </div>
         <el-upload
@@ -75,6 +73,7 @@
       </div>
     </div>
 
+    <!-- <ImageEdit @change="handleImageEdit" ref="ImageEdit"/> -->
     <!-- <el-dialog :visible.sync="visibleDrawingBoard" append-to-body width="98%" id="gaoding">
       <slot name="title">
         <div class="flex justify-b font-18">
@@ -91,13 +90,7 @@
 import { mapGetters } from 'vuex'
 import debounce from 'lodash/debounce'
 import DrawingBoard from '@/components/DrawingBoard'
-import { createImageEditor } from '@gaoding/editor-sdk'
-import services from '@services'
-
-const editor = createImageEditor({
-  appId: 'LHCXOH948273',
-  container: '.edit-gaoding-container'
-})
+import ImageEdit from '@/components/ImageEdit'
 
 export default {
   name: 'PictureQualification',
@@ -105,7 +98,8 @@ export default {
     qualitys: Array
   },
   components: {
-    DrawingBoard
+    DrawingBoard,
+    ImageEdit
   },
   data () {
     return {
@@ -142,33 +136,12 @@ export default {
       // 测试 跨域图片
       // this.activeUrl = 'https://dy-image-no-delete.oss-cn-shanghai.aliyuncs.com/5009091-vsxpXgWNbUoh.jpg?t=0767982350'
       // this.activeUrl = file.url
-      this.visibleDrawingBoard = true
-      this.$nextTick(() => {
-        editor.importImage(
-          [file.url],
-          {disableModules: ['panel.template', 'panel.element', 'panel.upload']}
-        )
+      // this.visibleDrawingBoard = true
 
-        editor.onSave(({ files, workId, type, title }) => {
-        // 直接关闭编辑器
-          editor.close()
-        // 对结果进行下载
-          const file = files[0]
-
-          let form = new FormData()
-          form.append('file', file, 'jpeg')
-          services.imageCreate(form, {
-            'Content-Type': 'multipart/form-data;'
-          }).then(d => {
-            const url = d.url
-            console.log('裁剪图片地址：', url)
-            this.visibleDrawingBoard = false
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        })
-      })
+      this.$refs.ImageEdit.init(file.url)
+    },
+    handleImageEdit (url) {
+      console.log(url, '您下载的图片url')
     },
     handlePictureCardPreview (file) {
       const refName = file.url
@@ -261,22 +234,4 @@ export default {
   top:0px;
 }
 
-.edit-gaoding {
-  position: fixed;
-  top: 0%;
-  left: 0%;
-  right: 0%;
-  bottom: 0%;
-  margin: auto;
-  z-index: 10000;
-  background: rgba(0,0,0,0.5);
-  .edit-gaoding-container {
-    position: absolute;
-    top: 2%;
-    left: 2%;
-    right: 2%;
-    bottom: 2%;
-    margin: auto;
-  }
-}
 </style>

@@ -56,6 +56,12 @@
                             <i class="el-icon-delete"></i>
                             <span class="font-12">删除</span>
                           </span>
+
+                          <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete iconshanchu1 " style="visibility: visible;display:flex;flex-direction:column;justify-content:center;align-items:center;" @click="handlePs(picture, index)">
+                            <i class="el-icon-edit-outline"></i>
+                            <span class="font-12">编辑</span>
+                          </span>
+
                       </span>
                       <input type="checkbox" v-if="isAllowOperation('select')" :ref="'pictureCheck'+index" class="check-upload"
                             @change="handleSelect(picture, index, $event.target || $event.srcElement)"
@@ -89,7 +95,7 @@
         <div class="color-danger">*若为用户自定义上传的图片，系统仅能保存7天，请尽快上传该商品到抖音</div>
         <ClipImage ref="ClipImage" @submit="ClipImageSubmit" :fixed="true" :fixedNumber="[400, 400]" v-if="validSize" title="轮播图裁剪-图片长宽比需1:1"></ClipImage>
         <ClipImage ref="ClipImage" @submit="ClipImageSubmit" v-else></ClipImage>
-
+        <ImageEdit @change="handleImageEdit" ref="ImageEdit"/>
     </div>
 </template>
 <script>
@@ -98,11 +104,12 @@ import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import ClipImage from '@/components/ClipImage'
 import utils from '@/common/utils'
-
+import ImageEdit from '@/components/ImageEdit'
 export default {
   components: {
     draggable,
-    ClipImage
+    ClipImage,
+    ImageEdit
   },
   props: {
     validSize: Boolean,
@@ -222,6 +229,7 @@ export default {
       this.elemUploadDiv.style.visibility = (this.uploadIconVisible ? 'visible' : 'hidden')
       this.elemUploadDiv.style.height = (this.uploadIconVisible ? '180x' : '0')
     },
+
     onHandle (picture, index) {
       this.$emit('handleEdit', picture, index)
     },
@@ -299,7 +307,23 @@ export default {
       picture.url = url
       this.$set(this.curPictureList, index, picture)
       this.$emit('handleEdit', picture, index)
+    },
+    handlePs (picture, index) {
+      console.log(picture, 'picture')
+      this.activeImage = {
+        picture,
+        index
+      }
+      this.$refs.ImageEdit.init(picture.url)
+    },
+    handleImageEdit (url) {
+      console.log(url, 'handleImageEdit')
+      const { picture, index } = this.activeImage
+      picture.url = url
+      this.$set(this.curPictureList, index, picture)
+      this.$emit('handleEdit', picture, index)
     }
+
   }
 }
 </script>
