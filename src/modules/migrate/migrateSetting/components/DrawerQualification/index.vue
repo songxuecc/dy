@@ -6,6 +6,7 @@
             :with-header="false"
             direction="rtl"
             :before-close="dialogBeforeClose"
+            append-to-body
             size="80%">
             <div class="content">
                 <div class="close" @click="triggerDrawerClose" v-show="drawer && !loadingCatQualityList"><hh-icon type="iconguanbi1" class="iconguanbi"></hh-icon></div>
