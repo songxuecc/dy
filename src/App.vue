@@ -2,8 +2,8 @@
     <div id="app" >
       <div class="edit-gaoding" v-show="visibleDrawingBoard" >
           <div class="edit-gaoding-container">
-              <el-button  style="position:absolute;right:95px;top:7px;z-index:10000;height:42px;width:80px" @click="gaodingEditorClose">取消</el-button>
-              <div  style="position:absolute;left:13px;top:4px;z-index:10000;height: 50px;line-height:50px;font-size:22px;font-weight:bolder;background:#fff;width:110px">虎虎管家</div>
+              <el-button  v-show="!gaodingEditLoading" style="position:absolute;right:95px;top:7px;z-index:10000;height:42px;width:80px" @click="gaodingEditorClose">取消</el-button>
+              <div  v-show="!gaodingEditLoading"  style="position:absolute;left:13px;top:4px;z-index:10000;height: 50px;line-height:50px;font-size:22px;font-weight:bolder;background:#fff;width:110px">虎虎管家</div>
           </div>
       </div>
         <good-assess-dialog></good-assess-dialog>
@@ -162,7 +162,7 @@ export default {
     ...mapState({
       loading: state => (state['@@loading'].effects['requestToken'] || state['@@loading'].effects['fakeUser'] || state['@@loading'].effects['requestUserInfo'])
     }),
-    ...mapState('gaodingEdit', ['visibleDrawingBoard']),
+    ...mapState('gaodingEdit', ['visibleDrawingBoard', 'gaodingEditLoading']),
     ...mapGetters({
       getShopName: 'getShopName',
       userId: 'getUserId',

@@ -389,7 +389,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import request from '@/mixins/request.js'
@@ -501,6 +501,17 @@ export default {
       stockEditError: false
     }
   },
+  created () {
+    // 稿定设计的组建加载loading
+    this.$gaodingEditor.on('load', () => {
+      console.log('load=gaodingEditor')
+      setTimeout(() => {
+        this.save({
+          gaodingEditLoading: false
+        })
+      }, 500)
+    })
+  },
   watch: {
     product: {
       handler (val, oldVal) {
@@ -566,6 +577,7 @@ export default {
   updated () {
   },
   methods: {
+    ...mapMutations('gaodingEdit', ['save']),
     ...mapActions([
       'setIsShowFloatView'
     ]),
@@ -1924,6 +1936,9 @@ export default {
     },
     // 批量编辑图片
     BatchEditImages () {
+      this.save({
+        gaodingEditLoading: true
+      })
       if (this.activityTab === 'carousel') {
         const urls = this.product.model.bannerPicUrlList.map(item => item.url)
         this.$refs.ImageEdit.init(urls)
