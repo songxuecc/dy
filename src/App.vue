@@ -1,5 +1,11 @@
 <template>
     <div id="app" >
+      <div class="edit-gaoding" v-show="visibleDrawingBoard" >
+          <div class="edit-gaoding-container">
+              <el-button  style="position:absolute;right:95px;top:7px;z-index:10000;height:42px;width:80px" @click="gaodingEditorClose">取消</el-button>
+              <div  style="position:absolute;left:13px;top:4px;z-index:10000;height: 50px;line-height:50px;font-size:22px;font-weight:bolder;background:#fff;width:110px">虎虎管家</div>
+          </div>
+      </div>
         <good-assess-dialog></good-assess-dialog>
         <expire-notify-dialog></expire-notify-dialog>
         <el-header :style="{height:(curNavNotification ? 'auto' : '60px')}">
@@ -95,7 +101,7 @@ import ModalCharge from '@/components/ModalCharge'
 import ModalChargeSevenDays from '@/components/ModalChargeSevenDays'
 import ModalChargeTreeMonth from '@/components/ModalChargeTreeMonth'
 
-import { mapGetters, mapActions, mapState } from 'vuex'
+import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
 import moment from 'moment'
 import common from '@/common/common.js'
 import commonUtils from '@/common/commonUtils.js'
@@ -156,6 +162,7 @@ export default {
     ...mapState({
       loading: state => (state['@@loading'].effects['requestToken'] || state['@@loading'].effects['fakeUser'] || state['@@loading'].effects['requestUserInfo'])
     }),
+    ...mapState('gaodingEdit', ['visibleDrawingBoard']),
     ...mapGetters({
       getShopName: 'getShopName',
       userId: 'getUserId',
@@ -244,6 +251,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('gaodingEdit', ['save']),
     ...mapActions([
       'requestSyncProducts',
       'updateSyncStatus',
@@ -400,6 +408,13 @@ export default {
     },
     handleHuhuTitletipActive () {
       this.huhuTitletipActive = !this.huhuTitletipActive
+    },
+    // 稿定设计的取消按钮
+    gaodingEditorClose () {
+      this.$gaodingEditor.close()
+      this.save({
+        visibleDrawingBoard: false
+      })
     }
   }
 }
@@ -631,9 +646,26 @@ export default {
 
 </style>
 
-<style lang="css">
-  .design-editor-page {
-    z-index: 3000 !important;
+<style lang="less">
+// 稿定设计的css
+.edit-gaoding {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  right: 0%;
+  bottom: 0%;
+  margin: auto;
+  z-index: 999999;
+  background: rgba(0,0,0,0.5);
+  .edit-gaoding-container {
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    right: 2%;
+    bottom: 2%;
+    margin: auto;
+    z-index: 999999;
   }
+}
 
 </style>

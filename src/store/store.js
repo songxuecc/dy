@@ -12,6 +12,7 @@ import controller from './modules/controller'
 import migrate from './modules/migrate'
 import productManagement from './modules/productManagement'
 import customerSetting from './modules/customerSetting'
+import gaodingEdit from './modules/gaodingEdit'
 import {setBaseModelConfig} from '@commonModels/createBaseModel.js'
 
 setBaseModelConfig({
@@ -59,6 +60,7 @@ const modules = {
   notification,
   picture,
   controller,
+  gaodingEdit,
   ...migrate,
   ...productManagement,
   ...customerSetting

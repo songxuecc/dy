@@ -320,7 +320,7 @@ export default {
     handleImageEdit (url) {
       console.log(url, 'handleImageEdit')
       const { picture, index } = this.activeImage
-      picture.url = url
+      picture.url = url[0]
       this.$set(this.curPictureList, index, picture)
       this.$emit('handleEdit', picture, index)
     }
