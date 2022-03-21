@@ -315,6 +315,7 @@
           @opened="dialogOpened"
           @close="dialogClose"
           :before-close="dialogBeforeClose"
+          :append-to-body="true"
         >
           <product-edit-new-view ref="productEditNewView" @changeProducts="onChangeProducts" @triggerDialogClose="triggerDialogClose" v-if="dialogEditVisible"></product-edit-new-view>
         </el-drawer>

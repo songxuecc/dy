@@ -37,6 +37,17 @@ new Vue({
     utils.initMoment()
   }
 })
+// 挂载稿定设计的实例
+const gaodingEditor = window.gaoding.createImageEditor({
+  appId: 'LHCXOH948273',
+  container: '.edit-gaoding-container'
+})
+gaodingEditor.on('load', () => {
+  console.log('load')
+})
+gaodingEditor.on('save', () => {
+})
+Vue.prototype.$gaodingEditor = gaodingEditor
 
 const req = require.context('@/assets/icon', true, /\.svg$/)
 requireAll(req)

@@ -1,5 +1,5 @@
 <template lang="html">
-  <div style="height: 100%" class="ProductEditNewView" >
+  <div style="height: 100%" class="ProductEditNewView" v-loading="gaodingEditLoading">
     <el-row :gutter="20" style="height: 100%">
       <el-col :span="7" style="height: 100%; overflow-y: scroll;padding-right: 0px; padding-bottom: 80px;">
         <div class="left bold" style="font-size:14px;padding:8px 10px;"> <b >商品名称</b> <b class="color-999">（键盘↑(W)键和↓(S)键可切换商品,删除后请点击保存编辑）</b></div>
@@ -145,8 +145,9 @@
               </el-tab-pane>
 
               <el-tab-pane label="轮播页" name="carousel">
-                <div style="width: 100%; text-align: left;">
-                  <el-button size="mini" sytle="" type="primary" @click="applyRemoveFirstBannerToSelection()">批量去除选中商品轮播图首图</el-button>
+                <div style="width: 100%; text-align: left;" class="mb-10">
+                  <el-button size="mini" sytle="" type="primary"  @click="BatchEditImages" style="width:120px">批量编辑轮播图</el-button>
+                  <el-button size="mini" sytle="" type="primary" plain @click="applyRemoveFirstBannerToSelection()">批量去除选中商品轮播图首图</el-button>
                   <el-button v-if="product.originModel.bannerPicUrlList && product.originModel.bannerPicUrlList.length > 1 && productRemoveFirstBannerDic[product.model.tp_product_id]" size="mini" sytle="" type="error" @click="cancelRemoveFirstBanner()">还原本商品轮播图</el-button>
                 </div>
                  <span slot="label" v-if=" product.model.check_error_msg_static  && '2' in product.model.check_error_msg_static">轮播页
@@ -158,7 +159,7 @@
                   </el-tooltip>
                   </span>
                   <div >
-                      <div style="padding: 0 70px 5px; color: gray"> * 拖动可调整顺序，鼠标放在图片上点击第2个图标可裁剪图片 </div>
+                      <div style="padding: 0 0 5px; color: gray" class="left"> * 拖动可调整顺序，鼠标放在图片上点击第2个图标可裁剪图片 </div>
                       <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList" :validSize="true" :multiple="false">
                       </pictures-upload-view>
                   </div>
@@ -168,6 +169,7 @@
 
               <el-tab-pane label="详情页" name="detail">
                 <div style="width: 100%; text-align: left;">
+                  <el-button size="mini" sytle="" type="primary"  @click="BatchEditImages" style="width:120px">批量编辑详情图</el-button>
                   <el-button size="mini" sytle="" type="primary" @click="applyRemoveLastDescToSelection()">批量去除选中商品详情图尾图</el-button>
                   <el-button v-if="product.originModel.descPicUrlList && product.originModel.descPicUrlList.length > 1 && productRemoveLastDescDic[product.model.tp_product_id]" size="mini" sytle="" type="error" @click="cancelRemoveLastDesc()">还原本商品详情图</el-button>
                 </div>
@@ -383,10 +385,11 @@
         </div>
       </div>
     </el-dialog>
+    <ImageEdit @change="handleImageEdit" ref="ImageEdit"/>
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import isEmpty from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
 import request from '@/mixins/request.js'
@@ -405,6 +408,7 @@ import omit from 'lodash/omit'
 import SkuTable from './SkuTable'
 import services from '@services'
 import Api from '@/api/apis'
+import ImageEdit from '@/components/ImageEdit'
 
 export default {
   inject: ['reload'],
@@ -415,7 +419,8 @@ export default {
     PropertySet,
     SkuSelect,
     PictureQualification,
-    SkuTable
+    SkuTable,
+    ImageEdit
   },
   props: {
     belongType: {
@@ -515,6 +520,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('gaodingEdit', ['visibleDrawingBoard', 'gaodingEditLoading']),
     ...mapGetters({
       getTokenHeaders: 'getTokenHeaders'
     }),
@@ -1915,6 +1921,27 @@ export default {
       this.qualityList = data
       this.handlePictureQualificationChange(data)
       console.log(data, 'data')
+    },
+    // 批量编辑图片
+    BatchEditImages () {
+      if (this.activityTab === 'carousel') {
+        const urls = this.product.model.bannerPicUrlList.map(item => item.url)
+        this.$refs.ImageEdit.init(urls)
+      } else if (this.activityTab === 'detail') {
+        const urls = this.product.model.descPicUrlList.map(item => item.url)
+        this.$refs.ImageEdit.init(urls)
+      }
+    },
+    handleImageEdit (urls) {
+      if (this.activityTab === 'carousel') {
+        const bannerPicUrlList = urls.map(url => ({url}))
+        Object.assign(this.product.model, {bannerPicUrlList: [...bannerPicUrlList]})
+        this.bannerPicUrlList = [...this.product.model.bannerPicUrlList]
+      } else if (this.activityTab === 'detail') {
+        const descPicUrlList = urls.map(url => ({url}))
+        Object.assign(this.product.model, {descPicUrlList: [...descPicUrlList]})
+        this.descPicUrlList = [...this.product.model.descPicUrlList]
+      }
     }
   }
 }
