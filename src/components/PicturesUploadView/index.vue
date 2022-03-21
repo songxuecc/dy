@@ -101,7 +101,7 @@
 
 <script>
 import common from '@/common/common'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import draggable from 'vuedraggable'
 import ClipImage from '@/components/ClipImage'
 import utils from '@/common/utils'
@@ -185,6 +185,8 @@ export default {
     this.canDraggable = this.isAllowOperation('sort')
   },
   methods: {
+    ...mapMutations('gaodingEdit', ['save']),
+
     imageExceedHandler (files, fileList) {
       console.log(fileList, 'fileList')
       this.$message.error('剩余图片最多上传' + (this.containLimit - this.curPictureList.length) + '张')
@@ -311,6 +313,9 @@ export default {
     },
     handlePs (picture, index) {
       console.log(picture, 'picture')
+      this.save({
+        gaodingEditLoading: true
+      })
       this.activeImage = {
         picture,
         index

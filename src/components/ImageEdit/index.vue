@@ -19,6 +19,7 @@ export default {
       this.save({
         visibleDrawingBoard: true
       })
+      console.log(this.$gaodingEditor, 'this.$gaodingEditor')
       this.$gaodingEditor.importImage(
         urls,
         {disableModules: ['panel.template', 'panel.element', 'panel.upload']}
@@ -40,13 +41,15 @@ export default {
         })
         // 直接关闭编辑器
         // 对结果进行下载
+
+        console.log(files, 'files')
         Promise
           .all(files.map(item => createPromise(item)))
           .then(data => {
             console.log('裁剪图片地址：', data)
             this.$emit('change', data.map(d => d.url))
             this.$message.success('修改成功')
-            this.$gaodingEditor.close()
+            this.$gaodingEditor.onClose()
             this.save({
               gaodingEditLoading: false
             })
