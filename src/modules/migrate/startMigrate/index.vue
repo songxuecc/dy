@@ -44,7 +44,7 @@
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
     </span>
     <el-tabs v-model="activeName">
-    <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
+    <!-- <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
       <el-input
         type="textarea"
         :rows="10"
@@ -56,7 +56,7 @@
         v-model="textCaptureUrls"
       >
       </el-input>
-    </el-tab-pane>
+    </el-tab-pane> -->
 <!--      <el-tab-pane-->
 <!--        v-loading="loadingCnt"-->
 <!--        label="整店复制"-->
