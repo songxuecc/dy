@@ -1,8 +1,8 @@
 <template>
     <div class="edit-gaoding" v-show="visibleDrawingBoard" v-loading="loading">
       <div class="edit-gaoding-container">
-          <!-- <el-button v-show="show" style="position:absolute;right:95px;top:7px;z-index:10000;height:42px;width:80px" @click="close">取消</el-button>
-          <div v-show="show" style="position:absolute;left:13px;top:4px;z-index:10000;height: 50px;line-height:50px;font-size:18px;font-weight:bold;background:#fff;width:110px">虎虎管家</div> -->
+          <el-button v-show="show" style="position:absolute;right:95px;top:7px;z-index:10000;height:42px;width:80px" @click="close">取消</el-button>
+          <div v-show="show" style="position:absolute;left:13px;top:4px;z-index:10000;height: 50px;line-height:50px;font-size:18px;font-weight:bold;background:#fff;width:110px">虎虎管家</div>
       </div>
 
     </div>
@@ -35,11 +35,11 @@ export default {
         appId: 'LHCXOH948273',
         container: '.edit-gaoding-container'
       })
-      this.loading = true
+      this.show = false
       editor.on('load', () => {
         setTimeout(() => {
           console.log('99999')
-          this.loading = false
+          this.show = true
         }, 500)
       })
 
