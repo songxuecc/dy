@@ -13,8 +13,13 @@
         </div>
         <div v-if="userBindTpBindLists.length">
           <div class="mb-10 flex" v-if="tableData">
-            授权店铺：
+            <!-- 授权店铺： -->
             <el-select v-model="bindShopId" size="mini" @change="handleSelect">
+              <el-option
+                key="-1"
+                label="全部"
+                value="-1">
+              </el-option>
               <el-option
                 v-for="item in userBindTpBindLists"
                 :key="item.tp_user_id"
@@ -93,7 +98,7 @@ export default {
       tp_code: '',
       userBindTpBindLists: [],
       dialogTableVisible: false,
-      bindShopId: ''
+      bindShopId: '-1'
     }
   },
   created () {
@@ -125,10 +130,10 @@ export default {
       })
       services.userBindTpBindList().then(data => {
         this.userBindTpBindLists = data
-        this.bindShopId = data[0].tp_user_id
+        this.bindShopId = '-1'
         this.fetch({
           filters: {
-            tp_user_id: data[0].tp_user_id
+            tp_user_id: '-1'
           }
         }).then(data => {
           this.save({
@@ -160,10 +165,10 @@ export default {
         this.$message.success('绑定成功')
         services.userBindTpBindList().then(data => {
           this.userBindTpBindLists = data
-          this.bindShopId = data[0].tp_user_id
+          this.bindShopId = '-1'
           this.fetch({
             filters: {
-              tp_user_id: data[0].tp_user_id
+              tp_user_id: '-1'
             }
           })
         })
@@ -238,7 +243,7 @@ export default {
     deleteClowndStore (row) {
       const parmas = {
         cloud_goods_id: row.id,
-        tp_user_id: this.filters.tp_user_id
+        tp_user_id: '-1'
       }
       services.userBindTpBindDeleteCloudGoods(parmas).then(() => {
         this.$message.success('删除成功')
