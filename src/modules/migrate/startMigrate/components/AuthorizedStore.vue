@@ -187,7 +187,7 @@ export default {
       window.open('https://meideng.yuque.com/docs/share/730a3a18-0df7-4ea4-99a0-93f2c87e49c1?#')
     },
     gotoPdd () {
-      window.open('https://pdd.huhuguanjia.com/migrate')
+      window.open('https://pdd.huhuguanjia.com/authorizedStore')
     },
     manageBindShop () {
       this.dialogTableVisible = true
