@@ -243,7 +243,7 @@ export default {
     deleteClowndStore (row) {
       const parmas = {
         cloud_goods_id: row.id,
-        tp_user_id: '-1'
+        tp_user_id: row.user_id
       }
       services.userBindTpBindDeleteCloudGoods(parmas).then(() => {
         this.$message.success('删除成功')
