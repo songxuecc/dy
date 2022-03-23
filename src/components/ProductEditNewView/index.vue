@@ -160,7 +160,9 @@
                   </span>
                   <div >
                       <div style="padding: 0 0 5px; color: gray" class="left"> * 拖动可调整顺序，鼠标放在图片上点击第2个图标可裁剪图片 </div>
-                      <pictures-upload-view @imageChanged="onBannerImageChanged" ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList" :validSize="true" :multiple="false">
+                      <pictures-upload-view
+                        @imageChanged="onBannerImageChanged"
+                        ref="bannerPicListView" :belongType="0" :containLimit="5" :pictureUrlList="bannerPicUrlList" :validSize="true" :multiple="false">
                       </pictures-upload-view>
                   </div>
                   <div class="common-bottom">
@@ -430,6 +432,7 @@ export default {
   },
   data () {
     return {
+      needOpenEditImages: false,
       all: true,
       skuImport,
       dialogVisible: false,
@@ -1069,34 +1072,6 @@ export default {
         }).map(item => {
           return this.products[item.tp_product_id]
         })
-      // const promiseBannerImageResult = await this.promiseBannerImage(products)
-      // if (promiseBannerImageResult && promiseBannerImageResult.result) {
-      //   this.$refs.productList.setCurrentRow(promiseBannerImageResult.product.model)
-      //   const resetProduct = this.tableData.find(p => p.tp_product_id === promiseBannerImageResult.product.model.tp_product_id)
-      //   this.setProduct(resetProduct)
-      //   this.activityTab = 'carousel'
-      //   this.$nextTick(() => {
-      //     const srcs = promiseBannerImageResult.srcs
-      //     for (var i = 0; i < srcs.length; i++) {
-      //       const src = srcs[i]
-      //       const image = document.getElementsByClassName(`needValid ${src}`)
-      //       image && image[0].classList.add('is-error-carousel')
-      //     }
-      //     this.$refs.SkuTable.$refs.form.validate((valid, object) => {
-      //       let isError = document.getElementsByClassName('is-error-carousel')
-      //       if (isError && isError[0]) {
-      //         isError[0].scrollIntoView({
-      //           // 滚动到指定节点
-      //           // 值有start,center,end，nearest，当前显示在视图区域中间
-      //           block: 'center',
-      //           // 值有auto、instant,smooth，缓动动画（当前是慢速的）
-      //           behavior: 'smooth'
-      //         })
-      //       }
-      //     })
-      //   })
-      //   return this.$message.error('轮播图尺寸需要1:1')
-      // }
 
       // 服务与资质
       let qualityValidId = false
@@ -1334,6 +1309,11 @@ export default {
                 message: '保存成功',
                 type: 'success'
               })
+              // 编辑图片之前 保存当前编辑
+              if (self.needOpenEditImages) {
+                self.openEditImages(self.needOpenEditImages)
+                return false
+              }
               if (self.closeAfterSave) {
                 this.$emit('triggerDialogClose')
                 self.closeAfterSave = false
@@ -1348,6 +1328,11 @@ export default {
               message: '保存成功',
               type: 'success'
             })
+            // 编辑图片之前 保存当前编辑
+            if (self.needOpenEditImages) {
+              self.openEditImages(self.needOpenEditImages)
+              return false
+            }
           }
         } else {
           // 批量保存没完成继续处理
@@ -1546,6 +1531,24 @@ export default {
           isChanged = true
         } else {
           this.productDic[tpProductId].isEdit = false
+        }
+      }
+      // 资质图和其他编辑认证
+      if (this.productDic && this.productDic[this.product.model.tp_product_id]) {
+        if (this.product.isDiff() || this.attrApplyCatMap[this.product.model.cat_id] || this.checkQualityList(this.product)) {
+          this.productDic[this.product.model.tp_product_id].isEdit = true
+        } else {
+          this.productDic[this.product.model.tp_product_id].isEdit = false
+        }
+      }
+      return isChanged
+    },
+    checkPicture () {
+      let isChanged = false
+      for (let i in this.tableData) {
+        let tpProductId = this.tableData[i].tp_product_id
+        if (this.productDic[tpProductId].isEdit) {
+          isChanged = true
         }
       }
       return isChanged
@@ -1936,16 +1939,47 @@ export default {
     },
     // 批量编辑图片
     BatchEditImages () {
+      const needSave = this.hasDeleteProducts() || this.checkPicture()
+      if (needSave) {
+        this.$confirm('编辑图片容易数据丢失，是否先保存当前编辑', '', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          if (this.activityTab === 'carousel') {
+            this.needOpenEditImages = this.product.model.bannerPicUrlList
+          } else if (this.activityTab === 'detail') {
+            this.needOpenEditImages = this.product.model.descPicUrlList
+          }
+          this.onSaveProduct()
+        }).catch(() => {
+          if (this.activityTab === 'carousel') {
+            this.needOpenEditImages = this.product.model.bannerPicUrlList
+          } else if (this.activityTab === 'detail') {
+            this.needOpenEditImages = this.product.model.descPicUrlList
+          }
+          this.openEditImages()
+        })
+      } else {
+        if (this.activityTab === 'carousel') {
+          this.needOpenEditImages = this.product.model.bannerPicUrlList
+        } else if (this.activityTab === 'detail') {
+          this.needOpenEditImages = this.product.model.descPicUrlList
+        }
+        this.openEditImages()
+      }
+    },
+    openEditImages () {
       this.save({
         gaodingEditLoading: true
       })
       if (this.activityTab === 'carousel') {
-        const urls = this.product.model.bannerPicUrlList.map(item => item.url)
+        const urls = this.needOpenEditImages.map(item => item.url)
         this.$refs.ImageEdit.init(urls)
       } else if (this.activityTab === 'detail') {
-        const urls = this.product.model.descPicUrlList.map(item => item.url)
+        const urls = this.needOpenEditImages.map(item => item.url)
         this.$refs.ImageEdit.init(urls)
       }
+      this.needOpenEditImages = false
     },
     handleImageEdit (urls) {
       if (this.activityTab === 'carousel') {

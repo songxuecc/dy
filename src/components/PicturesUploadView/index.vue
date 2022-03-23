@@ -52,10 +52,10 @@
                             />
                             <span class="font-12" style="margin-left:0">裁剪</span>
                           </span>
-                           <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete iconshanchu1 " style="visibility: visible;display:flex;flex-direction:column;justify-content:center;align-items:center;" @click="handlePs(picture, index)">
+                           <!-- <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete iconshanchu1 " style="visibility: visible;display:flex;flex-direction:column;justify-content:center;align-items:center;" @click="handlePs(picture, index)">
                             <i class="el-icon-edit-outline"></i>
                             <span class="font-12">编辑</span>
-                          </span>
+                          </span> -->
                           <span v-if="isAllowOperation('delete')" class="el-upload-list__item-delete iconshanchu1 " style="visibility: visible;display:flex;flex-direction:column;justify-content:center;align-items:center;" @click="onRemove(picture, index)" >
                             <i class="el-icon-delete"></i>
                             <span class="font-12">删除</span>
