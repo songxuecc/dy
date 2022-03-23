@@ -18,6 +18,7 @@ const IconFont = MdUi.createFromIconfontCN({
   ],
   name: 'hh-icon'
 })
+
 Vue.use(IconFont)
 Vue.use(VueClipboard)
 Vue.config.productionTip = false
@@ -42,8 +43,9 @@ const gaodingEditor = window.gaoding.createImageEditor({
   appId: 'LHCXOH948273',
   container: '.edit-gaoding-container'
 })
-
-Vue.prototype.$gaodingEditor = gaodingEditor
+if (!Vue.prototype.$gaodingEditor) {
+  Vue.prototype.$gaodingEditor = gaodingEditor
+}
 
 const req = require.context('@/assets/icon', true, /\.svg$/)
 requireAll(req)
