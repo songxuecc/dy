@@ -44,7 +44,8 @@
       <hh-icon type="icontishi-dengpao"></hh-icon>绑定复制教程
     </span>
     <el-tabs v-model="activeName">
-    <!-- <el-tab-pane v-loading="loadingCnt" label="多商品复制" name="single">
+
+    <el-tab-pane v-if="showSingleCopy" v-loading="loadingCnt" label="多商品复制" name="single" >
       <el-input
         type="textarea"
         :rows="10"
@@ -56,7 +57,7 @@
         v-model="textCaptureUrls"
       >
       </el-input>
-    </el-tab-pane> -->
+    </el-tab-pane>
 <!--      <el-tab-pane-->
 <!--        v-loading="loadingCnt"-->
 <!--        label="整店复制"-->
@@ -577,7 +578,8 @@ export default {
       productListCheckLoading: false,
       showStartCopyTips: false,
       showBindCopyTips: false,
-      isCaptureIsExistShopCapture: false
+      isCaptureIsExistShopCapture: false,
+      showSingleCopy: false
     }
   },
   components: {
@@ -593,6 +595,11 @@ export default {
     AuthorizedStore
   },
   activated () {
+    const host = window.location.host
+    console.log(host, host === 'dy.nix.huhuguanjia.com', 'host')
+    if (host === 'dy.nix.huhuguanjia.com' || host === 'localhost:8000') {
+      this.showSingleCopy = true
+    }
     this.getUserBindList()
     this.getUserAccountQuery()
     // this.$refs.setting.getMigrateSetting()
