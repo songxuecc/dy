@@ -95,7 +95,7 @@ export default {
     if (shareId) {
       state['share_id'] = shareId
     }
-    let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&state=' + encodeURI(JSON.stringify(state)) + dyHarf
+    let url = 'https://fuwu.jinritemai.com/authorize?service_id=42&from=md&state=' + encodeURI(JSON.stringify(state)) + dyHarf
 
     window.location.href = url
   },
