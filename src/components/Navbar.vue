@@ -325,7 +325,7 @@ export default {
       })
     },
     bill () {
-      window.open('https://www.wjx.cn/vm/Po63DQq.aspx')
+      window.open('https://www.wjx.cn/vj/w7o0kTD.aspx')
     },
     drawback () {
       window.open('https://www.wjx.top/vm/wb6pzku.aspx')
