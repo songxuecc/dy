@@ -147,14 +147,14 @@
 <!--            <el-menu-item index="/customerSetting/woda">-->
 <!--              <span slot="title">打单发货</span>-->
 <!--            </el-menu-item>-->
-            <el-menu-item index="" @click="openWoDa">
+            <!-- <el-menu-item index="" @click="openWoDa">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="relative">我打_批量打单发货
                   <span  class="badge bold">新店3个月免费</span>
                 </span>
               </div>
-            </el-menu-item>
+            </el-menu-item> -->
             <!-- <el-menu-item index="" @click="openMeiZhe">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
@@ -163,14 +163,14 @@
                 </span>
               </div>
             </el-menu-item> -->
-            <el-menu-item index="" @click="openMeiZheSHouhou">
+            <!-- <el-menu-item index="" @click="openMeiZheSHouhou">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
                 <span class="relative">售后管家
                   <span  class="badge2 bold">提效10倍</span>
                 </span>
               </div>
-            </el-menu-item>
+            </el-menu-item> -->
           </el-submenu>
         </el-menu>
       </div>
