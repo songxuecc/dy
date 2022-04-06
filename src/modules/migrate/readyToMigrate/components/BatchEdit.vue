@@ -18,6 +18,7 @@
               </el-button>
               <span v-if="item.numberKey ? (selecEditList && selecEditList.length) : (selectDeleteList && selectDeleteList.length)" class="badge bold">{{item.numberKey ? selecEditList.length : selectDeleteList.length}}</span>
             </div>
+            <ReCaptureBtn :selecReTryList="selecReTryList"/>
           </div>
           <RefershCategoryBtn style="align-content:flex-end"/>
       </el-col>
@@ -70,6 +71,7 @@ import utils from '@/common/utils'
 import categorySelectView from '@/components/CategorySelectView'
 import RefershCategoryBtn from '@/components/RefershCategoryBtn'
 
+import ReCaptureBtn from '@migrate/readyToMigrate/components/ReCaptureBtn'
 import EditDelteRecord from '@migrate/readyToMigrate/components/EditDelteRecord'
 import EditTitle from '@migrate/readyToMigrate/components/EditTitle'
 import EditBrandId from '@migrate/readyToMigrate/components/EditBrandId'
@@ -96,7 +98,8 @@ export default {
     EditDeleteCarousel,
     EditDelteDetailImage,
     EditProperties,
-    RefershCategoryBtn
+    RefershCategoryBtn,
+    ReCaptureBtn
   },
   data () {
     return {
@@ -184,17 +187,6 @@ export default {
             style: 'text-align:center;width:110px'
           }
         }
-        // {
-        //   value: 6,
-        //   label: '批量重试复制',
-        //   key: 'visibleEditDelteRecord',
-        //   numberKey: false,
-        //   props: {
-        //     type: '',
-        //     plain: true,
-        //     style: 'text-align:center;width:110px'
-        //   }
-        // }
       ],
       percentage: 0,
       shutdown: false,
@@ -226,6 +218,19 @@ export default {
         productStatus.REJECT,
         productStatus.DY_APPROVING,
         productStatus.DELETED
+      ],
+      canRecaptureStatus: [
+        productStatus.WAIT_ONLINE,
+        productStatus.WAIT_MIGRATE,
+        productStatus.MIGRATING,
+        productStatus.SAVE_DRAFT,
+        productStatus.ONLINE,
+        productStatus.FAILED,
+        productStatus.WAIT_MODIFY,
+        productStatus.CAPTURE_FAILED,
+        productStatus.REJECT,
+        productStatus.DY_APPROVING,
+        productStatus.DELETED
       ]
     }
   },
@@ -243,6 +248,11 @@ export default {
     selecEditList () {
       return this.tpProductList.filter(item => {
         return this.selectIdBatchEditList.includes(`${item.tp_product_id}`) && this.canEditStatus.includes(item.status)
+      })
+    },
+    selecReTryList () {
+      return this.tpProductList.filter(item => {
+        return this.selectIdBatchEditList.includes(`${item.tp_product_id}`) && this.canDeleteStatus.includes(item.status)
       })
     }
   },
