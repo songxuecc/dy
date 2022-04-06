@@ -36,7 +36,7 @@
                 </div>
               </div>
 
-              <div v-if="shopName" class="syncProduct pointer " @click="bill" :disabled="isSyncing">
+              <!-- <div v-if="shopName" class="syncProduct pointer " @click="bill" :disabled="isSyncing">
                 <div class="flex align-c bold" >
                   <hh-icon type="iconfapiao" style="font-size:14px;margin-right:2px;margin-bottom:2px"/>
                   <div class="relative" style="height:60px;line-height:60px">
@@ -44,7 +44,7 @@
                     <div class="active-bar"></div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
                <div v-if="shopName" class="syncProduct pointer " @click="drawback" :disabled="isSyncing">
                 <div class="flex align-c bold" >
