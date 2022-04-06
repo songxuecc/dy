@@ -183,18 +183,18 @@ export default {
             plain: true,
             style: 'text-align:center;width:110px'
           }
-        },
-        {
-          value: 6,
-          label: '批量重试复制',
-          key: 'visibleEditDelteRecord',
-          numberKey: false,
-          props: {
-            type: '',
-            plain: true,
-            style: 'text-align:center;width:110px'
-          }
         }
+        // {
+        //   value: 6,
+        //   label: '批量重试复制',
+        //   key: 'visibleEditDelteRecord',
+        //   numberKey: false,
+        //   props: {
+        //     type: '',
+        //     plain: true,
+        //     style: 'text-align:center;width:110px'
+        //   }
+        // }
       ],
       percentage: 0,
       shutdown: false,
