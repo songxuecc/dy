@@ -97,7 +97,7 @@ export default {
                 }
               })
               .catch(() => {})
-            // this.reload()
+            this.reload()
             // if (this.userBindList.length) {
             //   this.$refs.modelCopyForm &&
             //     this.$refs.modelCopyForm.resetFields &&
