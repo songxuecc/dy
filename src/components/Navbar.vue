@@ -54,7 +54,7 @@
                     <div class="active-bar"></div>
                   </div>
                 </div> -->
-              </div>
+<!--              </div>-->
 
               <!-- 充值升级 -->
               <div v-if="shopName" class="syncProduct pointer " @click="paidRecharge" :disabled="isSyncing">
