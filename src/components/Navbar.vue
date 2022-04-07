@@ -46,14 +46,14 @@
                 </div>
               </div> -->
 
-               <div v-if="shopName" class="syncProduct pointer " @click="drawback" :disabled="isSyncing">
+               <!-- <div v-if="shopName" class="syncProduct pointer " @click="drawback" :disabled="isSyncing">
                 <div class="flex align-c bold" >
                   <hh-icon type="icontuikuan1" style="font-size:12px;margin-right:2px;margin-bottom:2px"/>
                   <div class="relative" style="height:60px;line-height:60px">
                     退款
                     <div class="active-bar"></div>
                   </div>
-                </div>
+                </div> -->
               </div>
 
               <!-- 充值升级 -->
