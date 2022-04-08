@@ -163,14 +163,13 @@
                 </span>
               </div>
             </el-menu-item> -->
-            <!-- <el-menu-item index="" @click="openMeiZheSHouhou">
+            <el-menu-item index="" @click="openMeiZheSHouhou">
               <div slot="title" class="flex align-c">
                 <hh-icon type="iconkaidianbibeigongjuweixuanzhong" style="font-size:16px; margin-right:4px"></hh-icon>
-                <span class="relative">售后管家
-                  <span  class="badge2 bold">提效10倍</span>
+                <span class="relative">抖店客服外包
                 </span>
               </div>
-            </el-menu-item> -->
+            </el-menu-item>
           </el-submenu>
         </el-menu>
       </div>
@@ -220,7 +219,7 @@ export default {
       window.open('https://dx5.cn/45Uosn')
     },
     openMeiZheSHouhou () {
-      window.open('https://dx5.cn/4kpxSj')
+      window.open('https://cloudchat-dev.meiqia.com/assets/cloudchat-ad.html')
     },
     gotoHomePage () {
       if (!this.isAuth()) return false
