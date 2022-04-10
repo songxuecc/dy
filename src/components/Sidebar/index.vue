@@ -219,7 +219,7 @@ export default {
       window.open('https://dx5.cn/45Uosn')
     },
     openMeiZheSHouhou () {
-      window.open('https://cloudchat-dev.meiqia.com/advertisement/cloudchat-ad.html')
+      window.open('https://s.woda.com/HgO46')
     },
     gotoHomePage () {
       if (!this.isAuth()) return false
